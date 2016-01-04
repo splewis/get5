@@ -24,7 +24,7 @@
 #define MAX_CVAR_LENGTH 128
 #define MATCH_END_DELAY_AFTER_TV 10
 
-#define TEAM1_COLOR "{LIGHT_RED}"
+#define TEAM1_COLOR "{LIGHT_GREEN}"
 #define TEAM2_COLOR "{PINK}"
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T
@@ -61,6 +61,8 @@ char g_FormattedTeamNames[MatchTeam_Count][TEAM_NAME_LENGTH];
 char g_TeamFlags[MatchTeam_Count][TEAM_FLAG_LENGTH];
 char g_TeamLogos[MatchTeam_Count][TEAM_LOGO_LENGTH];
 char g_TeamMatchTexts[MatchTeam_Count][MAX_CVAR_LENGTH];
+int g_FavoredTeamPercentage = 0;
+char g_FavoredTeamText[MAX_CVAR_LENGTH];
 int g_PlayersPerTeam = 5;
 bool g_SkipVeto = false;
 ArrayList g_CvarNames = null;
@@ -87,6 +89,7 @@ bool g_tUnpaused = false;
 // Map-game state not related to the actual gameplay.
 char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
+bool g_MovingClientToCoach[MAXPLAYERS+1];
 
 #include "trate/kniferounds.sp"
 #include "trate/liveon3.sp"
@@ -134,6 +137,7 @@ public void OnPluginStart() {
     RegConsoleCmd("sm_notready", Command_NotReady, "Marks the client as not ready");
     RegConsoleCmd("sm_pause", Command_Pause, "Pauses the game");
     RegConsoleCmd("sm_unpause", Command_Unpause, "Unpauses the game");
+    RegConsoleCmd("sm_coach", Command_SmCoach, "");
     RegConsoleCmd("sm_stay", Command_Stay, "Elects to stay on the current team after winning a knife round");
     RegConsoleCmd("sm_swap", Command_Swap, "Elects to swap the current teams after winning a knife round");
     RegConsoleCmd("sm_t", Command_T, "Elects to start on T side after winning a knife round");
@@ -182,6 +186,7 @@ public Action Timer_InfoMessages(Handle timer) {
 }
 
 public void OnClientAuthorized(int client, const char[] auth) {
+    g_MovingClientToCoach[client] = false;
     if (StrEqual(auth, "BOT", false)) {
         return;
     }
@@ -193,11 +198,6 @@ public void OnClientAuthorized(int client, const char[] auth) {
     MatchTeam team = GetClientMatchTeam(client);
     if (team == MatchTeam_TeamNone) {
         KickClient(client, "You are not a player in this match");
-    }
-
-    if (CountPlayersOnMatchTeam(team) >= g_PlayersPerTeam) {
-        // TODO: to enable coaching this probably has to be changed.
-        KickClient(client, "Your team is full.");
     }
 }
 
@@ -248,9 +248,9 @@ public void OnMapStart() {
 
     if (g_GameState == GameState_Warmup || g_GameState == GameState_Veto) {
         ServerCommand("exec %s", WARMUP_CONFIG);
-        ExecuteMatchConfigCvars();
         EnsurePausedWarmup();
         SetMatchTeamCvars();
+        ExecuteMatchConfigCvars();
     }
 
 }

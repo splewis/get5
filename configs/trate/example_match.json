@@ -15,14 +15,17 @@
 
 	"maplist":
 	[
-		"de_dust2",
 		"de_inferno",
+		"de_dust2",
 		"de_mirage",
 		"de_cache",
 		"de_cbble",
 		"de_overpass",
 		"de_train"
 	],
+
+	"favored_percentage_team1": 65,
+	"favored_percentage_text": "HLTV Bets",
 
 	"team1": {
 		"name": "EnvyUs",

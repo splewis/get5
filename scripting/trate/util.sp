@@ -27,7 +27,7 @@ stock int GetNumHumansOnTeam(int team) {
 stock int CountAlivePlayersOnTeam(int team) {
     int count = 0;
     for (int i = 1; i <= MaxClients; i++) {
-        if (IsPlayer(i) && IsPlayerAlive(i))
+        if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == team)
             count++;
     }
     return count;
@@ -181,6 +181,15 @@ stock void RestartGame(int delay) {
     ServerCommand("mp_restartgame %d", delay);
 }
 
+stock bool IsClientCoaching(int client) {
+    return GetClientTeam(client) == CS_TEAM_SPECTATOR &&
+        GetEntProp(client, Prop_Send, "m_iCoachingTeam") != 0;
+}
+
+stock void UpdateCoachTarget(int client, int team) {
+    SetEntProp(client, Prop_Send, "m_iCoachingTeam", team);
+}
+
 stock void SetTeamInfo(int team, const char[] name, const char[] flag="", const char[] logo="", const char[] matchstat="") {
     int team_int = (team == CS_TEAM_CT) ? 1 : 2;
 
@@ -197,6 +206,15 @@ stock void SetTeamInfo(int team, const char[] name, const char[] flag="", const 
     SetConVarStringSafe(flagCvarName, flag);
     SetConVarStringSafe(logoCvarName, logo);
     SetConVarStringSafe(textCvarName, matchstat);
+}
+
+stock void SetConVarIntSafe(const char[] name, int value) {
+    Handle cvar = FindConVar(name);
+    if (cvar == INVALID_HANDLE) {
+        LogError("Failed to find cvar: \"%s\"", name);
+    } else {
+        SetConVarInt(cvar, value);
+    }
 }
 
 stock void SetConVarStringSafe(const char[] name, const char[] value) {

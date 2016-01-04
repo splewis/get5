@@ -1,5 +1,5 @@
 public Action Command_JoinTeam(int client, const char[] command, int argc) {
-    if (!IsAuthedPlayer(client))
+    if (!IsAuthedPlayer(client) || argc < 1)
         return Plugin_Stop;
 
     // Don't do anything if not live/not in startup phase.
@@ -34,20 +34,57 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
     }
 
     if (csTeam != GetClientTeam(client)) {
-        LogDebug("Forcing player %N onto %d", client, csTeam);
         // SwitchPlayerTeam(client, csTeam);
-        FakeClientCommand(client, "jointeam %d", csTeam);
+        if (CountPlayersOnCSTeam(csTeam) >= g_PlayersPerTeam) {
+            LogDebug("Forcing player %N to coach", client);
+            MoveClientToCoach(client);
+        } else {
+            LogDebug("Forcing player %N onto %d", client, csTeam);
+            FakeClientCommand(client, "jointeam %d", csTeam);
+        }
+
         return Plugin_Stop;
     }
 
     return Plugin_Stop;
 }
 
+public void MoveClientToCoach(int client) {
+    LogDebug("MoveClientToCoach %L", client);
+    MatchTeam matchTeam = GetClientMatchTeam(client);
+    if (matchTeam != MatchTeam_Team1 && matchTeam != MatchTeam_Team2) {
+        return;
+    }
+
+    g_MovingClientToCoach[client] = true;
+    int csTeam = MatchTeamToCSTeam(matchTeam);
+    char teamString[4];
+    CSTeamString(csTeam, teamString, sizeof(teamString));
+    FakeClientCommand(client, "coach %s", teamString);
+    g_MovingClientToCoach[client] = false;
+
+}
+
+public Action Command_SmCoach(int client, int args) {
+    MoveClientToCoach(client);
+    return Plugin_Handled;
+}
+
 public Action Command_Coach(int client, const char[] command, int argc) {
-    // TODO: enable coaching with correct-team enforcement.
-    // Might need to fake the "coach ct" or "coach t" commands,
-    // or set m_iCoachingTeam for the client.
-    return Plugin_Continue;
+    if (!IsAuthedPlayer(client)) {
+        return Plugin_Stop;
+    }
+
+    if (InHalftimePhase()) {
+        return Plugin_Stop;
+    }
+
+    if (g_MovingClientToCoach[client]) {
+        return Plugin_Continue;
+    }
+
+    MoveClientToCoach(client);
+    return Plugin_Stop;
 }
 
 public MatchTeam GetClientMatchTeam(int client) {

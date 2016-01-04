@@ -73,8 +73,8 @@ public bool LoadMatchConfig(const char[] config) {
         ChangeState(GameState_PreVeto);
     }
 
-    ExecuteMatchConfigCvars();
     SetMatchTeamCvars();
+    ExecuteMatchConfigCvars();
     EnsurePausedWarmup();
     strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
 
@@ -86,6 +86,9 @@ static bool LoadMatchFromKv(KeyValues kv) {
     g_PlayersPerTeam = kv.GetNum("players_per_team", 5);
     g_MapsToWin = kv.GetNum("maps_to_win", 2);
     g_SkipVeto = kv.GetNum("skip_veto", 0) != 0;
+
+    g_FavoredTeamPercentage = kv.GetNum("favored_percentage_team1", 0);
+    kv.GetString("favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText));
 
     if (kv.JumpToKey("spectators")) {
         AddSubsectionKeysToList(kv, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
@@ -137,6 +140,9 @@ static bool LoadMatchFromJson(Handle json) {
     g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", 5);
     g_MapsToWin = json_object_get_int_safe(json, "maps_to_win", 2);
     g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", false);
+
+    json_object_get_string_safe(json, "favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText), "matchID");
+    g_FavoredTeamPercentage = json_object_get_int_safe(json, "favored_percentage_team1", 0);
 
     Handle spec = json_object_get(json, "spectators");
     if (spec != INVALID_HANDLE) {
@@ -240,6 +246,13 @@ public void SetMatchTeamCvars() {
     Format(mapstat, sizeof(mapstat), "Map %d of %d",
            mapsPlayed + 1, MaxMapsToPlay(g_MapsToWin));
     SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
+
+    // Set prediction cvars.
+    SetConVarStringSafe("mp_teamprediction_txt", g_FavoredTeamText);
+    if (g_TeamSide[MatchTeam_Team1] == CS_TEAM_CT)
+        SetConVarIntSafe("mp_teamprediction_pct", g_FavoredTeamPercentage);
+    else
+        SetConVarIntSafe("mp_teamprediction_pct", 100 - g_FavoredTeamPercentage);
 }
 
 public void ExecuteMatchConfigCvars() {

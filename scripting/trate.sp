@@ -6,6 +6,7 @@
 
 #undef REQUIRE_EXTENSIONS
 #include <smjansson>
+#include "include/jsonhelpers.inc"
 
 #define LIVE_TIMER_INTERVAL 1.0
 #define INFO_MESSAGE_TIMER_INTERVAL 29.0
@@ -141,6 +142,7 @@ public void OnPluginStart() {
     RegConsoleCmd("trate_status", Command_Status);
 
     /** Hooks **/
+    HookEvent("player_spawn", Event_PlayerSpawn);
     HookEvent("cs_win_panel_match", Event_MatchOver);
     HookEvent("round_end", Event_RoundEnd);
     HookEvent("announce_phase_end", Event_PhaseEnd);

@@ -3,6 +3,7 @@ sudo: false
 addons:
     apt_packages:
         - lib32stdc++6  # needed for spcomp
+        - python-demjson  # needed for jsonlint
 
 before_script:
     # install smbuilder
@@ -26,6 +27,7 @@ before_script:
 
 script:
     - smbuilder --flags="-E"
+    - jsonlint -v configs/trate/example_match.json
 
 notifications:
     email: true

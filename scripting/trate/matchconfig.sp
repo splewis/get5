@@ -1,5 +1,3 @@
-#include "../include/jsonhelpers.inc"
-
 public bool LoadMatchConfig(const char[] config) {
     g_TeamReady[MatchTeam_Team1] = false;
     g_TeamReady[MatchTeam_Team2] = false;
@@ -18,7 +16,6 @@ public bool LoadMatchConfig(const char[] config) {
     ClearArray(GetTeamAuths(MatchTeam_Team1));
     ClearArray(GetTeamAuths(MatchTeam_Team2));
 
-    LogDebug("%d", StrContains(config, "json"));
     if (StrContains(config, "json") >= 0) {
         if (!LibraryExists("jansson")) {
             LogError("Cannot load a json config without the smjansson extension loaded");

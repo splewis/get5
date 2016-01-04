@@ -580,6 +580,11 @@ public void ChangeState(GameState state) {
 public Action Command_Status(int client, int args) {
     ReplyToCommand(client, "{");
     ReplyToCommand(client, "  \"matchid\": \"%s\",", g_MatchID);
+    ReplyToCommand(client, "  \"plugin_version\": \"%s\",", PLUGIN_VERSION);
+
+    #if defined COMMIT_STRING
+    ReplyToCommand(client, "  \"commit: \"%s\"\"", COMMIT_STRING);
+    #endif
 
     char gamestate[64];
     GameStateString(g_GameState, gamestate, sizeof(gamestate));

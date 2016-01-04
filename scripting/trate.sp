@@ -5,7 +5,7 @@
 #include "include/trate.inc"
 
 #undef REQUIRE_EXTENSIONS
-#include <smjansson>
+#tryinclude <smjansson>
 #if defined _jansson_included_
 #include "include/jsonhelpers.inc"
 #endif
@@ -94,8 +94,9 @@ bool g_MapChangePending = false;
 #include "trate/mapveto.sp"
 #include "trate/matchconfig.sp"
 #include "trate/natives.sp"
-#include "trate/util.sp"
 #include "trate/teamlogic.sp"
+#include "trate/util.sp"
+#include "trate/version.sp"
 
 
 

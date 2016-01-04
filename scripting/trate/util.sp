@@ -1,8 +1,3 @@
-#tryinclude "manual_version.sp"
-#if !defined PLUGIN_VERSION
-#define PLUGIN_VERSION "0.0.1-dev"
-#endif
-
 #define MAX_INTEGER_STRING_LENGTH 16
 #define MAX_FLOAT_STRING_LENGTH 32
 

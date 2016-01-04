@@ -1,8 +1,19 @@
-stock bool json_has_key(Handle hObj, const char[] key) {
+stock bool json_has_key(Handle hObj, const char[] key, json_type expectedType=JSON_NULL) {
     Handle h = json_object_get(hObj, key);
     if (h == INVALID_HANDLE) {
         return false;
     } else {
+        // Perform type-checking.
+        json_type actualType = json_typeof(h);
+        if (expectedType != JSON_NULL && actualType != expectedType) {
+            char expectedTypeStr[16];
+            char actualTypeStr[16];
+            Stringify_json_type(expectedType, expectedTypeStr, sizeof(expectedTypeStr));
+            Stringify_json_type(actualType, actualTypeStr, sizeof(actualTypeStr));
+            LogError("Type mismatch for key \"%s\", got %s when expected a %s",
+                key, actualTypeStr, expectedTypeStr);
+            return false;
+        }
         CloseHandle(h);
         return true;
     }
@@ -10,7 +21,7 @@ stock bool json_has_key(Handle hObj, const char[] key) {
 
 stock int json_object_get_string_safe(Handle hObj, const char[] key, char[] buffer,
     int maxlength, const char[] defaultValue="") {
-    if (json_has_key(hObj, key)) {
+    if (json_has_key(hObj, key, JSON_STRING)) {
         return json_object_get_string(hObj, key, buffer, maxlength);
     } else {
         return strcopy(buffer, maxlength, defaultValue);
@@ -19,8 +30,24 @@ stock int json_object_get_string_safe(Handle hObj, const char[] key, char[] buff
 
 
 stock int json_object_get_int_safe(Handle hObj, const char[] key, int defaultValue=0) {
-    if (json_has_key(hObj, key)) {
+    if (json_has_key(hObj, key, JSON_INTEGER)) {
         return json_object_get_int(hObj, key);
+    } else {
+        return defaultValue;
+    }
+}
+
+stock bool json_object_get_bool_safe(Handle hObj, const char[] key, bool defaultValue=false) {
+    if (json_has_key(hObj, key)) {
+        return json_object_get_bool(hObj, key);
+    } else {
+        return defaultValue;
+    }
+}
+
+stock float json_object_get_float_safe(Handle hObj, const char[] key, float defaultValue=0.0) {
+    if (json_has_key(hObj, key, JSON_REAL)) {
+        return json_object_get_float(hObj, key);
     } else {
         return defaultValue;
     }

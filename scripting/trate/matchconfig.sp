@@ -17,6 +17,8 @@ public bool LoadMatchConfig(const char[] config) {
     ClearArray(GetTeamAuths(MatchTeam_Team2));
 
     if (StrContains(config, "json") >= 0) {
+
+#if defined _jansson_included_
         if (!LibraryExists("jansson")) {
             LogError("Cannot load a json config without the smjansson extension loaded");
             return false;
@@ -33,6 +35,10 @@ public bool LoadMatchConfig(const char[] config) {
             LogError("Failed to load match config from %s", config);
             return false;
         }
+#else
+        LogError("Cannot load a json config since the plugin compiled without smjansson support");
+#endif
+
     } else {
         // Assume its a keyvalues file.
         KeyValues kv = new KeyValues("Match");
@@ -125,6 +131,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
     return true;
 }
 
+#if defined _jansson_included_
 static bool LoadMatchFromJson(Handle json) {
     json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID), "matchID");
     g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", 5);
@@ -181,21 +188,22 @@ static bool LoadMatchFromJson(Handle json) {
     return true;
 }
 
-static void LoadTeamData(KeyValues kv, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
-    AddSubsectionKeysToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
-    kv.GetString("name", g_TeamNames[matchTeam], TEAM_NAME_LENGTH, defaultName);
-    kv.GetString("flag", g_TeamFlags[matchTeam], TEAM_FLAG_LENGTH, "");
-    kv.GetString("logo", g_TeamLogos[matchTeam], TEAM_LOGO_LENGTH, "");
-    kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");
-    Format(g_FormattedTeamNames[matchTeam], TEAM_NAME_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
-}
-
 static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] colorTag) {
     AddJsonSubsectionArrayToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
     json_object_get_string(json, "name", g_TeamNames[matchTeam], TEAM_NAME_LENGTH);
     json_object_get_string(json, "flag", g_TeamFlags[matchTeam], TEAM_FLAG_LENGTH);
     json_object_get_string(json, "logo", g_TeamLogos[matchTeam], TEAM_LOGO_LENGTH);
     json_object_get_string(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
+    Format(g_FormattedTeamNames[matchTeam], TEAM_NAME_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
+}
+#endif
+
+static void LoadTeamData(KeyValues kv, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
+    AddSubsectionKeysToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
+    kv.GetString("name", g_TeamNames[matchTeam], TEAM_NAME_LENGTH, defaultName);
+    kv.GetString("flag", g_TeamFlags[matchTeam], TEAM_FLAG_LENGTH, "");
+    kv.GetString("logo", g_TeamLogos[matchTeam], TEAM_LOGO_LENGTH, "");
+    kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");
     Format(g_FormattedTeamNames[matchTeam], TEAM_NAME_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
 }
 

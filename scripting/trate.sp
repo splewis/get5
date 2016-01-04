@@ -6,7 +6,9 @@
 
 #undef REQUIRE_EXTENSIONS
 #include <smjansson>
+#if defined _jansson_included_
 #include "include/jsonhelpers.inc"
+#endif
 
 #define LIVE_TIMER_INTERVAL 1.0
 #define INFO_MESSAGE_TIMER_INTERVAL 29.0

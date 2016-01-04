@@ -583,7 +583,7 @@ public Action Command_Status(int client, int args) {
     ReplyToCommand(client, "  \"plugin_version\": \"%s\",", PLUGIN_VERSION);
 
     #if defined COMMIT_STRING
-    ReplyToCommand(client, "  \"commit: \"%s\"\"", COMMIT_STRING);
+    ReplyToCommand(client, "  \"commit: \"%s\"\",", COMMIT_STRING);
     #endif
 
     char gamestate[64];

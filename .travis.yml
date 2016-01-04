@@ -1,0 +1,28 @@
+sudo: false
+
+addons:
+    apt_packages:
+        - lib32stdc++6  # needed for spcomp
+
+before_script:
+    # install smbuilder
+    - git clone https://github.com/splewis/sm-builder
+    - cd sm-builder
+    - pip install --user -r requirements.txt
+    - python setup.py install --prefix=~/.local
+    - cd ..
+
+    # install the sourcemod compiler
+    - SMPACKAGE="http://sourcemod.net/latest.php?os=linux&version=$1.7"
+    - wget $SMPACKAGE
+    - tar xfz $(basename $SMPACKAGE)
+    - cd addons/sourcemod/scripting/
+    - chmod +x spcomp
+    - PATH+=":$PWD"
+    - cd ../../..
+
+script:
+    - smbuilder --flags="-E"
+
+notifications:
+    email: true

@@ -1,0 +1,5 @@
+Plugin(source='scripting/trate.sp')
+
+Package(name='trate',
+        plugins=['trate'],
+)

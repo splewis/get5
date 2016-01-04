@@ -44,6 +44,7 @@ public SharedPlugin __pl_trate = {
 
 #if !defined REQUIRE_PLUGIN
 public __pl_trate_SetNTVOptional() {
+    MarkNativeAsOptional("Trate_GetGameState");
     MarkNativeAsOptional("Trate_Message");
     MarkNativeAsOptional("Trate_MessageToAll");
 }

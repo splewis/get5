@@ -19,7 +19,10 @@ before_script:
     - cd addons/sourcemod/scripting/
     - chmod +x spcomp
     - PATH+=":$PWD"
-    - cd ../../..
+
+    - cd include
+    - wget https://raw.githubusercontent.com/thraaawn/SMJansson/master/pawn/scripting/include/smjansson.inc
+    - cd ../../../..
 
 script:
     - smbuilder --flags="-E"

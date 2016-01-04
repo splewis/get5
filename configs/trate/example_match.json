@@ -1,0 +1,58 @@
+{
+	"matchid": "example_match",
+	"maps_to_win": 2,
+	"players_per_team": 1,
+	"skip_veto": 0,
+
+	"spectators": {
+		"players":
+		[
+			"STEAM_1:1:.....",
+			"STEAM_1:1:.....",
+			"STEAM_1:1:....."
+		]
+	},
+
+	"maplist":
+	[
+		"de_dust2",
+		"de_inferno",
+		"de_mirage",
+		"de_cache",
+		"de_cbble",
+		"de_overpass",
+		"de_train"
+	],
+
+	"team1": {
+		"name": "EnvyUs",
+		"flag": "FR",
+		"logo": "",
+		"players":
+		[
+			"STEAM_0:1:52245092",
+			"STEAM_1:1:.....",
+			"STEAM_1:1:.....",
+			"STEAM_1:1:.....",
+			"STEAM_1:1:....."
+		]
+	},
+
+	"team2": {
+		"name": "Fnatic",
+		"flag": "SE",
+		"logo": "",
+		"players":
+		[
+			"STEAM_1:1:46796472",
+			"STEAM_1:0:78189799",
+			"STEAM_1:1:.....",
+			"STEAM_1:1:.....",
+			"STEAM_1:1:....."
+		]
+	},
+
+	"cvars": {
+		"hostname": "Match server #1"
+	}
+}

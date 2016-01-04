@@ -4,6 +4,9 @@
 #include "include/logdebug.inc"
 #include "include/trate.inc"
 
+#undef REQUIRE_EXTENSIONS
+#include <smjansson>
+
 #define LIVE_TIMER_INTERVAL 1.0
 #define INFO_MESSAGE_TIMER_INTERVAL 29.0
 
@@ -18,6 +21,8 @@
 #define MAX_CVAR_LENGTH 128
 #define MATCH_END_DELAY_AFTER_TV 10
 
+#define TEAM1_COLOR "{LIGHT_RED}"
+#define TEAM2_COLOR "{PINK}"
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T
 
@@ -239,13 +244,13 @@ public void OnMapStart() {
 
 public Action Timer_CheckReady(Handle timer) {
     if (g_GameState == GameState_PreVeto) {
-        if (g_TeamReady[MatchTeam_Team1] && g_TeamReady[MatchTeam_Team2]) {
+        if (AllTeamsReady()) {
             ChangeState(GameState_Veto);
             CreateMapVeto();
         }
 
     } else  if (g_GameState == GameState_Warmup) {
-        if (g_TeamReady[MatchTeam_Team1] && g_TeamReady[MatchTeam_Team2] && !g_MapChangePending) {
+        if (AllTeamsReady() && !g_MapChangePending) {
             ChangeState(GameState_KnifeRound);
             StartGame();
         }
@@ -563,37 +568,42 @@ public void ChangeState(GameState state) {
 }
 
 public Action Command_Status(int client, int args) {
-    ReplyToCommand(client, "{\n");
+    ReplyToCommand(client, "{");
+    ReplyToCommand(client, "  \"matchid\": \"%s\",", g_MatchID);
 
     char gamestate[64];
     GameStateString(g_GameState, gamestate, sizeof(gamestate));
-    ReplyToCommand(client, "  \"gamestate\": \"%s\",\n", gamestate);
+    ReplyToCommand(client, "  \"gamestate\": \"%s\",", gamestate);
 
     if (g_GameState != GameState_None) {
-        ReplyToCommand(client, "  \"loaded_config_file\": \"%s\",\n", g_LoadedConfigFile);
-        ReplyToCommand(client, "  \"map_number\": %d,\n",
+        ReplyToCommand(client, "  \"loaded_config_file\": \"%s\",", g_LoadedConfigFile);
+        ReplyToCommand(client, "  \"map_number\": %d,",
             g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2] + 1);
 
-        ReplyToCommand(client, "  \"team1\": {\n");
+        ReplyToCommand(client, "  \"team1\": {");
         ReplyToTeamInfo(client, MatchTeam_Team1);
-        ReplyToCommand(client, "  },\n");
+        ReplyToCommand(client, "  },");
 
-        ReplyToCommand(client, "  \"team2\": {\n");
+        ReplyToCommand(client, "  \"team2\": {");
         ReplyToTeamInfo(client, MatchTeam_Team2);
-        ReplyToCommand(client, "  },\n");
+
+        if (g_GameState > GameState_Veto)
+            ReplyToCommand(client, "  },");
+        else
+            ReplyToCommand(client, "  }");
     }
 
     if (g_GameState > GameState_Veto) {
-        ReplyToCommand(client, "  \"maps\": {\n");
+        ReplyToCommand(client, "  \"maps\": {");
         for (int i = 0; i < g_MapsToPlay.Length; i++) {
             char mapName[PLATFORM_MAX_PATH];
             g_MapsToPlay.GetString(i, mapName, sizeof(mapName));
             if (i + 1 < g_MapsToPlay.Length)
-                ReplyToCommand(client, "    \"map%d\" : \"%s\",\n", i + 1, mapName);
+                ReplyToCommand(client, "    \"map%d\" : \"%s\",", i + 1, mapName);
             else // No commma on the last map.
-                ReplyToCommand(client, "    \"map%d\" : \"%s\"\n", i + 1, mapName);
+                ReplyToCommand(client, "    \"map%d\" : \"%s\"", i + 1, mapName);
         }
-        ReplyToCommand(client, "  }\n");
+        ReplyToCommand(client, "  }");
     }
 
     ReplyToCommand(client, "}");
@@ -604,10 +614,14 @@ static void ReplyToTeamInfo(int client, MatchTeam matchTeam) {
     int team = MatchTeamToCSTeam(matchTeam);
     char side[4];
     CSTeamString(team, side, sizeof(side));
-    ReplyToCommand(client, "    \"name\": \"%s\",\n", g_TeamNames[matchTeam]);
-    ReplyToCommand(client, "    \"map_score\": %d,\n", g_TeamMapScores[matchTeam]);
-    ReplyToCommand(client, "    \"ready\": %d,\n", g_TeamReady[matchTeam]);
-    ReplyToCommand(client, "    \"side\": \"%s\",\n", side);
-    ReplyToCommand(client, "    \"connected_clients\": %d,\n", GetNumHumansOnTeam(team));
-    ReplyToCommand(client, "    \"current_score\": %d\n", CS_GetTeamScore(team));
+    ReplyToCommand(client, "    \"name\": \"%s\",", g_TeamNames[matchTeam]);
+    ReplyToCommand(client, "    \"map_score\": %d,", g_TeamMapScores[matchTeam]);
+    ReplyToCommand(client, "    \"ready\": %d,", g_TeamReady[matchTeam]);
+    ReplyToCommand(client, "    \"side\": \"%s\",", side);
+    ReplyToCommand(client, "    \"connected_clients\": %d,", GetNumHumansOnTeam(team));
+    ReplyToCommand(client, "    \"current_score\": %d", CS_GetTeamScore(team));
+}
+
+public bool AllTeamsReady() {
+    return g_TeamReady[MatchTeam_Team1] && g_TeamReady[MatchTeam_Team2];
 }

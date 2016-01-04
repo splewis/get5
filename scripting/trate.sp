@@ -370,11 +370,9 @@ public Action Command_LoadMatch(int client, int args) {
     if (g_GameState != GameState_None) {
         return Plugin_Handled;
     }
-    char arg[128];
+    char arg[PLATFORM_MAX_PATH];
     if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {
-        char path[PLATFORM_MAX_PATH];
-        BuildPath(Path_SM, path, sizeof(path), "configs/trate/example_match.cfg");
-        if (!LoadMatchConfig(path)) {
+        if (!LoadMatchConfig(arg)) {
             ReplyToCommand(client, "Failed to load match config.");
         }
     } else {

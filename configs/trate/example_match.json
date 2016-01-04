@@ -27,7 +27,8 @@
 	"team1": {
 		"name": "EnvyUs",
 		"flag": "FR",
-		"logo": "",
+		"logo": "envy",
+		"matchtext": "Beat Ninjas in Pyjamas",
 		"players":
 		[
 			"STEAM_0:1:52245092",
@@ -41,7 +42,8 @@
 	"team2": {
 		"name": "Fnatic",
 		"flag": "SE",
-		"logo": "",
+		"logo": "fntc",
+		"matchtext": "Beat Virtus Pro",
 		"players":
 		[
 			"STEAM_1:1:46796472",

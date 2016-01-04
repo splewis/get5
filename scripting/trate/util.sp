@@ -246,7 +246,7 @@ stock bool InHalftimePhase() {
     return GetGamePhase() == GamePhase_HalfTime;
 }
 
-stock int AddSubsectionKeysToList(KeyValues kv, ArrayList list, int maxKeyLength, const char[] section) {
+stock int AddSubsectionKeysToList(KeyValues kv, const char[] section, ArrayList list, int maxKeyLength) {
     int count = 0;
     if (kv.JumpToKey(section)) {
         count = AddKeysToList(kv, list, maxKeyLength);

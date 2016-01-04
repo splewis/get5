@@ -43,6 +43,13 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
     return Plugin_Stop;
 }
 
+public Action Command_Coach(int client, const char[] command, int argc) {
+    // TODO: enable coaching with correct-team enforcement.
+    // Might need to fake the "coach ct" or "coach t" commands,
+    // or set m_iCoachingTeam for the client.
+    return Plugin_Continue;
+}
+
 public MatchTeam GetClientMatchTeam(int client) {
     char auth[AUTH_LENGTH];
     GetClientAuthId(client, AUTH_METHOD, auth, sizeof(auth));
@@ -87,6 +94,16 @@ public int CountPlayersOnCSTeam(int team) {
     int count = 0;
     for (int i = 1; i <= MaxClients; i++) {
         if (IsAuthedPlayer(i) && GetClientTeam(i) == team) {
+            count++;
+        }
+    }
+    return count;
+}
+
+public int CountPlayersOnMatchTeam(MatchTeam team) {
+    int count = 0;
+    for (int i = 1; i <= MaxClients; i++) {
+        if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == team) {
             count++;
         }
     }

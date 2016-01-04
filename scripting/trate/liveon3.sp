@@ -4,6 +4,7 @@ public Action BeginLO3(Handle timer) {
         return Plugin_Handled;
 
     SetMatchTeamCvars();
+    ExecuteMatchConfigCvars();
     ChangeState(GameState_GoingLive);
 
     // Force kill the warmup if we (still) need to.

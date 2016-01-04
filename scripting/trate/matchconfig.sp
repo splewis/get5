@@ -85,7 +85,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
     g_SkipVeto = kv.GetNum("skip_veto", 0) != 0;
 
     if (kv.JumpToKey("spectators")) {
-        AddSubsectionKeysToList(kv, GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH, "players");
+        AddSubsectionKeysToList(kv, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
         kv.GoBack();
     }
 
@@ -105,7 +105,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
         return false;
     }
 
-    if (AddSubsectionKeysToList(kv, g_MapList, PLATFORM_MAX_PATH, "maplist") <= 0) {
+    if (AddSubsectionKeysToList(kv, "maplist", g_MapList, PLATFORM_MAX_PATH) <= 0) {
         LogError("Failed to find \"maplist\" section in config, using fallback maplist.");
         LoadDefaultMapList(g_MapList);
     }
@@ -136,7 +136,7 @@ static bool LoadMatchFromJson(Handle json) {
 
     Handle spec = json_object_get(json, "spectators");
     if (spec != INVALID_HANDLE) {
-        JsonSubsectionArrayToList(json, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
+        AddJsonSubsectionArrayToList(json, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
         CloseHandle(spec);
     }
 
@@ -158,7 +158,7 @@ static bool LoadMatchFromJson(Handle json) {
         return false;
     }
 
-    if (JsonSubsectionArrayToList(json, "maplist", g_MapList, PLATFORM_MAX_PATH) <= 0) {
+    if (AddJsonSubsectionArrayToList(json, "maplist", g_MapList, PLATFORM_MAX_PATH) <= 0) {
         LogError("Failed to find \"maplist\" array in match json, using fallback maplist.");
         LoadDefaultMapList(g_MapList);
     }
@@ -185,18 +185,20 @@ static bool LoadMatchFromJson(Handle json) {
 }
 
 static void LoadTeamData(KeyValues kv, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
-    AddSubsectionKeysToList(kv, GetTeamAuths(matchTeam), AUTH_LENGTH, "players");
+    AddSubsectionKeysToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
     kv.GetString("name", g_TeamNames[matchTeam], TEAM_NAME_LENGTH, defaultName);
     kv.GetString("flag", g_TeamFlags[matchTeam], TEAM_FLAG_LENGTH, "");
     kv.GetString("logo", g_TeamLogos[matchTeam], TEAM_LOGO_LENGTH, "");
+    kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");
     Format(g_FormattedTeamNames[matchTeam], TEAM_NAME_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
 }
 
 static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] colorTag) {
-    JsonSubsectionArrayToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
+    AddJsonSubsectionArrayToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
     json_object_get_string(json, "name", g_TeamNames[matchTeam], TEAM_NAME_LENGTH);
     json_object_get_string(json, "flag", g_TeamFlags[matchTeam], TEAM_FLAG_LENGTH);
     json_object_get_string(json, "logo", g_TeamLogos[matchTeam], TEAM_LOGO_LENGTH);
+    json_object_get_string(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
     Format(g_FormattedTeamNames[matchTeam], TEAM_NAME_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
 }
 
@@ -218,10 +220,17 @@ public void SetMatchTeamCvars() {
         tTeam = MatchTeam_Team2;
     }
 
-    int mapsPlayed = g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
-    SetTeamInfo(CS_TEAM_CT, g_TeamNames[ctTeam], g_TeamFlags[ctTeam], g_TeamLogos[ctTeam]);
-    SetTeamInfo(CS_TEAM_T, g_TeamNames[tTeam], g_TeamFlags[tTeam], g_TeamLogos[tTeam]);
+    // TODO: in a series (longer than 1-map),
+    // the current map score (and possibly map history) should be displayed
+    // in the match texts instead of the g_TeamMatchTexts values.
 
+    SetTeamInfo(CS_TEAM_CT, g_TeamNames[ctTeam], g_TeamFlags[ctTeam],
+        g_TeamLogos[ctTeam], g_TeamMatchTexts[ctTeam]);
+
+    SetTeamInfo(CS_TEAM_T, g_TeamNames[tTeam],
+        g_TeamFlags[tTeam], g_TeamLogos[tTeam], g_TeamMatchTexts[tTeam]);
+
+    int mapsPlayed = g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
     char mapstat[128];
     Format(mapstat, sizeof(mapstat), "Map %d of %d",
            mapsPlayed + 1, MaxMapsToPlay(g_MapsToWin));

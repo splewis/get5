@@ -57,6 +57,7 @@ char g_TeamNames[MatchTeam_Count][TEAM_NAME_LENGTH];
 char g_FormattedTeamNames[MatchTeam_Count][TEAM_NAME_LENGTH];
 char g_TeamFlags[MatchTeam_Count][TEAM_FLAG_LENGTH];
 char g_TeamLogos[MatchTeam_Count][TEAM_LOGO_LENGTH];
+char g_TeamMatchTexts[MatchTeam_Count][MAX_CVAR_LENGTH];
 int g_PlayersPerTeam = 5;
 bool g_SkipVeto = false;
 ArrayList g_CvarNames = null;
@@ -146,6 +147,7 @@ public void OnPluginStart() {
     HookEvent("server_cvar", Event_CvarChanged, EventHookMode_Pre);
     HookEvent("player_connect_full", Event_PlayerConnectFull);
     HookEvent("player_team", Event_OnPlayerTeam, EventHookMode_Pre);
+    AddCommandListener(Command_Coach, "coach");
     AddCommandListener(Command_JoinTeam, "jointeam");
 
     /** Setup data structures **/
@@ -183,8 +185,14 @@ public void OnClientAuthorized(int client, const char[] auth) {
         KickClient(client, "There is no match setup");
     }
 
-    if (GetClientMatchTeam(client) == MatchTeam_TeamNone) {
+    MatchTeam team = GetClientMatchTeam(client);
+    if (team == MatchTeam_TeamNone) {
         KickClient(client, "You are not a player in this match");
+    }
+
+    if (CountPlayersOnMatchTeam(team) >= g_PlayersPerTeam) {
+        // TODO: to enable coaching this probably has to be changed.
+        KickClient(client, "Your team is full.");
     }
 }
 

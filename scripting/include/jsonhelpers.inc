@@ -26,7 +26,7 @@ stock int json_object_get_int_safe(Handle hObj, const char[] key, int defaultVal
     }
 }
 
-stock int JsonSubsectionArrayToList(Handle json, const char[] key, ArrayList list, int maxValueLength) {
+stock int AddJsonSubsectionArrayToList(Handle json, const char[] key, ArrayList list, int maxValueLength) {
     int count = 0;
     Handle array = json_object_get(json, key);
     if (array != INVALID_HANDLE) {

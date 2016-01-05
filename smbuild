@@ -1,5 +1,5 @@
-Plugin(source='scripting/trate.sp')
+Plugin(source='scripting/get5.sp')
 
-Package(name='trate',
-        plugins=['trate'],
+Package(name='get5',
+        plugins=['get5'],
 )

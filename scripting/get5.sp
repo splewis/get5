@@ -5,10 +5,8 @@
 #include "include/get5.inc"
 
 #undef REQUIRE_EXTENSIONS
-#tryinclude <smjansson>
-#if defined _jansson_included_
+#include <smjansson>
 #include "get5/jsonhelpers.sp"
-#endif
 
 #define LIVE_TIMER_INTERVAL 1.0
 #define INFO_MESSAGE_TIMER_INTERVAL 29.0

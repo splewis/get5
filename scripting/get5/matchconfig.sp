@@ -17,8 +17,6 @@ public bool LoadMatchConfig(const char[] config) {
     ClearArray(GetTeamAuths(MatchTeam_Team2));
 
     if (StrContains(config, "json") >= 0) {
-
-#if defined _jansson_included_
         if (!LibraryExists("jansson")) {
             LogError("Cannot load a json config without the smjansson extension loaded");
             return false;
@@ -35,9 +33,6 @@ public bool LoadMatchConfig(const char[] config) {
             LogError("Failed to load match config from %s", config);
             return false;
         }
-#else
-        LogError("Cannot load a json config since the plugin compiled without smjansson support");
-#endif
 
     } else {
         // Assume its a keyvalues file.

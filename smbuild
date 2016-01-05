@@ -2,4 +2,7 @@ Plugin(source='scripting/get5.sp')
 
 Package(name='get5',
         plugins=['get5'],
+        filegroups={
+            '.': ['LICENSE', 'README.md'],
+        },
 )

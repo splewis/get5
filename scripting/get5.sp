@@ -110,15 +110,15 @@ bool g_MovingClientToCoach[MAXPLAYERS+1];
  ***********************/
 
 public Plugin myinfo = {
-    name = "Trate",
+    name = "Get5",
     author = "splewis",
     description = "",
     version = PLUGIN_VERSION,
-    url = "https://github.com/splewis"
+    url = "https://github.com/splewis/get5"
 };
 
 public void OnPluginStart() {
-    InitDebugLog("sm_trate_debug", "get5");
+    InitDebugLog(DEBUG_CVAR, "get5");
 
     /** ConVars **/
     g_AutoLoadConfigCvar = CreateConVar("get5_autoload_config", "", "");
@@ -177,11 +177,11 @@ public void OnPluginStart() {
 
 public Action Timer_InfoMessages(Handle timer) {
     if (g_GameState == GameState_PreVeto) {
-        Trate_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to veto.");
+        Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to veto.");
     } else if (g_GameState == GameState_Warmup) {
-        Trate_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to knife for sides.");
+        Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to knife for sides.");
     } else if (g_GameState == GameState_PostGame) {
-        Trate_MessageToAll("The map will change once the GOTV broadcast has ended.");
+        Get5_MessageToAll("The map will change once the GOTV broadcast has ended.");
     }
 }
 
@@ -291,7 +291,7 @@ public Action Command_Pause(int client, int args) {
     g_tUnpaused = false;
     Pause();
     if (IsPlayer(client)) {
-        Trate_MessageToAll("%N paused the match.", client);
+        Get5_MessageToAll("%N paused the match.", client);
     }
 
     return Plugin_Handled;
@@ -315,12 +315,12 @@ public Action Command_Unpause(int client, int args) {
         if (g_tUnpaused && g_ctUnpaused)  {
             Unpause();
             if (IsPlayer(client)) {
-                Trate_MessageToAll("%N unpaused the match.", client);
+                Get5_MessageToAll("%N unpaused the match.", client);
             }
         } else if (g_tUnpaused && !g_ctUnpaused) {
-            Trate_MessageToAll("The T team wants to unpause, waiting for the CT team to type !unpause.");
+            Get5_MessageToAll("The T team wants to unpause, waiting for the CT team to type !unpause.");
         } else if (!g_tUnpaused && g_ctUnpaused) {
-            Trate_MessageToAll("The CT team wants to unpause, waiting for the T team to type !unpause.");
+            Get5_MessageToAll("The CT team wants to unpause, waiting for the T team to type !unpause.");
         }
     }
 
@@ -332,16 +332,16 @@ public Action Command_Ready(int client, int args) {
     if (t == MatchTeam_Team1 && !g_TeamReady[MatchTeam_Team1]) {
         g_TeamReady[MatchTeam_Team1] = true;
         if (g_GameState == GameState_PreVeto) {
-            Trate_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team1]);
+            Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team1]);
         } else {
-            Trate_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team1]);
+            Get5_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team1]);
         }
     } else if (t == MatchTeam_Team2 && !g_TeamReady[MatchTeam_Team2]) {
         g_TeamReady[MatchTeam_Team2] = true;
         if (g_GameState == GameState_PreVeto) {
-            Trate_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team2]);
+            Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team2]);
         } else {
-            Trate_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team2]);
+            Get5_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team2]);
         }
     }
     return Plugin_Handled;
@@ -350,10 +350,10 @@ public Action Command_Ready(int client, int args) {
 public Action Command_NotReady(int client, int args) {
     MatchTeam t = GetCaptainTeam(client);
     if (t == MatchTeam_Team1 && g_TeamReady[MatchTeam_Team1]) {
-        Trate_MessageToAll("%s is no longer ready.", g_FormattedTeamNames[MatchTeam_Team1]);
+        Get5_MessageToAll("%s is no longer ready.", g_FormattedTeamNames[MatchTeam_Team1]);
         g_TeamReady[MatchTeam_Team1] = false;
     } else if (t == MatchTeam_Team2 && g_TeamReady[MatchTeam_Team2]) {
-        Trate_MessageToAll("%s is no longer ready.", g_FormattedTeamNames[MatchTeam_Team2]);
+        Get5_MessageToAll("%s is no longer ready.", g_FormattedTeamNames[MatchTeam_Team2]);
         g_TeamReady[MatchTeam_Team2] = false;
     }
     return Plugin_Handled;
@@ -365,7 +365,7 @@ public Action Command_EndMatch(int client, int args) {
     }
     ChangeState(GameState_None);
 
-    Trate_MessageToAll("An admin force ended the match.");
+    Get5_MessageToAll("An admin force ended the match.");
     return Plugin_Handled;
 }
 
@@ -413,20 +413,20 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
         float minDelay = FindConVar("tv_delay").FloatValue + MATCH_END_DELAY_AFTER_TV;
         if (g_TeamMapScores[MatchTeam_Team1] == g_MapsToWin) {
-            Trate_MessageToAll("%s has won the series.", g_FormattedTeamNames[MatchTeam_Team1]);
+            Get5_MessageToAll("%s has won the series.", g_FormattedTeamNames[MatchTeam_Team1]);
             CreateTimer(minDelay, Timer_EndSeries);
         } else if (g_TeamMapScores[MatchTeam_Team2] == g_MapsToWin) {
-            Trate_MessageToAll("%s has won the series.", g_FormattedTeamNames[MatchTeam_Team2]);
+            Get5_MessageToAll("%s has won the series.", g_FormattedTeamNames[MatchTeam_Team2]);
             CreateTimer(minDelay, Timer_EndSeries);
         } else {
             if (g_TeamMapScores[MatchTeam_Team1] > g_TeamMapScores[MatchTeam_Team2]) {
-                Trate_MessageToAll("%s{NORMAL} is winning the series %d-%d",
+                Get5_MessageToAll("%s{NORMAL} is winning the series %d-%d",
                     g_FormattedTeamNames[MatchTeam_Team1], g_TeamMapScores[MatchTeam_Team1], g_TeamMapScores[MatchTeam_Team2]);
             } else if (g_TeamMapScores[MatchTeam_Team2] > g_TeamMapScores[MatchTeam_Team1]) {
-                Trate_MessageToAll("%s {NORMAL}is winning the series %d-%d",
+                Get5_MessageToAll("%s {NORMAL}is winning the series %d-%d",
                     g_FormattedTeamNames[MatchTeam_Team2], g_TeamMapScores[MatchTeam_Team2], g_TeamMapScores[MatchTeam_Team1]);
             } else {
-                Trate_MessageToAll("The series is tied at %d-%d", g_TeamMapScores[MatchTeam_Team1], g_TeamMapScores[MatchTeam_Team1]);
+                Get5_MessageToAll("The series is tied at %d-%d", g_TeamMapScores[MatchTeam_Team1], g_TeamMapScores[MatchTeam_Team1]);
             }
 
             int index = g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
@@ -434,7 +434,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
             g_MapsToPlay.GetString(index, nextMap, sizeof(nextMap));
 
             g_MapChangePending = true;
-            Trate_MessageToAll("The next map in the series is {GREEN}%s", nextMap);
+            Get5_MessageToAll("The next map in the series is {GREEN}%s", nextMap);
             ChangeState(GameState_PostGame);
             CreateTimer(minDelay, Timer_NextMatchMap);
         }
@@ -494,7 +494,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
         }
 
         g_KnifeWinnerTeam = CSTeamToMatchTeam(winningCSTeam);
-        Trate_MessageToAll("%s won the knife round. Waiting for them to type !stay or !swap.",
+        Get5_MessageToAll("%s won the knife round. Waiting for them to type !stay or !swap.",
             g_FormattedTeamNames[g_KnifeWinnerTeam]);
     }
 }

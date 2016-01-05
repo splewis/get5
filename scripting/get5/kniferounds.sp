@@ -8,7 +8,7 @@ public Action StartKnifeRound(Handle timer) {
 public Action Timer_AnnounceKnife(Handle timer) {
     EndWarmup();
     for (int i = 0; i < 5; i++)
-        Trate_MessageToAll("Knife!");
+        Get5_MessageToAll("Knife!");
 
     return Plugin_Handled;
 }
@@ -49,7 +49,7 @@ static bool AwaitingKnifeDecision(int client) {
 public Action Command_Stay(int client, int args) {
     if (AwaitingKnifeDecision(client)) {
         EndKnifeRound(false);
-        Trate_MessageToAll("%s have decided to stay.", g_FormattedTeamNames[g_KnifeWinnerTeam]);
+        Get5_MessageToAll("%s have decided to stay.", g_FormattedTeamNames[g_KnifeWinnerTeam]);
     }
     return Plugin_Handled;
 }
@@ -57,7 +57,7 @@ public Action Command_Stay(int client, int args) {
 public Action Command_Swap(int client, int args) {
     if (AwaitingKnifeDecision(client)) {
         EndKnifeRound(true);
-        Trate_MessageToAll("%s have decided to swap.", g_FormattedTeamNames[g_KnifeWinnerTeam]);
+        Get5_MessageToAll("%s have decided to swap.", g_FormattedTeamNames[g_KnifeWinnerTeam]);
     }
     return Plugin_Handled;
 }

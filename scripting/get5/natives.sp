@@ -2,9 +2,9 @@
 #define MESSAGE_PREFIX "[\x05Get5\x01]"
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
-    CreateNative("Trate_GetGameState", Native_GetGameState);
-    CreateNative("Trate_Message", Native_TrateMessage);
-    CreateNative("Trate_MessageToAll", Native_TrateMessageToAll);
+    CreateNative("Get5_GetGameState", Native_GetGameState);
+    CreateNative("Get5_Message", Native_Message);
+    CreateNative("Get5_MessageToAll", Native_MessageToAll);
     RegPluginLibrary("trate");
     return APLRes_Success;
 }
@@ -13,7 +13,7 @@ public int Native_GetGameState(Handle plugin, int numParams) {
     return view_as<int>(g_GameState);
 }
 
-public int Native_TrateMessage(Handle plugin, int numParams) {
+public int Native_Message(Handle plugin, int numParams) {
     int client = GetNativeCell(1);
     if (client != 0 && (!IsClientConnected(client) || !IsClientInGame(client)))
         return;
@@ -42,7 +42,7 @@ public int Native_TrateMessage(Handle plugin, int numParams) {
 
 }
 
-public int Native_TrateMessageToAll(Handle plugin, int numParams) {
+public int Native_MessageToAll(Handle plugin, int numParams) {
     char prefix[64] = MESSAGE_PREFIX;
     // g_MessagePrefixCvar.GetString(prefix, sizeof(prefix));
     char buffer[1024];

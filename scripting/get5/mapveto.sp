@@ -12,11 +12,11 @@ public void CreateMapVeto() {
 
 public void VetoFinished() {
     ChangeState(GameState_Warmup);
-    Trate_MessageToAll("The maps have been decided:");
+    Get5_MessageToAll("The maps have been decided:");
     for (int i = 0; i < g_MapsToPlay.Length; i++) {
         char map[PLATFORM_MAX_PATH];
         g_MapsToPlay.GetString(i, map, sizeof(map));
-        Trate_MessageToAll("Map %d: {GREEN}%s", i + 1, map);
+        Get5_MessageToAll("Map %d: {GREEN}%s", i + 1, map);
     }
 
     g_MapChangePending = true;
@@ -68,7 +68,7 @@ public int MapPickHandler(Menu menu, MenuAction action, int param1, int param2) 
         RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
         MatchTeam team = GetClientMatchTeam(client);
-        Trate_MessageToAll("%s picked {GREEN}%s {NORMAL}as map %d",
+        Get5_MessageToAll("%s picked {GREEN}%s {NORMAL}as map %d",
             g_FormattedTeamNames[team], mapName, g_MapsToPlay.Length);
 
         MapVetoController(GetNextTeamCaptain(client));
@@ -98,7 +98,7 @@ public int VetoHandler(Menu menu, MenuAction action, int param1, int param2) {
         RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
         MatchTeam team = GetClientMatchTeam(client);
-        Trate_MessageToAll("%s vetoed {LIGHT_RED}%s", g_FormattedTeamNames[team], mapName);
+        Get5_MessageToAll("%s vetoed {LIGHT_RED}%s", g_FormattedTeamNames[team], mapName);
 
         MapVetoController(GetNextTeamCaptain(client));
         g_LastVetoTeam = team;
@@ -108,8 +108,8 @@ public int VetoHandler(Menu menu, MenuAction action, int param1, int param2) {
 }
 
 static void AbortVeto() {
-    Trate_MessageToAll("A captain left during the veto, pausing the veto.");
-    Trate_MessageToAll("Type {GREEN}!ready {NORMAL}when you are ready to resume the veto.");
+    Get5_MessageToAll("A captain left during the veto, pausing the veto.");
+    Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when you are ready to resume the veto.");
     ChangeState(GameState_PreVeto);
 }
 

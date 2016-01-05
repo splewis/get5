@@ -24,13 +24,13 @@ enum MatchTeam {
 };
 
 // Returns the current pug gamestate.
-native GameState Trate_GetGameState();
+native GameState Get5_GetGameState();
 
 // Prints a plugin-formatted message to a client.
-native void Trate_Message(int client, const char[] format, any:...);
+native void Get5_Message(int client, const char[] format, any:...);
 
 // Prints a plugin-formatted message to all clients.
-native void Trate_MessageToAll(const char[] format, any:...);
+native void Get5_MessageToAll(const char[] format, any:...);
 
 public SharedPlugin __pl_trate = {
     name = "trate",
@@ -44,8 +44,8 @@ public SharedPlugin __pl_trate = {
 
 #if !defined REQUIRE_PLUGIN
 public __pl_trate_SetNTVOptional() {
-    MarkNativeAsOptional("Trate_GetGameState");
-    MarkNativeAsOptional("Trate_Message");
-    MarkNativeAsOptional("Trate_MessageToAll");
+    MarkNativeAsOptional("Get5_GetGameState");
+    MarkNativeAsOptional("Get5_Message");
+    MarkNativeAsOptional("Get5_MessageToAll");
 }
 #endif

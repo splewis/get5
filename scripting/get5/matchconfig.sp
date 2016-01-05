@@ -30,7 +30,7 @@ public bool LoadMatchConfig(const char[] config) {
         Handle json = json_load_file(configFile);
         if (json != INVALID_HANDLE && LoadMatchFromJson(json)) {
             CloseHandle(json);
-            Trate_MessageToAll("Loaded match config.");
+            Get5_MessageToAll("Loaded match config.");
         } else {
             LogError("Failed to load match config from %s", config);
             return false;
@@ -44,7 +44,7 @@ public bool LoadMatchConfig(const char[] config) {
         KeyValues kv = new KeyValues("Match");
         if (kv.ImportFromFile(config) && LoadMatchFromKv(kv)) {
             delete kv;
-            Trate_MessageToAll("Loaded match config.");
+            Get5_MessageToAll("Loaded match config.");
         } else {
             delete kv;
             LogError("Failed to load match config from %s", config);

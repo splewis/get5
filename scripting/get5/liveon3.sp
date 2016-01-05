@@ -12,7 +12,7 @@ public Action BeginLO3(Handle timer) {
         EndWarmup();
     }
 
-    Trate_MessageToAll("Restart 1/3");
+    Get5_MessageToAll("Restart 1/3");
     RestartGame(1);
     CreateTimer(3.0, Restart2);
 
@@ -23,7 +23,7 @@ public Action Restart2(Handle timer) {
     if (g_GameState == GameState_None)
         return Plugin_Handled;
 
-    Trate_MessageToAll("Restart 2/3");
+    Get5_MessageToAll("Restart 2/3");
     RestartGame(1);
     CreateTimer(4.0, Restart3);
 
@@ -34,7 +34,7 @@ public Action Restart3(Handle timer) {
     if (g_GameState == GameState_None)
         return Plugin_Handled;
 
-    Trate_MessageToAll("Restart 3/3");
+    Get5_MessageToAll("Restart 3/3");
     RestartGame(5);
     CreateTimer(5.1, MatchLive);
 
@@ -53,7 +53,7 @@ public Action MatchLive(Handle timer) {
     ChangeState(GameState_Live);
 
     for (int i = 0; i < 5; i++) {
-        Trate_MessageToAll("Match is {GREEN}LIVE");
+        Get5_MessageToAll("Match is {GREEN}LIVE");
     }
 
     return Plugin_Handled;

@@ -44,10 +44,11 @@
 
 /** ConVar handles **/
 ConVar g_AutoLoadConfigCvar;
-ConVar g_VersionCvar;
 ConVar g_DemoNameFormatCvar;
 ConVar g_DemoTimeFormatCvar;
+ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_PausingEnabledCvar;
+ConVar g_VersionCvar;
 
 /** Series config game-state **/
 int g_MapsToWin = 1;
@@ -122,6 +123,7 @@ public void OnPluginStart() {
     g_AutoLoadConfigCvar = CreateConVar("get5_autoload_config", "", "");
     g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}");
     g_DemoTimeFormatCvar = CreateConVar("get5_time_format", "%Y-%m-%d_%H", "Time format to use when creating demo file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
+    g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "1", "Whether the plugin kicks new clients when no match is loaded");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
 
     /** Create and exec plugin's configuration file **/
@@ -186,7 +188,7 @@ public Action Timer_InfoMessages(Handle timer) {
 
 public void OnClientAuthorized(int client, const char[] auth) {
     g_MovingClientToCoach[client] = false;
-    if (StrEqual(auth, "BOT", false)) {
+    if (StrEqual(auth, "BOT", false) || g_KickClientsWithNoMatchCvar.IntValue == 0) {
         return;
     }
 

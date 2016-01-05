@@ -75,5 +75,6 @@ See the example config in [keyvalues format](configs/get5/example_match.cfg) or 
 ## ConVars
 - ``get5_autoload_config``
 - ``get5_demo_name_format``
-- ``get5_time_format``
+- ``get5_kick_when_no_match_loaded``
 - ``get5_pausing_enabled``
+- ``get5_time_format``

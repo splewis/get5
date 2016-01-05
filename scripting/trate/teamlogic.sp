@@ -38,6 +38,7 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
         if (CountPlayersOnCSTeam(csTeam) >= g_PlayersPerTeam) {
             LogDebug("Forcing player %N to coach", client);
             MoveClientToCoach(client);
+            Trate_Message(client, "Because your team is full, you were moved to the coach position.");
         } else {
             LogDebug("Forcing player %N onto %d", client, csTeam);
             FakeClientCommand(client, "jointeam %d", csTeam);

@@ -299,7 +299,6 @@ public Action Command_Unpause(int client, int args) {
     if (!IsPaused())
         return Plugin_Handled;
 
-
     // Let console force unpause
     if (client == 0) {
         Unpause();
@@ -382,6 +381,7 @@ public Action Command_LoadMatch(int client, int args) {
 
     return Plugin_Handled;
 }
+
 
 
 /***********************

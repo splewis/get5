@@ -27,7 +27,7 @@ before_script:
 
 script:
     - smbuilder --flags="-E"
-    - jsonlint -v configs/trate/example_match.json
+    - jsonlint -v configs/get5/example_match.json
 
 notifications:
     email: true

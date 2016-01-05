@@ -132,6 +132,7 @@ public void OnPluginStart() {
 
     /** Client commands **/
     RegConsoleCmd("sm_ready", Command_Ready, "Marks the client as ready");
+    RegConsoleCmd("sm_unready", Command_NotReady, "Marks the client as not ready");
     RegConsoleCmd("sm_notready", Command_NotReady, "Marks the client as not ready");
     RegConsoleCmd("sm_pause", Command_Pause, "Pauses the game");
     RegConsoleCmd("sm_unpause", Command_Unpause, "Unpauses the game");

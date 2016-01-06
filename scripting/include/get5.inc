@@ -33,8 +33,8 @@ native void Get5_Message(int client, const char[] format, any:...);
 native void Get5_MessageToAll(const char[] format, any:...);
 
 public SharedPlugin __pl_trate = {
-    name = "trate",
-    file = "trate.smx",
+    name = "get5",
+    file = "get5.smx",
 #if defined REQUIRE_PLUGIN
     required = 1,
 #else
@@ -43,7 +43,7 @@ public SharedPlugin __pl_trate = {
 };
 
 #if !defined REQUIRE_PLUGIN
-public __pl_trate_SetNTVOptional() {
+public __pl_get5_SetNTVOptional() {
     MarkNativeAsOptional("Get5_GetGameState");
     MarkNativeAsOptional("Get5_Message");
     MarkNativeAsOptional("Get5_MessageToAll");

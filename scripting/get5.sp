@@ -379,12 +379,11 @@ public Action Command_LoadMatch(int client, int args) {
             ReplyToCommand(client, "Failed to load match config.");
         }
     } else {
-        ReplyToCommand(client, "Usage: trate_loadmatch <filename>");
+        ReplyToCommand(client, "Usage: get5_loadmatch <filename>");
     }
 
     return Plugin_Handled;
 }
-
 
 
 /***********************

@@ -86,6 +86,10 @@ char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
 bool g_MovingClientToCoach[MAXPLAYERS+1];
 
+/** Forwards **/
+Handle g_hOnMapResult = INVALID_HANDLE;
+Handle g_hOnSeriesResult = INVALID_HANDLE;
+
 #include "get5/kniferounds.sp"
 #include "get5/liveon3.sp"
 #include "get5/maps.sp"
@@ -166,6 +170,12 @@ public void OnPluginStart() {
     for (int i = 0; i < sizeof(g_TeamAuths); i++) {
         g_TeamAuths[i] = new ArrayList(AUTH_LENGTH);
     }
+
+    /** Create forwards **/
+    g_hOnMapResult = CreateGlobalForward("Get5_OnMapResult", ET_Ignore, Param_String,
+        Param_Cell, Param_Cell, Param_Cell);
+    g_hOnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_Cell,
+        Param_Cell, Param_Cell);
 
     /** Start any repeating timers **/
     CreateTimer(LIVE_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
@@ -406,6 +416,16 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
             g_TeamMapScores[MatchTeam_Team2]++;
         }
 
+        char mapName[PLATFORM_MAX_PATH];
+        GetCleanMapName(mapName, sizeof(mapName));
+
+        Call_StartForward(g_hOnMapResult);
+        Call_PushString(mapName);
+        Call_PushCell(winningTeam);
+        Call_PushCell(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
+        Call_PushCell(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
+        Call_Finish();
+
         float minDelay = FindConVar("tv_delay").FloatValue + MATCH_END_DELAY_AFTER_TV;
         if (g_TeamMapScores[MatchTeam_Team1] == g_MapsToWin) {
             Get5_MessageToAll("%s has won the series.", g_FormattedTeamNames[MatchTeam_Team1]);
@@ -456,6 +476,17 @@ public Action Timer_EndSeries(Handle timer) {
     }
 
     StopRecording();
+
+    MatchTeam winningTeam  = MatchTeam_Team1;
+    if (g_TeamMapScores[MatchTeam_Team2] > g_TeamMapScores[MatchTeam_Team1]) {
+        winningTeam = MatchTeam_Team2;
+    }
+
+    Call_StartForward(g_hOnSeriesResult);
+    Call_PushCell(winningTeam);
+    Call_PushCell(g_TeamMapScores[MatchTeam_Team1]);
+    Call_PushCell(g_TeamMapScores[MatchTeam_Team2]);
+    Call_Finish();
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
@@ -498,10 +529,14 @@ public Action Event_PhaseEnd(Event event, const char[] name, bool dontBroadcast)
     LogDebug("Event_PhaseEnd, g_GameState = %d, gamephase = %d", g_GameState, GetGamePhase());
     // TODO: this team score equality doesn't work if there are even-number halves
     if (InHalftimePhase() && CS_GetTeamScore(CS_TEAM_T) != CS_GetTeamScore(CS_TEAM_CT)) {
-        int tmp = g_TeamSide[MatchTeam_Team1];
-        g_TeamSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team2];
-        g_TeamSide[MatchTeam_Team2] = tmp;
+        SwapSides();
     }
+}
+
+public void SwapSides() {
+    int tmp = g_TeamSide[MatchTeam_Team1];
+    g_TeamSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team2];
+    g_TeamSide[MatchTeam_Team2] = tmp;
 }
 
 /**

@@ -23,6 +23,16 @@ enum MatchTeam {
     MatchTeam_Count,
 };
 
+// Called at the end of a map in a series.
+forward void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
+    int team1Score, int team2Score);
+
+// Called at the end of a full match.
+// Note: both Get5_OnMapResult and Get5_OnSeriesResult are called
+// on the last map of a series.
+forward void Get5_OnSeriesResult(MatchTeam seriesWinner,
+    int team1MapScore, int team2MapScore);
+
 // Returns the current pug gamestate.
 native GameState Get5_GetGameState();
 

@@ -77,7 +77,7 @@ public bool LoadMatchConfig(const char[] config) {
 }
 
 static bool LoadMatchFromKv(KeyValues kv) {
-    kv.GetString("matchid", g_MatchID, sizeof(g_MatchID), "matchID");
+    kv.GetString("matchid", g_MatchID, sizeof(g_MatchID), "matchid");
     g_PlayersPerTeam = kv.GetNum("players_per_team", 5);
     g_MapsToWin = kv.GetNum("maps_to_win", 2);
     g_SkipVeto = kv.GetNum("skip_veto", 0) != 0;
@@ -131,7 +131,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
 
 #if defined _jansson_included_
 static bool LoadMatchFromJson(Handle json) {
-    json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID), "matchID");
+    json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID), "matchid");
     g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", 5);
     g_MapsToWin = json_object_get_int_safe(json, "maps_to_win", 2);
     g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", false);

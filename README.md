@@ -42,9 +42,12 @@ Extract the download archive into the csgo/ directory on the server. The only re
 - ``!swap``
 
 #### Server Commands
-- ``get5_endmatch``
 - ``get5_loadmatch``
+- ``get5_endmatch``
 - ``get5_status``
+- ``get5_creatematch``
+- ``get5_addplayer``
+- ``get5_removeplayer``
 
 
 ## Match Schema

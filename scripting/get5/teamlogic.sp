@@ -57,13 +57,23 @@ public void MoveClientToCoach(int client) {
         return;
     }
 
-    g_MovingClientToCoach[client] = true;
     int csTeam = MatchTeamToCSTeam(matchTeam);
     char teamString[4];
     CSTeamString(csTeam, teamString, sizeof(teamString));
-    FakeClientCommand(client, "coach %s", teamString);
-    g_MovingClientToCoach[client] = false;
 
+    // If we're in warmup or a freezetime we use the in-game
+    // coaching command. Otherwise we manually move them to spec
+    // and set the coaching target.
+    if (!InWarmup() && !InFreezeTime()) {
+        // TODO: this needs to be tested more thoroughly,
+        // it might need to be done in reverse order (?)
+        SwitchPlayerTeam(client, CS_TEAM_SPECTATOR);
+        UpdateCoachTarget(client, csTeam);
+    } else {
+        g_MovingClientToCoach[client] = true;
+        FakeClientCommand(client, "coach %s", teamString);
+        g_MovingClientToCoach[client] = false;
+    }
 }
 
 public Action Command_SmCoach(int client, int args) {

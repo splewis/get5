@@ -138,6 +138,10 @@ stock bool InOvertime() {
     return GameRules_GetProp("m_nOvertimePlaying") != 0;
 }
 
+stock bool InFreezeTime() {
+    return GameRules_GetProp("m_bFreezePeriod") != 0;
+}
+
 stock void EnsurePausedWarmup() {
     if (!InWarmup())
         StartWarmup();

@@ -123,7 +123,7 @@ public void OnPluginStart() {
     g_AutoLoadConfigCvar = CreateConVar("get5_autoload_config", "", "");
     g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}");
     g_DemoTimeFormatCvar = CreateConVar("get5_time_format", "%Y-%m-%d_%H", "Time format to use when creating demo file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
-    g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "1", "Whether the plugin kicks new clients when no match is loaded");
+    g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "0", "Whether the plugin kicks new clients when no match is loaded");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
 
     /** Create and exec plugin's configuration file **/
@@ -144,9 +144,14 @@ public void OnPluginStart() {
     RegConsoleCmd("sm_t", Command_T, "Elects to start on T side after winning a knife round");
     RegConsoleCmd("sm_ct", Command_Ct, "Elects to start on CT side after winning a knife round");
 
-    /** Other commands **/
-    RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP);
+    /** Admin/server commands **/
     RegAdminCmd("get5_loadmatch", Command_LoadMatch, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("get5_removeplayer", Command_RemovePlayer, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP);
+
+    /** Other commands **/
     RegConsoleCmd("get5_status", Command_Status);
 
     /** Hooks **/
@@ -255,9 +260,9 @@ public void OnMapStart() {
 
     if (g_GameState == GameState_Warmup || g_GameState == GameState_Veto) {
         ServerCommand("exec %s", WARMUP_CONFIG);
-        EnsurePausedWarmup();
         SetMatchTeamCvars();
         ExecuteMatchConfigCvars();
+        EnsurePausedWarmup();
     }
 
 }
@@ -376,6 +381,7 @@ public Action Command_EndMatch(int client, int args) {
 
 public Action Command_LoadMatch(int client, int args) {
     if (g_GameState != GameState_None) {
+        LogError("Cannot load a match when a match is already loaded");
         return Plugin_Handled;
     }
     char arg[PLATFORM_MAX_PATH];
@@ -469,9 +475,11 @@ public Action Timer_NextMatchMap(Handle timer) {
 
 public Action Timer_EndSeries(Handle timer) {
     ChangeState(GameState_None);
-    for (int i = 1; i <= MaxClients; i++) {
-        if (IsPlayer(i)) {
-            KickClient(i, "The match has been finished");
+    if (g_KickClientsWithNoMatchCvar.IntValue != 0) {
+        for (int i = 1; i <= MaxClients; i++) {
+            if (IsPlayer(i)) {
+                KickClient(i, "The match has been finished");
+            }
         }
     }
 

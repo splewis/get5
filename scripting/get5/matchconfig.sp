@@ -63,11 +63,22 @@ public bool LoadMatchConfig(const char[] config) {
 
         g_MapList.GetString(0, mapName, sizeof(mapName));
         ChangeState(GameState_Warmup);
-        ChangeMap(mapName);
+
+        char currentMap[PLATFORM_MAX_PATH];
+        GetCleanMapName(currentMap, sizeof(currentMap));
+        if (!StrEqual(mapName, currentMap))
+            ChangeMap(mapName);
     } else {
         ChangeState(GameState_PreVeto);
     }
 
+    for (int i = 1; i <= MaxClients; i++) {
+        if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == MatchTeam_TeamNone) {
+            KickClient(i, "You are not a player in ths match");
+        }
+    }
+
+    ServerCommand("exec %s", WARMUP_CONFIG);
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
     EnsurePausedWarmup();
@@ -236,11 +247,13 @@ public void SetMatchTeamCvars() {
     SetTeamInfo(CS_TEAM_T, g_TeamNames[tTeam],
         g_TeamFlags[tTeam], g_TeamLogos[tTeam], g_TeamMatchTexts[tTeam]);
 
-    int mapsPlayed = g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
-    char mapstat[128];
-    Format(mapstat, sizeof(mapstat), "Map %d of %d",
-           mapsPlayed + 1, MaxMapsToPlay(g_MapsToWin));
-    SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
+    if (g_MapsToWin >= 2) {
+        int mapsPlayed = g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
+        char mapstat[128];
+        Format(mapstat, sizeof(mapstat), "Map %d of %d",
+               mapsPlayed + 1, MaxMapsToPlay(g_MapsToWin));
+        SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
+    }
 
     // Set prediction cvars.
     SetConVarStringSafe("mp_teamprediction_txt", g_FavoredTeamText);
@@ -258,4 +271,137 @@ public void ExecuteMatchConfigCvars() {
         g_CvarValues.GetString(i, value, sizeof(value));
         ServerCommand("%s %s", name, value);
     }
+}
+
+public Action Command_AddPlayer(int client, int args) {
+    if (g_GameState == GameState_None) {
+        LogError("Cannot change player lists when there is no match to modify");
+        return Plugin_Handled;
+    }
+
+    char auth[AUTH_LENGTH];
+    char teamString[32];
+    if (args >= 2 && GetCmdArg(1, auth, sizeof(auth)) && GetCmdArg(2, teamString, sizeof(teamString))) {
+        MatchTeam team = MatchTeam_TeamNone;
+        if (StrEqual(teamString, "team1"))  {
+            team = MatchTeam_Team1;
+        } else if (StrEqual(teamString, "team2")) {
+            team = MatchTeam_Team2;
+        } else if (StrEqual(teamString, "spec")) {
+            team = MatchTeam_TeamSpec;
+        } else {
+            ReplyToCommand(client, "Unknown team: must be one of team1, team2, spec");
+            return Plugin_Handled;
+        }
+        GetTeamAuths(team).PushString(auth);
+    } else {
+        ReplyToCommand(client, "Usage: sm_addplayer <auth> <team1|team2|spec>");
+    }
+    return Plugin_Handled;
+}
+
+public Action Command_RemovePlayer(int client, int args) {
+    if (g_GameState == GameState_None) {
+        LogError("Cannot change player lists when there is no match to modify");
+        return Plugin_Handled;
+    }
+
+    char auth[AUTH_LENGTH];
+    if (args >= 1 && GetCmdArg(1, auth, sizeof(auth))) {
+        for (int i = 0; i < view_as<int>(MatchTeam_Count); i++) {
+            MatchTeam team = view_as<MatchTeam>(i);
+            // TODO: this doesn't do correct steamid-comparisions.
+            if (RemoveStringFromArray(GetTeamAuths(team), auth))
+                ReplyToCommand(client, "Successfully removed player %s" ,auth);
+        }
+    } else {
+        ReplyToCommand(client, "Usage: sm_removeplayer <auth>");
+    }
+    return Plugin_Handled;
+}
+
+public Action Command_CreateMatch(int client, int args) {
+    if (g_GameState != GameState_None) {
+        LogError("Cannot create a match when a match is already loaded");
+        return Plugin_Handled;
+    }
+
+    char matchid[MATCH_ID_LENGTH] = "manual";
+    char path[PLATFORM_MAX_PATH];
+    if (FileExists(path)) {
+        DeleteFile(path);
+    }
+
+    Format(path, sizeof(path), "get5_%s.cfg", matchid);
+
+    KeyValues kv = new KeyValues("Match");
+    kv.SetString("matchid", matchid);
+    kv.SetNum("maps_to_win", 1);
+    kv.SetNum("skip_veto", 1);
+    kv.SetNum("players_per_team", 5);
+
+    kv.JumpToKey("maplist", true);
+    char currentMap[PLATFORM_MAX_PATH];
+    GetCleanMapName(currentMap, sizeof(currentMap));
+    kv.SetString(currentMap, "x");
+    kv.GoBack();
+
+    char teamName[MAX_CVAR_LENGTH];
+
+    kv.JumpToKey("team1", true);
+    int count = AddPlayersToAuthKv(kv, MatchTeam_Team1, teamName);
+    if (count > 0)
+        kv.SetString("name", teamName);
+    kv.GoBack();
+
+    kv.JumpToKey("team2", true);
+    count = AddPlayersToAuthKv(kv, MatchTeam_Team2, teamName);
+    if (count > 0)
+        kv.SetString("name", teamName);
+    kv.GoBack();
+
+    kv.JumpToKey("spectators", true);
+    AddPlayersToAuthKv(kv, MatchTeam_TeamSpec, teamName);
+    kv.GoBack();
+
+    kv.ExportToFile(path);
+    delete kv;
+    LoadMatchConfig(path);
+    return Plugin_Handled;
+}
+
+static int AddPlayersToAuthKv(KeyValues kv, MatchTeam team, char teamName[MAX_CVAR_LENGTH]) {
+    int count = 0;
+    kv.JumpToKey("players", true);
+    bool gotClientName = false;
+    char auth[AUTH_LENGTH];
+    for (int i = 1; i <= MaxClients; i++) {
+        if (IsAuthedPlayer(i)) {
+
+            int csTeam = GetClientTeam(i);
+            MatchTeam t = MatchTeam_TeamNone;
+            if (csTeam == TEAM1_STARTING_SIDE) {
+                t = MatchTeam_Team1;
+            } else if (csTeam == TEAM2_STARTING_SIDE) {
+                t = MatchTeam_Team2;
+            } else if (csTeam == CS_TEAM_SPECTATOR) {
+                t = MatchTeam_TeamSpec;
+            }
+
+            if (t == team) {
+                if (!gotClientName){
+                    gotClientName = true;
+                    char clientName[MAX_NAME_LENGTH];
+                    GetClientName(i, clientName, sizeof(clientName));
+                    Format(teamName, sizeof(teamName), "team_%s", clientName);
+                }
+
+                count++;
+                GetClientAuthId(i, AUTH_METHOD, auth, sizeof(auth));
+                kv.SetString(auth, "x");
+            }
+        }
+    }
+    kv.GoBack();
+    return count;
 }

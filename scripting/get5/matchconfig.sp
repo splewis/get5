@@ -191,21 +191,21 @@ static bool LoadMatchFromJson(Handle json) {
 
 static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] colorTag) {
     AddJsonSubsectionArrayToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
-    json_object_get_string(json, "name", g_TeamNames[matchTeam], TEAM_NAME_LENGTH);
-    json_object_get_string(json, "flag", g_TeamFlags[matchTeam], TEAM_FLAG_LENGTH);
-    json_object_get_string(json, "logo", g_TeamLogos[matchTeam], TEAM_LOGO_LENGTH);
+    json_object_get_string(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH);
+    json_object_get_string(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
+    json_object_get_string(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
-    Format(g_FormattedTeamNames[matchTeam], TEAM_NAME_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
+    Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
 }
 #endif
 
 static void LoadTeamData(KeyValues kv, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
     AddSubsectionKeysToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
-    kv.GetString("name", g_TeamNames[matchTeam], TEAM_NAME_LENGTH, defaultName);
-    kv.GetString("flag", g_TeamFlags[matchTeam], TEAM_FLAG_LENGTH, "");
-    kv.GetString("logo", g_TeamLogos[matchTeam], TEAM_LOGO_LENGTH, "");
+    kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, defaultName);
+    kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
+    kv.GetString("logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");
-    Format(g_FormattedTeamNames[matchTeam], TEAM_NAME_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
+    Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
 }
 
 static void LoadDefaultMapList(ArrayList list) {

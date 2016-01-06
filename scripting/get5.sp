@@ -16,9 +16,6 @@
 #define AUTH_METHOD AuthId_Steam2
 #define MATCH_ID_LENGTH 64
 #define MATCH_NAME_LENGTH 64
-#define TEAM_NAME_LENGTH 64
-#define TEAM_FLAG_LENGTH 4
-#define TEAM_LOGO_LENGTH 64
 #define MAX_CVAR_LENGTH 128
 #define MATCH_END_DELAY_AFTER_TV 10
 
@@ -55,10 +52,10 @@ int g_MapsToWin = 1;
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapList = null;
 ArrayList g_TeamAuths[MatchTeam_Count];
-char g_TeamNames[MatchTeam_Count][TEAM_NAME_LENGTH];
-char g_FormattedTeamNames[MatchTeam_Count][TEAM_NAME_LENGTH];
-char g_TeamFlags[MatchTeam_Count][TEAM_FLAG_LENGTH];
-char g_TeamLogos[MatchTeam_Count][TEAM_LOGO_LENGTH];
+char g_TeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
+char g_FormattedTeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
+char g_TeamFlags[MatchTeam_Count][MAX_CVAR_LENGTH];
+char g_TeamLogos[MatchTeam_Count][MAX_CVAR_LENGTH];
 char g_TeamMatchTexts[MatchTeam_Count][MAX_CVAR_LENGTH];
 int g_FavoredTeamPercentage = 0;
 char g_FavoredTeamText[MAX_CVAR_LENGTH];
@@ -78,12 +75,11 @@ int g_VetoCaptains[MatchTeam_Count]; // Clients doing the map vetos.
 int g_TeamMapScores[MatchTeam_Count]; // Current number of maps won per-team.
 bool g_TeamReady[MatchTeam_Count]; // Whether a team is marked as ready.
 int g_TeamSide[MatchTeam_Count]; // Current CS_TEAM_* side for the team.
+bool g_TeamReadyForUnpause[MatchTeam_Count];
 
 /** Map game-state **/
 MatchTeam g_LastRoundWinner = MatchTeam_TeamNone;
 MatchTeam g_KnifeWinnerTeam = MatchTeam_TeamNone;
-bool g_ctUnpaused = false;
-bool g_tUnpaused = false;
 
 // Map-game state not related to the actual gameplay.
 char g_DemoFileName[PLATFORM_MAX_PATH];
@@ -288,8 +284,8 @@ public Action Command_Pause(int client, int args) {
     if (!Pauseable() || IsPaused())
         return Plugin_Handled;
 
-    g_ctUnpaused = false;
-    g_tUnpaused = false;
+    g_TeamReadyForUnpause[MatchTeam_Team1] = false;
+    g_TeamReadyForUnpause[MatchTeam_Team2] = false;
     Pause();
     if (IsPlayer(client)) {
         Get5_MessageToAll("%N paused the match.", client);
@@ -306,21 +302,20 @@ public Action Command_Unpause(int client, int args) {
     if (client == 0) {
         Unpause();
     } else {
-        int team = GetClientTeam(client);
-        if (team == CS_TEAM_T)
-            g_tUnpaused = true;
-        else if (team == CS_TEAM_CT)
-            g_ctUnpaused = true;
+        MatchTeam team = GetClientMatchTeam(client);
+        g_TeamReadyForUnpause[team] = true;
 
-        if (g_tUnpaused && g_ctUnpaused)  {
+        if (g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2])  {
             Unpause();
             if (IsPlayer(client)) {
                 Get5_MessageToAll("%N unpaused the match.", client);
             }
-        } else if (g_tUnpaused && !g_ctUnpaused) {
-            Get5_MessageToAll("The T team wants to unpause, waiting for the CT team to type !unpause.");
-        } else if (!g_tUnpaused && g_ctUnpaused) {
-            Get5_MessageToAll("The CT team wants to unpause, waiting for the T team to type !unpause.");
+        } else if (g_TeamReadyForUnpause[MatchTeam_Team1] && !g_TeamReadyForUnpause[MatchTeam_Team2]) {
+            Get5_MessageToAll("%s wants to unpause, waiting for %s to type !unpause.",
+                g_FormattedTeamNames[MatchTeam_Team1], g_FormattedTeamNames[MatchTeam_Team2]);
+        } else if (!g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2]) {
+            Get5_MessageToAll("%s team wants to unpause, waiting for the %s to type !unpause.",
+                g_FormattedTeamNames[MatchTeam_Team2], g_FormattedTeamNames[MatchTeam_Team1]);
         }
     }
 

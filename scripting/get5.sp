@@ -184,11 +184,11 @@ public Action Timer_InfoMessages(Handle timer) {
 
 public void OnClientAuthorized(int client, const char[] auth) {
     g_MovingClientToCoach[client] = false;
-    if (StrEqual(auth, "BOT", false) || g_KickClientsWithNoMatchCvar.IntValue == 0) {
+    if (StrEqual(auth, "BOT", false)) {
         return;
     }
 
-    if (g_GameState == GameState_None) {
+    if (g_GameState == GameState_None && g_KickClientsWithNoMatchCvar.IntValue != 0) {
         KickClient(client, "There is no match setup");
     }
 

@@ -1,4 +1,5 @@
 public Action StartKnifeRound(Handle timer) {
+    g_PendingSideSwap = false;
     EndWarmup();
     RestartGame(1);
     CreateTimer(2.0, Timer_AnnounceKnife);
@@ -15,8 +16,7 @@ public Action Timer_AnnounceKnife(Handle timer) {
 
 public void EndKnifeRound(bool swap) {
     if (swap) {
-        g_TeamSide[MatchTeam_Team1] = CS_TEAM_T;
-        g_TeamSide[MatchTeam_Team2] = CS_TEAM_CT;
+        SwapSides();
         for (int i = 1; i <= MaxClients; i++) {
             if (IsValidClient(i)) {
                 int team = GetClientTeam(i);
@@ -72,6 +72,8 @@ public Action Command_Ct(int client, int args) {
 
     LogDebug("cs team = %d", GetClientTeam(client));
     LogDebug("m_iCoachingTeam = %d", GetEntProp(client, Prop_Send, "m_iCoachingTeam"));
+    LogDebug("m_iPendingTeamNum = %d",  GetEntProp(client, Prop_Send, "m_iPendingTeamNum"));
+
 
     return Plugin_Handled;
 }

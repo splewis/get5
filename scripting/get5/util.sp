@@ -18,7 +18,7 @@ enum GamePhase {
 stock int GetNumHumansOnTeam(int team) {
     int count = 0;
     for (int i = 1; i <= MaxClients; i++) {
-        if (IsPlayer(i))
+        if (IsPlayer(i) && GetClientTeam(i) == team)
             count++;
     }
     return count;
@@ -50,6 +50,7 @@ stock void SwitchPlayerTeam(int client, int team) {
     if (GetClientTeam(client) == team)
         return;
 
+    LogDebug("SwitchPlayerTeam %L to %d", client, team);
     if (team > CS_TEAM_SPECTATOR) {
         CS_SwitchTeam(client, team);
         CS_UpdateClientModel(client);

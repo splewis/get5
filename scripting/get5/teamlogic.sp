@@ -12,6 +12,21 @@ public Action Command_JoinGame(int client, const char[] command, int argc) {
     return Plugin_Continue;
 }
 
+// public void CheckClientTeam(int client) {
+//     MatchTeam correctTeam = GetClientMatchTeam(client);
+//     int csTeam = MatchTeamToCSTeam(correctTeam);
+//     int currentTeam = GetClientTeam(client);
+
+//     if (csTeam != currentTeam) {
+//         if (IsClientCoaching(client)) {
+//             UpdateCoachTarget(client, csTeam);
+//         }
+
+//         LogDebug("CheckClientTeam %L to %d", client, csTeam);
+//         SwitchPlayerTeam(client, csTeam);
+//     }
+// }
+
 public Action Command_JoinTeam(int client, const char[] command, int argc) {
     if (!IsAuthedPlayer(client) || argc < 1)
         return Plugin_Stop;
@@ -37,12 +52,10 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
 
     LogDebug("jointeam, gamephase = %d", GetGamePhase());
 
-    if (InHalftimePhase()) {
-        // TODO: this is a dirty hack. It needs to put the player on the proper team
-        // instead of just refusing to let a player onto any team.
+    if (g_PendingSideSwap) {
+        LogDebug("Blocking teamjoin due to pending swap");
         // SwitchPlayerTeam(client, csTeam);
-        // SetEntPropEnt(client, Prop_Send, "m_iPendingTeamNum", OtherCSTeam(csTeam));
-        return Plugin_Stop;
+        return Plugin_Handled;
     }
 
     if (csTeam == team_to) {
@@ -73,13 +86,15 @@ public void MoveClientToCoach(int client) {
         return;
     }
 
-    if (InHalftimePhase()) {
-        // TODO: this is the coach equivalent of the dirty halftime hack
-        // in the teamjoin callback above.
+    int csTeam = MatchTeamToCSTeam(matchTeam);
+
+    if (g_PendingSideSwap) {
+        LogDebug("Blocking coach move due to pending swap");
+        // SwitchPlayerTeam(client, CS_TEAM_SPECTATOR);
+        // UpdateCoachTarget( client, csTeam);
         return;
     }
 
-    int csTeam = MatchTeamToCSTeam(matchTeam);
     char teamString[4];
     CSTeamString(csTeam, teamString, sizeof(teamString));
 

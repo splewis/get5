@@ -86,6 +86,7 @@ MatchTeam g_KnifeWinnerTeam = MatchTeam_TeamNone;
 char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
 bool g_MovingClientToCoach[MAXPLAYERS+1];
+bool g_PendingSideSwap = false;
 
 /** Forwards **/
 Handle g_hOnMapResult = INVALID_HANDLE;
@@ -160,8 +161,8 @@ public void OnPluginStart() {
     /** Hooks **/
     HookEvent("player_spawn", Event_PlayerSpawn);
     HookEvent("cs_win_panel_match", Event_MatchOver);
+    HookEvent("round_prestart", Event_RoundPreStart);
     HookEvent("round_end", Event_RoundEnd);
-    HookEvent("announce_phase_end", Event_PhaseEnd);
     HookEvent("server_cvar", Event_CvarChanged, EventHookMode_Pre);
     HookEvent("player_connect_full", Event_PlayerConnectFull);
     HookEvent("player_team", Event_OnPlayerTeam, EventHookMode_Pre);
@@ -215,6 +216,8 @@ public void OnClientAuthorized(int client, const char[] auth) {
     if (team == MatchTeam_TeamNone) {
         KickClient(client, "You are not a player in this match");
     }
+
+    // TODO: if team full (and coaching disabled) kick the client
 }
 
 public void OnClientPutInServer(int client) {
@@ -503,6 +506,13 @@ public Action Timer_EndSeries(Handle timer) {
     Call_Finish();
 }
 
+public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
+    if (g_PendingSideSwap) {
+        g_PendingSideSwap = false;
+        SwapSides();
+    }
+}
+
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
     int winner = event.GetInt("winner");
     g_LastRoundWinner = CSTeamToMatchTeam(winner);
@@ -537,17 +547,34 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
         Get5_MessageToAll("%s won the knife round. Waiting for them to type !stay or !swap.",
             g_FormattedTeamNames[g_KnifeWinnerTeam]);
     }
-}
 
-public Action Event_PhaseEnd(Event event, const char[] name, bool dontBroadcast) {
-    LogDebug("Event_PhaseEnd, g_GameState = %d, gamephase = %d", g_GameState, GetGamePhase());
-    // TODO: this team score equality doesn't work if there are even-number halves
-    if (InHalftimePhase() && CS_GetTeamScore(CS_TEAM_T) != CS_GetTeamScore(CS_TEAM_CT)) {
-        SwapSides();
+    if (g_GameState == GameState_Live) {
+        int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
+        LogDebug("m_totalRoundsPlayed = %d", roundsPlayed);
+
+        int roundsPerHalf = GetCvarIntSafe("mp_maxrounds") / 2;
+        int roundsPerOTHalf = GetCvarIntSafe("mp_overtime_maxrounds") / 2;
+
+        // Regulation halftime. (after round 15)
+        if (roundsPlayed == roundsPerHalf) {
+            LogDebug("Pending regulation side swap");
+            g_PendingSideSwap = true;
+        }
+
+        // Now in OT.
+        if (roundsPlayed >= 2*roundsPerHalf) {
+            int otround = roundsPlayed - 2*roundsPerHalf; // round 33 -> round 3, etc.
+            // Do side swaps at OT halves (rounds 3, 9, ...)
+            if (otround + roundsPerOTHalf % (2*roundsPerOTHalf) == 0) {
+                LogDebug("Pending OT side swap");
+                g_PendingSideSwap = true;
+            }
+        }
     }
 }
 
 public void SwapSides() {
+    LogDebug("SwapSides");
     int tmp = g_TeamSide[MatchTeam_Team1];
     g_TeamSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team2];
     g_TeamSide[MatchTeam_Team2] = tmp;

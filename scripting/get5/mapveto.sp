@@ -31,8 +31,15 @@ public void MapVetoController(int client) {
     int mapsLeft = GetNumMapsLeft();
     int maxMaps = MaxMapsToPlay(g_MapsToWin);
 
-    // TODO: a BO3 should have a ban/ban/pick/pick/ban/ban veto.
-    // Right now, this is always ban/ban/ban/ban/pick/pick.
+    // This is a dirty hack to get ban/ban/pick/pick/ban/ban
+    // instead of straight vetoing until the maplist is the length
+    // of the series.
+    // This only applies to a standard Bo3 in the 7-map pool.
+    // TODO: It should be written more generically.
+    bool bo3_hack = false;
+    if (maxMaps == 3 && (mapsLeft == 4 || mapsLeft == 5) && g_MapList.Length == 7) {
+        bo3_hack = true;
+    }
 
     if (mapsLeft == 1) {
         // Only 1 map left in the pool, add it directly to the active maplist.
@@ -40,7 +47,7 @@ public void MapVetoController(int client) {
         g_MapsLeftInVetoPool.GetString(0, mapName, sizeof(mapName));
         g_MapsToPlay.PushString(mapName);
         VetoFinished();
-    } else if (mapsLeft <= maxMaps) {
+    } else if (mapsLeft + g_MapsToPlay.Length <= maxMaps || bo3_hack) {
         GiveMapPickMenu(client);
     } else {
         GiveVetoMenu(client);

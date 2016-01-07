@@ -1,3 +1,17 @@
+public Action Command_JoinGame(int client, const char[] command, int argc) {
+    if (g_GameState == GameState_None) {
+        return Plugin_Continue;
+    }
+
+    // TODO: if we want to bypass the teammenu, this is probably the best
+    // place to put the player onto a team.
+    // if (IsPlayer(client)) {
+    //     FakeClientCommand(client, "jointeam 2");
+    // }
+
+    return Plugin_Continue;
+}
+
 public Action Command_JoinTeam(int client, const char[] command, int argc) {
     if (!IsAuthedPlayer(client) || argc < 1)
         return Plugin_Stop;
@@ -24,6 +38,8 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
     LogDebug("jointeam, gamephase = %d", GetGamePhase());
 
     if (InHalftimePhase()) {
+        // TODO: this is a dirty hack. It needs to put the player on the proper team
+        // instead of just refusing to let a player onto any team.
         // SwitchPlayerTeam(client, csTeam);
         // SetEntPropEnt(client, Prop_Send, "m_iPendingTeamNum", OtherCSTeam(csTeam));
         return Plugin_Stop;
@@ -54,6 +70,12 @@ public void MoveClientToCoach(int client) {
     LogDebug("MoveClientToCoach %L", client);
     MatchTeam matchTeam = GetClientMatchTeam(client);
     if (matchTeam != MatchTeam_Team1 && matchTeam != MatchTeam_Team2) {
+        return;
+    }
+
+    if (InHalftimePhase()) {
+        // TODO: this is the coach equivalent of the dirty halftime hack
+        // in the teamjoin callback above.
         return;
     }
 

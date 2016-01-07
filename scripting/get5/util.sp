@@ -294,6 +294,25 @@ stock bool RemoveStringFromArray(ArrayList list, const char[] str) {
     return false;
 }
 
+stock int FindAuthInArray(ArrayList list, const char[] auth) {
+    char tmp[AUTH_LENGTH];
+    for (int i = 0; i < list.Length; i++) {
+        list.GetString(i, tmp, sizeof(tmp));
+        if (SteamIdsEqual(auth, tmp))
+            return i;
+    }
+    return -1;
+}
+
+stock bool RemoveAuthFromArray(ArrayList list, const char[] auth) {
+    int index = FindAuthInArray(list, auth);
+    if (index != -1) {
+        list.Erase(index);
+        return true;
+    }
+    return false;
+}
+
 stock int OtherCSTeam(int team) {
     if (team == CS_TEAM_CT) {
         return CS_TEAM_T;

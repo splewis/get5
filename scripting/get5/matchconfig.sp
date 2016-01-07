@@ -295,7 +295,7 @@ public Action Command_AddPlayer(int client, int args) {
         }
         GetTeamAuths(team).PushString(auth);
     } else {
-        ReplyToCommand(client, "Usage: sm_addplayer <auth> <team1|team2|spec>");
+        ReplyToCommand(client, "Usage: get5_addplayer <auth> <team1|team2|spec>");
     }
     return Plugin_Handled;
 }
@@ -310,12 +310,16 @@ public Action Command_RemovePlayer(int client, int args) {
     if (args >= 1 && GetCmdArg(1, auth, sizeof(auth))) {
         for (int i = 0; i < view_as<int>(MatchTeam_Count); i++) {
             MatchTeam team = view_as<MatchTeam>(i);
-            // TODO: this doesn't do correct steamid-comparisions.
-            if (RemoveStringFromArray(GetTeamAuths(team), auth))
-                ReplyToCommand(client, "Successfully removed player %s" ,auth);
+            if (RemoveAuthFromArray(GetTeamAuths(team), auth)) {
+                ReplyToCommand(client, "Successfully removed player %s", auth);
+                int target = AuthToClient(auth);
+                if (IsAuthedPlayer(target)) {
+                    KickClient(target, "You are not a player in this match");
+                }
+            }
         }
     } else {
-        ReplyToCommand(client, "Usage: sm_removeplayer <auth>");
+        ReplyToCommand(client, "Usage: get5_removeplayer <auth>");
     }
     return Plugin_Handled;
 }
@@ -327,6 +331,19 @@ public Action Command_CreateMatch(int client, int args) {
     }
 
     char matchid[MATCH_ID_LENGTH] = "manual";
+    char matchMap[PLATFORM_MAX_PATH];
+    GetCleanMapName(matchMap, sizeof(matchMap));
+
+    if (args >= 1) {
+        GetCmdArg(1, matchid, sizeof(matchid));
+    } if (args >= 2) {
+        GetCmdArg(2, matchMap, sizeof(matchMap));
+        if (!IsMapValid(matchMap)) {
+            LogError("Invalid map: %s", matchMap);
+            return Plugin_Handled;
+        }
+    }
+
     char path[PLATFORM_MAX_PATH];
     if (FileExists(path)) {
         DeleteFile(path);
@@ -341,9 +358,7 @@ public Action Command_CreateMatch(int client, int args) {
     kv.SetNum("players_per_team", 5);
 
     kv.JumpToKey("maplist", true);
-    char currentMap[PLATFORM_MAX_PATH];
-    GetCleanMapName(currentMap, sizeof(currentMap));
-    kv.SetString(currentMap, "x");
+    kv.SetString(matchMap, "x");
     kv.GoBack();
 
     char teamName[MAX_CVAR_LENGTH];

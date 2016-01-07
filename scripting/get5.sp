@@ -1,6 +1,7 @@
 #include <cstrike>
 #include <sdktools>
 #include <sourcemod>
+#include <testing>
 #include "include/logdebug.inc"
 #include "include/get5.inc"
 
@@ -97,6 +98,7 @@ Handle g_hOnSeriesResult = INVALID_HANDLE;
 #include "get5/matchconfig.sp"
 #include "get5/natives.sp"
 #include "get5/teamlogic.sp"
+#include "get5/tests.sp"
 #include "get5/util.sp"
 #include "get5/version.sp"
 
@@ -153,6 +155,7 @@ public void OnPluginStart() {
 
     /** Other commands **/
     RegConsoleCmd("get5_status", Command_Status);
+    RegServerCmd("get5_test", Command_Test);
 
     /** Hooks **/
     HookEvent("player_spawn", Event_PlayerSpawn);
@@ -164,6 +167,7 @@ public void OnPluginStart() {
     HookEvent("player_team", Event_OnPlayerTeam, EventHookMode_Pre);
     AddCommandListener(Command_Coach, "coach");
     AddCommandListener(Command_JoinTeam, "jointeam");
+    AddCommandListener(Command_JoinGame, "joingame");
 
     /** Setup data structures **/
     g_MapList = new ArrayList(PLATFORM_MAX_PATH);
@@ -244,6 +248,8 @@ public void OnMapStart() {
     g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
     g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
 
+    // TODO: figure out how to force teams so we can bypass the teamjoin menu.
+    // The biggest issue is placing players during halftime/intermission periods.
     // ServerCommand("sv_disable_show_team_select_menu 1");
 
     if (g_GameState == GameState_None) {

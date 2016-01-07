@@ -69,12 +69,14 @@ public void GiveMapPickMenu(int client) {
 public int MapPickHandler(Menu menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
         int client = param1;
+        MatchTeam team = GetClientMatchTeam(client);
         char mapName[PLATFORM_MAX_PATH];
         menu.GetItem(param2, mapName, sizeof(mapName));
+
+        g_WhoPickedEachMap[g_MapsToPlay.Length] = team;
         g_MapsToPlay.PushString(mapName);
         RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
-        MatchTeam team = GetClientMatchTeam(client);
         Get5_MessageToAll("%s picked {GREEN}%s {NORMAL}as map %d",
             g_FormattedTeamNames[team], mapName, g_MapsToPlay.Length);
 

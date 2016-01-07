@@ -12,6 +12,12 @@ public bool LoadMatchConfig(const char[] config) {
     g_CvarNames.Clear();
     g_CvarValues.Clear();
 
+    for (MatchTeam t = MatchTeam_Team1; t < MatchTeam_Count; t++) {
+        for (int map = 0; map < MAX_SERIES_MAPS; map++) {
+            g_TeamScoresPerMap[t][map] = 0;
+        }
+    }
+
     ClearArray(GetTeamAuths(MatchTeam_TeamSpec));
     ClearArray(GetTeamAuths(MatchTeam_Team1));
     ClearArray(GetTeamAuths(MatchTeam_Team2));
@@ -76,6 +82,11 @@ public bool LoadMatchConfig(const char[] config) {
         if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == MatchTeam_TeamNone) {
             KickClient(i, "You are not a player in ths match");
         }
+    }
+
+    if (MaxMapsToPlay(g_MapsToWin) > MAX_SERIES_MAPS) {
+        LogError("Cannot load a series with over %d maps", MAX_SERIES_MAPS);
+        return false;
     }
 
     ServerCommand("exec %s", WARMUP_CONFIG);
@@ -237,23 +248,88 @@ public void SetMatchTeamCvars() {
         tTeam = MatchTeam_Team2;
     }
 
-    // TODO: in a series (longer than 1-map),
-    // the current map score (and possibly map history) should be displayed
-    // in the match texts instead of the g_TeamMatchTexts values.
+    int mapsPlayed = g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
 
-    SetTeamInfo(CS_TEAM_CT, g_TeamNames[ctTeam], g_TeamFlags[ctTeam],
-        g_TeamLogos[ctTeam], g_TeamMatchTexts[ctTeam]);
-
-    SetTeamInfo(CS_TEAM_T, g_TeamNames[tTeam],
-        g_TeamFlags[tTeam], g_TeamLogos[tTeam], g_TeamMatchTexts[tTeam]);
+    // Get the match configs set by the config file.
+    // These might be modified so copies are made here.
+    char ctMatchText[MAX_CVAR_LENGTH];
+    char tMatchText[MAX_CVAR_LENGTH];
+    strcopy(ctMatchText, sizeof(ctMatchText), g_TeamMatchTexts[ctTeam]);
+    strcopy(tMatchText, sizeof(tMatchText), g_TeamMatchTexts[tTeam]);
 
     if (g_MapsToWin >= 2) {
-        int mapsPlayed = g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
         char mapstat[128];
         Format(mapstat, sizeof(mapstat), "Map %d of %d",
                mapsPlayed + 1, MaxMapsToPlay(g_MapsToWin));
         SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
     }
+
+    // Set the match stat text values to display the previous map
+    // results for a Bo3 series (as long as we're past map 1).
+    if (g_MapsToWin == 2 && mapsPlayed >= 1) {
+        char team1Text[MAX_CVAR_LENGTH];
+        char team2Text[MAX_CVAR_LENGTH];
+
+        MatchTeam map1Winner = GetMapWinner(0);
+        MatchTeam map2Winner = GetMapWinner(1);
+        char map1[PLATFORM_MAX_PATH];
+        char map2[PLATFORM_MAX_PATH];
+        g_MapsToPlay.GetString(0, map1, sizeof(map1));
+        g_MapsToPlay.GetString(1, map2, sizeof(map2));
+
+        if (mapsPlayed == 1) {
+            if (map1Winner == MatchTeam_Team1) {
+                Format(team1Text, sizeof(team1Text), "Won %s %d:%d",
+                    map1,
+                    g_TeamScoresPerMap[MatchTeam_Team1][0],
+                    g_TeamScoresPerMap[MatchTeam_Team2][0]);
+                Format(team2Text, sizeof(team2Text), "Lost %s", map1);
+            } else {
+                Format(team1Text, sizeof(team2Text), "Lost %s", map1);
+                Format(team2Text, sizeof(team1Text), "Won %s %d:%d",
+                    map1,
+                    g_TeamScoresPerMap[MatchTeam_Team2][0],
+                    g_TeamScoresPerMap[MatchTeam_Team1][0]);
+            }
+
+        } else if (mapsPlayed == 2) {
+            // Note: you can assume map1winner = map2loser and map2winner = map1loser
+            if (map1Winner == MatchTeam_Team1) {
+                Format(team1Text, sizeof(team1Text), "Won %s %d:%d",
+                    map1,
+                    g_TeamScoresPerMap[map1Winner][0],
+                    g_TeamScoresPerMap[map2Winner][0]);
+                Format(team2Text, sizeof(team2Text), "Won %s %d:%d",
+                    map2,
+                    g_TeamScoresPerMap[map2Winner][1],
+                    g_TeamScoresPerMap[map1Winner][1]);
+            } else {
+                Format(team1Text, sizeof(team1Text), "Won %s %d:%d",
+                    map2,
+                    g_TeamScoresPerMap[map2Winner][1],
+                    g_TeamScoresPerMap[map1Winner][1]);
+                Format(team2Text, sizeof(team2Text), "Won %s %d:%d",
+                    map1,
+                    g_TeamScoresPerMap[map1Winner][0],
+                    g_TeamScoresPerMap[map2Winner][0]);
+            }
+        }
+
+        if (MatchTeamToCSTeam(MatchTeam_Team1) == CS_TEAM_CT) {
+            strcopy(ctMatchText, sizeof(ctMatchText), team1Text);
+            strcopy(tMatchText, sizeof(tMatchText), team2Text);
+        } else {
+            strcopy(tMatchText, sizeof(tMatchText), team1Text);
+            strcopy(ctMatchText, sizeof(ctMatchText), team2Text);
+        }
+    }
+
+    SetTeamInfo(CS_TEAM_CT, g_TeamNames[ctTeam],
+        g_TeamFlags[ctTeam], g_TeamLogos[ctTeam], ctMatchText);
+
+    SetTeamInfo(CS_TEAM_T, g_TeamNames[tTeam],
+        g_TeamFlags[tTeam], g_TeamLogos[tTeam], tMatchText);
+
 
     // Set prediction cvars.
     SetConVarStringSafe("mp_teamprediction_txt", g_FavoredTeamText);
@@ -261,6 +337,16 @@ public void SetMatchTeamCvars() {
         SetConVarIntSafe("mp_teamprediction_pct", g_FavoredTeamPercentage);
     else
         SetConVarIntSafe("mp_teamprediction_pct", 100 - g_FavoredTeamPercentage);
+}
+
+public MatchTeam GetMapWinner(int mapNumber) {
+    int team1score = g_TeamScoresPerMap[MatchTeam_Team1][mapNumber];
+    int team2score = g_TeamScoresPerMap[MatchTeam_Team2][mapNumber];
+    if (team1score > team2score) {
+        return MatchTeam_Team1;
+    } else {
+        return MatchTeam_Team2;
+    }
 }
 
 public void ExecuteMatchConfigCvars() {

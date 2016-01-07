@@ -19,6 +19,7 @@
 #define MATCH_NAME_LENGTH 64
 #define MAX_CVAR_LENGTH 128
 #define MATCH_END_DELAY_AFTER_TV 10
+#define MAX_SERIES_MAPS 15
 
 #define TEAM1_COLOR "{LIGHT_GREEN}"
 #define TEAM2_COLOR "{PINK}"
@@ -70,7 +71,9 @@ GameState g_GameState = GameState_None;
 ArrayList g_MapsToPlay = null;
 ArrayList g_MapsLeftInVetoPool = null;
 MatchTeam g_LastVetoTeam;
+MatchTeam g_WhoPickedEachMap[MAX_SERIES_MAPS];
 
+int g_TeamScoresPerMap[MatchTeam_Count][MAX_SERIES_MAPS]; // Score acheived on each map.
 char g_LoadedConfigFile[PLATFORM_MAX_PATH];
 int g_VetoCaptains[MatchTeam_Count]; // Clients doing the map vetos.
 int g_TeamMapScores[MatchTeam_Count]; // Current number of maps won per-team.
@@ -424,6 +427,13 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast) {
     if (g_GameState == GameState_Live) {
         MatchTeam winningTeam = g_LastRoundWinner;
+
+        int currentMapNumber = g_TeamMapScores[MatchTeam_Team1]
+            + g_TeamMapScores[MatchTeam_Team2];
+        g_TeamScoresPerMap[MatchTeam_Team1][currentMapNumber]
+            = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
+        g_TeamScoresPerMap[MatchTeam_Team2][currentMapNumber]
+            = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
 
         if (winningTeam == MatchTeam_Team1) {
             g_TeamMapScores[MatchTeam_Team1]++;

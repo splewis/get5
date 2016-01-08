@@ -2,6 +2,7 @@
 #include <sdktools>
 #include <sourcemod>
 #include <testing>
+#include "include/restorecvars.inc"
 #include "include/logdebug.inc"
 #include "include/get5.inc"
 
@@ -90,6 +91,8 @@ char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
 bool g_MovingClientToCoach[MAXPLAYERS+1];
 bool g_PendingSideSwap = false;
+
+Handle g_KnifeChangedCvars = INVALID_HANDLE;
 
 /** Forwards **/
 Handle g_hOnMapResult = INVALID_HANDLE;
@@ -644,7 +647,12 @@ public void StartGame() {
     }
 
     ServerCommand("exec %s", LIVE_CONFIG);
+
+    if (g_KnifeChangedCvars != INVALID_HANDLE)
+        CloseCvarStorage(g_KnifeChangedCvars);
+    g_KnifeChangedCvars = ExecuteAndSaveCvars(KNIFE_CONFIG);
     ServerCommand("exec %s", KNIFE_CONFIG);
+
     EndWarmup();
     CreateTimer(3.0, StartKnifeRound);
 }

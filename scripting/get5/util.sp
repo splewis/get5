@@ -36,7 +36,7 @@ stock int CountAlivePlayersOnTeam(int team) {
 stock int SumHealthOfTeam(int team) {
     int sum = 0;
     for (int i = 1; i <= MaxClients; i++) {
-        if (IsPlayer(i) && IsPlayerAlive(i)) {
+        if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == team) {
             sum += GetClientHealth(i);
         }
     }

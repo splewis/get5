@@ -218,9 +218,11 @@ public void OnClientAuthorized(int client, const char[] auth) {
         KickClient(client, "There is no match setup");
     }
 
-    MatchTeam team = GetClientMatchTeam(client);
-    if (team == MatchTeam_TeamNone) {
-        KickClient(client, "You are not a player in this match");
+    if (g_GameState != GameState_None) {
+        MatchTeam team = GetClientMatchTeam(client);
+        if (team == MatchTeam_TeamNone) {
+            KickClient(client, "You are not a player in this match");
+        }
     }
 
     // TODO: if team full (and coaching disabled) kick the client

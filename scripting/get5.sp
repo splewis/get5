@@ -8,6 +8,7 @@
 
 #undef REQUIRE_EXTENSIONS
 #include <SteamWorks>
+#include <system2>
 #include <smjansson>
 #include "get5/jsonhelpers.sp"
 #define REMOTE_CONFIG_FILENAME "remote.json"
@@ -419,12 +420,17 @@ public Action Command_LoadMatch(int client, int args) {
 
 public Action Command_LoadMatchUrl(int client, int args) {
     if (g_GameState != GameState_None) {
-        LogError("Cannot load a match when a match is already loaded");
+        LogError("Cannot load a match config with another match already loaded");
         return Plugin_Handled;
     }
 
-    if (GetFeatureStatus(FeatureType_Native, "SteamWorks_CreateHTTPRequest") != FeatureStatus_Available) {
-        ReplyToCommand(client, "Cannot load matches from a url without the SteamWorks extension running");
+    bool steamWorksAvaliable = GetFeatureStatus(FeatureType_Native,
+        "SteamWorks_CreateHTTPRequest") == FeatureStatus_Available;
+    bool system2Avaliable = GetFeatureStatus(FeatureType_Native,
+        "System2_DownloadFile") == FeatureStatus_Available;
+
+    if (!steamWorksAvaliable && !system2Avaliable) {
+        ReplyToCommand(client, "Cannot load matches from a url without the SteamWorks or system2 extension running");
     } else {
         char arg[PLATFORM_MAX_PATH];
         if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {

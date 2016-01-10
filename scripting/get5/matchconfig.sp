@@ -103,25 +103,34 @@ public bool LoadMatchConfig(const char[] config) {
 }
 
 public bool LoadMatchFromUrl(const char[] url) {
-    if (GetFeatureStatus(FeatureType_Native, "SteamWorks_CreateHTTPRequest") != FeatureStatus_Available) {
+    bool steamWorksAvaliable = GetFeatureStatus(FeatureType_Native,
+        "SteamWorks_CreateHTTPRequest") == FeatureStatus_Available;
+    bool system2Avaliable = GetFeatureStatus(FeatureType_Native,
+        "System2_DownloadFile") == FeatureStatus_Available;
+
+    if (system2Avaliable) {
+        System2_DownloadFile(System2_OnMatchConfigReceived, url, REMOTE_CONFIG_FILENAME);
+        return true;
+
+    } else if (steamWorksAvaliable) {
+        Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
+        if (request == INVALID_HANDLE) {
+            LogError("Failed to create HTTP GET request using url: %s", url);
+            return false;
+        }
+
+        SteamWorks_SetHTTPCallbacks(request, SteamWorks_OnMatchConfigReceived);
+        SteamWorks_SendHTTPRequest(request);
+        return true;
+
+    } else {
         return false;
     }
-
-    Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
-    if (request == INVALID_HANDLE) {
-        LogError("Failed to create HTTP GET request using url: %s", url);
-        return false;
-    }
-
-    SteamWorks_SetHTTPCallbacks(request, OnMatchConfigReceived);
-    SteamWorks_SendHTTPRequest(request);
-
-    return false;
 }
 
 
 // SteamWorks HTTP callback for fetching a workshop collection
-public int OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode, Handle data) {
+public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode, Handle data) {
     if (failure || !requestSuccessful) {
         LogError("Steamworks collection request failed, HTTP status code = %d", statusCode);
         return;
@@ -129,6 +138,16 @@ public int OnMatchConfigReceived(Handle request, bool failure, bool requestSucce
 
     SteamWorks_WriteHTTPResponseBodyToFile(request, REMOTE_CONFIG_FILENAME);
     LoadMatchConfig(REMOTE_CONFIG_FILENAME);
+}
+
+
+public int System2_OnMatchConfigReceived(bool finished, const char[] error, float dltotal, float dlnow, float ultotal, float ulnow, int serial) {
+    if (!StrEqual(error, "")) {
+        LogError("Error receiving remote config: %s", error);
+    }
+    if (finished) {
+        LoadMatchConfig(REMOTE_CONFIG_FILENAME);
+    }
 }
 
 static bool LoadMatchFromKv(KeyValues kv) {

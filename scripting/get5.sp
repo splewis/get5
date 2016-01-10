@@ -7,8 +7,10 @@
 #include "include/get5.inc"
 
 #undef REQUIRE_EXTENSIONS
+#include <SteamWorks>
 #include <smjansson>
 #include "get5/jsonhelpers.sp"
+#define REMOTE_CONFIG_FILENAME "remote.json"
 
 #define LIVE_TIMER_INTERVAL 1.0
 #define INFO_MESSAGE_TIMER_INTERVAL 29.0
@@ -155,6 +157,7 @@ public void OnPluginStart() {
 
     /** Admin/server commands **/
     RegAdminCmd("get5_loadmatch", Command_LoadMatch, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("get5_loadmatch_url", Command_LoadMatchUrl, ADMFLAG_CHANGEMAP);
     RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP);
     RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP);
     RegAdminCmd("get5_removeplayer", Command_RemovePlayer, ADMFLAG_CHANGEMAP);
@@ -401,6 +404,7 @@ public Action Command_LoadMatch(int client, int args) {
         LogError("Cannot load a match when a match is already loaded");
         return Plugin_Handled;
     }
+
     char arg[PLATFORM_MAX_PATH];
     if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {
         if (!LoadMatchConfig(arg)) {
@@ -408,6 +412,28 @@ public Action Command_LoadMatch(int client, int args) {
         }
     } else {
         ReplyToCommand(client, "Usage: get5_loadmatch <filename>");
+    }
+
+    return Plugin_Handled;
+}
+
+public Action Command_LoadMatchUrl(int client, int args) {
+    if (g_GameState != GameState_None) {
+        LogError("Cannot load a match when a match is already loaded");
+        return Plugin_Handled;
+    }
+
+    if (GetFeatureStatus(FeatureType_Native, "SteamWorks_CreateHTTPRequest") != FeatureStatus_Available) {
+        ReplyToCommand(client, "Cannot load matches from a url without the SteamWorks extension running");
+    } else {
+        char arg[PLATFORM_MAX_PATH];
+        if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {
+            if (!LoadMatchFromUrl(arg)) {
+                ReplyToCommand(client, "Failed to load match config.");
+            }
+        } else {
+            ReplyToCommand(client, "Usage: get5_loadmatch_url <url>");
+        }
     }
 
     return Plugin_Handled;

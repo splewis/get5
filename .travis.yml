@@ -22,6 +22,7 @@ before_script:
     - PATH+=":$PWD"
 
     - cd include
+    - wget https://raw.githubusercontent.com/KyleSanderson/SteamWorks/master/Pawn/includes/SteamWorks.inc
     - wget https://raw.githubusercontent.com/thraaawn/SMJansson/master/pawn/scripting/include/smjansson.inc
     - cd ../../../..
 

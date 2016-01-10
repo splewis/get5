@@ -43,6 +43,7 @@ Extract the download archive into the csgo/ directory on the server. The only re
 
 #### Server Commands
 - ``get5_loadmatch``
+- ``get5_loadmatch_url``
 - ``get5_endmatch``
 - ``get5_status``
 - ``get5_creatematch``

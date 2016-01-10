@@ -1,4 +1,8 @@
 public bool LoadMatchConfig(const char[] config) {
+    if (g_GameState != GameState_None) {
+        return false;
+    }
+
     g_TeamReady[MatchTeam_Team1] = false;
     g_TeamReady[MatchTeam_Team2] = false;
     g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
@@ -98,6 +102,35 @@ public bool LoadMatchConfig(const char[] config) {
     return true;
 }
 
+public bool LoadMatchFromUrl(const char[] url) {
+    if (GetFeatureStatus(FeatureType_Native, "SteamWorks_CreateHTTPRequest") != FeatureStatus_Available) {
+        return false;
+    }
+
+    Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
+    if (request == INVALID_HANDLE) {
+        LogError("Failed to create HTTP GET request using url: %s", url);
+        return false;
+    }
+
+    SteamWorks_SetHTTPCallbacks(request, OnMatchConfigReceived);
+    SteamWorks_SendHTTPRequest(request);
+
+    return false;
+}
+
+
+// SteamWorks HTTP callback for fetching a workshop collection
+public int OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode, Handle data) {
+    if (failure || !requestSuccessful) {
+        LogError("Steamworks collection request failed, HTTP status code = %d", statusCode);
+        return;
+    }
+
+    SteamWorks_WriteHTTPResponseBodyToFile(request, REMOTE_CONFIG_FILENAME);
+    LoadMatchConfig(REMOTE_CONFIG_FILENAME);
+}
+
 static bool LoadMatchFromKv(KeyValues kv) {
     kv.GetString("matchid", g_MatchID, sizeof(g_MatchID), "matchid");
     g_PlayersPerTeam = kv.GetNum("players_per_team", 5);
@@ -151,7 +184,6 @@ static bool LoadMatchFromKv(KeyValues kv) {
     return true;
 }
 
-#if defined _jansson_included_
 static bool LoadMatchFromJson(Handle json) {
     json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID), "matchid");
     g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", 5);
@@ -219,7 +251,6 @@ static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] colo
     json_object_get_string(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
     Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
 }
-#endif
 
 static void LoadTeamData(KeyValues kv, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
     AddSubsectionKeysToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);

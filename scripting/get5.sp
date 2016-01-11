@@ -150,23 +150,23 @@ public void OnPluginStart() {
     RegConsoleCmd("sm_notready", Command_NotReady, "Marks the client as not ready");
     RegConsoleCmd("sm_pause", Command_Pause, "Pauses the game");
     RegConsoleCmd("sm_unpause", Command_Unpause, "Unpauses the game");
-    RegConsoleCmd("sm_coach", Command_SmCoach, "");
+    RegConsoleCmd("sm_coach", Command_SmCoach, "Marks a client as a coach for their team");
     RegConsoleCmd("sm_stay", Command_Stay, "Elects to stay on the current team after winning a knife round");
     RegConsoleCmd("sm_swap", Command_Swap, "Elects to swap the current teams after winning a knife round");
     RegConsoleCmd("sm_t", Command_T, "Elects to start on T side after winning a knife round");
     RegConsoleCmd("sm_ct", Command_Ct, "Elects to start on CT side after winning a knife round");
 
     /** Admin/server commands **/
-    RegAdminCmd("get5_loadmatch", Command_LoadMatch, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("get5_loadmatch_url", Command_LoadMatchUrl, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("get5_removeplayer", Command_RemovePlayer, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("get5_loadmatch", Command_LoadMatch, ADMFLAG_CHANGEMAP, "Loads a match config file (json or keyvalues) from a file relative to the csgo/ directory");
+    RegAdminCmd("get5_loadmatch_url", Command_LoadMatchUrl, ADMFLAG_CHANGEMAP, "Loads a JSON config file by sending a GET request to download it. Requires either the SteamWorks or system2 extensions");
+    RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP, "Force ends the current match");
+    RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Adds a steamid to a match team");
+    RegAdminCmd("get5_removeplayer", Command_RemovePlayer, ADMFLAG_CHANGEMAP, "Adds a steamid to a match team");
+    RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP, "Creates and loads a match using the players currently on the server as a Bo1 with the current map");
 
     /** Other commands **/
-    RegConsoleCmd("get5_status", Command_Status);
-    RegServerCmd("get5_test", Command_Test);
+    RegConsoleCmd("get5_status", Command_Status, "Prints JSON formatted match state info");
+    RegServerCmd("get5_test", Command_Test, "Runs get5 tests - should not be used on a live match server since it will reload a match config to test");
 
     /** Hooks **/
     HookEvent("player_spawn", Event_PlayerSpawn);

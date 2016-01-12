@@ -19,6 +19,11 @@ Features of this include:
 - Automatically executing match config files
 - Automatically setting team names/logos/match text values for spectator/GOTV clients
 
+#### TODO:
+
+This is still very-much a work in progress. It may have bugs. See the [issues](https://github.com/splewis/get5/issues) section for bugs or things that are yet-to-be-done. Pull requests are welcome.
+
+
 ## Download and Installation
 
 #### Requirements
@@ -33,22 +38,22 @@ Extract the download archive into the csgo/ directory on the server. The only re
 
 ## Commands
 #### Client Commands
-- ``!ready``
-- ``!unready``
-- ``!pause``
-- ``!unpause``
-- ``!coach``
-- ``!stay``
-- ``!swap``
+- ``!ready``: marks a client's team as ready to begin
+- ``!unready``: marks a client's team as not-ready
+- ``!pause``: requests a freezetime pause
+- ``!unpause``: requests an unpause
+- ``!coach``: moves a client to coach for their team
+- ``!stay``: elects to stay after a knife round win
+- ``!swap``: elects to swap after a knife round win
 
 #### Server Commands
-- ``get5_loadmatch``
-- ``get5_loadmatch_url``
-- ``get5_endmatch``
-- ``get5_status``
-- ``get5_creatematch``
-- ``get5_addplayer``
-- ``get5_removeplayer``
+- ``get5_loadmatch``: loads a match config file (json or keyvalues) relative from the ``csgo`` directory
+- ``get5_loadmatch_url``: loads a remote match config by sending a HTTP GET to the given url, this requires either the [system2](https://forums.alliedmods.net/showthread.php?t=146019) or [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) Extensions
+- ``get5_endmatch``: force ends the current match
+- ``get5_status``: replies with JSON formatted match state (also available to clients)
+- ``get5_creatematch``: creates a Bo1 match with the current players on the server on the current map
+- ``get5_addplayer``: adds a steamid to a team
+- ``get5_removeplayer``: removes a steamid from all teams
 
 
 ## Match Schema
@@ -57,28 +62,30 @@ See the example config in [keyvalues format](configs/get5/example_match.cfg) or 
 
 **Note:** to use a JSON match file, you must install the [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604) sourcemod extension on the server.
 
-- ``matchid``
-- ``maps_to_win``
-- ``skip_veto``
-- ``players_per_team``
-- ``favored_percentage_team1``
-- ``favored_percentage_text``
-- ``spectators``
-- ``team1``
-- ``team2``
-- ``cvars``
+- ``matchid``: a string matchid used to identify the match
+- ``maps_to_win``: number of maps needed to win the series (1 in a Bo1, 2 in a Bo3, 3 in a Bo5)
+- ``maplist``:
+- ``skip_veto``: whether the veto will be skipped and the maps will come from the maplist (in the order given)
+- ``players_per_team``: maximum players per team (doesn't include a coach spot)
+- ``favored_percentage_team1``: wrapper for ``mp_teamprediction_pct``
+- ``favored_percentage_text`` wrapper for ``mp_teamprediction_txt``
+- ``cvars``: cvars to be set during the match warmup/knife round/live state
+- ``spectators``: see the team schema below (only the ``players`` section is used for spectators)
+- ``team1``: see the team schema below
+- ``team2``: see the team schema below
 
 #### Team Schema
-- ``name``
-- ``flag``
-- ``logo``
-- ``matchtext``
-- ``players``
-
+- ``name``: team name (wraps ``mp_teamname_1`` and is displayed often in chat messages)
+- ``flag``: team flag (2 letter country code, wraps ``mp_teamflag_1``)
+- ``logo`` team logo (wraps ``mp_teamlogo_1``)
+- ``matchtext``: warps ``mp_teammatchstat_txt``
+- ``players``: list of Steam2 id's for users on the team
 
 ## ConVars
-- ``get5_autoload_config``
-- ``get5_demo_name_format``
-- ``get5_kick_when_no_match_loaded``
-- ``get5_pausing_enabled``
-- ``get5_time_format``
+Note: these are auto-executed on plugin start by the auto-generated (the 1st time the plugin starts) file ``cfg/sourcemod/get5.cfg``.
+
+- ``get5_autoload_config``: a config file to autoload on map starts if no match is loaded
+- ``get5_demo_name_format``: format to name demo files in (default ``{MATCHID}_map{MAPNUMBER}_{MAPNAME}``)
+- ``get5_kick_when_no_match_loaded``: whether to kick all clients if no match is loaded
+- ``get5_pausing_enabled``: whether pausing (!pause command) is enabled
+- ``get5_time_format``: time format string (default ``"%Y-%m-%d_%H``), only affects if a {TIME} tag is used in ``get5_demo_name_format``

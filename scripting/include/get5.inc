@@ -42,7 +42,7 @@ native void Get5_Message(int client, const char[] format, any:...);
 // Prints a plugin-formatted message to all clients.
 native void Get5_MessageToAll(const char[] format, any:...);
 
-public SharedPlugin __pl_trate = {
+public SharedPlugin __pl_get5 = {
     name = "get5",
     file = "get5.smx",
 #if defined REQUIRE_PLUGIN

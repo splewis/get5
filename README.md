@@ -84,8 +84,11 @@ See the example config in [Vavle KeyValues format](configs/get5/example_match.cf
 ## ConVars
 Note: these are auto-executed on plugin start by the auto-generated (the 1st time the plugin starts) file ``cfg/sourcemod/get5.cfg``.
 
+You should either set these in the above file, or in the match config's ``cvars`` section.
+
 - ``get5_autoload_config``: a config file to autoload on map starts if no match is loaded
 - ``get5_demo_name_format``: format to name demo files in (default ``{MATCHID}_map{MAPNUMBER}_{MAPNAME}``)
 - ``get5_kick_when_no_match_loaded``: whether to kick all clients if no match is loaded
 - ``get5_pausing_enabled``: whether pausing (!pause command) is enabled
 - ``get5_time_format``: time format string (default ``"%Y-%m-%d_%H``), only affects if a {TIME} tag is used in ``get5_demo_name_format``
+- ``get5_wait_for_spec_ready``: whether to wait for spectators (if there are any) to ready up to begin

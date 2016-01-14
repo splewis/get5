@@ -52,6 +52,7 @@ ConVar g_DemoTimeFormatCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_VersionCvar;
+ConVar g_WaitForSpecReadyCvar;
 
 /** Series config game-state **/
 int g_MapsToWin = 1;
@@ -137,6 +138,7 @@ public void OnPluginStart() {
     g_DemoTimeFormatCvar = CreateConVar("get5_time_format", "%Y-%m-%d_%H", "Time format to use when creating demo file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
     g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "0", "Whether the plugin kicks new clients when no match is loaded");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
+    g_WaitForSpecReadyCvar = CreateConVar("get5_wait_for_spec_ready", "0", "Whether to wait for spectators to ready up if there are any");
 
     /** Create and exec plugin's configuration file **/
     AutoExecConfig(true, "get5");
@@ -206,7 +208,11 @@ public Action Timer_InfoMessages(Handle timer) {
     if (g_GameState == GameState_PreVeto) {
         Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to veto.");
     } else if (g_GameState == GameState_Warmup) {
-        Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to knife for sides.");
+        if (AllTeamsReady(false) && !AllTeamsReady(true)) {
+            Get5_MessageToAll("Waiting for the casters to type {GREEN}!ready {NORMAL}to begin.");
+        } else {
+            Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to knife for sides.");
+        }
     } else if (g_GameState == GameState_PostGame) {
         Get5_MessageToAll("The map will change once the GOTV broadcast has ended.");
     }
@@ -260,6 +266,7 @@ public void OnMapStart() {
     g_MapChangePending = false;
     g_TeamReady[MatchTeam_Team1] = false;
     g_TeamReady[MatchTeam_Team2] = false;
+    g_TeamReady[MatchTeam_TeamSpec] = false;
     g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
     g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
 
@@ -290,13 +297,13 @@ public void OnMapStart() {
 
 public Action Timer_CheckReady(Handle timer) {
     if (g_GameState == GameState_PreVeto) {
-        if (AllTeamsReady()) {
+        if (AllTeamsReady(false)) {
             ChangeState(GameState_Veto);
             CreateMapVeto();
         }
 
     } else  if (g_GameState == GameState_Warmup) {
-        if (AllTeamsReady() && !g_MapChangePending) {
+        if (AllTeamsReady(true) && !g_MapChangePending) {
             ChangeState(GameState_KnifeRound);
             StartGame();
         }
@@ -761,6 +768,13 @@ static void ReplyToTeamInfo(int client, MatchTeam matchTeam) {
     ReplyToCommand(client, "    \"current_score\": %d", CS_GetTeamScore(team));
 }
 
-public bool AllTeamsReady() {
-    return g_TeamReady[MatchTeam_Team1] && g_TeamReady[MatchTeam_Team2];
+stock bool AllTeamsReady(bool includeSpec=true) {
+    bool playersReady = g_TeamReady[MatchTeam_Team1] && g_TeamReady[MatchTeam_Team2];
+    if (g_WaitForSpecReadyCvar.IntValue == 0 ||
+        GetTeamAuths(MatchTeam_TeamSpec).Length == 0 ||
+        !includeSpec) {
+        return playersReady;
+    } else {
+        return playersReady && g_TeamReady[MatchTeam_TeamSpec];
+    }
 }

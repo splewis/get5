@@ -5,6 +5,7 @@ public bool LoadMatchConfig(const char[] config) {
 
     g_TeamReady[MatchTeam_Team1] = false;
     g_TeamReady[MatchTeam_Team2] = false;
+    g_TeamReady[MatchTeam_TeamSpec] = false;
     g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
     g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
     g_TeamMapScores[MatchTeam_Team1] = 0;

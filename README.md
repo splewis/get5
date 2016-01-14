@@ -47,8 +47,8 @@ Extract the download archive into the csgo/ directory on the server. The only re
 - ``!swap``: elects to swap after a knife round win
 
 #### Server Commands
-- ``get5_loadmatch``: loads a match config file (json or keyvalues) relative from the ``csgo`` directory
-- ``get5_loadmatch_url``: loads a remote match config by sending a HTTP GET to the given url, this requires either the [system2](https://forums.alliedmods.net/showthread.php?t=146019) or [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) Extensions
+- ``get5_loadmatch``: loads a match config file (JSON or keyvalues) relative from the ``csgo`` directory
+- ``get5_loadmatch_url``: loads a remote (JSON formatted) match config by sending a HTTP GET to the given url, this requires either the [system2](https://forums.alliedmods.net/showthread.php?t=146019) or [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) Extensions
 - ``get5_endmatch``: force ends the current match
 - ``get5_status``: replies with JSON formatted match state (also available to clients)
 - ``get5_creatematch``: creates a Bo1 match with the current players on the server on the current map
@@ -58,13 +58,13 @@ Extract the download archive into the csgo/ directory on the server. The only re
 
 ## Match Schema
 
-See the example config in [keyvalues format](configs/get5/example_match.cfg) or [json format](configs/get5/example_match.json) to learn how to format the configs. Both files contain equivalent match data.
+See the example config in [Vavle KeyValues format](configs/get5/example_match.cfg) or [JSON format](configs/get5/example_match.json) to learn how to format the configs. Both files contain equivalent match data.
 
 **Note:** to use a JSON match file, you must install the [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604) sourcemod extension on the server.
 
 - ``matchid``: a string matchid used to identify the match
 - ``maps_to_win``: number of maps needed to win the series (1 in a Bo1, 2 in a Bo3, 3 in a Bo5)
-- ``maplist``:
+- ``maplist``: list of the maps in use (an array of strings in JSON, mapnames as keys for KeyValues)
 - ``skip_veto``: whether the veto will be skipped and the maps will come from the maplist (in the order given)
 - ``players_per_team``: maximum players per team (doesn't include a coach spot)
 - ``favored_percentage_team1``: wrapper for ``mp_teamprediction_pct``

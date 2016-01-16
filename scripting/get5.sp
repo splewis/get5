@@ -23,7 +23,6 @@
 #define MATCH_NAME_LENGTH 64
 #define MAX_CVAR_LENGTH 128
 #define MATCH_END_DELAY_AFTER_TV 10
-#define MAX_SERIES_MAPS 15
 
 #define TEAM1_COLOR "{LIGHT_GREEN}"
 #define TEAM2_COLOR "{PINK}"
@@ -68,17 +67,19 @@ int g_FavoredTeamPercentage = 0;
 char g_FavoredTeamText[MAX_CVAR_LENGTH];
 int g_PlayersPerTeam = 5;
 bool g_SkipVeto = false;
+MatchSideType g_MatchSideType = MatchSideType_Standard;
 ArrayList g_CvarNames = null;
 ArrayList g_CvarValues = null;
 
 // Other state
 GameState g_GameState = GameState_None;
 ArrayList g_MapsToPlay = null;
+ArrayList g_MapSides = null;
 ArrayList g_MapsLeftInVetoPool = null;
 MatchTeam g_LastVetoTeam;
-MatchTeam g_WhoPickedEachMap[MAX_SERIES_MAPS];
 
-int g_TeamScoresPerMap[MatchTeam_Count][MAX_SERIES_MAPS]; // Score acheived on each map.
+// int g_TeamScoresPerMap[MatchTeam_Count][MAX_SERIES_MAPS]; // Score acheived on each map.
+ArrayList g_TeamScoresPerMap = null;
 char g_LoadedConfigFile[PLATFORM_MAX_PATH];
 int g_VetoCaptains[MatchTeam_Count]; // Clients doing the map vetos.
 int g_TeamMapScores[MatchTeam_Count]; // Current number of maps won per-team.
@@ -186,8 +187,10 @@ public void OnPluginStart() {
     g_MapList = new ArrayList(PLATFORM_MAX_PATH);
     g_MapsLeftInVetoPool = new ArrayList(PLATFORM_MAX_PATH);
     g_MapsToPlay = new ArrayList(PLATFORM_MAX_PATH);
+    g_MapSides = new ArrayList();
     g_CvarNames = new ArrayList(MAX_CVAR_LENGTH);
     g_CvarValues = new ArrayList(MAX_CVAR_LENGTH);
+    g_TeamScoresPerMap = new ArrayList(view_as<int>(MatchTeam_Count));
 
     for (int i = 0; i < sizeof(g_TeamAuths); i++) {
         g_TeamAuths[i] = new ArrayList(AUTH_LENGTH);
@@ -207,11 +210,12 @@ public void OnPluginStart() {
 public Action Timer_InfoMessages(Handle timer) {
     if (g_GameState == GameState_PreVeto) {
         Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to veto.");
-    } else if (g_GameState == GameState_Warmup) {
+    } else if (g_GameState == GameState_Warmup && !g_MapChangePending) {
         if (AllTeamsReady(false) && !AllTeamsReady(true)) {
             Get5_MessageToAll("Waiting for the casters to type {GREEN}!ready {NORMAL}to begin.");
         } else {
-            Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to knife for sides.");
+            Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready.");
+            // TODO: print whether it's a knife or who is starting on CT
         }
     } else if (g_GameState == GameState_PostGame) {
         Get5_MessageToAll("The map will change once the GOTV broadcast has ended.");
@@ -267,12 +271,7 @@ public void OnMapStart() {
     g_TeamReady[MatchTeam_Team1] = false;
     g_TeamReady[MatchTeam_Team2] = false;
     g_TeamReady[MatchTeam_TeamSpec] = false;
-    g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
-    g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
-
-    // TODO: figure out how to force teams so we can bypass the teamjoin menu.
-    // The biggest issue is placing players during halftime/intermission periods.
-    // ServerCommand("sv_disable_show_team_select_menu 1");
+    SetStartingTeams();
 
     if (g_GameState == GameState_None) {
         char autoloadConfig[PLATFORM_MAX_PATH];
@@ -304,8 +303,13 @@ public Action Timer_CheckReady(Handle timer) {
 
     } else  if (g_GameState == GameState_Warmup) {
         if (AllTeamsReady(true) && !g_MapChangePending) {
-            ChangeState(GameState_KnifeRound);
-            StartGame();
+            int mapNumber = GetMapNumber();
+            if (g_MapSides.Get(mapNumber) == SideChoice_KnifeRound) {
+                ChangeState(GameState_KnifeRound);
+                StartGame(true);
+            } else {
+                StartGame(false);
+            }
         }
     }
 
@@ -472,13 +476,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     if (g_GameState == GameState_Live) {
         MatchTeam winningTeam = g_LastRoundWinner;
 
-        int currentMapNumber = g_TeamMapScores[MatchTeam_Team1]
-            + g_TeamMapScores[MatchTeam_Team2];
-        g_TeamScoresPerMap[MatchTeam_Team1][currentMapNumber]
-            = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
-        g_TeamScoresPerMap[MatchTeam_Team2][currentMapNumber]
-            = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
-
+        AddMapScore();
         if (winningTeam == MatchTeam_Team1) {
             g_TeamMapScores[MatchTeam_Team1]++;
         } else {
@@ -530,7 +528,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 public Action Timer_NextMatchMap(Handle timer) {
     StopRecording();
 
-    int index = g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
+    int index = GetMapNumber();
     char map[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(index, map, sizeof(map));
     ChangeMap(map);
@@ -649,7 +647,7 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
     return Plugin_Continue;
 }
 
-public void StartGame() {
+public void StartGame(bool knifeRound) {
     if (!IsTVEnabled()) {
         LogError("GOTV demo could not be recorded since tv_enable is not set to 1");
     } else {
@@ -689,13 +687,17 @@ public void StartGame() {
 
     ServerCommand("exec %s", LIVE_CONFIG);
 
-    if (g_KnifeChangedCvars != INVALID_HANDLE)
-        CloseCvarStorage(g_KnifeChangedCvars);
-    g_KnifeChangedCvars = ExecuteAndSaveCvars(KNIFE_CONFIG);
-    ServerCommand("exec %s", KNIFE_CONFIG);
-
-    EndWarmup();
-    CreateTimer(3.0, StartKnifeRound);
+    if (knifeRound) {
+        if (g_KnifeChangedCvars != INVALID_HANDLE)
+            CloseCvarStorage(g_KnifeChangedCvars);
+        g_KnifeChangedCvars = ExecuteAndSaveCvars(KNIFE_CONFIG);
+        ServerCommand("exec %s", KNIFE_CONFIG);
+        EndWarmup();
+        CreateTimer(3.0, StartKnifeRound);
+    } else {
+        ChangeState(GameState_GoingLive);
+        CreateTimer(3.0, BeginLO3, _, TIMER_FLAG_NO_MAPCHANGE);
+    }
 }
 
 public Action StopDemo(Handle timer) {

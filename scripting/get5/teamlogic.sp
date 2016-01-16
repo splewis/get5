@@ -249,3 +249,42 @@ public bool IsAuthInList(const char[] auth, ArrayList list) {
     }
     return false;
 }
+
+public void SetStartingTeams() {
+    int mapNumber = GetMapNumber();
+    if (mapNumber >= g_MapSides.Length || g_MapSides.Get(mapNumber) == SideChoice_KnifeRound) {
+        g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
+        g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
+    } else {
+        if (g_MapSides.Get(mapNumber) == SideChoice_Team1CT) {
+            g_TeamSide[MatchTeam_Team1] = CS_TEAM_CT;
+            g_TeamSide[MatchTeam_Team2] = CS_TEAM_T;
+        }  else {
+            g_TeamSide[MatchTeam_Team1] = CS_TEAM_T;
+            g_TeamSide[MatchTeam_Team2] = CS_TEAM_CT;
+        }
+    }
+}
+
+public void AddMapScore() {
+    int currentMapNumber = GetMapNumber();
+
+    g_TeamScoresPerMap.Push(0);
+    g_TeamScoresPerMap.Set(
+        currentMapNumber,
+        CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
+        view_as<int>(MatchTeam_Team1));
+
+    g_TeamScoresPerMap.Set(
+        currentMapNumber,
+        CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
+        view_as<int>(MatchTeam_Team2));
+}
+
+public int GetMapScore(int mapNumber, MatchTeam team) {
+    return g_TeamScoresPerMap.Get(mapNumber, view_as<int>(team));
+}
+
+public int GetMapNumber() {
+    return g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
+}

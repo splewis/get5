@@ -66,6 +66,7 @@ See the example config in [Vavle KeyValues format](configs/get5/example_match.cf
 - ``maps_to_win``: number of maps needed to win the series (1 in a Bo1, 2 in a Bo3, 3 in a Bo5)
 - ``maplist``: list of the maps in use (an array of strings in JSON, mapnames as keys for KeyValues)
 - ``skip_veto``: whether the veto will be skipped and the maps will come from the maplist (in the order given)
+- ``side_type``: either "standard", "never_knife", or "always_knife"; standard means the team that doesn't pick a map gets the side choice, never_knife means team is always on CT first, and always knife means there is always a knife round
 - ``players_per_team``: maximum players per team (doesn't include a coach spot)
 - ``favored_percentage_team1``: wrapper for ``mp_teamprediction_pct``
 - ``favored_percentage_text`` wrapper for ``mp_teamprediction_txt``

@@ -166,7 +166,6 @@ stock void StartWarmup(bool indefiniteWarmup=true, int warmupTime=60) {
 }
 
 stock void EndWarmup() {
-    LogDebug("EndWarmup");
     ServerCommand("mp_warmup_end");
 }
 
@@ -383,5 +382,15 @@ stock void GameStateString(GameState state, char[] buffer, int length) {
         case GameState_GoingLive: Format(buffer, length, "going live");
         case GameState_Live: Format(buffer, length, "live");
         case GameState_PostGame: Format(buffer, length, "postgame");
+    }
+}
+
+public MatchSideType MatchSideTypeFromString(const char[] str) {
+    if (StrEqual(str, "normal", false) || StrEqual(str, "standard", false)) {
+        return MatchSideType_Standard;
+    } else if (StrEqual(str, "never_knife", false)) {
+        return MatchSideType_NeverKnife;
+    } else {
+        return MatchSideType_AlwaysKnife;
     }
 }

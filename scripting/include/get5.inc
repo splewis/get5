@@ -23,6 +23,18 @@ enum MatchTeam {
     MatchTeam_Count,
 };
 
+enum MatchSideType {
+    MatchSideType_Standard,     // Team that doesn't pick map gets side choice, leftovers go to knife rounds
+    MatchSideType_AlwaysKnife,  // All maps use a knife round to pick sides
+    MatchSideType_NeverKnife,   // Team 1 always starts CT
+};
+
+enum SideChoice {
+    SideChoice_Team1CT,     // Team 1 will start on CT
+    SideChoice_Team1T,      // Team 2 will start on T
+    SideChoice_KnifeRound,  // There will be a knife round to choose sides
+};
+
 // Called at the end of a map in a series.
 forward void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
     int team1Score, int team2Score);

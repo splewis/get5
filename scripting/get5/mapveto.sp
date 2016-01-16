@@ -46,6 +46,15 @@ public void MapVetoController(int client) {
         char mapName[PLATFORM_MAX_PATH];
         g_MapsLeftInVetoPool.GetString(0, mapName, sizeof(mapName));
         g_MapsToPlay.PushString(mapName);
+
+        if (g_MatchSideType == MatchSideType_Standard) {
+            g_MapSides.Push(SideChoice_KnifeRound);
+        } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
+            g_MapSides.Push(SideChoice_KnifeRound);
+        } else if (g_MatchSideType == MatchSideType_NeverKnife) {
+            g_MapSides.Push(SideChoice_Team1CT);
+        }
+
         VetoFinished();
     } else if (mapsLeft + g_MapsToPlay.Length <= maxMaps || bo3_hack) {
         GiveMapPickMenu(client);
@@ -73,15 +82,65 @@ public int MapPickHandler(Menu menu, MenuAction action, int param1, int param2) 
         char mapName[PLATFORM_MAX_PATH];
         menu.GetItem(param2, mapName, sizeof(mapName));
 
-        g_WhoPickedEachMap[g_MapsToPlay.Length] = team;
         g_MapsToPlay.PushString(mapName);
         RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
         Get5_MessageToAll("%s picked {GREEN}%s {NORMAL}as map %d",
             g_FormattedTeamNames[team], mapName, g_MapsToPlay.Length);
-
-        MapVetoController(GetNextTeamCaptain(client));
         g_LastVetoTeam = team;
+
+        if (g_MatchSideType == MatchSideType_Standard) {
+            GiveSidePickMenu(GetNextTeamCaptain(client));
+        } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
+            g_MapSides.Push(SideChoice_KnifeRound);
+            MapVetoController(GetNextTeamCaptain(client));
+        } else if (g_MatchSideType == MatchSideType_NeverKnife) {
+            g_MapSides.Push(SideChoice_Team1CT);
+            MapVetoController(GetNextTeamCaptain(client));
+        }
+    } else if (action == MenuAction_End) {
+        delete menu;
+    }
+}
+
+// TODO: by GiveSidePickMenu not being called from the MapVetoController
+// this bypasses any checks that maintain consistency when a player
+// disconnects during the veto phase. It would be better for
+// GiveSidePickMenu to be called there than the MapPickHandler callback.
+public void GiveSidePickMenu(int client) {
+    Menu menu = new Menu(SidePickMenuHandler);
+    menu.ExitButton = false;
+    char mapName[PLATFORM_MAX_PATH];
+    g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
+    menu.SetTitle("Select a side for %s", mapName);
+    menu.AddItem("CT", "CT");
+    menu.AddItem("T", "T");
+    menu.Display(client, MENU_TIME_FOREVER);
+}
+
+public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
+    if (action == MenuAction_Select) {
+        int client = param1;
+        MatchTeam team = GetClientMatchTeam(client);
+
+        char choice[PLATFORM_MAX_PATH];
+        menu.GetItem(param2, choice, sizeof(choice));
+        if (StrEqual(choice, "CT")) {
+            if (team == MatchTeam_Team1)
+                g_MapSides.Push(SideChoice_Team1CT);
+            else
+                g_MapSides.Push(SideChoice_Team1T);
+        } else {
+            if (team == MatchTeam_Team1)
+                g_MapSides.Push(SideChoice_Team1T);
+            else
+                g_MapSides.Push(SideChoice_Team1CT);
+        }
+
+        Get5_MessageToAll("%s has selected to start on {GREEN}%s",
+            g_FormattedTeamNames[team], choice);
+
+        MapVetoController(client);
     } else if (action == MenuAction_End) {
         delete menu;
     }

@@ -6,22 +6,16 @@ public bool LoadMatchConfig(const char[] config) {
     g_TeamReady[MatchTeam_Team1] = false;
     g_TeamReady[MatchTeam_Team2] = false;
     g_TeamReady[MatchTeam_TeamSpec] = false;
-    g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
-    g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
     g_TeamMapScores[MatchTeam_Team1] = 0;
     g_TeamMapScores[MatchTeam_Team2] = 0;
     g_LastVetoTeam = MatchTeam_Team2;
     g_MapList.Clear();
     g_MapsLeftInVetoPool.Clear();
     g_MapsToPlay.Clear();
+    g_MapSides.Clear();
     g_CvarNames.Clear();
     g_CvarValues.Clear();
-
-    for (MatchTeam t = MatchTeam_Team1; t < MatchTeam_Count; t++) {
-        for (int map = 0; map < MAX_SERIES_MAPS; map++) {
-            g_TeamScoresPerMap[t][map] = 0;
-        }
-    }
+    g_TeamScoresPerMap.Clear();
 
     ClearArray(GetTeamAuths(MatchTeam_TeamSpec));
     ClearArray(GetTeamAuths(MatchTeam_Team1));
@@ -89,16 +83,12 @@ public bool LoadMatchConfig(const char[] config) {
         }
     }
 
-    if (MaxMapsToPlay(g_MapsToWin) > MAX_SERIES_MAPS) {
-        LogError("Cannot load a series with over %d maps", MAX_SERIES_MAPS);
-        return false;
-    }
-
     ServerCommand("exec %s", WARMUP_CONFIG);
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
     EnsurePausedWarmup();
     strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
+    SetStartingTeams();
 
     return true;
 }
@@ -157,6 +147,10 @@ static bool LoadMatchFromKv(KeyValues kv) {
     g_MapsToWin = kv.GetNum("maps_to_win", 2);
     g_SkipVeto = kv.GetNum("skip_veto", 0) != 0;
 
+    char buf[64];
+    kv.GetString("side_type", buf, sizeof(buf), "standard");
+    g_MatchSideType = MatchSideTypeFromString(buf);
+
     g_FavoredTeamPercentage = kv.GetNum("favored_percentage_team1", 0);
     kv.GetString("favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText));
 
@@ -209,6 +203,10 @@ static bool LoadMatchFromJson(Handle json) {
     g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", 5);
     g_MapsToWin = json_object_get_int_safe(json, "maps_to_win", 2);
     g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", false);
+
+    char buf[64];
+    json_object_get_string_safe(json, "side_type", buf, sizeof(buf), "standard");
+    g_MatchSideType = MatchSideTypeFromString(buf);
 
     json_object_get_string_safe(json, "favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText), "matchID");
     g_FavoredTeamPercentage = json_object_get_int_safe(json, "favored_percentage_team1", 0);
@@ -322,7 +320,6 @@ public void SetMatchTeamCvars() {
         char team2Text[MAX_CVAR_LENGTH];
 
         MatchTeam map1Winner = GetMapWinner(0);
-        MatchTeam map2Winner = GetMapWinner(1);
         char map1[PLATFORM_MAX_PATH];
         char map2[PLATFORM_MAX_PATH];
         g_MapsToPlay.GetString(0, map1, sizeof(map1));
@@ -332,37 +329,38 @@ public void SetMatchTeamCvars() {
             if (map1Winner == MatchTeam_Team1) {
                 Format(team1Text, sizeof(team1Text), "Won %s %d:%d",
                     map1,
-                    g_TeamScoresPerMap[MatchTeam_Team1][0],
-                    g_TeamScoresPerMap[MatchTeam_Team2][0]);
+                    GetMapScore(0, MatchTeam_Team1),
+                    GetMapScore(0, MatchTeam_Team2));
                 Format(team2Text, sizeof(team2Text), "Lost %s", map1);
             } else {
                 Format(team1Text, sizeof(team2Text), "Lost %s", map1);
                 Format(team2Text, sizeof(team1Text), "Won %s %d:%d",
                     map1,
-                    g_TeamScoresPerMap[MatchTeam_Team2][0],
-                    g_TeamScoresPerMap[MatchTeam_Team1][0]);
+                    GetMapScore(0, MatchTeam_Team2),
+                    GetMapScore(0, MatchTeam_Team1));
             }
 
         } else if (mapsPlayed == 2) {
+            MatchTeam map2Winner = GetMapWinner(1);
             // Note: you can assume map1winner = map2loser and map2winner = map1loser
             if (map1Winner == MatchTeam_Team1) {
                 Format(team1Text, sizeof(team1Text), "Won %s %d:%d",
                     map1,
-                    g_TeamScoresPerMap[map1Winner][0],
-                    g_TeamScoresPerMap[map2Winner][0]);
+                    GetMapScore(0, map1Winner),
+                    GetMapScore(0, map2Winner));
                 Format(team2Text, sizeof(team2Text), "Won %s %d:%d",
                     map2,
-                    g_TeamScoresPerMap[map2Winner][1],
-                    g_TeamScoresPerMap[map1Winner][1]);
+                    GetMapScore(1, map2Winner),
+                    GetMapScore(1, map1Winner));
             } else {
                 Format(team1Text, sizeof(team1Text), "Won %s %d:%d",
                     map2,
-                    g_TeamScoresPerMap[map2Winner][1],
-                    g_TeamScoresPerMap[map1Winner][1]);
+                    GetMapScore(1, map2Winner),
+                    GetMapScore(1, map1Winner));
                 Format(team2Text, sizeof(team2Text), "Won %s %d:%d",
                     map1,
-                    g_TeamScoresPerMap[map1Winner][0],
-                    g_TeamScoresPerMap[map2Winner][0]);
+                    GetMapScore(0, map1Winner),
+                    GetMapScore(0, map2Winner));
             }
         }
 
@@ -391,8 +389,8 @@ public void SetMatchTeamCvars() {
 }
 
 public MatchTeam GetMapWinner(int mapNumber) {
-    int team1score = g_TeamScoresPerMap[MatchTeam_Team1][mapNumber];
-    int team2score = g_TeamScoresPerMap[MatchTeam_Team2][mapNumber];
+    int team1score = GetMapScore(mapNumber, MatchTeam_Team1);
+    int team2score = GetMapScore(mapNumber, MatchTeam_Team2);
     if (team1score > team2score) {
         return MatchTeam_Team1;
     } else {

@@ -49,7 +49,7 @@ public Action MatchLive(Handle timer) {
     g_PendingSideSwap = false;
     ConVar mp_match_restart_delay = FindConVar("mp_match_restart_delay");
     ConVar tv_delay = FindConVar("tv_delay");
-    SetConVarInt(mp_match_restart_delay, tv_delay.IntValue + MATCH_END_DELAY_AFTER_TV + 5.0);
+    SetConVarInt(mp_match_restart_delay, tv_delay.IntValue + MATCH_END_DELAY_AFTER_TV + 5);
 
     ChangeState(GameState_Live);
 

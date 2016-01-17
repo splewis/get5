@@ -91,12 +91,12 @@ public bool LoadMatchConfig(const char[] config) {
         }
     }
 
+    SetStartingTeams();
     ExecCfg(g_WarmupCfgCvar);
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
     EnsurePausedWarmup();
     strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
-    SetStartingTeams();
 
     return true;
 }

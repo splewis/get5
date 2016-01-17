@@ -1,7 +1,7 @@
-#if defined _trate_included
+#if defined _get5_included_
   #endinput
 #endif
-#define _trate_included
+#define _get5_included_
 
 enum GameState {
     GameState_None,                          // no setup has taken place

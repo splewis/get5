@@ -5,7 +5,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
     CreateNative("Get5_GetGameState", Native_GetGameState);
     CreateNative("Get5_Message", Native_Message);
     CreateNative("Get5_MessageToAll", Native_MessageToAll);
-    RegPluginLibrary("trate");
+    RegPluginLibrary("get5");
     return APLRes_Success;
 }
 

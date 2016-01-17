@@ -36,7 +36,7 @@ public void EndKnifeRound(bool swap) {
     }
 
     RestoreCvars(g_KnifeChangedCvars, true);
-    ServerCommand("exec %s", LIVE_CONFIG);
+    ExecCfg(g_LiveCfgCvar);
 
     ChangeState(GameState_GoingLive);
     CreateTimer(3.0, BeginLO3, _, TIMER_FLAG_NO_MAPCHANGE);

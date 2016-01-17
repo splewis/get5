@@ -83,7 +83,7 @@ public bool LoadMatchConfig(const char[] config) {
         }
     }
 
-    ServerCommand("exec %s", WARMUP_CONFIG);
+    ExecCfg(g_WarmupCfgCvar);
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
     EnsurePausedWarmup();

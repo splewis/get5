@@ -28,10 +28,7 @@
 #define TEAM2_COLOR "{PINK}"
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T
-
-#define LIVE_CONFIG "get5/live.cfg"
 #define KNIFE_CONFIG "get5/knife.cfg"
-#define WARMUP_CONFIG "get5/warmup.cfg"
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -49,9 +46,11 @@ ConVar g_AutoLoadConfigCvar;
 ConVar g_DemoNameFormatCvar;
 ConVar g_DemoTimeFormatCvar;
 ConVar g_KickClientsWithNoMatchCvar;
+ConVar g_LiveCfgCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_VersionCvar;
 ConVar g_WaitForSpecReadyCvar;
+ConVar g_WarmupCfgCvar;
 
 /** Series config game-state **/
 int g_MapsToWin = 1;
@@ -138,8 +137,10 @@ public void OnPluginStart() {
     g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}");
     g_DemoTimeFormatCvar = CreateConVar("get5_time_format", "%Y-%m-%d_%H", "Time format to use when creating demo file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
     g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "0", "Whether the plugin kicks new clients when no match is loaded");
+    g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to exec when the game goes live");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
     g_WaitForSpecReadyCvar = CreateConVar("get5_wait_for_spec_ready", "0", "Whether to wait for spectators to ready up if there are any");
+    g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
 
     /** Create and exec plugin's configuration file **/
     AutoExecConfig(true, "get5");
@@ -249,8 +250,8 @@ public void OnClientPutInServer(int client) {
 
     if (g_GameState <= GameState_Warmup) {
         if (GetRealClientCount() <= 1) {
+            ExecCfg(g_WarmupCfgCvar);
             EnsurePausedWarmup();
-            ServerCommand("exec %s", WARMUP_CONFIG);
         }
     }
 }
@@ -286,7 +287,7 @@ public void OnMapStart() {
     }
 
     if (g_GameState == GameState_Warmup || g_GameState == GameState_Veto) {
-        ServerCommand("exec %s", WARMUP_CONFIG);
+        ExecCfg(g_WarmupCfgCvar);
         SetMatchTeamCvars();
         ExecuteMatchConfigCvars();
         EnsurePausedWarmup();
@@ -685,13 +686,12 @@ public void StartGame(bool knifeRound) {
         }
     }
 
-    ServerCommand("exec %s", LIVE_CONFIG);
+    ExecCfg(g_LiveCfgCvar);
 
     if (knifeRound) {
         if (g_KnifeChangedCvars != INVALID_HANDLE)
             CloseCvarStorage(g_KnifeChangedCvars);
         g_KnifeChangedCvars = ExecuteAndSaveCvars(KNIFE_CONFIG);
-        ServerCommand("exec %s", KNIFE_CONFIG);
         EndWarmup();
         CreateTimer(3.0, StartKnifeRound);
     } else {

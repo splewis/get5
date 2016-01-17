@@ -394,3 +394,9 @@ public MatchSideType MatchSideTypeFromString(const char[] str) {
         return MatchSideType_AlwaysKnife;
     }
 }
+
+stock void ExecCfg(ConVar cvar) {
+    char cfg[PLATFORM_MAX_PATH];
+    cvar.GetString(cfg, sizeof(cfg));
+    ServerCommand("exec \"%s\"", cfg);
+}

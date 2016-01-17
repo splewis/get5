@@ -64,6 +64,14 @@ public bool LoadMatchConfig(const char[] config) {
         for (int i = 0; i < MaxMapsToPlay(g_MapsToWin); i++) {
             g_MapList.GetString(i, mapName, sizeof(mapName));
             g_MapsToPlay.PushString(mapName);
+
+            if (g_MatchSideType == MatchSideType_Standard) {
+                g_MapSides.Push(SideChoice_KnifeRound);
+            } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
+                g_MapSides.Push(SideChoice_KnifeRound);
+            } else if (g_MatchSideType == MatchSideType_NeverKnife) {
+                g_MapSides.Push(SideChoice_Team1CT);
+            }
         }
 
         g_MapList.GetString(0, mapName, sizeof(mapName));

@@ -215,8 +215,12 @@ public Action Timer_InfoMessages(Handle timer) {
         if (AllTeamsReady(false) && !AllTeamsReady(true)) {
             Get5_MessageToAll("Waiting for the casters to type {GREEN}!ready {NORMAL}to begin.");
         } else {
-            Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready.");
-            // TODO: print whether it's a knife or who is starting on CT
+            SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
+            if (sides == SideChoice_KnifeRound) {
+                Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to knife.");
+            } else {
+                Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to begin.");
+            }
         }
     } else if (g_GameState == GameState_PostGame) {
         Get5_MessageToAll("The map will change once the GOTV broadcast has ended.");

@@ -31,6 +31,9 @@ public void MapVetoController(int client) {
     int mapsLeft = GetNumMapsLeft();
     int maxMaps = MaxMapsToPlay(g_MapsToWin);
 
+    int mapsPicked = g_MapsToPlay.Length;
+    int sidesSet = g_MapSides.Length;
+
     // This is a dirty hack to get ban/ban/pick/pick/ban/ban
     // instead of straight vetoing until the maplist is the length
     // of the series.
@@ -41,7 +44,20 @@ public void MapVetoController(int client) {
         bo3_hack = true;
     }
 
-    if (mapsLeft == 1) {
+    if (sidesSet < mapsPicked) {
+        if (g_MatchSideType == MatchSideType_Standard) {
+            GiveSidePickMenu(client);
+
+        } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
+            g_MapSides.Push(SideChoice_KnifeRound);
+            MapVetoController(client);
+
+        } else if (g_MatchSideType == MatchSideType_NeverKnife) {
+            g_MapSides.Push(SideChoice_Team1CT);
+            MapVetoController(client);
+        }
+
+    } else if (mapsLeft == 1) {
         // Only 1 map left in the pool, add it directly to the active maplist.
         char mapName[PLATFORM_MAX_PATH];
         g_MapsLeftInVetoPool.GetString(0, mapName, sizeof(mapName));
@@ -56,7 +72,7 @@ public void MapVetoController(int client) {
         }
 
         VetoFinished();
-    } else if (mapsLeft + g_MapsToPlay.Length <= maxMaps || bo3_hack) {
+    } else if (mapsLeft + mapsPicked <= maxMaps || bo3_hack) {
         GiveMapPickMenu(client);
     } else {
         GiveVetoMenu(client);
@@ -89,24 +105,16 @@ public int MapPickHandler(Menu menu, MenuAction action, int param1, int param2) 
             g_FormattedTeamNames[team], mapName, g_MapsToPlay.Length);
         g_LastVetoTeam = team;
 
-        if (g_MatchSideType == MatchSideType_Standard) {
-            GiveSidePickMenu(GetNextTeamCaptain(client));
-        } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
-            g_MapSides.Push(SideChoice_KnifeRound);
-            MapVetoController(GetNextTeamCaptain(client));
-        } else if (g_MatchSideType == MatchSideType_NeverKnife) {
-            g_MapSides.Push(SideChoice_Team1CT);
-            MapVetoController(GetNextTeamCaptain(client));
-        }
+        MapVetoController(GetNextTeamCaptain(client));
+
+    } else if (action == MenuAction_Cancel) {
+        AbortVeto();
+
     } else if (action == MenuAction_End) {
         delete menu;
     }
 }
 
-// TODO: by GiveSidePickMenu not being called from the MapVetoController
-// this bypasses any checks that maintain consistency when a player
-// disconnects during the veto phase. It would be better for
-// GiveSidePickMenu to be called there than the MapPickHandler callback.
 public void GiveSidePickMenu(int client) {
     Menu menu = new Menu(SidePickMenuHandler);
     menu.ExitButton = false;
@@ -141,6 +149,10 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
             g_FormattedTeamNames[team], choice);
 
         MapVetoController(client);
+
+    } else if (action == MenuAction_Cancel) {
+        AbortVeto();
+
     } else if (action == MenuAction_End) {
         delete menu;
     }
@@ -170,6 +182,10 @@ public int VetoHandler(Menu menu, MenuAction action, int param1, int param2) {
 
         MapVetoController(GetNextTeamCaptain(client));
         g_LastVetoTeam = team;
+
+    } else if (action == MenuAction_Cancel) {
+        AbortVeto();
+
     } else if (action == MenuAction_End) {
         delete menu;
     }

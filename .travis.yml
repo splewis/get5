@@ -5,6 +5,10 @@ addons:
         - lib32stdc++6  # needed for spcomp
         - python-demjson  # needed for jsonlint
 
+env:
+    - SMVERSION=1.7
+    - SMVERSION=1.8
+
 before_script:
     # install smbuilder
     - git clone https://github.com/splewis/sm-builder
@@ -14,7 +18,7 @@ before_script:
     - cd ..
 
     # install the sourcemod compiler
-    - SMPACKAGE="http://sourcemod.net/latest.php?os=linux&version=1.7"
+    - SMPACKAGE="http://sourcemod.net/latest.php?os=linux&version=${SMVERSION}"
     - wget $SMPACKAGE
     - tar xfz $(basename $SMPACKAGE)
     - cd addons/sourcemod/scripting/

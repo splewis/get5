@@ -145,7 +145,7 @@ public void OnPluginStart() {
     /** Create and exec plugin's configuration file **/
     AutoExecConfig(true, "get5");
 
-    g_VersionCvar = CreateConVar("get5_version", PLUGIN_VERSION, "Current get5 version", FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
+    g_VersionCvar = CreateConVar("get5_version", PLUGIN_VERSION, "Current get5 version", FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
     g_VersionCvar.SetString(PLUGIN_VERSION);
 
     /** Client commands **/

@@ -1,6 +1,6 @@
 /*
  * logdebug.inc by Dr. McKay
- * 
+ *
  * A simple to use library for debug logging which can be redirected or disabled on-the-fly.
  * Employs transitional syntax - SourceMod 1.7 or newer is required to compile and run.
  */
@@ -32,7 +32,7 @@ int g_DebugAdminFlags;
 
 /**
  * Inits debug logging. You must call this in OnPluginStart().
- * 
+ *
  * @param convarName		A name to use for the cvar which controls debug log output. Also used as filename for logfile.
  * @param debugTag			Tag to prepend to messages, without []. Max 10 characters.
  * @param adminFlag			One or more admin flagbits which define whether a user is an "admin". If you pass multiple flags, users will need ALL flags.
@@ -40,34 +40,34 @@ int g_DebugAdminFlags;
  */
 stock void InitDebugLog(const char[] convarName, const char[] debugTag, int adminFlags = ADMFLAG_GENERIC) {
 	BuildPath(Path_SM, g_DebugLogFileName, sizeof(g_DebugLogFileName), "logs/%s.log", convarName);
-	
+
 	char flagChars[32];
 	AdminFlag flags[22];
 	int numFlags = FlagBitsToArray(adminFlags, flags, sizeof(flags));
 	for(int i = 0; i < numFlags; i++) {
 		int len = strlen(flagChars);
-		
+
 		if(len > 0) {
 			len += StrCat(flagChars, sizeof(flagChars), ", ");
 		}
-		
+
 		FindFlagChar(flags[i], view_as<int>(flagChars[len]));
 		flagChars[len + 1] = '\0';
 	}
-	
+
 	g_DebugAdminFlags = adminFlags;
-	
+
 	char convarDescription[512];
 	Format(convarDescription, sizeof(convarDescription), "Add up values to enable debug logging to those locations\n  1 = server console\n  2 = all clients' consoles\n  4 = consoles of admins with '%s' flag%s or access to '%s' override\n  8 = all clients' chat\n  16 = chat of admins with '%s' flag%s or access to '%s' override\n  32 = debug log file %s", flagChars, flagChars[1] == '\0' ? "" : "s", convarName, flagChars, flagChars[1] == '\0' ? "" : "s", convarName, g_DebugLogFileName);
-	g_cvarDebugMode = CreateConVar(convarName, "0", convarDescription, FCVAR_DONTRECORD|FCVAR_PLUGIN, true, 0.0, true, 63.0);
-	
+	g_cvarDebugMode = CreateConVar(convarName, "0", convarDescription, FCVAR_DONTRECORD, true, 0.0, true, 63.0);
+
 	strcopy(g_DebugTag, sizeof(g_DebugTag), debugTag);
 	strcopy(g_DebugCvarName, sizeof(g_DebugCvarName), convarName);
 }
 
 /**
  * Logs a message to all enabled debug output points
- * 
+ *
  * @param format		Message text with formatting tokens
  * @param ...			Variable number of format parameters
  * @return				true if message was output to at least one place
@@ -76,19 +76,19 @@ stock bool LogDebug(const char[] format, any ...) {
 	if(g_cvarDebugMode == null) {
 		ThrowError("InitDebugLog must be called before LogDebug");
 	}
-	
+
 	int output = g_cvarDebugMode.IntValue;
 	if(output == 0) {
 		return false;
 	}
-	
+
 	char buffer[512];
 	VFormat(buffer, sizeof(buffer), format, 2);
-	
+
 	if(output & DEBUG_SERVER_CONSOLE) {
 		PrintToServer("[%s] %s", g_DebugTag, buffer);
 	}
-	
+
 	if(output & DEBUG_CLIENT_CONSOLE) {
 		for(int i = 1; i <= MaxClients; i++) {
 			if(IsClientInGame(i) && !IsFakeClient(i)) {
@@ -96,7 +96,7 @@ stock bool LogDebug(const char[] format, any ...) {
 			}
 		}
 	}
-	
+
 	if(output & DEBUG_ADMIN_CONSOLE) {
 		for(int i = 1; i <= MaxClients; i++) {
 			if(IsClientInGame(i) && !IsFakeClient(i) && CheckCommandAccess(i, g_DebugCvarName, g_DebugAdminFlags, true)) {
@@ -104,11 +104,11 @@ stock bool LogDebug(const char[] format, any ...) {
 			}
 		}
 	}
-	
+
 	if(output & DEBUG_CLIENT_CHAT) {
 		PrintToChatAll("[%s] %s", g_DebugTag, buffer);
 	}
-	
+
 	if(output & DEBUG_ADMIN_CHAT) {
 		for(int i = 1; i <= MaxClients; i++) {
 			if(IsClientInGame(i) && !IsFakeClient(i) && CheckCommandAccess(i, g_DebugCvarName, g_DebugAdminFlags, true)) {
@@ -116,17 +116,17 @@ stock bool LogDebug(const char[] format, any ...) {
 			}
 		}
 	}
-	
+
 	if(output & DEBUG_LOG_FILE) {
 		LogToFileEx(g_DebugLogFileName, "[%s] %s", g_DebugTag, buffer);
 	}
-	
+
 	return true;
 }
 
 /**
  * Returns a bitstring containing bits enabled for each output location (see DEBUG_ constants)
- * 
+ *
  * @return				bitstring for enabled outputs
  */
 stock int GetDebugOutputs() {

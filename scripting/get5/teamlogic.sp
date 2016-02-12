@@ -286,5 +286,5 @@ public int GetMapScore(int mapNumber, MatchTeam team) {
 }
 
 public int GetMapNumber() {
-    return g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
+    return g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
 }

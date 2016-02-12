@@ -6,10 +6,10 @@ public bool LoadMatchConfig(const char[] config) {
     g_TeamReady[MatchTeam_Team1] = false;
     g_TeamReady[MatchTeam_Team2] = false;
     g_TeamReady[MatchTeam_TeamSpec] = false;
-    g_TeamMapScores[MatchTeam_Team1] = 0;
-    g_TeamMapScores[MatchTeam_Team2] = 0;
+    g_TeamSeriesScores[MatchTeam_Team1] = 0;
+    g_TeamSeriesScores[MatchTeam_Team2] = 0;
     g_LastVetoTeam = MatchTeam_Team2;
-    g_MapList.Clear();
+    g_MapPoolList.Clear();
     g_MapsLeftInVetoPool.Clear();
     g_MapsToPlay.Clear();
     g_MapSides.Clear();
@@ -54,15 +54,15 @@ public bool LoadMatchConfig(const char[] config) {
 
     // Copy all the maps into the veto pool.
     char mapName[PLATFORM_MAX_PATH];
-    for (int i = 0; i < g_MapList.Length; i++) {
-        g_MapList.GetString(i, mapName, sizeof(mapName));
+    for (int i = 0; i < g_MapPoolList.Length; i++) {
+        g_MapPoolList.GetString(i, mapName, sizeof(mapName));
         g_MapsLeftInVetoPool.PushString(mapName);
     }
 
     if (g_SkipVeto) {
         // Copy the first k maps from the maplist to the final match maps.
         for (int i = 0; i < MaxMapsToPlay(g_MapsToWin); i++) {
-            g_MapList.GetString(i, mapName, sizeof(mapName));
+            g_MapPoolList.GetString(i, mapName, sizeof(mapName));
             g_MapsToPlay.PushString(mapName);
 
             if (g_MatchSideType == MatchSideType_Standard) {
@@ -74,7 +74,7 @@ public bool LoadMatchConfig(const char[] config) {
             }
         }
 
-        g_MapList.GetString(0, mapName, sizeof(mapName));
+        g_MapPoolList.GetString(0, mapName, sizeof(mapName));
         ChangeState(GameState_Warmup);
 
         char currentMap[PLATFORM_MAX_PATH];
@@ -183,9 +183,9 @@ static bool LoadMatchFromKv(KeyValues kv) {
         return false;
     }
 
-    if (AddSubsectionKeysToList(kv, "maplist", g_MapList, PLATFORM_MAX_PATH) <= 0) {
+    if (AddSubsectionKeysToList(kv, "maplist", g_MapPoolList, PLATFORM_MAX_PATH) <= 0) {
         LogError("Failed to find \"maplist\" section in config, using fallback maplist.");
-        LoadDefaultMapList(g_MapList);
+        LoadDefaultMapList(g_MapPoolList);
     }
 
     if (kv.JumpToKey("cvars")) {
@@ -243,9 +243,9 @@ static bool LoadMatchFromJson(Handle json) {
         return false;
     }
 
-    if (AddJsonSubsectionArrayToList(json, "maplist", g_MapList, PLATFORM_MAX_PATH) <= 0) {
+    if (AddJsonSubsectionArrayToList(json, "maplist", g_MapPoolList, PLATFORM_MAX_PATH) <= 0) {
         LogError("Failed to find \"maplist\" array in match json, using fallback maplist.");
-        LoadDefaultMapList(g_MapList);
+        LoadDefaultMapList(g_MapPoolList);
     }
 
     Handle cvars = json_object_get(json, "cvars");
@@ -305,7 +305,7 @@ public void SetMatchTeamCvars() {
         tTeam = MatchTeam_Team2;
     }
 
-    int mapsPlayed = g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
+    int mapsPlayed = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
 
     // Get the match configs set by the config file.
     // These might be modified so copies are made here.

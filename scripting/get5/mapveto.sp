@@ -40,7 +40,7 @@ public void MapVetoController(int client) {
     // This only applies to a standard Bo3 in the 7-map pool.
     // TODO: It should be written more generically.
     bool bo3_hack = false;
-    if (maxMaps == 3 && (mapsLeft == 4 || mapsLeft == 5) && g_MapList.Length == 7) {
+    if (maxMaps == 3 && (mapsLeft == 4 || mapsLeft == 5) && g_MapPoolList.Length == 7) {
         bo3_hack = true;
     }
 

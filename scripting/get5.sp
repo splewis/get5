@@ -55,7 +55,7 @@ ConVar g_WarmupCfgCvar;
 /** Series config game-state **/
 int g_MapsToWin = 1;
 char g_MatchID[MATCH_ID_LENGTH];
-ArrayList g_MapList = null;
+ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MatchTeam_Count];
 char g_TeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
 char g_FormattedTeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
@@ -70,18 +70,17 @@ MatchSideType g_MatchSideType = MatchSideType_Standard;
 ArrayList g_CvarNames = null;
 ArrayList g_CvarValues = null;
 
-// Other state
+/** Other state **/
 GameState g_GameState = GameState_None;
 ArrayList g_MapsToPlay = null;
 ArrayList g_MapSides = null;
 ArrayList g_MapsLeftInVetoPool = null;
 MatchTeam g_LastVetoTeam;
 
-// int g_TeamScoresPerMap[MatchTeam_Count][MAX_SERIES_MAPS]; // Score acheived on each map.
 ArrayList g_TeamScoresPerMap = null;
 char g_LoadedConfigFile[PLATFORM_MAX_PATH];
 int g_VetoCaptains[MatchTeam_Count]; // Clients doing the map vetos.
-int g_TeamMapScores[MatchTeam_Count]; // Current number of maps won per-team.
+int g_TeamSeriesScores[MatchTeam_Count]; // Current number of maps won per-team.
 bool g_TeamReady[MatchTeam_Count]; // Whether a team is marked as ready.
 int g_TeamSide[MatchTeam_Count]; // Current CS_TEAM_* side for the team.
 bool g_TeamReadyForUnpause[MatchTeam_Count];
@@ -90,7 +89,7 @@ bool g_TeamReadyForUnpause[MatchTeam_Count];
 MatchTeam g_LastRoundWinner = MatchTeam_TeamNone;
 MatchTeam g_KnifeWinnerTeam = MatchTeam_TeamNone;
 
-// Map-game state not related to the actual gameplay.
+/** Map-game state not related to the actual gameplay. **/
 char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
 bool g_MovingClientToCoach[MAXPLAYERS+1];
@@ -185,7 +184,7 @@ public void OnPluginStart() {
     AddCommandListener(Command_JoinGame, "joingame");
 
     /** Setup data structures **/
-    g_MapList = new ArrayList(PLATFORM_MAX_PATH);
+    g_MapPoolList = new ArrayList(PLATFORM_MAX_PATH);
     g_MapsLeftInVetoPool = new ArrayList(PLATFORM_MAX_PATH);
     g_MapsToPlay = new ArrayList(PLATFORM_MAX_PATH);
     g_MapSides = new ArrayList();
@@ -483,9 +482,9 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
         AddMapScore();
         if (winningTeam == MatchTeam_Team1) {
-            g_TeamMapScores[MatchTeam_Team1]++;
+            g_TeamSeriesScores[MatchTeam_Team1]++;
         } else {
-            g_TeamMapScores[MatchTeam_Team2]++;
+            g_TeamSeriesScores[MatchTeam_Team2]++;
         }
 
         char mapName[PLATFORM_MAX_PATH];
@@ -499,24 +498,24 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
         Call_Finish();
 
         float minDelay = FindConVar("tv_delay").FloatValue + MATCH_END_DELAY_AFTER_TV;
-        if (g_TeamMapScores[MatchTeam_Team1] == g_MapsToWin) {
+        if (g_TeamSeriesScores[MatchTeam_Team1] == g_MapsToWin) {
             Get5_MessageToAll("%s has won the series.", g_FormattedTeamNames[MatchTeam_Team1]);
             CreateTimer(minDelay, Timer_EndSeries);
-        } else if (g_TeamMapScores[MatchTeam_Team2] == g_MapsToWin) {
+        } else if (g_TeamSeriesScores[MatchTeam_Team2] == g_MapsToWin) {
             Get5_MessageToAll("%s has won the series.", g_FormattedTeamNames[MatchTeam_Team2]);
             CreateTimer(minDelay, Timer_EndSeries);
         } else {
-            if (g_TeamMapScores[MatchTeam_Team1] > g_TeamMapScores[MatchTeam_Team2]) {
+            if (g_TeamSeriesScores[MatchTeam_Team1] > g_TeamSeriesScores[MatchTeam_Team2]) {
                 Get5_MessageToAll("%s{NORMAL} is winning the series %d-%d",
-                    g_FormattedTeamNames[MatchTeam_Team1], g_TeamMapScores[MatchTeam_Team1], g_TeamMapScores[MatchTeam_Team2]);
-            } else if (g_TeamMapScores[MatchTeam_Team2] > g_TeamMapScores[MatchTeam_Team1]) {
+                    g_FormattedTeamNames[MatchTeam_Team1], g_TeamSeriesScores[MatchTeam_Team1], g_TeamSeriesScores[MatchTeam_Team2]);
+            } else if (g_TeamSeriesScores[MatchTeam_Team2] > g_TeamSeriesScores[MatchTeam_Team1]) {
                 Get5_MessageToAll("%s {NORMAL}is winning the series %d-%d",
-                    g_FormattedTeamNames[MatchTeam_Team2], g_TeamMapScores[MatchTeam_Team2], g_TeamMapScores[MatchTeam_Team1]);
+                    g_FormattedTeamNames[MatchTeam_Team2], g_TeamSeriesScores[MatchTeam_Team2], g_TeamSeriesScores[MatchTeam_Team1]);
             } else {
-                Get5_MessageToAll("The series is tied at %d-%d", g_TeamMapScores[MatchTeam_Team1], g_TeamMapScores[MatchTeam_Team1]);
+                Get5_MessageToAll("The series is tied at %d-%d", g_TeamSeriesScores[MatchTeam_Team1], g_TeamSeriesScores[MatchTeam_Team1]);
             }
 
-            int index = g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2];
+            int index = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
             char nextMap[PLATFORM_MAX_PATH];
             g_MapsToPlay.GetString(index, nextMap, sizeof(nextMap));
 
@@ -552,14 +551,14 @@ public Action Timer_EndSeries(Handle timer) {
     StopRecording();
 
     MatchTeam winningTeam  = MatchTeam_Team1;
-    if (g_TeamMapScores[MatchTeam_Team2] > g_TeamMapScores[MatchTeam_Team1]) {
+    if (g_TeamSeriesScores[MatchTeam_Team2] > g_TeamSeriesScores[MatchTeam_Team1]) {
         winningTeam = MatchTeam_Team2;
     }
 
     Call_StartForward(g_hOnSeriesResult);
     Call_PushCell(winningTeam);
-    Call_PushCell(g_TeamMapScores[MatchTeam_Team1]);
-    Call_PushCell(g_TeamMapScores[MatchTeam_Team2]);
+    Call_PushCell(g_TeamSeriesScores[MatchTeam_Team1]);
+    Call_PushCell(g_TeamSeriesScores[MatchTeam_Team2]);
     Call_Finish();
 }
 
@@ -676,7 +675,7 @@ public void StartGame(bool knifeRound) {
         char demoName[PLATFORM_MAX_PATH];
         g_DemoNameFormatCvar.GetString(demoName, sizeof(demoName));
 
-        int mapNumber = g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2] + 1;
+        int mapNumber = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] + 1;
         ReplaceStringWithInt(demoName, sizeof(demoName), "{MAPNUMBER}", mapNumber, false);
         ReplaceString(demoName, sizeof(demoName), "{MATCHID}", g_MatchID, false);
         ReplaceString(demoName, sizeof(demoName), "{MAPNAME}", mapName, false);
@@ -730,7 +729,7 @@ public Action Command_Status(int client, int args) {
     if (g_GameState != GameState_None) {
         ReplyToCommand(client, "  \"loaded_config_file\": \"%s\",", g_LoadedConfigFile);
         ReplyToCommand(client, "  \"map_number\": %d,",
-            g_TeamMapScores[MatchTeam_Team1] + g_TeamMapScores[MatchTeam_Team2] + 1);
+            g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] + 1);
 
         ReplyToCommand(client, "  \"team1\": {");
         ReplyToTeamInfo(client, MatchTeam_Team1);
@@ -767,11 +766,11 @@ static void ReplyToTeamInfo(int client, MatchTeam matchTeam) {
     char side[4];
     CSTeamString(team, side, sizeof(side));
     ReplyToCommand(client, "    \"name\": \"%s\",", g_TeamNames[matchTeam]);
-    ReplyToCommand(client, "    \"map_score\": %d,", g_TeamMapScores[matchTeam]);
+    ReplyToCommand(client, "    \"series_score\": %d,", g_TeamSeriesScores[matchTeam]);
     ReplyToCommand(client, "    \"ready\": %d,", g_TeamReady[matchTeam]);
     ReplyToCommand(client, "    \"side\": \"%s\",", side);
     ReplyToCommand(client, "    \"connected_clients\": %d,", GetNumHumansOnTeam(team));
-    ReplyToCommand(client, "    \"current_score\": %d", CS_GetTeamScore(team));
+    ReplyToCommand(client, "    \"current_map_score\": %d", CS_GetTeamScore(team));
 }
 
 stock bool AllTeamsReady(bool includeSpec=true) {

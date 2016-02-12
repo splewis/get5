@@ -64,10 +64,16 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
 
     if (csTeam != GetClientTeam(client)) {
         // SwitchPlayerTeam(client, csTeam);
-        if (CountPlayersOnCSTeam(csTeam) >= g_PlayersPerTeam) {
-            LogDebug("Forcing player %N to coach", client);
-            MoveClientToCoach(client);
-            Get5_Message(client, "Because your team is full, you were moved to the coach position.");
+        int count = CountPlayersOnCSTeam(csTeam);
+
+        if (count >= g_PlayersPerTeam) {
+            if (g_CoachingEnabledCvar.IntValue == 0) {
+                KickClient(client, "Your team is full");
+            } else {
+                LogDebug("Forcing player %N to coach", client);
+                MoveClientToCoach(client);
+                Get5_Message(client, "Because your team is full, you were moved to the coach position.");
+            }
         } else {
             LogDebug("Forcing player %N onto %d", client, csTeam);
             FakeClientCommand(client, "jointeam %d", csTeam);
@@ -83,6 +89,10 @@ public void MoveClientToCoach(int client) {
     LogDebug("MoveClientToCoach %L", client);
     MatchTeam matchTeam = GetClientMatchTeam(client);
     if (matchTeam != MatchTeam_Team1 && matchTeam != MatchTeam_Team2) {
+        return;
+    }
+
+    if (g_CoachingEnabledCvar.IntValue == 0) {
         return;
     }
 
@@ -114,11 +124,19 @@ public void MoveClientToCoach(int client) {
 }
 
 public Action Command_SmCoach(int client, int args) {
+    if (g_CoachingEnabledCvar.IntValue == 0) {
+        return Plugin_Handled;
+    }
+
     MoveClientToCoach(client);
     return Plugin_Handled;
 }
 
 public Action Command_Coach(int client, const char[] command, int argc) {
+    if (g_CoachingEnabledCvar.IntValue == 0) {
+        return Plugin_Handled;
+    }
+
     if (!IsAuthedPlayer(client)) {
         return Plugin_Stop;
     }
@@ -175,20 +193,20 @@ public MatchTeam GetAuthMatchTeam(const char[] auth) {
     return MatchTeam_TeamNone;
 }
 
-public int CountPlayersOnCSTeam(int team) {
+stock int CountPlayersOnCSTeam(int team, int exclude=-1) {
     int count = 0;
     for (int i = 1; i <= MaxClients; i++) {
-        if (IsAuthedPlayer(i) && GetClientTeam(i) == team) {
+        if (i != exclude && IsAuthedPlayer(i) && GetClientTeam(i) == team) {
             count++;
         }
     }
     return count;
 }
 
-public int CountPlayersOnMatchTeam(MatchTeam team) {
+stock int CountPlayersOnMatchTeam(MatchTeam team, int exclude=-1) {
     int count = 0;
     for (int i = 1; i <= MaxClients; i++) {
-        if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == team) {
+        if (i != exclude && IsAuthedPlayer(i) && GetClientMatchTeam(i) == team) {
             count++;
         }
     }

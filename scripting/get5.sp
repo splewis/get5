@@ -52,6 +52,9 @@ ConVar g_VersionCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
 
+// Hooked cvars built into csgo
+ConVar g_CoachingEnabledCvar;
+
 /** Series config game-state **/
 int g_MapsToWin = 1;
 char g_MatchID[MATCH_ID_LENGTH];
@@ -147,6 +150,8 @@ public void OnPluginStart() {
     g_VersionCvar = CreateConVar("get5_version", PLUGIN_VERSION, "Current get5 version", FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
     g_VersionCvar.SetString(PLUGIN_VERSION);
 
+    g_CoachingEnabledCvar = FindConVar("sv_coaching_enabled");
+
     /** Client commands **/
     RegConsoleCmd("sm_ready", Command_Ready, "Marks the client as ready");
     RegConsoleCmd("sm_unready", Command_NotReady, "Marks the client as not ready");
@@ -240,10 +245,13 @@ public void OnClientAuthorized(int client, const char[] auth) {
         MatchTeam team = GetClientMatchTeam(client);
         if (team == MatchTeam_TeamNone) {
             KickClient(client, "You are not a player in this match");
+        } else {
+            int teamCount = CountPlayersOnMatchTeam(team, client);
+            if (teamCount >= g_PlayersPerTeam && g_CoachingEnabledCvar.IntValue == 0) {
+                KickClient(client, "Your team is full");
+            }
         }
     }
-
-    // TODO: if team full (and coaching disabled) kick the client
 }
 
 public void OnClientPutInServer(int client) {

@@ -730,6 +730,11 @@ public void ChangeState(GameState state) {
 }
 
 public Action Command_Status(int client, int args) {
+    if (!LibraryExists("smjansson")) {
+        ReplyToCommand("get5_status requires the smjansson extension to be loaded");
+        return Plugin_Handled;
+    }
+
     Handle json = json_object();
 
     set_json_string(json, "matchid", g_MatchID);

@@ -89,7 +89,6 @@ int g_TeamSide[MatchTeam_Count]; // Current CS_TEAM_* side for the team.
 bool g_TeamReadyForUnpause[MatchTeam_Count];
 
 /** Map game-state **/
-MatchTeam g_LastRoundWinner = MatchTeam_TeamNone;
 MatchTeam g_KnifeWinnerTeam = MatchTeam_TeamNone;
 
 /** Map-game state not related to the actual gameplay. **/
@@ -494,7 +493,9 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 
 public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast) {
     if (g_GameState == GameState_Live) {
-        MatchTeam winningTeam = g_LastRoundWinner;
+        int t1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
+        int t2score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
+        MatchTeam winningTeam = (t1score > t2score) ? MatchTeam_Team1 : MatchTeam_Team2;
 
         AddMapScore();
         if (winningTeam == MatchTeam_Team1) {
@@ -586,9 +587,6 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
-    int winner = event.GetInt("winner");
-    g_LastRoundWinner = CSTeamToMatchTeam(winner);
-
     if (g_GameState == GameState_KnifeRound) {
         ChangeState(GameState_WaitingForKnifeRoundDecision);
 
@@ -731,7 +729,7 @@ public void ChangeState(GameState state) {
 
 public Action Command_Status(int client, int args) {
     if (!LibraryExists("smjansson")) {
-        ReplyToCommand("get5_status requires the smjansson extension to be loaded");
+        ReplyToCommand(client, "get5_status requires the smjansson extension to be loaded");
         return Plugin_Handled;
     }
 

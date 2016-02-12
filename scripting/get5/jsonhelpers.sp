@@ -67,3 +67,15 @@ stock int AddJsonSubsectionArrayToList(Handle json, const char[] key, ArrayList 
     }
     return count;
 }
+
+stock void set_json_string(Handle root_json, const char[] key, const char[] value) {
+    Handle value_json = json_string(value);
+    json_object_set(root_json, key, value_json);
+    CloseHandle(value_json);
+}
+
+stock void set_json_int(Handle root_json, const char[] key, int value) {
+    Handle value_json = json_integer(value);
+    json_object_set(root_json, key, value_json);
+    CloseHandle(value_json);
+}

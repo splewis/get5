@@ -382,6 +382,10 @@ public Action Command_Unpause(int client, int args) {
 }
 
 public Action Command_Ready(int client, int args) {
+    if (g_GameState == GameState_None) {
+        return Plugin_Handled;
+    }
+
     MatchTeam t = GetCaptainTeam(client);
     if (t == MatchTeam_Team1 && !g_TeamReady[MatchTeam_Team1]) {
         g_TeamReady[MatchTeam_Team1] = true;
@@ -402,6 +406,10 @@ public Action Command_Ready(int client, int args) {
 }
 
 public Action Command_NotReady(int client, int args) {
+    if (g_GameState == GameState_None) {
+        return Plugin_Handled;
+    }
+
     MatchTeam t = GetCaptainTeam(client);
     if (t == MatchTeam_Team1 && g_TeamReady[MatchTeam_Team1]) {
         Get5_MessageToAll("%s is no longer ready.", g_FormattedTeamNames[MatchTeam_Team1]);
@@ -722,63 +730,69 @@ public void ChangeState(GameState state) {
 }
 
 public Action Command_Status(int client, int args) {
-    ReplyToCommand(client, "{");
-    ReplyToCommand(client, "  \"matchid\": \"%s\",", g_MatchID);
-    ReplyToCommand(client, "  \"plugin_version\": \"%s\",", PLUGIN_VERSION);
+    Handle json = json_object();
+
+    set_json_string(json, "matchid", g_MatchID);
+    set_json_string(json, "plugin_version", PLUGIN_VERSION);
 
     #if defined COMMIT_STRING
-    ReplyToCommand(client, "  \"commit: \"%s\"\",", COMMIT_STRING);
+    set_json_string(json, "commit", COMMIT_STRING);
     #endif
 
     char gamestate[64];
     GameStateString(g_GameState, gamestate, sizeof(gamestate));
-    ReplyToCommand(client, "  \"gamestate\": \"%s\",", gamestate);
+    set_json_string(json, "gamestate", gamestate);
 
     if (g_GameState != GameState_None) {
-        ReplyToCommand(client, "  \"loaded_config_file\": \"%s\",", g_LoadedConfigFile);
-        ReplyToCommand(client, "  \"map_number\": %d,",
-            g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] + 1);
+        set_json_string(json, "loaded_config_file", g_LoadedConfigFile);
+        set_json_int(json, "map_number", GetMapNumber() + 1);
 
-        ReplyToCommand(client, "  \"team1\": {");
-        ReplyToTeamInfo(client, MatchTeam_Team1);
-        ReplyToCommand(client, "  },");
+        Handle team1 = json_object();
+        AddTeamInfo(team1, MatchTeam_Team1);
+        json_object_set(json, "team1", team1);
+        CloseHandle(team1);
 
-        ReplyToCommand(client, "  \"team2\": {");
-        ReplyToTeamInfo(client, MatchTeam_Team2);
-
-        if (g_GameState > GameState_Veto)
-            ReplyToCommand(client, "  },");
-        else
-            ReplyToCommand(client, "  }");
+        Handle team2 = json_object();
+        AddTeamInfo(team2, MatchTeam_Team2);
+        json_object_set(json, "team2", team2);
+        CloseHandle(team2);
     }
 
     if (g_GameState > GameState_Veto) {
-        ReplyToCommand(client, "  \"maps\": {");
-        for (int i = 0; i < g_MapsToPlay.Length; i++) {
+        Handle maps = json_object();
+
+        // Done backwards since the json keys are reported in a way such that
+        // the last added is the first stored.
+        for (int i = g_MapsToPlay.Length - 1; i >= 0; i--) {
+            char mapKey[64];
+            Format(mapKey, sizeof(mapKey), "map%d", i + 1);
+
             char mapName[PLATFORM_MAX_PATH];
             g_MapsToPlay.GetString(i, mapName, sizeof(mapName));
-            if (i + 1 < g_MapsToPlay.Length)
-                ReplyToCommand(client, "    \"map%d\" : \"%s\",", i + 1, mapName);
-            else // No commma on the last map.
-                ReplyToCommand(client, "    \"map%d\" : \"%s\"", i + 1, mapName);
+
+            set_json_string(maps, mapKey, mapName);
         }
-        ReplyToCommand(client, "  }");
+        json_object_set(json, "maps", maps);
+        CloseHandle(maps);
     }
 
-    ReplyToCommand(client, "}");
+    char buffer[4096];
+    json_dump(json, buffer, sizeof(buffer));
+    ReplyToCommand(client, buffer);
+    CloseHandle(json);
     return Plugin_Handled;
 }
 
-static void ReplyToTeamInfo(int client, MatchTeam matchTeam) {
+static void AddTeamInfo(Handle json, MatchTeam matchTeam) {
     int team = MatchTeamToCSTeam(matchTeam);
     char side[4];
     CSTeamString(team, side, sizeof(side));
-    ReplyToCommand(client, "    \"name\": \"%s\",", g_TeamNames[matchTeam]);
-    ReplyToCommand(client, "    \"series_score\": %d,", g_TeamSeriesScores[matchTeam]);
-    ReplyToCommand(client, "    \"ready\": %d,", g_TeamReady[matchTeam]);
-    ReplyToCommand(client, "    \"side\": \"%s\",", side);
-    ReplyToCommand(client, "    \"connected_clients\": %d,", GetNumHumansOnTeam(team));
-    ReplyToCommand(client, "    \"current_map_score\": %d", CS_GetTeamScore(team));
+    set_json_string(json, "name", g_TeamNames[matchTeam]);
+    set_json_int(json, "series_score", g_TeamSeriesScores[matchTeam]);
+    set_json_int(json, "ready", g_TeamReady[matchTeam]);
+    set_json_string(json, "side", side);
+    set_json_int(json, "connected_clients", GetNumHumansOnTeam(team));
+    set_json_int(json, "current_map_score", CS_GetTeamScore(team));
 }
 
 stock bool AllTeamsReady(bool includeSpec=true) {

@@ -3,11 +3,12 @@ public bool LoadMatchConfig(const char[] config) {
         return false;
     }
 
-    g_TeamReady[MatchTeam_Team1] = false;
-    g_TeamReady[MatchTeam_Team2] = false;
-    g_TeamReady[MatchTeam_TeamSpec] = false;
-    g_TeamSeriesScores[MatchTeam_Team1] = 0;
-    g_TeamSeriesScores[MatchTeam_Team2] = 0;
+    LOOP_TEAMS(team) {
+        g_TeamReady[team] = false;
+        g_TeamSeriesScores[team] = 0;
+        ClearArray(GetTeamAuths(team));
+    }
+
     g_LastVetoTeam = MatchTeam_Team2;
     g_MapPoolList.Clear();
     g_MapsLeftInVetoPool.Clear();
@@ -16,10 +17,6 @@ public bool LoadMatchConfig(const char[] config) {
     g_CvarNames.Clear();
     g_CvarValues.Clear();
     g_TeamScoresPerMap.Clear();
-
-    ClearArray(GetTeamAuths(MatchTeam_TeamSpec));
-    ClearArray(GetTeamAuths(MatchTeam_Team1));
-    ClearArray(GetTeamAuths(MatchTeam_Team2));
 
     if (StrContains(config, "json") >= 0) {
         if (!LibraryExists("jansson")) {
@@ -87,7 +84,7 @@ public bool LoadMatchConfig(const char[] config) {
 
     for (int i = 1; i <= MaxClients; i++) {
         if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == MatchTeam_TeamNone) {
-            KickClient(i, "You are not a player in ths match");
+            KickClient(i, "You are not a player in this match");
         }
     }
 

@@ -103,6 +103,7 @@ Handle g_KnifeChangedCvars = INVALID_HANDLE;
 Handle g_hOnMapResult = INVALID_HANDLE;
 Handle g_hOnSeriesResult = INVALID_HANDLE;
 
+#include "get5/util.sp"
 #include "get5/kniferounds.sp"
 #include "get5/liveon3.sp"
 #include "get5/maps.sp"
@@ -111,7 +112,6 @@ Handle g_hOnSeriesResult = INVALID_HANDLE;
 #include "get5/natives.sp"
 #include "get5/teamlogic.sp"
 #include "get5/tests.sp"
-#include "get5/util.sp"
 #include "get5/version.sp"
 
 
@@ -279,9 +279,11 @@ public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dont
 
 public void OnMapStart() {
     g_MapChangePending = false;
-    g_TeamReady[MatchTeam_Team1] = false;
-    g_TeamReady[MatchTeam_Team2] = false;
-    g_TeamReady[MatchTeam_TeamSpec] = false;
+
+    LOOP_TEAMS(team) {
+        g_TeamReady[team] = false;
+    }
+
     SetStartingTeams();
 
     if (g_GameState == GameState_None) {

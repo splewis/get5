@@ -4,6 +4,9 @@
 static char _colorNames[][] = {"{NORMAL}", "{DARK_RED}", "{PINK}", "{GREEN}", "{YELLOW}", "{LIGHT_GREEN}", "{LIGHT_RED}", "{GRAY}", "{ORANGE}", "{LIGHT_BLUE}", "{DARK_BLUE}", "{PURPLE}"};
 static char _colorCodes[][] = {"\x01",     "\x02",      "\x03",   "\x04",         "\x05",     "\x06",          "\x07",        "\x08",   "\x09",     "\x0B",         "\x0C",        "\x0E"};
 
+// Convenience macro for looping over match teams.
+#define LOOP_TEAMS(%1) for (MatchTeam %1=MatchTeam_Team1; %1 < MatchTeam_Count; %1++)
+
 // These match CS:GO's m_gamePhase values.
 enum GamePhase {
     GamePhase_FirstHalf = 2,

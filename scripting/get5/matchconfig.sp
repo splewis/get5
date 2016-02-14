@@ -298,14 +298,9 @@ static void LoadDefaultMapList(ArrayList list) {
 }
 
 public void SetMatchTeamCvars() {
-    MatchTeam ctTeam = MatchTeam_Team2;
-    MatchTeam tTeam = MatchTeam_Team1;
-    if (g_TeamSide[MatchTeam_Team1] == CS_TEAM_CT) {
-        ctTeam = MatchTeam_Team1;
-        tTeam = MatchTeam_Team2;
-    }
-
-    int mapsPlayed = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
+    MatchTeam ctTeam = CSTeamToMatchTeam(CS_TEAM_CT);
+    MatchTeam tTeam = CSTeamToMatchTeam(CS_TEAM_T);
+    int mapsPlayed = GetMapNumber();
 
     // Get the match configs set by the config file.
     // These might be modified so copies are made here.
@@ -319,20 +314,30 @@ public void SetMatchTeamCvars() {
         Format(mapstat, sizeof(mapstat), "Map %d of %d",
                mapsPlayed + 1, MaxMapsToPlay(g_MapsToWin));
         SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
+
+        if (g_MapsToWin >= 3) { // Bo5 or higher.
+            char team1Text[MAX_CVAR_LENGTH];
+            char team2Text[MAX_CVAR_LENGTH];
+            IntToString(g_TeamSeriesScores[MatchTeam_Team1], team1Text, sizeof(team1Text));
+            IntToString(g_TeamSeriesScores[MatchTeam_Team2], team2Text, sizeof(team2Text));
+
+            MatchTeamStringsToCSTeam(team1Text, team2Text,
+                ctMatchText, sizeof(ctMatchText),
+                tMatchText, sizeof(tMatchText));
+        }
     }
 
     // Set the match stat text values to display the previous map
     // results for a Bo3 series.
     if (g_MapsToWin == 2 && mapsPlayed >= 1) {
-        char team1Text[MAX_CVAR_LENGTH];
-        char team2Text[MAX_CVAR_LENGTH];
-
         MatchTeam map1Winner = GetMapWinner(0);
         char map1[PLATFORM_MAX_PATH];
         char map2[PLATFORM_MAX_PATH];
         g_MapsToPlay.GetString(0, map1, sizeof(map1));
         g_MapsToPlay.GetString(1, map2, sizeof(map2));
 
+        char team1Text[MAX_CVAR_LENGTH];
+        char team2Text[MAX_CVAR_LENGTH];
         if (mapsPlayed == 0) {
             Format(team1Text, sizeof(team1Text), "0");
             Format(team2Text, sizeof(team2Text), "0");
@@ -376,13 +381,9 @@ public void SetMatchTeamCvars() {
             }
         }
 
-        if (MatchTeamToCSTeam(MatchTeam_Team1) == CS_TEAM_CT) {
-            strcopy(ctMatchText, sizeof(ctMatchText), team1Text);
-            strcopy(tMatchText, sizeof(tMatchText), team2Text);
-        } else {
-            strcopy(tMatchText, sizeof(tMatchText), team1Text);
-            strcopy(ctMatchText, sizeof(ctMatchText), team2Text);
-        }
+        MatchTeamStringsToCSTeam(team1Text, team2Text,
+            ctMatchText, sizeof(ctMatchText),
+            tMatchText, sizeof(tMatchText));
     }
 
     SetTeamInfo(CS_TEAM_CT, g_TeamNames[ctTeam],
@@ -566,4 +567,16 @@ static int AddPlayersToAuthKv(KeyValues kv, MatchTeam team, char teamName[MAX_CV
     }
     kv.GoBack();
     return count;
+}
+
+static void MatchTeamStringsToCSTeam(const char[] team1Str, const char[] team2Str,
+    char[] ctStr, int ctLen,
+    char[] tStr, int tLen) {
+    if (MatchTeamToCSTeam(MatchTeam_Team1) == CS_TEAM_CT) {
+        strcopy(ctStr, ctLen, team1Str);
+        strcopy(tStr, tLen, team2Str);
+    } else {
+        strcopy(tStr, tLen, team1Str);
+        strcopy(ctStr, ctLen, team2Str);
+    }
 }

@@ -134,14 +134,22 @@ public void OnPluginStart() {
     InitDebugLog(DEBUG_CVAR, "get5");
 
     /** ConVars **/
-    g_AutoLoadConfigCvar = CreateConVar("get5_autoload_config", "", "");
-    g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}");
-    g_DemoTimeFormatCvar = CreateConVar("get5_time_format", "%Y-%m-%d_%H", "Time format to use when creating demo file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
-    g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "0", "Whether the plugin kicks new clients when no match is loaded");
-    g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to exec when the game goes live");
-    g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
-    g_WaitForSpecReadyCvar = CreateConVar("get5_wait_for_spec_ready", "0", "Whether to wait for spectators to ready up if there are any");
-    g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
+    g_AutoLoadConfigCvar = CreateConVar("get5_autoload_config", "",
+        "Name of a match config file to automatically load when the server loads");
+    g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format",
+        "{MATCHID}_map{MAPNUMBER}_{MAPNAME}", "Format for demo file names");
+    g_DemoTimeFormatCvar = CreateConVar("get5_time_format", "%Y-%m-%d_%H",
+        "Time format to use when creating demo file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
+    g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "0",
+        "Whether the plugin kicks new clients when no match is loaded");
+    g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg",
+        "Config file to exec when the game goes live");
+    g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",
+        "Whether pausing is allowed.");
+    g_WaitForSpecReadyCvar = CreateConVar("get5_wait_for_spec_ready", "0",
+        "Whether to wait for spectators to ready up if there are any");
+    g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg",
+        "Config file to exec in warmup periods");
 
     /** Create and exec plugin's configuration file **/
     AutoExecConfig(true, "get5");
@@ -164,16 +172,23 @@ public void OnPluginStart() {
     RegConsoleCmd("sm_ct", Command_Ct, "Elects to start on CT side after winning a knife round");
 
     /** Admin/server commands **/
-    RegAdminCmd("get5_loadmatch", Command_LoadMatch, ADMFLAG_CHANGEMAP, "Loads a match config file (json or keyvalues) from a file relative to the csgo/ directory");
-    RegAdminCmd("get5_loadmatch_url", Command_LoadMatchUrl, ADMFLAG_CHANGEMAP, "Loads a JSON config file by sending a GET request to download it. Requires either the SteamWorks or system2 extensions");
-    RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP, "Force ends the current match");
-    RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Adds a steamid to a match team");
-    RegAdminCmd("get5_removeplayer", Command_RemovePlayer, ADMFLAG_CHANGEMAP, "Adds a steamid to a match team");
-    RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP, "Creates and loads a match using the players currently on the server as a Bo1 with the current map");
+    RegAdminCmd("get5_loadmatch", Command_LoadMatch, ADMFLAG_CHANGEMAP,
+        "Loads a match config file (json or keyvalues) from a file relative to the csgo/ directory");
+    RegAdminCmd("get5_loadmatch_url", Command_LoadMatchUrl, ADMFLAG_CHANGEMAP,
+        "Loads a JSON config file by sending a GET request to download it. Requires either the SteamWorks or system2 extensions");
+    RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP,
+        "Force ends the current match");
+    RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP,
+        "Adds a steamid to a match team");
+    RegAdminCmd("get5_removeplayer", Command_RemovePlayer, ADMFLAG_CHANGEMAP,
+        "Adds a steamid to a match team");
+    RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP,
+        "Creates and loads a match using the players currently on the server as a Bo1 with the current map");
 
     /** Other commands **/
     RegConsoleCmd("get5_status", Command_Status, "Prints JSON formatted match state info");
-    RegServerCmd("get5_test", Command_Test, "Runs get5 tests - should not be used on a live match server since it will reload a match config to test");
+    RegServerCmd("get5_test", Command_Test,
+        "Runs get5 tests - should not be used on a live match server since it will reload a match config to test");
 
     /** Hooks **/
     HookEvent("player_spawn", Event_PlayerSpawn);
@@ -520,18 +535,28 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
         if (g_TeamSeriesScores[MatchTeam_Team1] == g_MapsToWin) {
             Get5_MessageToAll("%s has won the series.", g_FormattedTeamNames[MatchTeam_Team1]);
             CreateTimer(minDelay, Timer_EndSeries);
+
         } else if (g_TeamSeriesScores[MatchTeam_Team2] == g_MapsToWin) {
             Get5_MessageToAll("%s has won the series.", g_FormattedTeamNames[MatchTeam_Team2]);
             CreateTimer(minDelay, Timer_EndSeries);
+
         } else {
             if (g_TeamSeriesScores[MatchTeam_Team1] > g_TeamSeriesScores[MatchTeam_Team2]) {
                 Get5_MessageToAll("%s{NORMAL} is winning the series %d-%d",
-                    g_FormattedTeamNames[MatchTeam_Team1], g_TeamSeriesScores[MatchTeam_Team1], g_TeamSeriesScores[MatchTeam_Team2]);
+                    g_FormattedTeamNames[MatchTeam_Team1],
+                    g_TeamSeriesScores[MatchTeam_Team1],
+                    g_TeamSeriesScores[MatchTeam_Team2]);
+
             } else if (g_TeamSeriesScores[MatchTeam_Team2] > g_TeamSeriesScores[MatchTeam_Team1]) {
                 Get5_MessageToAll("%s {NORMAL}is winning the series %d-%d",
-                    g_FormattedTeamNames[MatchTeam_Team2], g_TeamSeriesScores[MatchTeam_Team2], g_TeamSeriesScores[MatchTeam_Team1]);
+                    g_FormattedTeamNames[MatchTeam_Team2],
+                    g_TeamSeriesScores[MatchTeam_Team2],
+                    g_TeamSeriesScores[MatchTeam_Team1]);
+
             } else {
-                Get5_MessageToAll("The series is tied at %d-%d", g_TeamSeriesScores[MatchTeam_Team1], g_TeamSeriesScores[MatchTeam_Team1]);
+                Get5_MessageToAll("The series is tied at %d-%d",
+                    g_TeamSeriesScores[MatchTeam_Team1],
+                    g_TeamSeriesScores[MatchTeam_Team1]);
             }
 
             int index = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];

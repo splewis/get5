@@ -126,7 +126,8 @@ public bool LoadMatchFromUrl(const char[] url) {
 
 
 // SteamWorks HTTP callback for fetching a workshop collection
-public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode, Handle data) {
+public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful,
+    EHTTPStatusCode statusCode, Handle data) {
     if (failure || !requestSuccessful) {
         LogError("Steamworks collection request failed, HTTP status code = %d", statusCode);
         return;
@@ -137,7 +138,8 @@ public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
 }
 
 
-public int System2_OnMatchConfigReceived(bool finished, const char[] error, float dltotal, float dlnow, float ultotal, float ulnow, int serial) {
+public int System2_OnMatchConfigReceived(bool finished, const char[] error, float dltotal,
+    float dlnow, float ultotal, float ulnow, int serial) {
     if (!StrEqual(error, "")) {
         LogError("Error receiving remote config: %s", error);
     }
@@ -213,7 +215,8 @@ static bool LoadMatchFromJson(Handle json) {
     json_object_get_string_safe(json, "side_type", buf, sizeof(buf), "standard");
     g_MatchSideType = MatchSideTypeFromString(buf);
 
-    json_object_get_string_safe(json, "favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText), "matchID");
+    json_object_get_string_safe(json, "favored_percentage_text",
+        g_FavoredTeamText, sizeof(g_FavoredTeamText), "matchID");
     g_FavoredTeamPercentage = json_object_get_int_safe(json, "favored_percentage_team1", 0);
 
     Handle spec = json_object_get(json, "spectators");
@@ -319,7 +322,7 @@ public void SetMatchTeamCvars() {
     }
 
     // Set the match stat text values to display the previous map
-    // results for a Bo3 series (as long as we're past map 1).
+    // results for a Bo3 series.
     if (g_MapsToWin == 2 && mapsPlayed >= 1) {
         char team1Text[MAX_CVAR_LENGTH];
         char team2Text[MAX_CVAR_LENGTH];
@@ -330,7 +333,11 @@ public void SetMatchTeamCvars() {
         g_MapsToPlay.GetString(0, map1, sizeof(map1));
         g_MapsToPlay.GetString(1, map2, sizeof(map2));
 
-        if (mapsPlayed == 1) {
+        if (mapsPlayed == 0) {
+            Format(team1Text, sizeof(team1Text), "0");
+            Format(team2Text, sizeof(team2Text), "0");
+
+        } else if (mapsPlayed == 1) {
             if (map1Winner == MatchTeam_Team1) {
                 Format(team1Text, sizeof(team1Text), "Won %s %d:%d",
                     map1,

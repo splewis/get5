@@ -65,6 +65,7 @@ char g_FormattedTeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
 char g_TeamFlags[MatchTeam_Count][MAX_CVAR_LENGTH];
 char g_TeamLogos[MatchTeam_Count][MAX_CVAR_LENGTH];
 char g_TeamMatchTexts[MatchTeam_Count][MAX_CVAR_LENGTH];
+char g_MatchTitle[MAX_CVAR_LENGTH];
 int g_FavoredTeamPercentage = 0;
 char g_FavoredTeamText[MAX_CVAR_LENGTH];
 int g_PlayersPerTeam = 5;
@@ -500,7 +501,7 @@ public Action Command_LoadMatchUrl(int client, int args) {
  ***********************/
 
 public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
-    if (g_GameState < GameState_KnifeRound) {
+    if (g_GameState != GameState_None && g_GameState < GameState_KnifeRound) {
         int client = GetClientOfUserId(event.GetInt("userid"));
         if (IsPlayer(client) && OnActiveTeam(client)) {
             SetEntProp(client, Prop_Send, "m_iAccount", GetCvarIntSafe("mp_maxmoney"));

@@ -63,6 +63,7 @@ See the example config in [Vavle KeyValues format](configs/get5/example_match.cf
 **Note:** to use a JSON match file, you must install the [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604) sourcemod extension on the server.
 
 - ``matchid``: a string matchid used to identify the match
+- ``match_title``: wrapper on the ``mp_teammatchstat_txt`` cvar, but can use {MAPNUMBER} and {MAXMAPS} as variables that get replaced with their integer values
 - ``maps_to_win``: number of maps needed to win the series (1 in a Bo1, 2 in a Bo3, 3 in a Bo5)
 - ``maplist``: list of the maps in use (an array of strings in JSON, mapnames as keys for KeyValues)
 - ``skip_veto``: whether the veto will be skipped and the maps will come from the maplist (in the order given)

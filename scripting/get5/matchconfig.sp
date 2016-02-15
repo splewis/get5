@@ -150,6 +150,7 @@ public int System2_OnMatchConfigReceived(bool finished, const char[] error, floa
 
 static bool LoadMatchFromKv(KeyValues kv) {
     kv.GetString("matchid", g_MatchID, sizeof(g_MatchID), "matchid");
+    kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), "Map {MAPNUMBER} of {MAXMAPS}");
     g_PlayersPerTeam = kv.GetNum("players_per_team", 5);
     g_MapsToWin = kv.GetNum("maps_to_win", 2);
     g_SkipVeto = kv.GetNum("skip_veto", 0) != 0;
@@ -207,6 +208,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
 
 static bool LoadMatchFromJson(Handle json) {
     json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID), "matchid");
+    json_object_get_string_safe(json, "match_title", g_MatchTitle, sizeof(g_MatchTitle), "Map {MAPNUMBER} of {MAXMAPS}");
     g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", 5);
     g_MapsToWin = json_object_get_int_safe(json, "maps_to_win", 2);
     g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", false);
@@ -309,22 +311,22 @@ public void SetMatchTeamCvars() {
     strcopy(ctMatchText, sizeof(ctMatchText), g_TeamMatchTexts[ctTeam]);
     strcopy(tMatchText, sizeof(tMatchText), g_TeamMatchTexts[tTeam]);
 
-    if (g_MapsToWin >= 2) {
-        char mapstat[128];
-        Format(mapstat, sizeof(mapstat), "Map %d of %d",
-               mapsPlayed + 1, MaxMapsToPlay(g_MapsToWin));
-        SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
+    // Update mp_teammatchstat_txt with the match title.
+    char mapstat[MAX_CVAR_LENGTH];
+    strcopy(mapstat, sizeof(mapstat), g_MatchTitle);
+    ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAPNUMBER}", mapsPlayed + 1);
+    ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAXMAPS}", MaxMapsToPlay(g_MapsToWin));
+    SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
 
-        if (g_MapsToWin >= 3) { // Bo5 or higher.
-            char team1Text[MAX_CVAR_LENGTH];
-            char team2Text[MAX_CVAR_LENGTH];
-            IntToString(g_TeamSeriesScores[MatchTeam_Team1], team1Text, sizeof(team1Text));
-            IntToString(g_TeamSeriesScores[MatchTeam_Team2], team2Text, sizeof(team2Text));
+    if (g_MapsToWin >= 3) {
+        char team1Text[MAX_CVAR_LENGTH];
+        char team2Text[MAX_CVAR_LENGTH];
+        IntToString(g_TeamSeriesScores[MatchTeam_Team1], team1Text, sizeof(team1Text));
+        IntToString(g_TeamSeriesScores[MatchTeam_Team2], team2Text, sizeof(team2Text));
 
-            MatchTeamStringsToCSTeam(team1Text, team2Text,
-                ctMatchText, sizeof(ctMatchText),
-                tMatchText, sizeof(tMatchText));
-        }
+        MatchTeamStringsToCSTeam(team1Text, team2Text,
+            ctMatchText, sizeof(ctMatchText),
+            tMatchText, sizeof(tMatchText));
     }
 
     // Set the match stat text values to display the previous map

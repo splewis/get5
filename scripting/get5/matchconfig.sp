@@ -93,6 +93,7 @@ public bool LoadMatchConfig(const char[] config) {
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
     EnsurePausedWarmup();
+    AddTeamLogosToDownloadTable();
     strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
 
     return true;
@@ -580,5 +581,27 @@ static void MatchTeamStringsToCSTeam(const char[] team1Str, const char[] team2St
     } else {
         strcopy(tStr, tLen, team1Str);
         strcopy(ctStr, ctLen, team2Str);
+    }
+}
+
+// Adds the team logos to the download table.
+static void AddTeamLogosToDownloadTable() {
+    AddTeamLogoToDownloadTable(g_TeamLogos[MatchTeam_Team1]);
+    AddTeamLogoToDownloadTable(g_TeamLogos[MatchTeam_Team2]);
+}
+
+static void AddTeamLogoToDownloadTable(const char[] logoName) {
+    if (StrEqual(logoName, ""))
+        return;
+
+    char logoPath[PLATFORM_MAX_PATH + 1];
+    Format(logoPath, sizeof(logoPath),
+        "resource/flash/econ/tournaments/teams/%s.png",
+        logoName);
+
+    if (FileExists(logoPath)) {
+        AddFileToDownloadsTable(logoPath);
+    } else {
+        LogError("Missing logo file: %s", logoPath);
     }
 }

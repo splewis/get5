@@ -71,7 +71,7 @@ public bool LoadMatchConfig(const char[] config) {
             }
         }
 
-        g_MapPoolList.GetString(0, mapName, sizeof(mapName));
+        g_MapPoolList.GetString(GetMapNumber(), mapName, sizeof(mapName));
         ChangeState(GameState_Warmup);
 
         char currentMap[PLATFORM_MAX_PATH];
@@ -278,6 +278,7 @@ static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] colo
     json_object_get_string_safe(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
+    g_TeamSeriesScores[matchTeam] = json_object_get_int_safe(json, "series_score", 0);
     Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
 }
 
@@ -287,6 +288,7 @@ static void LoadTeamData(KeyValues kv, MatchTeam matchTeam, const char[] default
     kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");
+    g_TeamSeriesScores[matchTeam] = kv.GetNum("series_score", 0);
     Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
 }
 

@@ -534,11 +534,11 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
         float minDelay = FindConVar("tv_delay").FloatValue + MATCH_END_DELAY_AFTER_TV;
         if (g_TeamSeriesScores[MatchTeam_Team1] == g_MapsToWin) {
-            Get5_MessageToAll("%s has won the series.", g_FormattedTeamNames[MatchTeam_Team1]);
+            SeriesWonMessage(MatchTeam_Team1);
             CreateTimer(minDelay, Timer_EndSeries);
 
         } else if (g_TeamSeriesScores[MatchTeam_Team2] == g_MapsToWin) {
-            Get5_MessageToAll("%s has won the series.", g_FormattedTeamNames[MatchTeam_Team2]);
+            SeriesWonMessage(MatchTeam_Team2);
             CreateTimer(minDelay, Timer_EndSeries);
 
         } else {
@@ -572,6 +572,14 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     }
 
     return Plugin_Continue;
+}
+
+static void SeriesWonMessage(MatchTeam team) {
+    if (g_MapsToWin == 1) {
+        Get5_MessageToAll("%s has won the match.", g_FormattedTeamNames[team]);
+    } else {
+        Get5_MessageToAll("%s has won the series.", g_FormattedTeamNames[team]);
+    }
 }
 
 public Action Timer_NextMatchMap(Handle timer) {

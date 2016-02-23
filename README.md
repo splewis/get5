@@ -82,6 +82,7 @@ See the example config in [Vavle KeyValues format](configs/get5/example_match.cf
 - ``logo`` team logo (wraps ``mp_teamlogo_1``)
 - ``matchtext``: warps ``mp_teammatchstat_txt``
 - ``players``: list of Steam2 id's for users on the team
+- ``series_score``: current score in the series, this should only be used to restore a match (e.g., changed server after 1 map), defaults to 0
 
 ## ConVars
 Note: these are auto-executed on plugin start by the auto-generated (the 1st time the plugin starts) file ``cfg/sourcemod/get5.cfg``.

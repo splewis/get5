@@ -578,7 +578,10 @@ static void SeriesWonMessage(MatchTeam team) {
     if (g_MapsToWin == 1) {
         Get5_MessageToAll("%s has won the match.", g_FormattedTeamNames[team]);
     } else {
-        Get5_MessageToAll("%s has won the series.", g_FormattedTeamNames[team]);
+        Get5_MessageToAll("%s has won the series %d-%d.",
+            g_FormattedTeamNames[team],
+            g_TeamSeriesScores[team],
+            g_TeamSeriesScores[OtherMatchTeam(team)]);
     }
 }
 

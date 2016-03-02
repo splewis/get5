@@ -306,3 +306,26 @@ public int GetMapScore(int mapNumber, MatchTeam team) {
 public int GetMapNumber() {
     return g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
 }
+
+public bool AddPlayerToTeam(const char[] auth, MatchTeam team) {
+    if (GetAuthMatchTeam(auth) == MatchTeam_TeamNone) {
+        GetTeamAuths(team).PushString(auth);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+public bool RemovePlayerFromTeams(const char[] auth) {
+    for (int i = 0; i < view_as<int>(MatchTeam_Count); i++) {
+        MatchTeam team = view_as<MatchTeam>(i);
+        if (RemoveAuthFromArray(GetTeamAuths(team), auth)) {
+            int target = AuthToClient(auth);
+            if (IsAuthedPlayer(target)) {
+                KickClient(target, "You are not a player in this match");
+            }
+            return true;
+        }
+    }
+    return false;
+}

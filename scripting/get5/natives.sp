@@ -5,6 +5,10 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
     CreateNative("Get5_GetGameState", Native_GetGameState);
     CreateNative("Get5_Message", Native_Message);
     CreateNative("Get5_MessageToAll", Native_MessageToAll);
+    CreateNative("Get5_LoadMatchConfig", Native_LoadMatchConfig);
+    CreateNative("Get5_LoadMatchConfigFromURL", Native_LoadMatchConfigFromURL);
+    CreateNative("Get5_AddPlayerToTeam", Native_AddPlayerToTeam);
+    CreateNative("Get5_RemovePlayerFromTeam", Naitve_RemovePlayerFromTeam);
     RegPluginLibrary("get5");
     return APLRes_Success;
 }
@@ -69,4 +73,29 @@ public int Native_MessageToAll(Handle plugin, int numParams) {
             PrintToConsole(i, finalMsg);
         }
     }
+}
+
+public int Native_LoadMatchConfig(Handle plugin, int numParams) {
+    char filename[PLATFORM_MAX_PATH];
+    GetNativeString(1, filename, sizeof(filename));
+    return LoadMatchConfig(filename);
+}
+
+public int Native_LoadMatchConfigFromURL(Handle plugin, int numParams) {
+    char url[PLATFORM_MAX_PATH];
+    GetNativeString(1, url, sizeof(url));
+    return LoadMatchFromUrl(url);
+}
+
+public int Native_AddPlayerToTeam(Handle plugin, int numParams) {
+    char auth[PLATFORM_MAX_PATH];
+    GetNativeString(1, auth, sizeof(auth));
+    MatchTeam team = view_as<MatchTeam>(GetNativeCell(2));
+    return AddPlayerToTeam(auth, team);
+}
+
+public int Naitve_RemovePlayerFromTeam(Handle plugin, int numParams) {
+    char auth[PLATFORM_MAX_PATH];
+    GetNativeString(1, auth, sizeof(auth));
+    return RemovePlayerFromTeams(auth);
 }

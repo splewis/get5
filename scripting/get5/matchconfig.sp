@@ -446,7 +446,13 @@ public Action Command_AddPlayer(int client, int args) {
             ReplyToCommand(client, "Unknown team: must be one of team1, team2, spec");
             return Plugin_Handled;
         }
-        GetTeamAuths(team).PushString(auth);
+
+        if (AddPlayerToTeam(auth, team)) {
+            ReplyToCommand(client, "Successfully added player %s to team %s", auth, teamString);
+        } else {
+            ReplyToCommand(client, "Player %s is already on a match team", auth);
+        }
+
     } else {
         ReplyToCommand(client, "Usage: get5_addplayer <auth> <team1|team2|spec>");
     }
@@ -461,15 +467,10 @@ public Action Command_RemovePlayer(int client, int args) {
 
     char auth[AUTH_LENGTH];
     if (args >= 1 && GetCmdArg(1, auth, sizeof(auth))) {
-        for (int i = 0; i < view_as<int>(MatchTeam_Count); i++) {
-            MatchTeam team = view_as<MatchTeam>(i);
-            if (RemoveAuthFromArray(GetTeamAuths(team), auth)) {
-                ReplyToCommand(client, "Successfully removed player %s", auth);
-                int target = AuthToClient(auth);
-                if (IsAuthedPlayer(target)) {
-                    KickClient(target, "You are not a player in this match");
-                }
-            }
+        if (RemovePlayerFromTeams(auth)) {
+            ReplyToCommand(client, "Successfully removed player %s", auth);
+        } else {
+            ReplyToCommand(client, "Failed to find player %s in team lists", auth);
         }
     } else {
         ReplyToCommand(client, "Usage: get5_removeplayer <auth>");

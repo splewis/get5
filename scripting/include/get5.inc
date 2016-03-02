@@ -54,6 +54,21 @@ native void Get5_Message(int client, const char[] format, any:...);
 // Prints a plugin-formatted message to all clients.
 native void Get5_MessageToAll(const char[] format, any:...);
 
+// Loads a match config (keyvalues or JSON) from a local file.
+// Returns true if the config was successfully loaded.
+native bool Get5_LoadMatchConfig(const char[] filename);
+
+// Loads a match config by downloading a remote config via a HTTP GET request.
+native bool Get5_LoadMatchConfigFromURL(const char[] url);
+
+// Adds a player to a match team.
+// Returns if they were successfully added.
+native bool Get5_AddPlayerToTeam(const char[] steamId, MatchTeam team);
+
+// Removes a player from all match teams.
+// Returns if they were successfully removed (false if not round).
+native bool Get5_RemovePlayerFromTeam(const char[] steamId);
+
 public SharedPlugin __pl_get5 = {
     name = "get5",
     file = "get5.smx",
@@ -69,5 +84,9 @@ public __pl_get5_SetNTVOptional() {
     MarkNativeAsOptional("Get5_GetGameState");
     MarkNativeAsOptional("Get5_Message");
     MarkNativeAsOptional("Get5_MessageToAll");
+    MarkNativeAsOptional("Get5_LoadMatchConfig");
+    MarkNativeAsOptional("Get5_LoadMatchConfigFromURL");
+    MarkNativeAsOptional("Get5_AddPlayerToTeam");
+    MarkNativeAsOptional("Get5_RemovePlayerFromTeam");
 }
 #endif

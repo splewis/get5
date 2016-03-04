@@ -6,7 +6,7 @@ stock void ChangeMap(const char[] map, float delay=3.0) {
     WritePackString(data, map);
     g_MapChangePending = true;
 
-    CreateTimer(delay, Timer_DelayedChangeMap, data);
+    CreateDataTimer(delay, Timer_DelayedChangeMap, data);
 }
 
 public Action Timer_DelayedChangeMap(Handle timer, Handle pack) {

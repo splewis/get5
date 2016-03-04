@@ -92,8 +92,9 @@ You should either set these in the above file, or in the match config's ``cvars`
 - ``get5_autoload_config``: a config file to autoload on map starts if no match is loaded
 - ``get5_demo_name_format``: format to name demo files in (default ``{MATCHID}_map{MAPNUMBER}_{MAPNAME}``)
 - ``get5_kick_when_no_match_loaded``: whether to kick all clients if no match is loaded
+- ``get5_live_cfg``: config file executed when the game goes live
 - ``get5_pausing_enabled``: whether pausing (!pause command) is enabled
+- ``get5_quick_restarts``: whether to use a single restart or a full live-on-3 restart process
 - ``get5_time_format``: time format string (default ``"%Y-%m-%d_%H``), only affects if a {TIME} tag is used in ``get5_demo_name_format``
 - ``get5_wait_for_spec_ready``: whether to wait for spectators (if there are any) to ready up to begin
 - ``get5_warmup_cfg``: config file executed in warmup periods
-- ``get5_live_cfg``: config file executed when the game goes live

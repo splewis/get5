@@ -48,6 +48,7 @@ ConVar g_DemoTimeFormatCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_PausingEnabledCvar;
+ConVar g_QuickRestartCvar;
 ConVar g_VersionCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
@@ -147,6 +148,8 @@ public void OnPluginStart() {
         "Config file to exec when the game goes live");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",
         "Whether pausing is allowed.");
+    g_QuickRestartCvar = CreateConVar("get5_quick_restarts", "0",
+        "Whether to use a quick restart or a full live-on-3 restart");
     g_WaitForSpecReadyCvar = CreateConVar("get5_wait_for_spec_ready", "0",
         "Whether to wait for spectators to ready up if there are any");
     g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg",

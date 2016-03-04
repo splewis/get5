@@ -12,9 +12,16 @@ public Action BeginLO3(Handle timer) {
         EndWarmup();
     }
 
-    Get5_MessageToAll("Restart 1/3");
-    RestartGame(1);
-    CreateTimer(3.0, Restart2);
+    if (g_QuickRestartCvar.IntValue == 0) {
+        // Do a single restart.
+        RestartGame(5);
+        CreateTimer(5.1, MatchLive);
+    } else {
+        // Do a true lo3.
+        Get5_MessageToAll("Restart 1/3");
+        RestartGame(1);
+        CreateTimer(3.0, Restart2);
+    }
 
     return Plugin_Handled;
 }

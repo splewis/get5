@@ -45,6 +45,9 @@ forward void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
 forward void Get5_OnSeriesResult(MatchTeam seriesWinner,
     int team1MapScore, int team2MapScore);
 
+// Called when a match config fails to load.
+forward void Get5_OnLoadMatchConfigFailed(const char[] reason);
+
 // Returns the current pug gamestate.
 native GameState Get5_GetGameState();
 

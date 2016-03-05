@@ -20,7 +20,7 @@ public bool LoadMatchConfig(const char[] config) {
 
     if (StrContains(config, "json") >= 0) {
         if (!LibraryExists("jansson")) {
-            LogError("Cannot load a json config without the smjansson extension loaded");
+            MatchConfigFail("Cannot load a json config without the smjansson extension loaded");
             return false;
         }
 
@@ -32,7 +32,7 @@ public bool LoadMatchConfig(const char[] config) {
             CloseHandle(json);
             Get5_MessageToAll("Loaded match config.");
         } else {
-            LogError("Failed to load match config from %s", config);
+            MatchConfigFail("invalid match json");
             return false;
         }
 
@@ -44,7 +44,7 @@ public bool LoadMatchConfig(const char[] config) {
             Get5_MessageToAll("Loaded match config.");
         } else {
             delete kv;
-            LogError("Failed to load match config from %s", config);
+            MatchConfigFail("invalid match kv");
             return false;
         }
     }
@@ -99,6 +99,16 @@ public bool LoadMatchConfig(const char[] config) {
     return true;
 }
 
+static void MatchConfigFail(const char[] reason, any ...) {
+    char buffer[512];
+    VFormat(buffer, sizeof(buffer), reason, 2);
+
+    Call_StartForward(h_hOnLoadMatchConfigFailed);
+    LogError("Failed to load match config: %s", buffer);
+    Call_PushString(buffer);
+    Call_Finish();
+}
+
 public bool LoadMatchFromUrl(const char[] url) {
     bool steamWorksAvaliable = GetFeatureStatus(FeatureType_Native,
         "SteamWorks_CreateHTTPRequest") == FeatureStatus_Available;
@@ -112,7 +122,7 @@ public bool LoadMatchFromUrl(const char[] url) {
     } else if (steamWorksAvaliable) {
         Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
         if (request == INVALID_HANDLE) {
-            LogError("Failed to create HTTP GET request using url: %s", url);
+            MatchConfigFail("Failed to create HTTP GET request");
             return false;
         }
 
@@ -121,6 +131,7 @@ public bool LoadMatchFromUrl(const char[] url) {
         return true;
 
     } else {
+        MatchConfigFail("Neither steamworks nor system2 extensions avaliable");
         return false;
     }
 }
@@ -130,7 +141,7 @@ public bool LoadMatchFromUrl(const char[] url) {
 public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful,
     EHTTPStatusCode statusCode, Handle data) {
     if (failure || !requestSuccessful) {
-        LogError("Steamworks collection request failed, HTTP status code = %d", statusCode);
+        MatchConfigFail("Steamworks GET request failed, HTTP status code = %d", statusCode);
         return;
     }
 
@@ -142,7 +153,7 @@ public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
 public int System2_OnMatchConfigReceived(bool finished, const char[] error, float dltotal,
     float dlnow, float ultotal, float ulnow, int serial) {
     if (!StrEqual(error, "")) {
-        LogError("Error receiving remote config: %s", error);
+        MatchConfigFail("Error receiving remote config: %s", error);
     }
     if (finished) {
         LoadMatchConfig(REMOTE_CONFIG_FILENAME);
@@ -172,7 +183,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
         LoadTeamData(kv, MatchTeam_Team1, "Team1", TEAM1_COLOR);
         kv.GoBack();
     } else {
-        LogError("Missing \"team1\" section in match kv");
+        MatchConfigFail("Missing \"team1\" section in match kv");
         return false;
     }
 
@@ -180,7 +191,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
         LoadTeamData(kv, MatchTeam_Team2, "Team2", TEAM2_COLOR);
         kv.GoBack();
     } else {
-        LogError("Missing \"team2\" section in match kv");
+        MatchConfigFail("Missing \"team2\" section in match kv");
         return false;
     }
 
@@ -233,7 +244,7 @@ static bool LoadMatchFromJson(Handle json) {
         LoadTeamDataJson(team1, MatchTeam_Team1, TEAM1_COLOR);
         CloseHandle(team1);
     } else {
-        LogError("Missing \"team1\" section in match json");
+        MatchConfigFail("Missing \"team1\" section in match json");
         return false;
     }
 
@@ -242,7 +253,7 @@ static bool LoadMatchFromJson(Handle json) {
         LoadTeamDataJson(team2, MatchTeam_Team2, TEAM2_COLOR);
         CloseHandle(team2);
     } else {
-        LogError("Missing \"team2\" section in match json");
+        MatchConfigFail("Missing \"team2\" section in match json");
         return false;
     }
 

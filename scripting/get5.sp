@@ -104,6 +104,7 @@ Handle g_KnifeChangedCvars = INVALID_HANDLE;
 /** Forwards **/
 Handle g_hOnMapResult = INVALID_HANDLE;
 Handle g_hOnSeriesResult = INVALID_HANDLE;
+Handle h_hOnLoadMatchConfigFailed = INVALID_HANDLE;
 
 #include "get5/util.sp"
 #include "get5/kniferounds.sp"
@@ -224,6 +225,8 @@ public void OnPluginStart() {
         Param_Cell, Param_Cell, Param_Cell);
     g_hOnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_Cell,
         Param_Cell, Param_Cell);
+    h_hOnLoadMatchConfigFailed = CreateGlobalForward("Get5_OnLoadMatchConfigFailed",
+        ET_Ignore, Param_String);
 
     /** Start any repeating timers **/
     CreateTimer(LIVE_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);

@@ -6,13 +6,14 @@ stock void ChangeMap(const char[] map, float delay=3.0) {
     WritePackString(data, map);
     g_MapChangePending = true;
 
-    CreateDataTimer(delay, Timer_DelayedChangeMap, data);
+    CreateTimer(delay, Timer_DelayedChangeMap, data);
 }
 
 public Action Timer_DelayedChangeMap(Handle timer, Handle pack) {
     char map[PLATFORM_MAX_PATH];
     ResetPack(pack);
     ReadPackString(pack, map, sizeof(map));
+    CloseHandle(pack);
     ServerCommand("changelevel %s", map);
 
     return Plugin_Handled;

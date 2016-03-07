@@ -150,20 +150,21 @@ stock void EnsurePausedWarmup() {
     if (!InWarmup()) {
         StartWarmup();
     }
-    FindConVar("mp_warmup_pausetimer").IntValue = 1;
+
+    ServerCommand("mp_warmup_pausetimer 1");
+    ServerCommand("mp_do_warmup_period 1");
+    ServerCommand("mp_warmup_pausetimer 1");
 }
 
 stock void StartWarmup(bool indefiniteWarmup=true, int warmupTime=60) {
-    if (indefiniteWarmup) {
-        FindConVar("mp_warmup_pausetimer").IntValue = 1;
-    }
-
+    ServerCommand("mp_do_warmup_period 1");
     ServerCommand("mp_warmuptime %d", warmupTime);
     ServerCommand("mp_warmup_start");
 
-    // for some reason this needs to get set multiple times to work correctly on occasion? (valve pls)
+    // For some reason it needs to get sent twice. Ask Valve.
     if (indefiniteWarmup) {
-        FindConVar("mp_warmup_pausetimer").IntValue = 1;
+        ServerCommand("mp_warmup_pausetimer 1");
+        ServerCommand("mp_warmup_pausetimer 1");
     }
 }
 

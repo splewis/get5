@@ -773,7 +773,7 @@ public void ChangeState(GameState state) {
 }
 
 public Action Command_Status(int client, int args) {
-    if (!LibraryExists("smjansson")) {
+    if (!LibraryExists("jansson")) {
         ReplyToCommand(client, "get5_status requires the smjansson extension to be loaded");
         return Plugin_Handled;
     }

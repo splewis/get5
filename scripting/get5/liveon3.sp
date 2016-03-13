@@ -12,7 +12,7 @@ public Action BeginLO3(Handle timer) {
         EndWarmup();
     }
 
-    if (g_QuickRestartCvar.IntValue == 0) {
+    if (g_QuickRestartCvar.IntValue != 0) {
         // Do a single restart.
         RestartGame(5);
         CreateTimer(5.1, MatchLive);

@@ -109,7 +109,7 @@ static void MatchConfigFail(const char[] reason, any ...) {
     Call_Finish();
 }
 
-public bool LoadMatchFromUrl(const char[] url) {
+stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames=null, ArrayList paramValues=null) {
     bool steamWorksAvaliable = GetFeatureStatus(FeatureType_Native,
         "SteamWorks_CreateHTTPRequest") == FeatureStatus_Available;
     bool system2Avaliable = GetFeatureStatus(FeatureType_Native,
@@ -124,6 +124,21 @@ public bool LoadMatchFromUrl(const char[] url) {
         if (request == INVALID_HANDLE) {
             MatchConfigFail("Failed to create HTTP GET request");
             return false;
+        }
+
+        if (paramNames != null && paramValues != null) {
+            if (paramNames.Length != paramValues.Length) {
+                MatchConfigFail("request paramNames and paramValues size mismatch");
+                return false;
+            }
+
+            char param[128];
+            char value[128];
+            for (int i = 0; i < paramNames.Length; i++) {
+                paramNames.GetString(i, param, sizeof(param));
+                paramValues.GetString(i, value, sizeof(value));
+                SteamWorks_SetHTTPRequestGetOrPostParameter(request, param, value);
+            }
         }
 
         SteamWorks_SetHTTPCallbacks(request, SteamWorks_OnMatchConfigReceived);

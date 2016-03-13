@@ -62,7 +62,10 @@ native void Get5_MessageToAll(const char[] format, any:...);
 native bool Get5_LoadMatchConfig(const char[] filename);
 
 // Loads a match config by downloading a remote config via a HTTP GET request.
-native bool Get5_LoadMatchConfigFromURL(const char[] url);
+// If using the SteamWorks extension, request parameters should be left out of the url
+// and put into the optional ArrayLists parameters.
+native bool Get5_LoadMatchConfigFromURL(const char[] url,
+    ArrayList paramNames=null, ArrayList paramValues=null);
 
 // Adds a player to a match team.
 // Returns if they were successfully added.

@@ -143,7 +143,7 @@ public void OnPluginStart() {
         "{MATCHID}_map{MAPNUMBER}_{MAPNAME}", "Format for demo file names");
     g_DemoTimeFormatCvar = CreateConVar("get5_time_format", "%Y-%m-%d_%H",
         "Time format to use when creating demo file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
-    g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "0",
+    g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "1",
         "Whether the plugin kicks new clients when no match is loaded");
     g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg",
         "Config file to exec when the game goes live");
@@ -396,7 +396,7 @@ public Action Command_Unpause(int client, int args) {
             Get5_MessageToAll("%s wants to unpause, waiting for %s to type !unpause.",
                 g_FormattedTeamNames[MatchTeam_Team1], g_FormattedTeamNames[MatchTeam_Team2]);
         } else if (!g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2]) {
-            Get5_MessageToAll("%s team wants to unpause, waiting for the %s to type !unpause.",
+            Get5_MessageToAll("%s wants to unpause, waiting for %s to type !unpause.",
                 g_FormattedTeamNames[MatchTeam_Team2], g_FormattedTeamNames[MatchTeam_Team1]);
         }
     }

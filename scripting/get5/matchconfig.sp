@@ -256,7 +256,7 @@ static bool LoadMatchFromJson(Handle json) {
 
     Handle team1 = json_object_get(json, "team1");
     if (team1 != INVALID_HANDLE) {
-        LoadTeamDataJson(team1, MatchTeam_Team1, TEAM1_COLOR);
+        LoadTeamDataJson(team1, MatchTeam_Team1, "Team1", TEAM1_COLOR);
         CloseHandle(team1);
     } else {
         MatchConfigFail("Missing \"team1\" section in match json");
@@ -265,7 +265,7 @@ static bool LoadMatchFromJson(Handle json) {
 
     Handle team2 = json_object_get(json, "team2");
     if (team2 != INVALID_HANDLE) {
-        LoadTeamDataJson(team2, MatchTeam_Team2, TEAM2_COLOR);
+        LoadTeamDataJson(team2, MatchTeam_Team2, "Team2", TEAM2_COLOR);
         CloseHandle(team2);
     } else {
         MatchConfigFail("Missing \"team2\" section in match json");
@@ -298,9 +298,12 @@ static bool LoadMatchFromJson(Handle json) {
     return true;
 }
 
-static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] colorTag) {
+static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
     AddJsonSubsectionArrayToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
     json_object_get_string_safe(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH);
+    if (StrEqual(g_TeamNames[matchTeam], ""))
+        strcopy(g_TeamNames[matchTeam], MAX_CVAR_LENGTH, defaultName);
+
     json_object_get_string_safe(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);

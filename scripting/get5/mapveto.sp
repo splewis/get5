@@ -71,6 +71,11 @@ public void MapVetoController(int client) {
             g_MapSides.Push(SideChoice_Team1CT);
         }
 
+        Call_StartForward(g_OnMapPicked);
+        Call_PushCell(MatchTeam_TeamNone);
+        Call_PushString(mapName);
+        Call_Finish();
+
         VetoFinished();
     } else if (mapsLeft + mapsPicked <= maxMaps || bo3_hack) {
         GiveMapPickMenu(client);
@@ -104,6 +109,11 @@ public int MapPickHandler(Menu menu, MenuAction action, int param1, int param2) 
         Get5_MessageToAll("%s picked {GREEN}%s {NORMAL}as map %d",
             g_FormattedTeamNames[team], mapName, g_MapsToPlay.Length);
         g_LastVetoTeam = team;
+
+        Call_StartForward(g_OnMapPicked);
+        Call_PushCell(team);
+        Call_PushString(mapName);
+        Call_Finish();
 
         MapVetoController(GetNextTeamCaptain(client));
 
@@ -179,6 +189,11 @@ public int VetoHandler(Menu menu, MenuAction action, int param1, int param2) {
 
         MatchTeam team = GetClientMatchTeam(client);
         Get5_MessageToAll("%s vetoed {LIGHT_RED}%s", g_FormattedTeamNames[team], mapName);
+
+        Call_StartForward(g_OnMapVetoed);
+        Call_PushCell(team);
+        Call_PushString(mapName);
+        Call_Finish();
 
         MapVetoController(GetNextTeamCaptain(client));
         g_LastVetoTeam = team;

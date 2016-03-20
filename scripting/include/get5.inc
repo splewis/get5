@@ -48,6 +48,15 @@ forward void Get5_OnSeriesResult(MatchTeam seriesWinner,
 // Called when a match config fails to load.
 forward void Get5_OnLoadMatchConfigFailed(const char[] reason);
 
+// Called when a team vetoes a map.
+forward void Get5_OnMapVetoed(MatchTeam team, const char[] map);
+
+// Called when a team selects a map.
+// The team parameter will be MatchTeam_TeamNone if the map was
+// selected as the last remaining map and not by one of the teams
+// specifically.
+forward void Get5_OnMapPicked(MatchTeam team, const char[] map);
+
 // Returns the current pug gamestate.
 native GameState Get5_GetGameState();
 

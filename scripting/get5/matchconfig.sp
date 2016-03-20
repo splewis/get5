@@ -103,7 +103,7 @@ static void MatchConfigFail(const char[] reason, any ...) {
     char buffer[512];
     VFormat(buffer, sizeof(buffer), reason, 2);
 
-    Call_StartForward(h_hOnLoadMatchConfigFailed);
+    Call_StartForward(g_OnLoadMatchConfigFailed);
     LogError("Failed to load match config: %s", buffer);
     Call_PushString(buffer);
     Call_Finish();

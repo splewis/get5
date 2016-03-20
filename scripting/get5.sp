@@ -102,9 +102,11 @@ bool g_PendingSideSwap = false;
 Handle g_KnifeChangedCvars = INVALID_HANDLE;
 
 /** Forwards **/
-Handle g_hOnMapResult = INVALID_HANDLE;
-Handle g_hOnSeriesResult = INVALID_HANDLE;
-Handle h_hOnLoadMatchConfigFailed = INVALID_HANDLE;
+Handle g_OnMapResult = INVALID_HANDLE;
+Handle g_OnSeriesResult = INVALID_HANDLE;
+Handle g_OnLoadMatchConfigFailed = INVALID_HANDLE;
+Handle g_OnMapVetoed = INVALID_HANDLE;
+Handle g_OnMapPicked = INVALID_HANDLE;
 
 #include "get5/util.sp"
 #include "get5/kniferounds.sp"
@@ -221,12 +223,16 @@ public void OnPluginStart() {
     }
 
     /** Create forwards **/
-    g_hOnMapResult = CreateGlobalForward("Get5_OnMapResult", ET_Ignore, Param_String,
+    g_OnMapResult = CreateGlobalForward("Get5_OnMapResult", ET_Ignore, Param_String,
         Param_Cell, Param_Cell, Param_Cell);
-    g_hOnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_Cell,
+    g_OnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_Cell,
         Param_Cell, Param_Cell);
-    h_hOnLoadMatchConfigFailed = CreateGlobalForward("Get5_OnLoadMatchConfigFailed",
+    g_OnLoadMatchConfigFailed = CreateGlobalForward("Get5_OnLoadMatchConfigFailed",
         ET_Ignore, Param_String);
+    g_OnMapVetoed = CreateGlobalForward("Get5_OnMapVetoed",
+        ET_Ignore, Param_Cell, Param_String);
+    g_OnMapPicked =  CreateGlobalForward("Get5_OnMapPicked",
+        ET_Ignore, Param_Cell, Param_String);
 
     /** Start any repeating timers **/
     CreateTimer(LIVE_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
@@ -531,7 +537,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
         char mapName[PLATFORM_MAX_PATH];
         GetCleanMapName(mapName, sizeof(mapName));
 
-        Call_StartForward(g_hOnMapResult);
+        Call_StartForward(g_OnMapResult);
         Call_PushString(mapName);
         Call_PushCell(winningTeam);
         Call_PushCell(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
@@ -617,7 +623,7 @@ public Action Timer_EndSeries(Handle timer) {
         winningTeam = MatchTeam_Team2;
     }
 
-    Call_StartForward(g_hOnSeriesResult);
+    Call_StartForward(g_OnSeriesResult);
     Call_PushCell(winningTeam);
     Call_PushCell(g_TeamSeriesScores[MatchTeam_Team1]);
     Call_PushCell(g_TeamSeriesScores[MatchTeam_Team2]);

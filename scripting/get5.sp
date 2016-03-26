@@ -528,11 +528,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
         MatchTeam winningTeam = (t1score > t2score) ? MatchTeam_Team1 : MatchTeam_Team2;
 
         AddMapScore();
-        if (winningTeam == MatchTeam_Team1) {
-            g_TeamSeriesScores[MatchTeam_Team1]++;
-        } else {
-            g_TeamSeriesScores[MatchTeam_Team2]++;
-        }
+        g_TeamSeriesScores[winningTeam]++;
 
         char mapName[PLATFORM_MAX_PATH];
         GetCleanMapName(mapName, sizeof(mapName));
@@ -686,7 +682,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
         if (roundsPlayed >= 2*roundsPerHalf) {
             int otround = roundsPlayed - 2*roundsPerHalf; // round 33 -> round 3, etc.
             // Do side swaps at OT halves (rounds 3, 9, ...)
-            if (otround + roundsPerOTHalf % (2*roundsPerOTHalf) == 0) {
+            if ((otround + roundsPerOTHalf) % (2 * roundsPerOTHalf) == 0) {
                 LogDebug("Pending OT side swap");
                 g_PendingSideSwap = true;
             }
@@ -833,6 +829,7 @@ public Action Command_Status(int client, int args) {
     char buffer[4096];
     json_dump(json, buffer, sizeof(buffer));
     ReplyToCommand(client, buffer);
+
     CloseHandle(json);
     return Plugin_Handled;
 }

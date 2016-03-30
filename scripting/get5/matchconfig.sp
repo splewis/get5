@@ -633,7 +633,5 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
 
     if (FileExists(logoPath)) {
         AddFileToDownloadsTable(logoPath);
-    } else {
-        LogError("Missing logo file: %s", logoPath);
     }
 }

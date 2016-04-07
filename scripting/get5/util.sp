@@ -401,7 +401,7 @@ stock void ExecCfg(ConVar cvar) {
 }
 
 // Taken from Zephyrus (https://forums.alliedmods.net/showpost.php?p=2231850&postcount=2)
-stock bool ConvertSteam2ToSteam64(const char[] steam2Auth, char[] steam64Auth, int size) {
+static bool ConvertSteam2ToSteam64(const char[] steam2Auth, char[] steam64Auth, int size) {
     if (strlen(steam2Auth) < 11 || steam2Auth[0] != 'S' || steam2Auth[6] == 'I') {
         steam64Auth[0] = 0;
         return false;
@@ -418,8 +418,42 @@ stock bool ConvertSteam2ToSteam64(const char[] steam2Auth, char[] steam64Auth, i
     return true;
 }
 
+static bool ConvertSteam3ToSteam2(const char[] steam3Auth, char[] steam2Auth, int size) {
+    if (StrContains(steam3Auth, "[U:1:") != 0) {
+        return false;
+    }
+
+    // Steam2 -> Steam3 is:
+    // Old: STEAM_0:A:B
+    // New: [U:1:B*2+A]
+    // Example: STEAM_0:1:1234 ---> [U:1:2469]
+    //
+    // So the inverse Steam3 -> Steam2 is:
+    // [U:1:x], x = B * 2 + A
+    // where A = 1 if x odd, A = 0 if x ever
+    // -> B = (x - A) / 2
+
+    // Get the x value as a string, then convert it to an int.
+    char xBuf[AUTH_LENGTH];
+    const int startIndex = 5;
+    int i = startIndex;
+    for (; i < strlen(steam3Auth) - 1; i++) {
+        xBuf[i - startIndex] = steam3Auth[i];
+    }
+    xBuf[i - startIndex] = '\0';
+
+    int x = StringToInt(xBuf);
+    if (x == 0)
+        return false;
+
+    int a = (x % 2);
+    int b = (x - a) / 2;
+
+    Format(steam2Auth, size, "STEAM_0:%d:%d", a, b);
+    return true;
+}
+
 stock bool ConvertAuthToSteam64(const char[] inputId, char outputId[AUTH_LENGTH], bool reportErrors=true) {
-    // TODO: add Steam3 support here
     if (StrContains(inputId, "STEAM_") == 0 && strlen(inputId) >= 11) { // steam2
         return ConvertSteam2ToSteam64(inputId, outputId, sizeof(outputId));
 
@@ -427,8 +461,19 @@ stock bool ConvertAuthToSteam64(const char[] inputId, char outputId[AUTH_LENGTH]
         strcopy(outputId, sizeof(outputId), inputId);
         return true;
 
+    } else if (StrContains(inputId, "[U:1:") == 0) { // steam3
+        // Convert to steam2 then to steam64.
+        char steam2[AUTH_LENGTH];
+        if (ConvertSteam3ToSteam2(inputId, steam2, sizeof(steam2))) {
+            return ConvertSteam2ToSteam64(steam2, outputId, sizeof(outputId));
+        } else {
+            return false;
+        }
+
     } else {
-        LogError("Failed to read input auth id \"%s\", inputId", inputId);
+        if (reportErrors)
+            LogError("Failed to read input auth id \"%s\", inputId", inputId);
+
         return false;
     }
 }

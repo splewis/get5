@@ -40,8 +40,13 @@ static void Utils_Test() {
 
     input = "_0:1:52245092";
     expected = "76561198064755913";
-    AssertFalse("ConvertAuthToSteam64_3_return", ConvertAuthToSteam64(input, output));
+    AssertFalse("ConvertAuthToSteam64_3_return", ConvertAuthToSteam64(input, output, false));
     AssertTrue("ConvertAuthToSteam64_3_value", StrEqual(output, expected));
+
+    input = "[U:1:104490185]";
+    expected = "76561198064755913";
+    AssertTrue("ConvertAuthToSteam64_4_return", ConvertAuthToSteam64(input, output));
+    AssertTrue("ConvertAuthToSteam64_4_value", StrEqual(output, expected));
 
     // AddSubsectionKeysToList
     KeyValues kv = new KeyValues("test");

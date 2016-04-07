@@ -43,10 +43,11 @@ public void EndKnifeRound(bool swap) {
 }
 
 static bool AwaitingKnifeDecision(int client) {
-    return (g_GameState == GameState_WaitingForKnifeRoundDecision) &&
-        IsPlayer(client) && GetClientMatchTeam(client) == g_KnifeWinnerTeam;
+    bool waiting = g_GameState == GameState_WaitingForKnifeRoundDecision;
+    bool onWinningTeam = IsPlayer(client) && GetClientMatchTeam(client) == g_KnifeWinnerTeam;
+    bool admin = (client == 0);
+    return waiting && (onWinningTeam || admin);
 }
-
 
 public Action Command_Stay(int client, int args) {
     if (AwaitingKnifeDecision(client)) {

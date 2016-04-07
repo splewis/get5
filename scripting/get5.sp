@@ -191,6 +191,8 @@ public void OnPluginStart() {
         "Adds a steamid to a match team");
     RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP,
         "Creates and loads a match using the players currently on the server as a Bo1 with the current map");
+    RegAdminCmd("get5_forceready", Command_ForceReady, ADMFLAG_CHANGEMAP,
+        "Force readies all current teams");
 
     /** Other commands **/
     RegConsoleCmd("get5_status", Command_Status, "Prints JSON formatted match state info");
@@ -422,14 +424,14 @@ public Action Command_Ready(int client, int args) {
         g_TeamReady[MatchTeam_Team1] = true;
         if (g_GameState == GameState_PreVeto) {
             Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team1]);
-        } else {
+        } else if (g_GameState == GameState_Warmup) {
             Get5_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team1]);
         }
     } else if (t == MatchTeam_Team2 && !g_TeamReady[MatchTeam_Team2]) {
         g_TeamReady[MatchTeam_Team2] = true;
         if (g_GameState == GameState_PreVeto) {
             Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team2]);
-        } else {
+        } else if (g_GameState == GameState_Warmup) {
             Get5_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team2]);
         }
     }
@@ -449,6 +451,19 @@ public Action Command_NotReady(int client, int args) {
         Get5_MessageToAll("%s is no longer ready.", g_FormattedTeamNames[MatchTeam_Team2]);
         g_TeamReady[MatchTeam_Team2] = false;
     }
+    return Plugin_Handled;
+}
+
+public Action Command_ForceReady(int client, int args) {
+    if (g_GameState != GameState_PreVeto && g_GameState != GameState_Warmup) {
+        return Plugin_Handled;
+    }
+
+    Get5_MessageToAll("An admin has force-readied all teams.");
+    LOOP_TEAMS(team) {
+        g_TeamReady[team] = true;
+    }
+
     return Plugin_Handled;
 }
 

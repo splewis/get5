@@ -46,7 +46,7 @@ Extract the download archive into the csgo/ directory on the server. The only re
 - ``!stay``: elects to stay after a knife round win
 - ``!swap``: elects to swap after a knife round win
 
-#### Server Commands
+#### Server/Admin Commands
 - ``get5_loadmatch``: loads a match config file (JSON or keyvalues) relative from the ``csgo`` directory
 - ``get5_loadmatch_url``: loads a remote (JSON formatted) match config by sending a HTTP GET to the given url, this requires either the [system2](https://forums.alliedmods.net/showthread.php?t=146019) or [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) Extensions
 - ``get5_endmatch``: force ends the current match
@@ -54,6 +54,7 @@ Extract the download archive into the csgo/ directory on the server. The only re
 - ``get5_creatematch``: creates a Bo1 match with the current players on the server on the current map
 - ``get5_addplayer``: adds a steamid to a team (any format for steamid)
 - ``get5_removeplayer``: removes a steamid from all teams (any format for steamid)
+- ``get5_forceready``: marks all teams as ready
 
 
 ## Match Schema

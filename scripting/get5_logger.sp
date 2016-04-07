@@ -54,3 +54,7 @@ public void Get5_OnMapVetoed(MatchTeam team, const char[] map) {
 public void Get5_OnMapPicked(MatchTeam team, const char[] map) {
     Get5_Log("Get5_OnMapPicked: %d picked %s", team, map);
 }
+
+public void Get5_OnDemoFinished(const char[] filename) {
+    Get5_Log("Get5_OnDemoFinished: finished recording", filename);
+}

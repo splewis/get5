@@ -288,27 +288,34 @@ stock int AddKeysToList(KeyValues kv, ArrayList list, int maxKeyLength) {
     return count;
 }
 
+stock int AddSubsectionAuthsToList(KeyValues kv, const char[] section, ArrayList list, int maxKeyLength) {
+    int count = 0;
+    if (kv.JumpToKey(section)) {
+        count = AddAuthsToList(kv, list, maxKeyLength);
+        kv.GoBack();
+    }
+    return count;
+}
+
+stock int AddAuthsToList(KeyValues kv, ArrayList list, int maxKeyLength) {
+    int count = 0;
+    char[] buffer = new char[maxKeyLength];
+    char steam64[AUTH_LENGTH];
+    if (kv.GotoFirstSubKey(false)) {
+        do {
+            kv.GetSectionName(buffer, maxKeyLength);
+            if (ConvertAuthToSteam64(buffer, steam64)) {
+                list.PushString(steam64);
+                count++;
+            }
+        } while (kv.GotoNextKey(false));
+        kv.GoBack();
+    }
+    return count;
+}
+
 stock bool RemoveStringFromArray(ArrayList list, const char[] str) {
     int index = list.FindString(str);
-    if (index != -1) {
-        list.Erase(index);
-        return true;
-    }
-    return false;
-}
-
-stock int FindAuthInArray(ArrayList list, const char[] auth) {
-    char tmp[AUTH_LENGTH];
-    for (int i = 0; i < list.Length; i++) {
-        list.GetString(i, tmp, sizeof(tmp));
-        if (SteamIdsEqual(auth, tmp))
-            return i;
-    }
-    return -1;
-}
-
-stock bool RemoveAuthFromArray(ArrayList list, const char[] auth) {
-    int index = FindAuthInArray(list, auth);
     if (index != -1) {
         list.Erase(index);
         return true;
@@ -336,25 +343,14 @@ stock MatchTeam OtherMatchTeam(MatchTeam team) {
     }
 }
 
-stock bool SteamIdsEqual(const char[] id1, const char[] id2) {
-    if (StrEqual(id1, id2, false)) {
-        return true;
-    }
-
-    if (strlen(id1) < 10 || strlen(id2) < 10) {
-        return false;
-    }
-    return StrEqual(id1[10], id2[10]);
-}
-
 // TODO: might want a auth->client adt-trie to speed this up, maintained during
 // client auth and disconnect forwards.
 stock int AuthToClient(const char[] auth) {
     for (int i = 1; i <= MaxClients; i++) {
         if (IsAuthedPlayer(i)) {
             char clientAuth[AUTH_LENGTH];
-            GetClientAuthId(i, AUTH_METHOD, clientAuth, sizeof(clientAuth));
-            if (SteamIdsEqual(auth, clientAuth)) {
+            GetClientAuthId(i, AuthId_SteamID64, clientAuth, sizeof(clientAuth));
+            if (StrEqual(auth, clientAuth)) {
                 return i;
             }
         }
@@ -402,4 +398,37 @@ stock void ExecCfg(ConVar cvar) {
     char cfg[PLATFORM_MAX_PATH];
     cvar.GetString(cfg, sizeof(cfg));
     ServerCommand("exec \"%s\"", cfg);
+}
+
+// Taken from Zephyrus (https://forums.alliedmods.net/showpost.php?p=2231850&postcount=2)
+stock bool ConvertSteam2ToSteam64(const char[] steam2Auth, char[] steam64Auth, int size) {
+    if (strlen(steam2Auth) < 11 || steam2Auth[0] != 'S' || steam2Auth[6] == 'I') {
+        steam64Auth[0] = 0;
+        return false;
+    }
+    int iUpper = 765611979;
+    int isteam64Auth = StringToInt(steam2Auth[10]) * 2 + 60265728 + steam2Auth[8] - 48;
+    int iDiv = isteam64Auth / 100000000;
+    int iIdx = 9 - (iDiv? iDiv / 10 + 1 : 0);
+    iUpper += iDiv;
+    IntToString(isteam64Auth, steam64Auth[iIdx], size - iIdx);
+    iIdx = steam64Auth[9];
+    IntToString(iUpper, steam64Auth, size);
+    steam64Auth[9] = iIdx;
+    return true;
+}
+
+stock bool ConvertAuthToSteam64(const char[] inputId, char outputId[AUTH_LENGTH], bool reportErrors=true) {
+    // TODO: add Steam3 support here
+    if (StrContains(inputId, "STEAM_") == 0 && strlen(inputId) >= 11) { // steam2
+        return ConvertSteam2ToSteam64(inputId, outputId, sizeof(outputId));
+
+    } else if (StrContains(inputId, "7656119") == 0) { // steam64
+        strcopy(outputId, sizeof(outputId), inputId);
+        return true;
+
+    } else {
+        LogError("Failed to read input auth id \"%s\", inputId", inputId);
+        return false;
+    }
 }

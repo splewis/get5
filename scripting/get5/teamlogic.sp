@@ -155,7 +155,7 @@ public Action Command_Coach(int client, const char[] command, int argc) {
 
 public MatchTeam GetClientMatchTeam(int client) {
     char auth[AUTH_LENGTH];
-    GetClientAuthId(client, AUTH_METHOD, auth, sizeof(auth));
+    GetClientAuthId(client, AuthId_SteamID64, auth, sizeof(auth));
     return GetAuthMatchTeam(auth);
 }
 
@@ -183,10 +183,10 @@ public MatchTeam CSTeamToMatchTeam(int csTeam) {
     }
 }
 
-public MatchTeam GetAuthMatchTeam(const char[] auth) {
+public MatchTeam GetAuthMatchTeam(const char[] steam64) {
     for (int i = 0; i < view_as<int>(MatchTeam_Count); i++) {
         MatchTeam team = view_as<MatchTeam>(i);
-        if (IsAuthOnTeam(auth, team)) {
+        if (IsAuthOnTeam(steam64, team)) {
             return team;
         }
     }
@@ -254,18 +254,7 @@ public ArrayList GetTeamAuths(MatchTeam team) {
 }
 
 public bool IsAuthOnTeam(const char[] auth, MatchTeam team) {
-    return IsAuthInList(auth, GetTeamAuths(team));
-}
-
-public bool IsAuthInList(const char[] auth, ArrayList list) {
-    char buffer[AUTH_LENGTH];
-    for (int i = 0; i < list.Length; i++) {
-        list.GetString(i, buffer, sizeof(buffer));
-        if (SteamIdsEqual(auth, buffer)) {
-            return true;
-        }
-    }
-    return false;
+    return GetTeamAuths(team).FindString(auth) >= 0;
 }
 
 public void SetStartingTeams() {
@@ -308,8 +297,11 @@ public int GetMapNumber() {
 }
 
 public bool AddPlayerToTeam(const char[] auth, MatchTeam team) {
-    if (GetAuthMatchTeam(auth) == MatchTeam_TeamNone) {
-        GetTeamAuths(team).PushString(auth);
+    char steam64[AUTH_LENGTH];
+    ConvertAuthToSteam64(auth, steam64);
+
+    if (GetAuthMatchTeam(steam64) == MatchTeam_TeamNone) {
+        GetTeamAuths(team).PushString(steam64);
         return true;
     } else {
         return false;
@@ -317,10 +309,15 @@ public bool AddPlayerToTeam(const char[] auth, MatchTeam team) {
 }
 
 public bool RemovePlayerFromTeams(const char[] auth) {
+    char steam64[AUTH_LENGTH];
+    ConvertAuthToSteam64(auth, steam64);
+
     for (int i = 0; i < view_as<int>(MatchTeam_Count); i++) {
         MatchTeam team = view_as<MatchTeam>(i);
-        if (RemoveAuthFromArray(GetTeamAuths(team), auth)) {
-            int target = AuthToClient(auth);
+        int index = GetTeamAuths(team).FindString(steam64);
+        if (index >= 0) {
+            GetTeamAuths(team).Erase(index);
+            int target = AuthToClient(steam64);
             if (IsAuthedPlayer(target)) {
                 KickClient(target, "You are not a player in this match");
             }

@@ -26,13 +26,22 @@ static void Utils_Test() {
     AssertEq("MaxMapsToPlay3", MaxMapsToPlay(3), 5);
     AssertEq("MaxMapsToPlay4", MaxMapsToPlay(4), 7);
 
-    // SteamIdsEqual
-    AssertTrue("SteamIdsEqual1", SteamIdsEqual("STEAM_1:1:12345", "STEAM_1:1:12345"));
-    AssertTrue("SteamIdsEqual2", SteamIdsEqual("STEAM_1:1:12345", "STEAM_0:1:12345"));
-    AssertTrue("SteamIdsEqual3", SteamIdsEqual("STEAM_1:1:12345", "STEAM_0:0:12345"));
-    AssertFalse("SteamIdsEqual4", SteamIdsEqual("STEAM_1:1:12345", "STEAM_1:1:11345"));
-    AssertFalse("SteamIdsEqual5", SteamIdsEqual("STEAM_1:1:12345", "STEAM_1:1:12346"));
-    AssertFalse("SteamIdsEqual6", SteamIdsEqual("STEAM_1:1:12345", "STEAM_1:1:125346"));
+    // ConvertAuthToSteam64
+    char input[64] = "STEAM_0:1:52245092";
+    char expected[64] = "76561198064755913";
+    char output[64] = "";
+    AssertTrue("ConvertAuthToSteam64_1_return", ConvertAuthToSteam64(input, output));
+    AssertTrue("ConvertAuthToSteam64_1_value", StrEqual(output, expected));
+
+    input = "76561198064755913";
+    expected = "76561198064755913";
+    AssertTrue("ConvertAuthToSteam64_2_return", ConvertAuthToSteam64(input, output));
+    AssertTrue("ConvertAuthToSteam64_2_value", StrEqual(output, expected));
+
+    input = "_0:1:52245092";
+    expected = "76561198064755913";
+    AssertFalse("ConvertAuthToSteam64_3_return", ConvertAuthToSteam64(input, output));
+    AssertTrue("ConvertAuthToSteam64_3_value", StrEqual(output, expected));
 
     // AddSubsectionKeysToList
     KeyValues kv = new KeyValues("test");

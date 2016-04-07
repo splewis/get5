@@ -68,6 +68,24 @@ stock int AddJsonSubsectionArrayToList(Handle json, const char[] key, ArrayList 
     return count;
 }
 
+stock int AddJsonAuthsToList(Handle json, const char[] key, ArrayList list, int maxValueLength) {
+    int count = 0;
+    Handle array = json_object_get(json, key);
+    if (array != INVALID_HANDLE) {
+        char[] buffer = new char[maxValueLength];
+        for (int i = 0; i < json_array_size(array); i++) {
+            json_array_get_string(array, i, buffer, maxValueLength);
+            char steam64[AUTH_LENGTH];
+            if (ConvertAuthToSteam64(buffer, steam64)) {
+                list.PushString(steam64);
+                count++;
+            }
+        }
+        CloseHandle(array);
+    }
+    return count;
+}
+
 stock void set_json_string(Handle root_json, const char[] key, const char[] value) {
     Handle value_json = json_string(value);
     json_object_set(root_json, key, value_json);

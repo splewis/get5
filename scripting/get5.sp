@@ -10,7 +10,6 @@
 #include <SteamWorks>
 #include <system2>
 #include <smjansson>
-#include "get5/jsonhelpers.sp"
 #define REMOTE_CONFIG_FILENAME "remote.json"
 
 #define LIVE_TIMER_INTERVAL 1.0
@@ -18,7 +17,6 @@
 
 #define DEBUG_CVAR "get5_debug"
 #define AUTH_LENGTH 64
-#define AUTH_METHOD AuthId_Steam2
 #define MATCH_ID_LENGTH 64
 #define MATCH_NAME_LENGTH 64
 #define MAX_CVAR_LENGTH 128
@@ -118,6 +116,7 @@ Handle g_OnMapPicked = INVALID_HANDLE;
 #include "get5/teamlogic.sp"
 #include "get5/tests.sp"
 #include "get5/version.sp"
+#include "get5/jsonhelpers.sp"
 
 
 

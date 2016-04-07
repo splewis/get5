@@ -190,7 +190,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
     kv.GetString("favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText));
 
     if (kv.JumpToKey("spectators")) {
-        AddSubsectionKeysToList(kv, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
+        AddSubsectionAuthsToList(kv, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
         kv.GoBack();
     }
 
@@ -250,7 +250,7 @@ static bool LoadMatchFromJson(Handle json) {
 
     Handle spec = json_object_get(json, "spectators");
     if (spec != INVALID_HANDLE) {
-        AddJsonSubsectionArrayToList(json, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
+        AddJsonAuthsToList(json, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
         CloseHandle(spec);
     }
 
@@ -299,7 +299,7 @@ static bool LoadMatchFromJson(Handle json) {
 }
 
 static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
-    AddJsonSubsectionArrayToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
+    AddJsonAuthsToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
     json_object_get_string_safe(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH);
     if (StrEqual(g_TeamNames[matchTeam], ""))
         strcopy(g_TeamNames[matchTeam], MAX_CVAR_LENGTH, defaultName);
@@ -312,7 +312,7 @@ static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] defa
 }
 
 static void LoadTeamData(KeyValues kv, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
-    AddSubsectionKeysToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
+    AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
     kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, defaultName);
     kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH, "");
@@ -483,7 +483,7 @@ public Action Command_AddPlayer(int client, int args) {
         if (AddPlayerToTeam(auth, team)) {
             ReplyToCommand(client, "Successfully added player %s to team %s", auth, teamString);
         } else {
-            ReplyToCommand(client, "Player %s is already on a match team", auth);
+            ReplyToCommand(client, "Failed to add %s to a match team", auth);
         }
 
     } else {
@@ -503,7 +503,7 @@ public Action Command_RemovePlayer(int client, int args) {
         if (RemovePlayerFromTeams(auth)) {
             ReplyToCommand(client, "Successfully removed player %s", auth);
         } else {
-            ReplyToCommand(client, "Failed to find player %s in team lists", auth);
+            ReplyToCommand(client, "Failed to remove %s from team auth lists", auth);
         }
     } else {
         ReplyToCommand(client, "Usage: get5_removeplayer <auth>");
@@ -599,7 +599,7 @@ static int AddPlayersToAuthKv(KeyValues kv, MatchTeam team, char teamName[MAX_CV
                 }
 
                 count++;
-                GetClientAuthId(i, AUTH_METHOD, auth, sizeof(auth));
+                GetClientAuthId(i, AuthId_SteamID64, auth, sizeof(auth));
                 kv.SetString(auth, "x");
             }
         }

@@ -52,8 +52,8 @@ Extract the download archive into the csgo/ directory on the server. The only re
 - ``get5_endmatch``: force ends the current match
 - ``get5_status``: replies with JSON formatted match state (also available to clients)
 - ``get5_creatematch``: creates a Bo1 match with the current players on the server on the current map
-- ``get5_addplayer``: adds a steamid to a team
-- ``get5_removeplayer``: removes a steamid from all teams
+- ``get5_addplayer``: adds a steamid to a team (any format for steamid)
+- ``get5_removeplayer``: removes a steamid from all teams (any format for steamid)
 
 
 ## Match Schema

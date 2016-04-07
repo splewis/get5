@@ -419,7 +419,7 @@ static bool ConvertSteam2ToSteam64(const char[] steam2Auth, char[] steam64Auth, 
 }
 
 static bool ConvertSteam3ToSteam2(const char[] steam3Auth, char[] steam2Auth, int size) {
-    if (StrContains(steam3Auth, "[U:1:") != 0) {
+    if (StrContains(steam3Auth, "[U:1:") != 0 || strlen(steam3Auth) >= AUTH_LENGTH) {
         return false;
     }
 

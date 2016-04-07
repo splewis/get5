@@ -371,8 +371,8 @@ public void SetMatchTeamCvars() {
         char map2Display[PLATFORM_MAX_PATH];
         g_MapsToPlay.GetString(0, map1, sizeof(map1));
         g_MapsToPlay.GetString(1, map2, sizeof(map2));
-        FormatMapName(map1, map1Display, sizeof(map1Display));
-        FormatMapName(map2, map2Display, sizeof(map2Display));
+        FormatMapName(map1, map1Display, sizeof(map1Display), true);
+        FormatMapName(map2, map2Display, sizeof(map2Display), true);
 
         char team1Text[MAX_CVAR_LENGTH];
         char team2Text[MAX_CVAR_LENGTH];

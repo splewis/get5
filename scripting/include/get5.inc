@@ -57,6 +57,9 @@ forward void Get5_OnMapVetoed(MatchTeam team, const char[] map);
 // specifically.
 forward void Get5_OnMapPicked(MatchTeam team, const char[] map);
 
+// Called when a demo finishes recording.
+forward void Get5_OnDemoFinished(const char[] filename);
+
 // Returns the current pug gamestate.
 native GameState Get5_GetGameState();
 

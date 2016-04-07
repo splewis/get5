@@ -105,6 +105,7 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 Handle g_OnLoadMatchConfigFailed = INVALID_HANDLE;
 Handle g_OnMapVetoed = INVALID_HANDLE;
 Handle g_OnMapPicked = INVALID_HANDLE;
+Handle g_OnDemoFinished = INVALID_HANDLE;
 
 #include "get5/util.sp"
 #include "get5/kniferounds.sp"
@@ -232,6 +233,8 @@ public void OnPluginStart() {
         ET_Ignore, Param_Cell, Param_String);
     g_OnMapPicked =  CreateGlobalForward("Get5_OnMapPicked",
         ET_Ignore, Param_Cell, Param_String);
+    g_OnDemoFinished = CreateGlobalForward("Get5_OnDemoFinished",
+        ET_Ignore, Param_String);
 
     /** Start any repeating timers **/
     CreateTimer(LIVE_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
@@ -744,8 +747,8 @@ public void StartGame(bool knifeRound) {
         ReplaceString(demoName, sizeof(demoName), "{TEAM2}", g_TeamNames[MatchTeam_Team2], false);
 
         if (Record(demoName)) {
-            LogMessage("Recording to %s", demoName);
             Format(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);
+            LogMessage("Recording to %s", g_DemoFileName);
         }
     }
 

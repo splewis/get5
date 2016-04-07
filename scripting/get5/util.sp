@@ -132,6 +132,9 @@ stock bool Record(const char[] demoName) {
 
 stock void StopRecording() {
     ServerCommand("tv_stoprecord");
+    Call_StartForward(g_OnDemoFinished);
+    Call_PushString(g_DemoFileName);
+    Call_Finish();
 }
 
 stock bool InWarmup() {

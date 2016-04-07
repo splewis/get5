@@ -430,7 +430,7 @@ static bool ConvertSteam3ToSteam2(const char[] steam3Auth, char[] steam2Auth, in
     //
     // So the inverse Steam3 -> Steam2 is:
     // [U:1:x], x = B * 2 + A
-    // where A = 1 if x odd, A = 0 if x ever
+    // where A = 1 if x odd, A = 0 if x even
     // -> B = (x - A) / 2
 
     // Get the x value as a string, then convert it to an int.
@@ -466,14 +466,12 @@ stock bool ConvertAuthToSteam64(const char[] inputId, char outputId[AUTH_LENGTH]
         char steam2[AUTH_LENGTH];
         if (ConvertSteam3ToSteam2(inputId, steam2, sizeof(steam2))) {
             return ConvertSteam2ToSteam64(steam2, outputId, sizeof(outputId));
-        } else {
-            return false;
         }
-
-    } else {
-        if (reportErrors)
-            LogError("Failed to read input auth id \"%s\", inputId", inputId);
-
-        return false;
     }
+
+    if (reportErrors) {
+        LogError("Failed to read input auth id \"%s\", inputId", inputId);
+    }
+
+    return false;
 }

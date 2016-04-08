@@ -88,7 +88,7 @@ public bool LoadMatchConfig(const char[] config) {
         }
     }
 
-    if (GetMapNumber() > 1) {
+    if (GetMapNumber() >= 1) { // Already accounted for a map win.
         g_RestoreMatchBackup = true;
     } else {
         g_RestoreMatchBackup = false;

@@ -79,6 +79,7 @@ ArrayList g_MapsToPlay = null;
 ArrayList g_MapSides = null;
 ArrayList g_MapsLeftInVetoPool = null;
 MatchTeam g_LastVetoTeam;
+bool g_RestoreMatchBackup = false;
 
 ArrayList g_TeamScoresPerMap = null;
 char g_LoadedConfigFile[PLATFORM_MAX_PATH];

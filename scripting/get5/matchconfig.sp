@@ -88,6 +88,12 @@ public bool LoadMatchConfig(const char[] config) {
         }
     }
 
+    if (GetMapNumber() > 1) {
+        g_RestoreMatchBackup = true;
+    } else {
+        g_RestoreMatchBackup = false;
+    }
+
     SetStartingTeams();
     ExecCfg(g_WarmupCfgCvar);
     SetMatchTeamCvars();
@@ -363,7 +369,9 @@ public void SetMatchTeamCvars() {
 
     // Set the match stat text values to display the previous map
     // results for a Bo3 series.
-    if (g_MapsToWin == 2 && mapsPlayed >= 1) {
+    // Also skip this is we restored a match backup since the map history
+    // results could be missing.
+    if (g_MapsToWin == 2 && mapsPlayed >= 1 && !g_RestoreMatchBackup) {
         MatchTeam map1Winner = GetMapWinner(0);
         char map1[PLATFORM_MAX_PATH];
         char map2[PLATFORM_MAX_PATH];

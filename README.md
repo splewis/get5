@@ -81,7 +81,7 @@ See the example config in [Vavle KeyValues format](configs/get5/example_match.cf
 - ``name``: team name (wraps ``mp_teamname_1`` and is displayed often in chat messages)
 - ``flag``: team flag (2 letter country code, wraps ``mp_teamflag_1``)
 - ``logo`` team logo (wraps ``mp_teamlogo_1``)
-- ``matchtext``: warps ``mp_teammatchstat_txt``
+- ``matchtext``: warps ``mp_teammatchstat_1``
 - ``players``: list of Steam2 id's for users on the team
 - ``series_score``: current score in the series, this should only be used to restore a match (e.g., changed server after 1 map), defaults to 0
 

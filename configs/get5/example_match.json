@@ -3,7 +3,7 @@
 	"match_title": "Quarterfinals | Map {MAPNUMBER} of {MAXMAPS}",
 	"maps_to_win": 2,
 	"players_per_team": 1,
-	"skip_veto": true,
+	"skip_veto": false,
 	"side_type": "standard",
 
 	"spectators": {

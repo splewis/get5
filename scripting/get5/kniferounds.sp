@@ -52,7 +52,7 @@ static bool AwaitingKnifeDecision(int client) {
 public Action Command_Stay(int client, int args) {
     if (AwaitingKnifeDecision(client)) {
         EndKnifeRound(false);
-        Get5_MessageToAll("%s have decided to stay.", g_FormattedTeamNames[g_KnifeWinnerTeam]);
+        Get5_MessageToAll("%s has decided to stay.", g_FormattedTeamNames[g_KnifeWinnerTeam]);
     }
     return Plugin_Handled;
 }
@@ -60,7 +60,7 @@ public Action Command_Stay(int client, int args) {
 public Action Command_Swap(int client, int args) {
     if (AwaitingKnifeDecision(client)) {
         EndKnifeRound(true);
-        Get5_MessageToAll("%s have decided to swap.", g_FormattedTeamNames[g_KnifeWinnerTeam]);
+        Get5_MessageToAll("%s has decided to swap.", g_FormattedTeamNames[g_KnifeWinnerTeam]);
     }
     return Plugin_Handled;
 }

@@ -88,6 +88,7 @@ int g_TeamSeriesScores[MatchTeam_Count]; // Current number of maps won per-team.
 bool g_TeamReady[MatchTeam_Count]; // Whether a team is marked as ready.
 int g_TeamSide[MatchTeam_Count]; // Current CS_TEAM_* side for the team.
 bool g_TeamReadyForUnpause[MatchTeam_Count];
+bool g_TeamGivenStopCommand[MatchTeam_Count];
 
 /** Map game-state **/
 MatchTeam g_KnifeWinnerTeam = MatchTeam_TeamNone;
@@ -178,6 +179,7 @@ public void OnPluginStart() {
     RegConsoleCmd("sm_swap", Command_Swap, "Elects to swap the current teams after winning a knife round");
     RegConsoleCmd("sm_t", Command_T, "Elects to start on T side after winning a knife round");
     RegConsoleCmd("sm_ct", Command_Ct, "Elects to start on CT side after winning a knife round");
+    RegConsoleCmd("sm_stop", Command_Stop, "Elects to stop the game to reload a backup file");
 
     /** Admin/server commands **/
     RegAdminCmd("get5_loadmatch", Command_LoadMatch, ADMFLAG_CHANGEMAP,
@@ -315,6 +317,8 @@ public void OnMapStart() {
 
     LOOP_TEAMS(team) {
         g_TeamReady[team] = false;
+        g_TeamGivenStopCommand[team] = false;
+        g_TeamReadyForUnpause[team] = false;
     }
 
     SetStartingTeams();
@@ -517,6 +521,37 @@ public Action Command_LoadMatchUrl(int client, int args) {
             }
         } else {
             ReplyToCommand(client, "Usage: get5_loadmatch_url <url>");
+        }
+    }
+
+    return Plugin_Handled;
+}
+
+public Action Command_Stop(int client, int args) {
+    int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
+    if (g_GameState != GameState_Live || roundsPlayed == 0) {
+        return Plugin_Handled;
+    }
+
+    MatchTeam team = GetClientMatchTeam(client);
+    g_TeamGivenStopCommand[team] = true;
+
+    if (g_TeamGivenStopCommand[MatchTeam_Team1] && !g_TeamGivenStopCommand[MatchTeam_Team2]) {
+        Get5_MessageToAll("%s wants to stop and reload last round, need %s to confirm with !stop.",
+            g_FormattedTeamNames[MatchTeam_Team1], g_FormattedTeamNames[MatchTeam_Team2]);
+    } else if (!g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
+        Get5_MessageToAll("%s wants to stop and reload last round, need %s to confirm with !stop.",
+            g_FormattedTeamNames[MatchTeam_Team2], g_FormattedTeamNames[MatchTeam_Team1]);
+    } else if (g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
+        LOOP_TEAMS(x) {
+            g_TeamGivenStopCommand[x] = false;
+        }
+
+        char lastBackup[PLATFORM_MAX_PATH];
+        ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
+        if (lastBackupCvar != null) {
+            lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
+            ServerCommand("mp_backup_restore_load_file \"%s\"", lastBackup);
         }
     }
 

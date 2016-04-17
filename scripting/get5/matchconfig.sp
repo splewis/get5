@@ -6,6 +6,8 @@ public bool LoadMatchConfig(const char[] config) {
     LOOP_TEAMS(team) {
         g_TeamReady[team] = false;
         g_TeamSeriesScores[team] = 0;
+        g_TeamReadyForUnpause[team] = false;
+        g_TeamGivenStopCommand[team] = false;
         ClearArray(GetTeamAuths(team));
     }
 

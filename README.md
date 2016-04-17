@@ -41,10 +41,11 @@ Extract the download archive into the csgo/ directory on the server. The only re
 - ``!ready``: marks a client's team as ready to begin
 - ``!unready``: marks a client's team as not-ready
 - ``!pause``: requests a freezetime pause
-- ``!unpause``: requests an unpause
+- ``!unpause``: requests an unpause, requires the other team to confirm
 - ``!coach``: moves a client to coach for their team
 - ``!stay``: elects to stay after a knife round win
 - ``!swap``: elects to swap after a knife round win
+- ``!stop``: asks to reload the last match backup file, requires other team to confirm
 
 #### Server/Admin Commands
 - ``get5_loadmatch``: loads a match config file (JSON or keyvalues) relative from the ``csgo`` directory

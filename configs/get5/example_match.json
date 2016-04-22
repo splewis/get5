@@ -17,11 +17,11 @@
 
 	"maplist":
 	[
-		"de_inferno",
-		"de_dust2",
-		"de_mirage",
 		"de_cache",
 		"de_cbble",
+		"de_dust2",
+		"de_mirage",
+		"de_nuke",
 		"de_overpass",
 		"de_train"
 	],

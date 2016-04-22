@@ -333,8 +333,8 @@ static void LoadDefaultMapList(ArrayList list) {
     list.PushString("de_cache");
     list.PushString("de_cbble");
     list.PushString("de_dust2");
-    list.PushString("de_inferno");
     list.PushString("de_mirage");
+    list.PushString("de_nuke");
     list.PushString("de_overpass");
     list.PushString("de_train");
 }

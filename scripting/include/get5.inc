@@ -87,6 +87,9 @@ native bool Get5_AddPlayerToTeam(const char[] steamId, MatchTeam team);
 // Returns if they were successfully removed (false if not round).
 native bool Get5_RemovePlayerFromTeam(const char[] steamId);
 
+// Returns the current match team a auth is mapped to.
+native MatchTeam Get5_GetPlayerTeam(const char[] steamId);
+
 public SharedPlugin __pl_get5 = {
     name = "get5",
     file = "get5.smx",
@@ -106,5 +109,6 @@ public __pl_get5_SetNTVOptional() {
     MarkNativeAsOptional("Get5_LoadMatchConfigFromURL");
     MarkNativeAsOptional("Get5_AddPlayerToTeam");
     MarkNativeAsOptional("Get5_RemovePlayerFromTeam");
+    MarkNativeAsOptional("Get5_GetPlayerTeam");
 }
 #endif

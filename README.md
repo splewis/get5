@@ -49,6 +49,7 @@ Extract the download archive into the csgo/ directory on the server. The only re
 
 #### Server/Admin Commands
 - ``get5_loadmatch``: loads a match config file (JSON or keyvalues) relative from the ``csgo`` directory
+- ``get5_loadteam``: loads a team section from a file into a team
 - ``get5_loadmatch_url``: loads a remote (JSON formatted) match config by sending a HTTP GET to the given url, this requires either the [system2](https://forums.alliedmods.net/showthread.php?t=146019) or [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) Extensions
 - ``get5_endmatch``: force ends the current match
 - ``get5_status``: replies with JSON formatted match state (also available to clients)

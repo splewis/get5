@@ -320,6 +320,7 @@ static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] defa
 }
 
 static void LoadTeamData(KeyValues kv, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
+    GetTeamAuths(matchTeam).Clear();
     AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
     kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, defaultName);
     kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
@@ -469,9 +470,57 @@ public void ExecuteMatchConfigCvars() {
     }
 }
 
-public Action Command_AddPlayer(int client, int args) {
+public Action Command_LoadTeam(int client, int args) {
     if (g_GameState == GameState_None) {
         LogError("Cannot change player lists when there is no match to modify");
+        return Plugin_Handled;
+    }
+
+    char defaultName[MAX_CVAR_LENGTH];
+    char defaultColor[MAX_CVAR_LENGTH];
+
+    char arg1[PLATFORM_MAX_PATH];
+    char arg2[PLATFORM_MAX_PATH];
+    if (args >= 2 && GetCmdArg(1, arg1, sizeof(arg1)) && GetCmdArg(2, arg2, sizeof(arg2))) {
+        MatchTeam team = MatchTeam_TeamNone;
+        if (StrEqual(arg1, "team1"))  {
+            team = MatchTeam_Team1;
+            defaultName = "team1";
+            defaultColor = TEAM1_COLOR;
+
+        } else if (StrEqual(arg1, "team2")) {
+            team = MatchTeam_Team2;
+            defaultName = "team2";
+            defaultColor = TEAM2_COLOR;
+
+        } else if (StrEqual(arg1, "spec")) {
+            team = MatchTeam_TeamSpec;
+
+        } else {
+            ReplyToCommand(client, "Unknown team: must be one of team1, team2, spec");
+            return Plugin_Handled;
+        }
+
+        KeyValues kv = new KeyValues("team");
+        if (kv.ImportFromFile(arg2)) {
+            LoadTeamData(kv, team, defaultName, defaultColor);
+            ReplyToCommand(client, "Loaded team data for %s", arg1);
+            SetMatchTeamCvars();
+        } else {
+            ReplyToCommand(client, "Failed to read keyvalues from file \"%s\"", arg2);
+        }
+        delete kv;
+
+    } else {
+        ReplyToCommand(client, "Usage: get_loadteam <team1|team2|spec> <filename>");
+    }
+
+    return Plugin_Handled;
+}
+
+public Action Command_AddPlayer(int client, int args) {
+    if (g_GameState == GameState_None) {
+        ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
         return Plugin_Handled;
     }
 
@@ -504,7 +553,7 @@ public Action Command_AddPlayer(int client, int args) {
 
 public Action Command_RemovePlayer(int client, int args) {
     if (g_GameState == GameState_None) {
-        LogError("Cannot change player lists when there is no match to modify");
+        ReplyToCommand(client,"Cannot change player lists when there is no match to modify");
         return Plugin_Handled;
     }
 
@@ -649,3 +698,5 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
         AddFileToDownloadsTable(logoPath);
     }
 }
+
+

@@ -186,6 +186,8 @@ public void OnPluginStart() {
         "Loads a match config file (json or keyvalues) from a file relative to the csgo/ directory");
     RegAdminCmd("get5_loadmatch_url", Command_LoadMatchUrl, ADMFLAG_CHANGEMAP,
         "Loads a JSON config file by sending a GET request to download it. Requires either the SteamWorks or system2 extensions");
+    RegAdminCmd("get5_loadteam", Command_LoadTeam, ADMFLAG_CHANGEMAP,
+        "Loads a team data from a file into a team");
     RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP,
         "Force ends the current match");
     RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP,

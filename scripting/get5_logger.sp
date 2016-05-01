@@ -6,7 +6,7 @@
 public Plugin myinfo = {
     name = "Get5 logger",
     author = "splewis",
-    description = "",
+    description = "Provides logging for get5 forwards",
     version = PLUGIN_VERSION,
     url = "https://github.com/splewis/get5"
 };

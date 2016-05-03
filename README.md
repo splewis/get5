@@ -61,7 +61,7 @@ Extract the download archive into the csgo/ directory on the server. The only re
 
 ## Match Schema
 
-See the example config in [Vavle KeyValues format](configs/get5/example_match.cfg) or [JSON format](configs/get5/example_match.json) to learn how to format the configs. Both files contain equivalent match data.
+See the example config in [Valve KeyValues format](configs/get5/example_match.cfg) or [JSON format](configs/get5/example_match.json) to learn how to format the configs. Both files contain equivalent match data.
 
 **Note:** to use a JSON match file, you must install the [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604) sourcemod extension on the server.
 

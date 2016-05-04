@@ -28,6 +28,10 @@ public bool LoadMatchConfig(const char[] config) {
 
         char configFile[PLATFORM_MAX_PATH];
         strcopy(configFile, sizeof(configFile), config);
+        if (!FileExists(configFile)) {
+            MatchConfigFail("Match json file doesn't exist: \"%s\"", configFile);
+            return false;
+        }
 
         Handle json = json_load_file(configFile);
         if (json != INVALID_HANDLE && LoadMatchFromJson(json)) {
@@ -41,7 +45,11 @@ public bool LoadMatchConfig(const char[] config) {
     } else {
         // Assume its a keyvalues file.
         KeyValues kv = new KeyValues("Match");
-        if (kv.ImportFromFile(config) && LoadMatchFromKv(kv)) {
+        if (!FileExists(config)) {
+            delete kv;
+            MatchConfigFail("Match kv file doesn't exist: \"%s\"", config);
+            return false;
+        } else if (kv.ImportFromFile(config) && LoadMatchFromKv(kv)) {
             delete kv;
             Get5_MessageToAll("Loaded match config.");
         } else {
@@ -307,25 +315,55 @@ static bool LoadMatchFromJson(Handle json) {
 }
 
 static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
-    AddJsonAuthsToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
-    json_object_get_string_safe(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH);
-    if (StrEqual(g_TeamNames[matchTeam], ""))
-        strcopy(g_TeamNames[matchTeam], MAX_CVAR_LENGTH, defaultName);
+    GetTeamAuths(matchTeam).Clear();
 
-    json_object_get_string_safe(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
-    json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
-    json_object_get_string_safe(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
+    char fromfile[PLATFORM_MAX_PATH];
+    json_object_get_string_safe(json, "fromfile", fromfile, sizeof(fromfile));
+
+    if (StrEqual(fromfile, "")) {
+        AddJsonAuthsToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
+        json_object_get_string_safe(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH);
+        if (StrEqual(g_TeamNames[matchTeam], ""))
+            strcopy(g_TeamNames[matchTeam], MAX_CVAR_LENGTH, defaultName);
+
+        json_object_get_string_safe(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
+        json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
+        json_object_get_string_safe(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
+    } else {
+        Handle fromfileJson = json_load_file(fromfile);
+        if (fromfileJson == INVALID_HANDLE) {
+            LogError("Cannot load team config from file \"%s\", fromfile");
+        } else {
+            LoadTeamDataJson(fromfileJson, matchTeam, defaultName, colorTag);
+            CloseHandle(fromfileJson);
+        }
+    }
+
     g_TeamSeriesScores[matchTeam] = json_object_get_int_safe(json, "series_score", 0);
     Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
 }
 
 static void LoadTeamData(KeyValues kv, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
     GetTeamAuths(matchTeam).Clear();
-    AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
-    kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, defaultName);
-    kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
-    kv.GetString("logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH, "");
-    kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");
+    char fromfile[PLATFORM_MAX_PATH];
+    kv.GetString("fromfile", fromfile, sizeof(fromfile));
+
+    if (StrEqual(fromfile, "")) {
+        AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
+        kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, defaultName);
+        kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
+        kv.GetString("logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH, "");
+        kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");
+    } else {
+        KeyValues fromfilekv = new KeyValues("team");
+        if (fromfilekv.ImportFromFile(fromfile)) {
+            LoadTeamData(fromfilekv, matchTeam, defaultName, colorTag);
+        } else {
+            LogError("Cannot load team config from file \"%s\"", fromfile);
+        }
+        delete fromfilekv;
+    }
+
     g_TeamSeriesScores[matchTeam] = kv.GetNum("series_score", 0);
     Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
 }

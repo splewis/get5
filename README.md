@@ -33,7 +33,7 @@ You must have sourcemod installed on the game server. You can download it at htt
 Download a release package from the [releases section](https://github.com/splewis/get5/releases) or a [the latest development build](http://ci.splewis.net/job/get5/lastSuccessfulBuild/).
 
 #### Installation
-Extract the download archive into the csgo/ directory on the server. The only required file is actually just the ``get5.smx`` plugin binary in the ``addons/sourcemod/plugins`` directory. 
+Extract the download archive into the csgo/ directory on the server. The only required file is actually just the ``get5.smx`` plugin binary in the ``addons/sourcemod/plugins`` directory.
 
 If you need more help, see the [step-by-step guide in the wiki](https://github.com/splewis/get5/wiki/Step-by-step-installation-guide).
 
@@ -90,6 +90,8 @@ See the example config in [Valve KeyValues format](configs/get5/example_match.cf
 - ``series_score``: current score in the series, this should only be used to restore a match (e.g., changed server after 1 map), defaults to 0
 
 There is advice on handling these match configs in [the wiki](https://github.com/splewis/get5/wiki/Managing-match-configs).
+
+Instead of the above fields, you can also use "fromfile" and a filename, where that file contains the other above fields. This is available for both json and keyvalue format.s
 
 ## ConVars
 Note: these are auto-executed on plugin start by the auto-generated (the 1st time the plugin starts) file ``cfg/sourcemod/get5.cfg``.

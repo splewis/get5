@@ -56,6 +56,7 @@ ConVar g_CoachingEnabledCvar;
 
 /** Series config game-state **/
 int g_MapsToWin = 1;
+bool g_BO2Match = false;
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MatchTeam_Count];
@@ -604,6 +605,10 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
             SeriesWonMessage(MatchTeam_Team2);
             CreateTimer(minDelay, Timer_EndSeries);
 
+        } else if (g_BO2Match && GetMapNumber() == 2) {
+            SeriesWonMessage(MatchTeam_TeamNone);
+            CreateTimer(minDelay, Timer_EndSeries);
+
         } else {
             if (g_TeamSeriesScores[MatchTeam_Team1] > g_TeamSeriesScores[MatchTeam_Team2]) {
                 Get5_MessageToAll("%s{NORMAL} is winning the series %d-%d",
@@ -641,10 +646,18 @@ static void SeriesWonMessage(MatchTeam team) {
     if (g_MapsToWin == 1) {
         Get5_MessageToAll("%s has won the match.", g_FormattedTeamNames[team]);
     } else {
-        Get5_MessageToAll("%s has won the series %d-%d.",
-            g_FormattedTeamNames[team],
-            g_TeamSeriesScores[team],
-            g_TeamSeriesScores[OtherMatchTeam(team)]);
+        if (team == MatchTeam_TeamNone) {
+            // BO2 split.
+            Get5_MessageToAll("%s and %s have split the series 1-1.",
+                g_FormattedTeamNames[MatchTeam_Team1],
+                g_FormattedTeamNames[MatchTeam_Team2]);
+
+        } else {
+            Get5_MessageToAll("%s has won the series %d-%d.",
+                g_FormattedTeamNames[team],
+                g_TeamSeriesScores[team],
+                g_TeamSeriesScores[OtherMatchTeam(team)]);
+        }
     }
 }
 
@@ -672,6 +685,8 @@ public Action Timer_EndSeries(Handle timer) {
     MatchTeam winningTeam  = MatchTeam_Team1;
     if (g_TeamSeriesScores[MatchTeam_Team2] > g_TeamSeriesScores[MatchTeam_Team1]) {
         winningTeam = MatchTeam_Team2;
+    } else if (g_TeamSeriesScores[MatchTeam_Team1] == g_TeamSeriesScores[MatchTeam_Team2]) {
+        winningTeam = MatchTeam_TeamNone;
     }
 
     Call_StartForward(g_OnSeriesResult);

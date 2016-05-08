@@ -70,6 +70,7 @@ static void KV_Test() {
     SetTestContext("KV_Test");
 
     AssertEq("maps_to_win", g_MapsToWin, 2);
+    AssertEq("bo2_series", g_BO2Match, false);
     AssertEq("skip_veto", g_SkipVeto, false);
     AssertEq("players_per_team", g_PlayersPerTeam, 1);
     AssertEq("favored_percentage_team1", g_FavoredTeamPercentage, 65);

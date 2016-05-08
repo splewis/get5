@@ -70,7 +70,8 @@ See the example config in [Valve KeyValues format](configs/get5/example_match.cf
 - ``matchid``: a string matchid used to identify the match
 - ``match_title``: wrapper on the ``mp_teammatchstat_txt`` cvar, but can use {MAPNUMBER} and {MAXMAPS} as variables that get replaced with their integer values
 - ``maps_to_win``: number of maps needed to win the series (1 in a Bo1, 2 in a Bo3, 3 in a Bo5)
-- ``maplist``: list of the maps in use (an array of strings in JSON, mapnames as keys for KeyValues)
+- ``bo2_series``: whether the series is a bo2 series (will ignore ``maps_to_win`` if it is)
+- ``maplist``: list of the maps in use (an array of strings in JSON, mapnames as keys for KeyValues), you should always use an odd-sized maplist
 - ``skip_veto``: whether the veto will be skipped and the maps will come from the maplist (in the order given)
 - ``side_type``: either "standard", "never_knife", or "always_knife"; standard means the team that doesn't pick a map gets the side choice, never_knife means team is always on CT first, and always knife means there is always a knife round
 - ``players_per_team``: maximum players per team (doesn't include a coach spot)

@@ -2,6 +2,11 @@
  * Map vetoing functions
  */
 public void CreateMapVeto() {
+    if (g_MapPoolList.Length % 2 == 0) {
+        LogError("Warning, the maplist is odd number sized (%d maps), vetos may not function correctly!",
+            g_MapPoolList.Length);
+    }
+
     g_VetoCaptains[MatchTeam_Team1] = GetTeamCaptain(MatchTeam_Team1);
     g_VetoCaptains[MatchTeam_Team2] = GetTeamCaptain(MatchTeam_Team2);
     g_TeamReady[MatchTeam_Team1] = false;
@@ -58,6 +63,12 @@ public void MapVetoController(int client) {
         }
 
     } else if (mapsLeft == 1) {
+        if (g_BO2Match) {
+            // Terminate the veto since we've had ban-ban-ban-ban-pick-pick
+            VetoFinished();
+            return;
+        }
+
         // Only 1 map left in the pool, add it directly to the active maplist.
         char mapName[PLATFORM_MAX_PATH];
         g_MapsLeftInVetoPool.GetString(0, mapName, sizeof(mapName));

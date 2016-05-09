@@ -362,7 +362,10 @@ stock int AuthToClient(const char[] auth) {
 }
 
 stock int MaxMapsToPlay(int mapsToWin) {
-    return 2 * mapsToWin - 1;
+    if (g_BO2Match)
+        return 2;
+    else
+        return 2 * mapsToWin - 1;
 }
 
 stock void CSTeamString(int csTeam, char[] buffer, int len) {

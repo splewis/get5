@@ -2,6 +2,7 @@
 	"matchid": "example_match",
 	"match_title": "Quarterfinals | Map {MAPNUMBER} of {MAXMAPS}",
 	"maps_to_win": 2,
+	"bo2_series": false,
 	"players_per_team": 1,
 	"skip_veto": false,
 	"side_type": "standard",

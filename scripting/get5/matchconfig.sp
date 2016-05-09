@@ -71,6 +71,10 @@ public bool LoadMatchConfig(const char[] config) {
         g_MapsLeftInVetoPool.PushString(mapName);
     }
 
+    if (g_BO2Match) {
+        g_MapsToWin = 2;
+    }
+
     if (g_SkipVeto) {
         // Copy the first k maps from the maplist to the final match maps.
         for (int i = 0; i < MaxMapsToPlay(g_MapsToWin); i++) {
@@ -201,6 +205,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
     kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), "Map {MAPNUMBER} of {MAXMAPS}");
     g_PlayersPerTeam = kv.GetNum("players_per_team", 5);
     g_MapsToWin = kv.GetNum("maps_to_win", 2);
+    g_BO2Match = kv.GetNum("bo2_series", 0) != 0;
     g_SkipVeto = kv.GetNum("skip_veto", 0) != 0;
 
     char buf[64];
@@ -259,6 +264,7 @@ static bool LoadMatchFromJson(Handle json) {
     json_object_get_string_safe(json, "match_title", g_MatchTitle, sizeof(g_MatchTitle), "Map {MAPNUMBER} of {MAXMAPS}");
     g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", 5);
     g_MapsToWin = json_object_get_int_safe(json, "maps_to_win", 2);
+    g_BO2Match = json_object_get_bool_safe(json, "bo2_series", false);
     g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", false);
 
     char buf[64];

@@ -67,6 +67,8 @@ See the example config in [Valve KeyValues format](configs/get5/example_match.cf
 
 **Note:** to use a JSON match file, you must install the [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604) sourcemod extension on the server.
 
+Of the below fields, only the ``team1`` and ``team2`` fields are actually required. Reasonable defaults are used for entires (bo3 series, 5v5, empty strings for team names, etc.)
+
 - ``matchid``: a string matchid used to identify the match
 - ``match_title``: wrapper on the ``mp_teammatchstat_txt`` cvar, but can use {MAPNUMBER} and {MAXMAPS} as variables that get replaced with their integer values
 - ``maps_to_win``: number of maps needed to win the series (1 in a Bo1, 2 in a Bo3, 3 in a Bo5)

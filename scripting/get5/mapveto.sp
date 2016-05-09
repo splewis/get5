@@ -49,6 +49,14 @@ public void MapVetoController(int client) {
         bo3_hack = true;
     }
 
+    // This is also a bit hacky.
+    // The purpose is to force the veto process to take a
+    // ban/ban/ban/ban/pick/pick/last map unused process for BO2's.
+    bool bo2_hack = false;
+    if (g_BO2Match && (mapsLeft == 3 || mapsLeft == 2)) {
+        bo2_hack = true;
+    }
+
     if (sidesSet < mapsPicked) {
         if (g_MatchSideType == MatchSideType_Standard) {
             GiveSidePickMenu(client);
@@ -88,7 +96,7 @@ public void MapVetoController(int client) {
         Call_Finish();
 
         VetoFinished();
-    } else if (mapsLeft + mapsPicked <= maxMaps || bo3_hack) {
+    } else if (mapsLeft + mapsPicked <= maxMaps || bo3_hack || bo2_hack) {
         GiveMapPickMenu(client);
     } else {
         GiveVetoMenu(client);
@@ -166,8 +174,11 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
                 g_MapSides.Push(SideChoice_Team1CT);
         }
 
-        Get5_MessageToAll("%s has selected to start on {GREEN}%s",
-            g_FormattedTeamNames[team], choice);
+        char mapName[PLATFORM_MAX_PATH];
+        g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
+
+        Get5_MessageToAll("%s has selected to start on {GREEN}%s {NORMAL}on %s",
+            g_FormattedTeamNames[team], choice, mapName);
 
         MapVetoController(client);
 

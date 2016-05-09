@@ -35,6 +35,9 @@ enum SideChoice {
     SideChoice_KnifeRound,  // There will be a knife round to choose sides
 };
 
+// Called whenever the gamestate phase is changed.
+forward void Get5_OnGameStateChanged(GameState oldState, GameState newState);
+
 // Called at the end of a map in a series.
 forward void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
     int team1Score, int team2Score);

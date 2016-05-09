@@ -105,12 +105,13 @@ bool g_PendingSideSwap = false;
 Handle g_KnifeChangedCvars = INVALID_HANDLE;
 
 /** Forwards **/
-Handle g_OnMapResult = INVALID_HANDLE;
-Handle g_OnSeriesResult = INVALID_HANDLE;
-Handle g_OnLoadMatchConfigFailed = INVALID_HANDLE;
-Handle g_OnMapVetoed = INVALID_HANDLE;
-Handle g_OnMapPicked = INVALID_HANDLE;
 Handle g_OnDemoFinished = INVALID_HANDLE;
+Handle g_OnGameStateChanged = INVALID_HANDLE;
+Handle g_OnLoadMatchConfigFailed = INVALID_HANDLE;
+Handle g_OnMapPicked = INVALID_HANDLE;
+Handle g_OnMapResult = INVALID_HANDLE;
+Handle g_OnMapVetoed = INVALID_HANDLE;
+Handle g_OnSeriesResult = INVALID_HANDLE;
 
 #include "get5/util.sp"
 #include "get5/kniferounds.sp"
@@ -235,18 +236,20 @@ public void OnPluginStart() {
     }
 
     /** Create forwards **/
-    g_OnMapResult = CreateGlobalForward("Get5_OnMapResult", ET_Ignore, Param_String,
-        Param_Cell, Param_Cell, Param_Cell);
-    g_OnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_Cell,
+    g_OnDemoFinished = CreateGlobalForward("Get5_OnDemoFinished", ET_Ignore,
+        Param_String);
+    g_OnGameStateChanged = CreateGlobalForward("Get5_OnGameStateChanged", ET_Ignore,
         Param_Cell, Param_Cell);
-    g_OnLoadMatchConfigFailed = CreateGlobalForward("Get5_OnLoadMatchConfigFailed",
-        ET_Ignore, Param_String);
-    g_OnMapVetoed = CreateGlobalForward("Get5_OnMapVetoed",
-        ET_Ignore, Param_Cell, Param_String);
-    g_OnMapPicked =  CreateGlobalForward("Get5_OnMapPicked",
-        ET_Ignore, Param_Cell, Param_String);
-    g_OnDemoFinished = CreateGlobalForward("Get5_OnDemoFinished",
-        ET_Ignore, Param_String);
+    g_OnMapResult = CreateGlobalForward("Get5_OnMapResult", ET_Ignore,
+        Param_String, Param_Cell, Param_Cell, Param_Cell);
+    g_OnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore,
+        Param_Cell, Param_Cell, Param_Cell);
+    g_OnLoadMatchConfigFailed = CreateGlobalForward("Get5_OnLoadMatchConfigFailed", ET_Ignore,
+        Param_String);
+    g_OnMapPicked =  CreateGlobalForward("Get5_OnMapPicked", ET_Ignore,
+        Param_Cell, Param_String);
+    g_OnMapVetoed = CreateGlobalForward("Get5_OnMapVetoed", ET_Ignore,
+        Param_Cell, Param_String);
 
     /** Start any repeating timers **/
     CreateTimer(LIVE_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
@@ -852,6 +855,10 @@ public Action StopDemo(Handle timer) {
 
 public void ChangeState(GameState state) {
     LogDebug("Change from state %d -> %d", g_GameState, state);
+    Call_StartForward(g_OnGameStateChanged);
+    Call_PushCell(g_GameState);
+    Call_PushCell(state);
+    Call_Finish();
     g_GameState = state;
 }
 

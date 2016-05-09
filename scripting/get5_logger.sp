@@ -11,6 +11,10 @@ public Plugin myinfo = {
     url = "https://github.com/splewis/get5"
 };
 
+public void Get5_OnGameStateChanged(GameState oldState, GameState newState) {
+    LogMessage("Get5_OnGameStateChanged: %d -> %d", oldState, newState);
+}
+
 public void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
     int team1Score, int team2Score) {
     int winnerScore = team1Score;

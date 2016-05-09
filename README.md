@@ -7,6 +7,8 @@ Get5 is a [SourceMod](http://www.sourcemod.net/) plugin for CS:GO servers for ru
 
 The core idea behind its use is all match details being fully defined in a single config file. Check out [this example config](configs/get5/example_match.cfg). Its main target use-case is tournaments and leagues (online or LAN). All that is required of the server-admins is to load match config file to the server and the match should run without any more manual actions from the admins. This plugin is not invasive - most of its functionality is built to work within how the CS:GO server normally operates, not replacing its functionality. It is not recommended for your new matchmaking service.
 
+It is meant to be relatively easy to use for tournament admins.
+
 Features of this include:
 - Locking players to the correct team by their Steam ID
 - In-game map veto support from the match's maplist
@@ -86,7 +88,7 @@ See the example config in [Valve KeyValues format](configs/get5/example_match.cf
 - ``flag``: team flag (2 letter country code, wraps ``mp_teamflag_1``)
 - ``logo`` team logo (wraps ``mp_teamlogo_1``)
 - ``matchtext``: warps ``mp_teammatchstat_1``
-- ``players``: list of Steam2 id's for users on the team
+- ``players``: list of Steam2 id's for users on the team (not used if ``get5_check_auths`` is set to 0)
 - ``series_score``: current score in the series, this should only be used to restore a match (e.g., changed server after 1 map), defaults to 0
 
 There is advice on handling these match configs in [the wiki](https://github.com/splewis/get5/wiki/Managing-match-configs).
@@ -99,6 +101,7 @@ Note: these are auto-executed on plugin start by the auto-generated (the 1st tim
 You should either set these in the above file, or in the match config's ``cvars`` section.
 
 - ``get5_autoload_config``: a config file to autoload on map starts if no match is loaded
+- ``get5_check_auths``: whether the steamids from a "players" section are used to force players onto teams (default 1)
 - ``get5_demo_name_format``: format to name demo files in (default ``{MATCHID}_map{MAPNUMBER}_{MAPNAME}``)
 - ``get5_kick_when_no_match_loaded``: whether to kick all clients if no match is loaded
 - ``get5_live_cfg``: config file executed when the game goes live

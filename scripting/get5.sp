@@ -41,15 +41,17 @@
 
 /** ConVar handles **/
 ConVar g_AutoLoadConfigCvar;
+ConVar g_CheckAuthsCvar;
 ConVar g_DemoNameFormatCvar;
 ConVar g_DemoTimeFormatCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_QuickRestartCvar;
-ConVar g_VersionCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
+
+ConVar g_VersionCvar;
 
 // Hooked cvars built into csgo
 ConVar g_CoachingEnabledCvar;
@@ -143,6 +145,8 @@ public void OnPluginStart() {
     /** ConVars **/
     g_AutoLoadConfigCvar = CreateConVar("get5_autoload_config", "",
         "Name of a match config file to automatically load when the server loads");
+    g_CheckAuthsCvar = CreateConVar("get5_check_auths", "1",
+        "If set to 0, get5 will not force players to the correct team based on steamid");
     g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format",
         "{MATCHID}_map{MAPNUMBER}_{MAPNAME}", "Format for demo file names");
     g_DemoTimeFormatCvar = CreateConVar("get5_time_format", "%Y-%m-%d_%H",
@@ -277,7 +281,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
         KickClient(client, "There is no match setup");
     }
 
-    if (g_GameState != GameState_None) {
+    if (g_GameState != GameState_None && g_CheckAuthsCvar.IntValue != 0) {
         MatchTeam team = GetClientMatchTeam(client);
         if (team == MatchTeam_TeamNone) {
             KickClient(client, "You are not a player in this match");
@@ -295,7 +299,8 @@ public void OnClientPutInServer(int client) {
         return;
     }
 
-    if (g_GameState <= GameState_Warmup) {
+    CheckAutoLoadConfig();
+    if (g_GameState <= GameState_Warmup && g_GameState != GameState_None) {
         if (GetRealClientCount() <= 1) {
             ExecCfg(g_WarmupCfgCvar);
             EnsurePausedWarmup();
@@ -324,14 +329,7 @@ public void OnMapStart() {
     }
 
     SetStartingTeams();
-
-    if (g_GameState == GameState_None) {
-        char autoloadConfig[PLATFORM_MAX_PATH];
-        g_AutoLoadConfigCvar.GetString(autoloadConfig, sizeof(autoloadConfig));
-        if (!StrEqual(autoloadConfig, "")) {
-            LoadMatchConfig(autoloadConfig);
-        }
-    }
+    CheckAutoLoadConfig();
 
     if (g_GameState == GameState_PostGame) {
         ChangeState(GameState_Warmup);
@@ -343,7 +341,6 @@ public void OnMapStart() {
         ExecuteMatchConfigCvars();
         EnsurePausedWarmup();
     }
-
 }
 
 public Action Timer_CheckReady(Handle timer) {
@@ -366,6 +363,16 @@ public Action Timer_CheckReady(Handle timer) {
     }
 
     return Plugin_Continue;
+}
+
+static void CheckAutoLoadConfig() {
+    if (g_GameState == GameState_None) {
+        char autoloadConfig[PLATFORM_MAX_PATH];
+        g_AutoLoadConfigCvar.GetString(autoloadConfig, sizeof(autoloadConfig));
+        if (!StrEqual(autoloadConfig, "")) {
+            LoadMatchConfig(autoloadConfig);
+        }
+    }
 }
 
 

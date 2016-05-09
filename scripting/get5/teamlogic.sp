@@ -36,6 +36,11 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
         return Plugin_Continue;
     }
 
+    // Don't enforce team joins.
+    if (g_CheckAuthsCvar.IntValue == 0) {
+        return Plugin_Continue;
+    }
+
     char arg[4];
     GetCmdArg(1, arg, sizeof(arg));
     int team_to = StringToInt(arg);
@@ -154,9 +159,13 @@ public Action Command_Coach(int client, const char[] command, int argc) {
 }
 
 public MatchTeam GetClientMatchTeam(int client) {
-    char auth[AUTH_LENGTH];
-    GetClientAuthId(client, AuthId_SteamID64, auth, sizeof(auth));
-    return GetAuthMatchTeam(auth);
+    if (g_CheckAuthsCvar.IntValue == 0) {
+        return CSTeamToMatchTeam(GetClientTeam(client));
+    } else {
+        char auth[AUTH_LENGTH];
+        GetClientAuthId(client, AuthId_SteamID64, auth, sizeof(auth));
+        return GetAuthMatchTeam(auth);
+    }
 }
 
 public int MatchTeamToCSTeam(MatchTeam t) {
@@ -229,6 +238,16 @@ public MatchTeam GetCaptainTeam(int client) {
 }
 
 public int GetTeamCaptain(MatchTeam team) {
+    // If not forcing auths, take the 1st client on the team.
+    if (g_CheckAuthsCvar.IntValue == 0) {
+        for (int i = 1; i <= MaxClients; i++) {
+            if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == team)
+                return i;
+        }
+        return -1;
+    }
+
+    // For consistency, always take the 1st auth on the list.
     ArrayList auths = GetTeamAuths(team);
     char buffer[AUTH_LENGTH];
     for (int i = 0; i < auths.Length; i++) {

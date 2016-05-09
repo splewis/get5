@@ -171,8 +171,13 @@ stock void StartWarmup(bool indefiniteWarmup=true, int warmupTime=60) {
     }
 }
 
-stock void EndWarmup() {
-    ServerCommand("mp_warmup_end");
+stock void EndWarmup(int time=0) {
+    if (time == 0) {
+        ServerCommand("mp_warmup_end");
+    } else {
+        ServerCommand("mp_warmup_pausetimer 0");
+        ServerCommand("mp_warmuptime %d", time);
+    }
 }
 
 stock bool IsPaused() {

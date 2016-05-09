@@ -713,6 +713,7 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
     if (g_GameState == GameState_KnifeRound) {
         ChangeState(GameState_WaitingForKnifeRoundDecision);
+        CreateTimer(3.0, Timer_StartWarmup);
 
         int ctAlive = CountAlivePlayersOnTeam(CS_TEAM_CT);
         int tAlive = CountAlivePlayersOnTeam(CS_TEAM_T);
@@ -833,12 +834,15 @@ public void StartGame(bool knifeRound) {
         if (g_KnifeChangedCvars != INVALID_HANDLE)
             CloseCvarStorage(g_KnifeChangedCvars);
         g_KnifeChangedCvars = ExecuteAndSaveCvars(KNIFE_CONFIG);
-        EndWarmup();
-        CreateTimer(3.0, StartKnifeRound);
+        CreateTimer(1.0, StartKnifeRound);
     } else {
         ChangeState(GameState_GoingLive);
         CreateTimer(3.0, BeginLO3, _, TIMER_FLAG_NO_MAPCHANGE);
     }
+}
+
+public Action Timer_StartWarmup(Handle timer) {
+    EnsurePausedWarmup();
 }
 
 public Action StopDemo(Handle timer) {

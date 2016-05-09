@@ -1,13 +1,16 @@
 public Action StartKnifeRound(Handle timer) {
     g_PendingSideSwap = false;
-    EndWarmup();
-    RestartGame(1);
-    CreateTimer(2.0, Timer_AnnounceKnife);
+
+    if (InWarmup())
+        EndWarmup(10);
+    else
+        RestartGame(10);
+
+    CreateTimer(15.0, Timer_AnnounceKnife);
     return Plugin_Handled;
 }
 
 public Action Timer_AnnounceKnife(Handle timer) {
-    EndWarmup();
     for (int i = 0; i < 5; i++)
         Get5_MessageToAll("Knife!");
 

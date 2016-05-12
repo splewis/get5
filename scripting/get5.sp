@@ -546,6 +546,11 @@ public Action Command_Stop(int client, int args) {
         return Plugin_Handled;
     }
 
+    // Let the server/rcon always force restore.
+    if (client == 0) {
+        RestoreLastRound();
+    }
+
     MatchTeam team = GetClientMatchTeam(client);
     g_TeamGivenStopCommand[team] = true;
 
@@ -556,19 +561,25 @@ public Action Command_Stop(int client, int args) {
         Get5_MessageToAll("%s wants to stop and reload last round, need %s to confirm with !stop.",
             g_FormattedTeamNames[MatchTeam_Team2], g_FormattedTeamNames[MatchTeam_Team1]);
     } else if (g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
-        LOOP_TEAMS(x) {
-            g_TeamGivenStopCommand[x] = false;
-        }
-
-        char lastBackup[PLATFORM_MAX_PATH];
-        ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
-        if (lastBackupCvar != null) {
-            lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
-            ServerCommand("mp_backup_restore_load_file \"%s\"", lastBackup);
-        }
+        RestoreLastRound();
     }
 
     return Plugin_Handled;
+}
+
+static bool RestoreLastRound() {
+    LOOP_TEAMS(x) {
+            g_TeamGivenStopCommand[x] = false;
+        }
+
+    char lastBackup[PLATFORM_MAX_PATH];
+    ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
+    if (lastBackupCvar != null) {
+        lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
+        ServerCommand("mp_backup_restore_load_file \"%s\"", lastBackup);
+        return true;
+    }
+    return false;
 }
 
 

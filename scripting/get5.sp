@@ -888,9 +888,11 @@ public Action Command_Status(int client, int args) {
     set_json_string(json, "commit", COMMIT_STRING);
     #endif
 
+    set_json_int(json, "gamestate", view_as<int>(g_GameState));
+
     char gamestate[64];
     GameStateString(g_GameState, gamestate, sizeof(gamestate));
-    set_json_string(json, "gamestate", gamestate);
+    set_json_string(json, "gamestate_string", gamestate);
 
     if (g_GameState != GameState_None) {
         set_json_string(json, "loaded_config_file", g_LoadedConfigFile);

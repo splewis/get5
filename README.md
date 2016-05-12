@@ -5,14 +5,14 @@ get5
 
 Get5 is a [SourceMod](http://www.sourcemod.net/) plugin for CS:GO servers for running matches. It is originally based on [pugsetup](https://github.com/splewis/csgo-pug-setup) and is inspired by [eBot](https://github.com/deStrO/eBot-CSGO).
 
-The core idea behind its use is all match details being fully defined in a single config file. Check out [this example config](configs/get5/example_match.cfg). Its main target use-case is tournaments and leagues (online or LAN). All that is required of the server-admins is to load match config file to the server and the match should run without any more manual actions from the admins. This plugin is not invasive - most of its functionality is built to work within how the CS:GO server normally operates, not replacing its functionality. It is not recommended for your new matchmaking service.
+The core idea behind its use is all match details being fully defined in a single config file. Check out [this example config](configs/get5/example_match.cfg). Its main target use-case is tournaments and leagues (online or LAN). All that is required of the server-admins is to load match config file to the server and the match should run without any more manual actions from the admins. This plugin is not invasive - most of its functionality is built to work within how the CS:GO server normally operates, not replacing its functionality. No, it is not recommended for your new matchmaking service.
 
 It is meant to be relatively easy to use for tournament admins.
 
 Features of this include:
 - Locking players to the correct team by their Steam ID
 - In-game map veto support from the match's maplist
-- Support for multi-map series (Bo1, Bo3, Bo5, etc.)
+- Support for multi-map series (Bo1, Bo2, Bo3, Bo5, etc.)
 - Warmup and !ready system each team
 - Automatic GOTV demo recording
 - Knifing for sides
@@ -25,6 +25,7 @@ Features of this include:
 
 This is still very-much a work in progress. It may have bugs. See the [issues](https://github.com/splewis/get5/issues) section for bugs or things that are yet-to-be-done. Pull requests are welcome.
 
+A web panel for managing get5 matches may exist in the future. If you're interested in making I'd encourage you to do so.
 
 ## Download and Installation
 
@@ -91,7 +92,7 @@ Of the below fields, only the ``team1`` and ``team2`` fields are actually requir
 - ``flag``: team flag (2 letter country code, wraps ``mp_teamflag_1``)
 - ``logo`` team logo (wraps ``mp_teamlogo_1``)
 - ``matchtext``: warps ``mp_teammatchstat_1``
-- ``players``: list of Steam2 id's for users on the team (not used if ``get5_check_auths`` is set to 0)
+- ``players``: list of Steam id's for users on the team (not used if ``get5_check_auths`` is set to 0)
 - ``series_score``: current score in the series, this should only be used to restore a match (e.g., changed server after 1 map), defaults to 0
 
 There is advice on handling these match configs in [the wiki](https://github.com/splewis/get5/wiki/Managing-match-configs).

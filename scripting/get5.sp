@@ -277,6 +277,10 @@ public Action Timer_InfoMessages(Handle timer) {
                 Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to begin.");
             }
         }
+    } else if (g_GameState == GameState_WaitingForKnifeRoundDecision) {
+        Get5_MessageToAll("%s won the knife round. Waiting for them to type !stay or !swap.",
+            g_FormattedTeamNames[g_KnifeWinnerTeam]);
+
     } else if (g_GameState == GameState_PostGame) {
         Get5_MessageToAll("The map will change once the GOTV broadcast has ended.");
     }

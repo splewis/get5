@@ -27,10 +27,10 @@ stock int GetNumHumansOnTeam(int team) {
     return count;
 }
 
-stock int CountAlivePlayersOnTeam(int team) {
+stock int CountAlivePlayersOnTeam(int csTeam) {
     int count = 0;
     for (int i = 1; i <= MaxClients; i++) {
-        if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == team)
+        if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == csTeam)
             count++;
     }
     return count;

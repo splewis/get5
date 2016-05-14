@@ -130,6 +130,12 @@ native bool Get5_GetMatchStats(KeyValues kv);
 #define STAT_3K "3kill_rounds"
 #define STAT_4K "4kill_rounds"
 #define STAT_5K "5kill_rounds"
+#define STAT_V1 "1v1"
+#define STAT_V2 "1v2"
+#define STAT_V3 "1v3"
+#define STAT_V4 "1v4"
+#define STAT_V5 "1v5"
+// TODO: add a flash assist statistic
 
 public SharedPlugin __pl_get5 = {
     name = "get5",

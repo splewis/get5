@@ -34,21 +34,42 @@ public void Stats_UpdateTeamScores() {
     GoBackFromTeam();
 }
 
-public void Stats_UpdatePlayerRounds() {
+public void Stats_ResetRoundValues() {
+    g_SetTeamClutching[CS_TEAM_CT] = false;
+    g_SetTeamClutching[CS_TEAM_T] = false;
+
+    for (int i = 1; i <= MaxClients; i++) {
+        Stats_ResetClientRoundValues(i);
+    }
+}
+
+public void Stats_ResetClientRoundValues(int client) {
+    g_RoundKills[client] = 0;
+    g_RoundClutchingEnemyCount[client] = 0;
+}
+
+public void Stats_UpdatePlayerRounds(int csTeamWinner) {
     for (int i = 1; i <= MaxClients; i++) {
         if (IsPlayer(i)) {
             MatchTeam team = GetClientMatchTeam(i);
             if (team == MatchTeam_Team1 || team == MatchTeam_Team2) {
                 IncrementPlayerStat(i, STAT_ROUNDSPLAYED);
 
-                if (g_RoundKills[i] == 2) {
-                    IncrementPlayerStat(i, STAT_2K);
-                } else if (g_RoundKills[i] == 3) {
-                    IncrementPlayerStat(i, STAT_3K);
-                } else if (g_RoundKills[i] == 4) {
-                    IncrementPlayerStat(i, STAT_4K);
-                } else if (g_RoundKills[i] == 5) {
-                    IncrementPlayerStat(i, STAT_5K);
+                switch(g_RoundKills[i]) {
+                    case 2: IncrementPlayerStat(i, STAT_2K);
+                    case 3: IncrementPlayerStat(i, STAT_3K);
+                    case 4: IncrementPlayerStat(i, STAT_4K);
+                    case 5: IncrementPlayerStat(i, STAT_5K);
+                }
+
+                if (GetClientTeam(i) == csTeamWinner) {
+                    switch (g_RoundClutchingEnemyCount[i]) {
+                        case 1: IncrementPlayerStat(i, STAT_V1);
+                        case 2: IncrementPlayerStat(i, STAT_V2);
+                        case 3: IncrementPlayerStat(i, STAT_V3);
+                        case 4: IncrementPlayerStat(i, STAT_V4);
+                        case 5: IncrementPlayerStat(i, STAT_V5);
+                    }
                 }
 
                 GoToPlayer(i);
@@ -105,6 +126,22 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
                 IncrementPlayerStat(attacker, STAT_TEAMKILLS);
             }
         }
+    }
+
+    // Update "clutch" (1vx) data structures to check if the clutcher wins the round
+    int tCount = CountAlivePlayersOnTeam(CS_TEAM_T);
+    int ctCount = CountAlivePlayersOnTeam(CS_TEAM_CT);
+
+    if (tCount == 1 && !g_SetTeamClutching[CS_TEAM_T]) {
+        g_SetTeamClutching[CS_TEAM_T] = true;
+        int clutcher = GetClutchingClient(CS_TEAM_T);
+        g_RoundClutchingEnemyCount[clutcher] = ctCount;
+    }
+
+    if (ctCount == 1 && !g_SetTeamClutching[CS_TEAM_CT]) {
+        g_SetTeamClutching[CS_TEAM_CT] = true;
+        int clutcher = GetClutchingClient(CS_TEAM_CT);
+        g_RoundClutchingEnemyCount[clutcher] = tCount;
     }
 }
 
@@ -204,11 +241,28 @@ static void GoBackFromPlayer() {
     g_StatsKv.GoBack();
 }
 
-public int GetMapStatsNumber() {
+static int GetMapStatsNumber() {
     int x = GetMapNumber();
     if (g_MapChangePending) {
         return x;
     } else {
         return x + 1;
+    }
+}
+
+static int GetClutchingClient(int csTeam) {
+    int client = -1;
+    int count = 0;
+    for (int i = 1; i <= MaxClients; i++) {
+        if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == csTeam) {
+            client = i;
+            count++;
+        }
+    }
+
+    if (count == 1) {
+        return client;
+    } else {
+        return -1;
     }
 }

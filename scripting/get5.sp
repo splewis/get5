@@ -84,7 +84,9 @@ MatchTeam g_LastVetoTeam;
 bool g_RestoreMatchBackup = false;
 
 // Stats values
-int g_RoundKills[MAXPLAYERS+1];
+bool g_SetTeamClutching[4];
+int g_RoundKills[MAXPLAYERS+1]; // kills per round
+int g_RoundClutchingEnemyCount[MAXPLAYERS+1]; // number of enemies left alive when last alive on your team
 KeyValues g_StatsKv;
 
 ArrayList g_TeamScoresPerMap = null;
@@ -321,6 +323,8 @@ public void OnClientPutInServer(int client) {
             EnsurePausedWarmup();
         }
     }
+
+    Stats_ResetClientRoundValues(client);
 }
 
 /**
@@ -769,9 +773,7 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
         SwapSides();
     }
 
-    for (int i = 1; i <= MaxClients; i++) {
-        g_RoundKills[i] = 0;
-    }
+    Stats_ResetRoundValues();
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
@@ -808,8 +810,10 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     }
 
     if (g_GameState == GameState_Live) {
+        int csTeamWinner = event.GetInt("winner");
+
         Stats_UpdateTeamScores();
-        Stats_UpdatePlayerRounds();
+        Stats_UpdatePlayerRounds(csTeamWinner);
 
         int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
         LogDebug("m_totalRoundsPlayed = %d", roundsPlayed);

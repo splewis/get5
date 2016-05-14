@@ -47,7 +47,6 @@ ConVar g_DemoTimeFormatCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_PausingEnabledCvar;
-ConVar g_QuickRestartCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
 
@@ -119,7 +118,7 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 
 #include "get5/util.sp"
 #include "get5/kniferounds.sp"
-#include "get5/liveon3.sp"
+#include "get5/goinglive.sp"
 #include "get5/maps.sp"
 #include "get5/mapveto.sp"
 #include "get5/matchconfig.sp"
@@ -164,8 +163,6 @@ public void OnPluginStart() {
         "Config file to exec when the game goes live");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",
         "Whether pausing is allowed.");
-    g_QuickRestartCvar = CreateConVar("get5_quick_restarts", "0",
-        "Whether to use a quick restart or a full live-on-3 restart");
     g_WaitForSpecReadyCvar = CreateConVar("get5_wait_for_spec_ready", "0",
         "Whether to wait for spectators to ready up if there are any");
     g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg",
@@ -448,19 +445,27 @@ public Action Command_Ready(int client, int args) {
     }
 
     MatchTeam t = GetCaptainTeam(client);
+    SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
+
     if (t == MatchTeam_Team1 && !g_TeamReady[MatchTeam_Team1]) {
         g_TeamReady[MatchTeam_Team1] = true;
         if (g_GameState == GameState_PreVeto) {
             Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team1]);
         } else if (g_GameState == GameState_Warmup) {
-            Get5_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team1]);
+            if (sides == SideChoice_KnifeRound)
+                Get5_MessageToAll("%s is ready to knife for sides.", g_FormattedTeamNames[MatchTeam_Team1]);
+            else
+                Get5_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team1]);
         }
     } else if (t == MatchTeam_Team2 && !g_TeamReady[MatchTeam_Team2]) {
         g_TeamReady[MatchTeam_Team2] = true;
         if (g_GameState == GameState_PreVeto) {
             Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team2]);
         } else if (g_GameState == GameState_Warmup) {
-            Get5_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team2]);
+            if (sides == SideChoice_KnifeRound)
+                Get5_MessageToAll("%s is ready to knife for sides.", g_FormattedTeamNames[MatchTeam_Team2]);
+            else
+                Get5_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team2]);
         }
     }
     return Plugin_Handled;
@@ -726,7 +731,6 @@ public Action Timer_NextMatchMap(Handle timer) {
 }
 
 public Action Timer_EndSeries(Handle timer) {
-    ChangeState(GameState_None);
     if (g_KickClientsWithNoMatchCvar.IntValue != 0) {
         for (int i = 1; i <= MaxClients; i++) {
             if (IsPlayer(i)) {
@@ -751,6 +755,8 @@ public Action Timer_EndSeries(Handle timer) {
     Call_PushCell(g_TeamSeriesScores[MatchTeam_Team1]);
     Call_PushCell(g_TeamSeriesScores[MatchTeam_Team2]);
     Call_Finish();
+
+    ChangeState(GameState_None);
 }
 
 public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
@@ -897,12 +903,14 @@ public void StartGame(bool knifeRound) {
         CreateTimer(1.0, StartKnifeRound);
     } else {
         ChangeState(GameState_GoingLive);
-        CreateTimer(3.0, BeginLO3, _, TIMER_FLAG_NO_MAPCHANGE);
+        CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
     }
 }
 
 public Action Timer_PostKnife(Handle timer) {
-    RestoreCvars(g_KnifeChangedCvars, true);
+    if (g_KnifeChangedCvars != INVALID_HANDLE)
+        RestoreCvars(g_KnifeChangedCvars, true);
+
     ExecCfg(g_WarmupCfgCvar);
     EnsurePausedWarmup();
 }

@@ -1,12 +1,13 @@
 public Action StartKnifeRound(Handle timer) {
     g_PendingSideSwap = false;
 
+    Get5_MessageToAll("The knife round will begin in 5 seconds.");
     if (InWarmup())
-        EndWarmup(10);
+        EndWarmup(5);
     else
-        RestartGame(10);
+        RestartGame(5);
 
-    CreateTimer(15.0, Timer_AnnounceKnife);
+    CreateTimer(10.0, Timer_AnnounceKnife);
     return Plugin_Handled;
 }
 
@@ -39,7 +40,7 @@ public void EndKnifeRound(bool swap) {
     }
 
     ChangeState(GameState_GoingLive);
-    CreateTimer(3.0, BeginLO3, _, TIMER_FLAG_NO_MAPCHANGE);
+    CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
 }
 
 static bool AwaitingKnifeDecision(int client) {

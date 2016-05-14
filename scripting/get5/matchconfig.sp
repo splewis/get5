@@ -120,6 +120,7 @@ public bool LoadMatchConfig(const char[] config) {
     EnsurePausedWarmup();
     AddTeamLogosToDownloadTable();
     strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
+    Stats_InitSeries();
 
     return true;
 }

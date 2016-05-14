@@ -3,6 +3,7 @@ public Action BeginLO3(Handle timer) {
     if (g_GameState == GameState_None)
         return Plugin_Handled;
 
+    ExecCfg(g_LiveCfgCvar);
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
     ChangeState(GameState_GoingLive);

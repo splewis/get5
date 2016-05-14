@@ -93,6 +93,44 @@ native bool Get5_RemovePlayerFromTeam(const char[] steamId);
 // Returns the current match team a auth is mapped to.
 native MatchTeam Get5_GetPlayerTeam(const char[] steamId);
 
+// Sets the current matchid.
+native void Get5_SetMatchID(const char[] id);
+
+// Copies the current series stats into the passed KeyValues structure.
+// Below are the keys used for stats in the kv copied.
+// The caller is responsible for creating and deleting a KeyValues
+// object if using this method.
+native bool Get5_GetMatchStats(KeyValues kv);
+
+// Series stats (root section)
+#define STAT_SERIESWINNER "winner"
+#define STAT_SERIESTYPE "series_type"
+
+// Map stats (under "map1", "map2", etc.)
+#define STAT_MAPNAME "mapname"
+#define STAT_MAPWINNER "winner"
+#define STAT_DEMOFILENAME "demo_filename"
+
+// Team stats (under map section, then "team1" or "team2")
+#define STAT_TEAMNAME "name"
+#define STAT_TEAMSCORE "score"
+
+// Player stats (under map section, then team section, then player's steam64)
+#define STAT_NAME "name"
+#define STAT_KILLS "kills"
+#define STAT_DEATHS "deaths"
+#define STAT_ASSISTS "assists"
+#define STAT_TEAMKILLS "teamkills"
+#define STAT_DAMAGE "damage"
+#define STAT_HEADSHOT_KILLS "headshot_kills"
+#define STAT_ROUNDSPLAYED "roundsplayed"
+#define STAT_BOMBDEFUSES "bomb_defuses"
+#define STAT_BOMBPLANTS "bomb_plants"
+#define STAT_2K "2kill_rounds"
+#define STAT_3K "3kill_rounds"
+#define STAT_4K "4kill_rounds"
+#define STAT_5K "5kill_rounds"
+
 public SharedPlugin __pl_get5 = {
     name = "get5",
     file = "get5.smx",
@@ -113,5 +151,7 @@ public __pl_get5_SetNTVOptional() {
     MarkNativeAsOptional("Get5_AddPlayerToTeam");
     MarkNativeAsOptional("Get5_RemovePlayerFromTeam");
     MarkNativeAsOptional("Get5_GetPlayerTeam");
+    MarkNativeAsOptional("Get5_SetMatchID");
+    MarkNativeAsOptional("Get5_GetMatchStats");
 }
 #endif

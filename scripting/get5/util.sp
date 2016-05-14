@@ -381,6 +381,18 @@ stock void CSTeamString(int csTeam, char[] buffer, int len) {
     }
 }
 
+stock void GetTeamString(MatchTeam team, char[] buffer, int len) {
+    if (team == MatchTeam_Team1) {
+        Format(buffer, len, "team1");
+    } else if (team == MatchTeam_Team2) {
+        Format(buffer, len, "team2");
+    } else if (team == MatchTeam_TeamSpec) {
+        Format(buffer, len, "spec");
+    } else {
+        Format(buffer, len, "none");
+    }
+}
+
 stock void GameStateString(GameState state, char[] buffer, int length) {
     switch(state) {
         case GameState_None: Format(buffer, length, "none");
@@ -485,4 +497,13 @@ stock bool ConvertAuthToSteam64(const char[] inputId, char outputId[AUTH_LENGTH]
     }
 
     return false;
+}
+
+stock bool HelpfulAttack(int attacker, int victim) {
+    if (!IsValidClient(attacker) || !IsValidClient(victim)) {
+        return false;
+    }
+    int ateam = GetClientTeam(attacker); // Get attacker's team
+    int vteam = GetClientTeam(victim);   // Get the victim's team
+    return ateam != vteam && attacker != victim;
 }

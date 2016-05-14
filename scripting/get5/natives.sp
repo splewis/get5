@@ -10,6 +10,8 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
     CreateNative("Get5_AddPlayerToTeam", Native_AddPlayerToTeam);
     CreateNative("Get5_RemovePlayerFromTeam", Native_RemovePlayerFromTeam);
     CreateNative("Get5_GetPlayerTeam", Native_GetPlayerTeam);
+    CreateNative("Get5_SetMatchID", Native_SetMatchID);
+    CreateNative("Get5_GetMatchStats", Native_GetMatchStats);
     RegPluginLibrary("get5");
     return APLRes_Success;
 }
@@ -112,5 +114,21 @@ public int Native_GetPlayerTeam(Handle plugin, int numParams) {
         return view_as<int>(GetAuthMatchTeam(steam64Auth));
     } else {
         return view_as<int>(MatchTeam_TeamNone);
+    }
+}
+
+public int Native_SetMatchID(Handle plugin, int numParams) {
+    GetNativeString(1, g_MatchID, sizeof(g_MatchID));
+    return 0;
+}
+
+public int Native_GetMatchStats(Handle plugin, int numParams) {
+    Handle output = GetNativeCell(1);
+    if (output == INVALID_HANDLE) {
+        return view_as<int>(false);
+    } else {
+        KvCopySubkeys(g_StatsKv, output);
+        g_StatsKv.Rewind();
+        return view_as<int>(true);
     }
 }

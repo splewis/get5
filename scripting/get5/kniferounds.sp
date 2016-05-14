@@ -38,9 +38,6 @@ public void EndKnifeRound(bool swap) {
         g_TeamSide[MatchTeam_Team2] = CS_TEAM_T;
     }
 
-    RestoreCvars(g_KnifeChangedCvars, true);
-    ExecCfg(g_LiveCfgCvar);
-
     ChangeState(GameState_GoingLive);
     CreateTimer(3.0, BeginLO3, _, TIMER_FLAG_NO_MAPCHANGE);
 }

@@ -84,6 +84,10 @@ ArrayList g_MapsLeftInVetoPool = null;
 MatchTeam g_LastVetoTeam;
 bool g_RestoreMatchBackup = false;
 
+// Stats values
+int g_RoundKills[MAXPLAYERS+1];
+KeyValues g_StatsKv;
+
 ArrayList g_TeamScoresPerMap = null;
 char g_LoadedConfigFile[PLATFORM_MAX_PATH];
 int g_VetoCaptains[MatchTeam_Count]; // Clients doing the map vetos.
@@ -124,6 +128,7 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 #include "get5/tests.sp"
 #include "get5/version.sp"
 #include "get5/jsonhelpers.sp"
+#include "get5/stats.sp"
 
 
 
@@ -204,6 +209,8 @@ public void OnPluginStart() {
         "Creates and loads a match using the players currently on the server as a Bo1 with the current map");
     RegAdminCmd("get5_forceready", Command_ForceReady, ADMFLAG_CHANGEMAP,
         "Force readies all current teams");
+    RegAdminCmd("get5_dumpstats", Command_DumpStats, ADMFLAG_CHANGEMAP,
+        "Dumps match stats to a file");
 
     /** Other commands **/
     RegConsoleCmd("get5_status", Command_Status, "Prints JSON formatted match state info");
@@ -218,6 +225,9 @@ public void OnPluginStart() {
     HookEvent("server_cvar", Event_CvarChanged, EventHookMode_Pre);
     HookEvent("player_connect_full", Event_PlayerConnectFull);
     HookEvent("player_team", Event_OnPlayerTeam, EventHookMode_Pre);
+    Stats_PluginStart();
+    Stats_InitSeries();
+
     AddCommandListener(Command_Coach, "coach");
     AddCommandListener(Command_JoinTeam, "jointeam");
     AddCommandListener(Command_JoinGame, "joingame");
@@ -497,7 +507,7 @@ public Action Command_EndMatch(int client, int args) {
 
 public Action Command_LoadMatch(int client, int args) {
     if (g_GameState != GameState_None) {
-        LogError("Cannot load a match when a match is already loaded");
+        ReplyToCommand(client, "Cannot load a match when a match is already loaded");
         return Plugin_Handled;
     }
 
@@ -515,7 +525,7 @@ public Action Command_LoadMatch(int client, int args) {
 
 public Action Command_LoadMatchUrl(int client, int args) {
     if (g_GameState != GameState_None) {
-        LogError("Cannot load a match config with another match already loaded");
+        ReplyToCommand(client, "Cannot load a match config with another match already loaded");
         return Plugin_Handled;
     }
 
@@ -535,6 +545,29 @@ public Action Command_LoadMatchUrl(int client, int args) {
         } else {
             ReplyToCommand(client, "Usage: get5_loadmatch_url <url>");
         }
+    }
+
+    return Plugin_Handled;
+}
+
+public Action Command_DumpStats(int client, int args) {
+    if (g_GameState == GameState_None) {
+        ReplyToCommand(client, "Cannot dump match stats with no match existing");
+        return Plugin_Handled;
+    }
+
+    char arg[PLATFORM_MAX_PATH];
+    if (args < 1) {
+        arg = "get5_matchstats.cfg";
+    } else {
+        GetCmdArg(1, arg, sizeof(arg));
+    }
+
+    if (g_StatsKv.ExportToFile(arg)) {
+        g_StatsKv.Rewind();
+        ReplyToCommand(client, "Saved match stats to %s", arg);
+    } else {
+        ReplyToCommand(client, "Failed to save match stats to %s", arg);
     }
 
     return Plugin_Handled;
@@ -603,6 +636,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
         int t1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
         int t2score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
         MatchTeam winningTeam = (t1score > t2score) ? MatchTeam_Team1 : MatchTeam_Team2;
+        Stats_UpdateMapScore(winningTeam);
 
         AddMapScore();
         g_TeamSeriesScores[winningTeam]++;
@@ -710,6 +744,8 @@ public Action Timer_EndSeries(Handle timer) {
         winningTeam = MatchTeam_TeamNone;
     }
 
+    Stats_SeriesEnd(winningTeam);
+
     Call_StartForward(g_OnSeriesResult);
     Call_PushCell(winningTeam);
     Call_PushCell(g_TeamSeriesScores[MatchTeam_Team1]);
@@ -722,12 +758,16 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
         g_PendingSideSwap = false;
         SwapSides();
     }
+
+    for (int i = 1; i <= MaxClients; i++) {
+        g_RoundKills[i] = 0;
+    }
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
     if (g_GameState == GameState_KnifeRound) {
         ChangeState(GameState_WaitingForKnifeRoundDecision);
-        CreateTimer(3.0, Timer_StartWarmup);
+        CreateTimer(1.0, Timer_PostKnife);
 
         int ctAlive = CountAlivePlayersOnTeam(CS_TEAM_CT);
         int tAlive = CountAlivePlayersOnTeam(CS_TEAM_T);
@@ -758,6 +798,9 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     }
 
     if (g_GameState == GameState_Live) {
+        Stats_UpdateTeamScores();
+        Stats_UpdatePlayerRounds();
+
         int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
         LogDebug("m_totalRoundsPlayed = %d", roundsPlayed);
 
@@ -804,6 +847,7 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
     return Plugin_Continue;
 }
 
+
 public void StartGame(bool knifeRound) {
     if (!IsTVEnabled()) {
         LogError("GOTV demo could not be recorded since tv_enable is not set to 1");
@@ -839,6 +883,8 @@ public void StartGame(bool knifeRound) {
         if (Record(demoName)) {
             Format(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);
             LogMessage("Recording to %s", g_DemoFileName);
+        } else {
+            Format(g_DemoFileName, sizeof(g_DemoFileName), "");
         }
     }
 
@@ -855,7 +901,9 @@ public void StartGame(bool knifeRound) {
     }
 }
 
-public Action Timer_StartWarmup(Handle timer) {
+public Action Timer_PostKnife(Handle timer) {
+    RestoreCvars(g_KnifeChangedCvars, true);
+    ExecCfg(g_WarmupCfgCvar);
     EnsurePausedWarmup();
 }
 

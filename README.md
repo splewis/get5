@@ -57,11 +57,12 @@ If you need more help, see the [step-by-step guide in the wiki](https://github.c
 - ``get5_loadteam``: loads a team section from a file into a team
 - ``get5_loadmatch_url``: loads a remote (JSON formatted) match config by sending a HTTP GET to the given url, this requires either the [system2](https://forums.alliedmods.net/showthread.php?t=146019) or [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) Extensions
 - ``get5_endmatch``: force ends the current match
-- ``get5_status``: replies with JSON formatted match state (also available to clients)
 - ``get5_creatematch``: creates a Bo1 match with the current players on the server on the current map
 - ``get5_addplayer``: adds a steamid to a team (any format for steamid)
 - ``get5_removeplayer``: removes a steamid from all teams (any format for steamid)
 - ``get5_forceready``: marks all teams as ready
+- ``get5_dumpstats``: dumps current match stats to a file
+- ``get5_status``: replies with JSON formatted match state (available to all clients, requires [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604))
 
 
 ## Match Schema

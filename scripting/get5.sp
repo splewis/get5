@@ -548,10 +548,8 @@ public Action Command_LoadMatchUrl(int client, int args) {
         return Plugin_Handled;
     }
 
-    bool steamWorksAvaliable = GetFeatureStatus(FeatureType_Native,
-        "SteamWorks_CreateHTTPRequest") == FeatureStatus_Available;
-    bool system2Avaliable = GetFeatureStatus(FeatureType_Native,
-        "System2_DownloadFile") == FeatureStatus_Available;
+    bool steamWorksAvaliable = LibraryExists("SteamWorks");
+    bool system2Avaliable = LibraryExists("system2");
 
     if (!steamWorksAvaliable && !system2Avaliable) {
         ReplyToCommand(client, "Cannot load matches from a url without the SteamWorks or system2 extension running");

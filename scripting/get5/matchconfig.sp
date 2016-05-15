@@ -139,10 +139,8 @@ static void MatchConfigFail(const char[] reason, any ...) {
 }
 
 stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames=null, ArrayList paramValues=null) {
-    bool steamWorksAvaliable = GetFeatureStatus(FeatureType_Native,
-        "SteamWorks_CreateHTTPRequest") == FeatureStatus_Available;
-    bool system2Avaliable = GetFeatureStatus(FeatureType_Native,
-        "System2_DownloadFile") == FeatureStatus_Available;
+    bool steamWorksAvaliable = LibraryExists("SteamWorks");
+    bool system2Avaliable = LibraryExists("system2");
 
     if (system2Avaliable) {
         System2_DownloadFile(System2_OnMatchConfigReceived, url, REMOTE_CONFIG_FILENAME);

@@ -981,11 +981,9 @@ public Action Command_Status(int client, int args) {
     if (g_GameState > GameState_Veto) {
         Handle maps = json_object();
 
-        // Done backwards since the json keys are reported in a way such that
-        // the last added is the first stored.
-        for (int i = g_MapsToPlay.Length - 1; i >= 0; i--) {
+        for (int i = 0; i < g_MapsToPlay.Length; i++) {
             char mapKey[64];
-            Format(mapKey, sizeof(mapKey), "map%d", i + 1);
+            Format(mapKey, sizeof(mapKey), "map%d", i);
 
             char mapName[PLATFORM_MAX_PATH];
             g_MapsToPlay.GetString(i, mapName, sizeof(mapName));

@@ -124,7 +124,10 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
                 if (IsValidClient(assister))
                     IncrementPlayerStat(assister, STAT_ASSISTS);
             } else {
-                IncrementPlayerStat(attacker, STAT_TEAMKILLS);
+                if (attacker == victim)
+                    IncrementPlayerStat(attacker, STAT_SUICIDES);
+                else
+                    IncrementPlayerStat(attacker, STAT_TEAMKILLS);
             }
         }
     }

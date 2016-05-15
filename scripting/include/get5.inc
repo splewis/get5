@@ -128,6 +128,7 @@ native bool Get5_GetMatchStats(KeyValues kv);
 #define STAT_DEATHS "deaths"
 #define STAT_ASSISTS "assists"
 #define STAT_TEAMKILLS "teamkills"
+#define STAT_SUICIDES "suicides"
 #define STAT_DAMAGE "damage"
 #define STAT_HEADSHOT_KILLS "headshot_kills"
 #define STAT_ROUNDSPLAYED "roundsplayed"

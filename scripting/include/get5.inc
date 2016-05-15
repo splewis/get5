@@ -113,7 +113,7 @@ native bool Get5_GetMatchStats(KeyValues kv);
 #define STAT_SERIESWINNER "winner"
 #define STAT_SERIESTYPE "series_type"
 
-// Map stats (under "map1", "map2", etc.)
+// Map stats (under "map0", "map1", etc.)
 #define STAT_MAPNAME "mapname"
 #define STAT_MAPWINNER "winner"
 #define STAT_DEMOFILENAME "demo_filename"

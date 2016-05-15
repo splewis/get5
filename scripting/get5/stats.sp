@@ -245,9 +245,9 @@ static void GoBackFromPlayer() {
 static int GetMapStatsNumber() {
     int x = GetMapNumber();
     if (g_MapChangePending) {
-        return x;
+        return x - 1;
     } else {
-        return x + 1;
+        return x;
     }
 }
 

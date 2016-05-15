@@ -458,13 +458,13 @@ public Action Command_Ready(int client, int args) {
     }
 
     MatchTeam t = GetCaptainTeam(client);
-    SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
 
     if (t == MatchTeam_Team1 && !g_TeamReady[MatchTeam_Team1]) {
         g_TeamReady[MatchTeam_Team1] = true;
         if (g_GameState == GameState_PreVeto) {
             Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team1]);
         } else if (g_GameState == GameState_Warmup) {
+            SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
             if (sides == SideChoice_KnifeRound)
                 Get5_MessageToAll("%s is ready to knife for sides.", g_FormattedTeamNames[MatchTeam_Team1]);
             else
@@ -475,6 +475,7 @@ public Action Command_Ready(int client, int args) {
         if (g_GameState == GameState_PreVeto) {
             Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team2]);
         } else if (g_GameState == GameState_Warmup) {
+            SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
             if (sides == SideChoice_KnifeRound)
                 Get5_MessageToAll("%s is ready to knife for sides.", g_FormattedTeamNames[MatchTeam_Team2]);
             else

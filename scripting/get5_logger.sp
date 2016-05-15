@@ -1,7 +1,9 @@
 #include <cstrike>
 #include <sourcemod>
 #include "include/get5.inc"
+#include "get5/util.sp"
 #include "get5/version.sp"
+
 
 public Plugin myinfo = {
     name = "Get5 logger",
@@ -32,8 +34,11 @@ public void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
         loserScore = team1Score;
     }
 
-    LogMessage("Get5_OnMapResult: Team %d won %s (map%d) %d:%d",
-        mapWinner, map, mapNumber, winnerScore, loserScore);
+    char winnerString[32];
+    GetTeamString(mapWinner, winnerString, sizeof(winnerString));
+
+    LogMessage("Get5_OnMapResult: %s won %s (map%d) %d:%d",
+        winnerString, map, mapNumber, winnerScore, loserScore);
 }
 
 public void Get5_OnSeriesResult(MatchTeam seriesWinner,
@@ -45,8 +50,11 @@ public void Get5_OnSeriesResult(MatchTeam seriesWinner,
         loserScore = team1MapScore;
     }
 
-    LogMessage("Get5_OnSeriesResult: Team %d won the series %d:%d",
-        seriesWinner, winnerScore, loserScore);
+    char winnerString[32];
+    GetTeamString(seriesWinner, winnerString, sizeof(winnerString));
+
+    LogMessage("Get5_OnSeriesResult: %s won the series %d:%d",
+        winnerString, winnerScore, loserScore);
 }
 
 public void Get5_OnLoadMatchConfigFailed(const char[] reason) {

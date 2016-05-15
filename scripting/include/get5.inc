@@ -3,6 +3,8 @@
 #endif
 #define _get5_included_
 
+#define AUTH_LENGTH 64
+
 enum GameState {
     GameState_None,                          // no setup has taken place
     GameState_PreVeto,                       // warmup, waiting for the veto

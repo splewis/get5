@@ -16,7 +16,6 @@
 #define INFO_MESSAGE_TIMER_INTERVAL 29.0
 
 #define DEBUG_CVAR "get5_debug"
-#define AUTH_LENGTH 64
 #define MATCH_ID_LENGTH 64
 #define MATCH_NAME_LENGTH 64
 #define MAX_CVAR_LENGTH 128

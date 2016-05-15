@@ -122,6 +122,9 @@ public bool LoadMatchConfig(const char[] config) {
     strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
     Stats_InitSeries();
 
+    Call_StartForward(g_OnSeriesInit);
+    Call_Finish();
+
     return true;
 }
 

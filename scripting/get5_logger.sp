@@ -11,12 +11,20 @@ public Plugin myinfo = {
     url = "https://github.com/splewis/get5"
 };
 
+public void Get5_OnSeriesInit() {
+    LogMessage("Get5_OnSeriesInit");
+}
+
+public void Get5_OnGoingLive(int mapNumber) {
+    LogMessage("Get5_OnGoingLive, mapNumber = %d", mapNumber);
+}
+
 public void Get5_OnGameStateChanged(GameState oldState, GameState newState) {
     LogMessage("Get5_OnGameStateChanged: %d -> %d", oldState, newState);
 }
 
 public void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
-    int team1Score, int team2Score) {
+    int team1Score, int team2Score, int mapNumber) {
     int winnerScore = team1Score;
     int loserScore = team2Score;
     if (mapWinner == MatchTeam_Team2) {
@@ -24,8 +32,8 @@ public void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
         loserScore = team1Score;
     }
 
-    LogMessage("Get5_OnMapResult: Team %d won %s %d:%d",
-        mapWinner, map, winnerScore, loserScore);
+    LogMessage("Get5_OnMapResult: Team %d won %s (map%d) %d:%d",
+        mapWinner, map, mapNumber, winnerScore, loserScore);
 }
 
 public void Get5_OnSeriesResult(MatchTeam seriesWinner,

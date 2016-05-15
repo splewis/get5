@@ -112,10 +112,12 @@ Handle g_KnifeChangedCvars = INVALID_HANDLE;
 /** Forwards **/
 Handle g_OnDemoFinished = INVALID_HANDLE;
 Handle g_OnGameStateChanged = INVALID_HANDLE;
+Handle g_OnGoingLive = INVALID_HANDLE;
 Handle g_OnLoadMatchConfigFailed = INVALID_HANDLE;
 Handle g_OnMapPicked = INVALID_HANDLE;
 Handle g_OnMapResult = INVALID_HANDLE;
 Handle g_OnMapVetoed = INVALID_HANDLE;
+Handle g_OnSeriesInit = INVALID_HANDLE;
 Handle g_OnSeriesResult = INVALID_HANDLE;
 
 #include "get5/util.sp"
@@ -249,16 +251,19 @@ public void OnPluginStart() {
         Param_String);
     g_OnGameStateChanged = CreateGlobalForward("Get5_OnGameStateChanged", ET_Ignore,
         Param_Cell, Param_Cell);
+    g_OnGoingLive = CreateGlobalForward("Get5_OnGoingLive", ET_Ignore,
+        Param_Cell);
     g_OnMapResult = CreateGlobalForward("Get5_OnMapResult", ET_Ignore,
-        Param_String, Param_Cell, Param_Cell, Param_Cell);
-    g_OnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore,
-        Param_Cell, Param_Cell, Param_Cell);
+        Param_String, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
     g_OnLoadMatchConfigFailed = CreateGlobalForward("Get5_OnLoadMatchConfigFailed", ET_Ignore,
         Param_String);
     g_OnMapPicked =  CreateGlobalForward("Get5_OnMapPicked", ET_Ignore,
         Param_Cell, Param_String);
     g_OnMapVetoed = CreateGlobalForward("Get5_OnMapVetoed", ET_Ignore,
         Param_Cell, Param_String);
+    g_OnSeriesInit = CreateGlobalForward("Get5_OnSeriesInit", ET_Ignore);
+    g_OnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore,
+        Param_Cell, Param_Cell, Param_Cell);
 
     /** Start any repeating timers **/
     CreateTimer(LIVE_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
@@ -662,6 +667,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
         Call_PushCell(winningTeam);
         Call_PushCell(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
         Call_PushCell(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
+        Call_PushCell(GetMapNumber() - 1);
         Call_Finish();
 
         float minDelay = FindConVar("tv_delay").FloatValue + MATCH_END_DELAY_AFTER_TV;

@@ -424,7 +424,7 @@ stock void ExecCfg(ConVar cvar) {
 }
 
 // Taken from Zephyrus (https://forums.alliedmods.net/showpost.php?p=2231850&postcount=2)
-static bool ConvertSteam2ToSteam64(const char[] steam2Auth, char[] steam64Auth, int size) {
+stock bool ConvertSteam2ToSteam64(const char[] steam2Auth, char[] steam64Auth, int size) {
     if (strlen(steam2Auth) < 11 || steam2Auth[0] != 'S' || steam2Auth[6] == 'I') {
         steam64Auth[0] = 0;
         return false;
@@ -441,7 +441,7 @@ static bool ConvertSteam2ToSteam64(const char[] steam2Auth, char[] steam64Auth, 
     return true;
 }
 
-static bool ConvertSteam3ToSteam2(const char[] steam3Auth, char[] steam2Auth, int size) {
+stock bool ConvertSteam3ToSteam2(const char[] steam3Auth, char[] steam2Auth, int size) {
     if (StrContains(steam3Auth, "[U:1:") != 0 || strlen(steam3Auth) >= AUTH_LENGTH) {
         return false;
     }

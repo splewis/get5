@@ -56,6 +56,7 @@ public void Stats_UpdatePlayerRounds(int csTeamWinner) {
                 IncrementPlayerStat(i, STAT_ROUNDSPLAYED);
 
                 switch(g_RoundKills[i]) {
+                    case 1: IncrementPlayerStat(i, STAT_1K);
                     case 2: IncrementPlayerStat(i, STAT_2K);
                     case 3: IncrementPlayerStat(i, STAT_3K);
                     case 4: IncrementPlayerStat(i, STAT_4K);

@@ -35,12 +35,19 @@ enum SideChoice {
     SideChoice_KnifeRound,  // There will be a knife round to choose sides
 };
 
+// Called when a series is first setup.
+forward void Get5_OnSeriesInit();
+
+// Called each time in a match when a map is going live.
+// The mapNumber parameter starts at 0.
+forward void Get5_OnGoingLive(int mapNumber);
+
 // Called whenever the gamestate phase is changed.
 forward void Get5_OnGameStateChanged(GameState oldState, GameState newState);
 
 // Called at the end of a map in a series.
 forward void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
-    int team1Score, int team2Score);
+    int team1Score, int team2Score, int mapNumber);
 
 // Called at the end of a full match.
 // Note: both Get5_OnMapResult and Get5_OnSeriesResult are called
@@ -126,15 +133,16 @@ native bool Get5_GetMatchStats(KeyValues kv);
 #define STAT_ROUNDSPLAYED "roundsplayed"
 #define STAT_BOMBDEFUSES "bomb_defuses"
 #define STAT_BOMBPLANTS "bomb_plants"
+#define STAT_1K "1kill_rounds"
 #define STAT_2K "2kill_rounds"
 #define STAT_3K "3kill_rounds"
 #define STAT_4K "4kill_rounds"
 #define STAT_5K "5kill_rounds"
-#define STAT_V1 "1v1"
-#define STAT_V2 "1v2"
-#define STAT_V3 "1v3"
-#define STAT_V4 "1v4"
-#define STAT_V5 "1v5"
+#define STAT_V1 "v1"
+#define STAT_V2 "v2"
+#define STAT_V3 "v3"
+#define STAT_V4 "v4"
+#define STAT_V5 "v5"
 // TODO: add a flash assist statistic
 
 public SharedPlugin __pl_get5 = {

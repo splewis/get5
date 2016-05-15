@@ -14,6 +14,10 @@ public Action StartGoingLive(Handle timer) {
 
     CreateTimer(15.0, MatchLive);
 
+    Call_StartForward(g_OnGoingLive);
+    Call_PushCell(GetMapNumber());
+    Call_Finish();
+
     return Plugin_Handled;
 }
 

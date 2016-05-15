@@ -965,7 +965,7 @@ public Action Command_Status(int client, int args) {
 
     if (g_GameState != GameState_None) {
         set_json_string(json, "loaded_config_file", g_LoadedConfigFile);
-        set_json_int(json, "map_number", GetMapNumber() + 1);
+        set_json_int(json, "map_number", GetMapNumber());
 
         Handle team1 = json_object();
         AddTeamInfo(team1, MatchTeam_Team1);

@@ -209,6 +209,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
 
             int kills = kv.GetNum(STAT_KILLS);
             int deaths = kv.GetNum(STAT_DEATHS);
+            int flashbang_assists = kv.GetNum(STAT_FLASHBANG_ASSISTS);
             int assists = kv.GetNum(STAT_ASSISTS);
             int teamkills = kv.GetNum(STAT_TEAMKILLS);
             int damage = kv.GetNum(STAT_DAMAGE);
@@ -221,6 +222,10 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
             int v3 = kv.GetNum(STAT_V3);
             int v4 = kv.GetNum(STAT_V4);
             int v5 = kv.GetNum(STAT_V5);
+            int k2 = kv.GetNum(STAT_2K);
+            int k3 = kv.GetNum(STAT_3K);
+            int k4 = kv.GetNum(STAT_4K);
+            int k5 = kv.GetNum(STAT_5K);
 
             char teamString[16];
             GetTeamString(team, teamString, sizeof(teamString));
@@ -228,21 +233,24 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
             Format(queryBuffer, sizeof(queryBuffer),
                 "REPLACE INTO `get5_stats_players` \
                 (matchid, mapnumber, steamid64, team, \
-                rounds_played, name, kills, deaths, \
+                rounds_played, name, kills, deaths, flashbang_assists, \
                 assists, teamkills, headshot_kills, damage, \
                 bomb_plants, bomb_defuses, \
                 v1, v2, v3, v4, v5 \
+                2k, 3k, 4k, 5k, \
                 ) VALUES \
                 (%d, %d, '%s', '%s', \
-                %d, '%s', %d, %d, \
+                %d, '%s', %d, %d, %d, \
                 %d, %d, %d, %d, \
                 %d, %d, \
-                %d, %d, %d, %d, %d)",
+                %d, %d, %d, %d, %d,\
+                %d, %d, %d, %d)",
                 g_MatchID, g_MapNumber, authSz, teamString,
-                roundsplayed, nameSz, kills, deaths,
+                roundsplayed, nameSz, kills, deaths, flashbang_assists,
                 assists, teamkills, headshot_kills, damage,
                 plants, defuses,
-                v1, v2, v3, v4, v5);
+                v1, v2, v3, v4, v5,
+                k2, k3, k4, k5);
 
             db.Query(SQLErrorCheckCallback, queryBuffer);
 

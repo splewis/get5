@@ -875,23 +875,32 @@ public void StartGame(bool knifeRound) {
     if (!IsTVEnabled()) {
         LogError("GOTV demo could not be recorded since tv_enable is not set to 1");
     } else {
-        // get the map, with any workshop stuff before removed
-        // this is {MAP} in the format string
+        // Get the map, with any workshop stuff before removed.
+        // This is {MAP} in the format string.
         char mapName[PLATFORM_MAX_PATH];
         GetCleanMapName(mapName, sizeof(mapName));
 
-        // get the time, this is {TIME} in the format string
+        // Get the time, this is {TIME} in the format string.
         char timeFormat[64];
         g_DemoTimeFormatCvar.GetString(timeFormat, sizeof(timeFormat));
         int timeStamp = GetTime();
         char formattedTime[64];
         FormatTime(formattedTime, sizeof(formattedTime), timeFormat, timeStamp);
 
-        // get the player count, this is {TEAMSIZE} in the format string
+        // Get the player count, this is {TEAMSIZE} in the format string.
         char playerCount[MAX_INTEGER_STRING_LENGTH];
         IntToString(g_PlayersPerTeam, playerCount, sizeof(playerCount));
 
-        // create the actual demo name to use
+        // Get team names with spaces removed.
+        char team1Str[MAX_CVAR_LENGTH];
+        strcopy(team1Str, sizeof(team1Str), g_TeamNames[MatchTeam_Team1]);
+        ReplaceString(team1Str, sizeof(team1Str), " ", "_");
+
+        char team2Str[MAX_CVAR_LENGTH];
+        strcopy(team2Str, sizeof(team2Str), g_TeamNames[MatchTeam_Team2]);
+        ReplaceString(team2Str, sizeof(team2Str), " ", "_");
+
+        // Create the actual demo name to use.
         char demoName[PLATFORM_MAX_PATH];
         g_DemoNameFormatCvar.GetString(demoName, sizeof(demoName));
 
@@ -900,8 +909,8 @@ public void StartGame(bool knifeRound) {
         ReplaceString(demoName, sizeof(demoName), "{MATCHID}", g_MatchID, false);
         ReplaceString(demoName, sizeof(demoName), "{MAPNAME}", mapName, false);
         ReplaceString(demoName, sizeof(demoName), "{TIME}", formattedTime, false);
-        ReplaceString(demoName, sizeof(demoName), "{TEAM1}", g_TeamNames[MatchTeam_Team1], false);
-        ReplaceString(demoName, sizeof(demoName), "{TEAM2}", g_TeamNames[MatchTeam_Team2], false);
+        ReplaceString(demoName, sizeof(demoName), "{TEAM1}", team1Str, false);
+        ReplaceString(demoName, sizeof(demoName), "{TEAM2}", team2Str, false);
 
         if (Record(demoName)) {
             Format(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);

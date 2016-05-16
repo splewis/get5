@@ -142,6 +142,7 @@ native bool Get5_GetMatchStats(KeyValues kv);
 #define STAT_KILLS "kills"
 #define STAT_DEATHS "deaths"
 #define STAT_ASSISTS "assists"
+#define STAT_FLASHBANG_ASSISTS "flashbang_assists"
 #define STAT_TEAMKILLS "teamkills"
 #define STAT_SUICIDES "suicides"
 #define STAT_DAMAGE "damage"
@@ -159,7 +160,6 @@ native bool Get5_GetMatchStats(KeyValues kv);
 #define STAT_V3 "v3"
 #define STAT_V4 "v4"
 #define STAT_V5 "v5"
-// TODO: add a flash assist statistic
 
 public SharedPlugin __pl_get5 = {
     name = "get5",

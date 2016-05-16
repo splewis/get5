@@ -3,6 +3,8 @@ public void Stats_PluginStart() {
     HookEvent("player_hurt", Stats_DamageDealtEvent, EventHookMode_Pre);
     HookEvent("bomb_planted", Stats_BombPlantedEvent);
     HookEvent("bomb_defused", Stats_BombDefusedEvent);
+    HookEvent("flashbang_detonate", Stats_FlashbangDetonateEvent, EventHookMode_Pre);
+    HookEvent("player_blind", Stats_PlayerBlindEvent);
 }
 
 public void Stats_InitSeries() {
@@ -46,6 +48,7 @@ public void Stats_ResetRoundValues() {
 public void Stats_ResetClientRoundValues(int client) {
     g_RoundKills[client] = 0;
     g_RoundClutchingEnemyCount[client] = 0;
+    g_RoundFlashedBy[client] = 0;
 }
 
 public void Stats_UpdatePlayerRounds(int csTeamWinner) {
@@ -102,33 +105,40 @@ public void Stats_SeriesEnd(MatchTeam winner) {
 }
 
 public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBroadcast) {
-    if (g_GameState == GameState_Live) {
-        int victim = GetClientOfUserId(event.GetInt("userid"));
-        int attacker = GetClientOfUserId(event.GetInt("attacker"));
-        int assister = GetClientOfUserId(event.GetInt("assister"));
-        bool headshot = event.GetBool("headshot");
+    if (g_GameState != GameState_Live) {
+        return Plugin_Continue;
+    }
 
-        bool validAttacker = IsValidClient(attacker);
-        bool validVictim = IsValidClient(victim);
+    int victim = GetClientOfUserId(event.GetInt("userid"));
+    int attacker = GetClientOfUserId(event.GetInt("attacker"));
+    int assister = GetClientOfUserId(event.GetInt("assister"));
+    bool headshot = event.GetBool("headshot");
 
-        if (validVictim) {
-            IncrementPlayerStat(victim, STAT_DEATHS);
-        }
+    bool validAttacker = IsValidClient(attacker);
+    bool validVictim = IsValidClient(victim);
 
-        if (validAttacker) {
-            if (HelpfulAttack(attacker, victim)) {
-                g_RoundKills[attacker]++;
-                IncrementPlayerStat(attacker, STAT_KILLS);
-                if (headshot)
-                    IncrementPlayerStat(attacker, STAT_HEADSHOT_KILLS);
-                if (IsValidClient(assister))
-                    IncrementPlayerStat(assister, STAT_ASSISTS);
-            } else {
-                if (attacker == victim)
-                    IncrementPlayerStat(attacker, STAT_SUICIDES);
-                else
-                    IncrementPlayerStat(attacker, STAT_TEAMKILLS);
-            }
+    if (validVictim) {
+        IncrementPlayerStat(victim, STAT_DEATHS);
+    }
+
+    if (validAttacker) {
+        if (HelpfulAttack(attacker, victim)) {
+            g_RoundKills[attacker]++;
+            IncrementPlayerStat(attacker, STAT_KILLS);
+            if (headshot)
+                IncrementPlayerStat(attacker, STAT_HEADSHOT_KILLS);
+            if (IsValidClient(assister))
+                IncrementPlayerStat(assister, STAT_ASSISTS);
+
+            int flasher = g_RoundFlashedBy[victim];
+            if (IsValidClient(flasher) && flasher != attacker)
+                IncrementPlayerStat(flasher, STAT_FLASHBANG_ASSISTS);
+
+        } else {
+            if (attacker == victim)
+                IncrementPlayerStat(attacker, STAT_SUICIDES);
+            else
+                IncrementPlayerStat(attacker, STAT_TEAMKILLS);
         }
     }
 
@@ -147,9 +157,15 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
         int clutcher = GetClutchingClient(CS_TEAM_CT);
         g_RoundClutchingEnemyCount[clutcher] = tCount;
     }
+
+    return Plugin_Continue;
 }
 
 public Action Stats_DamageDealtEvent(Event event, const char[] name, bool dontBroadcast) {
+    if (g_GameState != GameState_Live) {
+        return Plugin_Continue;
+    }
+
     int attacker = GetClientOfUserId(event.GetInt("attacker"));
     int victim = GetClientOfUserId(event.GetInt("userid"));
     bool validAttacker = IsValidClient(attacker);
@@ -169,19 +185,78 @@ public Action Stats_DamageDealtEvent(Event event, const char[] name, bool dontBr
 
         AddToPlayerStat(attacker, STAT_DAMAGE, damage);
     }
+
+    return Plugin_Continue;
 }
 
 public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBroadcast) {
+    if (g_GameState != GameState_Live) {
+        return Plugin_Continue;
+    }
+
     int client = GetClientOfUserId(event.GetInt("userid"));
     if (IsValidClient(client)) {
         IncrementPlayerStat(client, STAT_BOMBPLANTS);
     }
+
+    return Plugin_Continue;
 }
 
 public Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBroadcast) {
+    if (g_GameState != GameState_Live) {
+        return Plugin_Continue;
+    }
+
     int client = GetClientOfUserId(event.GetInt("userid"));
     if (IsValidClient(client)) {
         IncrementPlayerStat(client, STAT_BOMBDEFUSES);
+    }
+
+    return Plugin_Continue;
+}
+
+public Action Stats_FlashbangDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
+    if (g_GameState != GameState_Live) {
+        return Plugin_Continue;
+    }
+
+    int userid = event.GetInt("userid");
+    int client = GetClientOfUserId(userid);
+
+    if (IsValidClient(client)) {
+        g_LastFlashBangThrower = client;
+    }
+
+    return Plugin_Continue;
+}
+
+public Action Timer_ResetFlashStatus(Handle timer, int serial) {
+    int client = GetClientFromSerial(serial);
+    if (IsValidClient(client)) {
+        g_RoundFlashedBy[client] = -1;
+    }
+}
+
+public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBroadcast) {
+    if (g_GameState != GameState_Live) {
+        return Plugin_Continue;
+    }
+
+    int userid = event.GetInt("userid");
+    int client = GetClientOfUserId(userid);
+    RequestFrame(GetFlashInfo, GetClientSerial(client));
+
+    return Plugin_Continue;
+}
+
+public void GetFlashInfo(int serial) {
+    int client = GetClientFromSerial(serial);
+    if (IsValidClient(client)) {
+        float flashDuration = GetEntDataFloat(client, FindSendPropInfo("CCSPlayer", "m_flFlashDuration"));
+        if (flashDuration >= 2.5) {
+            g_RoundFlashedBy[client] = g_LastFlashBangThrower;
+        }
+        CreateTimer(flashDuration, Timer_ResetFlashStatus, serial);
     }
 }
 
@@ -204,6 +279,7 @@ static void AddToPlayerStat(int client, const char[] field, int delta) {
 }
 
 static void IncrementPlayerStat(int client, const char[] field) {
+    LogDebug("Incrementing player stat %s for %L", field, client);
     AddToPlayerStat(client, field, 1);
 }
 

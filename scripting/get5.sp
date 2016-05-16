@@ -734,7 +734,8 @@ static void SeriesWonMessage(MatchTeam team) {
 }
 
 public Action Timer_NextMatchMap(Handle timer) {
-    StopRecording();
+    if (g_GameState >= GameState_Live)
+        StopRecording();
 
     int index = GetMapNumber();
     char map[PLATFORM_MAX_PATH];

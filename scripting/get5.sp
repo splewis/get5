@@ -116,6 +116,7 @@ Handle g_OnLoadMatchConfigFailed = INVALID_HANDLE;
 Handle g_OnMapPicked = INVALID_HANDLE;
 Handle g_OnMapResult = INVALID_HANDLE;
 Handle g_OnMapVetoed = INVALID_HANDLE;
+Handle g_OnRoundStatsUpdated = INVALID_HANDLE;
 Handle g_OnSeriesInit = INVALID_HANDLE;
 Handle g_OnSeriesResult = INVALID_HANDLE;
 
@@ -260,6 +261,7 @@ public void OnPluginStart() {
         Param_Cell, Param_String);
     g_OnMapVetoed = CreateGlobalForward("Get5_OnMapVetoed", ET_Ignore,
         Param_Cell, Param_String);
+    g_OnRoundStatsUpdated = CreateGlobalForward("Get5_OnRoundStatsUpdated", ET_Ignore);
     g_OnSeriesInit = CreateGlobalForward("Get5_OnSeriesInit", ET_Ignore);
     g_OnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore,
         Param_Cell, Param_Cell, Param_Cell);
@@ -819,6 +821,8 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
         Stats_UpdateTeamScores();
         Stats_UpdatePlayerRounds(csTeamWinner);
+        Call_StartForward(g_OnRoundStatsUpdated);
+        Call_Finish();
 
         int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
         LogDebug("m_totalRoundsPlayed = %d", roundsPlayed);

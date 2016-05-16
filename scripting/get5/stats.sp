@@ -14,6 +14,8 @@ public void Stats_InitSeries() {
     char seriesType[32];
     Format(seriesType, sizeof(seriesType), "bo%d", MaxMapsToPlay(g_MapsToWin));
     g_StatsKv.SetString(STAT_SERIESTYPE, seriesType);
+    g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamNames[MatchTeam_Team1]);
+    g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[MatchTeam_Team2]);
 }
 
 public void Stats_UpdateTeamScores() {
@@ -25,12 +27,10 @@ public void Stats_UpdateTeamScores() {
 
     GoToTeam(MatchTeam_Team1);
     g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
-    g_StatsKv.SetString(STAT_TEAMNAME, g_TeamNames[MatchTeam_Team1]);
     GoBackFromTeam();
 
     GoToTeam(MatchTeam_Team2);
     g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
-    g_StatsKv.SetString(STAT_TEAMNAME, g_TeamNames[MatchTeam_Team2]);
     GoBackFromTeam();
 }
 

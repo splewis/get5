@@ -47,6 +47,9 @@ forward void Get5_OnGoingLive(int mapNumber);
 // Called whenever the gamestate phase is changed.
 forward void Get5_OnGameStateChanged(GameState oldState, GameState newState);
 
+// Called when the stats for the last round have been updated.
+forward void Get5_OnRoundStatsUpdated();
+
 // Called at the end of a map in a series.
 forward void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
     int team1Score, int team2Score, int mapNumber);
@@ -102,6 +105,15 @@ native bool Get5_RemovePlayerFromTeam(const char[] steamId);
 // Returns the current match team a auth is mapped to.
 native MatchTeam Get5_GetPlayerTeam(const char[] steamId);
 
+// Translates a CS team (CS_TEAM_T, etc.) to a Match team.
+native MatchTeam Get5_CSTeamToMatchTeam(int csTeam);
+
+// Translate da MatchTeam to a CS team.
+native int Get5_MatchTeamToCSTeam(MatchTeam team);
+
+// Gets the scores for a match team.
+native void Get5_GetTeamScores(MatchTeam team, int& seriesScore, int& currentMapScore);
+
 // Sets the current matchid.
 native void Get5_SetMatchID(const char[] id);
 
@@ -114,6 +126,8 @@ native bool Get5_GetMatchStats(KeyValues kv);
 // Series stats (root section)
 #define STAT_SERIESWINNER "winner"
 #define STAT_SERIESTYPE "series_type"
+#define STAT_SERIES_TEAM1NAME "team1_name"
+#define STAT_SERIES_TEAM2NAME "team2_name"
 
 // Map stats (under "map0", "map1", etc.)
 #define STAT_MAPNAME "mapname"
@@ -121,7 +135,6 @@ native bool Get5_GetMatchStats(KeyValues kv);
 #define STAT_DEMOFILENAME "demo_filename"
 
 // Team stats (under map section, then "team1" or "team2")
-#define STAT_TEAMNAME "name"
 #define STAT_TEAMSCORE "score"
 
 // Player stats (under map section, then team section, then player's steam64)
@@ -168,6 +181,9 @@ public __pl_get5_SetNTVOptional() {
     MarkNativeAsOptional("Get5_AddPlayerToTeam");
     MarkNativeAsOptional("Get5_RemovePlayerFromTeam");
     MarkNativeAsOptional("Get5_GetPlayerTeam");
+    MarkNativeAsOptional("Get5_CSTeamToMatchTeam");
+    MarkNativeAsOptional("Get5_MatchTeamToCSTeam");
+    MarkNativeAsOptional("Get5_GetTeamScores");
     MarkNativeAsOptional("Get5_SetMatchID");
     MarkNativeAsOptional("Get5_GetMatchStats");
 }

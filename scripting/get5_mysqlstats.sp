@@ -54,15 +54,11 @@ public void Get5_OnSeriesInit() {
     tmpStats.GetString(STAT_SERIESTYPE, seriesType, sizeof(seriesType));
     db.Escape(seriesType, seriesTypeSz, sizeof(seriesTypeSz));
 
-    tmpStats.JumpToKey("team1", true);
-    tmpStats.GetString("name", team1Name, sizeof(team1Name));
+    tmpStats.GetString(STAT_SERIES_TEAM1NAME, team1Name, sizeof(team1Name));
     db.Escape(team1Name, team1NameSz, sizeof(team1NameSz));
-    tmpStats.GoBack();
 
-    tmpStats.JumpToKey("team2", true);
-    tmpStats.GetString("name", team2Name, sizeof(team2Name));
+    tmpStats.GetString(STAT_SERIES_TEAM2NAME, team2Name, sizeof(team2Name));
     db.Escape(team2Name, team2NameSz, sizeof(team2NameSz));
-    tmpStats.GoBack();
 
     delete tmpStats;
 
@@ -72,8 +68,8 @@ public void Get5_OnSeriesInit() {
         g_ForceMatchIDCvar.IntValue = 0;
         Format(queryBuffer, sizeof(queryBuffer),
             "INSERT INTO `get5_stats_matches` \
-            (matchid, series_type, team1_name, team2_name) VALUES \
-            (%d, '%s', '%s', '%s')",
+            (matchid, series_type, team1_name, team2_name, start_time) VALUES \
+            (%d, '%s', '%s', '%s', NOW())",
             g_MatchID, seriesTypeSz, team1NameSz, team2NameSz);
         db.Query(SQLErrorCheckCallback, queryBuffer);
 
@@ -84,8 +80,8 @@ public void Get5_OnSeriesInit() {
 
         Format(queryBuffer, sizeof(queryBuffer),
             "INSERT INTO `get5_stats_matches` \
-            (series_type, team1_name, team2_name) VALUES \
-            ('%s', '%s', '%s')",
+            (series_type, team1_name, team2_name, start_time) VALUES \
+            ('%s', '%s', '%s', NOW())",
             seriesTypeSz, team1NameSz, team2NameSz);
         t.AddQuery(queryBuffer);
 
@@ -134,27 +130,26 @@ public void Get5_OnGoingLive(int mapNumber) {
 
     Format(queryBuffer, sizeof(queryBuffer),
         "INSERT INTO `get5_stats_maps` \
-        (matchid, mapnumber, mapname) VALUES \
-        (%d, %d, '%s')",
+        (matchid, mapnumber, mapname, start_time) VALUES \
+        (%d, %d, '%s', NOW())",
         g_MatchID, mapNumber, mapNameSz);
 
     db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-public void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
-    int team1Score, int team2Score, int mapNumber) {
-    if (g_DisableStats)
-        return;
-
-    char winnerString[64];
-    GetTeamString(mapWinner, winnerString, sizeof(winnerString));
+public void UpdateRoundStats(int mapNumber) {
+    LogMessage("UpdateRoundStats map %d", mapNumber);
+    // Update team scores
+    int t1score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(MatchTeam_Team1));
+    int t2score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(MatchTeam_Team2));
 
     Format(queryBuffer, sizeof(queryBuffer),
         "UPDATE `get5_stats_maps` \
-        SET winner = '%s', team1_score = %d, team2_score = %d WHERE matchid = %d and mapnumber = %d",
-        winnerString, team1Score, team2Score, g_MatchID, mapNumber);
+        SET team1_score = %d, team2_score = %d WHERE matchid = %d and mapnumber = %d",
+        t1score, t2score, g_MatchID, mapNumber);
     db.Query(SQLErrorCheckCallback, queryBuffer);
 
+    // Update player stats
     KeyValues kv = new KeyValues("Stats");
     Get5_GetMatchStats(kv);
     char mapKey[32];
@@ -171,6 +166,32 @@ public void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
         kv.GoBack();
     }
     delete kv;
+}
+
+public void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
+    int team1Score, int team2Score, int mapNumber) {
+    if (g_DisableStats)
+        return;
+
+    // Update the map winner
+    char winnerString[64];
+    GetTeamString(mapWinner, winnerString, sizeof(winnerString));
+    Format(queryBuffer, sizeof(queryBuffer),
+        "UPDATE `get5_stats_maps` SET winner = '%s', end_time = NOW() \
+        WHERE matchid = %d and mapnumber = %d",
+        winnerString, g_MatchID, mapNumber);
+    db.Query(SQLErrorCheckCallback, queryBuffer);
+
+    // Update the series scores
+    int t1_seriesscore, t2_seriesscore, tmp;
+    Get5_GetTeamScores(MatchTeam_Team1, t1_seriesscore, tmp);
+    Get5_GetTeamScores(MatchTeam_Team2, t2_seriesscore, tmp);
+
+    Format(queryBuffer, sizeof(queryBuffer),
+        "UPDATE `get5_stats_matches` \
+        SET team1_score = %d, team2_score = %d WHERE matchid = %d",
+        t1_seriesscore, t2_seriesscore, g_MatchID);
+    db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
 public void AddPlayerStats(KeyValues kv, MatchTeam team) {
@@ -205,7 +226,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
             GetTeamString(team, teamString, sizeof(teamString));
 
             Format(queryBuffer, sizeof(queryBuffer),
-                "INSERT IGNORE INTO `get5_stats_players` \
+                "REPLACE INTO `get5_stats_players` \
                 (matchid, mapnumber, steamid64, team, \
                 rounds_played, name, kills, deaths, \
                 assists, teamkills, headshot_kills, damage, \
@@ -240,7 +261,8 @@ public void Get5_OnSeriesResult(MatchTeam seriesWinner,
 
     Format(queryBuffer, sizeof(queryBuffer),
         "UPDATE `get5_stats_matches` \
-        SET winner = '%s', team1_score = %d, team2_score = %d WHERE matchid = %d",
+        SET winner = '%s', team1_score = %d, team2_score = %d, end_time = NOW() \
+        WHERE matchid = %d",
         winnerString, team1MapScore, team2MapScore, g_MatchID);
     db.Query(SQLErrorCheckCallback, queryBuffer);
 }
@@ -248,5 +270,11 @@ public void Get5_OnSeriesResult(MatchTeam seriesWinner,
 public int SQLErrorCheckCallback(Handle owner, Handle hndl, const char[] error, int data) {
     if (!StrEqual("", error)) {
         LogError("Last Connect SQL Error: %s", error);
+    }
+}
+
+public void Get5_OnRoundStatsUpdated() {
+    if (Get5_GetGameState() == GameState_Live && !g_DisableStats) {
+        UpdateRoundStats(g_MapNumber);
     }
 }

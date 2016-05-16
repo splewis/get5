@@ -10,6 +10,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
     CreateNative("Get5_AddPlayerToTeam", Native_AddPlayerToTeam);
     CreateNative("Get5_RemovePlayerFromTeam", Native_RemovePlayerFromTeam);
     CreateNative("Get5_GetPlayerTeam", Native_GetPlayerTeam);
+    CreateNative("Get5_CSTeamToMatchTeam", Native_CSTeamToMatchTeam);
+    CreateNative("Get5_MatchTeamToCSTeam", Native_MatchTeamToCSTeam);
+    CreateNative("Get5_GetTeamScores", Native_GetTeamScores);
     CreateNative("Get5_SetMatchID", Native_SetMatchID);
     CreateNative("Get5_GetMatchStats", Native_GetMatchStats);
     RegPluginLibrary("get5");
@@ -114,6 +117,22 @@ public int Native_GetPlayerTeam(Handle plugin, int numParams) {
         return view_as<int>(GetAuthMatchTeam(steam64Auth));
     } else {
         return view_as<int>(MatchTeam_TeamNone);
+    }
+}
+
+public int Native_CSTeamToMatchTeam(Handle plugin, int numParams) {
+    return view_as<int>(CSTeamToMatchTeam(GetNativeCell(1)));
+}
+
+public int Native_MatchTeamToCSTeam(Handle plugin, int numParams) {
+    return MatchTeamToCSTeam(GetNativeCell(1));
+}
+
+public int Native_GetTeamScores(Handle plugin, int numParams) {
+    MatchTeam team = GetNativeCell(1);
+    if (team == MatchTeam_Team1 || team == MatchTeam_Team2) {
+        SetNativeCellRef(2, g_TeamSeriesScores[team]);
+        SetNativeCellRef(3, CS_GetTeamScore(MatchTeamToCSTeam(team)));
     }
 }
 

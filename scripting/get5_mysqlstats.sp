@@ -151,8 +151,8 @@ public void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
 
     Format(queryBuffer, sizeof(queryBuffer),
         "UPDATE `get5_stats_maps` \
-        SET winner = '%s', team1_score = %d, team2_score = %d WHERE matchid = %d",
-        winnerString, team1Score, team2Score, g_MatchID);
+        SET winner = '%s', team1_score = %d, team2_score = %d WHERE matchid = %d and mapnumber = %d",
+        winnerString, team1Score, team2Score, g_MatchID, mapNumber);
     db.Query(SQLErrorCheckCallback, queryBuffer);
 
     KeyValues kv = new KeyValues("Stats");

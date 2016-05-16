@@ -46,6 +46,7 @@ ConVar g_DemoTimeFormatCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_PausingEnabledCvar;
+ConVar g_StopCommandEnabledCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
 
@@ -169,6 +170,8 @@ public void OnPluginStart() {
         "Config file to exec when the game goes live");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",
         "Whether pausing is allowed.");
+    g_StopCommandEnabledCvar = CreateConVar("get5_stop_command_enabled", "1",
+        "Whether clients cna use the !stop command to restore to the last round");
     g_WaitForSpecReadyCvar = CreateConVar("get5_wait_for_spec_ready", "0",
         "Whether to wait for spectators to ready up if there are any");
     g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg",
@@ -594,6 +597,10 @@ public Action Command_DumpStats(int client, int args) {
 }
 
 public Action Command_Stop(int client, int args) {
+    if (g_StopCommandEnabledCvar.IntValue == 0) {
+        return Plugin_Handled;
+    }
+
     int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
     if (g_GameState != GameState_Live || roundsPlayed == 0) {
         return Plugin_Handled;

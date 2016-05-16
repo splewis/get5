@@ -20,6 +20,7 @@ Features of this include:
 - Coaching support
 - Automatically executing match config files
 - Automatically setting team names/logos/match text values for spectator/GOTV clients
+- Stats collection and optional MySQL result/stats upload ([see the wiki](https://github.com/splewis/get5/wiki/Stats))
 
 #### TODO:
 

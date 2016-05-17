@@ -144,11 +144,12 @@ static void MatchConfigFail(const char[] reason, any ...) {
     Call_Finish();
 }
 
-stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames=null, ArrayList paramValues=null) {
+stock bool LoadMatchFromUrl(const char[] url, bool preferSystem2=true, ArrayList paramNames=null, ArrayList paramValues=null) {
     bool steamWorksAvaliable = LibraryExists("SteamWorks");
     bool system2Avaliable = LibraryExists("system2");
+    bool forceSteamworks = (steamWorksAvaliable && !preferSystem2);
 
-    if (system2Avaliable) {
+    if (system2Avaliable && !forceSteamworks) {
         System2_DownloadFile(System2_OnMatchConfigReceived, url, REMOTE_CONFIG_FILENAME);
         return true;
 
@@ -201,7 +202,7 @@ public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
 public int System2_OnMatchConfigReceived(bool finished, const char[] error, float dltotal,
     float dlnow, float ultotal, float ulnow, int serial) {
     if (!StrEqual(error, "")) {
-        MatchConfigFail("Error receiving remote config: %s", error);
+        MatchConfigFail("Error receiving remote config via system2: %s", error);
     }
     if (finished) {
         LoadMatchConfig(REMOTE_CONFIG_FILENAME);

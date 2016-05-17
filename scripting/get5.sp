@@ -171,7 +171,7 @@ public void OnPluginStart() {
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",
         "Whether pausing is allowed.");
     g_StopCommandEnabledCvar = CreateConVar("get5_stop_command_enabled", "1",
-        "Whether clients cna use the !stop command to restore to the last round");
+        "Whether clients can use the !stop command to restore to the last round");
     g_WaitForSpecReadyCvar = CreateConVar("get5_wait_for_spec_ready", "0",
         "Whether to wait for spectators to ready up if there are any");
     g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg",

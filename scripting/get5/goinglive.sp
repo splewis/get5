@@ -12,8 +12,10 @@ public Action StartGoingLive(Handle timer) {
         RestartGame(10);
     }
 
-    CreateTimer(15.0, MatchLive);
+    // Always disable sv_cheats!
+    ServerCommand("sv_cheats 0");
 
+    CreateTimer(15.0, MatchLive);
     Call_StartForward(g_OnGoingLive);
     Call_PushCell(GetMapNumber());
     Call_Finish();

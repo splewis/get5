@@ -828,6 +828,12 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     if (g_GameState == GameState_Live) {
         int csTeamWinner = event.GetInt("winner");
 
+        Get5_MessageToAll("{YELLOW}%s {GREEN}%d {NORMAL}- {GREEN}%d {YELLOW}%s",
+            g_TeamNames[MatchTeam_Team1],
+            CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
+            CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
+            g_TeamNames[MatchTeam_Team2]);
+
         Stats_UpdateTeamScores();
         Stats_UpdatePlayerRounds(csTeamWinner);
         Call_StartForward(g_OnRoundStatsUpdated);

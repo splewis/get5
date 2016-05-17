@@ -203,8 +203,7 @@ public int System2_OnMatchConfigReceived(bool finished, const char[] error, floa
     float dlnow, float ultotal, float ulnow, int serial) {
     if (!StrEqual(error, "")) {
         MatchConfigFail("Error receiving remote config via system2: %s", error);
-    }
-    if (finished) {
+    } else if (finished) {
         LoadMatchConfig(REMOTE_CONFIG_FILENAME);
     }
 }

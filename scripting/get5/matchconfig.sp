@@ -75,6 +75,12 @@ public bool LoadMatchConfig(const char[] config) {
         g_MapsToWin = 2;
     }
 
+    if (MaxMapsToPlay(g_MapsToWin) > g_MapPoolList.Length) {
+        MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps",
+            MaxMapsToPlay(g_MapsToWin), g_MapPoolList.Length);
+        return false;
+    }
+
     if (g_SkipVeto) {
         // Copy the first k maps from the maplist to the final match maps.
         for (int i = 0; i < MaxMapsToPlay(g_MapsToWin); i++) {

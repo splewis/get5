@@ -13,6 +13,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
     CreateNative("Get5_CSTeamToMatchTeam", Native_CSTeamToMatchTeam);
     CreateNative("Get5_MatchTeamToCSTeam", Native_MatchTeamToCSTeam);
     CreateNative("Get5_GetTeamScores", Native_GetTeamScores);
+    CreateNative("Get5_GetMatchID", Native_GetMatchID);
     CreateNative("Get5_SetMatchID", Native_SetMatchID);
     CreateNative("Get5_GetMatchStats", Native_GetMatchStats);
     RegPluginLibrary("get5");
@@ -135,6 +136,11 @@ public int Native_GetTeamScores(Handle plugin, int numParams) {
         SetNativeCellRef(2, g_TeamSeriesScores[team]);
         SetNativeCellRef(3, CS_GetTeamScore(MatchTeamToCSTeam(team)));
     }
+}
+
+public int Native_GetMatchID(Handle plugin, int numParams) {
+    SetNativeString(1, g_MatchID, GetNativeCell(2));
+    return 0;
 }
 
 public int Native_SetMatchID(Handle plugin, int numParams) {

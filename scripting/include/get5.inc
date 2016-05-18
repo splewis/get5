@@ -115,6 +115,9 @@ native int Get5_MatchTeamToCSTeam(MatchTeam team);
 // Gets the scores for a match team.
 native void Get5_GetTeamScores(MatchTeam team, int& seriesScore, int& currentMapScore);
 
+// Gets the current matchid.
+native void Get5_GetMatchID(char[] id, int length);
+
 // Sets the current matchid.
 native void Get5_SetMatchID(const char[] id);
 
@@ -185,6 +188,7 @@ public __pl_get5_SetNTVOptional() {
     MarkNativeAsOptional("Get5_CSTeamToMatchTeam");
     MarkNativeAsOptional("Get5_MatchTeamToCSTeam");
     MarkNativeAsOptional("Get5_GetTeamScores");
+    MarkNativeAsOptional("Get5_GetMatchID");
     MarkNativeAsOptional("Get5_SetMatchID");
     MarkNativeAsOptional("Get5_GetMatchStats");
 }

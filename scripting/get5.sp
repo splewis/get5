@@ -828,7 +828,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     if (g_GameState == GameState_Live) {
         int csTeamWinner = event.GetInt("winner");
 
-        Get5_MessageToAll("{YELLOW}%s {GREEN}%d {NORMAL}- {GREEN}%d {YELLOW}%s",
+        Get5_MessageToAll("{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s",
             g_TeamNames[MatchTeam_Team1],
             CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
             CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),

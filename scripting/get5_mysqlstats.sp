@@ -3,6 +3,7 @@
 #include "include/get5.inc"
 #include "get5/util.sp"
 #include "get5/version.sp"
+#include "include/logdebug.inc"
 
 
 Database db = null;
@@ -24,6 +25,8 @@ public Plugin myinfo = {
 };
 
 public void OnPluginStart() {
+    InitDebugLog("get5_debug", "get5_mysql");
+
     g_ForceMatchIDCvar = CreateConVar("get5_mysql_force_matchid", "0", "If set to a positive integer, this will force get5 to use the matchid in this convar");
 
     char error[255];
@@ -71,6 +74,7 @@ public void Get5_OnSeriesInit() {
             (matchid, series_type, team1_name, team2_name, start_time) VALUES \
             (%d, '%s', '%s', '%s', NOW())",
             g_MatchID, seriesTypeSz, team1NameSz, team2NameSz);
+        LogDebug(queryBuffer);
         db.Query(SQLErrorCheckCallback, queryBuffer);
 
         LogMessage("Starting match id %d", g_MatchID);
@@ -83,10 +87,12 @@ public void Get5_OnSeriesInit() {
             (series_type, team1_name, team2_name, start_time) VALUES \
             ('%s', '%s', '%s', NOW())",
             seriesTypeSz, team1NameSz, team2NameSz);
+        LogDebug(queryBuffer);
         t.AddQuery(queryBuffer);
 
         Format(queryBuffer, sizeof(queryBuffer),
             "SELECT LAST_INSERT_ID()");
+        LogDebug(queryBuffer);
         t.AddQuery(queryBuffer);
 
         db.Execute(t, MatchInitSuccess, MatchInitFailure);
@@ -133,6 +139,7 @@ public void Get5_OnGoingLive(int mapNumber) {
         (matchid, mapnumber, mapname, start_time) VALUES \
         (%d, %d, '%s', NOW())",
         g_MatchID, mapNumber, mapNameSz);
+    LogDebug(queryBuffer);
 
     db.Query(SQLErrorCheckCallback, queryBuffer);
 }
@@ -147,6 +154,7 @@ public void UpdateRoundStats(int mapNumber) {
         "UPDATE `get5_stats_maps` \
         SET team1_score = %d, team2_score = %d WHERE matchid = %d and mapnumber = %d",
         t1score, t2score, g_MatchID, mapNumber);
+    LogDebug(queryBuffer);
     db.Query(SQLErrorCheckCallback, queryBuffer);
 
     // Update player stats
@@ -180,6 +188,7 @@ public void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
         "UPDATE `get5_stats_maps` SET winner = '%s', end_time = NOW() \
         WHERE matchid = %d and mapnumber = %d",
         winnerString, g_MatchID, mapNumber);
+    LogDebug(queryBuffer);
     db.Query(SQLErrorCheckCallback, queryBuffer);
 
     // Update the series scores
@@ -191,6 +200,7 @@ public void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
         "UPDATE `get5_stats_matches` \
         SET team1_score = %d, team2_score = %d WHERE matchid = %d",
         t1_seriesscore, t2_seriesscore, g_MatchID);
+    LogDebug(queryBuffer);
     db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
@@ -252,6 +262,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
                 v1, v2, v3, v4, v5,
                 k2, k3, k4, k5);
 
+            LogDebug(queryBuffer);
             db.Query(SQLErrorCheckCallback, queryBuffer);
 
         } while (kv.GotoNextKey());
@@ -272,6 +283,7 @@ public void Get5_OnSeriesResult(MatchTeam seriesWinner,
         SET winner = '%s', team1_score = %d, team2_score = %d, end_time = NOW() \
         WHERE matchid = %d",
         winnerString, team1MapScore, team2MapScore, g_MatchID);
+    LogDebug(queryBuffer);
     db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 

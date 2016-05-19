@@ -210,7 +210,7 @@ public void OnPluginStart() {
     RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP,
         "Adds a steamid to a match team");
     RegAdminCmd("get5_removeplayer", Command_RemovePlayer, ADMFLAG_CHANGEMAP,
-        "Adds a steamid to a match team");
+        "Removes a steamid from a match team");
     RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP,
         "Creates and loads a match using the players currently on the server as a Bo1 with the current map");
     RegAdminCmd("get5_forceready", Command_ForceReady, ADMFLAG_CHANGEMAP,

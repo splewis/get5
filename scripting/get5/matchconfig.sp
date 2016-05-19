@@ -1,3 +1,11 @@
+#define CONFIG_MATCHID_DEFAULT "matchid"
+#define CONFIG_MATCHTITLE_DEFAULT "Map {MAPNUMBER} of {MAXMAPS}"
+#define CONFIG_PLAYERSPERTEAM_DEFAULT 5
+#define CONFIG_MAPSTOWIN_DEFAULT 2
+#define CONFIG_BO2_DEFAULT false
+#define CONFIG_SKIPVETO_DEFAULT false
+#define CONFIG_SIDETYPE_DEFAULT "standard"
+
 public bool LoadMatchConfig(const char[] config) {
     if (g_GameState != GameState_None) {
         return false;
@@ -209,15 +217,15 @@ public int System2_OnMatchConfigReceived(bool finished, const char[] error, floa
 }
 
 static bool LoadMatchFromKv(KeyValues kv) {
-    kv.GetString("matchid", g_MatchID, sizeof(g_MatchID), "matchid");
-    kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), "Map {MAPNUMBER} of {MAXMAPS}");
-    g_PlayersPerTeam = kv.GetNum("players_per_team", 5);
-    g_MapsToWin = kv.GetNum("maps_to_win", 2);
-    g_BO2Match = kv.GetNum("bo2_series", 0) != 0;
-    g_SkipVeto = kv.GetNum("skip_veto", 0) != 0;
+    kv.GetString("matchid", g_MatchID, sizeof(g_MatchID), CONFIG_MATCHID_DEFAULT);
+    kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
+    g_PlayersPerTeam = kv.GetNum("players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
+    g_MapsToWin = kv.GetNum("maps_to_win", CONFIG_MAPSTOWIN_DEFAULT);
+    g_BO2Match = kv.GetNum("bo2_series", CONFIG_BO2_DEFAULT) != 0;
+    g_SkipVeto = kv.GetNum("skip_veto", CONFIG_SKIPVETO_DEFAULT) != 0;
 
     char buf[64];
-    kv.GetString("side_type", buf, sizeof(buf), "standard");
+    kv.GetString("side_type", buf, sizeof(buf), CONFIG_SIDETYPE_DEFAULT);
     g_MatchSideType = MatchSideTypeFromString(buf);
 
     g_FavoredTeamPercentage = kv.GetNum("favored_percentage_team1", 0);
@@ -268,15 +276,18 @@ static bool LoadMatchFromKv(KeyValues kv) {
 }
 
 static bool LoadMatchFromJson(Handle json) {
-    json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID), "matchid");
-    json_object_get_string_safe(json, "match_title", g_MatchTitle, sizeof(g_MatchTitle), "Map {MAPNUMBER} of {MAXMAPS}");
-    g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", 5);
-    g_MapsToWin = json_object_get_int_safe(json, "maps_to_win", 2);
-    g_BO2Match = json_object_get_bool_safe(json, "bo2_series", false);
-    g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", false);
+    json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID),
+        CONFIG_MATCHID_DEFAULT);
+    json_object_get_string_safe(json, "match_title", g_MatchTitle, sizeof(g_MatchTitle),
+        CONFIG_MATCHTITLE_DEFAULT);
+
+    g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
+    g_MapsToWin = json_object_get_int_safe(json, "maps_to_win", CONFIG_MAPSTOWIN_DEFAULT);
+    g_BO2Match = json_object_get_bool_safe(json, "bo2_series", CONFIG_BO2_DEFAULT);
+    g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
 
     char buf[64];
-    json_object_get_string_safe(json, "side_type", buf, sizeof(buf), "standard");
+    json_object_get_string_safe(json, "side_type", buf, sizeof(buf), CONFIG_SIDETYPE_DEFAULT);
     g_MatchSideType = MatchSideTypeFromString(buf);
 
     json_object_get_string_safe(json, "favored_percentage_text",

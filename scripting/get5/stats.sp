@@ -267,20 +267,21 @@ static int GetPlayerStat(int client, const char[] field) {
     return value;
 }
 
-static void SetPlayerStat(int client, const char[] field, int newValue) {
+static int SetPlayerStat(int client, const char[] field, int newValue) {
     GoToPlayer(client);
     g_StatsKv.SetNum(field, newValue);
     GoBackFromPlayer();
+    return newValue;
 }
 
-static void AddToPlayerStat(int client, const char[] field, int delta) {
+public int AddToPlayerStat(int client, const char[] field, int delta) {
     int value = GetPlayerStat(client, field);
-    SetPlayerStat(client, field, value + delta);
+    return SetPlayerStat(client, field, value + delta);
 }
 
-static void IncrementPlayerStat(int client, const char[] field) {
+static int IncrementPlayerStat(int client, const char[] field) {
     LogDebug("Incrementing player stat %s for %L", field, client);
-    AddToPlayerStat(client, field, 1);
+    return AddToPlayerStat(client, field, 1);
 }
 
 static void GoToMap() {

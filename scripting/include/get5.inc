@@ -127,6 +127,9 @@ native void Get5_SetMatchID(const char[] id);
 // object if using this method.
 native bool Get5_GetMatchStats(KeyValues kv);
 
+// Increases an (integer-typed) player statistic in the plugin's stats keyvalue structure.
+native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount=1);
+
 // Series stats (root section)
 #define STAT_SERIESWINNER "winner"
 #define STAT_SERIESTYPE "series_type"
@@ -190,6 +193,7 @@ public __pl_get5_SetNTVOptional() {
     MarkNativeAsOptional("Get5_GetTeamScores");
     MarkNativeAsOptional("Get5_GetMatchID");
     MarkNativeAsOptional("Get5_SetMatchID");
+    MarkNativeAsOptional("Get5_IncreasePlayerStat");
     MarkNativeAsOptional("Get5_GetMatchStats");
 }
 #endif

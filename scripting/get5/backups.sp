@@ -128,6 +128,7 @@ public bool RestoreFromBackup(const char[] path) {
     }
 
     if (kv.JumpToKey("stats")) {
+        Stats_Reset();
         KvCopySubkeys(kv, g_StatsKv);
         kv.GoBack();
     }

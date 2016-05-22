@@ -7,12 +7,15 @@ public void Stats_PluginStart() {
     HookEvent("player_blind", Stats_PlayerBlindEvent);
 }
 
-public void Stats_InitSeries() {
+public void Stats_Reset() {
     if (g_StatsKv != null) {
         delete g_StatsKv;
     }
     g_StatsKv = new KeyValues("Stats");
+}
 
+public void Stats_InitSeries() {
+    Stats_Reset();
     char seriesType[32];
     Format(seriesType, sizeof(seriesType), "bo%d", MaxMapsToPlay(g_MapsToWin));
     g_StatsKv.SetString(STAT_SERIESTYPE, seriesType);

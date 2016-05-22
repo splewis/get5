@@ -190,3 +190,24 @@ public void RestoreGet5Backup() {
 
     ChangeState(GameState_Live);
 }
+
+public void DeleteOldBackups() {
+    int maxTimeDifference = g_MaxBackupAgeCvar.IntValue;
+    if (maxTimeDifference <= 0) {
+        return;
+    }
+
+    DirectoryListing files = OpenDirectory(".");
+    if (files != null) {
+        char path[PLATFORM_MAX_PATH];
+        while (files.GetNext(path, sizeof(path))) {
+            LogMessage("path = %s", path);
+            if (StrContains(path, "get5_backup_") == 0 &&
+                GetTime() - GetFileTime(path, FileTime_LastChange) >= maxTimeDifference) {
+                LogMessage("deleting %s", path);
+                DeleteFile(path);
+            }
+        }
+        delete files;
+    }
+}

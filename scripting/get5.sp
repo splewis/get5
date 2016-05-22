@@ -46,6 +46,7 @@ ConVar g_DemoNameFormatCvar;
 ConVar g_DemoTimeFormatCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
+ConVar g_MaxBackupAgeCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_StopCommandEnabledCvar;
 ConVar g_WaitForSpecReadyCvar;
@@ -179,6 +180,8 @@ public void OnPluginStart() {
         "Whether the plugin kicks new clients when no match is loaded");
     g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg",
         "Config file to exec when the game goes live");
+    g_MaxBackupAgeCvar = CreateConVar("get5_max_backup_age", "160000",
+        "Number of seconds before a backup file is automatically deleted, 0 to disable");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",
         "Whether pausing is allowed.");
     g_StopCommandEnabledCvar = CreateConVar("get5_stop_command_enabled", "1",
@@ -372,6 +375,7 @@ public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dont
 
 public void OnMapStart() {
     g_MapChangePending = false;
+    DeleteOldBackups();
 
     LOOP_TEAMS(team) {
         g_TeamReady[team] = false;

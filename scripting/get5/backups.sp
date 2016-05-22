@@ -61,7 +61,7 @@ public void WriteBackStructure(const char[] path) {
     // Write valve's backup format into the file.
     char lastBackup[PLATFORM_MAX_PATH];
     ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
-    if (lastBackupCvar != null) {
+    if (g_GameState == GameState_Live && lastBackupCvar != null) {
         lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
         KeyValues valveBackup = new KeyValues("valve_backup");
         if (valveBackup.ImportFromFile(lastBackup)) {

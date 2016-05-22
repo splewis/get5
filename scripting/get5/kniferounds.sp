@@ -37,6 +37,9 @@ public void EndKnifeRound(bool swap) {
     } else {
         g_TeamSide[MatchTeam_Team1] = CS_TEAM_CT;
         g_TeamSide[MatchTeam_Team2] = CS_TEAM_T;
+
+        g_TeamStartingSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team1];
+        g_TeamStartingSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team2];
     }
 
     ChangeState(GameState_GoingLive);

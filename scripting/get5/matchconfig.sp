@@ -6,8 +6,8 @@
 #define CONFIG_SKIPVETO_DEFAULT false
 #define CONFIG_SIDETYPE_DEFAULT "standard"
 
-public bool LoadMatchConfig(const char[] config) {
-    if (g_GameState != GameState_None) {
+stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
+    if (g_GameState != GameState_None && !restoreBackup) {
         return false;
     }
 
@@ -28,6 +28,93 @@ public bool LoadMatchConfig(const char[] config) {
     g_CvarValues.Clear();
     g_TeamScoresPerMap.Clear();
 
+    g_WaitingForRoundBackup = false;
+    g_LastGet5BackupCvar.SetString("");
+
+    if (!LoadMatchFile(config)) {
+        return false;
+    }
+
+    if (g_CheckAuthsCvar.IntValue == 0 &&
+        (GetTeamAuths(MatchTeam_Team1).Length != 0 || GetTeamAuths(MatchTeam_Team2).Length != 0)) {
+        LogError("Setting player auths in the \"players\" section has no impact with get5_check_auths 0");
+    }
+
+    // Copy all the maps into the veto pool.
+    char mapName[PLATFORM_MAX_PATH];
+    for (int i = 0; i < g_MapPoolList.Length; i++) {
+        g_MapPoolList.GetString(i, mapName, sizeof(mapName));
+        g_MapsLeftInVetoPool.PushString(mapName);
+        g_TeamScoresPerMap.Push(0);
+    }
+
+    if (g_BO2Match) {
+        g_MapsToWin = 2;
+    }
+
+    if (MaxMapsToPlay(g_MapsToWin) > g_MapPoolList.Length) {
+        MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps",
+            MaxMapsToPlay(g_MapsToWin), g_MapPoolList.Length);
+        return false;
+    }
+
+    if (g_SkipVeto) {
+        // Copy the first k maps from the maplist to the final match maps.
+        for (int i = 0; i < MaxMapsToPlay(g_MapsToWin); i++) {
+            g_MapPoolList.GetString(i, mapName, sizeof(mapName));
+            g_MapsToPlay.PushString(mapName);
+
+            if (g_MatchSideType == MatchSideType_Standard) {
+                g_MapSides.Push(SideChoice_KnifeRound);
+            } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
+                g_MapSides.Push(SideChoice_KnifeRound);
+            } else if (g_MatchSideType == MatchSideType_NeverKnife) {
+                g_MapSides.Push(SideChoice_Team1CT);
+            }
+        }
+
+        g_MapPoolList.GetString(GetMapNumber(), mapName, sizeof(mapName));
+        ChangeState(GameState_Warmup);
+
+        char currentMap[PLATFORM_MAX_PATH];
+        GetCurrentMap(currentMap, sizeof(currentMap));
+        if (!StrEqual(mapName, currentMap) && !restoreBackup) {
+            ChangeMap(mapName);
+        }
+    } else {
+        ChangeState(GameState_PreVeto);
+    }
+
+    for (int i = 1; i <= MaxClients; i++) {
+        if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == MatchTeam_TeamNone) {
+            KickClient(i, "You are not a player in this match");
+        }
+    }
+
+    if (GetMapNumber() >= 1 || restoreBackup) { // Already accounted for a map win.
+        g_RestoreMatchBackup = true;
+    } else {
+        g_RestoreMatchBackup = false;
+    }
+
+    SetStartingTeams();
+    ExecCfg(g_WarmupCfgCvar);
+    SetMatchTeamCvars();
+    ExecuteMatchConfigCvars();
+    EnsurePausedWarmup();
+    AddTeamLogosToDownloadTable();
+    strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
+
+    if (!restoreBackup) {
+        Stats_InitSeries();
+        Call_StartForward(g_OnSeriesInit);
+        Call_Finish();
+    }
+
+    return true;
+}
+
+public bool LoadMatchFile(const char[] config) {
     if (StrContains(config, "json") >= 0) {
         if (!LibraryExists("jansson")) {
             MatchConfigFail("Cannot load a json config without the smjansson extension loaded");
@@ -66,78 +153,6 @@ public bool LoadMatchConfig(const char[] config) {
             return false;
         }
     }
-
-    if (g_CheckAuthsCvar.IntValue == 0 &&
-        (GetTeamAuths(MatchTeam_Team1).Length != 0 || GetTeamAuths(MatchTeam_Team2).Length != 0)) {
-        LogError("Setting player auths in the \"players\" section has no impact with get5_check_auths 0");
-    }
-
-    // Copy all the maps into the veto pool.
-    char mapName[PLATFORM_MAX_PATH];
-    for (int i = 0; i < g_MapPoolList.Length; i++) {
-        g_MapPoolList.GetString(i, mapName, sizeof(mapName));
-        g_MapsLeftInVetoPool.PushString(mapName);
-    }
-
-    if (g_BO2Match) {
-        g_MapsToWin = 2;
-    }
-
-    if (MaxMapsToPlay(g_MapsToWin) > g_MapPoolList.Length) {
-        MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps",
-            MaxMapsToPlay(g_MapsToWin), g_MapPoolList.Length);
-        return false;
-    }
-
-    if (g_SkipVeto) {
-        // Copy the first k maps from the maplist to the final match maps.
-        for (int i = 0; i < MaxMapsToPlay(g_MapsToWin); i++) {
-            g_MapPoolList.GetString(i, mapName, sizeof(mapName));
-            g_MapsToPlay.PushString(mapName);
-
-            if (g_MatchSideType == MatchSideType_Standard) {
-                g_MapSides.Push(SideChoice_KnifeRound);
-            } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
-                g_MapSides.Push(SideChoice_KnifeRound);
-            } else if (g_MatchSideType == MatchSideType_NeverKnife) {
-                g_MapSides.Push(SideChoice_Team1CT);
-            }
-        }
-
-        g_MapPoolList.GetString(GetMapNumber(), mapName, sizeof(mapName));
-        ChangeState(GameState_Warmup);
-
-        char currentMap[PLATFORM_MAX_PATH];
-        GetCleanMapName(currentMap, sizeof(currentMap));
-        if (!StrEqual(mapName, currentMap))
-            ChangeMap(mapName);
-    } else {
-        ChangeState(GameState_PreVeto);
-    }
-
-    for (int i = 1; i <= MaxClients; i++) {
-        if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == MatchTeam_TeamNone) {
-            KickClient(i, "You are not a player in this match");
-        }
-    }
-
-    if (GetMapNumber() >= 1) { // Already accounted for a map win.
-        g_RestoreMatchBackup = true;
-    } else {
-        g_RestoreMatchBackup = false;
-    }
-
-    SetStartingTeams();
-    ExecCfg(g_WarmupCfgCvar);
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-    EnsurePausedWarmup();
-    AddTeamLogosToDownloadTable();
-    strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
-    Stats_InitSeries();
-
-    Call_StartForward(g_OnSeriesInit);
-    Call_Finish();
 
     return true;
 }
@@ -409,8 +424,13 @@ static void LoadDefaultMapList(ArrayList list) {
 }
 
 public void SetMatchTeamCvars() {
-    MatchTeam ctTeam = CSTeamToMatchTeam(CS_TEAM_CT);
-    MatchTeam tTeam = CSTeamToMatchTeam(CS_TEAM_T);
+    MatchTeam ctTeam = MatchTeam_Team1;
+    MatchTeam tTeam = MatchTeam_Team2;
+    if (g_TeamStartingSide[MatchTeam_Team1] == CS_TEAM_T) {
+        ctTeam = MatchTeam_Team2;
+        tTeam = MatchTeam_Team1;
+    }
+
     int mapsPlayed = GetMapNumber();
 
     // Get the match configs set by the config file.

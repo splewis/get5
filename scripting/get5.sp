@@ -40,6 +40,7 @@
 
 /** ConVar handles **/
 ConVar g_AutoLoadConfigCvar;
+ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
 ConVar g_DemoNameFormatCvar;
 ConVar g_DemoTimeFormatCvar;
@@ -50,6 +51,7 @@ ConVar g_StopCommandEnabledCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
 
+ConVar g_LastGet5BackupCvar;
 ConVar g_VersionCvar;
 
 // Hooked cvars built into csgo
@@ -81,7 +83,11 @@ ArrayList g_MapsToPlay = null;
 ArrayList g_MapSides = null;
 ArrayList g_MapsLeftInVetoPool = null;
 MatchTeam g_LastVetoTeam;
-bool g_RestoreMatchBackup = false;
+
+/** Backup data **/
+bool g_RestoreMatchBackup = false; // Whether a backup has been used in the current match
+bool g_WaitingForRoundBackup = false;
+bool g_SavedValveBackup = false;
 
 // Stats values
 bool g_SetTeamClutching[4];
@@ -97,6 +103,7 @@ int g_VetoCaptains[MatchTeam_Count]; // Clients doing the map vetos.
 int g_TeamSeriesScores[MatchTeam_Count]; // Current number of maps won per-team.
 bool g_TeamReady[MatchTeam_Count]; // Whether a team is marked as ready.
 int g_TeamSide[MatchTeam_Count]; // Current CS_TEAM_* side for the team.
+int g_TeamStartingSide[MatchTeam_Count];
 bool g_TeamReadyForUnpause[MatchTeam_Count];
 bool g_TeamGivenStopCommand[MatchTeam_Count];
 
@@ -112,6 +119,7 @@ bool g_PendingSideSwap = false;
 Handle g_KnifeChangedCvars = INVALID_HANDLE;
 
 /** Forwards **/
+Handle g_OnBackupRestore = INVALID_HANDLE;
 Handle g_OnDemoFinished = INVALID_HANDLE;
 Handle g_OnGameStateChanged = INVALID_HANDLE;
 Handle g_OnGoingLive = INVALID_HANDLE;
@@ -135,6 +143,7 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 #include "get5/version.sp"
 #include "get5/jsonhelpers.sp"
 #include "get5/stats.sp"
+#include "get5/backups.sp"
 
 
 
@@ -158,6 +167,8 @@ public void OnPluginStart() {
     /** ConVars **/
     g_AutoLoadConfigCvar = CreateConVar("get5_autoload_config", "",
         "Name of a match config file to automatically load when the server loads");
+    g_BackupSystemEnabledCvar = CreateConVar("get5_backup_system_enabled", "1",
+        "Whether the get5 backup system is enabled");
     g_CheckAuthsCvar = CreateConVar("get5_check_auths", "1",
         "If set to 0, get5 will not force players to the correct team based on steamid");
     g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format",
@@ -180,6 +191,7 @@ public void OnPluginStart() {
     /** Create and exec plugin's configuration file **/
     AutoExecConfig(true, "get5");
 
+    g_LastGet5BackupCvar = CreateConVar("get5_last_backup_file", "", "Last get5 backup file written", FCVAR_DONTRECORD);
     g_VersionCvar = CreateConVar("get5_version", PLUGIN_VERSION, "Current get5 version", FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
     g_VersionCvar.SetString(PLUGIN_VERSION);
 
@@ -217,6 +229,8 @@ public void OnPluginStart() {
         "Force readies all current teams");
     RegAdminCmd("get5_dumpstats", Command_DumpStats, ADMFLAG_CHANGEMAP,
         "Dumps match stats to a file");
+    RegAdminCmd("get5_loadbackup", Command_LoadBackup, ADMFLAG_CHANGEMAP,
+        "Loads a get5 match backup");
 
     /** Other commands **/
     RegConsoleCmd("get5_status", Command_Status, "Prints JSON formatted match state info");
@@ -252,6 +266,7 @@ public void OnPluginStart() {
     }
 
     /** Create forwards **/
+    g_OnBackupRestore = CreateGlobalForward("Get5_OnBackupRestore", ET_Ignore);
     g_OnDemoFinished = CreateGlobalForward("Get5_OnDemoFinished", ET_Ignore,
         Param_String);
     g_OnGameStateChanged = CreateGlobalForward("Get5_OnGameStateChanged", ET_Ignore,
@@ -284,7 +299,9 @@ public Action Timer_InfoMessages(Handle timer) {
             Get5_MessageToAll("Waiting for the casters to type {GREEN}!ready {NORMAL}to begin.");
         } else {
             SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
-            if (sides == SideChoice_KnifeRound) {
+            if (g_WaitingForRoundBackup) {
+                Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to restore the match backup.");
+            } else if (sides == SideChoice_KnifeRound) {
                 Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to knife.");
             } else {
                 Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when your team is ready to begin.");
@@ -330,7 +347,11 @@ public void OnClientPutInServer(int client) {
     CheckAutoLoadConfig();
     if (g_GameState <= GameState_Warmup && g_GameState != GameState_None) {
         if (GetRealClientCount() <= 1) {
-            ExecCfg(g_WarmupCfgCvar);
+            if (g_WaitingForRoundBackup)
+                ExecCfg(g_WarmupCfgCvar);
+            else
+                ExecCfg(g_LiveCfgCvar);
+
             EnsurePausedWarmup();
         }
     }
@@ -358,18 +379,27 @@ public void OnMapStart() {
         g_TeamReadyForUnpause[team] = false;
     }
 
-    SetStartingTeams();
-    CheckAutoLoadConfig();
-
-    if (g_GameState == GameState_PostGame) {
+    if (g_WaitingForRoundBackup) {
         ChangeState(GameState_Warmup);
-    }
-
-    if (g_GameState == GameState_Warmup || g_GameState == GameState_Veto) {
-        ExecCfg(g_WarmupCfgCvar);
+        ExecCfg(g_LiveCfgCvar);
         SetMatchTeamCvars();
         ExecuteMatchConfigCvars();
         EnsurePausedWarmup();
+
+    } else {
+        SetStartingTeams();
+        CheckAutoLoadConfig();
+
+        if (g_GameState == GameState_PostGame) {
+            ChangeState(GameState_Warmup);
+        }
+
+        if (g_GameState == GameState_Warmup || g_GameState == GameState_Veto) {
+            ExecCfg(g_WarmupCfgCvar);
+            SetMatchTeamCvars();
+            ExecuteMatchConfigCvars();
+            EnsurePausedWarmup();
+        }
     }
 }
 
@@ -383,11 +413,17 @@ public Action Timer_CheckReady(Handle timer) {
     } else  if (g_GameState == GameState_Warmup) {
         if (AllTeamsReady(true) && !g_MapChangePending) {
             int mapNumber = GetMapNumber();
-            if (g_MapSides.Get(mapNumber) == SideChoice_KnifeRound) {
+            if (g_WaitingForRoundBackup) {
+                g_WaitingForRoundBackup = false;
+                RestoreGet5Backup();
+
+            } else if (g_MapSides.Get(mapNumber) == SideChoice_KnifeRound) {
                 ChangeState(GameState_KnifeRound);
                 StartGame(true);
+
             } else {
                 StartGame(false);
+
             }
         }
     }
@@ -467,28 +503,26 @@ public Action Command_Ready(int client, int args) {
 
     if (t == MatchTeam_Team1 && !g_TeamReady[MatchTeam_Team1]) {
         g_TeamReady[MatchTeam_Team1] = true;
-        if (g_GameState == GameState_PreVeto) {
-            Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team1]);
-        } else if (g_GameState == GameState_Warmup) {
-            SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
-            if (sides == SideChoice_KnifeRound)
-                Get5_MessageToAll("%s is ready to knife for sides.", g_FormattedTeamNames[MatchTeam_Team1]);
-            else
-                Get5_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team1]);
-        }
+        PrintReadyMessage(MatchTeam_Team1);
     } else if (t == MatchTeam_Team2 && !g_TeamReady[MatchTeam_Team2]) {
         g_TeamReady[MatchTeam_Team2] = true;
-        if (g_GameState == GameState_PreVeto) {
-            Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[MatchTeam_Team2]);
-        } else if (g_GameState == GameState_Warmup) {
-            SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
-            if (sides == SideChoice_KnifeRound)
-                Get5_MessageToAll("%s is ready to knife for sides.", g_FormattedTeamNames[MatchTeam_Team2]);
-            else
-                Get5_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[MatchTeam_Team2]);
-        }
+        PrintReadyMessage(MatchTeam_Team2);
     }
     return Plugin_Handled;
+}
+
+static void PrintReadyMessage(MatchTeam team) {
+    if (g_GameState == GameState_PreVeto) {
+        Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[team]);
+    } else if (g_GameState == GameState_Warmup) {
+        SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
+        if (g_WaitingForRoundBackup)
+            Get5_MessageToAll("%s is ready to restore the match backup.", g_FormattedTeamNames[team]);
+        else if (sides == SideChoice_KnifeRound)
+            Get5_MessageToAll("%s is ready to knife for sides.", g_FormattedTeamNames[team]);
+        else
+            Get5_MessageToAll("%s is ready to begin the match.", g_FormattedTeamNames[team]);
+    }
 }
 
 public Action Command_NotReady(int client, int args) {
@@ -629,14 +663,13 @@ public Action Command_Stop(int client, int args) {
 
 static bool RestoreLastRound() {
     LOOP_TEAMS(x) {
-            g_TeamGivenStopCommand[x] = false;
-        }
+        g_TeamGivenStopCommand[x] = false;
+    }
 
     char lastBackup[PLATFORM_MAX_PATH];
-    ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
-    if (lastBackupCvar != null) {
-        lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
-        ServerCommand("mp_backup_restore_load_file \"%s\"", lastBackup);
+    g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
+    if (!StrEqual(lastBackup, "")) {
+        ServerCommand("get5_loadbackup \"%s\"", lastBackup);
         return true;
     }
     return false;
@@ -667,6 +700,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
         AddMapScore();
         g_TeamSeriesScores[winningTeam]++;
+        WriteBackup();
 
         char mapName[PLATFORM_MAX_PATH];
         GetCleanMapName(mapName, sizeof(mapName));
@@ -790,6 +824,32 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
     }
 
     Stats_ResetRoundValues();
+
+    if (g_GameState >= GameState_Live) {
+        WriteBackup();
+    }
+}
+
+public void WriteBackup() {
+    if (g_BackupSystemEnabledCvar.IntValue == 0) {
+        return;
+    }
+
+    char path[PLATFORM_MAX_PATH];
+    if (g_GameState == GameState_Live) {
+        Format(path, sizeof(path), "get5_backup_match%s_map%d_round%d.cfg",
+            g_MatchID, GetMapNumber(), GameRules_GetProp("m_totalRoundsPlayed"));
+    } else {
+        Format(path, sizeof(path), "get5_backup_match%s_map%d_prelive.cfg",
+            g_MatchID, GetMapNumber());
+    }
+    LogDebug("created path %s", path);
+
+    if (!FileExists(path) || g_GameState == GameState_PostGame) {
+        LogDebug("writing to %s", path);
+        WriteBackStructure(path);
+        g_LastGet5BackupCvar.SetString(path);
+    }
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {

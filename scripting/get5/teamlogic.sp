@@ -12,20 +12,20 @@ public Action Command_JoinGame(int client, const char[] command, int argc) {
     return Plugin_Continue;
 }
 
-// public void CheckClientTeam(int client) {
-//     MatchTeam correctTeam = GetClientMatchTeam(client);
-//     int csTeam = MatchTeamToCSTeam(correctTeam);
-//     int currentTeam = GetClientTeam(client);
+public void CheckClientTeam(int client) {
+    MatchTeam correctTeam = GetClientMatchTeam(client);
+    int csTeam = MatchTeamToCSTeam(correctTeam);
+    int currentTeam = GetClientTeam(client);
 
-//     if (csTeam != currentTeam) {
-//         if (IsClientCoaching(client)) {
-//             UpdateCoachTarget(client, csTeam);
-//         }
+    if (csTeam != currentTeam) {
+        if (IsClientCoaching(client)) {
+            UpdateCoachTarget(client, csTeam);
+        }
 
-//         LogDebug("CheckClientTeam %L to %d", client, csTeam);
-//         SwitchPlayerTeam(client, csTeam);
-//     }
-// }
+        LogDebug("CheckClientTeam %L to %d", client, csTeam);
+        SwitchPlayerTeam(client, csTeam);
+    }
+}
 
 public Action Command_JoinTeam(int client, const char[] command, int argc) {
     if (!IsAuthedPlayer(client) || argc < 1)
@@ -290,12 +290,14 @@ public void SetStartingTeams() {
             g_TeamSide[MatchTeam_Team2] = CS_TEAM_CT;
         }
     }
+
+    g_TeamStartingSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team1];
+    g_TeamStartingSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team2];
 }
 
 public void AddMapScore() {
     int currentMapNumber = GetMapNumber();
 
-    g_TeamScoresPerMap.Push(0);
     g_TeamScoresPerMap.Set(
         currentMapNumber,
         CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
@@ -345,3 +347,4 @@ public bool RemovePlayerFromTeams(const char[] auth) {
     }
     return false;
 }
+

@@ -10,7 +10,6 @@ Database db = null;
 char queryBuffer[1024];
 
 int g_MatchID = -1;
-int g_MapNumber = 0;
 
 ConVar g_ForceMatchIDCvar;
 bool g_DisableStats = false;
@@ -39,9 +38,14 @@ public void OnPluginStart() {
     }
 }
 
+public void Get5_OnBackupRestore() {
+    char matchid[64];
+    Get5_GetMatchID(matchid, sizeof(matchid));
+    g_MatchID = StringToInt(matchid);
+}
+
 public void Get5_OnSeriesInit() {
     g_MatchID = -1;
-    g_MapNumber = 0;
 
     char seriesType[64];
     char team1Name[64];
@@ -126,8 +130,6 @@ public void Get5_OnGoingLive(int mapNumber) {
     if (g_DisableStats)
         return;
 
-    g_MapNumber = mapNumber;
-
     char mapName[255];
     GetCurrentMap(mapName, sizeof(mapName));
 
@@ -135,7 +137,7 @@ public void Get5_OnGoingLive(int mapNumber) {
     db.Escape(mapName, mapNameSz, sizeof(mapNameSz));
 
     Format(queryBuffer, sizeof(queryBuffer),
-        "INSERT INTO `get5_stats_maps` \
+        "INSERT IGNORE INTO `get5_stats_maps` \
         (matchid, mapnumber, mapname, start_time) VALUES \
         (%d, %d, '%s', NOW())",
         g_MatchID, mapNumber, mapNameSz);
@@ -209,6 +211,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
     char auth[AUTH_LENGTH];
     char nameSz[MAX_NAME_LENGTH*2 + 1];
     char authSz[AUTH_LENGTH*2 + 1];
+    int mapNumber = MapNumber();
 
     if (kv.GotoFirstSubKey()) {
         do {
@@ -255,7 +258,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
                 %d, %d, \
                 %d, %d, %d, %d, %d,\
                 %d, %d, %d, %d)",
-                g_MatchID, g_MapNumber, authSz, teamString,
+                g_MatchID, mapNumber, authSz, teamString,
                 roundsplayed, nameSz, kills, deaths, flashbang_assists,
                 assists, teamkills, headshot_kills, damage,
                 plants, defuses,
@@ -295,6 +298,14 @@ public int SQLErrorCheckCallback(Handle owner, Handle hndl, const char[] error, 
 
 public void Get5_OnRoundStatsUpdated() {
     if (Get5_GetGameState() == GameState_Live && !g_DisableStats) {
-        UpdateRoundStats(g_MapNumber);
+        UpdateRoundStats(MapNumber());
     }
+}
+
+static int MapNumber() {
+    int t1, t2;
+    int buf;
+    Get5_GetTeamScores(MatchTeam_Team1, t1, buf);
+    Get5_GetTeamScores(MatchTeam_Team1, t2, buf);
+    return t1 + t2;
 }

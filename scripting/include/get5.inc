@@ -75,6 +75,9 @@ forward void Get5_OnMapPicked(MatchTeam team, const char[] map);
 // Called when a demo finishes recording.
 forward void Get5_OnDemoFinished(const char[] filename);
 
+// Called when a match backup is restored.
+forward void Get5_OnBackupRestore();
+
 // Returns the current pug gamestate.
 native GameState Get5_GetGameState();
 

@@ -15,6 +15,7 @@ Features of this include:
 - Support for multi-map series (Bo1, Bo2, Bo3, Bo5, etc.)
 - Warmup and !ready system each team
 - Automatic GOTV demo recording
+- Advanced backup system built on top of valve's backup system ([see the wiki](https://github.com/splewis/get5/wiki/Match-backups))
 - Knifing for sides
 - Pausing support
 - Coaching support
@@ -95,7 +96,7 @@ Of the below fields, only the ``team1`` and ``team2`` fields are actually requir
 - ``logo`` team logo (wraps ``mp_teamlogo_1``)
 - ``matchtext``: warps ``mp_teammatchstat_1``
 - ``players``: list of Steam id's for users on the team (not used if ``get5_check_auths`` is set to 0)
-- ``series_score``: current score in the series, this should only be used to restore a match (e.g., changed server after 1 map), defaults to 0
+- ``series_score``: current score in the series, this can be used to give a team a map advantage or used as a manual backup method, defaults to 0
 
 There is advice on handling these match configs in [the wiki](https://github.com/splewis/get5/wiki/Managing-match-configs).
 
@@ -110,6 +111,7 @@ You should either set these in the above file, or in the match config's ``cvars`
 - ``get5_check_auths``: whether the steamids from a "players" section are used to force players onto teams (default 1)
 - ``get5_demo_name_format``: format to name demo files in (default ``{MATCHID}_map{MAPNUMBER}_{MAPNAME}``)
 - ``get5_kick_when_no_match_loaded``: whether to kick all clients if no match is loaded
+- ``get5_last_backup_file``: last match backup file get5 wrote in the current series
 - ``get5_live_cfg``: config file executed when the game goes live
 - ``get5_pausing_enabled``: whether pausing (!pause command) is enabled
 - ``get5_stop_command_enabled``: whether the !stop command is enabled

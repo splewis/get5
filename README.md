@@ -56,6 +56,7 @@ If you need more help, see the [step-by-step guide in the wiki](https://github.c
 
 #### Server/Admin Commands
 - ``get5_loadmatch``: loads a match config file (JSON or keyvalues) relative from the ``csgo`` directory
+- ``get5_loadbackup``: loads a get5 backup file
 - ``get5_loadteam``: loads a team section from a file into a team
 - ``get5_loadmatch_url``: loads a remote (JSON formatted) match config by sending a HTTP GET to the given url, this requires either the [system2](https://forums.alliedmods.net/showthread.php?t=146019) or [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) Extensions
 - ``get5_endmatch``: force ends the current match

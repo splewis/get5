@@ -201,10 +201,8 @@ public void DeleteOldBackups() {
     if (files != null) {
         char path[PLATFORM_MAX_PATH];
         while (files.GetNext(path, sizeof(path))) {
-            LogMessage("path = %s", path);
             if (StrContains(path, "get5_backup_") == 0 &&
                 GetTime() - GetFileTime(path, FileTime_LastChange) >= maxTimeDifference) {
-                LogMessage("deleting %s", path);
                 DeleteFile(path);
             }
         }

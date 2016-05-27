@@ -599,7 +599,7 @@ public Action Command_LoadMatchUrl(int client, int args) {
         ReplyToCommand(client, "Cannot load matches from a url without the SteamWorks or system2 extension running");
     } else {
         char arg[PLATFORM_MAX_PATH];
-        if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {
+        if (args >= 1 && GetCmdArgString(arg, sizeof(arg))) {
             if (!LoadMatchFromUrl(arg)) {
                 ReplyToCommand(client, "Failed to load match config.");
             }

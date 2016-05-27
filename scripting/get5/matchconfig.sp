@@ -221,13 +221,14 @@ public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
     LoadMatchConfig(REMOTE_CONFIG_FILENAME);
 }
 
-
 public int System2_OnMatchConfigReceived(bool finished, const char[] error, float dltotal,
     float dlnow, float ultotal, float ulnow, int serial) {
-    if (!StrEqual(error, "")) {
-        MatchConfigFail("Error receiving remote config via system2: %s", error);
-    } else if (finished) {
-        LoadMatchConfig(REMOTE_CONFIG_FILENAME);
+    if (finished) {
+        if (!StrEqual(error, "")) {
+            MatchConfigFail("Error receiving remote config via system2: %s", error);
+        } else if (finished) {
+            LoadMatchConfig(REMOTE_CONFIG_FILENAME);
+        }
     }
 }
 

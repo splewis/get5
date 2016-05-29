@@ -827,7 +827,7 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
         SwapSides();
     }
 
-    if (g_GameState == g_OnGoingLive) {
+    if (g_GameState == GameState_GoingLive) {
         ChangeState(GameState_Live);
     }
 

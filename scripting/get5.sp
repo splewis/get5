@@ -827,6 +827,10 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
         SwapSides();
     }
 
+    if (g_GameState == g_OnGoingLive) {
+        ChangeState(GameState_Live);
+    }
+
     Stats_ResetRoundValues();
 
     if (g_GameState >= GameState_Live) {

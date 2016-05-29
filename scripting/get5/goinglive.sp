@@ -34,8 +34,6 @@ public Action MatchLive(Handle timer) {
     ConVar tv_delay = FindConVar("tv_delay");
     SetConVarInt(mp_match_restart_delay, tv_delay.IntValue + MATCH_END_DELAY_AFTER_TV + 5);
 
-    ChangeState(GameState_Live);
-
     for (int i = 0; i < 5; i++) {
         Get5_MessageToAll("Match is {GREEN}LIVE");
     }

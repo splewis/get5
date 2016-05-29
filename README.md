@@ -64,6 +64,7 @@ If you need more help, see the [step-by-step guide in the wiki](https://github.c
 - ``get5_forceready``: marks all teams as ready
 - ``get5_dumpstats``: dumps current match stats to a file
 - ``get5_status``: replies with JSON formatted match state (available to all clients, requires [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604))
+- ``get5_list_backups``: lists backup files for the current matchid or a given matchid
 
 
 ## Match Schema

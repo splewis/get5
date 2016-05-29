@@ -232,6 +232,8 @@ public void OnPluginStart() {
         "Force readies all current teams");
     RegAdminCmd("get5_dumpstats", Command_DumpStats, ADMFLAG_CHANGEMAP,
         "Dumps match stats to a file");
+    RegAdminCmd("get5_listbackups", Command_ListBackups, ADMFLAG_CHANGEMAP,
+        "Lists get5 match backups for the current matchid or a given one");
     RegAdminCmd("get5_loadbackup", Command_LoadBackup, ADMFLAG_CHANGEMAP,
         "Loads a get5 match backup");
 

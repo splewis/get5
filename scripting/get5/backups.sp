@@ -20,6 +20,35 @@ public Action Command_LoadBackup(int client, int args) {
     return Plugin_Handled;
 }
 
+public Action Command_ListBackups(int client, int args) {
+    if (g_BackupSystemEnabledCvar.IntValue == 0) {
+        ReplyToCommand(client, "The backup system is disabled");
+        return Plugin_Handled;
+    }
+    char matchID[MATCH_ID_LENGTH];
+    if (args >= 1) {
+        GetCmdArg(1, matchID, sizeof(matchID));
+    } else {
+        strcopy(matchID, sizeof(matchID), g_MatchID);
+    }
+
+    char pattern[PLATFORM_MAX_PATH];
+    Format(pattern, sizeof(pattern), "get5_backup_match%s", matchID);
+
+    DirectoryListing files = OpenDirectory(".");
+    if (files != null) {
+        char path[PLATFORM_MAX_PATH];
+        while (files.GetNext(path, sizeof(path))) {
+            if (StrContains(path, pattern) == 0) {
+                ReplyToCommand(client, path);
+            }
+        }
+        delete files;
+    }
+
+    return Plugin_Handled;
+}
+
 public void WriteBackStructure(const char[] path) {
     KeyValues kv = new KeyValues("Backup");
     char timeString[PLATFORM_MAX_PATH];

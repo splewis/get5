@@ -23,22 +23,6 @@ public void Stats_InitSeries() {
     g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[MatchTeam_Team2]);
 }
 
-public void Stats_UpdateTeamScores() {
-    GoToMap();
-    char mapName[PLATFORM_MAX_PATH];
-    GetCleanMapName(mapName, sizeof(mapName));
-    g_StatsKv.SetString(STAT_MAPNAME, mapName);
-    GoBackFromMap();
-
-    GoToTeam(MatchTeam_Team1);
-    g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
-    GoBackFromTeam();
-
-    GoToTeam(MatchTeam_Team2);
-    g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
-    GoBackFromTeam();
-}
-
 public void Stats_ResetRoundValues() {
     g_SetTeamClutching[CS_TEAM_CT] = false;
     g_SetTeamClutching[CS_TEAM_T] = false;
@@ -54,13 +38,45 @@ public void Stats_ResetClientRoundValues(int client) {
     g_RoundFlashedBy[client] = 0;
 }
 
-public void Stats_UpdatePlayerRounds(int csTeamWinner) {
+public void Stats_RoundStart() {
     for (int i = 1; i <= MaxClients; i++) {
         if (IsPlayer(i)) {
             MatchTeam team = GetClientMatchTeam(i);
             if (team == MatchTeam_Team1 || team == MatchTeam_Team2) {
                 IncrementPlayerStat(i, STAT_ROUNDSPLAYED);
 
+                GoToPlayer(i);
+                char name[MAX_NAME_LENGTH];
+                GetClientName(i, name, sizeof(name));
+                g_StatsKv.SetString(STAT_NAME, name);
+                GoBackFromPlayer();
+            }
+        }
+    }
+
+}
+
+public void Stats_RoundEnd(int csTeamWinner) {
+    // Update team scores.
+    GoToMap();
+    char mapName[PLATFORM_MAX_PATH];
+    GetCleanMapName(mapName, sizeof(mapName));
+    g_StatsKv.SetString(STAT_MAPNAME, mapName);
+    GoBackFromMap();
+
+    GoToTeam(MatchTeam_Team1);
+    g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
+    GoBackFromTeam();
+
+    GoToTeam(MatchTeam_Team2);
+    g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
+    GoBackFromTeam();
+
+    // Update player 1vx and x-kill values.
+    for (int i = 1; i <= MaxClients; i++) {
+        if (IsPlayer(i)) {
+            MatchTeam team = GetClientMatchTeam(i);
+            if (team == MatchTeam_Team1 || team == MatchTeam_Team2) {
                 switch(g_RoundKills[i]) {
                     case 1: IncrementPlayerStat(i, STAT_1K);
                     case 2: IncrementPlayerStat(i, STAT_2K);
@@ -87,6 +103,7 @@ public void Stats_UpdatePlayerRounds(int csTeamWinner) {
             }
         }
     }
+
 }
 
 public void Stats_UpdateMapScore(MatchTeam winner) {

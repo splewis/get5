@@ -830,6 +830,7 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
     Stats_ResetRoundValues();
 
     if (g_GameState >= GameState_Live) {
+        Stats_RoundStart();
         WriteBackup();
     }
 }
@@ -898,8 +899,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
             CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
             g_TeamNames[MatchTeam_Team2]);
 
-        Stats_UpdateTeamScores();
-        Stats_UpdatePlayerRounds(csTeamWinner);
+        Stats_RoundEnd(csTeamWinner);
         Call_StartForward(g_OnRoundStatsUpdated);
         Call_Finish();
 

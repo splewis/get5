@@ -124,6 +124,10 @@ native void Get5_GetMatchID(char[] id, int length);
 // Sets the current matchid.
 native void Get5_SetMatchID(const char[] id);
 
+// Adds a cvar to be set when going live.
+// Note: this should only be used when a match config loaded.
+native void Get5_AddLiveCvar(const char[] name, const char[] value);
+
 // Copies the current series stats into the passed KeyValues structure.
 // Below are the keys used for stats in the kv copied.
 // The caller is responsible for creating and deleting a KeyValues
@@ -196,6 +200,7 @@ public __pl_get5_SetNTVOptional() {
     MarkNativeAsOptional("Get5_GetTeamScores");
     MarkNativeAsOptional("Get5_GetMatchID");
     MarkNativeAsOptional("Get5_SetMatchID");
+    MarkNativeAsOptional("Get5_AddLiveCvar");
     MarkNativeAsOptional("Get5_IncreasePlayerStat");
     MarkNativeAsOptional("Get5_GetMatchStats");
 }

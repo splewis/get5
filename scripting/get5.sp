@@ -246,6 +246,7 @@ public void OnPluginStart() {
     HookEvent("player_spawn", Event_PlayerSpawn);
     HookEvent("cs_win_panel_match", Event_MatchOver);
     HookEvent("round_prestart", Event_RoundPreStart);
+    HookEvent("round_freeze_end", Event_FreezeEnd);
     HookEvent("round_end", Event_RoundEnd);
     HookEvent("server_cvar", Event_CvarChanged, EventHookMode_Pre);
     HookEvent("player_connect_full", Event_PlayerConnectFull);
@@ -836,8 +837,13 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
     Stats_ResetRoundValues();
 
     if (g_GameState >= GameState_Live) {
-        Stats_RoundStart();
         WriteBackup();
+    }
+}
+
+public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast) {
+    if (g_GameState == GameState_Live) {
+        Stats_RoundStart();
     }
 }
 

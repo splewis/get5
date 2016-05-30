@@ -74,6 +74,7 @@ public void WriteBackStructure(const char[] path) {
 
     kv.SetNum("team1_side", g_TeamSide[MatchTeam_Team1]);
     kv.SetNum("team2_side", g_TeamSide[MatchTeam_Team2]);
+
     kv.SetNum("team1_start_side", g_TeamStartingSide[MatchTeam_Team1]);
     kv.SetNum("team2_start_side", g_TeamStartingSide[MatchTeam_Team2]);
 
@@ -205,10 +206,12 @@ public void RestoreGet5Backup() {
     ExecCfg(g_LiveCfgCvar);
 
     if (g_SavedValveBackup) {
-        // ServerCommand("mp_teamname_1 \"\"");
-        // ServerCommand("mp_teamname_2 \"\"");
+        // This variable is reset ona timer since the implementation of the
+        // mp_backup_restore_load_file doesn't do everything in one frame.
+        g_DoingBackupRestoreNow = true;
         ServerCommand("mp_backup_restore_load_file \"%s\"", TEMP_VALVE_BACKUP_FILE);
         Pause();
+        CreateTimer(0.1, Timer_FinishBackup);
 
     } else {
         SetStartingTeams();
@@ -225,6 +228,10 @@ public void RestoreGet5Backup() {
     }
 
     ChangeState(GameState_Live);
+}
+
+public Action Timer_FinishBackup(Handle timer) {
+    g_DoingBackupRestoreNow = false;
 }
 
 public void DeleteOldBackups() {

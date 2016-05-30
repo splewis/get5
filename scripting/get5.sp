@@ -89,6 +89,7 @@ MatchTeam g_LastVetoTeam;
 bool g_RestoreMatchBackup = false; // Whether a backup has been used in the current match
 bool g_WaitingForRoundBackup = false;
 bool g_SavedValveBackup = false;
+bool g_DoingBackupRestoreNow = false;
 
 // Stats values
 bool g_SetTeamClutching[4];
@@ -836,7 +837,7 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
 
     Stats_ResetRoundValues();
 
-    if (g_GameState >= GameState_Live) {
+    if (g_GameState >= GameState_Warmup && !g_DoingBackupRestoreNow) {
         WriteBackup();
     }
 }
@@ -862,7 +863,7 @@ public void WriteBackup() {
     }
     LogDebug("created path %s", path);
 
-    if (!FileExists(path) || g_GameState == GameState_PostGame) {
+    if (!g_DoingBackupRestoreNow) {
         LogDebug("writing to %s", path);
         WriteBackStructure(path);
         g_LastGet5BackupCvar.SetString(path);
@@ -870,6 +871,9 @@ public void WriteBackup() {
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
+    if (g_DoingBackupRestoreNow)
+        return;
+
     if (g_GameState == GameState_KnifeRound) {
         ChangeState(GameState_WaitingForKnifeRoundDecision);
         CreateTimer(1.0, Timer_PostKnife);

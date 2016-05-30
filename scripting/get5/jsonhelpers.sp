@@ -97,3 +97,9 @@ stock void set_json_int(Handle root_json, const char[] key, int value) {
     json_object_set(root_json, key, value_json);
     CloseHandle(value_json);
 }
+
+stock void set_json_bool(Handle root_json, const char[] key, bool value) {
+    Handle value_json = json_boolean(value);
+    json_object_set(root_json, key, value_json);
+    CloseHandle(value_json);
+}

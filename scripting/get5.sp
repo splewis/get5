@@ -1056,6 +1056,7 @@ public Action Command_Status(int client, int args) {
     #endif
 
     set_json_int(json, "gamestate", view_as<int>(g_GameState));
+    set_json_bool(json, "paused", IsPaused());
 
     char gamestate[64];
     GameStateString(g_GameState, gamestate, sizeof(gamestate));

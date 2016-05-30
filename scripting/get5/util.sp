@@ -417,6 +417,16 @@ public MatchSideType MatchSideTypeFromString(const char[] str) {
     }
 }
 
+public void MatchSideTypeToString(MatchSideType type, char[] str, int len) {
+    if (type == MatchSideType_Standard) {
+        Format(str, len, "standard");
+    } else if (type == MatchSideType_NeverKnife) {
+        Format(str, len, "never_knife");
+    } else {
+        Format(str, len, "always_knife");
+    }
+}
+
 stock void ExecCfg(ConVar cvar) {
     char cfg[PLATFORM_MAX_PATH];
     cvar.GetString(cfg, sizeof(cfg));

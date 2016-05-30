@@ -1,4 +1,5 @@
-#define TEMP_BACKUP_FILE "get5_temp_backup.txt"
+#define TEMP_MATCHCONFIG_BACKUP_FILE "get5_match_config_backup.txt"
+#define TEMP_VALVE_BACKUP_FILE "get5_temp_backup.txt"
 
 public Action Command_LoadBackup(int client, int args) {
     if (g_BackupSystemEnabledCvar.IntValue == 0) {
@@ -55,7 +56,6 @@ public void WriteBackStructure(const char[] path) {
     FormatTime(timeString, sizeof(timeString), "%Y-%m-%d %H:%M:%S", GetTime());
     kv.SetString("timestamp", timeString);
     kv.SetString("matchid", g_MatchID);
-    kv.SetString("match_config", g_LoadedConfigFile);
 
     char mapName[PLATFORM_MAX_PATH];
     GetCurrentMap(mapName, sizeof(mapName));
@@ -87,6 +87,11 @@ public void WriteBackStructure(const char[] path) {
     }
     kv.GoBack();
 
+    // Write the original match config data.
+    kv.JumpToKey("Match", true);
+    WriteMatchToKv(kv);
+    kv.GoBack();
+
     // Write valve's backup format into the file.
     char lastBackup[PLATFORM_MAX_PATH];
     ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
@@ -110,6 +115,7 @@ public void WriteBackStructure(const char[] path) {
     delete kv;
 }
 
+
 public bool RestoreFromBackup(const char[] path) {
     KeyValues kv = new KeyValues("Backup");
     if (!kv.ImportFromFile(path)) {
@@ -118,12 +124,14 @@ public bool RestoreFromBackup(const char[] path) {
         return false;
     }
 
-    char matchconfig[PLATFORM_MAX_PATH];
-    kv.GetString("match_config", matchconfig, sizeof(matchconfig));
-    if (!LoadMatchConfig(matchconfig, true)) {
-        delete kv;
-        LogError("Could not restore from match config \"%s\"", matchconfig);
-        return false;
+    if (kv.JumpToKey("Match")) {
+        kv.ExportToFile(TEMP_MATCHCONFIG_BACKUP_FILE);
+        if (!LoadMatchConfig(TEMP_MATCHCONFIG_BACKUP_FILE, true)) {
+            delete kv;
+            LogError("Could not restore from match config \"%s\"", TEMP_MATCHCONFIG_BACKUP_FILE);
+            return false;
+        }
+        kv.GoBack();
     }
 
     kv.GetString("matchid", g_MatchID, sizeof(g_MatchID));
@@ -164,7 +172,7 @@ public bool RestoreFromBackup(const char[] path) {
 
     if (kv.JumpToKey("valve_backup")) {
         g_SavedValveBackup = true;
-        kv.ExportToFile(TEMP_BACKUP_FILE);
+        kv.ExportToFile(TEMP_VALVE_BACKUP_FILE);
         kv.GoBack();
     } else {
         g_SavedValveBackup = false;
@@ -175,7 +183,6 @@ public bool RestoreFromBackup(const char[] path) {
 
     char currentSeriesMap[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(GetMapNumber(), currentSeriesMap, sizeof(currentSeriesMap));
-    LogMessage("currentMap = %s, currentSeriesMap = %s", currentMap, currentSeriesMap);
 
     if (!StrEqual(currentMap, currentSeriesMap)) {
         ChangeMap(currentSeriesMap, 1.0);
@@ -200,7 +207,7 @@ public void RestoreGet5Backup() {
     if (g_SavedValveBackup) {
         // ServerCommand("mp_teamname_1 \"\"");
         // ServerCommand("mp_teamname_2 \"\"");
-        ServerCommand("mp_backup_restore_load_file \"%s\"", TEMP_BACKUP_FILE);
+        ServerCommand("mp_backup_restore_load_file \"%s\"", TEMP_VALVE_BACKUP_FILE);
         Pause();
 
     } else {

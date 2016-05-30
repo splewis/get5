@@ -232,6 +232,68 @@ public int System2_OnMatchConfigReceived(bool finished, const char[] error, floa
     }
 }
 
+public void WriteMatchToKv(KeyValues kv) {
+    kv.SetString("matchid", g_MatchID);
+    kv.SetNum("maps_to_win", g_MapsToWin);
+    kv.SetNum("bo2_series", g_BO2Match);
+    kv.SetNum("skip_veto", g_SkipVeto);
+    kv.SetNum("players_per_team", g_PlayersPerTeam);
+    kv.SetString("match_title", g_MatchTitle);
+
+    kv.SetNum("favored_percentage_team1", g_FavoredTeamPercentage);
+    kv.SetString("favored_percentage_text", g_FavoredTeamText);
+
+    char sideType[64];
+    MatchSideTypeToString(g_MatchSideType, sideType, sizeof(sideType));
+    kv.SetString("side_type", sideType);
+
+    kv.JumpToKey("maplist", true);
+    for (int i = 0; i < g_MapPoolList.Length; i++) {
+        char map[PLATFORM_MAX_PATH];
+        g_MapPoolList.GetString(i, map, sizeof(map));
+        kv.SetString(map, "x");
+    }
+    kv.GoBack();
+    // TODO: this should also put the maplist in
+
+    kv.JumpToKey("team1", true);
+    AddTeamBackupData(kv, MatchTeam_Team1);
+    kv.GoBack();
+
+    kv.JumpToKey("team2", true);
+    AddTeamBackupData(kv, MatchTeam_Team2);
+    kv.GoBack();
+
+    kv.JumpToKey("spec", true);
+    AddTeamBackupData(kv, MatchTeam_TeamSpec);
+    kv.GoBack();
+
+    kv.JumpToKey("cvars", true);
+    for (int i = 0; i < g_CvarNames.Length; i++) {
+        char cvarName[MAX_CVAR_LENGTH];
+        char cvarValue[MAX_CVAR_LENGTH];
+        g_CvarNames.GetString(i, cvarName, sizeof(cvarName));
+        g_CvarValues.GetString(i, cvarValue, sizeof(cvarValue));
+        kv.SetString(cvarName, cvarValue);
+    }
+    kv.GoBack();
+}
+
+static void AddTeamBackupData(KeyValues kv, MatchTeam team) {
+    kv.JumpToKey("players", true);
+    char auth[AUTH_LENGTH];
+    for (int i = 0; i < GetTeamAuths(team).Length; i++) {
+        GetTeamAuths(team).GetString(i, auth, sizeof(auth));
+        kv.SetString(auth, "x");
+    }
+    kv.GoBack();
+
+    kv.SetString("name", g_TeamNames[team]);
+    kv.SetString("flag", g_TeamFlags[team]);
+    kv.SetString("logo", g_TeamLogos[team]);
+    kv.SetString("matchtext", g_TeamMatchTexts[team]);
+}
+
 static bool LoadMatchFromKv(KeyValues kv) {
     kv.GetString("matchid", g_MatchID, sizeof(g_MatchID), CONFIG_MATCHID_DEFAULT);
     kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
@@ -307,7 +369,7 @@ static bool LoadMatchFromJson(Handle json) {
     g_MatchSideType = MatchSideTypeFromString(buf);
 
     json_object_get_string_safe(json, "favored_percentage_text",
-        g_FavoredTeamText, sizeof(g_FavoredTeamText), "matchID");
+        g_FavoredTeamText, sizeof(g_FavoredTeamText));
     g_FavoredTeamPercentage = json_object_get_int_safe(json, "favored_percentage_team1", 0);
 
     Handle spec = json_object_get(json, "spectators");

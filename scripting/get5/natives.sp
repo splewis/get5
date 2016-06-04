@@ -155,8 +155,16 @@ public int Native_AddLiveCvar(Handle plugin, int numParams) {
     char cvarValue[MAX_CVAR_LENGTH];
     GetNativeString(1, cvarName, sizeof(cvarName));
     GetNativeString(2, cvarValue, sizeof(cvarValue));
-    g_CvarNames.PushString(cvarName);
-    g_CvarValues.PushString(cvarValue);
+    int index = g_CvarNames.FindString(cvarName);
+
+    // If not found, push to the end.
+    // Otherwise, overwrite the cvar value.
+    if (index == -1) {
+        g_CvarNames.PushString(cvarName);
+        g_CvarValues.PushString(cvarValue);
+    } else {
+        g_CvarValues.SetString(index, cvarValue);
+    }
     return 0;
 }
 

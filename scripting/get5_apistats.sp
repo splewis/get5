@@ -206,13 +206,15 @@ public void UpdatePlayerStats(KeyValues kv, MatchTeam team) {
 }
 
 static void AddStringParam(Handle request, const char[] key, const char[] value) {
-    SteamWorks_SetHTTPRequestGetOrPostParameter(request, key, value);
+    if (!SteamWorks_SetHTTPRequestGetOrPostParameter(request, key, value)) {
+        LogError("Failed to add http param %s=%s", key, value);
+    }
 }
 
 static void AddIntParam(Handle request, const char[] key, int value) {
     char buffer[32];
     IntToString(value, buffer, sizeof(buffer));
-    SteamWorks_SetHTTPRequestGetOrPostParameter(request, key, buffer);
+    AddStringParam(request, key, buffer);
 }
 
 public void Get5_OnSeriesResult(MatchTeam seriesWinner,

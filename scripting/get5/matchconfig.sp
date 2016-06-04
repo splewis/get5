@@ -617,7 +617,12 @@ public void ExecuteMatchConfigCvars() {
     for (int i = 0; i < g_CvarNames.Length; i++) {
         g_CvarNames.GetString(i, name, sizeof(name));
         g_CvarValues.GetString(i, value, sizeof(value));
-        ServerCommand("%s %s", name, value);
+        ConVar cvar = FindConVar(name);
+        if (cvar == null) {
+            ServerCommand("%s %s", name, value);
+        } else {
+            cvar.SetString(value);
+        }
     }
 }
 

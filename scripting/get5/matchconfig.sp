@@ -855,4 +855,24 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
     }
 }
 
+public void CheckTeamNameStatus(MatchTeam team) {
+    if (StrEqual(g_TeamNames[team], "") && team != MatchTeam_TeamSpec) {
+        for (int i = 1; i <= MaxClients; i++) {
+            if (IsAuthedPlayer(i)) {
+                if (GetClientMatchTeam(i) == team) {
+                    char clientName[MAX_NAME_LENGTH];
+                    GetClientName(i, clientName, sizeof(clientName));
+                    Format(g_TeamNames[team], MAX_CVAR_LENGTH, "team_%s", clientName);
+                    break;
+                }
+            }
+        }
 
+        char colorTag[32] = TEAM1_COLOR;
+        if (team == MatchTeam_Team2)
+            colorTag = TEAM2_COLOR;
+
+        Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
+            colorTag, g_TeamNames[team]);
+    }
+}

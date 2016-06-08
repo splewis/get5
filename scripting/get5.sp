@@ -520,6 +520,8 @@ public Action Command_Ready(int client, int args) {
 }
 
 static void PrintReadyMessage(MatchTeam team) {
+    CheckTeamNameStatus(team);
+
     if (g_GameState == GameState_PreVeto) {
         Get5_MessageToAll("%s is ready to veto.", g_FormattedTeamNames[team]);
     } else if (g_GameState == GameState_Warmup) {

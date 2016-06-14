@@ -107,6 +107,7 @@ Note: these are auto-executed on plugin start by the auto-generated (the 1st tim
 
 You should either set these in the above file, or in the match config's ``cvars`` section.
 
+- ``get5_auto_dump_stats``: whether match stats keyvalues files are saved to a get5_matchstats_matchid.cfg file (updated each map end)
 - ``get5_autoload_config``: a config file to autoload on map starts if no match is loaded
 - ``get5_check_auths``: whether the steamids from a "players" section are used to force players onto teams (default 1)
 - ``get5_demo_name_format``: format to name demo files in (default ``{MATCHID}_map{MAPNUMBER}_{MAPNAME}``)

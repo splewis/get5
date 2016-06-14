@@ -21,6 +21,7 @@ public void Stats_InitSeries() {
     g_StatsKv.SetString(STAT_SERIESTYPE, seriesType);
     g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamNames[MatchTeam_Team1]);
     g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[MatchTeam_Team2]);
+    DumpToFile();
 }
 
 public void Stats_ResetRoundValues() {
@@ -116,12 +117,15 @@ public void Stats_UpdateMapScore(MatchTeam winner) {
     g_StatsKv.SetString(STAT_DEMOFILENAME, g_DemoFileName);
 
     GoBackFromMap();
+
+    DumpToFile();
 }
 
 public void Stats_SeriesEnd(MatchTeam winner) {
     char winnerString[16];
     GetTeamString(winner, winnerString, sizeof(winnerString));
     g_StatsKv.SetString(STAT_SERIESWINNER, winnerString);
+    DumpToFile();
 }
 
 public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBroadcast) {
@@ -365,5 +369,13 @@ static int GetClutchingClient(int csTeam) {
         return client;
     } else {
         return -1;
+    }
+}
+
+public void DumpToFile() {
+    if (g_AutoDumpStatsCvar.IntValue != 0) {
+        char path[PLATFORM_MAX_PATH];
+        Format(path, sizeof(path), "get5_matchstats_%s", g_MatchID);
+        g_StatsKv.ExportToFile(path);
     }
 }

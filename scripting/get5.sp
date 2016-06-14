@@ -39,6 +39,7 @@
  ***********************/
 
 /** ConVar handles **/
+ConVar g_AutoDumpStatsCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
@@ -167,6 +168,8 @@ public void OnPluginStart() {
     InitDebugLog(DEBUG_CVAR, "get5");
 
     /** ConVars **/
+    g_AutoDumpStatsCvar = CreateConVar("get5_auto_dump_stats", "0",
+        "Whether match stats keyvalues files are saved to a get5_matchstats_matchid.cfg file (updated each map end)");
     g_AutoLoadConfigCvar = CreateConVar("get5_autoload_config", "",
         "Name of a match config file to automatically load when the server loads");
     g_BackupSystemEnabledCvar = CreateConVar("get5_backup_system_enabled", "1",

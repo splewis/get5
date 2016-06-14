@@ -35,13 +35,12 @@ public void EndKnifeRound(bool swap) {
             }
         }
     } else {
-        g_TeamSide[MatchTeam_Team1] = CS_TEAM_CT;
-        g_TeamSide[MatchTeam_Team2] = CS_TEAM_T;
-
-        g_TeamStartingSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team1];
-        g_TeamStartingSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team2];
+        g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
+        g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
     }
 
+    g_TeamStartingSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team1];
+    g_TeamStartingSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team2];
     ChangeState(GameState_GoingLive);
     CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
 }

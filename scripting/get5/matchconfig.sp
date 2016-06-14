@@ -64,12 +64,15 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
             g_MapPoolList.GetString(i, mapName, sizeof(mapName));
             g_MapsToPlay.PushString(mapName);
 
-            if (g_MatchSideType == MatchSideType_Standard) {
-                g_MapSides.Push(SideChoice_KnifeRound);
-            } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
-                g_MapSides.Push(SideChoice_KnifeRound);
-            } else if (g_MatchSideType == MatchSideType_NeverKnife) {
-                g_MapSides.Push(SideChoice_Team1CT);
+            // Push a map side if one hasn't been set yet.
+            if (g_MapSides.Length < g_MapsToPlay.Length) {
+                if (g_MatchSideType == MatchSideType_Standard) {
+                    g_MapSides.Push(SideChoice_KnifeRound);
+                } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
+                    g_MapSides.Push(SideChoice_KnifeRound);
+                } else if (g_MatchSideType == MatchSideType_NeverKnife) {
+                    g_MapSides.Push(SideChoice_Team1CT);
+                }
             }
         }
 
@@ -254,7 +257,6 @@ public void WriteMatchToKv(KeyValues kv) {
         kv.SetString(map, "x");
     }
     kv.GoBack();
-    // TODO: this should also put the maplist in
 
     kv.JumpToKey("team1", true);
     AddTeamBackupData(kv, MatchTeam_Team1);
@@ -335,6 +337,20 @@ static bool LoadMatchFromKv(KeyValues kv) {
         LoadDefaultMapList(g_MapPoolList);
     }
 
+    if (g_SkipVeto) {
+        if (kv.JumpToKey("map_sides")) {
+            if (kv.GotoFirstSubKey(false)) {
+                do {
+                    char buffer[64];
+                    kv.GetSectionName(buffer, sizeof(buffer));
+                    g_MapSides.Push(SideTypeFromString(buffer));
+                } while (kv.GotoNextKey(false));
+                kv.GoBack();
+            }
+            kv.GoBack();
+        }
+    }
+
     if (kv.JumpToKey("cvars")) {
         if (kv.GotoFirstSubKey(false)) {
             char name[MAX_CVAR_LENGTH];
@@ -399,6 +415,18 @@ static bool LoadMatchFromJson(Handle json) {
     if (AddJsonSubsectionArrayToList(json, "maplist", g_MapPoolList, PLATFORM_MAX_PATH) <= 0) {
         LogError("Failed to find \"maplist\" array in match json, using fallback maplist.");
         LoadDefaultMapList(g_MapPoolList);
+    }
+
+    if (g_SkipVeto) {
+        Handle array = json_object_get(json, "map_sides");
+        if (array != INVALID_HANDLE) {
+            for (int i = 0; i < json_array_size(array); i++) {
+                char buffer[64];
+                json_array_get_string(array, i, buffer, sizeof(buffer));
+                g_MapSides.Push(SideTypeFromString(buffer));
+            }
+            CloseHandle(array);
+        }
     }
 
     Handle cvars = json_object_get(json, "cvars");
@@ -875,4 +903,8 @@ public void CheckTeamNameStatus(MatchTeam team) {
         Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
             colorTag, g_TeamNames[team]);
     }
+}
+
+public void ReadTeamSides() {
+
 }

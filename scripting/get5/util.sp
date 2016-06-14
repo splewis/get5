@@ -517,3 +517,20 @@ stock bool HelpfulAttack(int attacker, int victim) {
     int vteam = GetClientTeam(victim);   // Get the victim's team
     return ateam != vteam && attacker != victim;
 }
+
+stock SideChoice SideTypeFromString(const char[] input) {
+    if (StrEqual(input, "team1_ct", false)) {
+        return SideChoice_Team1CT;
+    } else if (StrEqual(input, "team1_t", false)) {
+        return SideChoice_Team1T;
+    } else if (StrEqual(input, "team2_ct", false)) {
+        return SideChoice_Team1T;
+    } else if (StrEqual(input, "team2_t", false)) {
+        return SideChoice_Team1CT;
+    } else if (StrEqual(input, "knife", false)) {
+        return SideChoice_KnifeRound;
+    } else {
+        LogError("Invalid side choice \"%s\", falling back to knife round", input);
+        return SideChoice_KnifeRound;
+    }
+}

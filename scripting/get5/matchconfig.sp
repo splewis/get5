@@ -163,9 +163,9 @@ public bool LoadMatchFile(const char[] config) {
 static void MatchConfigFail(const char[] reason, any ...) {
     char buffer[512];
     VFormat(buffer, sizeof(buffer), reason, 2);
+    LogError("Failed to load match config: %s", buffer);
 
     Call_StartForward(g_OnLoadMatchConfigFailed);
-    LogError("Failed to load match config: %s", buffer);
     Call_PushString(buffer);
     Call_Finish();
 }
@@ -656,7 +656,7 @@ public void ExecuteMatchConfigCvars() {
 
 public Action Command_LoadTeam(int client, int args) {
     if (g_GameState == GameState_None) {
-        LogError("Cannot change player lists when there is no match to modify");
+        ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
         return Plugin_Handled;
     }
 
@@ -756,7 +756,7 @@ public Action Command_RemovePlayer(int client, int args) {
 
 public Action Command_CreateMatch(int client, int args) {
     if (g_GameState != GameState_None) {
-        LogError("Cannot create a match when a match is already loaded");
+        ReplyToCommand(client, "Cannot create a match when a match is already loaded");
         return Plugin_Handled;
     }
 
@@ -769,7 +769,7 @@ public Action Command_CreateMatch(int client, int args) {
     } if (args >= 2) {
         GetCmdArg(2, matchMap, sizeof(matchMap));
         if (!IsMapValid(matchMap)) {
-            LogError("Invalid map: %s", matchMap);
+            ReplyToCommand(client, "Invalid map: %s", matchMap);
             return Plugin_Handled;
         }
     }
@@ -903,8 +903,4 @@ public void CheckTeamNameStatus(MatchTeam team) {
         Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
             colorTag, g_TeamNames[team]);
     }
-}
-
-public void ReadTeamSides() {
-
 }

@@ -35,6 +35,8 @@ You must have sourcemod installed on the game server. You can download it at htt
 #### Download
 Download a release package from the [releases section](https://github.com/splewis/get5/releases) or a [the latest development build](http://ci.splewis.net/job/get5/lastSuccessfulBuild/).
 
+Release and development builds are currently compiled against sourcemod 1.7 and should work on sourcemod 1.7 or later.
+
 #### Installation
 Extract the download archive into the csgo/ directory on the server. The only required file is actually just the ``get5.smx`` plugin binary in the ``addons/sourcemod/plugins`` directory.
 

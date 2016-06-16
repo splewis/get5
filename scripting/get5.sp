@@ -914,11 +914,30 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     if (g_GameState == GameState_Live) {
         int csTeamWinner = event.GetInt("winner");
 
-        Get5_MessageToAll("{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s",
-            g_TeamNames[MatchTeam_Team1],
+		if (CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1))==CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2))){
+			Get5_MessageToAll("{LIGHT_GREEN}%s {ORANGE}%d {NORMAL}- {ORANGE}%d {LIGHT_GREEN}%s",
+			g_TeamNames[MatchTeam_Team1],
             CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
             CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
-            g_TeamNames[MatchTeam_Team2]);
+			g_TeamNames[MatchTeam_Team2]);
+		}
+		else {
+			if(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1))>CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2))){
+				Get5_MessageToAll("{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {LIGHT_RED}%d {LIGHT_GREEN}%s",
+				g_TeamNames[MatchTeam_Team1],
+				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
+				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
+				g_TeamNames[MatchTeam_Team2]);
+			}
+			else {
+				Get5_MessageToAll("{LIGHT_GREEN}%s {LIGHT_RED}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s",
+				g_TeamNames[MatchTeam_Team1],
+				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
+				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
+				g_TeamNames[MatchTeam_Team2]);
+			}		
+		}		
+	}
 
         Stats_RoundEnd(csTeamWinner);
         Call_StartForward(g_OnRoundStatsUpdated);

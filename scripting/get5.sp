@@ -194,6 +194,8 @@ public void OnPluginStart() {
         "Whether to wait for spectators to ready up if there are any");
     g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg",
         "Config file to exec in warmup periods");
+    g_QuickRestartCvar = CreateConVar("get5_quick_restarts", "0",
+        "Whether to use a one 10 second restart or a full live-on-3 restart");
 
     /** Create and exec plugin's configuration file **/
     AutoExecConfig(true, "get5");

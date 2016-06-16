@@ -510,7 +510,7 @@ public Action Command_Ready(int client, int args) {
         return Plugin_Handled;
     }
 
-    MatchTeam t = GetCaptainTeam(client);
+    MatchTeam t = GetClientMatchTeam(client);
 
     if (t == MatchTeam_Team1 && !g_TeamReady[MatchTeam_Team1]) {
         g_TeamReady[MatchTeam_Team1] = true;
@@ -543,7 +543,7 @@ public Action Command_NotReady(int client, int args) {
         return Plugin_Handled;
     }
 
-    MatchTeam t = GetCaptainTeam(client);
+    MatchTeam t = GetClientMatchTeam(client);
     if (t == MatchTeam_Team1 && g_TeamReady[MatchTeam_Team1]) {
         Get5_MessageToAll("%s is no longer ready.", g_FormattedTeamNames[MatchTeam_Team1]);
         g_TeamReady[MatchTeam_Team1] = false;

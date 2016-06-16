@@ -914,7 +914,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     if (g_GameState == GameState_Live) {
         int csTeamWinner = event.GetInt("winner");
 		if (CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1))==CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2))){
-			Get5_MessageToAll("{PURPLE}%s {YELLOW}%d {NORMAL}- {YELLOW}%d {PURPLE}%s",
+			Get5_MessageToAll("{NORMAL}%s {LIGHT_BLUE}%d {NORMAL}- {LIGHT_BLUE}%d {NORMAL}%s",
 			g_TeamNames[MatchTeam_Team1],
             CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
             CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
@@ -922,14 +922,14 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 		}
 		else {
 			if(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1))>CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2))){
-				Get5_MessageToAll("{PURPLE}%s {GREEN}%d {NORMAL}- {LIGHT_RED}%d {PURPLE}%s",
+				Get5_MessageToAll("{NORMAL}%s {GREEN}%d {NORMAL}- {LIGHT_RED}%d {NORMAL}%s",
 				g_TeamNames[MatchTeam_Team1],
 				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
 				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
 				g_TeamNames[MatchTeam_Team2]);
 			}
 			else {
-				Get5_MessageToAll("{PURPLE}%s {LIGHT_RED}%d {NORMAL}- {GREEN}%d {PURPLE}%s",
+				Get5_MessageToAll("{NORMAL}%s {LIGHT_RED}%d {NORMAL}- {GREEN}%d {NORMAL}%s",
 				g_TeamNames[MatchTeam_Team1],
 				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
 				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),

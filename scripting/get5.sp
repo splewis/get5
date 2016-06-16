@@ -52,6 +52,7 @@ ConVar g_PausingEnabledCvar;
 ConVar g_StopCommandEnabledCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
+ConVar g_QuickRestartCvar;
 
 ConVar g_LastGet5BackupCvar;
 ConVar g_VersionCvar;

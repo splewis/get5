@@ -815,6 +815,74 @@ public Action Command_CreateMatch(int client, int args) {
     return Plugin_Handled;
 }
 
+public Action Command_CreateScrim(int client, int args) {
+    if (g_GameState != GameState_None) {
+        ReplyToCommand(client, "Cannot create a match when a match is already loaded");
+        return Plugin_Handled;
+    }
+
+    char matchid[MATCH_ID_LENGTH] = "scrim";
+    char matchMap[PLATFORM_MAX_PATH];
+    GetCleanMapName(matchMap, sizeof(matchMap));
+
+    if (args >= 1) {
+        GetCmdArg(1, matchid, sizeof(matchid));
+    } if (args >= 2) {
+        GetCmdArg(2, matchMap, sizeof(matchMap));
+        if (!IsMapValid(matchMap)) {
+            ReplyToCommand(client, "Invalid map: %s", matchMap);
+            return Plugin_Handled;
+        }
+    }
+
+    char path[PLATFORM_MAX_PATH];
+    if (FileExists(path)) {
+        DeleteFile(path);
+    }
+
+    Format(path, sizeof(path), "get5_%s.cfg", matchid);
+
+    KeyValues kv = new KeyValues("Match");
+    kv.SetString("matchid", matchid);
+    kv.SetNum("maps_to_win", 1);
+    kv.SetNum("skip_veto", 1);
+    kv.SetNum("players_per_team", 5);
+    kv.SetString("side_type", "never_knife"); // no knife rounds
+
+    kv.JumpToKey("maplist", true);
+    kv.SetString(matchMap, "x");
+    kv.GoBack();
+
+    char teamName[MAX_CVAR_LENGTH];
+
+    kv.JumpToKey("team1", true);
+    int count = AddPlayersToAuthKv(kv, MatchTeam_Team1, teamName);
+    if (count > 0)
+        kv.SetString("name", teamName);
+    kv.GoBack();
+
+    kv.JumpToKey("team2", true);
+    count = AddPlayersToAuthKv(kv, MatchTeam_Team2, teamName);
+    if (count > 0)
+        kv.SetString("name", teamName);
+    kv.GoBack();
+
+    kv.JumpToKey("spectators", true);
+    AddPlayersToAuthKv(kv, MatchTeam_TeamSpec, teamName);
+    kv.GoBack();
+
+    kv.JumpToKey("cvars", true);
+    kv.SetString("mp_match_can_clinch", "0");
+    kv.SetString("mp_overtime_enable", "0");
+    kv.GoBack();
+
+    kv.ExportToFile(path);
+    delete kv;
+    LoadMatchConfig(path);
+    return Plugin_Handled;
+
+}
+
 static int AddPlayersToAuthKv(KeyValues kv, MatchTeam team, char teamName[MAX_CVAR_LENGTH]) {
     int count = 0;
     kv.JumpToKey("players", true);

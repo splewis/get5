@@ -52,6 +52,7 @@ ConVar g_PausingEnabledCvar;
 ConVar g_StopCommandEnabledCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
+ConVar g_QuickRestartCvar;
 
 ConVar g_LastGet5BackupCvar;
 ConVar g_VersionCvar;
@@ -194,6 +195,8 @@ public void OnPluginStart() {
         "Whether to wait for spectators to ready up if there are any");
     g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg",
         "Config file to exec in warmup periods");
+    g_QuickRestartCvar = CreateConVar("get5_quick_restarts", "0",
+        "Whether to use a one 10 second restart or a full live-on-3 restart");
 
     /** Create and exec plugin's configuration file **/
     AutoExecConfig(true, "get5");
@@ -915,13 +918,30 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
     if (g_GameState == GameState_Live) {
         int csTeamWinner = event.GetInt("winner");
-
-        Get5_MessageToAll("{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s",
-            g_TeamNames[MatchTeam_Team1],
+		if (CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1))==CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2))){
+			Get5_MessageToAll("{NORMAL}%s {LIGHT_BLUE}%d {NORMAL}- {LIGHT_BLUE}%d {NORMAL}%s",
+			g_TeamNames[MatchTeam_Team1],
             CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
             CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
-            g_TeamNames[MatchTeam_Team2]);
-
+			g_TeamNames[MatchTeam_Team2]);
+		}
+		else {
+			if(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1))>CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2))){
+				Get5_MessageToAll("{NORMAL}%s {GREEN}%d {NORMAL}- {LIGHT_RED}%d {NORMAL}%s",
+				g_TeamNames[MatchTeam_Team1],
+				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
+				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
+				g_TeamNames[MatchTeam_Team2]);
+			}
+			else {
+				Get5_MessageToAll("{NORMAL}%s {LIGHT_RED}%d {NORMAL}- {GREEN}%d {NORMAL}%s",
+				g_TeamNames[MatchTeam_Team1],
+				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
+				CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
+				g_TeamNames[MatchTeam_Team2]);
+			}		
+		}		
+	
         Stats_RoundEnd(csTeamWinner);
         Call_StartForward(g_OnRoundStatsUpdated);
         Call_Finish();
@@ -947,7 +967,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
                 g_PendingSideSwap = true;
             }
         }
-    }
+	}
 }
 
 public void SwapSides() {

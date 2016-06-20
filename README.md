@@ -117,6 +117,7 @@ You should either set these in the above file, or in the match config's ``cvars`
 - ``get5_kick_when_no_match_loaded``: whether to kick all clients if no match is loaded
 - ``get5_last_backup_file``: last match backup file get5 wrote in the current series
 - ``get5_live_cfg``: config file executed when the game goes live
+- ``get5_live_countdown_time``: number of seconds used to count down when a match is going live
 - ``get5_max_backup_age``: number of seconds before a get5 backup file is automatically deleted, 0 to disable
 - ``get5_pausing_enabled``: whether pausing (!pause command) is enabled
 - ``get5_stop_command_enabled``: whether the !stop command is enabled

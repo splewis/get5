@@ -5,17 +5,20 @@ public Action StartGoingLive(Handle timer) {
     ExecuteMatchConfigCvars();
 
     // Force kill the warmup if we (still) need to.
-    Get5_MessageToAll("The match will begin in 10 seconds.");
+    Get5_MessageToAll("The match will begin in %d seconds.", g_LiveCountdownTimeCvar.IntValue);
     if (InWarmup()) {
-        EndWarmup(10);
+        EndWarmup(g_LiveCountdownTimeCvar.IntValue);
     } else {
-        RestartGame(10);
+        RestartGame(g_LiveCountdownTimeCvar.IntValue);
     }
 
     // Always disable sv_cheats!
     ServerCommand("sv_cheats 0");
 
-    CreateTimer(15.0, MatchLive);
+    // Delayed an extra 5 seconds for the final 3-second countdown
+    // the game uses after the origina countdown.
+    float delay = float(5 + g_LiveCountdownTimeCvar.IntValue);
+    CreateTimer(delay, MatchLive);
     Call_StartForward(g_OnGoingLive);
     Call_PushCell(GetMapNumber());
     Call_Finish();

@@ -47,6 +47,7 @@ ConVar g_DemoNameFormatCvar;
 ConVar g_DemoTimeFormatCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
+ConVar g_LiveCountdownTimeCvar;
 ConVar g_MaxBackupAgeCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_StopCommandEnabledCvar;
@@ -184,6 +185,8 @@ public void OnPluginStart() {
         "Whether the plugin kicks new clients when no match is loaded");
     g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg",
         "Config file to exec when the game goes live");
+    g_LiveCountdownTimeCvar = CreateConVar("get5_live_countdown_time", "10",
+        "Number of seconds used to count down when a match is going live", 0, true, 5.0, true, 60.0);
     g_MaxBackupAgeCvar = CreateConVar("get5_max_backup_age", "160000",
         "Number of seconds before a backup file is automatically deleted, 0 to disable");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",

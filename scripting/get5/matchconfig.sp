@@ -390,7 +390,7 @@ static bool LoadMatchFromJson(Handle json) {
 
     Handle spec = json_object_get(json, "spectators");
     if (spec != INVALID_HANDLE) {
-        AddJsonAuthsToList(json, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
+        AddJsonAuthsToList(spec, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
         CloseHandle(spec);
     }
 

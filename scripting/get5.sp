@@ -49,6 +49,8 @@ ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
 ConVar g_MaxBackupAgeCvar;
+ConVar g_MaxPausesPerHalfCvar;
+ConVar g_MaxPauseTimePerHalfCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_StopCommandEnabledCvar;
 ConVar g_WaitForSpecReadyCvar;
@@ -110,6 +112,8 @@ int g_TeamSide[MatchTeam_Count]; // Current CS_TEAM_* side for the team.
 int g_TeamStartingSide[MatchTeam_Count];
 bool g_TeamReadyForUnpause[MatchTeam_Count];
 bool g_TeamGivenStopCommand[MatchTeam_Count];
+int g_TeamPauseTimeUsed[MatchTeam_Count];
+int g_TeamPausesUsed[MatchTeam_Count];
 
 /** Map game-state **/
 MatchTeam g_KnifeWinnerTeam = MatchTeam_TeamNone;
@@ -189,6 +193,10 @@ public void OnPluginStart() {
         "Number of seconds used to count down when a match is going live", 0, true, 5.0, true, 60.0);
     g_MaxBackupAgeCvar = CreateConVar("get5_max_backup_age", "160000",
         "Number of seconds before a backup file is automatically deleted, 0 to disable");
+    g_MaxPausesPerHalfCvar = CreateConVar("get5_max_pauses_per_half", "0",
+        "Maximum number of pauses a team can use per half, 0=unlimited");
+    g_MaxPauseTimePerHalfCvar = CreateConVar("get5_max_pause_time_per_half", "300",
+        "Maximum number of time the game can spend paused by a team per half, 0=unlimited");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",
         "Whether pausing is allowed.");
     g_StopCommandEnabledCvar = CreateConVar("get5_stop_command_enabled", "1",
@@ -393,6 +401,8 @@ public void OnMapStart() {
         g_TeamReady[team] = false;
         g_TeamGivenStopCommand[team] = false;
         g_TeamReadyForUnpause[team] = false;
+        g_TeamPauseTimeUsed[team] = 0;
+        g_TeamPausesUsed[team] = 0;
     }
 
     if (g_WaitingForRoundBackup) {
@@ -472,6 +482,21 @@ public Action Command_Pause(int client, int args) {
     if (!Pauseable() || IsPaused())
         return Plugin_Handled;
 
+    MatchTeam team = GetClientMatchTeam(client);
+    int maxPauses = g_MaxPausesPerHalfCvar.IntValue;
+    if (maxPauses > 0 && g_TeamPausesUsed[team] >= maxPauses && IsPlayerTeam(team)) {
+        Get5_Message(client, "Your team has already used the max %d pauses per half.",
+            maxPauses);
+        return Plugin_Handled;
+    }
+
+    int maxPauseTime = g_MaxPauseTimePerHalfCvar.IntValue;
+    if (maxPauseTime > 0 && g_TeamPauseTimeUsed[team] >= maxPauseTime && IsPlayerTeam(team)) {
+        Get5_Message(client, "Your team has already used the max %d seconds of pause time per half.",
+            maxPauseTime);
+        return Plugin_Handled;
+    }
+
     g_TeamReadyForUnpause[MatchTeam_Team1] = false;
     g_TeamReadyForUnpause[MatchTeam_Team2] = false;
     Pause();
@@ -479,7 +504,47 @@ public Action Command_Pause(int client, int args) {
         Get5_MessageToAll("%N paused the match.", client);
     }
 
+    if (IsPlayerTeam(team)) {
+        CreateTimer(1.0, Timer_PauseTimeCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
+        g_TeamPausesUsed[team]++;
+    }
+
     return Plugin_Handled;
+}
+
+public Action Timer_PauseTimeCheck(Handle timer, int data) {
+    if (g_GameState != GameState_Live || !IsPaused()) {
+        return Plugin_Stop;
+    }
+
+    MatchTeam team = view_as<MatchTeam>(data);
+
+    // Only count against the team's pause time if we're actually in the freezetime
+    // pause and they haven't requested an unpause yet.
+    if (InFreezeTime() && !g_TeamReadyForUnpause[team]) {
+        g_TeamPauseTimeUsed[team]++;
+    }
+
+    int timeLeft = g_MaxPauseTimePerHalfCvar.IntValue - g_TeamPauseTimeUsed[team];
+
+    if (timeLeft <= 0) {
+        Get5_MessageToAll("%s has run out of pause time, unpausing the match.",
+            g_FormattedTeamNames[team]);
+        Unpause();
+        return Plugin_Stop;
+    }
+
+    if (timeLeft == 10) {
+        Get5_MessageToAll("%s is almost out of pause time, unpausing in 10 seconds.",
+            g_FormattedTeamNames[team]);
+    }
+
+    if (timeLeft % 30 == 0) {
+        Get5_MessageToAll("%s has %d seconds of pause time left this half.",
+            g_FormattedTeamNames[team], timeLeft);
+    }
+
+    return Plugin_Continue;
 }
 
 public Action Command_Unpause(int client, int args) {
@@ -958,6 +1023,11 @@ public void SwapSides() {
     int tmp = g_TeamSide[MatchTeam_Team1];
     g_TeamSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team2];
     g_TeamSide[MatchTeam_Team2] = tmp;
+
+    LOOP_TEAMS(team) {
+        g_TeamPauseTimeUsed[team] = 0;
+        g_TeamPausesUsed[team] = 0;
+    }
 }
 
 /**

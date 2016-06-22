@@ -351,6 +351,10 @@ stock MatchTeam OtherMatchTeam(MatchTeam team) {
     }
 }
 
+stock bool IsPlayerTeam(MatchTeam team) {
+    return team == MatchTeam_Team1 || team == MatchTeam_Team2;
+}
+
 // TODO: might want a auth->client adt-trie to speed this up, maintained during
 // client auth and disconnect forwards.
 stock int AuthToClient(const char[] auth) {

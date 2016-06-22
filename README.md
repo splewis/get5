@@ -119,6 +119,8 @@ You should either set these in the above file, or in the match config's ``cvars`
 - ``get5_live_cfg``: config file executed when the game goes live
 - ``get5_live_countdown_time``: number of seconds used to count down when a match is going live
 - ``get5_max_backup_age``: number of seconds before a get5 backup file is automatically deleted, 0 to disable
+- ``get5_max_pauses_per_half``: maximum number of pauses a team can use per half, 0=unlimited
+- ``get5_max_pause_time_per_half``: maximum number of time the game can spend paused by a team per half, 0=unlimited
 - ``get5_pausing_enabled``: whether pausing (!pause command) is enabled
 - ``get5_stop_command_enabled``: whether the !stop command is enabled
 - ``get5_time_format``: time format string (default ``"%Y-%m-%d_%H``), only affects if a {TIME} tag is used in ``get5_demo_name_format``

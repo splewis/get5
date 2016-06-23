@@ -49,8 +49,9 @@ ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
 ConVar g_MaxBackupAgeCvar;
-ConVar g_MaxPausesPerHalfCvar;
-ConVar g_MaxPauseTimePerHalfCvar;
+ConVar g_MaxPausesCvar;
+ConVar g_MaxPauseTimeCvar;
+ConVar g_ResetPausesEachHalfCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_StopCommandEnabledCvar;
 ConVar g_WaitForSpecReadyCvar;
@@ -193,10 +194,12 @@ public void OnPluginStart() {
         "Number of seconds used to count down when a match is going live", 0, true, 5.0, true, 60.0);
     g_MaxBackupAgeCvar = CreateConVar("get5_max_backup_age", "160000",
         "Number of seconds before a backup file is automatically deleted, 0 to disable");
-    g_MaxPausesPerHalfCvar = CreateConVar("get5_max_pauses_per_half", "0",
-        "Maximum number of pauses a team can use per half, 0=unlimited");
-    g_MaxPauseTimePerHalfCvar = CreateConVar("get5_max_pause_time_per_half", "300",
-        "Maximum number of time the game can spend paused by a team per half, 0=unlimited");
+    g_MaxPausesCvar = CreateConVar("get5_max_pauses", "0",
+        "Maximum number of pauses a team can use, 0=unlimited");
+    g_MaxPauseTimeCvar = CreateConVar("get5_max_pause_time", "300",
+        "Maximum number of time the game can spend paused by a team, 0=unlimited");
+    g_ResetPausesEachHalfCvar = CreateConVar("get5_reset_pauses_each_half", "1",
+        "Whether pause limits will be reset each halftime period");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",
         "Whether pausing is allowed.");
     g_StopCommandEnabledCvar = CreateConVar("get5_stop_command_enabled", "1",
@@ -482,18 +485,23 @@ public Action Command_Pause(int client, int args) {
     if (!Pauseable() || IsPaused())
         return Plugin_Handled;
 
+    char resetString[32];
+    if (g_ResetPausesEachHalfCvar.IntValue != 0) {
+        resetString = " for this half";
+    }
+
     MatchTeam team = GetClientMatchTeam(client);
-    int maxPauses = g_MaxPausesPerHalfCvar.IntValue;
+    int maxPauses = g_MaxPausesCvar.IntValue;
     if (maxPauses > 0 && g_TeamPausesUsed[team] >= maxPauses && IsPlayerTeam(team)) {
-        Get5_Message(client, "Your team has already used the max %d pauses per half.",
-            maxPauses);
+        Get5_Message(client, "Your team has already used the max %d pauses%s.",
+            maxPauses, resetString);
         return Plugin_Handled;
     }
 
-    int maxPauseTime = g_MaxPauseTimePerHalfCvar.IntValue;
+    int maxPauseTime = g_MaxPauseTimeCvar.IntValue;
     if (maxPauseTime > 0 && g_TeamPauseTimeUsed[team] >= maxPauseTime && IsPlayerTeam(team)) {
-        Get5_Message(client, "Your team has already used the max %d seconds of pause time per half.",
-            maxPauseTime);
+        Get5_Message(client, "Your team has already used the max %d seconds of pause time%s.",
+            maxPauseTime, resetString);
         return Plugin_Handled;
     }
 
@@ -518,30 +526,29 @@ public Action Timer_PauseTimeCheck(Handle timer, int data) {
     }
 
     MatchTeam team = view_as<MatchTeam>(data);
+    int timeLeft = g_MaxPauseTimeCvar.IntValue - g_TeamPauseTimeUsed[team];
 
     // Only count against the team's pause time if we're actually in the freezetime
     // pause and they haven't requested an unpause yet.
     if (InFreezeTime() && !g_TeamReadyForUnpause[team]) {
         g_TeamPauseTimeUsed[team]++;
-    }
+    } else {
+        if (timeLeft == 10) {
+            Get5_MessageToAll("%s is almost out of pause time, unpausing in 10 seconds.",
+                g_FormattedTeamNames[team]);
+        }
 
-    int timeLeft = g_MaxPauseTimePerHalfCvar.IntValue - g_TeamPauseTimeUsed[team];
+        if (timeLeft % 30 == 0) {
+            Get5_MessageToAll("%s has %d seconds of pause time left this half.",
+                g_FormattedTeamNames[team], timeLeft);
+        }
+    }
 
     if (timeLeft <= 0) {
         Get5_MessageToAll("%s has run out of pause time, unpausing the match.",
             g_FormattedTeamNames[team]);
         Unpause();
         return Plugin_Stop;
-    }
-
-    if (timeLeft == 10) {
-        Get5_MessageToAll("%s is almost out of pause time, unpausing in 10 seconds.",
-            g_FormattedTeamNames[team]);
-    }
-
-    if (timeLeft % 30 == 0) {
-        Get5_MessageToAll("%s has %d seconds of pause time left this half.",
-            g_FormattedTeamNames[team], timeLeft);
     }
 
     return Plugin_Continue;
@@ -1024,9 +1031,11 @@ public void SwapSides() {
     g_TeamSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team2];
     g_TeamSide[MatchTeam_Team2] = tmp;
 
-    LOOP_TEAMS(team) {
-        g_TeamPauseTimeUsed[team] = 0;
-        g_TeamPausesUsed[team] = 0;
+    if (g_ResetPausesEachHalfCvar.IntValue != 0) {
+        LOOP_TEAMS(team) {
+            g_TeamPauseTimeUsed[team] = 0;
+            g_TeamPausesUsed[team] = 0;
+        }
     }
 }
 

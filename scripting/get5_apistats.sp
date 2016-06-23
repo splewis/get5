@@ -65,9 +65,14 @@ static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:
     VFormat(formattedUrl, sizeof(formattedUrl), url, 3);
 
     Handle req = SteamWorks_CreateHTTPRequest(httpMethod, formattedUrl);
-    if (req == INVALID_HANDLE || StrEqual(g_APIKey, "")) {
+    if (StrEqual(g_APIKey, "")) {
+        // Not using a web interface.
+        return INVALID_HANDLE;
+
+    } else if (req == INVALID_HANDLE) {
         LogError("Failed to create request to %s", formattedUrl);
         return INVALID_HANDLE;
+
     } else {
         SteamWorks_SetHTTPCallbacks(req, RequestCallback);
         AddStringParam(req, "key", g_APIKey);

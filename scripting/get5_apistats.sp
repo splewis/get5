@@ -65,9 +65,15 @@ static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:
     VFormat(formattedUrl, sizeof(formattedUrl), url, 3);
 
     Handle req = SteamWorks_CreateHTTPRequest(httpMethod, formattedUrl);
-    if (req == INVALID_HANDLE || StrEqual(g_APIKey, "")) {
+
+    if (StrEqual(g_APIKey, "")) {
+        // Not using web interface.
+        return INVALID_HANDLE;
+
+    } else if (req == INVALID_HANDLE ) {
         LogError("Failed to create request to %s", formattedUrl);
         return INVALID_HANDLE;
+
     } else {
         SteamWorks_SetHTTPCallbacks(req, RequestCallback);
         AddStringParam(req, "key", g_APIKey);
@@ -242,4 +248,12 @@ static int MapNumber() {
     Get5_GetTeamScores(MatchTeam_Team1, t1, buf);
     Get5_GetTeamScores(MatchTeam_Team2, t2, buf);
     return t1 + t2;
+}
+
+public void Get5_OnDemoUploaded(const char[] matchid, int mapNumber, const char[] fileUploaded, const char[] uploadPath) {
+    Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%d/map/%d/demo", g_MatchID, mapNumber);
+    if (req != INVALID_HANDLE) {
+        AddStringParam(req, "file", uploadPath);
+        SteamWorks_SendHTTPRequest(req);
+    }
 }

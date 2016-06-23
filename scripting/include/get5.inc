@@ -78,6 +78,10 @@ forward void Get5_OnDemoFinished(const char[] filename);
 // Called when a match backup is restored.
 forward void Get5_OnBackupRestore();
 
+// Called when a match demo is finished uploading.
+forward void Get5_OnDemoUploaded(const char[] matchid, int mapNumber,
+    const char[] fileUploaded, const char[] uploadPath);
+
 // Returns the current pug gamestate.
 native GameState Get5_GetGameState();
 

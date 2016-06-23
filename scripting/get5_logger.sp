@@ -72,3 +72,13 @@ public void Get5_OnMapPicked(MatchTeam team, const char[] map) {
 public void Get5_OnDemoFinished(const char[] filename) {
     LogMessage("Get5_OnDemoFinished: finished recording", filename);
 }
+
+public void Get5_OnBackupRestore() {
+    LogMessage("Get5_OnBackupRestore");
+}
+
+public void Get5_OnDemoUploaded(const char[] matchid, int mapNumber,
+    const char[] fileUploaded, const char[] uploadPath) {
+    LogMessage("Get5_OnDemoUpload demo upload for match %s, map %d: %s -> ftp:%s", matchid, mapNumber,
+        fileUploaded, uploadPath);
+}

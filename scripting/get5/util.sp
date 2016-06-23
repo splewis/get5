@@ -135,6 +135,7 @@ stock void StopRecording() {
     Call_StartForward(g_OnDemoFinished);
     Call_PushString(g_DemoFileName);
     Call_Finish();
+    HandleDemoUpload();
 }
 
 stock bool InWarmup() {

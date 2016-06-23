@@ -57,6 +57,14 @@ ConVar g_StopCommandEnabledCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
 
+// FTP cvars
+ConVar g_DemoFtpHostCvar;
+ConVar g_DemoFtpUserCvar;
+ConVar g_DemoFtpPasswordCvar;
+ConVar g_DemoFtpPortCvar;
+ConVar g_DemoFtpPathCvar;
+ConVar g_DemoDeleteAfterUploadCvar;
+
 ConVar g_LastGet5BackupCvar;
 ConVar g_VersionCvar;
 
@@ -130,6 +138,7 @@ Handle g_KnifeChangedCvars = INVALID_HANDLE;
 /** Forwards **/
 Handle g_OnBackupRestore = INVALID_HANDLE;
 Handle g_OnDemoFinished = INVALID_HANDLE;
+Handle g_OnDemoUploaded = INVALID_HANDLE;
 Handle g_OnGameStateChanged = INVALID_HANDLE;
 Handle g_OnGoingLive = INVALID_HANDLE;
 Handle g_OnLoadMatchConfigFailed = INVALID_HANDLE;
@@ -153,6 +162,7 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 #include "get5/jsonhelpers.sp"
 #include "get5/stats.sp"
 #include "get5/backups.sp"
+#include "get5/demoupload.sp"
 
 
 
@@ -208,6 +218,14 @@ public void OnPluginStart() {
         "Whether to wait for spectators to ready up if there are any");
     g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg",
         "Config file to exec in warmup periods");
+
+    g_DemoFtpHostCvar = CreateConVar("get5_ftp_host", "", "FTP host for demo uploads");
+    g_DemoFtpUserCvar = CreateConVar("get5_ftp_user", "", "FTP user for demo uploads");
+    g_DemoFtpPasswordCvar = CreateConVar("get5_ftp_password", "", "FTP password for demo uploads");
+    g_DemoFtpPortCvar = CreateConVar("get5_ftp_port", "21", "FTP port for demo uploads");
+    g_DemoFtpPathCvar = CreateConVar("get5_ftp_demo_path", "", "Directory path to upload demo files to");
+    g_DemoDeleteAfterUploadCvar = CreateConVar("get5_ftp_demo_delete", "1",
+        "Whether to delete dmeos after upload");
 
     /** Create and exec plugin's configuration file **/
     AutoExecConfig(true, "get5");
@@ -295,6 +313,8 @@ public void OnPluginStart() {
     g_OnBackupRestore = CreateGlobalForward("Get5_OnBackupRestore", ET_Ignore);
     g_OnDemoFinished = CreateGlobalForward("Get5_OnDemoFinished", ET_Ignore,
         Param_String);
+    g_OnDemoUploaded = CreateGlobalForward("Get5_OnDemoUploaded", ET_Ignore,
+        Param_String, Param_Cell, Param_String, Param_String);
     g_OnGameStateChanged = CreateGlobalForward("Get5_OnGameStateChanged", ET_Ignore,
         Param_Cell, Param_Cell);
     g_OnGoingLive = CreateGlobalForward("Get5_OnGoingLive", ET_Ignore,
@@ -1123,11 +1143,6 @@ public Action Timer_PostKnife(Handle timer) {
 
     ExecCfg(g_WarmupCfgCvar);
     EnsurePausedWarmup();
-}
-
-public Action StopDemo(Handle timer) {
-    StopRecording();
-    return Plugin_Handled;
 }
 
 public void ChangeState(GameState state) {

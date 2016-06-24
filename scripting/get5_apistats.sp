@@ -31,7 +31,7 @@ public void OnPluginStart() {
     g_APIKeyCvar = CreateConVar("get5_web_api_key", "", "Match API key, this is automatically set through rcon");
     HookConVarChange(g_APIKeyCvar, ApiInfoChanged);
 
-    g_APIURLCvar = CreateConVar("get5_web_api_url", "http://get5.splewis.net", "URL the get5 api is hosted at")
+    g_APIURLCvar = CreateConVar("get5_web_api_url", "", "URL the get5 api is hosted at")
     HookConVarChange(g_APIURLCvar, ApiInfoChanged)
 
     RegConsoleCmd("get5_web_avaliable", Command_Avaliable);
@@ -55,11 +55,17 @@ public Action Command_Avaliable(int client, int args) {
 public void ApiInfoChanged(ConVar convar, const char[] oldValue, const char[] newValue) {
     g_APIKeyCvar.GetString(g_APIKey, sizeof(g_APIKey));
     g_APIURLCvar.GetString(g_APIURL, sizeof(g_APIURL));
+
+    // Add a trailing backslash to the api url if one is missing.
+    int len = strlen(g_APIURL);
+    if (g_APIURL[len - 1] != '/') {
+        StrCat(g_APIURL, sizeof(g_APIURL), "/");
+    }
 }
 
 static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:...) {
     char url[1024];
-    Format(url, sizeof(url), "%s/%s", g_APIURL, apiMethod);
+    Format(url, sizeof(url), "%s%s", g_APIURL, apiMethod);
 
     char formattedUrl[1024];
     VFormat(formattedUrl, sizeof(formattedUrl), url, 3);

@@ -268,7 +268,7 @@ public void WriteMatchToKv(KeyValues kv) {
     AddTeamBackupData(kv, MatchTeam_Team2);
     kv.GoBack();
 
-    kv.JumpToKey("spec", true);
+    kv.JumpToKey("spectators", true);
     AddTeamBackupData(kv, MatchTeam_TeamSpec);
     kv.GoBack();
 
@@ -316,6 +316,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
     g_FavoredTeamPercentage = kv.GetNum("favored_percentage_team1", 0);
     kv.GetString("favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText));
 
+    GetTeamAuths(MatchTeam_TeamSpec).Clear();
     if (kv.JumpToKey("spectators")) {
         AddSubsectionAuthsToList(kv, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
         kv.GoBack();

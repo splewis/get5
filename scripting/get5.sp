@@ -393,7 +393,9 @@ public void OnClientPutInServer(int client) {
  */
 public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dontBroadcast) {
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
-    SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
+    if (client > 0) {
+        SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
+    }
 }
 
 public void OnMapStart() {

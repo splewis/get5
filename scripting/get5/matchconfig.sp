@@ -292,10 +292,13 @@ static void AddTeamBackupData(KeyValues kv, MatchTeam team) {
     }
     kv.GoBack();
 
-    kv.SetString("name", g_TeamNames[team]);
-    kv.SetString("flag", g_TeamFlags[team]);
-    kv.SetString("logo", g_TeamLogos[team]);
-    kv.SetString("matchtext", g_TeamMatchTexts[team]);
+    if (team != MatchTeam_TeamSpec) {
+        kv.SetString("name", g_TeamNames[team]);
+        kv.SetString("flag", g_TeamFlags[team]);
+        kv.SetString("logo", g_TeamLogos[team]);
+        kv.SetString("matchtext", g_TeamMatchTexts[team]);
+    }
+
 }
 
 static bool LoadMatchFromKv(KeyValues kv) {

@@ -81,10 +81,25 @@ public void WriteBackStructure(const char[] path) {
     kv.SetNum("team1_series_score", g_TeamSeriesScores[MatchTeam_Team1]);
     kv.SetNum("team2_series_score", g_TeamSeriesScores[MatchTeam_Team2]);
 
+    // Write original maplist.
     kv.JumpToKey("maps", true);
     for (int i = 0; i < g_MapsToPlay.Length; i++) {
         g_MapsToPlay.GetString(i, mapName, sizeof(mapName));
         kv.SetNum(mapName, view_as<int>(g_MapSides.Get(i)));
+    }
+    kv.GoBack();
+
+    // Write map score history.
+    kv.JumpToKey("map_scores", true);
+    for (int i = 0; i < g_TeamScoresPerMap.Length; i++) {
+        char key[32];
+        IntToString(i, key, sizeof(key));
+
+        kv.JumpToKey(key, true);
+
+        kv.SetNum("team1", GetMapScore(i, MatchTeam_Team1));
+        kv.SetNum("team2", GetMapScore(i, MatchTeam_Team2));
+        kv.GoBack();
     }
     kv.GoBack();
 
@@ -159,6 +174,23 @@ public bool RestoreFromBackup(const char[] path) {
                     g_MapsToPlay.PushString(mapName);
                     g_MapSides.Push(sides);
                 } while (kv.GotoNextKey(false));
+                kv.GoBack();
+            }
+            kv.GoBack();
+        }
+
+        if (kv.JumpToKey("map_scores")) {
+            if (kv.GotoFirstSubKey()) {
+                do {
+                    char buf[32];
+                    kv.GetSectionName(buf, sizeof(buf));
+                    int map = StringToInt(buf);
+
+                    int t1 = kv.GetNum("team1");
+                    int t2 = kv.GetNum("team2");
+                    g_TeamScoresPerMap.Set(map, MatchTeam_Team1, t1);
+                    g_TeamScoresPerMap.Set(map, MatchTeam_Team2, t2);
+                } while (kv.GotoNextKey());
                 kv.GoBack();
             }
             kv.GoBack();

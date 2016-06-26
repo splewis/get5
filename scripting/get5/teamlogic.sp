@@ -313,6 +313,11 @@ public int GetMapScore(int mapNumber, MatchTeam team) {
     return g_TeamScoresPerMap.Get(mapNumber, view_as<int>(team));
 }
 
+public bool HasMapScore(int mapNumber) {
+    return GetMapScore(mapNumber, MatchTeam_Team1) != 0 ||
+        GetMapScore(mapNumber, MatchTeam_Team2);
+}
+
 public int GetMapNumber() {
     return g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
 }

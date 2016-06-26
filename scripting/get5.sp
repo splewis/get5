@@ -91,7 +91,6 @@ ArrayList g_MapsLeftInVetoPool = null;
 MatchTeam g_LastVetoTeam;
 
 /** Backup data **/
-bool g_RestoreMatchBackup = false; // Whether a backup has been used in the current match
 bool g_WaitingForRoundBackup = false;
 bool g_SavedValveBackup = false;
 bool g_DoingBackupRestoreNow = false;

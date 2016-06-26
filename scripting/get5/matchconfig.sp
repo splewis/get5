@@ -96,12 +96,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
         }
     }
 
-    if (GetMapNumber() >= 1 || restoreBackup) { // Already accounted for a map win.
-        g_RestoreMatchBackup = true;
-    } else {
-        g_RestoreMatchBackup = false;
-    }
-
     SetStartingTeams();
     ExecCfg(g_WarmupCfgCvar);
     SetMatchTeamCvars();
@@ -557,9 +551,7 @@ public void SetMatchTeamCvars() {
 
     // Set the match stat text values to display the previous map
     // results for a Bo3 series.
-    // Also skip this is we restored a match backup since the map history
-    // results could be missing.
-    if (g_MapsToWin == 2 && mapsPlayed >= 1 && !g_RestoreMatchBackup) {
+    if (g_MapsToWin == 2 && mapsPlayed >= 1) {
         MatchTeam map1Winner = GetMapWinner(0);
         char map1[PLATFORM_MAX_PATH];
         char map2[PLATFORM_MAX_PATH];
@@ -576,7 +568,7 @@ public void SetMatchTeamCvars() {
             Format(team1Text, sizeof(team1Text), "0");
             Format(team2Text, sizeof(team2Text), "0");
 
-        } else if (mapsPlayed == 1) {
+        } else if (mapsPlayed == 1 && HasMapScore(0)) {
             if (map1Winner == MatchTeam_Team1) {
                 Format(team1Text, sizeof(team1Text), "Won %s %d:%d",
                     map1Display,
@@ -591,7 +583,7 @@ public void SetMatchTeamCvars() {
                     GetMapScore(0, MatchTeam_Team1));
             }
 
-        } else if (mapsPlayed == 2) {
+        } else if (mapsPlayed == 2 && HasMapScore(0) && HasMapScore(1)) {
             MatchTeam map2Winner = GetMapWinner(1);
             // Note: you can assume map1winner = map2loser and map2winner = map1loser
             if (map1Winner == MatchTeam_Team1) {

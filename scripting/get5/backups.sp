@@ -91,7 +91,7 @@ public void WriteBackStructure(const char[] path) {
 
     // Write map score history.
     kv.JumpToKey("map_scores", true);
-    for (int i = 0; i < g_TeamScoresPerMap.Length; i++) {
+    for (int i = 0; i < g_MapsToPlay.Length; i++) {
         char key[32];
         IntToString(i, key, sizeof(key));
 
@@ -188,8 +188,8 @@ public bool RestoreFromBackup(const char[] path) {
 
                     int t1 = kv.GetNum("team1");
                     int t2 = kv.GetNum("team2");
-                    g_TeamScoresPerMap.Set(map, MatchTeam_Team1, t1);
-                    g_TeamScoresPerMap.Set(map, MatchTeam_Team2, t2);
+                    g_TeamScoresPerMap.Set(map, t1, view_as<int>(MatchTeam_Team1));
+                    g_TeamScoresPerMap.Set(map, t2, view_as<int>(MatchTeam_Team2));
                 } while (kv.GotoNextKey());
                 kv.GoBack();
             }
@@ -223,7 +223,6 @@ public bool RestoreFromBackup(const char[] path) {
 
     } else {
         RestoreGet5Backup();
-        Pause();
     }
 
     delete kv;
@@ -244,7 +243,7 @@ public void RestoreGet5Backup() {
         ServerCommand("mp_backup_restore_load_file \"%s\"", TEMP_VALVE_BACKUP_FILE);
         Pause();
         CreateTimer(0.1, Timer_FinishBackup);
-
+        ChangeState(GameState_Live);
     } else {
         SetStartingTeams();
         SetMatchTeamCvars();
@@ -253,13 +252,15 @@ public void RestoreGet5Backup() {
                 CheckClientTeam(i);
         }
 
-        EndWarmup();
-        EndWarmup();
-        ServerCommand("mp_restartgame 5");
-
+        if (g_GameState == GameState_Live) {
+            EndWarmup();
+            EndWarmup();
+            ServerCommand("mp_restartgame 5");
+            Pause();
+        } else {
+            EnsurePausedWarmup();
+        }
     }
-
-    ChangeState(GameState_Live);
 }
 
 public Action Timer_FinishBackup(Handle timer) {

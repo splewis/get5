@@ -48,6 +48,8 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
         g_MapPoolList.GetString(i, mapName, sizeof(mapName));
         g_MapsLeftInVetoPool.PushString(mapName);
         g_TeamScoresPerMap.Push(0);
+        g_TeamScoresPerMap.Set(g_TeamScoresPerMap.Length - 1, 0, 0);
+        g_TeamScoresPerMap.Set(g_TeamScoresPerMap.Length - 1, 0, 1);
     }
 
     if (g_BO2Match) {
@@ -96,19 +98,20 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
         }
     }
 
-    SetStartingTeams();
-    ExecCfg(g_WarmupCfgCvar);
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-    EnsurePausedWarmup();
-    AddTeamLogosToDownloadTable();
-    strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
-
     if (!restoreBackup) {
+        SetStartingTeams();
+        ExecCfg(g_WarmupCfgCvar);
+        EnsurePausedWarmup();
+
         Stats_InitSeries();
         Call_StartForward(g_OnSeriesInit);
         Call_Finish();
     }
+
+    AddTeamLogosToDownloadTable();
+    SetMatchTeamCvars();
+    ExecuteMatchConfigCvars();
+    strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
 
     return true;
 }
@@ -564,11 +567,8 @@ public void SetMatchTeamCvars() {
 
         char team1Text[MAX_CVAR_LENGTH];
         char team2Text[MAX_CVAR_LENGTH];
-        if (mapsPlayed == 0) {
-            Format(team1Text, sizeof(team1Text), "0");
-            Format(team2Text, sizeof(team2Text), "0");
 
-        } else if (mapsPlayed == 1 && HasMapScore(0)) {
+        if (mapsPlayed == 1 && HasMapScore(0)) {
             if (map1Winner == MatchTeam_Team1) {
                 Format(team1Text, sizeof(team1Text), "Won %s %d:%d",
                     map1Display,

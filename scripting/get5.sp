@@ -533,13 +533,11 @@ public Action Timer_PauseTimeCheck(Handle timer, int data) {
     // pause and they haven't requested an unpause yet.
     if (InFreezeTime() && !g_TeamReadyForUnpause[team]) {
         g_TeamPauseTimeUsed[team]++;
-    } else {
+
         if (timeLeft == 10) {
             Get5_MessageToAll("%s is almost out of pause time, unpausing in 10 seconds.",
                 g_FormattedTeamNames[team]);
-        }
-
-        if (timeLeft % 30 == 0) {
+        } else if (timeLeft % 30 == 0) {
             Get5_MessageToAll("%s has %d seconds of pause time left this half.",
                 g_FormattedTeamNames[team], timeLeft);
         }
@@ -791,6 +789,8 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
         AddMapScore();
         g_TeamSeriesScores[winningTeam]++;
+
+        g_MapChangePending = true;
         WriteBackup();
 
         char mapName[PLATFORM_MAX_PATH];
@@ -939,10 +939,10 @@ public void WriteBackup() {
     char path[PLATFORM_MAX_PATH];
     if (g_GameState == GameState_Live) {
         Format(path, sizeof(path), "get5_backup_match%s_map%d_round%d.cfg",
-            g_MatchID, GetMapNumber(), GameRules_GetProp("m_totalRoundsPlayed"));
+            g_MatchID, GetMapStatsNumber(), GameRules_GetProp("m_totalRoundsPlayed"));
     } else {
         Format(path, sizeof(path), "get5_backup_match%s_map%d_prelive.cfg",
-            g_MatchID, GetMapNumber());
+            g_MatchID, GetMapStatsNumber());
     }
     LogDebug("created path %s", path);
 

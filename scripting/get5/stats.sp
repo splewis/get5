@@ -346,7 +346,7 @@ static void GoBackFromPlayer() {
     g_StatsKv.GoBack();
 }
 
-static int GetMapStatsNumber() {
+public int GetMapStatsNumber() {
     int x = GetMapNumber();
     if (g_MapChangePending) {
         return x - 1;

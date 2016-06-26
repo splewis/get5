@@ -22,7 +22,6 @@ public void CheckClientTeam(int client) {
             UpdateCoachTarget(client, csTeam);
         }
 
-        LogDebug("CheckClientTeam %L to %d", client, csTeam);
         SwitchPlayerTeam(client, csTeam);
     }
 }

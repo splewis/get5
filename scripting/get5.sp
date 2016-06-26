@@ -372,11 +372,7 @@ public void OnClientPutInServer(int client) {
     CheckAutoLoadConfig();
     if (g_GameState <= GameState_Warmup && g_GameState != GameState_None) {
         if (GetRealClientCount() <= 1) {
-            if (g_WaitingForRoundBackup)
-                ExecCfg(g_WarmupCfgCvar);
-            else
-                ExecCfg(g_LiveCfgCvar);
-
+            ExecCfg(g_WarmupCfgCvar);
             EnsurePausedWarmup();
         }
     }

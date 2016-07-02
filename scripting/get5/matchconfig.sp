@@ -33,6 +33,9 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
     g_WaitingForRoundBackup = false;
     g_LastGet5BackupCvar.SetString("");
 
+    CloseCvarStorage(g_KnifeChangedCvars);
+    CloseCvarStorage(g_MatchConfigChangedCvars);
+
     if (!LoadMatchFile(config)) {
         return false;
     }
@@ -638,6 +641,11 @@ public MatchTeam GetMapWinner(int mapNumber) {
 }
 
 public void ExecuteMatchConfigCvars() {
+    // Save the original match cvar values if we haven't already.
+    if (g_MatchConfigChangedCvars == INVALID_HANDLE) {
+        g_MatchConfigChangedCvars = SaveCvars(g_CvarNames);
+    }
+
     char name[MAX_CVAR_LENGTH];
     char value[MAX_CVAR_LENGTH];
     for (int i = 0; i < g_CvarNames.Length; i++) {
@@ -841,6 +849,8 @@ public Action Command_CreateScrim(int client, int args) {
     Format(path, sizeof(path), "get5_%s.cfg", matchid);
 
     KeyValues kv = new KeyValues("Match");
+
+    // Note: these settings can be overwritten by the template, and that's OK.
     kv.SetString("matchid", matchid);
     kv.SetNum("maps_to_win", 1);
     kv.SetNum("skip_veto", 1);
@@ -850,6 +860,10 @@ public Action Command_CreateScrim(int client, int args) {
     kv.JumpToKey("maplist", true);
     kv.SetString(matchMap, "x");
     kv.GoBack();
+
+    char templateFile[PLATFORM_MAX_PATH + 1];
+    BuildPath(Path_SM, templateFile, sizeof(templateFile), "configs/get5/scrim_template.cfg");
+    kv.ImportFromFile(templateFile);
 
     char teamName[MAX_CVAR_LENGTH];
 
@@ -867,11 +881,6 @@ public Action Command_CreateScrim(int client, int args) {
 
     kv.JumpToKey("spectators", true);
     AddPlayersToAuthKv(kv, MatchTeam_TeamSpec, teamName);
-    kv.GoBack();
-
-    kv.JumpToKey("cvars", true);
-    kv.SetString("mp_match_can_clinch", "0");
-    kv.SetString("mp_overtime_enable", "0");
     kv.GoBack();
 
     kv.ExportToFile(path);

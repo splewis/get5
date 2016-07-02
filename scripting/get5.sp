@@ -125,6 +125,7 @@ bool g_MovingClientToCoach[MAXPLAYERS+1];
 bool g_PendingSideSwap = false;
 
 Handle g_KnifeChangedCvars = INVALID_HANDLE;
+Handle g_MatchConfigChangedCvars = INVALID_HANDLE;
 
 /** Forwards **/
 Handle g_OnBackupRestore = INVALID_HANDLE;
@@ -646,6 +647,7 @@ public Action Command_EndMatch(int client, int args) {
     ChangeState(GameState_None);
 
     Get5_MessageToAll("An admin force ended the match.");
+    RestoreCvars(g_MatchConfigChangedCvars);
     return Plugin_Handled;
 }
 
@@ -901,6 +903,7 @@ public Action Timer_EndSeries(Handle timer) {
     Call_PushCell(g_TeamSeriesScores[MatchTeam_Team2]);
     Call_Finish();
 
+    RestoreCvars(g_MatchConfigChangedCvars);
     ChangeState(GameState_None);
 }
 

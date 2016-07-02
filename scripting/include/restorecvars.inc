@@ -50,6 +50,10 @@ stock void RestoreCvars(Handle& cvarStorage, bool close=true) {
 
 // Closes a cvar storage object returned by SaveCvars.
 stock void CloseCvarStorage(Handle& cvarStorage) {
+    if (cvarStorage == INVALID_HANDLE) {
+        return;
+    }
+
     CloseHandle(GetArrayCell(cvarStorage, 0));
     CloseHandle(GetArrayCell(cvarStorage, 1));
     CloseHandle(cvarStorage);

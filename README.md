@@ -61,7 +61,7 @@ If you need more help, see the [step-by-step guide in the wiki](https://github.c
 - ``get5_loadmatch_url``: loads a remote (JSON formatted) match config by sending a HTTP GET to the given url, this requires either the [system2](https://forums.alliedmods.net/showthread.php?t=146019) or [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) Extensions
 - ``get5_endmatch``: force ends the current match
 - ``get5_creatematch``: creates a Bo1 match with the current players on the server on the current map
-- ``get5_scrim``: creates a Bo1 match with the current players on the server on the current map, with all 30-rounds played out and no knife round
+- ``get5_scrim``: creates a Bo1 match with the current players on the server on the current map, using settings from ``configs/get5/scrim_template.cfg``
 - ``get5_addplayer``: adds a steamid to a team (any format for steamid)
 - ``get5_removeplayer``: removes a steamid from all teams (any format for steamid)
 - ``get5_forceready``: marks all teams as ready
@@ -108,7 +108,7 @@ Instead of the above fields, you can also use "fromfile" and a filename, where t
 ## ConVars
 Note: these are auto-executed on plugin start by the auto-generated (the 1st time the plugin starts) file ``cfg/sourcemod/get5.cfg``.
 
-You should either set these in the above file, or in the match config's ``cvars`` section.
+You should either set these in the above file, or in the match config's ``cvars`` section. Note: cvars set in the ``cvars`` section will override other settings.
 
 - ``get5_auto_dump_stats``: whether match stats keyvalues files are saved to a get5_matchstats_matchid.cfg file (updated each map end)
 - ``get5_autoload_config``: a config file to autoload on map starts if no match is loaded

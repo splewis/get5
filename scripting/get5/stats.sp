@@ -122,9 +122,7 @@ public void Stats_UpdateMapScore(MatchTeam winner) {
 }
 
 public void Stats_Forfeit(MatchTeam team) {
-    GoToTeam(team);
-    g_StatsKv.SetNum(STAT_TEAMFORFEIT, 1);
-    GoBackFromTeam();
+    g_StatsKv.SetNum(STAT_SERIES_FORFEIT, 1);
 
     if (team == MatchTeam_Team1)
         Stats_SeriesEnd(MatchTeam_Team2);

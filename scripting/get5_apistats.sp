@@ -232,9 +232,16 @@ public void Get5_OnSeriesResult(MatchTeam seriesWinner,
     int team1MapScore, int team2MapScore) {
     char winnerString[64];
     GetTeamString(seriesWinner, winnerString, sizeof(winnerString));
+
+    KeyValues kv = new KeyValues("Stats");
+    Get5_GetMatchStats(kv);
+    bool forfeit = kv.GetNum(STAT_SERIES_FORFEIT, 0) != 0;
+    delete kv;
+
     Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%d/finish", g_MatchID);
     if (req != INVALID_HANDLE) {
         AddStringParam(req, "winner", winnerString);
+        AddIntParam(req, "forfiet", forfeit);
         SteamWorks_SendHTTPRequest(req);
     }
 

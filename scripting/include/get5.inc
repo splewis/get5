@@ -142,6 +142,7 @@ native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount
 #define STAT_SERIESTYPE "series_type"
 #define STAT_SERIES_TEAM1NAME "team1_name"
 #define STAT_SERIES_TEAM2NAME "team2_name"
+#define STAT_SERIES_FORFEIT "forfeit"
 
 // Map stats (under "map0", "map1", etc.)
 #define STAT_MAPNAME "mapname"
@@ -150,7 +151,6 @@ native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount
 
 // Team stats (under map section, then "team1" or "team2")
 #define STAT_TEAMSCORE "score"
-#define STAT_TEAMFORFEIT "forfeit"
 
 // Player stats (under map section, then team section, then player's steam64)
 #define STAT_NAME "name"

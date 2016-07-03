@@ -51,9 +51,11 @@ ConVar g_LiveCountdownTimeCvar;
 ConVar g_MaxBackupAgeCvar;
 ConVar g_MaxPausesCvar;
 ConVar g_MaxPauseTimeCvar;
-ConVar g_ResetPausesEachHalfCvar;
 ConVar g_PausingEnabledCvar;
+ConVar g_ResetPausesEachHalfCvar;
 ConVar g_StopCommandEnabledCvar;
+ConVar g_TeamTimeToStartCvar;
+ConVar g_TeamTimeToKnifeDecisionCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
 
@@ -114,6 +116,7 @@ bool g_TeamReadyForUnpause[MatchTeam_Count];
 bool g_TeamGivenStopCommand[MatchTeam_Count];
 int g_TeamPauseTimeUsed[MatchTeam_Count];
 int g_TeamPausesUsed[MatchTeam_Count];
+int g_ReadyTimeWaitingUsed[MatchTeam_Count];
 
 /** Map game-state **/
 MatchTeam g_KnifeWinnerTeam = MatchTeam_TeamNone;
@@ -204,6 +207,10 @@ public void OnPluginStart() {
         "Whether pausing is allowed.");
     g_StopCommandEnabledCvar = CreateConVar("get5_stop_command_enabled", "1",
         "Whether clients can use the !stop command to restore to the last round");
+    g_TeamTimeToStartCvar = CreateConVar("get5_time_to_start", "0",
+        "Time (in seconds) teams have to ready up before forfeiting the match, 0=unlimited");
+    g_TeamTimeToKnifeDecisionCvar = CreateConVar("get5_time_to_make_knife_decision", "60",
+        "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited");
     g_WaitForSpecReadyCvar = CreateConVar("get5_wait_for_spec_ready", "0",
         "Whether to wait for spectators to ready up if there are any");
     g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg",
@@ -404,6 +411,7 @@ public void OnMapStart() {
         g_TeamReadyForUnpause[team] = false;
         g_TeamPauseTimeUsed[team] = 0;
         g_TeamPausesUsed[team] = 0;
+        g_ReadyTimeWaitingUsed[team] = 0;
     }
 
     if (g_WaitingForRoundBackup) {
@@ -435,9 +443,11 @@ public Action Timer_CheckReady(Handle timer) {
         if (AllTeamsReady(false)) {
             ChangeState(GameState_Veto);
             CreateMapVeto();
+        } else {
+            CheckReadyWaitingTimes();
         }
 
-    } else  if (g_GameState == GameState_Warmup) {
+    } else if (g_GameState == GameState_Warmup) {
         if (AllTeamsReady(true) && !g_MapChangePending) {
             int mapNumber = GetMapNumber();
             if (g_WaitingForRoundBackup) {
@@ -450,12 +460,47 @@ public Action Timer_CheckReady(Handle timer) {
 
             } else {
                 StartGame(false);
-
             }
+        } else {
+            CheckReadyWaitingTimes();
         }
     }
 
     return Plugin_Continue;
+}
+
+static void CheckReadyWaitingTimes() {
+    if (g_TeamTimeToStartCvar.IntValue > 0) {
+        CheckReadyWaitingTime(MatchTeam_Team1);
+        CheckReadyWaitingTime(MatchTeam_Team2);
+    }
+}
+
+static void CheckReadyWaitingTime(MatchTeam team) {
+    if (!g_TeamReady[team] && g_GameState != GameState_None) {
+        g_ReadyTimeWaitingUsed[team]++;
+        int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed[team];
+
+        if (timeLeft <= 0) {
+            Get5_MessageToAll("%s failed to ready up in time and has forfeit.",
+                g_FormattedTeamNames[team]);
+            ChangeState(GameState_None);
+            Stats_Forfeit(team);
+            EndSeries();
+
+        } else if (timeLeft >= 300 && timeLeft % 60 == 0) {
+            Get5_MessageToAll("%s has %d minutes left to ready up or they will forfeit the match.",
+                g_FormattedTeamNames[team], timeLeft / 60);
+
+        } else if (timeLeft < 300 && timeLeft % 30 == 0) {
+            Get5_MessageToAll("%s has %d seconds left to ready up or they will forfeit the match.",
+                g_FormattedTeamNames[team], timeLeft);
+
+        } else if (timeLeft == 10) {
+            Get5_MessageToAll("%s has 10 seconds to ready up or forfeit the match.",
+                g_FormattedTeamNames[team], timeLeft);
+        }
+    }
 }
 
 static void CheckAutoLoadConfig() {
@@ -653,6 +698,7 @@ public Action Command_EndMatch(int client, int args) {
 
     Get5_MessageToAll("An admin force ended the match.");
     RestoreCvars(g_MatchConfigChangedCvars);
+
     return Plugin_Handled;
 }
 
@@ -810,15 +856,15 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
         float minDelay = FindConVar("tv_delay").FloatValue + MATCH_END_DELAY_AFTER_TV;
         if (g_TeamSeriesScores[MatchTeam_Team1] == g_MapsToWin) {
             SeriesWonMessage(MatchTeam_Team1);
-            CreateTimer(minDelay, Timer_EndSeries);
+            DelayFunction(minDelay, EndSeries);
 
         } else if (g_TeamSeriesScores[MatchTeam_Team2] == g_MapsToWin) {
             SeriesWonMessage(MatchTeam_Team2);
-            CreateTimer(minDelay, Timer_EndSeries);
+            DelayFunction(minDelay, EndSeries);
 
         } else if (g_BO2Match && GetMapNumber() == 2) {
             SeriesWonMessage(MatchTeam_TeamNone);
-            CreateTimer(minDelay, Timer_EndSeries);
+            DelayFunction(minDelay, EndSeries);
 
         } else {
             if (g_TeamSeriesScores[MatchTeam_Team1] > g_TeamSeriesScores[MatchTeam_Team2]) {
@@ -882,7 +928,7 @@ public Action Timer_NextMatchMap(Handle timer) {
     ChangeMap(map);
 }
 
-public Action Timer_EndSeries(Handle timer) {
+public void KickClientsOnEnd() {
     if (g_KickClientsWithNoMatchCvar.IntValue != 0) {
         for (int i = 1; i <= MaxClients; i++) {
             if (IsPlayer(i)) {
@@ -890,7 +936,10 @@ public Action Timer_EndSeries(Handle timer) {
             }
         }
     }
+}
 
+public void EndSeries() {
+    DelayFunction(10.0, KickClientsOnEnd);
     StopRecording();
 
     MatchTeam winningTeam  = MatchTeam_Team1;
@@ -991,6 +1040,9 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
         g_KnifeWinnerTeam = CSTeamToMatchTeam(winningCSTeam);
         Get5_MessageToAll("%s won the knife round. Waiting for them to type !stay or !swap.",
             g_FormattedTeamNames[g_KnifeWinnerTeam]);
+
+        if (g_TeamTimeToKnifeDecisionCvar.FloatValue > 0)
+            CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision);
     }
 
     if (g_GameState == GameState_Live) {

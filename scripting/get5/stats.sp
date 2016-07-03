@@ -121,6 +121,17 @@ public void Stats_UpdateMapScore(MatchTeam winner) {
     DumpToFile();
 }
 
+public void Stats_Forfeit(MatchTeam team) {
+    GoToTeam(team);
+    g_StatsKv.SetNum(STAT_TEAMFORFEIT, 1);
+    GoBackFromTeam();
+
+    if (team == MatchTeam_Team1)
+        Stats_SeriesEnd(MatchTeam_Team2);
+    else
+        Stats_SeriesEnd(MatchTeam_Team1);
+}
+
 public void Stats_SeriesEnd(MatchTeam winner) {
     char winnerString[16];
     GetTeamString(winner, winnerString, sizeof(winnerString));

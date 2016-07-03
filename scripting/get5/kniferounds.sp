@@ -93,3 +93,9 @@ public Action Command_T(int client, int args) {
     }
     return Plugin_Handled;
 }
+
+public Action Timer_ForceKnifeDecision(Handle timer) {
+    EndKnifeRound(false);
+    Get5_MessageToAll("%s will stay since they did not make a decision in time.",
+        g_FormattedTeamNames[g_KnifeWinnerTeam]);
+}

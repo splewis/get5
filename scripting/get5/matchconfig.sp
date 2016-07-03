@@ -18,6 +18,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
         g_TeamGivenStopCommand[team] = false;
         g_TeamPauseTimeUsed[team] = 0;
         g_TeamPausesUsed[team] = 0;
+        g_ReadyTimeWaitingUsed[team] = 0;
         ClearArray(GetTeamAuths(team));
     }
 

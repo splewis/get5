@@ -483,23 +483,23 @@ public Action Command_Pause(int client, int args) {
     if (!Pauseable() || IsPaused())
         return Plugin_Handled;
 
-    char resetString[32];
+    char pausePeriodString[32];
     if (g_ResetPausesEachHalfCvar.IntValue != 0) {
-        resetString = " for this half";
+        pausePeriodString = " for this half";
     }
 
     MatchTeam team = GetClientMatchTeam(client);
     int maxPauses = g_MaxPausesCvar.IntValue;
     if (maxPauses > 0 && g_TeamPausesUsed[team] >= maxPauses && IsPlayerTeam(team)) {
         Get5_Message(client, "Your team has already used the max %d pauses%s.",
-            maxPauses, resetString);
+            maxPauses, pausePeriodString);
         return Plugin_Handled;
     }
 
     int maxPauseTime = g_MaxPauseTimeCvar.IntValue;
     if (maxPauseTime > 0 && g_TeamPauseTimeUsed[team] >= maxPauseTime && IsPlayerTeam(team)) {
         Get5_Message(client, "Your team has already used the max %d seconds of pause time%s.",
-            maxPauseTime, resetString);
+            maxPauseTime, pausePeriodString);
         return Plugin_Handled;
     }
 
@@ -523,6 +523,11 @@ public Action Timer_PauseTimeCheck(Handle timer, int data) {
         return Plugin_Stop;
     }
 
+    char pausePeriodString[32];
+    if (g_ResetPausesEachHalfCvar.IntValue != 0) {
+        pausePeriodString = " for this half";
+    }
+
     MatchTeam team = view_as<MatchTeam>(data);
     int timeLeft = g_MaxPauseTimeCvar.IntValue - g_TeamPauseTimeUsed[team];
 
@@ -535,8 +540,8 @@ public Action Timer_PauseTimeCheck(Handle timer, int data) {
             Get5_MessageToAll("%s is almost out of pause time, unpausing in 10 seconds.",
                 g_FormattedTeamNames[team]);
         } else if (timeLeft % 30 == 0) {
-            Get5_MessageToAll("%s has %d seconds of pause time left this half.",
-                g_FormattedTeamNames[team], timeLeft);
+            Get5_MessageToAll("%s has %d seconds of pause time left%s.",
+                g_FormattedTeamNames[team], timeLeft, pausePeriodString);
         }
     }
 

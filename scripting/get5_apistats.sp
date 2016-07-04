@@ -241,7 +241,7 @@ public void Get5_OnSeriesResult(MatchTeam seriesWinner,
     Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%d/finish", g_MatchID);
     if (req != INVALID_HANDLE) {
         AddStringParam(req, "winner", winnerString);
-        AddIntParam(req, "forfiet", forfeit);
+        AddIntParam(req, "forfeit", forfeit);
         SteamWorks_SendHTTPRequest(req);
     }
 

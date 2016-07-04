@@ -38,10 +38,17 @@ public void OnPluginStart() {
 }
 
 public Action Command_Avaliable(int client, int args) {
+    char versionString[64] = "unknown";
+    ConVar versionCvar = FindConVar("get5_version");
+    if (versionCvar != null) {
+        versionCvar.GetString(versionString, sizeof(versionString));
+    }
+
     Handle json = json_object();
 
     set_json_int(json, "gamestate", view_as<int>(Get5_GetGameState()));
     set_json_int(json, "avaliable", 1);
+    set_json_string(json, "version", versionString);
 
     char buffer[128];
     json_dump(json, buffer, sizeof(buffer));

@@ -3,16 +3,16 @@
 
 public Action Command_LoadBackup(int client, int args) {
     if (g_BackupSystemEnabledCvar.IntValue == 0) {
-        ReplyToCommand(client, "The backup system is disabled");
+        ReplyToCommand(client, "%t", "The backup system is disabled");
         return Plugin_Handled;
     }
 
     char path[PLATFORM_MAX_PATH];
     if (args >= 1 && GetCmdArg(1, path, sizeof(path))) {
         if (RestoreFromBackup(path)) {
-            Get5_MessageToAll("Successfully loaded backup %s", path);
+            Get5_MessageToAll("%t", "Successfully loaded backup %s", path);
         } else {
-            ReplyToCommand(client, "Failed to load backup %s - check error logs", path);
+            ReplyToCommand(client, "%t", "Failed to load backup %s - check error logs", path);
         }
     } else {
         ReplyToCommand(client, "Usage: get5_loadbackup <file>");
@@ -23,7 +23,7 @@ public Action Command_LoadBackup(int client, int args) {
 
 public Action Command_ListBackups(int client, int args) {
     if (g_BackupSystemEnabledCvar.IntValue == 0) {
-        ReplyToCommand(client, "The backup system is disabled");
+        ReplyToCommand(client, "%t", "The backup system is disabled");
         return Plugin_Handled;
     }
     char matchID[MATCH_ID_LENGTH];

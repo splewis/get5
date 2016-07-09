@@ -61,7 +61,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
     }
 
     if (MaxMapsToPlay(g_MapsToWin) > g_MapPoolList.Length) {
-        MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps",
+        MatchConfigFail("%t", "Cannot play a series of %d maps with a maplist of %d maps",
             MaxMapsToPlay(g_MapsToWin), g_MapPoolList.Length);
         return false;
     }
@@ -98,7 +98,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
 
     for (int i = 1; i <= MaxClients; i++) {
         if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == MatchTeam_TeamNone) {
-            KickClient(i, "You are not a player in this match");
+            KickClient(i, "%t", "You are not a player in this match");
         }
     }
 
@@ -123,23 +123,23 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
 public bool LoadMatchFile(const char[] config) {
     if (StrContains(config, "json") >= 0) {
         if (!LibraryExists("jansson")) {
-            MatchConfigFail("Cannot load a json config without the smjansson extension loaded");
+            MatchConfigFail("%t", "Cannot load a json config without the smjansson extension loaded");
             return false;
         }
 
         char configFile[PLATFORM_MAX_PATH];
         strcopy(configFile, sizeof(configFile), config);
         if (!FileExists(configFile)) {
-            MatchConfigFail("Match json file doesn't exist: \"%s\"", configFile);
+            MatchConfigFail("%t", "Match json file doesn't exist: \"%s\"", configFile);
             return false;
         }
 
         Handle json = json_load_file(configFile);
         if (json != INVALID_HANDLE && LoadMatchFromJson(json)) {
             CloseHandle(json);
-            Get5_MessageToAll("Loaded match config.");
+            Get5_MessageToAll("%t", "Loaded match config.");
         } else {
-            MatchConfigFail("invalid match json");
+            MatchConfigFail("%t", "invalid match json");
             return false;
         }
 
@@ -148,14 +148,14 @@ public bool LoadMatchFile(const char[] config) {
         KeyValues kv = new KeyValues("Match");
         if (!FileExists(config)) {
             delete kv;
-            MatchConfigFail("Match kv file doesn't exist: \"%s\"", config);
+            MatchConfigFail("%t", "Match kv file doesn't exist: \"%s\"", config);
             return false;
         } else if (kv.ImportFromFile(config) && LoadMatchFromKv(kv)) {
             delete kv;
-            Get5_MessageToAll("Loaded match config.");
+            Get5_MessageToAll("%t", "Loaded match config.");
         } else {
             delete kv;
-            MatchConfigFail("invalid match kv");
+            MatchConfigFail("%t", "invalid match kv");
             return false;
         }
     }
@@ -185,13 +185,13 @@ stock bool LoadMatchFromUrl(const char[] url, bool preferSystem2=true, ArrayList
     } else if (steamWorksAvaliable) {
         Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
         if (request == INVALID_HANDLE) {
-            MatchConfigFail("Failed to create HTTP GET request");
+            MatchConfigFail("%t", "Failed to create HTTP GET request");
             return false;
         }
 
         if (paramNames != null && paramValues != null) {
             if (paramNames.Length != paramValues.Length) {
-                MatchConfigFail("request paramNames and paramValues size mismatch");
+                MatchConfigFail("%t", "request paramNames and paramValues size mismatch");
                 return false;
             }
 
@@ -209,7 +209,7 @@ stock bool LoadMatchFromUrl(const char[] url, bool preferSystem2=true, ArrayList
         return true;
 
     } else {
-        MatchConfigFail("Neither steamworks nor system2 extensions avaliable");
+        MatchConfigFail("%t", "Neither steamworks nor system2 extensions avaliable");
         return false;
     }
 }
@@ -219,7 +219,7 @@ stock bool LoadMatchFromUrl(const char[] url, bool preferSystem2=true, ArrayList
 public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful,
     EHTTPStatusCode statusCode, Handle data) {
     if (failure || !requestSuccessful) {
-        MatchConfigFail("Steamworks GET request failed, HTTP status code = %d", statusCode);
+        MatchConfigFail("%t", "Steamworks GET request failed, HTTP status code = %d", statusCode);
         return;
     }
 
@@ -231,7 +231,7 @@ public int System2_OnMatchConfigReceived(bool finished, const char[] error, floa
     float dlnow, float ultotal, float ulnow, int serial) {
     if (finished) {
         if (!StrEqual(error, "")) {
-            MatchConfigFail("Error receiving remote config via system2: %s", error);
+            MatchConfigFail("%t", "Error receiving remote config via system2: %s", error);
         } else if (finished) {
             LoadMatchConfig(REMOTE_CONFIG_FILENAME);
         }
@@ -327,7 +327,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
         LoadTeamData(kv, MatchTeam_Team1, "Team1", TEAM1_COLOR);
         kv.GoBack();
     } else {
-        MatchConfigFail("Missing \"team1\" section in match kv");
+        MatchConfigFail("%t", "Missing \"team1\" section in match kv");
         return false;
     }
 
@@ -335,12 +335,12 @@ static bool LoadMatchFromKv(KeyValues kv) {
         LoadTeamData(kv, MatchTeam_Team2, "Team2", TEAM2_COLOR);
         kv.GoBack();
     } else {
-        MatchConfigFail("Missing \"team2\" section in match kv");
+        MatchConfigFail("%t", "Missing \"team2\" section in match kv");
         return false;
     }
 
     if (AddSubsectionKeysToList(kv, "maplist", g_MapPoolList, PLATFORM_MAX_PATH) <= 0) {
-        LogError("Failed to find \"maplist\" section in config, using fallback maplist.");
+        LogError("%t", "Failed to find \"maplist\" section in config, using fallback maplist.");
         LoadDefaultMapList(g_MapPoolList);
     }
 
@@ -406,7 +406,7 @@ static bool LoadMatchFromJson(Handle json) {
         LoadTeamDataJson(team1, MatchTeam_Team1, "Team1", TEAM1_COLOR);
         CloseHandle(team1);
     } else {
-        MatchConfigFail("Missing \"team1\" section in match json");
+        MatchConfigFail("%t", "Missing \"team1\" section in match json");
         return false;
     }
 
@@ -415,7 +415,7 @@ static bool LoadMatchFromJson(Handle json) {
         LoadTeamDataJson(team2, MatchTeam_Team2, "Team2", TEAM2_COLOR);
         CloseHandle(team2);
     } else {
-        MatchConfigFail("Missing \"team2\" section in match json");
+        MatchConfigFail("%t", "Missing \"team2\" section in match json");
         return false;
     }
 
@@ -663,7 +663,7 @@ public void ExecuteMatchConfigCvars() {
 
 public Action Command_LoadTeam(int client, int args) {
     if (g_GameState == GameState_None) {
-        ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
+        ReplyToCommand(client, "%t", "Cannot change player lists when there is no match to modify");
         return Plugin_Handled;
     }
 
@@ -688,22 +688,22 @@ public Action Command_LoadTeam(int client, int args) {
             team = MatchTeam_TeamSpec;
 
         } else {
-            ReplyToCommand(client, "Unknown team: must be one of team1, team2, spec");
+            ReplyToCommand(client, "%t", "Unknown team: must be one of team1, team2, spec");
             return Plugin_Handled;
         }
 
         KeyValues kv = new KeyValues("team");
         if (kv.ImportFromFile(arg2)) {
             LoadTeamData(kv, team, defaultName, defaultColor);
-            ReplyToCommand(client, "Loaded team data for %s", arg1);
+            ReplyToCommand(client, "%t", "Loaded team data for %s", arg1);
             SetMatchTeamCvars();
         } else {
-            ReplyToCommand(client, "Failed to read keyvalues from file \"%s\"", arg2);
+            ReplyToCommand(client, "%t", "Failed to read keyvalues from file \"%s\"", arg2);
         }
         delete kv;
 
     } else {
-        ReplyToCommand(client, "Usage: get_loadteam <team1|team2|spec> <filename>");
+        ReplyToCommand(client, "%t", "Usage: get_loadteam <team1|team2|spec> <filename>");
     }
 
     return Plugin_Handled;
@@ -711,7 +711,7 @@ public Action Command_LoadTeam(int client, int args) {
 
 public Action Command_AddPlayer(int client, int args) {
     if (g_GameState == GameState_None) {
-        ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
+        ReplyToCommand(client, "%t", "Cannot change player lists when there is no match to modify");
         return Plugin_Handled;
     }
 
@@ -726,44 +726,44 @@ public Action Command_AddPlayer(int client, int args) {
         } else if (StrEqual(teamString, "spec")) {
             team = MatchTeam_TeamSpec;
         } else {
-            ReplyToCommand(client, "Unknown team: must be one of team1, team2, spec");
+            ReplyToCommand(client, "%t", "Unknown team: must be one of team1, team2, spec");
             return Plugin_Handled;
         }
 
         if (AddPlayerToTeam(auth, team)) {
-            ReplyToCommand(client, "Successfully added player %s to team %s", auth, teamString);
+            ReplyToCommand(client, "%t", "Successfully added player %s to team %s", auth, teamString);
         } else {
-            ReplyToCommand(client, "Failed to add %s to a match team", auth);
+            ReplyToCommand(client, "%t", "Failed to add %s to a match team", auth);
         }
 
     } else {
-        ReplyToCommand(client, "Usage: get5_addplayer <auth> <team1|team2|spec>");
+        ReplyToCommand(client, "%t", "Usage: get5_addplayer <auth> <team1|team2|spec>");
     }
     return Plugin_Handled;
 }
 
 public Action Command_RemovePlayer(int client, int args) {
     if (g_GameState == GameState_None) {
-        ReplyToCommand(client,"Cannot change player lists when there is no match to modify");
+        ReplyToCommand(client, "%t", "Cannot change player lists when there is no match to modify");
         return Plugin_Handled;
     }
 
     char auth[AUTH_LENGTH];
     if (args >= 1 && GetCmdArg(1, auth, sizeof(auth))) {
         if (RemovePlayerFromTeams(auth)) {
-            ReplyToCommand(client, "Successfully removed player %s", auth);
+            ReplyToCommand(client, "%t", "Successfully removed player %s", auth);
         } else {
-            ReplyToCommand(client, "Failed to remove %s from team auth lists", auth);
+            ReplyToCommand(client, "%t", "Failed to remove %s from team auth lists", auth);
         }
     } else {
-        ReplyToCommand(client, "Usage: get5_removeplayer <auth>");
+        ReplyToCommand(client, "%t", "Usage: get5_removeplayer <auth>");
     }
     return Plugin_Handled;
 }
 
 public Action Command_CreateMatch(int client, int args) {
     if (g_GameState != GameState_None) {
-        ReplyToCommand(client, "Cannot create a match when a match is already loaded");
+        ReplyToCommand(client, "%t", "Cannot create a match when a match is already loaded");
         return Plugin_Handled;
     }
 
@@ -776,7 +776,7 @@ public Action Command_CreateMatch(int client, int args) {
     } if (args >= 2) {
         GetCmdArg(2, matchMap, sizeof(matchMap));
         if (!IsMapValid(matchMap)) {
-            ReplyToCommand(client, "Invalid map: %s", matchMap);
+            ReplyToCommand(client, "%t", "Invalid map: %s", matchMap);
             return Plugin_Handled;
         }
     }
@@ -824,7 +824,7 @@ public Action Command_CreateMatch(int client, int args) {
 
 public Action Command_CreateScrim(int client, int args) {
     if (g_GameState != GameState_None) {
-        ReplyToCommand(client, "Cannot create a match when a match is already loaded");
+        ReplyToCommand(client, "%t", "Cannot create a match when a match is already loaded");
         return Plugin_Handled;
     }
 
@@ -837,7 +837,7 @@ public Action Command_CreateScrim(int client, int args) {
     } if (args >= 2) {
         GetCmdArg(2, matchMap, sizeof(matchMap));
         if (!IsMapValid(matchMap)) {
-            ReplyToCommand(client, "Invalid map: %s", matchMap);
+            ReplyToCommand(client, "%t", "Invalid map: %s", matchMap);
             return Plugin_Handled;
         }
     }

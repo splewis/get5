@@ -1,5 +1,5 @@
 stock void ChangeMap(const char[] map, float delay=3.0) {
-    Get5_MessageToAll("Changing map to {GREEN}%s...", map);
+    Get5_MessageToAll("%t", "Changing map to {GREEN}%s...", map);
 
     // pass the "true" name to a timer to changelevel
     Handle data = CreateDataPack();

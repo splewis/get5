@@ -93,10 +93,6 @@
     {
         "en"            "%s wants to unpause, waiting for %s to type !unpause."
     }
-    "%s wants to unpause, waiting for %s to type !unpause."
-    {
-        "en"            "%s wants to unpause, waiting for %s to type !unpause."
-    }
     "%s is ready to veto."
     {
         "en"            "%s is ready to veto."

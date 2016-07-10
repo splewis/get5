@@ -72,11 +72,11 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
 
         if (count >= g_PlayersPerTeam) {
             if (g_CoachingEnabledCvar.IntValue == 0) {
-                KickClient(client, "%t", "Your team is full");
+                KickClient(client, "%t", "TeamIsFullInfoMessage");
             } else {
                 LogDebug("Forcing player %N to coach", client);
                 MoveClientToCoach(client);
-                Get5_Message(client, "%t", "Because your team is full, you were moved to the coach position.");
+                Get5_Message(client, "%t", "MoveToCoachInfoMessage");
             }
         } else {
             LogDebug("Forcing player %N onto %d", client, csTeam);
@@ -344,7 +344,7 @@ public bool RemovePlayerFromTeams(const char[] auth) {
             GetTeamAuths(team).Erase(index);
             int target = AuthToClient(steam64);
             if (IsAuthedPlayer(target)) {
-                KickClient(target, "%t", "You are not a player in this match");
+                KickClient(target, "%t", "YourAreNotAPlayerInfoMessage");
             }
             return true;
         }

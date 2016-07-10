@@ -1,55 +1,55 @@
 "Phrases"
 {
     // get5.sp
-    "Type {GREEN}!ready {NORMAL}when your team is ready to veto."
+    "ReadyToVetoInfoMessage"
     {
         "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to veto."
     }
-    "Waiting for the casters to type {GREEN}!ready {NORMAL}to begin."
+    "WaitingForCastersReadyInfoMessage"
     {
         "en"            "Waiting for the casters to type {GREEN}!ready {NORMAL}to begin."
     }
-    "Type {GREEN}!ready {NORMAL}when your team is ready to restore the match backup."
+    "ReadyToRestoreBackupInfoMessage"
     {
         "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to restore the match backup."
     }
-    "Type {GREEN}!ready {NORMAL}when your team is ready to knife."
+    "ReadyToKnifeInfoMessage"
     {
         "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to knife."
     }
-    "Type {GREEN}!ready {NORMAL}when your team is ready to begin."
+    "ReadyToStartInfoMessage"
     {
         "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to begin."
     }
-    "%s won the knife round. Waiting for them to type !stay or !swap."
+    "WaitingForEnemySwapInfoMessage"
     {
         "en"            "%s won the knife round. Waiting for them to type !stay or !swap."
     }
-    "The map will change once the GOTV broadcast has ended."
+    "WaitingForGOTVBrodcastEndingInfoMessage"
     {
         "en"            "The map will change once the GOTV broadcast has ended."
     }
-	"There is no match setup"
+	"NoMatchSetupInfoMessage"
 	{
 		"en"			"There is no match setup"
 	}
-    "You are not a player in this match"
+    "YourAreNotAPlayerInfoMessage"
     {
         "en"            "You are not a player in this match"
     }
-    "Your team is full"
+    "TeamIsFullInfoMessage"
     {
         "en"            "Your team is full"
     }
-    "%s failed to ready up in time and has forfeit."
+    "TeamForfeitInfoMessage"
     {
         "en"            "%s failed to ready up in time and has forfeit."
     }
-    "%s has %d minutes left to ready up or they will forfeit the match."
+    "MinutesToForfeitMessage"
     {
         "en"            "%s has %d minutes left to ready up or they will forfeit the match."
     }
-    "%s has %d seconds left to ready up or they will forfeit the match."
+    "SecondsToForfeitInfoMessage"
     {
         "en"            "%s has %d seconds left to ready up or they will forfeit the match."
     }
@@ -57,370 +57,181 @@
     {
         "en"            "%s has 10 seconds to ready up or forfeit the match."
     }
-    "for this half"
+    "PausePeriodSuffix"
     {
         "en"            "for this half"
     }
-    "Your team has already used the max %d pauses%s."
+    "MaxPausesUsedInfoMessage"
     {
         "en"            "Your team has already used the max %d pauses%s."
     }
-    "Your team has already used the max %d seconds of pause time%s."
+    "MaxPausesTimeUsedInfoMessage"
     {
         "en"            "Your team has already used the max %d seconds of pause time%s."
     }
-    "%N paused the match."
+    "MatchPausedByTeamMessage"
     {
         "en"            "%N paused the match."
     }
-    "%s is almost out of pause time, unpausing in 10 seconds."
+    "PauseTimeExpiration10SecInfoMessage"
     {
         "en"            "%s is almost out of pause time, unpausing in 10 seconds."
     }
-    "%s has %d seconds of pause time left%s."
+    "PauseTimeExpirationInfoMessage"
     {
         "en"            "%s has %d seconds of pause time left%s."
     }
-    "%s has run out of pause time, unpausing the match."
+    "PauseRunoutInfoMessage"
     {
         "en"            "%s has run out of pause time, unpausing the match."
     }
-    "%N unpaused the match."
+    "MatchUnpauseInfoMessage"
     {
         "en"            "%N unpaused the match."
     }
-    "%s wants to unpause, waiting for %s to type !unpause."
+    "WaitingForUnpauseInfoMessage"
     {
         "en"            "%s wants to unpause, waiting for %s to type !unpause."
     }
-    "%s is ready to veto."
+    "TeamReadyToVetoInfoMessage"
     {
         "en"            "%s is ready to veto."
     }
-    "%s is ready to restore the match backup."
+    "TeamReadyToRestoreBackupInfoMessage"
     {
         "en"            "%s is ready to restore the match backup."
     }
-    "%s is ready to knife for sides."
+    "TeamReadyToKnifeInfoMessage"
     {
         "en"            "%s is ready to knife for sides."
     }
-    "%s is ready to begin the match."
+    "TeamReadyToBeginInfoMessage"
     {
         "en"            "%s is ready to begin the match."
     }
-    "%s is no longer ready."
+    "TeamNotReadyInfoMessage"
     {
         "en"            "%s is no longer ready."
     }
-    "An admin has force-readied all teams."
+    "AdminForceReadyInfoMessage"
     {
         "en"            "An admin has force-readied all teams."
     }
-    "An admin force ended the match."
+    "AdminForceEndInfoMessage"
     {
         "en"            "An admin force ended the match."
     }
-    "Cannot load a match when a match is already loaded"
-    {
-        "en"            "Cannot load a match when a match is already loaded"
-    }
-    "Failed to load match config."
-    {
-        "en"            "Failed to load match config."
-    }
-    "Usage: get5_loadmatch <filename>"
-    {
-        "en"            "Usage: get5_loadmatch <filename>"
-    }
-    "Cannot load a match config with another match already loaded"
-    {
-        "en"            "Cannot load a match config with another match already loaded"
-    }
-    "Cannot load matches from a url without the SteamWorks or system2 extension running"
-    {
-        "en"            "Cannot load matches from a url without the SteamWorks or system2 extension running"
-    }
-    "Usage: get5_loadmatch_url <url>"
-    {
-        "en"            "Usage: get5_loadmatch_url <url>"
-    }
-    "Cannot dump match stats with no match existing"
-    {
-        "en"            "Cannot dump match stats with no match existing"
-    }
-    "Saved match stats to %s"
-    {
-        "en"            "Saved match stats to %s"
-    }
-    "Failed to save match stats to %s"
-    {
-        "en"            "Failed to save match stats to %s"
-    }
-    "%s wants to stop and reload last round, need %s to confirm with !stop."
+    "TeamWantsToReloadLastRoundInfoMessage"
     {
         "en"            "%s wants to stop and reload last round, need %s to confirm with !stop."
     }
-    "%s{NORMAL} is winning the series %d-%d"
+    "TeamWinnigSeriesInfoMessage"
     {
         "en"            "%s{NORMAL} is winning the series %d-%d"
     }
-    "The series is tied at %d-%d"
+    "SeriesTiedInfoMessage"
     {
         "en"            "The series is tied at %d-%d"
     }
-    "The next map in the series is {GREEN}%s"
+    "NextSeriesMapInfoMessage"
     {
         "en"            "The next map in the series is {GREEN}%s"
     }
-    "%s has won the match."
+    "TeamWonMatchInfoMessage"
     {
         "en"            "%s has won the match."
     }
-    "%s and %s have split the series 1-1."
+    "TeamsSplitSeriesBO2InfoMessage"
     {
         "en"            "%s and %s have split the series 1-1."
     }
-    "%s has won the series %d-%d."
+    "TeamWonSeriesInfoMessage"
     {
         "en"            "%s has won the series %d-%d."
     }
-    "The match has been finished"
+    "MatchFinishedInfoMessage"
     {
         "en"            "The match has been finished"
     }
-    "{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s"
+    "CurrentScoreInfoMessage"
     {
         "en"            "{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s"
     }
-    "get5_status requires the smjansson extension to be loaded"
-    {
-        "en"            "get5_status requires the smjansson extension to be loaded"
-    }
-    // get5/backups.sp
-    "The backup system is disabled"
-    {
-        "en"            "The backup system is disabled"
-    }
-    "Failed to load backup %s - check error logs"
-    {
-        "en"            "Failed to load backup %s - check error logs"
-    }
-    "Successfully loaded backup %s"
+    "BackupLoadedInfoMessage"
     {
         "en"            "Successfully loaded backup %s"
     }
     // get5/goinglive.sp
-    "The match will begin in %d seconds."
+    "MatchBeginInSecondsInfoMessage"
     {
         "en"            "The match will begin in %d seconds."
     }
-    "Match is {GREEN}LIVE"
+    "MatchIsLiveInfoMessage"
     {
         "en"            "Match is {GREEN}LIVE"
     }
     // get5/kniferounds.sp
-    "The knife round will begin in 5 seconds."
+    "KnifeIn5SecInfoMessage"
     {
         "en"            "The knife round will begin in 5 seconds."
     }
-    "Knife!"
+    "KnifeInfoMessage"
     {
         "en"            "Knife!"
     }
-    "%s has decided to stay."
+    "TeamDecidedToStayInfoMessage"
     {
         "en"            "%s has decided to stay."
     }
-    "%s has decided to swap."
+    "TeamDecidedToSwapInfoMessage
     {
         "en"            "%s has decided to swap."
     }
-    "%s will stay since they did not make a decision in time."
+    "TeamLostTimeToDecideInfoMessage"
     {
         "en"            "%s will stay since they did not make a decision in time."
     }
     // get5/maps.sp
-    "Changing map to {GREEN}%s..."
+    "ChangingMapInfoMessage"
     {
         "en"            "Changing map to {GREEN}%s..."
     }
     // get5/mapveto.sp
-    "Warning, the maplist is odd number sized (%d maps), vetos may not function correctly!"
-    {
-        "en"            "Warning, the maplist is odd number sized (%d maps), vetos may not function correctly!"
-    }
-    "The maps have been decided:"
+    "MapDecidedInfoMessage"
     {
         "en"            "The maps have been decided:"
     }
-    "Map %d: {GREEN}%s"
+    "MapIsInfoMessage"
     {
         "en"            "Map %d: {GREEN}%s"
     }
-    "Select a map to PLAY:"
-    {
-        "en"            "Select a map to PLAY:"
-    }
-    "%s picked {GREEN}%s {NORMAL}as map %d"
+    "TeamPickedMapInfoMessage"
     {
         "en"            "%s picked {GREEN}%s {NORMAL}as map %d"
     }
-    "Select a side for %s"
-    {
-        "en"            "Select a side for %s"
-    }
-    "%s has selected to start on {GREEN}%s {NORMAL}on %s"
+    "TeamSelectSideInfoMessage"
     {
         "en"            "%s has selected to start on {GREEN}%s {NORMAL}on %s"
     }
-    "Select a map to VETO:"
-    {
-        "en"            "Select a map to VETO:"
-    }
-    "%s vetoed {LIGHT_RED}%s"
+    "TeamVetoedMapInfoMessage"
     {
         "en"            "%s vetoed {LIGHT_RED}%s"
     }
-    "A captain left during the veto, pausing the veto."
+    "CaptainLeftOnVetoInfoMessage"
     {
         "en"            "A captain left during the veto, pausing the veto."
     }
-    "Type {GREEN}!ready {NORMAL}when you are ready to resume the veto."
+    "ReadyToResumeVetoInfoMessage"
     {
         "en"            "Type {GREEN}!ready {NORMAL}when you are ready to resume the veto."
     }
     // get5/matchconfig.sp
-    "Cannot play a series of %d maps with a maplist of %d maps"
-    {
-        "en"            "Cannot play a series of %d maps with a maplist of %d maps"
-    }
-    "Cannot load a json config without the smjansson extension loaded"
-    {
-        "en"            "Cannot load a json config without the smjansson extension loaded"
-    }
-    "Match json file doesn't exist: \"%s\""
-    {
-        "en"            "Match json file doesn't exist: \"%s\""
-    }
-    "Loaded match config."
+    "MatchConfigLoadedInfoMessage"
     {
         "en"            "Loaded match config."
     }
-    "invalid match json"
-    {
-        "en"            "Invalid match json"
-    }
-    "Match kv file doesn't exist: \"%s\""
-    {
-        "en"            "Match kv file doesn't exist: \"%s\""
-    }
-    "invalid match kv"
-    {
-        "en"            "invalid match kv"
-    }
-    "Failed to create HTTP GET request"
-    {
-        "en"            "Failed to create HTTP GET request"
-    }
-    "request paramNames and paramValues size mismatch"
-    {
-        "en"            "request paramNames and paramValues size mismatch"
-    }
-    "Neither steamworks nor system2 extensions avaliable"
-    {
-        "en"            "Neither steamworks nor system2 extensions avaliable"
-    }
-    "Steamworks GET request failed, HTTP status code = %d"
-    {
-        "en"            "Steamworks GET request failed, HTTP status code = %d"
-    }
-    "Error receiving remote config via system2: %s"
-    {
-        "en"            "Error receiving remote config via system2: %s"
-    }
-    "Missing \"team1\" section in match kv"
-    {
-        "en"            "Missing \"team1\" section in match kv"
-    }
-    "Missing \"team2\" section in match kv"
-    {
-        "en"            "Missing \"team2\" section in match kv"
-    }
-    "Failed to find \"maplist\" section in config, using fallback maplist."
-    {
-        "en"            "Failed to find \"maplist\" section in config, using fallback maplist."
-    }
-    "Missing \"team1\" section in match json"
-    {
-        "en"            "Missing \"team1\" section in match json"
-    }
-    "Missing \"team2\" section in match json"
-    {
-        "en"            "Missing \"team2\" section in match json"
-    }
-    "Won %s %d:%d"
-    {
-        "en"            "Won %s %d:%d"
-    }
-    "Lost %s"
-    {
-        "en"            "Lost %s"
-    }
-    "Cannot change player lists when there is no match to modify"
-    {
-        "en"            "Cannot change player lists when there is no match to modify"
-    }
-   "Unknown team: must be one of team1, team2, spec"
-    {
-        "en"            "Unknown team: must be one of team1, team2, spec"
-    } 
-    "Loaded team data for %s"
-    {
-        "en"            "Loaded team data for %s"
-    }
-    "Failed to read keyvalues from file \"%s\""
-    {
-        "en"            "Failed to read keyvalues from file \"%s\""
-    }
-    "Usage: get_loadteam <team1|team2|spec> <filename>"
-    {
-        "en"            "Usage: get_loadteam <team1|team2|spec> <filename>"
-    }
-    "Successfully added player %s to team %s"
-    {
-        "en"            "Successfully added player %s to team %s"
-    }
-    "Failed to add %s to a match team"
-    {
-        "en"            "Failed to add %s to a match team"
-    }
-    "Usage: get5_addplayer <auth> <team1|team2|spec>"
-    {
-        "en"            "Usage: get5_addplayer <auth> <team1|team2|spec>"
-    }
-    "Successfully removed player %s"
-    {
-        "en"            "Successfully removed player %s"
-    }
-    "Failed to remove %s from team auth lists"
-    {
-        "en"            "Failed to remove %s from team auth lists"
-    }
-    "Usage: get5_removeplayer <auth>"
-    {
-        "en"            "Usage: get5_removeplayer <auth>"
-    }
-    "Cannot create a match when a match is already loaded"
-    {
-        "en"            "Cannot create a match when a match is already loaded"
-    }   
-    "Invalid map: %s"
-    {
-        "en"            "Invalid map: %s"
-    }
     // get5/teamlogic.sp
-    "Because your team is full, you were moved to the coach position."
+    "MoveToCoachInfoMessage"
     {
         "en"            "Because your team is full, you were moved to the coach position."
     }

@@ -329,26 +329,26 @@ public void OnPluginStart() {
 
 public Action Timer_InfoMessages(Handle timer) {
     if (g_GameState == GameState_PreVeto) {
-        Get5_MessageToAll("%t", "Type {GREEN}!ready {NORMAL}when your team is ready to veto.");
+        Get5_MessageToAll("%t", "ReadyToVetoInfoMessage");
     } else if (g_GameState == GameState_Warmup && !g_MapChangePending) {
         if (AllTeamsReady(false) && !AllTeamsReady(true)) {
-            Get5_MessageToAll("%t", "Waiting for the casters to type {GREEN}!ready {NORMAL}to begin.");
+            Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage");
         } else {
             SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
             if (g_WaitingForRoundBackup) {
-                Get5_MessageToAll("%t", "Type {GREEN}!ready {NORMAL}when your team is ready to restore the match backup.");
+                Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage");
             } else if (sides == SideChoice_KnifeRound) {
-                Get5_MessageToAll("%t", "Type {GREEN}!ready {NORMAL}when your team is ready to knife.");
+                Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage");
             } else {
-                Get5_MessageToAll("%t", "Type {GREEN}!ready {NORMAL}when your team is ready to begin.");
+                Get5_MessageToAll("%t", "ReadyToStartInfoMessage");
             }
         }
     } else if (g_GameState == GameState_WaitingForKnifeRoundDecision) {
-        Get5_MessageToAll("%t", "%s won the knife round. Waiting for them to type !stay or !swap.",
+        Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
             g_FormattedTeamNames[g_KnifeWinnerTeam]);
 
     } else if (g_GameState == GameState_PostGame) {
-        Get5_MessageToAll("%t", "The map will change once the GOTV broadcast has ended.");
+        Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
     }
 }
 
@@ -359,17 +359,17 @@ public void OnClientAuthorized(int client, const char[] auth) {
     }
 
     if (g_GameState == GameState_None && g_KickClientsWithNoMatchCvar.IntValue != 0) {
-        KickClient(client, "%t", "There is no match setup");
+        KickClient(client, "%t", "NoMatchSetupInfoMessage");
     }
 
     if (g_GameState != GameState_None && g_CheckAuthsCvar.IntValue != 0) {
         MatchTeam team = GetClientMatchTeam(client);
         if (team == MatchTeam_TeamNone) {
-            KickClient(client, "%t", "You are not a player in this match");
+            KickClient(client, "%t", "YourAreNotAPlayerInfoMessage");
         } else {
             int teamCount = CountPlayersOnMatchTeam(team, client);
             if (teamCount >= g_PlayersPerTeam && g_CoachingEnabledCvar.IntValue == 0) {
-                KickClient(client, "%t", "Your team is full");
+                KickClient(client, "%t", "TeamIsFullInfoMessage");
             }
         }
     }
@@ -485,18 +485,18 @@ static void CheckReadyWaitingTime(MatchTeam team) {
         int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed[team];
 
         if (timeLeft <= 0) {
-            Get5_MessageToAll("%t", "%s failed to ready up in time and has forfeit.",
+            Get5_MessageToAll("%t", "TeamForfeitInfoMessage",
                 g_FormattedTeamNames[team]);
             ChangeState(GameState_None);
             Stats_Forfeit(team);
             EndSeries();
 
         } else if (timeLeft >= 300 && timeLeft % 60 == 0) {
-            Get5_MessageToAll("%t", "%s has %d minutes left to ready up or they will forfeit the match.",
+            Get5_MessageToAll("%t", "MinutesToForfeitMessage",
                 g_FormattedTeamNames[team], timeLeft / 60);
 
         } else if (timeLeft < 300 && timeLeft % 30 == 0) {
-            Get5_MessageToAll("%t", "%s has %d seconds left to ready up or they will forfeit the match.",
+            Get5_MessageToAll("%t", "SecondsToForfeitInfoMessage",
                 g_FormattedTeamNames[team], timeLeft);
 
         } else if (timeLeft == 10) {
@@ -533,20 +533,20 @@ public Action Command_Pause(int client, int args) {
 
     char pausePeriodString[32];
     if (g_ResetPausesEachHalfCvar.IntValue != 0) {
-        Format(pausePeriodString, sizeof(pausePeriodString), " %t", "for this half");
+        Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
     }
 
     MatchTeam team = GetClientMatchTeam(client);
     int maxPauses = g_MaxPausesCvar.IntValue;
     if (maxPauses > 0 && g_TeamPausesUsed[team] >= maxPauses && IsPlayerTeam(team)) {
-        Get5_Message(client, "%t", "Your team has already used the max %d pauses%s.",
+        Get5_Message(client, "%t", "MaxPausesUsedInfoMessage",
             maxPauses, pausePeriodString);
         return Plugin_Handled;
     }
 
     int maxPauseTime = g_MaxPauseTimeCvar.IntValue;
     if (maxPauseTime > 0 && g_TeamPauseTimeUsed[team] >= maxPauseTime && IsPlayerTeam(team)) {
-        Get5_Message(client, "%t", "Your team has already used the max %d seconds of pause time%s.",
+        Get5_Message(client, "%t", "MaxPausesTimeUsedInfoMessage",
             maxPauseTime, pausePeriodString);
         return Plugin_Handled;
     }
@@ -555,7 +555,7 @@ public Action Command_Pause(int client, int args) {
     g_TeamReadyForUnpause[MatchTeam_Team2] = false;
     Pause();
     if (IsPlayer(client)) {
-        Get5_MessageToAll("%t", "%N paused the match.", client);
+        Get5_MessageToAll("%t", "MatchPausedByTeamMessage", client);
     }
 
     if (IsPlayerTeam(team)) {
@@ -573,7 +573,7 @@ public Action Timer_PauseTimeCheck(Handle timer, int data) {
 
     char pausePeriodString[32];
     if (g_ResetPausesEachHalfCvar.IntValue != 0) {
-        Format(pausePeriodString, sizeof(pausePeriodString), " %t", "for this half");
+        Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
     }
 
     MatchTeam team = view_as<MatchTeam>(data);
@@ -585,16 +585,16 @@ public Action Timer_PauseTimeCheck(Handle timer, int data) {
         g_TeamPauseTimeUsed[team]++;
 
         if (timeLeft == 10) {
-            Get5_MessageToAll("%t", "%s is almost out of pause time, unpausing in 10 seconds.",
+            Get5_MessageToAll("%t", "PauseTimeExpiration10SecInfoMessage",
                 g_FormattedTeamNames[team]);
         } else if (timeLeft % 30 == 0) {
-            Get5_MessageToAll("%t", "%s has %d seconds of pause time left%s.",
+            Get5_MessageToAll("%t", "PauseTimeExpirationInfoMessage",
                 g_FormattedTeamNames[team], timeLeft, pausePeriodString);
         }
     }
 
     if (timeLeft <= 0) {
-        Get5_MessageToAll("%t", "%s has run out of pause time, unpausing the match.",
+        Get5_MessageToAll("%t", "PauseRunoutInfoMessage",
             g_FormattedTeamNames[team]);
         Unpause();
         return Plugin_Stop;
@@ -617,13 +617,13 @@ public Action Command_Unpause(int client, int args) {
         if (g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2])  {
             Unpause();
             if (IsPlayer(client)) {
-                Get5_MessageToAll("%t", "%N unpaused the match.", client);
+                Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", client);
             }
         } else if (g_TeamReadyForUnpause[MatchTeam_Team1] && !g_TeamReadyForUnpause[MatchTeam_Team2]) {
-            Get5_MessageToAll("%t", "%s wants to unpause, waiting for %s to type !unpause.",
+            Get5_MessageToAll("%t", "WaitingForUnpauseInfoMessage",
                 g_FormattedTeamNames[MatchTeam_Team1], g_FormattedTeamNames[MatchTeam_Team2]);
         } else if (!g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2]) {
-            Get5_MessageToAll("%t", "%s wants to unpause, waiting for %s to type !unpause.",
+            Get5_MessageToAll("%t", "WaitingForUnpauseInfoMessage",
                 g_FormattedTeamNames[MatchTeam_Team2], g_FormattedTeamNames[MatchTeam_Team1]);
         }
     }
@@ -652,15 +652,15 @@ static void PrintReadyMessage(MatchTeam team) {
     CheckTeamNameStatus(team);
 
     if (g_GameState == GameState_PreVeto) {
-        Get5_MessageToAll("%t", "%s is ready to veto.", g_FormattedTeamNames[team]);
+        Get5_MessageToAll("%t", "TeamReadyToVetoInfoMessage", g_FormattedTeamNames[team]);
     } else if (g_GameState == GameState_Warmup) {
         SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
         if (g_WaitingForRoundBackup)
-            Get5_MessageToAll("%t", "%s is ready to restore the match backup.", g_FormattedTeamNames[team]);
+            Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_FormattedTeamNames[team]);
         else if (sides == SideChoice_KnifeRound)
-            Get5_MessageToAll("%t", "%s is ready to knife for sides.", g_FormattedTeamNames[team]);
+            Get5_MessageToAll("%t", "TeamReadyToKnifeInfoMessage", g_FormattedTeamNames[team]);
         else
-            Get5_MessageToAll("%t", "%s is ready to begin the match.", g_FormattedTeamNames[team]);
+            Get5_MessageToAll("%t", "TeamReadyToBeginInfoMessage", g_FormattedTeamNames[team]);
     }
 }
 
@@ -671,10 +671,10 @@ public Action Command_NotReady(int client, int args) {
 
     MatchTeam t = GetClientMatchTeam(client);
     if (t == MatchTeam_Team1 && g_TeamReady[MatchTeam_Team1]) {
-        Get5_MessageToAll("%t", "%s is no longer ready.", g_FormattedTeamNames[MatchTeam_Team1]);
+        Get5_MessageToAll("%t", "TeamNotReadyInfoMessage", g_FormattedTeamNames[MatchTeam_Team1]);
         g_TeamReady[MatchTeam_Team1] = false;
     } else if (t == MatchTeam_Team2 && g_TeamReady[MatchTeam_Team2]) {
-        Get5_MessageToAll("%t", "%s is no longer ready.", g_FormattedTeamNames[MatchTeam_Team2]);
+        Get5_MessageToAll("%t", "TeamNotReadyInfoMessage", g_FormattedTeamNames[MatchTeam_Team2]);
         g_TeamReady[MatchTeam_Team2] = false;
     }
     return Plugin_Handled;
@@ -685,7 +685,7 @@ public Action Command_ForceReady(int client, int args) {
         return Plugin_Handled;
     }
 
-    Get5_MessageToAll("%t", "An admin has force-readied all teams.");
+    Get5_MessageToAll("%t", "AdminForceReadyInfoMessage");
     LOOP_TEAMS(team) {
         g_TeamReady[team] = true;
     }
@@ -699,7 +699,7 @@ public Action Command_EndMatch(int client, int args) {
     }
     ChangeState(GameState_None);
 
-    Get5_MessageToAll("%t", "An admin force ended the match.");
+    Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
     RestoreCvars(g_MatchConfigChangedCvars);
 
     return Plugin_Handled;
@@ -707,17 +707,17 @@ public Action Command_EndMatch(int client, int args) {
 
 public Action Command_LoadMatch(int client, int args) {
     if (g_GameState != GameState_None) {
-        ReplyToCommand(client, "%t", "Cannot load a match when a match is already loaded");
+        ReplyToCommand(client, "Cannot load a match when a match is already loaded");
         return Plugin_Handled;
     }
 
     char arg[PLATFORM_MAX_PATH];
     if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {
         if (!LoadMatchConfig(arg)) {
-            ReplyToCommand(client, "%t", "Failed to load match config.");
+            ReplyToCommand(client, "Failed to load match config.");
         }
     } else {
-        ReplyToCommand(client, "%t", "Usage: get5_loadmatch <filename>");
+        ReplyToCommand(client, "Usage: get5_loadmatch <filename>");
     }
 
     return Plugin_Handled;
@@ -725,7 +725,7 @@ public Action Command_LoadMatch(int client, int args) {
 
 public Action Command_LoadMatchUrl(int client, int args) {
     if (g_GameState != GameState_None) {
-        ReplyToCommand(client, "%t", "Cannot load a match config with another match already loaded");
+        ReplyToCommand(client, "Cannot load a match config with another match already loaded");
         return Plugin_Handled;
     }
 
@@ -733,15 +733,15 @@ public Action Command_LoadMatchUrl(int client, int args) {
     bool system2Avaliable = LibraryExists("system2");
 
     if (!steamWorksAvaliable && !system2Avaliable) {
-        ReplyToCommand(client, "%t", "Cannot load matches from a url without the SteamWorks or system2 extension running");
+        ReplyToCommand(client, "Cannot load matches from a url without the SteamWorks or system2 extension running");
     } else {
         char arg[PLATFORM_MAX_PATH];
         if (args >= 1 && GetCmdArgString(arg, sizeof(arg))) {
             if (!LoadMatchFromUrl(arg)) {
-                ReplyToCommand(client, "%t", "Failed to load match config.");
+                ReplyToCommand(client, "Failed to load match config.");
             }
         } else {
-            ReplyToCommand(client, "%t", "Usage: get5_loadmatch_url <url>");
+            ReplyToCommand(client, "Usage: get5_loadmatch_url <url>");
         }
     }
 
@@ -750,7 +750,7 @@ public Action Command_LoadMatchUrl(int client, int args) {
 
 public Action Command_DumpStats(int client, int args) {
     if (g_GameState == GameState_None) {
-        ReplyToCommand(client, "%t", "Cannot dump match stats with no match existing");
+        ReplyToCommand(client, "Cannot dump match stats with no match existing");
         return Plugin_Handled;
     }
 
@@ -763,9 +763,9 @@ public Action Command_DumpStats(int client, int args) {
 
     if (g_StatsKv.ExportToFile(arg)) {
         g_StatsKv.Rewind();
-        ReplyToCommand(client, "%t", "Saved match stats to %s", arg);
+        ReplyToCommand(client, "Saved match stats to %s", arg);
     } else {
-        ReplyToCommand(client, "%t", "Failed to save match stats to %s", arg);
+        ReplyToCommand(client, "Failed to save match stats to %s", arg);
     }
 
     return Plugin_Handled;
@@ -790,10 +790,10 @@ public Action Command_Stop(int client, int args) {
     g_TeamGivenStopCommand[team] = true;
 
     if (g_TeamGivenStopCommand[MatchTeam_Team1] && !g_TeamGivenStopCommand[MatchTeam_Team2]) {
-        Get5_MessageToAll("%t", "%s wants to stop and reload last round, need %s to confirm with !stop.",
+        Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
             g_FormattedTeamNames[MatchTeam_Team1], g_FormattedTeamNames[MatchTeam_Team2]);
     } else if (!g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
-        Get5_MessageToAll("%t", "%s wants to stop and reload last round, need %s to confirm with !stop.",
+        Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
             g_FormattedTeamNames[MatchTeam_Team2], g_FormattedTeamNames[MatchTeam_Team1]);
     } else if (g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
         RestoreLastRound();
@@ -871,7 +871,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
         } else {
             if (g_TeamSeriesScores[MatchTeam_Team1] > g_TeamSeriesScores[MatchTeam_Team2]) {
-                Get5_MessageToAll("%t", "%s{NORMAL} is winning the series %d-%d",
+                Get5_MessageToAll("%t", "TeamWinnigSeriesInfoMessage",
                     g_FormattedTeamNames[MatchTeam_Team1],
                     g_TeamSeriesScores[MatchTeam_Team1],
                     g_TeamSeriesScores[MatchTeam_Team2]);
@@ -883,7 +883,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
                     g_TeamSeriesScores[MatchTeam_Team1]);
 
             } else {
-                Get5_MessageToAll("%t", "The series is tied at %d-%d",
+                Get5_MessageToAll("%t", "SeriesTiedInfoMessage",
                     g_TeamSeriesScores[MatchTeam_Team1],
                     g_TeamSeriesScores[MatchTeam_Team1]);
             }
@@ -893,7 +893,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
             g_MapsToPlay.GetString(index, nextMap, sizeof(nextMap));
 
             g_MapChangePending = true;
-            Get5_MessageToAll("%t", "The next map in the series is {GREEN}%s", nextMap);
+            Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap);
             ChangeState(GameState_PostGame);
             CreateTimer(minDelay, Timer_NextMatchMap);
         }
@@ -904,16 +904,16 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
 static void SeriesWonMessage(MatchTeam team) {
     if (g_MapsToWin == 1) {
-        Get5_MessageToAll("%t", "%s has won the match.", g_FormattedTeamNames[team]);
+        Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[team]);
     } else {
         if (team == MatchTeam_TeamNone) {
             // BO2 split.
-            Get5_MessageToAll("%t", "%s and %s have split the series 1-1.",
+            Get5_MessageToAll("%t", "TeamsSplitSeriesBO2InfoMessage",
                 g_FormattedTeamNames[MatchTeam_Team1],
                 g_FormattedTeamNames[MatchTeam_Team2]);
 
         } else {
-            Get5_MessageToAll("%t", "%s has won the series %d-%d.",
+            Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage",
                 g_FormattedTeamNames[team],
                 g_TeamSeriesScores[team],
                 g_TeamSeriesScores[OtherMatchTeam(team)]);
@@ -935,7 +935,7 @@ public void KickClientsOnEnd() {
     if (g_KickClientsWithNoMatchCvar.IntValue != 0) {
         for (int i = 1; i <= MaxClients; i++) {
             if (IsPlayer(i)) {
-                KickClient(i, "%t", "The match has been finished");
+                KickClient(i, "%t", "MatchFinishedInfoMessage");
             }
         }
     }
@@ -1041,7 +1041,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
         }
 
         g_KnifeWinnerTeam = CSTeamToMatchTeam(winningCSTeam);
-        Get5_MessageToAll("%t", "%s won the knife round. Waiting for them to type !stay or !swap.",
+        Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
             g_FormattedTeamNames[g_KnifeWinnerTeam]);
 
         if (g_TeamTimeToKnifeDecisionCvar.FloatValue > 0)
@@ -1051,7 +1051,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     if (g_GameState == GameState_Live) {
         int csTeamWinner = event.GetInt("winner");
 
-        Get5_MessageToAll("%t", "{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s",
+        Get5_MessageToAll("%t", "CurrentScoreInfoMessage",
             g_TeamNames[MatchTeam_Team1],
             CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
             CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
@@ -1201,7 +1201,7 @@ public void ChangeState(GameState state) {
 
 public Action Command_Status(int client, int args) {
     if (!LibraryExists("jansson")) {
-        ReplyToCommand(client, "%t", "get5_status requires the smjansson extension to be loaded");
+        ReplyToCommand(client, "get5_status requires the smjansson extension to be loaded");
         return Plugin_Handled;
     }
 

@@ -3,7 +3,7 @@
  */
 public void CreateMapVeto() {
     if (g_MapPoolList.Length % 2 == 0) {
-        LogError("%t", "Warning, the maplist is odd number sized (%d maps), vetos may not function correctly!",
+        LogError("Warning, the maplist is odd number sized (%d maps), vetos may not function correctly!",
             g_MapPoolList.Length);
     }
 
@@ -17,11 +17,11 @@ public void CreateMapVeto() {
 
 public void VetoFinished() {
     ChangeState(GameState_Warmup);
-    Get5_MessageToAll("%t", "The maps have been decided:");
+    Get5_MessageToAll("%t", "MapDecidedInfoMessage");
     for (int i = 0; i < g_MapsToPlay.Length; i++) {
         char map[PLATFORM_MAX_PATH];
         g_MapsToPlay.GetString(i, map, sizeof(map));
-        Get5_MessageToAll("%t", "Map %d: {GREEN}%s", i + 1, map);
+        Get5_MessageToAll("%t", "MapIsInfoMessage", i + 1, map);
     }
 
     g_MapChangePending = true;
@@ -106,7 +106,7 @@ public void MapVetoController(int client) {
 public void GiveMapPickMenu(int client) {
     Menu menu = new Menu(MapPickHandler);
     menu.ExitButton = false;
-    menu.SetTitle("%t", "Select a map to PLAY:");
+    menu.SetTitle("Select a map to PLAY:");
     char mapName[PLATFORM_MAX_PATH];
     for (int i = 0; i < g_MapsLeftInVetoPool.Length; i++) {
         g_MapsLeftInVetoPool.GetString(i, mapName, sizeof(mapName));
@@ -125,7 +125,7 @@ public int MapPickHandler(Menu menu, MenuAction action, int param1, int param2) 
         g_MapsToPlay.PushString(mapName);
         RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
-        Get5_MessageToAll("%t", "%s picked {GREEN}%s {NORMAL}as map %d",
+        Get5_MessageToAll("%t", "TeamPickedMapInfoMessage",
             g_FormattedTeamNames[team], mapName, g_MapsToPlay.Length);
         g_LastVetoTeam = team;
 
@@ -149,7 +149,7 @@ public void GiveSidePickMenu(int client) {
     menu.ExitButton = false;
     char mapName[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
-    menu.SetTitle("%t", "Select a side for %s", mapName);
+    menu.SetTitle("Select a side for %s", mapName);
     menu.AddItem("CT", "CT");
     menu.AddItem("T", "T");
     menu.Display(client, MENU_TIME_FOREVER);
@@ -177,7 +177,7 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
         char mapName[PLATFORM_MAX_PATH];
         g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
 
-        Get5_MessageToAll("%t", "%s has selected to start on {GREEN}%s {NORMAL}on %s",
+        Get5_MessageToAll("%t", "TeamSelectSideInfoMessage",
             g_FormattedTeamNames[team], choice, mapName);
 
         MapVetoController(client);
@@ -193,7 +193,7 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
 public void GiveVetoMenu(int client) {
     Menu menu = new Menu(VetoHandler);
     menu.ExitButton = false;
-    menu.SetTitle("%t", "Select a map to VETO:");
+    menu.SetTitle("Select a map to VETO:");
     char mapName[PLATFORM_MAX_PATH];
     for (int i = 0; i < g_MapsLeftInVetoPool.Length; i++) {
         g_MapsLeftInVetoPool.GetString(i, mapName, sizeof(mapName));
@@ -210,7 +210,7 @@ public int VetoHandler(Menu menu, MenuAction action, int param1, int param2) {
         RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
         MatchTeam team = GetClientMatchTeam(client);
-        Get5_MessageToAll("%t", "%s vetoed {LIGHT_RED}%s", g_FormattedTeamNames[team], mapName);
+        Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], mapName);
 
         Call_StartForward(g_OnMapVetoed);
         Call_PushCell(team);
@@ -229,8 +229,8 @@ public int VetoHandler(Menu menu, MenuAction action, int param1, int param2) {
 }
 
 static void AbortVeto() {
-    Get5_MessageToAll("%t", "A captain left during the veto, pausing the veto.");
-    Get5_MessageToAll("%t", "Type {GREEN}!ready {NORMAL}when you are ready to resume the veto.");
+    Get5_MessageToAll("%t", "CaptainLeftOnVetoInfoMessage");
+    Get5_MessageToAll("%t", "ReadyToResumeVetoInfoMessage");
     ChangeState(GameState_PreVeto);
 }
 

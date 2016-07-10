@@ -1,0 +1,427 @@
+"Phrases"
+{
+    // get5.sp
+    "Type {GREEN}!ready {NORMAL}when your team is ready to veto."
+    {
+        "ru"            "Напишите {GREEN}!ready {NORMAL}когда ваша команда будет готова к голосованию."
+    }
+    "Waiting for the casters to type {GREEN}!ready {NORMAL}to begin."
+    {
+        "ru"            "Ожидаем, пока все игроки напишут {GREEN}!ready {NORMAL}для начала."
+    }
+    "Type {GREEN}!ready {NORMAL}when your team is ready to restore the match backup."
+    {
+        "ru"            "Напиши {GREEN}!ready {NORMAL}когда твоя команда будет готова загрузить сохраненную игру."
+    }
+    "Type {GREEN}!ready {NORMAL}when your team is ready to knife."
+    {
+        "ru"            "Напиши {GREEN}!ready {NORMAL}когда твоя команда будет готова к ножевому раунду."
+    }
+    "Type {GREEN}!ready {NORMAL}when your team is ready to begin."
+    {
+        "ru"            "Напиги {GREEN}!ready {NORMAL}когда твоя команда будет готова начать."
+    }
+    "%s won the knife round. Waiting for them to type !stay or !swap."
+    {
+        "ru"            "%s выиграла раунд. Ожидаем, пока они напишут !stay или !swap."
+    }
+    "The map will change once the GOTV broadcast has ended."
+    {
+        "ru"            "Карта будет изменена, когда закончится трансляция на GOTV."
+    }
+	"There is no match setup"
+	{
+		"ru"			"На этом сервере нет матча."
+	}
+    "You are not a player in this match"
+    {
+        "ru"            "Ты не являешься участником текущего матча"
+    }
+    "Your team is full"
+    {
+        "ru"            "Твоя команда заполнена"
+    }
+    "%s failed to ready up in time and has forfeit."
+    {
+        "ru"            "%s failed to ready up in time and has forfeit."
+    }
+    "%s has %d minutes left to ready up or they will forfeit the match."
+    {
+        "ru"            "%s has %d minutes left to ready up or they will forfeit the match."
+    }
+    "%s has %d seconds left to ready up or they will forfeit the match."
+    {
+        "ru"            "%s has %d seconds left to ready up or they will forfeit the match."
+    }
+    "%s has 10 seconds to ready up or forfeit the match."
+    {
+        "ru"            "%s has 10 seconds to ready up or forfeit the match."
+    }
+    "for this half"
+    {
+        "ru"            "для этой половины"
+    }
+    "Your team has already used the max %d pauses%s."
+    {
+        "ru"            "Твоя команда уже израсходовала максимум %d паузы%s."
+    }
+    "Your team has already used the max %d seconds of pause time%s."
+    {
+        "ru"            "Твоя команда уже израсходовала максимум %d секунд времени паузы%s."
+    }
+    "%N paused the match."
+    {
+        "ru"            "%N поставил матч на паузу."
+    }
+    "%s is almost out of pause time, unpausing in 10 seconds."
+    {
+        "ru"            "%s уже израсходовали количество пауз, снятие с паузы через 10 секунд."
+    }
+    "%s has %d seconds of pause time left%s."
+    {
+        "ru"            "У %s осталось %d секунд от паузы%s."
+    }
+    "%s has run out of pause time, unpausing the match."
+    {
+        "ru"            "Для %s время паузы вышло, матч снимается с паузы."
+    }
+    "%N unpaused the match."
+    {
+        "ru"            "%N снял матч с паузы."
+    }
+    "%s wants to unpause, waiting for %s to type !unpause."
+    {
+        "ru"            "%s желает снять паузу, ожидаем когда %s напишут !unpause."
+    }
+    "%s is ready to veto."
+    {
+        "ru"            "%s готовы для голосования."
+    }
+    "%s is ready to restore the match backup."
+    {
+        "ru"            "%s готовы загрузить сохраненную игру."
+    }
+    "%s is ready to knife for sides."
+    {
+        "ru"            "%s готовы к ножевому раунду."
+    }
+    "%s is ready to begin the match."
+    {
+        "ru"            "%s готовы начать матч."
+    }
+    "%s is no longer ready."
+    {
+        "ru"            "%s пока не готовы."
+    }
+    "An admin has force-readied all teams."
+    {
+        "ru"            "Админ, в общем, сказал, что все готовы. Поехали."
+    }
+    "An admin force ended the match."
+    {
+        "ru"            "Админ завершил матч."
+    }
+    "Cannot load a match when a match is already loaded"
+    {
+        "ru"            "Невозможно загрузить матч когда уже загружен другой."
+    }
+    "Failed to load match config."
+    {
+        "ru"            "Ошибка при загрузке матча."
+    }
+    "Usage: get5_loadmatch <filename>"
+    {
+        "ru"            "Usage: get5_loadmatch <filename>"
+    }
+    "Cannot load a match config with another match already loaded"
+    {
+        "ru"            "Невозможно загрузить конфиг матча когда уже загружен другой конфиг."
+    }
+    "Cannot load matches from a url without the SteamWorks or system2 extension running"
+    {
+        "ru"            "Матч не может быть загружен по url без установленных модулей SteamWorks или system2"
+    }
+    "Usage: get5_loadmatch_url <url>"
+    {
+        "ru"            "Usage: get5_loadmatch_url <url>"
+    }
+    "Cannot dump match stats with no match existing"
+    {
+        "ru"            "Cannot dump match stats with no match existing"
+    }
+    "Saved match stats to %s"
+    {
+        "ru"            "Saved match stats to %s"
+    }
+    "Failed to save match stats to %s"
+    {
+        "ru"            "Failed to save match stats to %s"
+    }
+    "%s wants to stop and reload last round, need %s to confirm with !stop."
+    {
+        "ru"            "%s желает остановить и перезагрузить последний раунд, ждем %s чтобы написали !stop для подтверждения."
+    }
+    "%s{NORMAL} is winning the series %d-%d"
+    {
+        "ru"            "%s{NORMAL} выигрывает со счетом %d-%d"
+    }
+    "The series is tied at %d-%d"
+    {
+        "ru"            "Матч остановлен на счете %d-%d"
+    }
+    "The next map in the series is {GREEN}%s"
+    {
+        "ru"            "Следующая карта в серии {GREEN}%s"
+    }
+    "%s has won the match."
+    {
+        "ru"            "%s выиграл матч."
+    }
+    "%s and %s have split the series 1-1."
+    {
+        "ru"            "%s и %s закончили серию со счетом 1-1."
+    }
+    "%s has won the series %d-%d."
+    {
+        "ru"            "%s выиграли серию %d-%d."
+    }
+    "The match has been finished"
+    {
+        "ru"            "Матч уже завершен"
+    }
+    "{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s"
+    {
+        "ru"            "{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s"
+    }
+    "get5_status requires the smjansson extension to be loaded"
+    {
+        "ru"            "get5_status requires the smjansson extension to be loaded"
+    }
+    // get5/backups.sp
+    "The backup system is disabled"
+    {
+        "ru"            "Система бэкапов выключена"
+    }
+    "Failed to load backup %s - check error logs"
+    {
+        "ru"            "Failed to load backup %s - check error logs"
+    }
+    "Successfully loaded backup %s"
+    {
+        "ru"            "Удачно загружен бэкап %s"
+    }
+    // get5/goinglive.sp
+    "The match will begin in %d seconds."
+    {
+        "ru"            "Матч начнется через %d секунд."
+    }
+    "Match is {GREEN}LIVE"
+    {
+        "ru"            "Матч {GREEN}НАЧАЛСЯ!"
+    }
+    // get5/kniferounds.sp
+    "The knife round will begin in 5 seconds."
+    {
+        "ru"            "Ножевой раунд начнется через 5 секунд."
+    }
+    "Knife!"
+    {
+        "ru"            "Ножевой раунд!"
+    }
+    "%s has decided to stay."
+    {
+        "ru"            "%s решили остатся в той же команде."
+    }
+    "%s has decided to swap."
+    {
+        "ru"            "%s решили сменить стороны."
+    }
+    "%s will stay since they did not make a decision in time."
+    {
+        "ru"            "%s остаются в той же команде, так как они не успели принять решение вовремя."
+    }
+    // get5/maps.sp
+    "Changing map to {GREEN}%s..."
+    {
+        "ru"            "Карта изменена на {GREEN}%s..."
+    }
+    // get5/mapveto.sp
+    "Warning, the maplist is odd number sized (%d maps), vetos may not function correctly!"
+    {
+        "ru"            "Предупреждение, список карт содержит четное число (%d карт), голосование может быть некорректным!"
+    }
+    "The maps have been decided:"
+    {
+        "ru"            "Итак, была выбрана карта:"
+    }
+    "Map %d: {GREEN}%s"
+    {
+        "ru"            "Карта %d: {GREEN}%s"
+    }
+    "Select a map to PLAY:"
+    {
+        "ru"            "Выберите карту для МАТЧА:"
+    }
+    "%s picked {GREEN}%s {NORMAL}as map %d"
+    {
+        "ru"            "%s выбрал {GREEN}%s {NORMAL}как карту %d"
+    }
+    "Select a side for %s"
+    {
+        "ru"            "Выберите сторону %s"
+    }
+    "%s has selected to start on {GREEN}%s {NORMAL}on %s"
+    {
+        "ru"            "%s выбрали начать за {GREEN}%s {NORMAL}на %s"
+    }
+    "Select a map to VETO:"
+    {
+        "ru"            "Вычерните КАРТУ:"
+    }
+    "%s vetoed {LIGHT_RED}%s"
+    {
+        "ru"            "%s вычеркнули {LIGHT_RED}%s"
+    }
+    "A captain left during the veto, pausing the veto."
+    {
+        "ru"            "Капитан пропал по время голосования, голосование приостановлено."
+    }
+    "Type {GREEN}!ready {NORMAL}when you are ready to resume the veto."
+    {
+        "ru"            "Напишите {GREEN}!ready {NORMAL}, когда будете готовы продолжить голосование."
+    }
+    // get5/matchconfig.sp
+    "Cannot play a series of %d maps with a maplist of %d maps"
+    {
+        "ru"            "Cannot play a series of %d maps with a maplist of %d maps"
+    }
+    "Cannot load a json config without the smjansson extension loaded"
+    {
+        "ru"            "Cannot load a json config without the smjansson extension loaded"
+    }
+    "Match json file doesn't exist: \"%s\""
+    {
+        "ru"            "Match json file doesn't exist: \"%s\""
+    }
+    "Loaded match config."
+    {
+        "ru"            "Загружен конфиг для матча."
+    }
+    "invalid match json"
+    {
+        "ru"            "Invalid match json"
+    }
+    "Match kv file doesn't exist: \"%s\""
+    {
+        "ru"            "Match kv file doesn't exist: \"%s\""
+    }
+    "invalid match kv"
+    {
+        "ru"            "invalid match kv"
+    }
+    "Failed to create HTTP GET request"
+    {
+        "ru"            "Failed to create HTTP GET request"
+    }
+    "request paramNames and paramValues size mismatch"
+    {
+        "ru"            "request paramNames and paramValues size mismatch"
+    }
+    "Neither steamworks nor system2 extensions avaliable"
+    {
+        "ru"            "Neither steamworks nor system2 extensions avaliable"
+    }
+    "Steamworks GET request failed, HTTP status code = %d"
+    {
+        "ru"            "Steamworks GET request failed, HTTP status code = %d"
+    }
+    "Error receiving remote config via system2: %s"
+    {
+        "ru"            "Error receiving remote config via system2: %s"
+    }
+    "Missing \"team1\" section in match kv"
+    {
+        "ru"            "Missing \"team1\" section in match kv"
+    }
+    "Missing \"team2\" section in match kv"
+    {
+        "ru"            "Missing \"team2\" section in match kv"
+    }
+    "Failed to find \"maplist\" section in config, using fallback maplist."
+    {
+        "ru"            "Failed to find \"maplist\" section in config, using fallback maplist."
+    }
+    "Missing \"team1\" section in match json"
+    {
+        "ru"            "Missing \"team1\" section in match json"
+    }
+    "Missing \"team2\" section in match json"
+    {
+        "ru"            "Missing \"team2\" section in match json"
+    }
+    "Won %s %d:%d"
+    {
+        "ru"            "Won %s %d:%d"
+    }
+    "Lost %s"
+    {
+        "ru"            "Lost %s"
+    }
+    "Cannot change player lists when there is no match to modify"
+    {
+        "ru"            "Cannot change player lists when there is no match to modify"
+    }
+   "Unknown team: must be one of team1, team2, spec"
+    {
+        "ru"            "Unknown team: must be one of team1, team2, spec"
+    } 
+    "Loaded team data for %s"
+    {
+        "ru"            "Loaded team data for %s"
+    }
+    "Failed to read keyvalues from file \"%s\""
+    {
+        "ru"            "Failed to read keyvalues from file \"%s\""
+    }
+    "Usage: get_loadteam <team1|team2|spec> <filename>"
+    {
+        "ru"            "Usage: get_loadteam <team1|team2|spec> <filename>"
+    }
+    "Successfully added player %s to team %s"
+    {
+        "ru"            "Successfully added player %s to team %s"
+    }
+    "Failed to add %s to a match team"
+    {
+        "ru"            "Failed to add %s to a match team"
+    }
+    "Usage: get5_addplayer <auth> <team1|team2|spec>"
+    {
+        "ru"            "Usage: get5_addplayer <auth> <team1|team2|spec>"
+    }
+    "Successfully removed player %s"
+    {
+        "ru"            "Successfully removed player %s"
+    }
+    "Failed to remove %s from team auth lists"
+    {
+        "ru"            "Failed to remove %s from team auth lists"
+    }
+    "Usage: get5_removeplayer <auth>"
+    {
+        "ru"            "Usage: get5_removeplayer <auth>"
+    }
+    "Cannot create a match when a match is already loaded"
+    {
+        "ru"            "Cannot create a match when a match is already loaded"
+    }   
+    "Invalid map: %s"
+    {
+        "ru"            "Invalid map: %s"
+    }
+    // get5/teamlogic.sp
+    "Because your team is full, you were moved to the coach position."
+    {
+        "ru"            "Так как твоя команда заполнена, ты был перемещен на позицию тренера."
+    }
+}

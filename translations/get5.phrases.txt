@@ -22,7 +22,8 @@
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "en"            "%s won the knife round. Waiting for them to type !stay or !swap."
+        "#format"       "{1:s}"
+        "en"            "{1} won the knife round. Waiting for them to type !stay or !swap."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
@@ -66,11 +67,13 @@
     }
     "MaxPausesUsedInfoMessage"
     {
-        "en"            "Your team has already used the max %d pauses%s."
+        "#format"       "{1:d},{2:s}"
+        "en"            "Your team has already used the max {1} pauses{2}."
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "en"            "Your team has already used the max %d seconds of pause time%s."
+        "#format"       "{1:d},{2:s}"
+        "en"            "Your team has already used the max {1} seconds of pause time{2}."
     }
     "MatchPausedByTeamMessage"
     {

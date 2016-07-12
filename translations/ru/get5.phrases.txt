@@ -1,6 +1,5 @@
 "Phrases"
 {
-    // get5.sp
     "ReadyToVetoInfoMessage"
     {
         "ru"            "Напишите {GREEN}!ready {NORMAL}когда ваша команда будет готова к голосованию."
@@ -23,16 +22,17 @@
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "ru"            "%s выиграла раунд. Ожидаем, пока они напишут !stay или !swap."
+        "#format"       "{1:s}"
+        "ru"            "{1} выиграла раунд. Ожидаем, пока они напишут !stay или !swap."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
         "ru"            "Карта будет изменена, когда закончится трансляция на GOTV."
     }
-	"NoMatchSetupInfoMessage"
-	{
-		"ru"			"На этом сервере нет матча."
-	}
+    "NoMatchSetupInfoMessage"
+    {
+        "ru"            "На этом сервере нет матча."
+    }
     "YourAreNotAPlayerInfoMessage"
     {
         "ru"            "Ты не являешься участником текущего матча"
@@ -43,11 +43,13 @@
     }
     "TeamForfeitInfoMessage"
     {
-        "ru"            "%s failed to ready up in time and has forfeit."
+        "#format"       "{1:s}"
+        "ru"            "{1} failed to ready up in time and has forfeit."
     }
     "MinutesToForfeitMessage"
     {
-        "ru"            "%s has %d minutes left to ready up or they will forfeit the match."
+        "#format"       "{1:s},{2:d}"
+        "ru"            "{1} has {2} minutes left to ready up or they will forfeit the match."
     }
     "SecondsToForfeitInfoMessage"
     {
@@ -55,7 +57,8 @@
     }
     "%s has 10 seconds to ready up or forfeit the match."
     {
-        "ru"            "%s has 10 seconds to ready up or forfeit the match."
+        "#format"       "{1:s}"
+        "ru"            "{1} has 10 seconds to ready up or forfeit the match."
     }
     "PausePeriodSuffix"
     {
@@ -63,11 +66,13 @@
     }
     "MaxPausesUsedInfoMessage"
     {
-        "ru"            "Твоя команда уже израсходовала максимум %d паузы%s."
+        "#format"       "{1:d},{2:s}"
+        "ru"            "Твоя команда уже израсходовала максимум {1} паузы{2}."
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "ru"            "Твоя команда уже израсходовала максимум %d секунд времени паузы%s."
+        "#format"       "{1:d},{2:s}"
+        "ru"            "Твоя команда уже израсходовала максимум {1} секунд времени паузы{2}."
     }
     "MatchPausedByTeamMessage"
     {
@@ -75,15 +80,18 @@
     }
     "PauseTimeExpiration10SecInfoMessage"
     {
-        "ru"            "%s уже израсходовали количество пауз, снятие с паузы через 10 секунд."
+        "#format"       "{1:s}"
+        "ru"            "{1} уже израсходовали количество пауз, снятие с паузы через 10 секунд."
     }
     "PauseTimeExpirationInfoMessage"
     {
-        "ru"            "У %s осталось %d секунд от паузы%s."
+        "#format"       "{1:s},{2:d},{3:s}"
+        "ru"            "У {1} осталось {2} секунд от паузы{3}."
     }
     "PauseRunoutInfoMessage"
     {
-        "ru"            "Для %s время паузы вышло, матч снимается с паузы."
+        "#format"       "{1:s}"
+        "ru"            "Для {1} время паузы вышло, матч снимается с паузы."
     }
     "MatchUnpauseInfoMessage"
     {
@@ -91,27 +99,33 @@
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "ru"            "%s желает снять паузу, ожидаем когда %s напишут !unpause."
+        "#format"       "{1:s},{2:s}"
+        "ru"            "{1} желает снять паузу, ожидаем когда {2} напишут !unpause."
     }
     "TeamReadyToVetoInfoMessage"
     {
-        "ru"            "%s готовы для голосования."
+        "#format"       "{1:s}"
+        "ru"            "{1} готовы для голосования."
     }
     "TeamReadyToRestoreBackupInfoMessage"
     {
-        "ru"            "%s готовы загрузить сохраненную игру."
+        "#format"       "{1:s}"
+        "ru"            "{1} готовы загрузить сохраненную игру."
     }
     "TeamReadyToKnifeInfoMessage"
     {
-        "ru"            "%s готовы к ножевому раунду."
+        "#format"       "{1:s}"
+        "ru"            "{1} готовы к ножевому раунду."
     }
     "TeamReadyToBeginInfoMessage"
     {
-        "ru"            "%s готовы начать матч."
+        "#format"       "{1:s}"
+        "ru"            "{1} готовы начать матч."
     }
     "TeamNotReadyInfoMessage"
     {
-        "ru"            "%s пока не готовы."
+        "#format"       "{1:s}"
+        "ru"            "{1} пока не готовы."
     }
     "AdminForceReadyInfoMessage"
     {
@@ -123,31 +137,38 @@
     }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
-        "ru"            "%s желает остановить и перезагрузить последний раунд, ждем %s чтобы написали !stop для подтверждения."
+        "#format"       "{1:s},{2:s}"
+        "ru"            "{1} желает остановить и перезагрузить последний раунд, ждем {2} чтобы написали !stop для подтверждения."
     }
     "TeamWinnigSeriesInfoMessage"
     {
-        "ru"            "%s{NORMAL} выигрывает со счетом %d-%d"
+        "#format"       "{1:s},{2:d},{3:d}"
+        "ru"            "{1}{NORMAL} выигрывает со счетом {2}-{3}"
     }
     "SeriesTiedInfoMessage"
     {
-        "ru"            "Матч остановлен на счете %d-%d"
+        "#format"       "{1:d},{2:d}"
+        "ru"            "Матч остановлен на счете {1}-{2}"
     }
     "NextSeriesMapInfoMessage"
     {
-        "ru"            "Следующая карта в серии {GREEN}%s"
+        "#format"       "{1:s}"
+        "ru"            "Следующая карта в серии {GREEN}{1}"
     }
     "TeamWonMatchInfoMessage"
     {
-        "ru"            "%s выиграл матч."
+        "#format"       "{1:s}"
+        "ru"            "{1} выиграл матч."
     }
     "TeamsSplitSeriesBO2InfoMessage"
     {
-        "ru"            "%s и %s закончили серию со счетом 1-1."
+        "#format"       "{1:s},{2:s}"
+        "ru"            "{1} и {2} закончили серию со счетом 1-1."
     }
     "TeamWonSeriesInfoMessage"
     {
-        "ru"            "%s выиграли серию %d-%d."
+        "#format"       "{1:s},{2:d},{3:d}"
+        "ru"            "{1} выиграли серию {2}-{3}."
     }
     "MatchFinishedInfoMessage"
     {
@@ -155,17 +176,20 @@
     }
     "CurrentScoreInfoMessage"
     {
-        "ru"            "{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s"
+        "#format"       "{1:s},{2:d},{3:d},{4:s}"
+        "ru"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
     }
     // get5/backups.sp
     "BackupLoadedInfoMessage"
     {
-        "ru"            "Удачно загружен бэкап %s"
+        "#format"       "{1:s}"
+        "ru"            "Удачно загружен бэкап {1}"
     }
     // get5/goinglive.sp
     "MatchBeginInSecondsInfoMessage"
     {
-        "ru"            "Матч начнется через %d секунд."
+        "#format"       "{1:d}"
+        "ru"            "Матч начнется через {1} секунд."
     }
     "MatchIsLiveInfoMessage"
     {
@@ -182,20 +206,24 @@
     }
     "TeamDecidedToStayInfoMessage"
     {
-        "ru"            "%s решили остатся в той же команде."
+        "#format"       "{1:s}"
+        "ru"            "{1} решили остатся в той же команде."
     }
     "TeamDecidedToSwapInfoMessage
     {
-        "ru"            "%s решили сменить стороны."
+        "#format"       "{1:s}"
+        "ru"            "{1} решили сменить стороны."
     }
     "TeamLostTimeToDecideInfoMessage"
     {
-        "ru"            "%s остаются в той же команде, так как они не успели принять решение вовремя."
+        "#format"       "{1:s}"
+        "ru"            "{1} остаются в той же команде, так как они не успели принять решение вовремя."
     }
     // get5/maps.sp
     "ChangingMapInfoMessage"
     {
-        "ru"            "Карта изменена на {GREEN}%s..."
+        "#format"       "{1:s}"
+        "ru"            "Карта изменена на {GREEN}{1}..."
     }
     // get5/mapveto.sp
     "MapDecidedInfoMessage"
@@ -204,19 +232,23 @@
     }
     "MapIsInfoMessage"
     {
-        "ru"            "Карта %d: {GREEN}%s"
+        "#format"       "{1:d},{2:s}"
+        "ru"            "Карта {1}: {GREEN}{2}"
     }
     "TeamPickedMapInfoMessage"
     {
-        "ru"            "%s выбрал {GREEN}%s {NORMAL}как карту %d"
+        "#format"       "{1:s},{2:s},{3:d}"
+        "ru"            "{1} выбрал {GREEN}{2} {NORMAL}как карту {3}"
     }
     "TeamSelectSideInfoMessage"
     {
-        "ru"            "%s выбрали начать за {GREEN}%s {NORMAL}на %s"
+        "#format"       "{1:s},{2:s},{3:s}"
+        "ru"            "{1} выбрали начать за {GREEN}{2} {NORMAL}на {3}"
     }
     "TeamVetoedMapInfoMessage"
     {
-        "ru"            "%s вычеркнули {LIGHT_RED}%s"
+        "#format"       "{1:s},{2:s}"
+        "ru"            "{1} вычеркнули {LIGHT_RED}{2}"
     }
     "CaptainLeftOnVetoInfoMessage"
     {

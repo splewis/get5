@@ -500,7 +500,7 @@ static void CheckReadyWaitingTime(MatchTeam team) {
                 g_FormattedTeamNames[team], timeLeft);
 
         } else if (timeLeft == 10) {
-            Get5_MessageToAll("%t", "%s has 10 seconds to ready up or forfeit the match.",
+            Get5_MessageToAll("%t", "10SecondsToForfeitInfoMessage",
                 g_FormattedTeamNames[team], timeLeft);
         }
     }
@@ -871,13 +871,13 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
         } else {
             if (g_TeamSeriesScores[MatchTeam_Team1] > g_TeamSeriesScores[MatchTeam_Team2]) {
-                Get5_MessageToAll("%t", "TeamWinnigSeriesInfoMessage",
+                Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage",
                     g_FormattedTeamNames[MatchTeam_Team1],
                     g_TeamSeriesScores[MatchTeam_Team1],
                     g_TeamSeriesScores[MatchTeam_Team2]);
 
             } else if (g_TeamSeriesScores[MatchTeam_Team2] > g_TeamSeriesScores[MatchTeam_Team1]) {
-                Get5_MessageToAll("%t", "%s {NORMAL}is winning the series %d-%d",
+                Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage",
                     g_FormattedTeamNames[MatchTeam_Team2],
                     g_TeamSeriesScores[MatchTeam_Team2],
                     g_TeamSeriesScores[MatchTeam_Team1]);

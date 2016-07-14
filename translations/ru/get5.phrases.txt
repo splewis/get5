@@ -52,7 +52,7 @@
     {
         "ru"            "SecondsToForfeitInfoMessage"
     }
-    "%s has 10 seconds to ready up or forfeit the match."
+    "10SecondsToForfeitInfoMessage"
     {
         "ru"            "{1} has 10 seconds to ready up or forfeit the match."
     }
@@ -70,7 +70,7 @@
     }
     "MatchPausedByTeamMessage"
     {
-        "ru"            "%N поставил матч на паузу."
+        "ru"            "{1} поставил матч на паузу."
     }
     "PauseTimeExpiration10SecInfoMessage"
     {
@@ -86,7 +86,7 @@
     }
     "MatchUnpauseInfoMessage"
     {
-        "ru"            "%N снял матч с паузы."
+        "ru"            "{1} снял матч с паузы."
     }
     "WaitingForUnpauseInfoMessage"
     {

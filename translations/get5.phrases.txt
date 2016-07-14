@@ -56,7 +56,7 @@
         "#format"       "{1:s},{2:d}"
         "en"            "{1} has {2} seconds left to ready up or they will forfeit the match."
     }
-    "%s has 10 seconds to ready up or forfeit the match."
+    "10SecondsToForfeitInfoMessage"
     {
         "#format"       "{1:s}"
         "en"            "{1} has 10 seconds to ready up or forfeit the match."
@@ -77,7 +77,8 @@
     }
     "MatchPausedByTeamMessage"
     {
-        "en"            "%N paused the match."
+        "#format"       "{1:N}"
+        "en"            "{1} paused the match."
     }
     "PauseTimeExpiration10SecInfoMessage"
     {
@@ -96,7 +97,8 @@
     }
     "MatchUnpauseInfoMessage"
     {
-        "en"            "%N unpaused the match."
+        "#format"       "{1:N}"
+        "en"            "{1:N} unpaused the match."
     }
     "WaitingForUnpauseInfoMessage"
     {

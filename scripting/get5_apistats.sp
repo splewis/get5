@@ -1,6 +1,8 @@
 #include <cstrike>
 #include <sourcemod>
 #include "include/get5.inc"
+#include "include/logdebug.inc"
+
 #include "get5/util.sp"
 #include "get5/version.sp"
 
@@ -28,6 +30,8 @@ public Plugin myinfo = {
 };
 
 public void OnPluginStart() {
+    InitDebugLog("get5_apistats_debug", "get5_api");
+
     g_APIKeyCvar = CreateConVar("get5_web_api_key", "", "Match API key, this is automatically set through rcon");
     HookConVarChange(g_APIKeyCvar, ApiInfoChanged);
 
@@ -68,6 +72,8 @@ public void ApiInfoChanged(ConVar convar, const char[] oldValue, const char[] ne
     if (len > 0 && g_APIURL[len - 1] != '/') {
         StrCat(g_APIURL, sizeof(g_APIURL), "/");
     }
+
+    LogDebug("get5_web_api_url now set to %s", g_APIURL);
 }
 
 static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:...) {
@@ -76,6 +82,8 @@ static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:
 
     char formattedUrl[1024];
     VFormat(formattedUrl, sizeof(formattedUrl), url, 3);
+
+    LogDebug("Trying to create request to url %s", formattedUrl);
 
     Handle req = SteamWorks_CreateHTTPRequest(httpMethod, formattedUrl);
     if (StrEqual(g_APIKey, "")) {
@@ -226,6 +234,8 @@ public void UpdatePlayerStats(KeyValues kv, MatchTeam team) {
 static void AddStringParam(Handle request, const char[] key, const char[] value) {
     if (!SteamWorks_SetHTTPRequestGetOrPostParameter(request, key, value)) {
         LogError("Failed to add http param %s=%s", key, value);
+    } else {
+        LogDebug("Added param %s=%s to request", key, value);
     }
 }
 

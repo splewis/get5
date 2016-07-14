@@ -31,13 +31,6 @@
 #pragma newdecls required
 
 
-
-/***********************
- *                     *
- *   Global variables  *
- *                     *
- ***********************/
-
 /** ConVar handles **/
 ConVar g_AutoDumpStatsCvar;
 ConVar g_AutoLoadConfigCvar;
@@ -66,7 +59,7 @@ ConVar g_VersionCvar;
 ConVar g_CoachingEnabledCvar;
 
 /** Series config game-state **/
-int g_MapsToWin = 1;
+int g_MapsToWin = 1; // Maps needed to win the series
 bool g_BO2Match = false;
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
@@ -159,12 +152,6 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 
 
 
-/***********************
- *                     *
- * Sourcemod forwards  *
- *                     *
- ***********************/
-
 public Plugin myinfo = {
     name = "Get5",
     author = "splewis",
@@ -172,6 +159,10 @@ public Plugin myinfo = {
     version = PLUGIN_VERSION,
     url = "https://github.com/splewis/get5"
 };
+
+/**
+ * Core SourceMod forwards,
+ */
 
 public void OnPluginStart() {
     InitDebugLog(DEBUG_CVAR, "get5");
@@ -514,11 +505,9 @@ static void CheckAutoLoadConfig() {
 }
 
 
-/***********************
- *                     *
- *     Commands        *
- *                     *
- ***********************/
+/**
+ * Client and server commands.
+ */
 
 static bool Pauseable() {
     return g_GameState >= GameState_KnifeRound && g_PausingEnabledCvar.IntValue != 0;
@@ -814,11 +803,9 @@ static bool RestoreLastRound() {
 }
 
 
-/***********************
- *                     *
- *       Events        *
- *                     *
- ***********************/
+/**
+ * Game Events *not* related to the stats tracking system.
+ */
 
 public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
     if (g_GameState != GameState_None && g_GameState < GameState_KnifeRound) {

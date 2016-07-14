@@ -22,9 +22,9 @@ char g_APIURL[128];
 
 
 public Plugin myinfo = {
-    name = "Get5 Web Integration",
+    name = "Get5 Web API Integration",
     author = "splewis",
-    description = "Records match stats to a get5 web api",
+    description = "Records match stats to a get5-web api",
     version = PLUGIN_VERSION,
     url = "https://github.com/splewis/get5"
 };

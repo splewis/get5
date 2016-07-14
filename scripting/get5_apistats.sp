@@ -65,7 +65,7 @@ public void ApiInfoChanged(ConVar convar, const char[] oldValue, const char[] ne
 
     // Add a trailing backslash to the api url if one is missing.
     int len = strlen(g_APIURL);
-    if (g_APIURL[len - 1] != '/') {
+    if (len > 0 && g_APIURL[len - 1] != '/') {
         StrCat(g_APIURL, sizeof(g_APIURL), "/");
     }
 }

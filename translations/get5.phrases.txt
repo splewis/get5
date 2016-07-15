@@ -1,0 +1,267 @@
+"Phrases"
+{
+    "ReadyToVetoInfoMessage"
+    {
+        "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to veto."
+    }
+    "WaitingForCastersReadyInfoMessage"
+    {
+        "en"            "Waiting for the casters to type {GREEN}!ready {NORMAL}to begin."
+    }
+    "ReadyToRestoreBackupInfoMessage"
+    {
+        "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to restore the match backup."
+    }
+    "ReadyToKnifeInfoMessage"
+    {
+        "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to knife."
+    }
+    "ReadyToStartInfoMessage"
+    {
+        "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to begin."
+    }
+    "WaitingForEnemySwapInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} won the knife round. Waiting for them to type !stay or !swap."
+    }
+    "WaitingForGOTVBrodcastEndingInfoMessage"
+    {
+        "en"            "The map will change once the GOTV broadcast has ended."
+    }
+    "NoMatchSetupInfoMessage"
+    {
+        "en"			"There is no match setup"
+    }
+    "YourAreNotAPlayerInfoMessage"
+    {
+        "en"            "You are not a player in this match"
+    }
+    "TeamIsFullInfoMessage"
+    {
+        "en"            "Your team is full"
+    }
+    "TeamForfeitInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} failed to ready up in time and has forfeit."
+    }
+    "MinutesToForfeitMessage"
+    {
+        "#format"       "{1:s},{2:d}"
+        "en"            "{1} has {2} minutes left to ready up or they will forfeit the match."
+    }
+    "SecondsToForfeitInfoMessage"
+    {
+        "#format"       "{1:s},{2:d}"
+        "en"            "{1} has {2} seconds left to ready up or they will forfeit the match."
+    }
+    "10SecondsToForfeitInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} has 10 seconds to ready up or forfeit the match."
+    }
+    "PausePeriodSuffix"
+    {
+        "en"            "for this half"
+    }
+    "MaxPausesUsedInfoMessage"
+    {
+        "#format"       "{1:d},{2:s}"
+        "en"            "Your team has already used the max {1} pauses{2}."
+    }
+    "MaxPausesTimeUsedInfoMessage"
+    {
+        "#format"       "{1:d},{2:s}"
+        "en"            "Your team has already used the max {1} seconds of pause time{2}."
+    }
+    "MatchPausedByTeamMessage"
+    {
+        "#format"       "{1:N}"
+        "en"            "{1} paused the match."
+    }
+    "PauseTimeExpiration10SecInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} is almost out of pause time, unpausing in 10 seconds."
+    }
+    "PauseTimeExpirationInfoMessage"
+    {
+        "#format"       "{1:s},{2:d},{3:s}"
+        "en"            "{1} has {2} seconds of pause time left{3}."
+    }
+    "PauseRunoutInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} has run out of pause time, unpausing the match."
+    }
+    "MatchUnpauseInfoMessage"
+    {
+        "#format"       "{1:N}"
+        "en"            "{1:N} unpaused the match."
+    }
+    "WaitingForUnpauseInfoMessage"
+    {
+        "#format"       "{1:s},{2:s}"
+        "en"            "{1} wants to unpause, waiting for {2} to type !unpause."
+    }
+    "TeamReadyToVetoInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} is ready to veto."
+    }
+    "TeamReadyToRestoreBackupInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} is ready to restore the match backup."
+    }
+    "TeamReadyToKnifeInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} is ready to knife for sides."
+    }
+    "TeamReadyToBeginInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} is ready to begin the match."
+    }
+    "TeamNotReadyInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} is no longer ready."
+    }
+    "AdminForceReadyInfoMessage"
+    {
+        "en"            "An admin has force-readied all teams."
+    }
+    "AdminForceEndInfoMessage"
+    {
+        "en"            "An admin force ended the match."
+    }
+    "TeamWantsToReloadLastRoundInfoMessage"
+    {
+        "#format"       "{1:s},{2:s}"
+        "en"            "{1} wants to stop and reload last round, need {2} to confirm with !stop."
+    }
+    "TeamWinnigSeriesInfoMessage"
+    {
+        "#format"       "{1:s},{2:d},{3:d}"
+        "en"            "{1}{NORMAL} is winning the series {2}-{3}"
+    }
+    "SeriesTiedInfoMessage"
+    {
+        "#format"       "{1:d},{2:d}"
+        "en"            "The series is tied at {1}-{2}"
+    }
+    "NextSeriesMapInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "The next map in the series is {GREEN}{1}"
+    }
+    "TeamWonMatchInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} has won the match."
+    }
+    "TeamsSplitSeriesBO2InfoMessage"
+    {
+        "#format"       "{1:s},{2:s}"
+        "en"            "{1} and {2} have split the series 1-1."
+    }
+    "TeamWonSeriesInfoMessage"
+    {
+        "#format"       "{1:s},{2:d},{3:d}"
+        "en"            "{1} has won the series {2}-{3}."
+    }
+    "MatchFinishedInfoMessage"
+    {
+        "en"            "The match has been finished"
+    }
+    "CurrentScoreInfoMessage"
+    {
+        "#format"       "{1:s},{2:d},{3:d},{4:s}"
+        "en"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
+    }
+    "BackupLoadedInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "Successfully loaded backup {1}"
+    }
+    "MatchBeginInSecondsInfoMessage"
+    {
+        "#format"       "{1:d}"
+        "en"            "The match will begin in {1} seconds."
+    }
+    "MatchIsLiveInfoMessage"
+    {
+        "en"            "Match is {GREEN}LIVE"
+    }
+    "KnifeIn5SecInfoMessage"
+    {
+        "en"            "The knife round will begin in 5 seconds."
+    }
+    "KnifeInfoMessage"
+    {
+        "en"            "Knife!"
+    }
+    "TeamDecidedToStayInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} has decided to stay."
+    }
+    "TeamDecidedToSwapInfoMessage
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} has decided to swap."
+    }
+    "TeamLostTimeToDecideInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} will stay since they did not make a decision in time."
+    }
+    "ChangingMapInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "Changing map to {GREEN}{1}..."
+    }
+    "MapDecidedInfoMessage"
+    {
+        "en"            "The maps have been decided:"
+    }
+    "MapIsInfoMessage"
+    {
+        "#format"       "{1:d},{2:s}"
+        "en"            "Map {1}: {GREEN}{2}"
+    }
+    "TeamPickedMapInfoMessage"
+    {
+        "#format"       "{1:s},{2:s},{3:d}"
+        "en"            "{1} picked {GREEN}{2} {NORMAL}as map {3}"
+    }
+    "TeamSelectSideInfoMessage"
+    {
+        "#format"       "{1:s},{2:s},{3:s}"
+        "en"            "{1} has selected to start on {GREEN}{2} {NORMAL}on {3}"
+    }
+    "TeamVetoedMapInfoMessage"
+    {
+        "#format"       "{1:s},{2:s}"
+        "en"            "{1} vetoed {LIGHT_RED}{2}"
+    }
+    "CaptainLeftOnVetoInfoMessage"
+    {
+        "en"            "A captain left during the veto, pausing the veto."
+    }
+    "ReadyToResumeVetoInfoMessage"
+    {
+        "en"            "Type {GREEN}!ready {NORMAL}when you are ready to resume the veto."
+    }
+    "MatchConfigLoadedInfoMessage"
+    {
+        "en"            "Loaded match config."
+    }
+    "MoveToCoachInfoMessage"
+    {
+        "en"            "Because your team is full, you were moved to the coach position."
+    }
+}

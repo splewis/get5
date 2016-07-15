@@ -98,7 +98,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
 
     for (int i = 1; i <= MaxClients; i++) {
         if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == MatchTeam_TeamNone) {
-            KickClient(i, "You are not a player in this match");
+            KickClient(i, "%t", "YourAreNotAPlayerInfoMessage");
         }
     }
 
@@ -137,7 +137,7 @@ public bool LoadMatchFile(const char[] config) {
         Handle json = json_load_file(configFile);
         if (json != INVALID_HANDLE && LoadMatchFromJson(json)) {
             CloseHandle(json);
-            Get5_MessageToAll("Loaded match config.");
+            Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
         } else {
             MatchConfigFail("invalid match json");
             return false;
@@ -152,7 +152,7 @@ public bool LoadMatchFile(const char[] config) {
             return false;
         } else if (kv.ImportFromFile(config) && LoadMatchFromKv(kv)) {
             delete kv;
-            Get5_MessageToAll("Loaded match config.");
+            Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
         } else {
             delete kv;
             MatchConfigFail("invalid match kv");
@@ -744,7 +744,7 @@ public Action Command_AddPlayer(int client, int args) {
 
 public Action Command_RemovePlayer(int client, int args) {
     if (g_GameState == GameState_None) {
-        ReplyToCommand(client,"Cannot change player lists when there is no match to modify");
+        ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
         return Plugin_Handled;
     }
 

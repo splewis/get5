@@ -5,7 +5,7 @@ public Action StartGoingLive(Handle timer) {
     ExecuteMatchConfigCvars();
 
     // Force kill the warmup if we (still) need to.
-    Get5_MessageToAll("The match will begin in %d seconds.", g_LiveCountdownTimeCvar.IntValue);
+    Get5_MessageToAll("%t", "MatchBeginInSecondsInfoMessage", g_LiveCountdownTimeCvar.IntValue);
     if (InWarmup()) {
         EndWarmup(g_LiveCountdownTimeCvar.IntValue);
     } else {
@@ -38,7 +38,7 @@ public Action MatchLive(Handle timer) {
     SetConVarInt(mp_match_restart_delay, tv_delay.IntValue + MATCH_END_DELAY_AFTER_TV + 5);
 
     for (int i = 0; i < 5; i++) {
-        Get5_MessageToAll("Match is {GREEN}LIVE");
+        Get5_MessageToAll("%t", "MatchIsLiveInfoMessage");
     }
 
     return Plugin_Handled;

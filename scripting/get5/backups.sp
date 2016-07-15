@@ -10,7 +10,7 @@ public Action Command_LoadBackup(int client, int args) {
     char path[PLATFORM_MAX_PATH];
     if (args >= 1 && GetCmdArg(1, path, sizeof(path))) {
         if (RestoreFromBackup(path)) {
-            Get5_MessageToAll("Successfully loaded backup %s", path);
+            Get5_MessageToAll("%t", "BackupLoadedInfoMessage", path);
         } else {
             ReplyToCommand(client, "Failed to load backup %s - check error logs", path);
         }

@@ -1,0 +1,231 @@
+"Phrases"
+{
+    "ReadyToVetoInfoMessage"
+    {
+        "ru"            "Напишите {GREEN}!ready {NORMAL}когда ваша команда будет готова к голосованию."
+    }
+    "WaitingForCastersReadyInfoMessage"
+    {
+        "ru"            "Ожидаем, пока все игроки напишут {GREEN}!ready {NORMAL}для начала."
+    }
+    "ReadyToRestoreBackupInfoMessage"
+    {
+        "ru"            "Напиши {GREEN}!ready {NORMAL}когда твоя команда будет готова загрузить сохраненную игру."
+    }
+    "ReadyToKnifeInfoMessage"
+    {
+        "ru"            "Напиши {GREEN}!ready {NORMAL}когда твоя команда будет готова к ножевому раунду."
+    }
+    "ReadyToStartInfoMessage"
+    {
+        "ru"            "Напиши {GREEN}!ready {NORMAL}когда твоя команда будет готова начать."
+    }
+    "WaitingForEnemySwapInfoMessage"
+    {
+        "ru"            "{1} выиграла раунд. Ожидаем, пока они напишут !stay или !swap."
+    }
+    "WaitingForGOTVBrodcastEndingInfoMessage"
+    {
+        "ru"            "Карта будет изменена, когда закончится трансляция на GOTV."
+    }
+    "NoMatchSetupInfoMessage"
+    {
+        "ru"            "На этом сервере нет матча."
+    }
+    "YourAreNotAPlayerInfoMessage"
+    {
+        "ru"            "Ты не являешься участником текущего матча"
+    }
+    "TeamIsFullInfoMessage"
+    {
+        "ru"            "Твоя команда заполнена"
+    }
+    "TeamForfeitInfoMessage"
+    {
+        "ru"            "{1} failed to ready up in time and has forfeit."
+    }
+    "MinutesToForfeitMessage"
+    {
+        "ru"            "{1} has {2} minutes left to ready up or they will forfeit the match."
+    }
+    "SecondsToForfeitInfoMessage"
+    {
+        "ru"            "SecondsToForfeitInfoMessage"
+    }
+    "10SecondsToForfeitInfoMessage"
+    {
+        "ru"            "{1} has 10 seconds to ready up or forfeit the match."
+    }
+    "PausePeriodSuffix"
+    {
+        "ru"            "для этой половины"
+    }
+    "MaxPausesUsedInfoMessage"
+    {
+        "ru"            "Твоя команда уже израсходовала максимум {1} паузы{2}."
+    }
+    "MaxPausesTimeUsedInfoMessage"
+    {
+        "ru"            "Твоя команда уже израсходовала максимум {1} секунд времени паузы{2}."
+    }
+    "MatchPausedByTeamMessage"
+    {
+        "ru"            "{1} поставил матч на паузу."
+    }
+    "PauseTimeExpiration10SecInfoMessage"
+    {
+        "ru"            "{1} уже израсходовали количество пауз, снятие с паузы через 10 секунд."
+    }
+    "PauseTimeExpirationInfoMessage"
+    {
+        "ru"            "У {1} осталось {2} секунд от паузы{3}."
+    }
+    "PauseRunoutInfoMessage"
+    {
+        "ru"            "Для {1} время паузы вышло, матч снимается с паузы."
+    }
+    "MatchUnpauseInfoMessage"
+    {
+        "ru"            "{1} снял матч с паузы."
+    }
+    "WaitingForUnpauseInfoMessage"
+    {
+        "ru"            "{1} желает снять паузу, ожидаем когда {2} напишут !unpause."
+    }
+    "TeamReadyToVetoInfoMessage"
+    {
+        "ru"            "{1} готовы для голосования."
+    }
+    "TeamReadyToRestoreBackupInfoMessage"
+    {
+        "ru"            "{1} готовы загрузить сохраненную игру."
+    }
+    "TeamReadyToKnifeInfoMessage"
+    {
+        "ru"            "{1} готовы к ножевому раунду."
+    }
+    "TeamReadyToBeginInfoMessage"
+    {
+        "ru"            "{1} готовы начать матч."
+    }
+    "TeamNotReadyInfoMessage"
+    {
+        "ru"            "{1} пока не готовы."
+    }
+    "AdminForceReadyInfoMessage"
+    {
+        "ru"            "Админ, в общем, сказал, что все готовы. Поехали."
+    }
+    "AdminForceEndInfoMessage"
+    {
+        "ru"            "Админ завершил матч."
+    }
+    "TeamWantsToReloadLastRoundInfoMessage"
+    {
+        "ru"            "{1} желает остановить и перезагрузить последний раунд, ждем {2} чтобы написали !stop для подтверждения."
+    }
+    "TeamWinnigSeriesInfoMessage"
+    {
+        "ru"            "{1}{NORMAL} выигрывает со счетом {2}-{3}"
+    }
+    "SeriesTiedInfoMessage"
+    {
+        "ru"            "Матч остановлен на счете {1}-{2}"
+    }
+    "NextSeriesMapInfoMessage"
+    {
+        "ru"            "Следующая карта в серии {GREEN}{1}"
+    }
+    "TeamWonMatchInfoMessage"
+    {
+        "ru"            "{1} выиграл матч."
+    }
+    "TeamsSplitSeriesBO2InfoMessage"
+    {
+        "ru"            "{1} и {2} закончили серию со счетом 1-1."
+    }
+    "TeamWonSeriesInfoMessage"
+    {
+        "ru"            "{1} выиграли серию {2}-{3}."
+    }
+    "MatchFinishedInfoMessage"
+    {
+        "ru"            "Матч уже завершен"
+    }
+    "CurrentScoreInfoMessage"
+    {
+        "ru"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
+    }
+    "BackupLoadedInfoMessage"
+    {
+        "ru"            "Удачно загружен бэкап {1}"
+    }
+    "MatchBeginInSecondsInfoMessage"
+    {
+        "ru"            "Матч начнется через {1} секунд."
+    }
+    "MatchIsLiveInfoMessage"
+    {
+        "ru"            "Матч {GREEN}НАЧАЛСЯ!"
+    }
+    "KnifeIn5SecInfoMessage"
+    {
+        "ru"            "Ножевой раунд начнется через 5 секунд."
+    }
+    "KnifeInfoMessage"
+    {
+        "ru"            "Ножевой раунд!"
+    }
+    "TeamDecidedToStayInfoMessage"
+    {
+        "ru"            "{1} решили остатся в той же команде."
+    }
+    "TeamDecidedToSwapInfoMessage
+    {
+        "ru"            "{1} решили сменить стороны."
+    }
+    "TeamLostTimeToDecideInfoMessage"
+    {
+        "ru"            "{1} остаются в той же команде, так как они не успели принять решение вовремя."
+    }
+    "ChangingMapInfoMessage"
+    {
+        "ru"            "Карта изменена на {GREEN}{1}..."
+    }
+    "MapDecidedInfoMessage"
+    {
+        "ru"            "Итак, была выбрана карта:"
+    }
+    "MapIsInfoMessage"
+    {
+        "ru"            "Карта {1}: {GREEN}{2}"
+    }
+    "TeamPickedMapInfoMessage"
+    {
+        "ru"            "{1} выбрал {GREEN}{2} {NORMAL}как карту {3}"
+    }
+    "TeamSelectSideInfoMessage"
+    {
+        "ru"            "{1} выбрали начать за {GREEN}{2} {NORMAL}на {3}"
+    }
+    "TeamVetoedMapInfoMessage"
+    {
+        "ru"            "{1} вычеркнули {LIGHT_RED}{2}"
+    }
+    "CaptainLeftOnVetoInfoMessage"
+    {
+        "ru"            "Капитан пропал по время голосования, голосование приостановлено."
+    }
+    "ReadyToResumeVetoInfoMessage"
+    {
+        "ru"            "Напишите {GREEN}!ready {NORMAL}, когда будете готовы продолжить голосование."
+    }
+    "MatchConfigLoadedInfoMessage"
+    {
+        "ru"            "Загружен конфиг для матча."
+    }
+    "MoveToCoachInfoMessage"
+    {
+        "ru"            "Так как твоя команда заполнена, ты был перемещен на позицию тренера."
+    }
+}

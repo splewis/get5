@@ -17,11 +17,11 @@ public void CreateMapVeto() {
 
 public void VetoFinished() {
     ChangeState(GameState_Warmup);
-    Get5_MessageToAll("The maps have been decided:");
+    Get5_MessageToAll("%t", "MapDecidedInfoMessage");
     for (int i = 0; i < g_MapsToPlay.Length; i++) {
         char map[PLATFORM_MAX_PATH];
         g_MapsToPlay.GetString(i, map, sizeof(map));
-        Get5_MessageToAll("Map %d: {GREEN}%s", i + 1, map);
+        Get5_MessageToAll("%t", "MapIsInfoMessage", i + 1, map);
     }
 
     g_MapChangePending = true;
@@ -125,7 +125,7 @@ public int MapPickHandler(Menu menu, MenuAction action, int param1, int param2) 
         g_MapsToPlay.PushString(mapName);
         RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
-        Get5_MessageToAll("%s picked {GREEN}%s {NORMAL}as map %d",
+        Get5_MessageToAll("%t", "TeamPickedMapInfoMessage",
             g_FormattedTeamNames[team], mapName, g_MapsToPlay.Length);
         g_LastVetoTeam = team;
 
@@ -177,7 +177,7 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
         char mapName[PLATFORM_MAX_PATH];
         g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
 
-        Get5_MessageToAll("%s has selected to start on {GREEN}%s {NORMAL}on %s",
+        Get5_MessageToAll("%t", "TeamSelectSideInfoMessage",
             g_FormattedTeamNames[team], choice, mapName);
 
         MapVetoController(client);
@@ -210,7 +210,7 @@ public int VetoHandler(Menu menu, MenuAction action, int param1, int param2) {
         RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
         MatchTeam team = GetClientMatchTeam(client);
-        Get5_MessageToAll("%s vetoed {LIGHT_RED}%s", g_FormattedTeamNames[team], mapName);
+        Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], mapName);
 
         Call_StartForward(g_OnMapVetoed);
         Call_PushCell(team);
@@ -229,8 +229,8 @@ public int VetoHandler(Menu menu, MenuAction action, int param1, int param2) {
 }
 
 static void AbortVeto() {
-    Get5_MessageToAll("A captain left during the veto, pausing the veto.");
-    Get5_MessageToAll("Type {GREEN}!ready {NORMAL}when you are ready to resume the veto.");
+    Get5_MessageToAll("%t", "CaptainLeftOnVetoInfoMessage");
+    Get5_MessageToAll("%t", "ReadyToResumeVetoInfoMessage");
     ChangeState(GameState_PreVeto);
 }
 

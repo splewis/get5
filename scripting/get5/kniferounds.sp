@@ -20,7 +20,8 @@ public Action Timer_AnnounceKnife(Handle timer) {
 
 public void EndKnifeRound(bool swap) {
     if (swap) {
-        SwapSides();
+        g_TeamSide[MatchTeam_Team1] = TEAM2_STARTING_SIDE;
+        g_TeamSide[MatchTeam_Team2] = TEAM1_STARTING_SIDE;
         for (int i = 1; i <= MaxClients; i++) {
             if (IsValidClient(i)) {
                 int team = GetClientTeam(i);
@@ -95,7 +96,9 @@ public Action Command_T(int client, int args) {
 }
 
 public Action Timer_ForceKnifeDecision(Handle timer) {
-    EndKnifeRound(false);
-    Get5_MessageToAll("%t", "TeamLostTimeToDecideInfoMessage",
-        g_FormattedTeamNames[g_KnifeWinnerTeam]);
+    if (g_GameState == GameState_WaitingForKnifeRoundDecision) {
+        EndKnifeRound(false);
+        Get5_MessageToAll("%t", "TeamLostTimeToDecideInfoMessage",
+            g_FormattedTeamNames[g_KnifeWinnerTeam]);
+   }
 }

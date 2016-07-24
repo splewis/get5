@@ -93,6 +93,7 @@ char g_MatchTitle[MAX_CVAR_LENGTH];
 int g_FavoredTeamPercentage = 0;
 char g_FavoredTeamText[MAX_CVAR_LENGTH];
 int g_PlayersPerTeam = 5;
+int g_MinPlayersPerTeam = 4;
 bool g_SkipVeto = false;
 MatchSideType g_MatchSideType = MatchSideType_Standard;
 ArrayList g_CvarNames = null;
@@ -641,19 +642,31 @@ public Action Command_Unpause(int client, int args) {
 }
 
 public Action Command_Ready(int client, int args) {
-    if (g_GameState == GameState_None) {
+    if (g_GameState != GameState_PreVeto && g_GameState != GameState_Warmup) {
         return Plugin_Handled;
     }
 
     MatchTeam t = GetClientMatchTeam(client);
+    int playerCount = CountPlayersOnMatchTeam(t);
 
     if (t == MatchTeam_Team1 && !g_TeamReady[MatchTeam_Team1]) {
-        g_TeamReady[MatchTeam_Team1] = true;
-        PrintReadyMessage(MatchTeam_Team1);
+        if (playerCount < g_MinPlayersPerTeam) {
+            g_TeamReady[MatchTeam_Team1] = true;
+            PrintReadyMessage(MatchTeam_Team1);
+        } else {
+            Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", g_MinPlayersPerTeam);
+        }
+
     } else if (t == MatchTeam_Team2 && !g_TeamReady[MatchTeam_Team2]) {
-        g_TeamReady[MatchTeam_Team2] = true;
-        PrintReadyMessage(MatchTeam_Team2);
+        if (playerCount < g_MinPlayersPerTeam) {
+            g_TeamReady[MatchTeam_Team2] = true;
+            PrintReadyMessage(MatchTeam_Team2);
+        } else {
+            Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", g_MinPlayersPerTeam);
+        }
+
     }
+
     return Plugin_Handled;
 }
 
@@ -674,7 +687,7 @@ static void PrintReadyMessage(MatchTeam team) {
 }
 
 public Action Command_NotReady(int client, int args) {
-    if (g_GameState == GameState_None) {
+    if (g_GameState != GameState_PreVeto && g_GameState != GameState_Warmup) {
         return Plugin_Handled;
     }
 
@@ -690,7 +703,7 @@ public Action Command_NotReady(int client, int args) {
 }
 
 public Action Command_ForceReady(int client, int args) {
-    if (g_GameState != GameState_PreVeto && g_GameState != GameState_Warmup) {
+    if (g_GameState != GameState_PreVeto || g_GameState != GameState_Warmup) {
         return Plugin_Handled;
     }
 

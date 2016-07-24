@@ -85,7 +85,8 @@ Of the below fields, only the ``team1`` and ``team2`` fields are actually requir
 - ``maplist``: list of the maps in use (an array of strings in JSON, mapnames as keys for KeyValues), you should always use an odd-sized maplist
 - ``skip_veto``: whether the veto will be skipped and the maps will come from the maplist (in the order given)
 - ``side_type``: either "standard", "never_knife", or "always_knife"; standard means the team that doesn't pick a map gets the side choice, never_knife means team is always on CT first, and always knife means there is always a knife round
-- ``players_per_team``: maximum players per team (doesn't include a coach spot)
+- ``players_per_team``: maximum players per team (doesn't include a coach spot, default: 5)
+- ``min_players_to_ready``: minimum players a team needs to be able to ready up (default: 1)
 - ``favored_percentage_team1``: wrapper for ``mp_teamprediction_pct``
 - ``favored_percentage_text`` wrapper for ``mp_teamprediction_txt``
 - ``cvars``: cvars to be set during the match warmup/knife round/live state

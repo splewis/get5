@@ -105,6 +105,11 @@
         "#format"       "{1:s},{2:s}"
         "en"            "{1} wants to unpause, waiting for {2} to type !unpause."
     }
+    "TeamFailToReadyMinPlayerCheck"
+    {
+        "#format"       "{1:d}"
+        "en"            "You must have at least {1} players on the server to ready up."
+    }
     "TeamReadyToVetoInfoMessage"
     {
         "#format"       "{1:s}"

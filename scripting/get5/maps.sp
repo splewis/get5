@@ -18,36 +18,3 @@ public Action Timer_DelayedChangeMap(Handle timer, Handle pack) {
 
     return Plugin_Handled;
 }
-
-stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool cleanName=false) {
-    // explode map by '/' so we can remove any directory prefixes (e.g. workshop stuff)
-    char buffers[4][PLATFORM_MAX_PATH];
-    int numSplits = ExplodeString(mapName, "/", buffers, sizeof(buffers), PLATFORM_MAX_PATH);
-    int mapStringIndex = (numSplits > 0) ? (numSplits - 1) : (0);
-    strcopy(buffer, len, buffers[mapStringIndex]);
-
-    // do it with backslashes too
-    numSplits = ExplodeString(buffer, "\\", buffers, sizeof(buffers), PLATFORM_MAX_PATH);
-    mapStringIndex = (numSplits > 0) ? (numSplits - 1) : (0);
-    strcopy(buffer, len, buffers[mapStringIndex]);
-
-    if (cleanName) {
-        if (StrEqual(buffer, "de_cache")) {
-            strcopy(buffer, len, "Cache");
-        } else if (StrEqual(buffer, "de_inferno")) {
-            strcopy(buffer, len, "Inferno");
-        } else if (StrEqual(buffer, "de_dust2")) {
-            strcopy(buffer, len, "Dust II");
-        } else if (StrEqual(buffer, "de_mirage")) {
-            strcopy(buffer, len, "Mirage");
-        } else if (StrEqual(buffer, "de_train")) {
-            strcopy(buffer, len, "Train");
-        } else if (StrEqual(buffer, "de_cbble")) {
-            strcopy(buffer, len, "Cobblestone");
-        } else if (StrEqual(buffer, "de_overpass")) {
-            strcopy(buffer, len, "Overpass");
-        } else if (StrEqual(buffer, "de_nuke")) {
-            strcopy(buffer, len, "Nuke");
-        }
-    }
-}

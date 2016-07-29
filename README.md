@@ -111,7 +111,6 @@ Note: these are auto-executed on plugin start by the auto-generated (the 1st tim
 
 You should either set these in the above file, or in the match config's ``cvars`` section. Note: cvars set in the ``cvars`` section will override other settings.
 
-- ``get5_auto_dump_stats``: whether match stats keyvalues files are saved to a get5_matchstats_matchid.cfg file (updated each map end)
 - ``get5_autoload_config``: a config file to autoload on map starts if no match is loaded
 - ``get5_check_auths``: whether the steamids from a "players" section are used to force players onto teams (default 1)
 - ``get5_demo_name_format``: format to name demo files in (default ``{MATCHID}_map{MAPNUMBER}_{MAPNAME}``)
@@ -124,9 +123,10 @@ You should either set these in the above file, or in the match config's ``cvars`
 - ``get5_max_pause_time``: maximum number of time the game can spend paused by a team, 0=unlimited
 - ``get5_reset_pauses_each_half``: whether pause limits are reset each halftime period (default 1)
 - ``get5_pausing_enabled``: whether pausing (!pause command) is enabled
+- ``get5_stats_path_format``: path where stats are output each map end if set
 - ``get5_stop_command_enabled``: whether the !stop command is enabled
 - ``get5_time_to_start``: time (in seconds_ teams have to ready up before forfeiting the match, 0=unlimited
 - ``get5_time_to_make_knife_decision``: time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited
-- ``get5_time_format``: time format string (default ``"%Y-%m-%d_%H``), only affects if a {TIME} tag is used in ``get5_demo_name_format``
+- ``get5_time_format``: time format string (default ``"%Y-%m-%d_%H``), only affects if a {TIME} tag is used in other file-name formatting cvars
 - ``get5_wait_for_spec_ready``: whether to wait for spectators (if there are any) to ready up to begin
 - ``get5_warmup_cfg``: config file executed in warmup periods

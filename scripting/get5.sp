@@ -52,12 +52,10 @@
 
 
 /** ConVar handles **/
-ConVar g_AutoDumpStatsCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
 ConVar g_DemoNameFormatCvar;
-ConVar g_DemoTimeFormatCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
@@ -66,9 +64,11 @@ ConVar g_MaxPausesCvar;
 ConVar g_MaxPauseTimeCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_ResetPausesEachHalfCvar;
+ConVar g_StatsPathFormatCvar;
 ConVar g_StopCommandEnabledCvar;
-ConVar g_TeamTimeToStartCvar;
 ConVar g_TeamTimeToKnifeDecisionCvar;
+ConVar g_TeamTimeToStartCvar;
+ConVar g_TimeFormatCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
 
@@ -192,8 +192,6 @@ public void OnPluginStart() {
     LoadTranslations("get5.phrases");
 
     /** ConVars **/
-    g_AutoDumpStatsCvar = CreateConVar("get5_auto_dump_stats", "0",
-        "Whether match stats keyvalues files are saved to a get5_matchstats_matchid.cfg file (updated each map end)");
     g_AutoLoadConfigCvar = CreateConVar("get5_autoload_config", "",
         "Name of a match config file to automatically load when the server loads");
     g_BackupSystemEnabledCvar = CreateConVar("get5_backup_system_enabled", "1",
@@ -202,8 +200,6 @@ public void OnPluginStart() {
         "If set to 0, get5 will not force players to the correct team based on steamid");
     g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format",
         "{MATCHID}_map{MAPNUMBER}_{MAPNAME}", "Format for demo file names");
-    g_DemoTimeFormatCvar = CreateConVar("get5_time_format", "%Y-%m-%d_%H",
-        "Time format to use when creating demo file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
     g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "1",
         "Whether the plugin kicks new clients when no match is loaded");
     g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg",
@@ -220,12 +216,16 @@ public void OnPluginStart() {
         "Whether pause limits will be reset each halftime period");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",
         "Whether pausing is allowed.");
+    g_StatsPathFormatCvar = CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg",
+        "Where match stats are saved (updated each map end), set to \"\" to disable");
     g_StopCommandEnabledCvar = CreateConVar("get5_stop_command_enabled", "1",
         "Whether clients can use the !stop command to restore to the last round");
     g_TeamTimeToStartCvar = CreateConVar("get5_time_to_start", "0",
         "Time (in seconds) teams have to ready up before forfeiting the match, 0=unlimited");
     g_TeamTimeToKnifeDecisionCvar = CreateConVar("get5_time_to_make_knife_decision", "60",
         "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited");
+    g_TimeFormatCvar = CreateConVar("get5_time_format", "%Y-%m-%d_%H",
+        "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
     g_WaitForSpecReadyCvar = CreateConVar("get5_wait_for_spec_ready", "0",
         "Whether to wait for spectators to ready up if there are any");
     g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg",
@@ -1139,44 +1139,8 @@ public void StartGame(bool knifeRound) {
     if (!IsTVEnabled()) {
         LogError("GOTV demo could not be recorded since tv_enable is not set to 1");
     } else {
-        // Get the map, with any workshop stuff before removed.
-        // This is {MAP} in the format string.
-        char mapName[PLATFORM_MAX_PATH];
-        GetCleanMapName(mapName, sizeof(mapName));
-
-        // Get the time, this is {TIME} in the format string.
-        char timeFormat[64];
-        g_DemoTimeFormatCvar.GetString(timeFormat, sizeof(timeFormat));
-        int timeStamp = GetTime();
-        char formattedTime[64];
-        FormatTime(formattedTime, sizeof(formattedTime), timeFormat, timeStamp);
-
-        // Get the player count, this is {TEAMSIZE} in the format string.
-        char playerCount[MAX_INTEGER_STRING_LENGTH];
-        IntToString(g_PlayersPerTeam, playerCount, sizeof(playerCount));
-
-        // Get team names with spaces removed.
-        char team1Str[MAX_CVAR_LENGTH];
-        strcopy(team1Str, sizeof(team1Str), g_TeamNames[MatchTeam_Team1]);
-        ReplaceString(team1Str, sizeof(team1Str), " ", "_");
-
-        char team2Str[MAX_CVAR_LENGTH];
-        strcopy(team2Str, sizeof(team2Str), g_TeamNames[MatchTeam_Team2]);
-        ReplaceString(team2Str, sizeof(team2Str), " ", "_");
-
-        // Create the actual demo name to use.
-        char demoName[PLATFORM_MAX_PATH];
-        g_DemoNameFormatCvar.GetString(demoName, sizeof(demoName));
-
-        int mapNumber = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] + 1;
-        ReplaceStringWithInt(demoName, sizeof(demoName), "{MAPNUMBER}", mapNumber, false);
-        ReplaceString(demoName, sizeof(demoName), "{MATCHID}", g_MatchID, false);
-        ReplaceString(demoName, sizeof(demoName), "{MAPNAME}", mapName, false);
-        ReplaceString(demoName, sizeof(demoName), "{TIME}", formattedTime, false);
-        ReplaceString(demoName, sizeof(demoName), "{TEAM1}", team1Str, false);
-        ReplaceString(demoName, sizeof(demoName), "{TEAM2}", team2Str, false);
-
-        if (Record(demoName)) {
+        char demoName[PLATFORM_MAX_PATH + 1];
+        if (FormatCvarString(g_DemoNameFormatCvar, demoName, sizeof(demoName)) && Record(demoName)) {
             Format(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);
             LogMessage("Recording to %s", g_DemoFileName);
         } else {
@@ -1301,4 +1265,39 @@ stock bool AllTeamsReady(bool includeSpec=true) {
     } else {
         return playersReady && g_TeamReady[MatchTeam_TeamSpec];
     }
+}
+
+public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
+    g_DemoNameFormatCvar.GetString(buffer, len);
+    if (StrEqual(buffer, ""))
+        return false;
+
+    char mapName[PLATFORM_MAX_PATH];
+    GetCleanMapName(mapName, sizeof(mapName));
+
+    // Get the time, this is {TIME} in the format string.
+    char timeFormat[64];
+    g_TimeFormatCvar.GetString(timeFormat, sizeof(timeFormat));
+    int timeStamp = GetTime();
+    char formattedTime[64];
+    FormatTime(formattedTime, sizeof(formattedTime), timeFormat, timeStamp);
+
+    // Get team names with spaces removed.
+    char team1Str[MAX_CVAR_LENGTH];
+    strcopy(team1Str, sizeof(team1Str), g_TeamNames[MatchTeam_Team1]);
+    ReplaceString(team1Str, sizeof(team1Str), " ", "_");
+
+    char team2Str[MAX_CVAR_LENGTH];
+    strcopy(team2Str, sizeof(team2Str), g_TeamNames[MatchTeam_Team2]);
+    ReplaceString(team2Str, sizeof(team2Str), " ", "_");
+
+    int mapNumber = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] + 1;
+    ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", mapNumber, false);
+    ReplaceString(buffer, len, "{MATCHID}", g_MatchID, false);
+    ReplaceString(buffer, len, "{MAPNAME}", mapName, false);
+    ReplaceString(buffer, len, "{TIME}", formattedTime, false);
+    ReplaceString(buffer, len, "{TEAM1}", team1Str, false);
+    ReplaceString(buffer, len, "{TEAM2}", team2Str, false);
+
+    return true;
 }

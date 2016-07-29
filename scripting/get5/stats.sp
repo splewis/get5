@@ -382,9 +382,8 @@ static int GetClutchingClient(int csTeam) {
 }
 
 public void DumpToFile() {
-    if (g_AutoDumpStatsCvar.IntValue != 0) {
-        char path[PLATFORM_MAX_PATH];
-        Format(path, sizeof(path), "get5_matchstats_%s", g_MatchID);
+    char path[PLATFORM_MAX_PATH + 1];
+    if (FormatCvarString(g_StatsPathFormatCvar, path, sizeof(path))) {
         g_StatsKv.ExportToFile(path);
     }
 }

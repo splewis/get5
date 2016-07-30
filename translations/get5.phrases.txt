@@ -148,7 +148,7 @@
         "#format"       "{1:s},{2:s}"
         "en"            "{1} wants to stop and reload last round, need {2} to confirm with !stop."
     }
-    "TeamWinnigSeriesInfoMessage"
+    "TeamWinningSeriesInfoMessage"
     {
         "#format"       "{1:s},{2:d},{3:d}"
         "en"            "{1}{NORMAL} is winning the series {2}-{3}"

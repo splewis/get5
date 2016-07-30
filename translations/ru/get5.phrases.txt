@@ -124,7 +124,7 @@
     {
         "ru"            "{1} желает остановить и перезагрузить последний раунд, ждем {2} чтобы написали !stop для подтверждения."
     }
-    "TeamWinnigSeriesInfoMessage"
+    "TeamWinningSeriesInfoMessage"
     {
         "ru"            "{1}{NORMAL} выигрывает со счетом {2}-{3}"
     }

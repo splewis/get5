@@ -128,7 +128,7 @@
     {
         "de"            "{1} möchte die letzte Runde wiederholen, {2} muss mit !stop bestätigen."
     }
-    "TeamWinnigSeriesInfoMessage"
+    "TeamWinningSeriesInfoMessage"
     {
         "de"            "{1}{NORMAL} gewinnt die Serie {2}-{3}"
     }

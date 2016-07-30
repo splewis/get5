@@ -703,7 +703,7 @@ public Action Command_NotReady(int client, int args) {
 }
 
 public Action Command_ForceReady(int client, int args) {
-    if (g_GameState != GameState_PreVeto || g_GameState != GameState_Warmup) {
+    if (g_GameState != GameState_PreVeto && g_GameState != GameState_Warmup) {
         return Plugin_Handled;
     }
 

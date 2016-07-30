@@ -650,7 +650,7 @@ public Action Command_Ready(int client, int args) {
     int playerCount = CountPlayersOnMatchTeam(t);
 
     if (t == MatchTeam_Team1 && !g_TeamReady[MatchTeam_Team1]) {
-        if (playerCount < g_MinPlayersPerTeam) {
+        if (playerCount >= g_MinPlayersPerTeam) {
             g_TeamReady[MatchTeam_Team1] = true;
             PrintReadyMessage(MatchTeam_Team1);
         } else {
@@ -658,7 +658,7 @@ public Action Command_Ready(int client, int args) {
         }
 
     } else if (t == MatchTeam_Team2 && !g_TeamReady[MatchTeam_Team2]) {
-        if (playerCount < g_MinPlayersPerTeam) {
+        if (playerCount >= g_MinPlayersPerTeam) {
             g_TeamReady[MatchTeam_Team2] = true;
             PrintReadyMessage(MatchTeam_Team2);
         } else {

@@ -577,7 +577,7 @@ public Action Command_Pause(int client, int args) {
 }
 
 public Action Timer_PauseTimeCheck(Handle timer, int data) {
-    if (g_GameState != GameState_Live || !IsPaused()) {
+    if (!Pauseable() || !IsPaused()) {
         return Plugin_Stop;
     }
 

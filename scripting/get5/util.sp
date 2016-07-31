@@ -413,8 +413,10 @@ stock int MaxMapsToPlay(int mapsToWin) {
 stock void CSTeamString(int csTeam, char[] buffer, int len) {
     if (csTeam == CS_TEAM_CT) {
         Format(buffer, len, "CT");
-    } else {
+    } else if (csTeam == CS_TEAM_T) {
         Format(buffer, len, "T");
+    } else {
+        Format(buffer, len, "none");
     }
 }
 

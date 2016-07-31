@@ -56,6 +56,7 @@ ConVar g_AutoLoadConfigCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
 ConVar g_DemoNameFormatCvar;
+ConVar g_EventLogFormatCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
@@ -162,6 +163,7 @@ Handle g_OnMapVetoed = INVALID_HANDLE;
 Handle g_OnRoundStatsUpdated = INVALID_HANDLE;
 Handle g_OnSeriesInit = INVALID_HANDLE;
 Handle g_OnSeriesResult = INVALID_HANDLE;
+Handle g_OnEvent = INVALID_HANDLE;
 
 #include "get5/util.sp"
 #include "get5/kniferounds.sp"
@@ -205,13 +207,17 @@ public void OnPluginStart() {
     g_CheckAuthsCvar = CreateConVar("get5_check_auths", "1",
         "If set to 0, get5 will not force players to the correct team based on steamid");
     g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format",
-        "{MATCHID}_map{MAPNUMBER}_{MAPNAME}", "Format for demo file names");
+        "{MATCHID}_map{MAPNUMBER}_{MAPNAME}", "Format for demo file names, use \"\" to disable");
+    g_EventLogFormatCvar = CreateConVar("get5_event_log_format",
+        "logs/get5_match{MATCHID}_event_log.log",
+        "Path to use when writing match event logs, use \"\" to disable");
     g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "1",
         "Whether the plugin kicks new clients when no match is loaded");
     g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg",
         "Config file to exec when the game goes live");
     g_LiveCountdownTimeCvar = CreateConVar("get5_live_countdown_time", "10",
-        "Number of seconds used to count down when a match is going live", 0, true, 5.0, true, 60.0);
+        "Number of seconds used to count down when a match is going live",
+        0, true, 5.0, true, 60.0);
     g_MaxBackupAgeCvar = CreateConVar("get5_max_backup_age", "160000",
         "Number of seconds before a backup file is automatically deleted, 0 to disable");
     g_MaxPausesCvar = CreateConVar("get5_max_pauses", "0",
@@ -339,6 +345,8 @@ public void OnPluginStart() {
     g_OnSeriesInit = CreateGlobalForward("Get5_OnSeriesInit", ET_Ignore);
     g_OnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore,
         Param_Cell, Param_Cell, Param_Cell);
+    g_OnEvent = CreateGlobalForward("Get5_OnEvent", ET_Ignore,
+        Param_String);
 
     /** Start any repeating timers **/
     CreateTimer(LIVE_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
@@ -407,6 +415,12 @@ public void OnClientPutInServer(int client) {
     }
 
     Stats_ResetClientRoundValues(client);
+}
+
+public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs) {
+    if (StrEqual(command, "say")) {
+        EventLogger_ClientSay(client, sArgs);
+    }
 }
 
 /**
@@ -874,6 +888,8 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
         g_MapChangePending = true;
         WriteBackup();
 
+        EventLogger_MapEnd(winningTeam);
+
         char mapName[PLATFORM_MAX_PATH];
         GetCleanMapName(mapName, sizeof(mapName));
 
@@ -982,6 +998,8 @@ public void EndSeries() {
     }
 
     Stats_SeriesEnd(winningTeam);
+    EventLogger_SeriesEnd(winningTeam,
+        g_TeamSeriesScores[MatchTeam_Team1], g_TeamSeriesScores[MatchTeam_Team2]);
 
     Call_StartForward(g_OnSeriesResult);
     Call_PushCell(winningTeam);
@@ -1090,6 +1108,8 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
         Call_StartForward(g_OnRoundStatsUpdated);
         Call_Finish();
 
+        EventLogger_RoundEnd(csTeamWinner);
+
         int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
         LogDebug("m_totalRoundsPlayed = %d", roundsPlayed);
 
@@ -1191,6 +1211,8 @@ public void ChangeState(GameState state) {
     Call_Finish();
     g_GameState = state;
 }
+
+#include "get5/eventlogger.sp"
 
 public Action Command_Status(int client, int args) {
     if (!LibraryExists("jansson")) {

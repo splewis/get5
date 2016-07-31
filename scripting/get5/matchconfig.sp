@@ -108,6 +108,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup=false) {
         ExecCfg(g_WarmupCfgCvar);
         EnsurePausedWarmup();
 
+        EventLogger_SeriesStart();
         Stats_InitSeries();
         Call_StartForward(g_OnSeriesInit);
         Call_Finish();
@@ -168,6 +169,8 @@ static void MatchConfigFail(const char[] reason, any ...) {
     char buffer[512];
     VFormat(buffer, sizeof(buffer), reason, 2);
     LogError("Failed to load match config: %s", buffer);
+
+    EventLogger_MatchConfigFail(buffer);
 
     Call_StartForward(g_OnLoadMatchConfigFailed);
     Call_PushString(buffer);

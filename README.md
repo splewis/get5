@@ -114,6 +114,7 @@ You should either set these in the above file, or in the match config's ``cvars`
 - ``get5_autoload_config``: a config file to autoload on map starts if no match is loaded
 - ``get5_check_auths``: whether the steamids from a "players" section are used to force players onto teams (default 1)
 - ``get5_demo_name_format``: format to name demo files in (default ``{MATCHID}_map{MAPNUMBER}_{MAPNAME}``)
+- ``get5_event_log_format``: format to write get5 event logs to (default ``logs/get5_match{MATCHID}.log``)
 - ``get5_kick_when_no_match_loaded``: whether to kick all clients if no match is loaded
 - ``get5_last_backup_file``: last match backup file get5 wrote in the current series
 - ``get5_live_cfg``: config file executed when the game goes live

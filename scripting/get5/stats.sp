@@ -3,6 +3,7 @@ public void Stats_PluginStart() {
     HookEvent("player_hurt", Stats_DamageDealtEvent, EventHookMode_Pre);
     HookEvent("bomb_planted", Stats_BombPlantedEvent);
     HookEvent("bomb_defused", Stats_BombDefusedEvent);
+    HookEvent("bomb_exploded", Stats_BombExplodedEvent);
     HookEvent("flashbang_detonate", Stats_FlashbangDetonateEvent, EventHookMode_Pre);
     HookEvent("player_blind", Stats_PlayerBlindEvent);
 }
@@ -147,6 +148,9 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
     int assister = GetClientOfUserId(event.GetInt("assister"));
     bool headshot = event.GetBool("headshot");
 
+    char weapon[32];
+    event.GetString("weapon", weapon, sizeof(weapon));
+
     bool validAttacker = IsValidClient(attacker);
     bool validVictim = IsValidClient(victim);
 
@@ -166,6 +170,11 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
             int flasher = g_RoundFlashedBy[victim];
             if (IsValidClient(flasher) && flasher != attacker)
                 IncrementPlayerStat(flasher, STAT_FLASHBANG_ASSISTS);
+            else
+                flasher = 0;
+
+            EventLogger_PlayerDeath(attacker, victim, headshot,
+                assister, flasher, weapon);
 
         } else {
             if (attacker == victim)
@@ -228,8 +237,10 @@ public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBr
     }
 
     int client = GetClientOfUserId(event.GetInt("userid"));
+    int site = event.GetInt("site");
     if (IsValidClient(client)) {
         IncrementPlayerStat(client, STAT_BOMBPLANTS);
+        EventLogger_BombPlanted(client, site);
     }
 
     return Plugin_Continue;
@@ -241,8 +252,24 @@ public Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBr
     }
 
     int client = GetClientOfUserId(event.GetInt("userid"));
+    int site = event.GetInt("site");
     if (IsValidClient(client)) {
         IncrementPlayerStat(client, STAT_BOMBDEFUSES);
+        EventLogger_BombDefused(client, site);
+    }
+
+    return Plugin_Continue;
+}
+
+public Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontBroadcast) {
+    if (g_GameState != GameState_Live) {
+        return Plugin_Continue;
+    }
+
+    int client = GetClientOfUserId(event.GetInt("userid"));
+    int site = event.GetInt("site");
+    if (IsValidClient(client)) {
+        EventLogger_BombExploded(client, site);
     }
 
     return Plugin_Continue;

@@ -90,6 +90,8 @@ public void MapVetoController(int client) {
             g_MapSides.Push(SideChoice_Team1CT);
         }
 
+        EventLogger_MapPicked(MatchTeam_TeamNone, mapName, g_MapsToPlay.Length - 1);
+
         Call_StartForward(g_OnMapPicked);
         Call_PushCell(MatchTeam_TeamNone);
         Call_PushString(mapName);
@@ -129,6 +131,8 @@ public int MapPickHandler(Menu menu, MenuAction action, int param1, int param2) 
             g_FormattedTeamNames[team], mapName, g_MapsToPlay.Length);
         g_LastVetoTeam = team;
 
+        EventLogger_MapPicked(team, mapName, g_MapsToPlay.Length - 1);
+
         Call_StartForward(g_OnMapPicked);
         Call_PushCell(team);
         Call_PushString(mapName);
@@ -162,12 +166,16 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
 
         char choice[PLATFORM_MAX_PATH];
         menu.GetItem(param2, choice, sizeof(choice));
+        int selectedSide;
+
         if (StrEqual(choice, "CT")) {
+            selectedSide = CS_TEAM_CT;
             if (team == MatchTeam_Team1)
                 g_MapSides.Push(SideChoice_Team1CT);
             else
                 g_MapSides.Push(SideChoice_Team1T);
         } else {
+            selectedSide = CS_TEAM_T;
             if (team == MatchTeam_Team1)
                 g_MapSides.Push(SideChoice_Team1T);
             else
@@ -177,6 +185,7 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
         char mapName[PLATFORM_MAX_PATH];
         g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
 
+        EventLogger_SidePicked(team, mapName, g_MapsToPlay.Length - 1, selectedSide);
         Get5_MessageToAll("%t", "TeamSelectSideInfoMessage",
             g_FormattedTeamNames[team], choice, mapName);
 
@@ -211,6 +220,8 @@ public int VetoHandler(Menu menu, MenuAction action, int param1, int param2) {
 
         MatchTeam team = GetClientMatchTeam(client);
         Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], mapName);
+
+        EventLogger_MapVetoed(team, mapName);
 
         Call_StartForward(g_OnMapVetoed);
         Call_PushCell(team);

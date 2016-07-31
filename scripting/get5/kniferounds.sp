@@ -15,6 +15,7 @@ public Action Timer_AnnounceKnife(Handle timer) {
     for (int i = 0; i < 5; i++)
         Get5_MessageToAll("%t", "KnifeInfoMessage");
 
+    EventLogger_KnifeStart();
     return Plugin_Handled;
 }
 
@@ -42,6 +43,8 @@ public void EndKnifeRound(bool swap) {
 
     g_TeamStartingSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team1];
     g_TeamStartingSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team2];
+
+    EventLogger_KnifeWon(g_KnifeWinnerTeam, swap);
     ChangeState(GameState_GoingLive);
     CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
 }

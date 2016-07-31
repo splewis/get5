@@ -37,6 +37,9 @@ enum SideChoice {
     SideChoice_KnifeRound,  // There will be a knife round to choose sides
 };
 
+// Called each get5-event with JSON formatted event text.
+forward void Get5_OnEvent(const char[] eventJson);
+
 // Called when a series is first setup.
 forward void Get5_OnSeriesInit();
 

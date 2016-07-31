@@ -230,6 +230,8 @@ public bool RestoreFromBackup(const char[] path) {
     Call_StartForward(g_OnBackupRestore);
     Call_Finish();
 
+    EventLogger_BackupLoaded(path);
+
     return true;
 }
 

@@ -19,6 +19,9 @@ public Action StartGoingLive(Handle timer) {
     // the game uses after the origina countdown.
     float delay = float(5 + g_LiveCountdownTimeCvar.IntValue);
     CreateTimer(delay, MatchLive);
+
+    EventLogger_GoingLive();
+
     Call_StartForward(g_OnGoingLive);
     Call_PushCell(GetMapNumber());
     Call_Finish();

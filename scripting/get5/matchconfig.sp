@@ -326,7 +326,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
     }
 
     if (kv.JumpToKey("team1")) {
-        LoadTeamData(kv, MatchTeam_Team1, "Team1", TEAM1_COLOR);
+        LoadTeamData(kv, MatchTeam_Team1);
         kv.GoBack();
     } else {
         MatchConfigFail("Missing \"team1\" section in match kv");
@@ -334,7 +334,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
     }
 
     if (kv.JumpToKey("team2")) {
-        LoadTeamData(kv, MatchTeam_Team2, "Team2", TEAM2_COLOR);
+        LoadTeamData(kv, MatchTeam_Team2);
         kv.GoBack();
     } else {
         MatchConfigFail("Missing \"team2\" section in match kv");
@@ -406,7 +406,7 @@ static bool LoadMatchFromJson(Handle json) {
 
     Handle team1 = json_object_get(json, "team1");
     if (team1 != INVALID_HANDLE) {
-        LoadTeamDataJson(team1, MatchTeam_Team1, "Team1", TEAM1_COLOR);
+        LoadTeamDataJson(team1, MatchTeam_Team1);
         CloseHandle(team1);
     } else {
         MatchConfigFail("Missing \"team1\" section in match json");
@@ -415,7 +415,7 @@ static bool LoadMatchFromJson(Handle json) {
 
     Handle team2 = json_object_get(json, "team2");
     if (team2 != INVALID_HANDLE) {
-        LoadTeamDataJson(team2, MatchTeam_Team2, "Team2", TEAM2_COLOR);
+        LoadTeamDataJson(team2, MatchTeam_Team2);
         CloseHandle(team2);
     } else {
         MatchConfigFail("Missing \"team2\" section in match json");
@@ -460,7 +460,7 @@ static bool LoadMatchFromJson(Handle json) {
     return true;
 }
 
-static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
+static void LoadTeamDataJson(Handle json, MatchTeam matchTeam) {
     GetTeamAuths(matchTeam).Clear();
 
     char fromfile[PLATFORM_MAX_PATH];
@@ -469,9 +469,6 @@ static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] defa
     if (StrEqual(fromfile, "")) {
         AddJsonAuthsToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
         json_object_get_string_safe(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH);
-        if (StrEqual(g_TeamNames[matchTeam], ""))
-            strcopy(g_TeamNames[matchTeam], MAX_CVAR_LENGTH, defaultName);
-
         json_object_get_string_safe(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
         json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
         json_object_get_string_safe(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
@@ -480,30 +477,31 @@ static void LoadTeamDataJson(Handle json, MatchTeam matchTeam, const char[] defa
         if (fromfileJson == INVALID_HANDLE) {
             LogError("Cannot load team config from file \"%s\", fromfile");
         } else {
-            LoadTeamDataJson(fromfileJson, matchTeam, defaultName, colorTag);
+            LoadTeamDataJson(fromfileJson, matchTeam);
             CloseHandle(fromfileJson);
         }
     }
 
     g_TeamSeriesScores[matchTeam] = json_object_get_int_safe(json, "series_score", 0);
-    Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
+    Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
+        g_DefaultTeamColors[matchTeam], g_TeamNames[matchTeam]);
 }
 
-static void LoadTeamData(KeyValues kv, MatchTeam matchTeam, const char[] defaultName, const char[] colorTag) {
+static void LoadTeamData(KeyValues kv, MatchTeam matchTeam) {
     GetTeamAuths(matchTeam).Clear();
     char fromfile[PLATFORM_MAX_PATH];
     kv.GetString("fromfile", fromfile, sizeof(fromfile));
 
     if (StrEqual(fromfile, "")) {
         AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
-        kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, defaultName);
+        kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, "");
         kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
         kv.GetString("logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH, "");
         kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");
     } else {
         KeyValues fromfilekv = new KeyValues("team");
         if (fromfilekv.ImportFromFile(fromfile)) {
-            LoadTeamData(fromfilekv, matchTeam, defaultName, colorTag);
+            LoadTeamData(fromfilekv, matchTeam);
         } else {
             LogError("Cannot load team config from file \"%s\"", fromfile);
         }
@@ -511,7 +509,8 @@ static void LoadTeamData(KeyValues kv, MatchTeam matchTeam, const char[] default
     }
 
     g_TeamSeriesScores[matchTeam] = kv.GetNum("series_score", 0);
-    Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag, g_TeamNames[matchTeam]);
+    Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
+        g_DefaultTeamColors[matchTeam], g_TeamNames[matchTeam]);
 }
 
 static void LoadDefaultMapList(ArrayList list) {
@@ -670,26 +669,17 @@ public Action Command_LoadTeam(int client, int args) {
         return Plugin_Handled;
     }
 
-    char defaultName[MAX_CVAR_LENGTH];
-    char defaultColor[MAX_CVAR_LENGTH];
-
     char arg1[PLATFORM_MAX_PATH];
     char arg2[PLATFORM_MAX_PATH];
     if (args >= 2 && GetCmdArg(1, arg1, sizeof(arg1)) && GetCmdArg(2, arg2, sizeof(arg2))) {
+
         MatchTeam team = MatchTeam_TeamNone;
         if (StrEqual(arg1, "team1"))  {
             team = MatchTeam_Team1;
-            defaultName = "team1";
-            defaultColor = TEAM1_COLOR;
-
         } else if (StrEqual(arg1, "team2")) {
             team = MatchTeam_Team2;
-            defaultName = "team2";
-            defaultColor = TEAM2_COLOR;
-
         } else if (StrEqual(arg1, "spec")) {
             team = MatchTeam_TeamSpec;
-
         } else {
             ReplyToCommand(client, "Unknown team: must be one of team1, team2, spec");
             return Plugin_Handled;
@@ -697,7 +687,7 @@ public Action Command_LoadTeam(int client, int args) {
 
         KeyValues kv = new KeyValues("team");
         if (kv.ImportFromFile(arg2)) {
-            LoadTeamData(kv, team, defaultName, defaultColor);
+            LoadTeamData(kv, team);
             ReplyToCommand(client, "Loaded team data for %s", arg1);
             SetMatchTeamCvars();
         } else {

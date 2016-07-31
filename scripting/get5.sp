@@ -131,6 +131,12 @@ bool g_TeamGivenStopCommand[MatchTeam_Count];
 int g_TeamPauseTimeUsed[MatchTeam_Count];
 int g_TeamPausesUsed[MatchTeam_Count];
 int g_ReadyTimeWaitingUsed[MatchTeam_Count];
+char g_DefaultTeamColors[][] = {
+    TEAM1_COLOR,
+    TEAM2_COLOR,
+    "{NORMAL}",
+    "{NORMAL}",
+};
 
 /** Map game-state **/
 MatchTeam g_KnifeWinnerTeam = MatchTeam_TeamNone;
@@ -454,6 +460,9 @@ public void OnMapStart() {
 }
 
 public Action Timer_CheckReady(Handle timer) {
+    CheckTeamNameStatus(MatchTeam_Team1);
+    CheckTeamNameStatus(MatchTeam_Team2);
+
     if (g_GameState == GameState_PreVeto) {
         if (AllTeamsReady(false)) {
             ChangeState(GameState_Veto);

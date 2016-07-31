@@ -22,6 +22,7 @@ static void EventLogger_LogEvent(const char[] eventName, Handle params) {
         LogError("Event JSON too long (%d characters, %d max): %s",
             eventName, strlen(buffer), kMaxCharacters);
     } else {
+        LogDebug("get5_event: %s", buffer);
         LogToGame("get5_event: %s", buffer);
 
         char logPath[PLATFORM_MAX_PATH];

@@ -178,6 +178,7 @@ Handle g_OnEvent = INVALID_HANDLE;
 #include "get5/jsonhelpers.sp"
 #include "get5/stats.sp"
 #include "get5/backups.sp"
+#include "get5/eventlogger.sp"
 
 
 
@@ -1211,8 +1212,6 @@ public void ChangeState(GameState state) {
     Call_Finish();
     g_GameState = state;
 }
-
-#include "get5/eventlogger.sp"
 
 public Action Command_Status(int client, int args) {
     if (!LibraryExists("jansson")) {

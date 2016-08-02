@@ -184,7 +184,7 @@
     {
         "de"            "{1} hat sich für den Stay entschieden."
     }
-    "TeamDecidedToSwapInfoMessage
+    "TeamDecidedToSwapInfoMessage"
     {
         "de"            "{1} hat sich für den Seitenwechsel entschieden."
     }

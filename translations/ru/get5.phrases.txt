@@ -180,7 +180,7 @@
     {
         "ru"            "{1} решили остатся в той же команде."
     }
-    "TeamDecidedToSwapInfoMessage
+    "TeamDecidedToSwapInfoMessage"
     {
         "ru"            "{1} решили сменить стороны."
     }

@@ -214,7 +214,7 @@
         "#format"       "{1:s}"
         "en"            "{1} has decided to stay."
     }
-    "TeamDecidedToSwapInfoMessage
+    "TeamDecidedToSwapInfoMessage"
     {
         "#format"       "{1:s}"
         "en"            "{1} has decided to swap."

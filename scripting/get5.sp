@@ -195,6 +195,7 @@ public Plugin myinfo = {
 
 public void OnPluginStart() {
     InitDebugLog(DEBUG_CVAR, "get5");
+    LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
 
     /** Translations **/
     LoadTranslations("get5.phrases");

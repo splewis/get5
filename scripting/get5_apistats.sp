@@ -51,6 +51,7 @@ public Plugin myinfo = {
 
 public void OnPluginStart() {
     InitDebugLog("get5_apistats_debug", "get5_api");
+    LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
 
     g_APIKeyCvar = CreateConVar("get5_web_api_key", "", "Match API key, this is automatically set through rcon");
     HookConVarChange(g_APIKeyCvar, ApiInfoChanged);

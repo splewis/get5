@@ -451,7 +451,7 @@ static bool LoadMatchFromJson(Handle json) {
         while (iterator != INVALID_HANDLE) {
             json_object_iter_key(iterator, cvarName, sizeof(cvarName));
             Handle value = json_object_iter_value(iterator);
-            json_string_value(value, cvarValue, sizeof(cvarValue));
+            json_string_value(value,cvarValue, sizeof(cvarValue));
             g_CvarNames.PushString(cvarName);
             g_CvarValues.PushString(cvarValue);
             CloseHandle(value);

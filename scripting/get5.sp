@@ -37,7 +37,6 @@
 
 #define DEBUG_CVAR "get5_debug"
 #define MATCH_ID_LENGTH 64
-#define MATCH_NAME_LENGTH 64
 #define MAX_CVAR_LENGTH 128
 #define MATCH_END_DELAY_AFTER_TV 10
 

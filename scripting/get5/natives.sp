@@ -157,14 +157,18 @@ public int Native_AddLiveCvar(Handle plugin, int numParams) {
     GetNativeString(2, cvarValue, sizeof(cvarValue));
     int index = g_CvarNames.FindString(cvarName);
 
-    // If not found, push to the end.
-    // Otherwise, overwrite the cvar value.
+    bool override = false;
+    if (numParams >= 3) {
+        override = (GetNativeCell(3) != 0);
+    }
+
     if (index == -1) {
         g_CvarNames.PushString(cvarName);
         g_CvarValues.PushString(cvarValue);
-    } else {
+    } else if (override) {
         g_CvarValues.SetString(index, cvarValue);
     }
+
     return 0;
 }
 

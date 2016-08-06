@@ -142,9 +142,6 @@ public void Get5_OnSeriesInit() {
     char matchid[64];
     Get5_GetMatchID(matchid, sizeof(matchid));
     g_MatchID = StringToInt(matchid);
-
-    Get5_AddLiveCvar("get5_web_api_key", g_APIKey);
-    Get5_AddLiveCvar("get5_web_api_url", g_APIURL);
 }
 
 public void Get5_OnGoingLive(int mapNumber) {
@@ -155,6 +152,9 @@ public void Get5_OnGoingLive(int mapNumber) {
         AddStringParam(req, "mapname", mapName);
         SteamWorks_SendHTTPRequest(req);
     }
+
+    Get5_AddLiveCvar("get5_web_api_key", g_APIKey);
+    Get5_AddLiveCvar("get5_web_api_url", g_APIURL);
 }
 
 public void UpdateRoundStats(int mapNumber) {

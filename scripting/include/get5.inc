@@ -41,6 +41,7 @@ enum SideChoice {
 forward void Get5_OnEvent(const char[] eventJson);
 
 // Called when a series is first setup.
+// Note: do not rely on the state of any cvars at this point.
 forward void Get5_OnSeriesInit();
 
 // Called each time in a match when a map is going live.
@@ -129,7 +130,7 @@ native void Get5_SetMatchID(const char[] id);
 
 // Adds a cvar to be set when going live.
 // Note: this should only be used when a match config loaded.
-native void Get5_AddLiveCvar(const char[] name, const char[] value);
+native void Get5_AddLiveCvar(const char[] name, const char[] value, bool override=true);
 
 // Copies the current series stats into the passed KeyValues structure.
 // Below are the keys used for stats in the kv copied.

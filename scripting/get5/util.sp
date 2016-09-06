@@ -241,6 +241,15 @@ stock void SetConVarStringSafe(const char[] name, const char[] value) {
     }
 }
 
+stock void GetConVarStringSafe(const char[] name, char[] value, int len) {
+    Handle cvar = FindConVar(name);
+    if (cvar == INVALID_HANDLE) {
+        LogError("Failed to find cvar: \"%s\"", name);
+    } else {
+        GetConVarString(cvar, value, len);
+    }
+}
+
 stock bool OnActiveTeam(int client) {
     if (!IsPlayer(client))
         return false;

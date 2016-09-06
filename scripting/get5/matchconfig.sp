@@ -950,9 +950,7 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
         "resource/flash/econ/tournaments/teams/%s.png",
         logoName);
 
-    if (FileExists(logoPath)) {
-        AddFileToDownloadsTable(logoPath);
-    }
+    AddFileToDownloadsTable(logoPath);
 }
 
 public void CheckTeamNameStatus(MatchTeam team) {

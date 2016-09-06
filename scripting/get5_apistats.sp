@@ -1,6 +1,6 @@
 /**
  * =============================================================================
- * Get5 API stats
+ * Get5 web API integration
  * Copyright (C) 2016. Sean Lewis.  All rights reserved.
  * =============================================================================
  *
@@ -143,7 +143,67 @@ public void Get5_OnSeriesInit() {
     char matchid[64];
     Get5_GetMatchID(matchid, sizeof(matchid));
     g_MatchID = StringToInt(matchid);
+
+
+    // Handle new logos.
+    if (!DirExists("resource/flash/econ/tournaments/teams")) {
+        if (!CreateDirectory("resource/flash/econ/tournaments/teams", 755)) {
+            LogError("Failed to create logo directory");
+        }
+    }
+
+    char logo1[32];
+    char logo2[32];
+    GetConVarStringSafe("mp_teamlogo_1", logo1, sizeof(logo1));
+    GetConVarStringSafe("mp_teamlogo_2", logo2, sizeof(logo2));
+    CheckForLogo(logo1);
+    CheckForLogo(logo2);
 }
+
+public void CheckForLogo(const char[] logo) {
+    char logoPath[PLATFORM_MAX_PATH + 1];
+    Format(logoPath, sizeof(logoPath),
+        "resource/flash/econ/tournaments/teams/%s.png",
+        logo);
+
+    // Try to fetch the file if we don't have it.
+    if (!FileExists(logoPath)) {
+        LogDebug("Fetching logo for %s", logo);
+        Handle req = CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.png", logo);
+        if (req == INVALID_HANDLE) {
+            return;
+        }
+
+        Handle pack = CreateDataPack();
+        WritePackString(pack, logo);
+
+        SteamWorks_SetHTTPRequestContextValue(req, view_as<int>(pack));
+        SteamWorks_SetHTTPCallbacks(req, LogoCallback);
+        SteamWorks_SendHTTPRequest(req);
+    }
+}
+
+
+public int LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status, int data) {
+    if (failure || !successful) {
+        LogError("Logo request failed, status code = %d", status);
+        return;
+    }
+
+    DataPack pack = view_as<DataPack>(data);
+    pack.Reset();
+    char logo[32];
+    pack.ReadString(logo, sizeof(logo));
+
+    char logoPath[PLATFORM_MAX_PATH + 1];
+    Format(logoPath, sizeof(logoPath),
+        "resource/flash/econ/tournaments/teams/%s.png",
+        logo);
+
+    LogMessage("Saved logo for %s to %s", logo, logoPath);
+    SteamWorks_WriteHTTPResponseBodyToFile(request, logoPath);
+}
+
 
 public void Get5_OnGoingLive(int mapNumber) {
     char mapName[64];

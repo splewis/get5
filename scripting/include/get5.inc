@@ -179,6 +179,10 @@ native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount
 #define STAT_V3 "v3"
 #define STAT_V4 "v4"
 #define STAT_V5 "v5"
+#define STAT_FIRSTKILL_T "firstkill_t"
+#define STAT_FIRSTKILL_CT "firstkill_ct"
+#define STAT_FIRSTDEATH_T "firstdeath_t"
+#define STAT_FIRSTDEATH_CT "firstdeath_ct"
 
 public SharedPlugin __pl_get5 = {
     name = "get5",

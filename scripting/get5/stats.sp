@@ -28,6 +28,10 @@ public void Stats_InitSeries() {
 public void Stats_ResetRoundValues() {
     g_SetTeamClutching[CS_TEAM_CT] = false;
     g_SetTeamClutching[CS_TEAM_T] = false;
+    g_TeamFirstKillDone[CS_TEAM_CT] = false;
+    g_TeamFirstKillDone[CS_TEAM_T] = false;
+    g_TeamFirstDeathDone[CS_TEAM_CT] = false;
+    g_TeamFirstDeathDone[CS_TEAM_T] = false;
 
     for (int i = 1; i <= MaxClients; i++) {
         Stats_ResetClientRoundValues(i);
@@ -156,9 +160,21 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
     if (validVictim) {
         IncrementPlayerStat(victim, STAT_DEATHS);
+
+        int victim_team = GetClientTeam(victim);
+        if (!g_TeamFirstDeathDone[victim_team]) {
+            g_TeamFirstDeathDone[victim_team] = true;
+            IncrementPlayerStat(victim, (victim_team == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
+        }
     }
 
     if (validAttacker) {
+        int attacker_team = GetClientTeam(attacker);
+        if (!g_TeamFirstKillDone[attacker_team]) {
+            g_TeamFirstKillDone[attacker_team] = true;
+            IncrementPlayerStat(attacker, (attacker_team == CS_TEAM_CT) ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
+        }
+
         if (HelpfulAttack(attacker, victim)) {
             g_RoundKills[attacker]++;
             IncrementPlayerStat(attacker, STAT_KILLS);

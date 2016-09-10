@@ -117,6 +117,8 @@ int g_RoundKills[MAXPLAYERS+1]; // kills per round
 int g_RoundClutchingEnemyCount[MAXPLAYERS+1]; // number of enemies left alive when last alive on your team
 int g_LastFlashBangThrower = -1;
 int g_RoundFlashedBy[MAXPLAYERS+1];
+bool g_TeamFirstKillDone[MatchTeam_Count];
+bool g_TeamFirstDeathDone[MatchTeam_Count];
 KeyValues g_StatsKv;
 
 ArrayList g_TeamScoresPerMap = null;

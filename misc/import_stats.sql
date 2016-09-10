@@ -89,6 +89,10 @@ CREATE TABLE `get5_stats_players` (
   `3k` smallint(5) unsigned NOT NULL,
   `4k` smallint(5) unsigned NOT NULL,
   `5k` smallint(5) unsigned NOT NULL,
+  `firstkill_t` smallint(5) unsigned NOT NULL,
+  `firstkill_ct` smallint(5) unsigned NOT NULL,
+  `firstdeath_t` smallint(5) unsigned NOT NULL,
+  `firstdeath_ct` smallint(5) unsigned NOT NULL,
   PRIMARY KEY (`matchid`,`mapnumber`,`steamid64`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

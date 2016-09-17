@@ -18,6 +18,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
     CreateNative("Get5_AddLiveCvar", Native_AddLiveCvar);
     CreateNative("Get5_IncreasePlayerStat", Native_IncreasePlayerStat);
     CreateNative("Get5_GetMatchStats", Native_GetMatchStats);
+    CreateNative("Get5_ChangeMatchState", Native_ChangeMatchState);
     RegPluginLibrary("get5");
     return APLRes_Success;
 }
@@ -189,4 +190,10 @@ public int Native_GetMatchStats(Handle plugin, int numParams) {
         g_StatsKv.Rewind();
         return view_as<int>(true);
     }
+}
+
+public int Native_ChangeMatchState(Handle plugin, int numParams) {
+    GameState state = GetNativeCell(1);
+    ChangeState(state);
+    return 0;
 }

@@ -173,9 +173,9 @@ public void EventLogger_BackupLoaded(const char[] path) {
     EventLogger_EndEvent("backup_loaded");
 }
 
-public void EventLogger_MatchConfigFail(const char[] path) {
+public void EventLogger_MatchConfigFail(const char[] reason) {
     EventLogger_StartEvent();
-    set_json_string(params, "path", path);
+    set_json_string(params, "reason", reason);
     EventLogger_EndEvent("match_config_load_fail");
 }
 

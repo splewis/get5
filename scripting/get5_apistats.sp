@@ -161,6 +161,10 @@ public void Get5_OnSeriesInit() {
 }
 
 public void CheckForLogo(const char[] logo) {
+    if (StrEqual(logo, "")) {
+        return;
+    }
+
     char logoPath[PLATFORM_MAX_PATH + 1];
     Format(logoPath, sizeof(logoPath),
         "resource/flash/econ/tournaments/teams/%s.png",

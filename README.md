@@ -123,6 +123,7 @@ You should either set these in the above file, or in the match config's ``cvars`
 - ``get5_max_pauses``: maximum number of pauses a team can use, 0=unlimited
 - ``get5_max_pause_time``: maximum number of time the game can spend paused by a team, 0=unlimited
 - ``get5_reset_pauses_each_half``: whether pause limits are reset each halftime period (default 1)
+- ``get5_fixed_pause_time``: if nonzero, the fixed length all pauses will be
 - ``get5_pausing_enabled``: whether pausing (!pause command) is enabled
 - ``get5_stats_path_format``: path where stats are output each map end if set
 - ``get5_stop_command_enabled``: whether the !stop command is enabled

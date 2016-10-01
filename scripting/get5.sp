@@ -56,6 +56,7 @@ ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
 ConVar g_DemoNameFormatCvar;
 ConVar g_EventLogFormatCvar;
+ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
@@ -214,6 +215,8 @@ public void OnPluginStart() {
     g_EventLogFormatCvar = CreateConVar("get5_event_log_format",
         "logs/get5_match{MATCHID}_event_log.log",
         "Path to use when writing match event logs, use \"\" to disable");
+    g_FixedPauseTimeCvar = CreateConVar("get5_fixed_pause_time", "0",
+        "If set to non-zero, this will be the fixed length of any pause");
     g_KickClientsWithNoMatchCvar = CreateConVar("get5_kick_when_no_match_loaded", "1",
         "Whether the plugin kicks new clients when no match is loaded");
     g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg",
@@ -589,13 +592,18 @@ public Action Command_Pause(int client, int args) {
 
     g_TeamReadyForUnpause[MatchTeam_Team1] = false;
     g_TeamReadyForUnpause[MatchTeam_Team2] = false;
-    Pause();
+
+    // If the pause will need explicit resuming, we will create a timer to poll the pause status.
+    bool need_resume = Pause(g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team));
     if (IsPlayer(client)) {
         Get5_MessageToAll("%t", "MatchPausedByTeamMessage", client);
     }
 
     if (IsPlayerTeam(team)) {
-        CreateTimer(1.0, Timer_PauseTimeCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
+        if (need_resume) {
+            CreateTimer(1.0, Timer_PauseTimeCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
+        }
+
         g_TeamPausesUsed[team]++;
     }
 

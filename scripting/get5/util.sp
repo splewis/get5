@@ -184,8 +184,22 @@ stock bool IsPaused() {
     return GameRules_GetProp("m_bMatchWaitingForResume") != 0;
 }
 
-stock void Pause() {
-    ServerCommand("mp_pause_match");
+// Pauses and returns if the match will automatically unpause after the duration ends.
+stock bool Pause(int pauseTime=0, int csTeam=CS_TEAM_NONE) {
+    if (pauseTime == 0 || csTeam == CS_TEAM_SPECTATOR || csTeam == CS_TEAM_NONE) {
+        ServerCommand("mp_pause_match");
+        return false;
+    } else {
+        ServerCommand("mp_pause_match");
+        if (csTeam == CS_TEAM_T) {
+            GameRules_SetProp("m_bTerroristTimeOutActive", true);
+            GameRules_SetPropFloat("m_flTerroristTimeOutRemaining", float(pauseTime));
+        } else {
+            GameRules_SetProp("m_bCTTimeOutActive", true);
+            GameRules_SetPropFloat("m_flCTTimeOutRemaining", float(pauseTime));
+        }
+        return true;
+    }
 }
 
 stock void Unpause() {

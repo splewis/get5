@@ -10,18 +10,19 @@ The core idea behind its use is all match details being fully defined in a singl
 It is meant to be relatively easy to use for tournament admins.
 
 Features of this include:
-- Locking players to the correct team by their Steam ID
-- In-game map veto support from the match's maplist
+- Locking players to the correct team by their [Steam ID](https://github.com/splewis/get5/wiki/Authentication-and-Steam-IDs)
+- In-game [map veto](https://github.com/splewis/get5/wiki/Map-Vetoes) support from the match's maplist
 - Support for multi-map series (Bo1, Bo2, Bo3, Bo5, etc.)
 - Warmup and !ready system each team
 - Automatic GOTV demo recording
-- Advanced backup system built on top of valve's backup system ([see the wiki](https://github.com/splewis/get5/wiki/Match-backups))
+- [Advanced backup system](https://github.com/splewis/get5/wiki/Match-backups) built on top of valve's backup system
 - Knifing for sides
-- Pausing support
+- [Pausing support](https://github.com/splewis/get5/wiki/Pausing)
 - Coaching support
 - Automatically executing match config files
 - Automatically setting team names/logos/match text values for spectator/GOTV clients
-- Stats collection and optional MySQL result/stats upload ([see the wiki](https://github.com/splewis/get5/wiki/Stats))
+- [Stats collection](https://github.com/splewis/get5/wiki/Stats) and optional MySQL result/stats upload
+- Allows lightweight usage for [scrims](https://github.com/splewis/get5/wiki/Using-get5-for-scrims)
 
 #### TODO:
 

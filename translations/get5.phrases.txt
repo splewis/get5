@@ -105,6 +105,16 @@
         "#format"       "{1:s},{2:s}"
         "en"            "{1} wants to unpause, waiting for {2} to type !unpause."
     }
+    "PausesLeftInfoMessage"
+    {
+        "#format"       "{1:s},{2:d},{3:s}"
+        "en"            "{1} has {2} pauses left{}."
+    }
+    "OnePauseLeftInfoMessage"
+    {
+        "#format"       "{1:s},{2:d},{3:s}"
+        "en"            "{1} has {2} pause left{}."
+    }
     "TeamFailToReadyMinPlayerCheck"
     {
         "#format"       "{1:d}"

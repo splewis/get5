@@ -605,6 +605,20 @@ public Action Command_Pause(int client, int args) {
         }
 
         g_TeamPausesUsed[team]++;
+
+        pausePeriodString = "";
+        if (g_ResetPausesEachHalfCvar.IntValue != 0) {
+            Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
+        }
+
+        int pausesLeft = g_MaxPausesCvar.IntValue - g_TeamPausesUsed[team];
+        if (pausesLeft == 1) {
+            Get5_MessageToAll("%t", "OnePauseLeftInfoMessage",
+                g_FormattedTeamNames[team], g_TeamPausesUsed[team], pausePeriodString);
+        } else {
+            Get5_MessageToAll("%t", "PausesLeftInfoMessage",
+                g_FormattedTeamNames[team], g_TeamPausesUsed[team], pausePeriodString);
+        }
     }
 
     return Plugin_Handled;

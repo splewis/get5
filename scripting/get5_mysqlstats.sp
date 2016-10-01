@@ -274,8 +274,8 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
                 assists, teamkills, headshot_kills, damage, \
                 bomb_plants, bomb_defuses, \
                 v1, v2, v3, v4, v5, \
-                2k, 3k, 4k, 5k \
-                firstkill_t, firstkill_ct, firstdeath_t, firstdeath_ct, \
+                2k, 3k, 4k, 5k, \
+                firstkill_t, firstkill_ct, firstdeath_t, firstdeath_ct \
                 ) VALUES \
                 (%d, %d, '%s', '%s', \
                 %d, '%s', %d, %d, %d, \

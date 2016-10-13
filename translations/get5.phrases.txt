@@ -108,12 +108,12 @@
     "PausesLeftInfoMessage"
     {
         "#format"       "{1:s},{2:d},{3:s}"
-        "en"            "{1} has {2} pauses left{}."
+        "en"            "{1} has {2} pauses left{3}."
     }
     "OnePauseLeftInfoMessage"
     {
         "#format"       "{1:s},{2:d},{3:s}"
-        "en"            "{1} has {2} pause left{}."
+        "en"            "{1} has {2} pause left{3}."
     }
     "TeamFailToReadyMinPlayerCheck"
     {

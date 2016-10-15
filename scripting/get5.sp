@@ -64,6 +64,7 @@ ConVar g_MaxBackupAgeCvar;
 ConVar g_MaxPausesCvar;
 ConVar g_MaxPauseTimeCvar;
 ConVar g_PausingEnabledCvar;
+ConVar g_QuickRestartCvar;
 ConVar g_ResetPausesEachHalfCvar;
 ConVar g_StatsPathFormatCvar;
 ConVar g_StopCommandEnabledCvar;
@@ -230,6 +231,8 @@ public void OnPluginStart() {
         "Maximum number of pauses a team can use, 0=unlimited");
     g_MaxPauseTimeCvar = CreateConVar("get5_max_pause_time", "300",
         "Maximum number of time the game can spend paused by a team, 0=unlimited");
+    g_QuickRestartCvar = CreateConVar("get5_quick_restarts", "0",
+        "Whether to use a quick restart or a full live-on-3 restart. 0 for LO3.");
     g_ResetPausesEachHalfCvar = CreateConVar("get5_reset_pauses_each_half", "1",
         "Whether pause limits will be reset each halftime period");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",

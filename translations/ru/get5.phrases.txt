@@ -168,6 +168,10 @@
     {
         "ru"            "Матч {GREEN}НАЧАЛСЯ!"
     }
+    "MatchPoweredBy"
+    {
+        "ru"            "от {YELLOW}Get5"
+    }
     "KnifeIn5SecInfoMessage"
     {
         "ru"            "Ножевой раунд начнется через 5 секунд."

@@ -211,6 +211,10 @@
     {
         "en"            "Match is {GREEN}LIVE"
     }
+    "MatchPoweredBy"
+    {
+        "en"            "Powered by {YELLOW}Get5"
+    }
     "KnifeIn5SecInfoMessage"
     {
         "en"            "The knife round will begin in 5 seconds."

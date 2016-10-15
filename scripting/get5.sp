@@ -577,6 +577,7 @@ public Action Command_Pause(int client, int args) {
 
     if (client == 0) {
     Pause();
+    Get5_MessageToAll("%t", "AdminForcePauseInfoMessage");
     } else {
 
     MatchTeam team = GetClientMatchTeam(client);
@@ -673,6 +674,7 @@ public Action Command_Unpause(int client, int args) {
     // Let console force unpause
     if (client == 0) {
         Unpause();
+        Get5_MessageToAll("%t", "AdminForceUnPauseInfoMessage");
     } else {
         MatchTeam team = GetClientMatchTeam(client);
         g_TeamReadyForUnpause[team] = true;

@@ -846,7 +846,7 @@ public Action Command_Stop(int client, int args) {
         return Plugin_Handled;
     }
 
-    if (g_GameState != GameState_Live || roundsPlayed == 0 || g_PendingSideSwap == true ) {
+    if (g_GameState != GameState_Live || g_PendingSideSwap == true ) {
         return Plugin_Handled;
     }
 

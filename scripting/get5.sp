@@ -847,7 +847,12 @@ public Action Command_Stop(int client, int args) {
     }
 
     int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
-    if (g_GameState != GameState_Live || roundsPlayed == 0) {
+    int roundsPerHalf = GetCvarIntSafe("mp_maxrounds") / 2;
+    int roundsPerOTHalf = GetCvarIntSafe("mp_overtime_maxrounds") / 2;
+    int otround = roundsPlayed - 2*roundsPerHalf;
+
+    // ( Match Not Live || No Rounds Played || Half Time || Full Time, 2 * Half Time)
+    if (g_GameState != GameState_Live || roundsPlayed == 0 || roundsPlayed == roundsPerHalf || (roundsPlayed == (2 * roundsPerHalf))) {
         return Plugin_Handled;
     }
 

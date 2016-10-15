@@ -575,6 +575,10 @@ public Action Command_Pause(int client, int args) {
         Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
     }
 
+    if (client == 0) {
+    Pause();
+    } else {
+
     MatchTeam team = GetClientMatchTeam(client);
     int maxPauses = g_MaxPausesCvar.IntValue;
     if (maxPauses > 0 && g_TeamPausesUsed[team] >= maxPauses && IsPlayerTeam(team)) {
@@ -619,6 +623,7 @@ public Action Command_Pause(int client, int args) {
             Get5_MessageToAll("%t", "PausesLeftInfoMessage",
                 g_FormattedTeamNames[team], g_TeamPausesUsed[team], pausePeriodString);
         }
+      }
     }
 
     return Plugin_Handled;

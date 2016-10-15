@@ -576,11 +576,17 @@ public Action Command_Pause(int client, int args) {
     }
 
     MatchTeam team = GetClientMatchTeam(client);
-    int maxPauses = g_MaxPausesCvar.IntValue;
-    if (maxPauses > 0 && g_TeamPausesUsed[team] >= maxPauses && IsPlayerTeam(team)) {
-        Get5_Message(client, "%t", "MaxPausesUsedInfoMessage",
-            maxPauses, pausePeriodString);
-        return Plugin_Handled;
+
+    if (client == 0) {
+        Pause();
+        Get5_MessageToAll("%t","AdminForcePauseInfoMessage");
+    } else {
+        int maxPauses = g_MaxPausesCvar.IntValue;
+        if (maxPauses > 0 && g_TeamPausesUsed[team] >= maxPauses && IsPlayerTeam(team)) {
+            Get5_Message(client, "%t", "MaxPausesUsedInfoMessage",
+                maxPauses, pausePeriodString);
+            return Plugin_Handled;
+        }
     }
 
     int maxPauseTime = g_MaxPauseTimeCvar.IntValue;
@@ -668,6 +674,7 @@ public Action Command_Unpause(int client, int args) {
     // Let console force unpause
     if (client == 0) {
         Unpause();
+        Get5_MessageToAll("%t", "AdminForceUnPauseInfoMessage");
     } else {
         MatchTeam team = GetClientMatchTeam(client);
         g_TeamReadyForUnpause[team] = true;

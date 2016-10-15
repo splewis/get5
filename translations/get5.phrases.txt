@@ -153,6 +153,14 @@
     {
         "en"            "An admin force ended the match."
     }
+    "AdminForcePauseInfoMessage"
+    {
+        "en"            "An admin force paused the match."
+    }
+    "AdminForceUnPauseInfoMessage"
+    {
+        "en"            "An admin force unpaused the match."
+    }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
         "#format"       "{1:s},{2:s}"

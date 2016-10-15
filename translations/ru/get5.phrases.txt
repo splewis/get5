@@ -120,6 +120,14 @@
     {
         "ru"            "Админ завершил матч."
     }
+    "AdminForcePauseInfoMessage"
+    {
+        "ru"            "Администратор сила сделала паузу игра."
+    }
+    "AdminForceUnPauseInfoMessage"
+    {
+        "ru"            "Администратор силы возобновленная игра."
+    }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
         "ru"            "{1} желает остановить и перезагрузить последний раунд, ждем {2} чтобы написали !stop для подтверждения."

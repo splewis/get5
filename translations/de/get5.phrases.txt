@@ -124,6 +124,14 @@
     {
         "de"            "Ein Admin hat das Match beendet."
     }
+    "AdminForcePauseInfoMessage"
+    {
+        "de"            "Ein Admin hat das Match pausiert."
+    }
+    "AdminForceUnPauseInfoMessage"
+    {
+        "de"            "Ein Admin hat das Match fortgesetzt."
+    }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
         "de"            "{1} möchte die letzte Runde wiederholen, {2} muss mit !stop bestätigen."

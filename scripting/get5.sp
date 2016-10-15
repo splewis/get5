@@ -846,11 +846,7 @@ public Action Command_Stop(int client, int args) {
         return Plugin_Handled;
     }
 
-    int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
-    int roundsPerHalf = GetCvarIntSafe("mp_maxrounds") / 2;
-
-    // ( Match Not Live || No Rounds Played || Half Time || Full Time, 2 * Half Time)
-    if (g_GameState != GameState_Live || roundsPlayed == 0 || roundsPlayed == roundsPerHalf || (roundsPlayed == (2 * roundsPerHalf))) {
+    if (g_GameState != GameState_Live || roundsPlayed == 0 || g_PendingSideSwap == true ) {
         return Plugin_Handled;
     }
 

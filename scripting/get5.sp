@@ -576,7 +576,7 @@ public Action Command_Pause(int client, int args) {
     }
 
     if (client == 0) {
-    Pause();
+    	Pause();
     Get5_MessageToAll("%t", "AdminForcePauseInfoMessage");
     } else {
 

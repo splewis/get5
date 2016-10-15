@@ -72,6 +72,7 @@ ConVar g_TeamTimeToStartCvar;
 ConVar g_TimeFormatCvar;
 ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
+ConVar g_MessagePrefixCvar;
 
 ConVar g_LastGet5BackupCvar;
 ConVar g_VersionCvar;
@@ -248,6 +249,8 @@ public void OnPluginStart() {
         "Whether to wait for spectators to ready up if there are any");
     g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg",
         "Config file to exec in warmup periods");
+    g_MessagePrefixCvar = CreateConVar("get5_message_prefix", "[{YELLOW}Get5{NORMAL}]",
+        "The tag applied before plugin messages. If you want no tag, you can set an empty string here.");
 
     /** Create and exec plugin's configuration file **/
     AutoExecConfig(true, "get5");

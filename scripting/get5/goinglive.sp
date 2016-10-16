@@ -19,7 +19,7 @@ public Action StartGoingLive(Handle timer) {
     // the game uses after the origina countdown.
     float delay = float(5 + g_LiveCountdownTimeCvar.IntValue);
 
-    if (g_QuickRestartCvar.IntValue != 0) {
+    if (g_QuickRestartCvar.IntValue == 0) {
         CreateTimer(delay, MatchLive);
     } else {
         CreateTimer(delay, Restart2);

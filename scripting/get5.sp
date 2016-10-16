@@ -853,8 +853,7 @@ public Action Command_Stop(int client, int args) {
         return Plugin_Handled;
     }
 
-    int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
-    if (g_GameState != GameState_Live || roundsPlayed == 0) {
+    if (g_GameState != GameState_Live || g_PendingSideSwap == true ) {
         return Plugin_Handled;
     }
 

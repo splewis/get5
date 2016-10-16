@@ -6,7 +6,6 @@ addons:
         - python-demjson  # needed for jsonlint
 
 env:
-    - SMVERSION=1.7
     - SMVERSION=1.8
     - SMVERSION=1.9
 

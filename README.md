@@ -45,6 +45,11 @@ If you need more help, see the [step-by-step guide in the wiki](https://github.c
 
 
 ## Commands
+
+Generally admin commands will have a ``get5_`` prefix and must be used in console. Commands intended for general player usage are created with ``sm_`` prefixes, which means sourcemod automtically registers a ``!`` chat version of the command. (For example: sm_ready in console is equivalent to !ready in chat)
+
+Some client commands are available also for admin usage. For example, sm_pause and sm_unpause will force pauses if executed by the server (e.g., through rcon).
+
 #### Client Commands
 - ``!ready``: marks a client's team as ready to begin
 - ``!unready``: marks a client's team as not-ready

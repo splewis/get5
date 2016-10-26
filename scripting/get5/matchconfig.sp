@@ -846,14 +846,7 @@ public Action Command_CreateScrim(int client, int args) {
     Format(path, sizeof(path), "get5_%s.cfg", matchid);
 
     KeyValues kv = new KeyValues("Match");
-
-    // Note: these settings can be overwritten by the template, and that's OK.
     kv.SetString("matchid", matchid);
-    kv.SetNum("maps_to_win", 1);
-    kv.SetNum("skip_veto", 1);
-    kv.SetNum("players_per_team", 5);
-    kv.SetString("side_type", "never_knife"); // no knife rounds
-
     kv.JumpToKey("maplist", true);
     kv.SetString(matchMap, "x");
     kv.GoBack();

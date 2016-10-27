@@ -40,7 +40,6 @@ char g_APIKey[128];
 ConVar g_APIURLCvar;
 char g_APIURL[128];
 
-
 public Plugin myinfo = {
     name = "Get5 Web API Integration",
     author = "splewis",
@@ -57,9 +56,11 @@ public void OnPluginStart() {
     HookConVarChange(g_APIKeyCvar, ApiInfoChanged);
 
     g_APIURLCvar = CreateConVar("get5_web_api_url", "", "URL the get5 api is hosted at")
+
     HookConVarChange(g_APIURLCvar, ApiInfoChanged)
 
-    RegConsoleCmd("get5_web_avaliable", Command_Avaliable);
+    RegConsoleCmd("get5_web_avaliable", Command_Avaliable); // legacy version since I'm bad at spelling
+    RegConsoleCmd("get5_web_available", Command_Avaliable);
 }
 
 public Action Command_Avaliable(int client, int args) {

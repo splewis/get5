@@ -907,8 +907,9 @@ static int AddPlayersToAuthKv(KeyValues kv, MatchTeam team, char teamName[MAX_CV
                 }
 
                 count++;
-                GetClientAuthId(i, AuthId_SteamID64, auth, sizeof(auth));
-                kv.SetString(auth, "x");
+                if (GetAuth(i, auth, sizeof(auth))) {
+                    kv.SetString(auth, "x");
+                }
             }
         }
     }

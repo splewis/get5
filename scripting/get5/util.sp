@@ -411,14 +411,21 @@ stock bool IsPlayerTeam(MatchTeam team) {
     return team == MatchTeam_Team1 || team == MatchTeam_Team2;
 }
 
+stock bool GetAuth(int client, char[] auth, int size) {
+    bool ret = GetClientAuthId(client, AuthId_SteamID64, auth, size);
+    if (!ret) {
+        LogError("Failed to get steamid for client %L", client);
+    }
+    return ret;
+}
+
 // TODO: might want a auth->client adt-trie to speed this up, maintained during
 // client auth and disconnect forwards.
 stock int AuthToClient(const char[] auth) {
     for (int i = 1; i <= MaxClients; i++) {
         if (IsAuthedPlayer(i)) {
             char clientAuth[AUTH_LENGTH];
-            GetClientAuthId(i, AuthId_SteamID64, clientAuth, sizeof(clientAuth));
-            if (StrEqual(auth, clientAuth)) {
+            if (GetAuth(i, clientAuth, sizeof(clientAuth)) && StrEqual(auth, clientAuth)) {
                 return i;
             }
         }

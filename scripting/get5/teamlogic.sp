@@ -162,8 +162,11 @@ public MatchTeam GetClientMatchTeam(int client) {
         return CSTeamToMatchTeam(GetClientTeam(client));
     } else {
         char auth[AUTH_LENGTH];
-        GetClientAuthId(client, AuthId_SteamID64, auth, sizeof(auth));
-        return GetAuthMatchTeam(auth);
+        if (GetAuth(client, auth, sizeof(auth))) {
+            return GetAuthMatchTeam(auth);
+        } else {
+            return MatchTeam_TeamNone;
+        }
     }
 }
 

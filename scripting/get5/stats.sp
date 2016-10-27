@@ -389,8 +389,9 @@ static void GoToPlayer(int client) {
     GoToTeam(team);
 
     char auth[AUTH_LENGTH];
-    GetClientAuthId(client, AuthId_SteamID64, auth, sizeof(auth));
-    g_StatsKv.JumpToKey(auth, true);
+    if (GetAuth(client, auth, sizeof(auth))) {
+        g_StatsKv.JumpToKey(auth, true);
+    }
 }
 
 static void GoBackFromPlayer() {

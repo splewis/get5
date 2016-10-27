@@ -267,6 +267,8 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
             char teamString[16];
             GetTeamString(team, teamString, sizeof(teamString));
 
+            // TODO: this should really get split up somehow. Once it hits 32-arguments
+            // (aka just a few more) it will cause runtime errors and the Format will fail.
             Format(queryBuffer, sizeof(queryBuffer),
                 "REPLACE INTO `get5_stats_players` \
                 (matchid, mapnumber, steamid64, team, \

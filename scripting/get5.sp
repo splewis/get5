@@ -232,7 +232,7 @@ public void OnPluginStart() {
     g_MaxPauseTimeCvar = CreateConVar("get5_max_pause_time", "300",
         "Maximum number of time the game can spend paused by a team, 0=unlimited");
     g_QuickRestartCvar = CreateConVar("get5_use_lo3", "0",
-        "Whether to use a quick restart or a full live-on-3 restart.");
+        "Whether to do a live-on-3 restart in addition to the warmup countdown.");
     g_ResetPausesEachHalfCvar = CreateConVar("get5_reset_pauses_each_half", "1",
         "Whether pause limits will be reset each halftime period");
     g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1",

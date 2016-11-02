@@ -18,13 +18,40 @@ public Action StartGoingLive(Handle timer) {
     // Delayed an extra 5 seconds for the final 3-second countdown
     // the game uses after the origina countdown.
     float delay = float(5 + g_LiveCountdownTimeCvar.IntValue);
-    CreateTimer(delay, MatchLive);
+
+    if (g_QuickRestartCvar.IntValue == 0) {
+        CreateTimer(delay, MatchLive);
+    } else {
+        CreateTimer(delay, Restart2);
+    }
 
     EventLogger_GoingLive();
 
     Call_StartForward(g_OnGoingLive);
     Call_PushCell(GetMapNumber());
     Call_Finish();
+
+    return Plugin_Handled;
+}
+
+public Action Restart2(Handle timer) {
+    if (g_GameState == GameState_None)
+        return Plugin_Handled;
+
+    Get5_MessageToAll("Restart 2/3");
+    RestartGame(5);
+    CreateTimer(4.0, Restart3);
+
+    return Plugin_Handled;
+}
+
+public Action Restart3(Handle timer) {
+    if (g_GameState == GameState_None)
+        return Plugin_Handled;
+
+    Get5_MessageToAll("Restart 3/3");
+    RestartGame(5);
+    CreateTimer(5.1, MatchLive);
 
     return Plugin_Handled;
 }

@@ -180,6 +180,10 @@
     {
         "de"            "Match ist {GREEN}LIVE"
     }
+    "MatchPoweredBy"
+    {
+        "de"            "Durch {YELLOW}Get5"
+    }
     "KnifeIn5SecInfoMessage"
     {
         "de"            "Die Messerrunde beginnt in 5 Sekunden."

@@ -44,5 +44,7 @@ public Action MatchLive(Handle timer) {
         Get5_MessageToAll("%t", "MatchIsLiveInfoMessage");
     }
 
+    Get5_MessageToAll("%t", "MatchPoweredBy");
+
     return Plugin_Handled;
 }

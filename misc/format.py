@@ -24,7 +24,6 @@ def main():
         subprocess.call('clang-format-3.9 -i {} -sort-includes=false'.format(filename), shell=True)
         with open(filename, 'r+') as f:
             data = f.read()
-            print(type(data))
             for (k, v) in replacements.items():
                 data = data.replace(k, v)
             f.seek(0)

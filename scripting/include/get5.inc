@@ -1,40 +1,42 @@
 #if defined _get5_included_
-  #endinput
+#endinput
 #endif
 #define _get5_included_
 
 #define AUTH_LENGTH 64
 
 enum GameState {
-    GameState_None,                          // no setup has taken place
-    GameState_PreVeto,                       // warmup, waiting for the veto
-    GameState_Veto,                          // warmup, doing the veto
-    GameState_Warmup,                        // setup done, waiting for players to ready up
-    GameState_KnifeRound,                    // in the knife round
-    GameState_WaitingForKnifeRoundDecision,  // waiting for a .stay/.swap command after the knife round
-    GameState_GoingLive,                     // in the lo3 process
-    GameState_Live,                          // the match is live
-    GameState_PostGame,                      // postgame screen + waiting for GOTV to finish broadcast
+  GameState_None,                          // no setup has taken place
+  GameState_PreVeto,                       // warmup, waiting for the veto
+  GameState_Veto,                          // warmup, doing the veto
+  GameState_Warmup,                        // setup done, waiting for players to ready up
+  GameState_KnifeRound,                    // in the knife round
+  GameState_WaitingForKnifeRoundDecision,  // waiting for a .stay/.swap command after the knife
+                                           // round
+  GameState_GoingLive,                     // in the lo3 process
+  GameState_Live,                          // the match is live
+  GameState_PostGame,                      // postgame screen + waiting for GOTV to finish broadcast
 };
 
 enum MatchTeam {
-    MatchTeam_Team1,
-    MatchTeam_Team2,
-    MatchTeam_TeamSpec,
-    MatchTeam_TeamNone,
-    MatchTeam_Count,
+  MatchTeam_Team1,
+  MatchTeam_Team2,
+  MatchTeam_TeamSpec,
+  MatchTeam_TeamNone,
+  MatchTeam_Count,
 };
 
 enum MatchSideType {
-    MatchSideType_Standard,     // Team that doesn't pick map gets side choice, leftovers go to knife rounds
-    MatchSideType_AlwaysKnife,  // All maps use a knife round to pick sides
-    MatchSideType_NeverKnife,   // Team 1 always starts CT
+  MatchSideType_Standard,     // Team that doesn't pick map gets side choice, leftovers go to knife
+                              // rounds
+  MatchSideType_AlwaysKnife,  // All maps use a knife round to pick sides
+  MatchSideType_NeverKnife,   // Team 1 always starts CT
 };
 
 enum SideChoice {
-    SideChoice_Team1CT,     // Team 1 will start on CT
-    SideChoice_Team1T,      // Team 2 will start on T
-    SideChoice_KnifeRound,  // There will be a knife round to choose sides
+  SideChoice_Team1CT,     // Team 1 will start on CT
+  SideChoice_Team1T,      // Team 2 will start on T
+  SideChoice_KnifeRound,  // There will be a knife round to choose sides
 };
 
 // Called each get5-event with JSON formatted event text.
@@ -55,14 +57,13 @@ forward void Get5_OnGameStateChanged(GameState oldState, GameState newState);
 forward void Get5_OnRoundStatsUpdated();
 
 // Called at the end of a map in a series.
-forward void Get5_OnMapResult(const char[] map, MatchTeam mapWinner,
-    int team1Score, int team2Score, int mapNumber);
+forward void Get5_OnMapResult(const char[] map, MatchTeam mapWinner, int team1Score, int team2Score,
+                              int mapNumber);
 
 // Called at the end of a full match.
 // Note: both Get5_OnMapResult and Get5_OnSeriesResult are called
 // on the last map of a series.
-forward void Get5_OnSeriesResult(MatchTeam seriesWinner,
-    int team1MapScore, int team2MapScore);
+forward void Get5_OnSeriesResult(MatchTeam seriesWinner, int team1MapScore, int team2MapScore);
 
 // Called when a match config fails to load.
 forward void Get5_OnLoadMatchConfigFailed(const char[] reason);
@@ -99,8 +100,8 @@ native bool Get5_LoadMatchConfig(const char[] filename);
 // If both Steamworks and system2 are loaded, system2 is used unless preferSystem2 is false.
 // If using the SteamWorks extension, request parameters should be left out of the url
 // and put into the optional ArrayLists parameters.
-native bool Get5_LoadMatchConfigFromURL(const char[] url, bool preferSystem2=true,
-    ArrayList paramNames=null, ArrayList paramValues=null);
+native bool Get5_LoadMatchConfigFromURL(const char[] url, bool preferSystem2 = true,
+                                        ArrayList paramNames = null, ArrayList paramValues = null);
 
 // Adds a player to a match team.
 // Returns if they were successfully added.
@@ -130,7 +131,7 @@ native void Get5_SetMatchID(const char[] id);
 
 // Adds a cvar to be set when going live.
 // Note: this should only be used when a match config loaded.
-native void Get5_AddLiveCvar(const char[] name, const char[] value, bool override=true);
+native void Get5_AddLiveCvar(const char[] name, const char[] value, bool override = true);
 
 // Copies the current series stats into the passed KeyValues structure.
 // Below are the keys used for stats in the kv copied.
@@ -139,7 +140,7 @@ native void Get5_AddLiveCvar(const char[] name, const char[] value, bool overrid
 native bool Get5_GetMatchStats(KeyValues kv);
 
 // Increases an (integer-typed) player statistic in the plugin's stats keyvalue structure.
-native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount=1);
+native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount = 1);
 
 // Series stats (root section)
 #define STAT_SERIESWINNER "winner"
@@ -185,8 +186,8 @@ native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount
 #define STAT_FIRSTDEATH_CT "firstdeath_ct"
 
 public SharedPlugin __pl_get5 = {
-    name = "get5",
-    file = "get5.smx",
+
+    name = "get5", file = "get5.smx",
 #if defined REQUIRE_PLUGIN
     required = 1,
 #else
@@ -196,21 +197,21 @@ public SharedPlugin __pl_get5 = {
 
 #if !defined REQUIRE_PLUGIN
 public __pl_get5_SetNTVOptional() {
-    MarkNativeAsOptional("Get5_GetGameState");
-    MarkNativeAsOptional("Get5_Message");
-    MarkNativeAsOptional("Get5_MessageToAll");
-    MarkNativeAsOptional("Get5_LoadMatchConfig");
-    MarkNativeAsOptional("Get5_LoadMatchConfigFromURL");
-    MarkNativeAsOptional("Get5_AddPlayerToTeam");
-    MarkNativeAsOptional("Get5_RemovePlayerFromTeam");
-    MarkNativeAsOptional("Get5_GetPlayerTeam");
-    MarkNativeAsOptional("Get5_CSTeamToMatchTeam");
-    MarkNativeAsOptional("Get5_MatchTeamToCSTeam");
-    MarkNativeAsOptional("Get5_GetTeamScores");
-    MarkNativeAsOptional("Get5_GetMatchID");
-    MarkNativeAsOptional("Get5_SetMatchID");
-    MarkNativeAsOptional("Get5_AddLiveCvar");
-    MarkNativeAsOptional("Get5_IncreasePlayerStat");
-    MarkNativeAsOptional("Get5_GetMatchStats");
+  MarkNativeAsOptional("Get5_GetGameState");
+  MarkNativeAsOptional("Get5_Message");
+  MarkNativeAsOptional("Get5_MessageToAll");
+  MarkNativeAsOptional("Get5_LoadMatchConfig");
+  MarkNativeAsOptional("Get5_LoadMatchConfigFromURL");
+  MarkNativeAsOptional("Get5_AddPlayerToTeam");
+  MarkNativeAsOptional("Get5_RemovePlayerFromTeam");
+  MarkNativeAsOptional("Get5_GetPlayerTeam");
+  MarkNativeAsOptional("Get5_CSTeamToMatchTeam");
+  MarkNativeAsOptional("Get5_MatchTeamToCSTeam");
+  MarkNativeAsOptional("Get5_GetTeamScores");
+  MarkNativeAsOptional("Get5_GetMatchID");
+  MarkNativeAsOptional("Get5_SetMatchID");
+  MarkNativeAsOptional("Get5_AddLiveCvar");
+  MarkNativeAsOptional("Get5_IncreasePlayerStat");
+  MarkNativeAsOptional("Get5_GetMatchStats");
 }
 #endif

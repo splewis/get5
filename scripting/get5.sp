@@ -18,18 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "include/get5.inc"
+#include "include/logdebug.inc"
+#include "include/restorecvars.inc"
 #include <cstrike>
 #include <sdktools>
 #include <sourcemod>
 #include <testing>
-#include "include/restorecvars.inc"
-#include "include/logdebug.inc"
-#include "include/get5.inc"
 
 #undef REQUIRE_EXTENSIONS
 #include <SteamWorks>
-#include <system2>
 #include <smjansson>
+#include <system2>
 #define REMOTE_CONFIG_FILENAME "remote.json"
 
 #define LIVE_TIMER_INTERVAL 1.0
@@ -165,19 +165,20 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 Handle g_OnEvent = INVALID_HANDLE;
 
 #include "get5/util.sp"
-#include "get5/kniferounds.sp"
+
+#include "get5/backups.sp"
+#include "get5/eventlogger.sp"
 #include "get5/goinglive.sp"
+#include "get5/jsonhelpers.sp"
+#include "get5/kniferounds.sp"
 #include "get5/maps.sp"
 #include "get5/mapveto.sp"
 #include "get5/matchconfig.sp"
 #include "get5/natives.sp"
+#include "get5/stats.sp"
 #include "get5/teamlogic.sp"
 #include "get5/tests.sp"
 #include "get5/version.sp"
-#include "get5/jsonhelpers.sp"
-#include "get5/stats.sp"
-#include "get5/backups.sp"
-#include "get5/eventlogger.sp"
 
 // clang-format off
 public Plugin myinfo = {

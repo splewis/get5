@@ -21,7 +21,7 @@ def main():
                 files.append(os.path.join(dirpath, f))
 
     for filename in files:
-        subprocess.call('clang-format-3.9 -i {} -sort-includes=false'.format(filename), shell=True)
+        subprocess.call('clang-format-3.9 -i {}'.format(filename), shell=True)
         with open(filename, 'r+') as f:
             data = f.read()
             for (k, v) in replacements.items():

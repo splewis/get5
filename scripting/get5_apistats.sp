@@ -18,10 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstrike>
-#include <sourcemod>
 #include "include/get5.inc"
 #include "include/logdebug.inc"
+#include <cstrike>
+#include <sourcemod>
 
 #include "get5/util.sp"
 #include "get5/version.sp"

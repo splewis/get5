@@ -20,9 +20,11 @@
 
 #include <cstrike>
 #include <sourcemod>
-#include "include/get5.inc"
-#include "get5/util.sp"
+
 #include "get5/version.sp"
+#include "include/get5.inc"
+
+#include "get5/util.sp"
 
 // clang-format off
 public Plugin myinfo = {

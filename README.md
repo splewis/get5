@@ -102,7 +102,10 @@ Of the below fields, only the ``team1`` and ``team2`` fields are actually requir
 - ``team2``: see the team schema below
 
 #### Team Schema
+Only ``name`` and ``players`` are required.
+
 - ``name``: team name (wraps ``mp_teamname_1`` and is displayed often in chat messages)
+- ``tag``: team tag (or short name), this replaces client "clan tags"
 - ``flag``: team flag (2 letter country code, wraps ``mp_teamflag_1``)
 - ``logo`` team logo (wraps ``mp_teamlogo_1``)
 - ``matchtext``: warps ``mp_teammatchstat_1``

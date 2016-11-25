@@ -183,8 +183,7 @@ public void UpdateClanTags() {
   if (g_GameState >= GameState_KnifeRound) {
     for (int i = 0; i <= MaxClients; i++) {
       if (IsPlayer(i)) {
-        // TODO: provide a "short tag" option for team configs
-        CS_SetClientClanTag(i, "");
+        CS_SetClientClanTag(i, g_TeamTags[GetClientMatchTeam(i)]);
       }
     }
   }

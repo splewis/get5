@@ -84,6 +84,7 @@ char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MatchTeam_Count];
 char g_TeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
+char g_TeamTags[MatchTeam_Count][MAX_CVAR_LENGTH];
 char g_FormattedTeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
 char g_TeamFlags[MatchTeam_Count][MAX_CVAR_LENGTH];
 char g_TeamLogos[MatchTeam_Count][MAX_CVAR_LENGTH];

@@ -12,8 +12,8 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     return false;
   }
 
+  ResetReadyStatus();
   LOOP_TEAMS(team) {
-    g_TeamReady[team] = false;
     g_TeamSeriesScores[team] = 0;
     g_TeamReadyForUnpause[team] = false;
     g_TeamGivenStopCommand[team] = false;

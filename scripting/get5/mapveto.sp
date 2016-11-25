@@ -10,8 +10,7 @@ public void CreateMapVeto() {
 
   g_VetoCaptains[MatchTeam_Team1] = GetTeamCaptain(MatchTeam_Team1);
   g_VetoCaptains[MatchTeam_Team2] = GetTeamCaptain(MatchTeam_Team2);
-  g_TeamReady[MatchTeam_Team1] = false;
-  g_TeamReady[MatchTeam_Team2] = false;
+  ResetReadyStatus();
   MatchTeam startingTeam = OtherMatchTeam(g_LastVetoTeam);
   MapVetoController(g_VetoCaptains[startingTeam]);
 }

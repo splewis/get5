@@ -145,6 +145,10 @@
         "#format"       "{1:s}"
         "en"            "{1} is no longer ready."
     }
+    "ForceReadyInfoMessage"
+    {
+        "en"            "You may type !forceready to force ready your team."
+    }
     "AdminForceReadyInfoMessage"
     {
         "en"            "An admin has force-readied all teams."
@@ -286,5 +290,13 @@
     "MoveToCoachInfoMessage"
     {
         "en"            "Because your team is full, you were moved to the coach position."
+    }
+    "ReadyTag"
+    {
+        "en"            "[READY]"
+    }
+    "NotReadyTag"
+    {
+        "en"            "[NOT READY]"
     }
 }

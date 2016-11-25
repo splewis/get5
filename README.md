@@ -137,5 +137,4 @@ You should either set these in the above file, or in the match config's ``cvars`
 - ``get5_time_to_start``: time (in seconds_ teams have to ready up before forfeiting the match, 0=unlimited
 - ``get5_time_to_make_knife_decision``: time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited
 - ``get5_time_format``: time format string (default ``"%Y-%m-%d_%H``), only affects if a {TIME} tag is used in other file-name formatting cvars
-- ``get5_wait_for_spec_ready``: whether to wait for spectators (if there are any) to ready up to begin
 - ``get5_warmup_cfg``: config file executed in warmup periods

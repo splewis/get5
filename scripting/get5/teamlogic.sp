@@ -195,6 +195,14 @@ public MatchTeam CSTeamToMatchTeam(int csTeam) {
 }
 
 public MatchTeam GetAuthMatchTeam(const char[] steam64) {
+  if (g_GameState == GameState_None) {
+    return MatchTeam_TeamNone;
+  }
+
+  if (g_InScrimMode) {
+    return IsAuthOnTeam(steam64, MatchTeam_Team1) ? MatchTeam_Team1 : MatchTeam_Team2;
+  }
+
   for (int i = 0; i < view_as<int>(MatchTeam_Count); i++) {
     MatchTeam team = view_as<MatchTeam>(i);
     if (IsAuthOnTeam(steam64, team)) {

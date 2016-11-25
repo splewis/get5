@@ -259,6 +259,7 @@ public int System2_OnMatchConfigReceived(bool finished, const char[] error, floa
 
 public void WriteMatchToKv(KeyValues kv) {
   kv.SetString("matchid", g_MatchID);
+  kv.SetNum("scrim", g_InScrimMode);
   kv.SetNum("maps_to_win", g_MapsToWin);
   kv.SetNum("bo2_series", g_BO2Match);
   kv.SetNum("skip_veto", g_SkipVeto);
@@ -322,6 +323,7 @@ static void AddTeamBackupData(KeyValues kv, MatchTeam team) {
 
 static bool LoadMatchFromKv(KeyValues kv) {
   kv.GetString("matchid", g_MatchID, sizeof(g_MatchID), CONFIG_MATCHID_DEFAULT);
+  g_InScrimMode = kv.GetNum("scrim") != 0;
   kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
   g_PlayersPerTeam = kv.GetNum("players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
   g_MinPlayersPerTeam = kv.GetNum("min_players_to_ready", CONFIG_MINPLAYER_TOREADY);
@@ -398,6 +400,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
 static bool LoadMatchFromJson(Handle json) {
   json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID),
                               CONFIG_MATCHID_DEFAULT);
+  g_InScrimMode = json_object_get_bool_safe(json, "scrim", false);
   json_object_get_string_safe(json, "match_title", g_MatchTitle, sizeof(g_MatchTitle),
                               CONFIG_MATCHTITLE_DEFAULT);
 
@@ -828,9 +831,10 @@ public Action Command_CreateScrim(int client, int args) {
   char matchid[MATCH_ID_LENGTH] = "scrim";
   char matchMap[PLATFORM_MAX_PATH];
   GetCleanMapName(matchMap, sizeof(matchMap));
+  char otherTeamName[MAX_CVAR_LENGTH] = "Away";
 
   if (args >= 1) {
-    GetCmdArg(1, matchid, sizeof(matchid));
+    GetCmdArg(1, otherTeamName, sizeof(otherTeamName));
   }
   if (args >= 2) {
     GetCmdArg(2, matchMap, sizeof(matchMap));
@@ -839,16 +843,20 @@ public Action Command_CreateScrim(int client, int args) {
       return Plugin_Handled;
     }
   }
+  if (args >= 3) {
+    GetCmdArg(3, matchid, sizeof(matchid));
+  }
 
   char path[PLATFORM_MAX_PATH];
+  Format(path, sizeof(path), "get5_%s.cfg", matchid);
   if (FileExists(path)) {
     DeleteFile(path);
   }
 
-  Format(path, sizeof(path), "get5_%s.cfg", matchid);
 
   KeyValues kv = new KeyValues("Match");
   kv.SetString("matchid", matchid);
+  kv.SetNum("scrim", 1);
   kv.JumpToKey("maplist", true);
   kv.SetString(matchMap, "x");
   kv.GoBack();
@@ -857,22 +865,8 @@ public Action Command_CreateScrim(int client, int args) {
   BuildPath(Path_SM, templateFile, sizeof(templateFile), "configs/get5/scrim_template.cfg");
   kv.ImportFromFile(templateFile);
 
-  char teamName[MAX_CVAR_LENGTH];
-
-  kv.JumpToKey("team1", true);
-  int count = AddPlayersToAuthKv(kv, MatchTeam_Team1, teamName);
-  if (count > 0)
-    kv.SetString("name", teamName);
-  kv.GoBack();
-
   kv.JumpToKey("team2", true);
-  count = AddPlayersToAuthKv(kv, MatchTeam_Team2, teamName);
-  if (count > 0)
-    kv.SetString("name", teamName);
-  kv.GoBack();
-
-  kv.JumpToKey("spectators", true);
-  AddPlayersToAuthKv(kv, MatchTeam_TeamSpec, teamName);
+  kv.SetString("name", otherTeamName);
   kv.GoBack();
 
   kv.ExportToFile(path);

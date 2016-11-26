@@ -94,7 +94,7 @@ public void EventLogger_SidePicked(MatchTeam team, const char[] map, int mapNumb
   AddTeam(params, "team", team);
   set_json_string(params, "map_name", map);
   set_json_int(params, "map_number", mapNumber);
-  AddCSTeam(parms, "side", side);
+  AddCSTeam(params, "side", side);
 
   EventLogger_EndEvent("side_picked");
 }

@@ -169,11 +169,11 @@ public void UpdateClanTags() {
   if (g_GameState == GameState_Warmup || g_GameState == GameState_PreVeto) {
     for (int i = 0; i <= MaxClients; i++) {
       if (IsPlayer(i)) {
-        if (GetClientTeam(i == CS_TEAM_SPECTATOR)) {
+        if (GetClientTeam(i) == CS_TEAM_SPECTATOR) {
           CS_SetClientClanTag(i, "");
         } else {
           char tag[32];
-          Format(tag, sizeof(tag), "%T", LANG_SERVER, g_ClientReady[i] ? "ReadyTag" : "NotReadyTag");
+          Format(tag, sizeof(tag), "%T", g_ClientReady[i] ? "ReadyTag" : "NotReadyTag", LANG_SERVER);
           CS_SetClientClanTag(i, tag);
         }
       }

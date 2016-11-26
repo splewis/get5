@@ -1,5 +1,4 @@
-public
-Action StartKnifeRound(Handle timer) {
+public Action StartKnifeRound(Handle timer) {
   g_PendingSideSwap = false;
 
   Get5_MessageToAll("%t", "KnifeIn5SecInfoMessage");

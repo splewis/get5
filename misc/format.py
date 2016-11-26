@@ -26,6 +26,13 @@ def main():
             data = f.read()
             for (k, v) in replacements.items():
                 data = data.replace(k, v)
+
+            # Trick of a hack so the 1st line of files also don't split
+            # public onto a single line. The normal replacement doesn't work
+            # since it assumes a blank line in front of it.
+            if data.startswith('public\n'):
+                data = data.replace('public\n', 'public ', 1)
+
             f.seek(0)
             f.write(data)
             f.truncate()

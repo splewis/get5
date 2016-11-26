@@ -1,5 +1,4 @@
-public
-Action Command_JoinGame(int client, const char[] command, int argc) {
+public Action Command_JoinGame(int client, const char[] command, int argc) {
   if (g_GameState == GameState_None) {
     return Plugin_Continue;
   }

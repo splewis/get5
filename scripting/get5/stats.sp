@@ -1,5 +1,4 @@
-public
-void Stats_PluginStart() {
+public void Stats_PluginStart() {
   HookEvent("player_death", Stats_PlayerDeathEvent);
   HookEvent("player_hurt", Stats_DamageDealtEvent, EventHookMode_Pre);
   HookEvent("bomb_planted", Stats_BombPlantedEvent);

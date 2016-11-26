@@ -1,5 +1,4 @@
-public
-Action Command_Test(int args) {
+public Action Command_Test(int args) {
   Get5_Test();
   return Plugin_Handled;
 }

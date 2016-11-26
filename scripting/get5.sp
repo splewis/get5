@@ -1194,7 +1194,7 @@ stock bool AllTeamsReady(bool includeSpec = true) {
 }
 
 public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
-  g_DemoNameFormatCvar.GetString(buffer, len);
+  cvar.GetString(buffer, len);
   if (StrEqual(buffer, "")) {
     return false;
   }

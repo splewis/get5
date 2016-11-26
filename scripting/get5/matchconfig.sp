@@ -193,7 +193,7 @@ stock bool LoadMatchFromUrl(const char[] url, bool preferSystem2 = true,
     ReplaceString(cleanedUrl, sizeof(cleanedUrl), "https://", "");
     ReplaceString(cleanedUrl, sizeof(cleanedUrl), "http://", "");
     LogDebug("cleanedUrl (system2) = %s", cleanedUrl);
-    System2_DownloadFile(System2_OnMatchConfigReceived, url, REMOTE_CONFIG_FILENAME);
+    System2_DownloadFile(System2_OnMatchConfigReceived, cleanedUrl, REMOTE_CONFIG_FILENAME);
     return true;
 
   } else if (steamWorksAvaliable) {

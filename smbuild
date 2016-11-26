@@ -1,11 +1,10 @@
 Plugin(source='scripting/get5.sp')
-Plugin(source='scripting/get5_logger.sp')
 Plugin(source='scripting/get5_mysqlstats.sp')
 Plugin(source='scripting/get5_apistats.sp')
 
 Package(name='get5',
-        plugins=['get5', 'get5_logger', 'get5_mysqlstats', 'get5_apistats'],
-        disabled_plugins=['get5_logger', 'get5_mysqlstats', 'get5_apistats'],
+        plugins=['get5', 'get5_mysqlstats', 'get5_apistats'],
+        disabled_plugins=['get5_mysqlstats', 'get5_apistats'],
         filegroups={
             '.': ['LICENSE', 'README.md'],
         },

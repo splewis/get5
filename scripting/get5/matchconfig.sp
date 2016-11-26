@@ -184,12 +184,26 @@ stock bool LoadMatchFromUrl(const char[] url, bool preferSystem2 = true,
   bool system2Avaliable = LibraryExists("system2");
   bool forceSteamworks = (steamWorksAvaliable && !preferSystem2);
 
+  char cleanedUrl[1024];
+  strcopy(cleanedUrl, sizeof(cleanedUrl), url);
+  ReplaceString(cleanedUrl, sizeof(cleanedUrl), "\"", "");
+
   if (system2Avaliable && !forceSteamworks) {
+    // No protocal strings here.
+    ReplaceString(cleanedUrl, sizeof(cleanedUrl), "https://", "");
+    ReplaceString(cleanedUrl, sizeof(cleanedUrl), "http://", "");
+    LogDebug("cleanedUrl (system2) = %s", cleanedUrl);
     System2_DownloadFile(System2_OnMatchConfigReceived, url, REMOTE_CONFIG_FILENAME);
     return true;
 
   } else if (steamWorksAvaliable) {
-    Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
+    // Add the protocl strings. Only allow http since SteamWorks doesn't support http it seems?
+    ReplaceString(cleanedUrl, sizeof(cleanedUrl), "https://", "http://");
+    if (StrContains(cleanedUrl, "http://") == -1) {
+      Format(cleanedUrl, sizeof(cleanedUrl), "http://%s", cleanedUrl);
+    }
+    LogDebug("cleanedUrl (SteamWorks) = %s", cleanedUrl);
+    Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, cleanedUrl);
     if (request == INVALID_HANDLE) {
       MatchConfigFail("Failed to create HTTP GET request");
       return false;

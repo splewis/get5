@@ -7,7 +7,7 @@ static char _colorNames[][] = {"{NORMAL}", "{DARK_RED}",    "{PINK}",      "{GRE
 static char _colorCodes[][] = {"\x01", "\x02", "\x03", "\x04", "\x05", "\x06",
                                "\x07", "\x08", "\x09", "\x0B", "\x0C", "\x0E"};
 
-// Convenience macro for looping over match teams.
+// Convenience macros.
 #define LOOP_TEAMS(%1) for (MatchTeam %1 = MatchTeam_Team1; %1 < MatchTeam_Count; %1 ++)
 
 // These match CS:GO's m_gamePhase values.
@@ -24,8 +24,9 @@ enum GamePhase {
 stock int GetNumHumansOnTeam(int team) {
   int count = 0;
   for (int i = 1; i <= MaxClients; i++) {
-    if (IsPlayer(i) && GetClientTeam(i) == team)
+    if (IsPlayer(i) && GetClientTeam(i) == team) {
       count++;
+    }
   }
   return count;
 }
@@ -33,8 +34,9 @@ stock int GetNumHumansOnTeam(int team) {
 stock int CountAlivePlayersOnTeam(int csTeam) {
   int count = 0;
   for (int i = 1; i <= MaxClients; i++) {
-    if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == csTeam)
+    if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == csTeam) {
       count++;
+    }
   }
   return count;
 }
@@ -53,8 +55,9 @@ stock int SumHealthOfTeam(int team) {
  * Switches and respawns a player onto a new team.
  */
 stock void SwitchPlayerTeam(int client, int team) {
-  if (GetClientTeam(client) == team)
+  if (GetClientTeam(client) == team) {
     return;
+  }
 
   LogDebug("SwitchPlayerTeam %L to %d", client, team);
   if (team > CS_TEAM_SPECTATOR) {
@@ -96,10 +99,11 @@ stock int GetRealClientCount() {
 
 stock void Colorize(char[] msg, int size, bool stripColor = false) {
   for (int i = 0; i < sizeof(_colorNames); i++) {
-    if (stripColor)
+    if (stripColor) {
       ReplaceString(msg, size, _colorNames[i], "\x01");  // replace with white
-    else
+    } else {
       ReplaceString(msg, size, _colorNames[i], _colorCodes[i]);
+    }
   }
 }
 
@@ -111,12 +115,12 @@ stock void ReplaceStringWithInt(char[] buffer, int len, const char[] replace, in
 }
 
 stock bool IsTVEnabled() {
-  Handle tvEnabledCvar = FindConVar("tv_enable");
-  if (tvEnabledCvar == INVALID_HANDLE) {
+  ConVar tvEnabledCvar = FindConVar("tv_enable");
+  if (tvEnabledCvar == null) {
     LogError("Failed to get tv_enable cvar");
     return false;
   }
-  return GetConVarInt(tvEnabledCvar) != 0;
+  return tvEnabledCvar.IntValue != 0;
 }
 
 stock bool Record(const char[] demoName) {
@@ -219,13 +223,13 @@ stock bool IsClientCoaching(int client) {
          GetEntProp(client, Prop_Send, "m_iCoachingTeam") != 0;
 }
 
-stock void UpdateCoachTarget(int client, int team) {
-  SetEntProp(client, Prop_Send, "m_iCoachingTeam", team);
+stock void UpdateCoachTarget(int client, int csTeam) {
+  SetEntProp(client, Prop_Send, "m_iCoachingTeam", csTeam);
 }
 
-stock void SetTeamInfo(int team, const char[] name, const char[] flag = "", const char[] logo = "",
+stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "", const char[] logo = "",
                        const char[] matchstat = "") {
-  int team_int = (team == CS_TEAM_CT) ? 1 : 2;
+  int team_int = (csTeam == CS_TEAM_CT) ? 1 : 2;
 
   char teamCvarName[32];
   char flagCvarName[32];
@@ -243,29 +247,29 @@ stock void SetTeamInfo(int team, const char[] name, const char[] flag = "", cons
 }
 
 stock void SetConVarIntSafe(const char[] name, int value) {
-  Handle cvar = FindConVar(name);
-  if (cvar == INVALID_HANDLE) {
+  ConVar cvar = FindConVar(name);
+  if (cvar == null) {
     LogError("Failed to find cvar: \"%s\"", name);
   } else {
-    SetConVarInt(cvar, value);
+    cvar.IntValue = value;
   }
 }
 
 stock void SetConVarStringSafe(const char[] name, const char[] value) {
-  Handle cvar = FindConVar(name);
-  if (cvar == INVALID_HANDLE) {
+  ConVar cvar = FindConVar(name);
+  if (cvar == null) {
     LogError("Failed to find cvar: \"%s\"", name);
   } else {
-    SetConVarString(cvar, value);
+    cvar.SetString(value);
   }
 }
 
 stock void GetConVarStringSafe(const char[] name, char[] value, int len) {
-  Handle cvar = FindConVar(name);
-  if (cvar == INVALID_HANDLE) {
+  ConVar cvar = FindConVar(name);
+  if (cvar == null) {
     LogError("Failed to find cvar: \"%s\"", name);
   } else {
-    GetConVarString(cvar, value, len);
+    cvar.GetString(value, len);
   }
 }
 
@@ -278,12 +282,12 @@ stock bool OnActiveTeam(int client) {
 }
 
 stock int GetCvarIntSafe(const char[] cvarName) {
-  Handle cvar = FindConVar(cvarName);
-  if (cvar == INVALID_HANDLE) {
+  ConVar cvar = FindConVar(cvarName);
+  if (cvar == null) {
     LogError("Failed to find cvar \"%s\"", cvar);
     return 0;
   } else {
-    return GetConVarInt(cvar);
+    return cvar.IntValue;
   }
 }
 
@@ -561,8 +565,9 @@ stock bool ConvertSteam3ToSteam2(const char[] steam3Auth, char[] steam2Auth, int
   xBuf[i - startIndex] = '\0';
 
   int x = StringToInt(xBuf);
-  if (x == 0)
+  if (x == 0) {
     return false;
+  }
 
   int a = (x % 2);
   int b = (x - a) / 2;
@@ -599,9 +604,9 @@ stock bool HelpfulAttack(int attacker, int victim) {
   if (!IsValidClient(attacker) || !IsValidClient(victim)) {
     return false;
   }
-  int ateam = GetClientTeam(attacker);  // Get attacker's team
-  int vteam = GetClientTeam(victim);    // Get the victim's team
-  return ateam != vteam && attacker != victim;
+  int attackerTeam = GetClientTeam(attacker);
+  int victimTeam = GetClientTeam(victim);
+  return attackerTeam != victimTeam && attacker != victim;
 }
 
 stock SideChoice SideTypeFromString(const char[] input) {

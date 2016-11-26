@@ -447,8 +447,8 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
  * if a player does not select a team but leaves their mouse over one, they are
  * put on that team and spawned, so we can't allow that.
  */
-public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dontBroadcast) {
-  int client = GetClientOfUserId(GetEventInt(event, "userid"));
+public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontBroadcast) {
+  int client = GetClientOfUserId(event.GetInt("userid"));
   if (client > 0) {
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
   }
@@ -1195,8 +1195,9 @@ stock bool AllTeamsReady(bool includeSpec = true) {
 
 public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   g_DemoNameFormatCvar.GetString(buffer, len);
-  if (StrEqual(buffer, ""))
+  if (StrEqual(buffer, "")) {
     return false;
+  }
 
   char mapName[PLATFORM_MAX_PATH];
   GetCleanMapName(mapName, sizeof(mapName));

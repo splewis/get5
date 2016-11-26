@@ -243,8 +243,9 @@ public int GetTeamCaptain(MatchTeam team) {
   // If not forcing auths, take the 1st client on the team.
   if (g_CheckAuthsCvar.IntValue == 0) {
     for (int i = 1; i <= MaxClients; i++) {
-      if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == team)
+      if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == team) {
         return i;
+      }
     }
     return -1;
   }

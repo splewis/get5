@@ -98,6 +98,7 @@ bool g_SkipVeto = false;
 MatchSideType g_MatchSideType = MatchSideType_Standard;
 ArrayList g_CvarNames = null;
 ArrayList g_CvarValues = null;
+bool g_InScrimMode = false;
 
 /** Other state **/
 GameState g_GameState = GameState_None;

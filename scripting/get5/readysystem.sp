@@ -21,6 +21,7 @@ public Action Command_Ready(int client, int args) {
     return Plugin_Handled;
   }
 
+  Get5_Message(client, "%t", "YouAreReady");
   g_ClientReady[client] = true;
   if (IsTeamReady(team)) {
     PrintReadyMessage(team);
@@ -58,6 +59,7 @@ public Action Command_NotReady(int client, int args) {
   bool teamWasReady = IsTeamReady(team);
   g_ClientReady[client] = false;
   g_TeamReadyOverride[team] = false;
+  Get5_Message(client, "%t", "YouAreNotReady");
 
   if (teamWasReady) {
     Get5_MessageToAll("%t", "TeamNotReadyInfoMessage", g_FormattedTeamNames[team]);
@@ -76,11 +78,18 @@ public Action Command_ForceReadyClient(int client, int args) {
     return Plugin_Handled;
   }
 
-  if (team == MatchTeam_Team1 && !IsTeamReady(team)) {
+  if (team == team && !IsTeamReady(team)) {
     int playerCount = CountPlayersOnMatchTeam(team);
     if (playerCount >= g_MinPlayersPerTeam) {
+      for (int i = 1; i <= MaxClients; i++) {
+        if (IsPlayer(i) && GetClientMatchTeam(i) == team) {
+          g_ClientReady[i] = true;
+          Get5_Message(i, "%t", "TeammateForceReadied", client);
+        }
+      }
       g_TeamReadyOverride[team] = true;
       PrintReadyMessage(team);
+
     } else {
       Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", g_MinPlayersPerTeam);
     }
@@ -128,7 +137,7 @@ public bool IsTeamReady(MatchTeam team) {
 public void MissingPlayerInfoMessage() {
   if (IsTeamReadyButMissingPlayers(MatchTeam_Team1) ||
       IsTeamReadyButMissingPlayers(MatchTeam_Team2)) {
-    Get5_MessageToAll("%t", "ForceReadyInfoMessage");
+    Get5_MessageToAll("%t", "ForceReadyInfoMessage", g_PlayersPerTeam);
   }
 }
 
@@ -149,7 +158,7 @@ public bool IsTeamReadyButMissingPlayers(MatchTeam team) {
   }
 
   if (!g_TeamReadyOverride[team] && readyCount >= g_MinPlayersPerTeam &&
-      readyCount < g_PlayersPerTeam) {
+      readyCount < g_PlayersPerTeam && playerCount == readyCount) {
     return true;
   }
 

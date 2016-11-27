@@ -102,7 +102,10 @@ Of the below fields, only the ``team1`` and ``team2`` fields are actually requir
 - ``team2``: see the team schema below
 
 #### Team Schema
+Only ``name`` and ``players`` are required.
+
 - ``name``: team name (wraps ``mp_teamname_1`` and is displayed often in chat messages)
+- ``tag``: team tag (or short name), this replaces client "clan tags"
 - ``flag``: team flag (2 letter country code, wraps ``mp_teamflag_1``)
 - ``logo`` team logo (wraps ``mp_teamlogo_1``)
 - ``matchtext``: warps ``mp_teammatchstat_1``
@@ -137,5 +140,4 @@ You should either set these in the above file, or in the match config's ``cvars`
 - ``get5_time_to_start``: time (in seconds_ teams have to ready up before forfeiting the match, 0=unlimited
 - ``get5_time_to_make_knife_decision``: time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited
 - ``get5_time_format``: time format string (default ``"%Y-%m-%d_%H``), only affects if a {TIME} tag is used in other file-name formatting cvars
-- ``get5_wait_for_spec_ready``: whether to wait for spectators (if there are any) to ready up to begin
 - ``get5_warmup_cfg``: config file executed in warmup periods

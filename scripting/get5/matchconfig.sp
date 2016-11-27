@@ -12,8 +12,8 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     return false;
   }
 
+  ResetReadyStatus();
   LOOP_TEAMS(team) {
-    g_TeamReady[team] = false;
     g_TeamSeriesScores[team] = 0;
     g_TeamReadyForUnpause[team] = false;
     g_TeamGivenStopCommand[team] = false;
@@ -314,6 +314,7 @@ static void AddTeamBackupData(KeyValues kv, MatchTeam team) {
 
   if (team != MatchTeam_TeamSpec) {
     kv.SetString("name", g_TeamNames[team]);
+    kv.SetString("tag", g_TeamTags[team]);
     kv.SetString("flag", g_TeamFlags[team]);
     kv.SetString("logo", g_TeamLogos[team]);
     kv.SetString("matchtext", g_TeamMatchTexts[team]);
@@ -488,6 +489,7 @@ static void LoadTeamDataJson(Handle json, MatchTeam matchTeam) {
   if (StrEqual(fromfile, "")) {
     AddJsonAuthsToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
     json_object_get_string_safe(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH);
+    json_object_get_string_safe(json, "tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
@@ -514,6 +516,7 @@ static void LoadTeamData(KeyValues kv, MatchTeam matchTeam) {
   if (StrEqual(fromfile, "")) {
     AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
     kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, "");
+    kv.GetString("tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");

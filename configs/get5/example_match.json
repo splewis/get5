@@ -32,6 +32,7 @@
 
 	"team1": {
 		"name": "EnvyUs",
+		"tag": "EnvyUs",
 		"flag": "FR",
 		"logo": "nv",
 		"matchtext": "Beat Ninjas in Pyjamas",
@@ -47,6 +48,7 @@
 
 	"team2": {
 		"name": "Fnatic",
+		"tag": "Fnatic",
 		"flag": "SE",
 		"logo": "fntc",
 		"matchtext": "Beat Virtus Pro",

@@ -32,7 +32,7 @@
 #include <system2>
 #define REMOTE_CONFIG_FILENAME "remote.json"
 
-#define LIVE_TIMER_INTERVAL 1.0
+#define CHECK_READY_TIMER_INTERVAL 1.0
 #define INFO_MESSAGE_TIMER_INTERVAL 29.0
 
 #define DEBUG_CVAR "get5_debug"
@@ -69,7 +69,6 @@ ConVar g_StopCommandEnabledCvar;
 ConVar g_TeamTimeToKnifeDecisionCvar;
 ConVar g_TeamTimeToStartCvar;
 ConVar g_TimeFormatCvar;
-ConVar g_WaitForSpecReadyCvar;
 ConVar g_WarmupCfgCvar;
 
 ConVar g_LastGet5BackupCvar;
@@ -85,6 +84,7 @@ char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MatchTeam_Count];
 char g_TeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
+char g_TeamTags[MatchTeam_Count][MAX_CVAR_LENGTH];
 char g_FormattedTeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
 char g_TeamFlags[MatchTeam_Count][MAX_CVAR_LENGTH];
 char g_TeamLogos[MatchTeam_Count][MAX_CVAR_LENGTH];
@@ -124,10 +124,11 @@ KeyValues g_StatsKv;
 
 ArrayList g_TeamScoresPerMap = null;
 char g_LoadedConfigFile[PLATFORM_MAX_PATH];
-int g_VetoCaptains[MatchTeam_Count];      // Clients doing the map vetos.
-int g_TeamSeriesScores[MatchTeam_Count];  // Current number of maps won per-team.
-bool g_TeamReady[MatchTeam_Count];        // Whether a team is marked as ready.
-int g_TeamSide[MatchTeam_Count];          // Current CS_TEAM_* side for the team.
+int g_VetoCaptains[MatchTeam_Count];        // Clients doing the map vetos.
+int g_TeamSeriesScores[MatchTeam_Count];    // Current number of maps won per-team.
+bool g_TeamReadyOverride[MatchTeam_Count];  // Whether a team has been voluntarily force readied.
+bool g_ClientReady[MAXPLAYERS + 1];         // Whether clients are marked ready.
+int g_TeamSide[MatchTeam_Count];            // Current CS_TEAM_* side for the team.
 int g_TeamStartingSide[MatchTeam_Count];
 bool g_TeamReadyForUnpause[MatchTeam_Count];
 bool g_TeamGivenStopCommand[MatchTeam_Count];
@@ -176,6 +177,7 @@ Handle g_OnEvent = INVALID_HANDLE;
 #include "get5/matchconfig.sp"
 #include "get5/natives.sp"
 #include "get5/pausing.sp"
+#include "get5/readysystem.sp"
 #include "get5/stats.sp"
 #include "get5/teamlogic.sp"
 #include "get5/tests.sp"
@@ -254,9 +256,6 @@ public void OnPluginStart() {
   g_TimeFormatCvar = CreateConVar(
       "get5_time_format", "%Y-%m-%d_%H",
       "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
-  g_WaitForSpecReadyCvar =
-      CreateConVar("get5_wait_for_spec_ready", "0",
-                   "Whether to wait for spectators to ready up if there are any");
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
 
@@ -275,6 +274,7 @@ public void OnPluginStart() {
   RegConsoleCmd("sm_ready", Command_Ready, "Marks the client as ready");
   RegConsoleCmd("sm_unready", Command_NotReady, "Marks the client as not ready");
   RegConsoleCmd("sm_notready", Command_NotReady, "Marks the client as not ready");
+  RegConsoleCmd("sm_forceready", Command_ForceReadyClient, "Force marks clients team as ready");
   RegConsoleCmd("sm_pause", Command_Pause, "Pauses the game");
   RegConsoleCmd("sm_unpause", Command_Unpause, "Unpauses the game");
   RegConsoleCmd("sm_coach", Command_SmCoach, "Marks a client as a coach for their team");
@@ -304,7 +304,7 @@ public void OnPluginStart() {
               "Creates and loads a match using the players currently on the server as a Bo1");
   RegAdminCmd("get5_scrim", Command_CreateScrim, ADMFLAG_CHANGEMAP,
               "Creates and loads a match using the players currently on the server as a Bo1");
-  RegAdminCmd("get5_forceready", Command_ForceReady, ADMFLAG_CHANGEMAP,
+  RegAdminCmd("get5_forceready", Command_AdminForceReady, ADMFLAG_CHANGEMAP,
               "Force readies all current teams");
   RegAdminCmd("get5_dumpstats", Command_DumpStats, ADMFLAG_CHANGEMAP,
               "Dumps match stats to a file");
@@ -367,26 +367,33 @@ public void OnPluginStart() {
   g_OnEvent = CreateGlobalForward("Get5_OnEvent", ET_Ignore, Param_String);
 
   /** Start any repeating timers **/
-  CreateTimer(LIVE_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
+  CreateTimer(CHECK_READY_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
   CreateTimer(INFO_MESSAGE_TIMER_INTERVAL, Timer_InfoMessages, _, TIMER_REPEAT);
 }
 
 public Action Timer_InfoMessages(Handle timer) {
   if (g_GameState == GameState_PreVeto) {
     Get5_MessageToAll("%t", "ReadyToVetoInfoMessage");
+    MissingPlayerInfoMessage();
+
   } else if (g_GameState == GameState_Warmup && !g_MapChangePending) {
     if (AllTeamsReady(false) && !AllTeamsReady(true)) {
       Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage");
+      MissingPlayerInfoMessage();
+
     } else {
       SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
       if (g_WaitingForRoundBackup) {
         Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage");
       } else if (sides == SideChoice_KnifeRound) {
         Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage");
+        MissingPlayerInfoMessage();
       } else {
         Get5_MessageToAll("%t", "ReadyToStartInfoMessage");
+        MissingPlayerInfoMessage();
       }
     }
+
   } else if (g_GameState == GameState_WaitingForKnifeRoundDecision) {
     Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
@@ -397,6 +404,7 @@ public Action Timer_InfoMessages(Handle timer) {
 }
 
 public void OnClientAuthorized(int client, const char[] auth) {
+  g_ClientReady[client] = false;
   g_MovingClientToCoach[client] = false;
   if (StrEqual(auth, "BOT", false)) {
     return;
@@ -458,8 +466,8 @@ public void OnMapStart() {
   g_MapChangePending = false;
   DeleteOldBackups();
 
+  ResetReadyStatus();
   LOOP_TEAMS(team) {
-    g_TeamReady[team] = false;
     g_TeamGivenStopCommand[team] = false;
     g_TeamReadyForUnpause[team] = false;
     g_TeamPauseTimeUsed[team] = 0;
@@ -522,6 +530,8 @@ public Action Timer_CheckReady(Handle timer) {
     }
   }
 
+  UpdateClanTags();
+
   return Plugin_Continue;
 }
 
@@ -533,7 +543,7 @@ static void CheckReadyWaitingTimes() {
 }
 
 static void CheckReadyWaitingTime(MatchTeam team) {
-  if (!g_TeamReady[team] && g_GameState != GameState_None) {
+  if (!IsTeamReady(team) && g_GameState != GameState_None) {
     g_ReadyTimeWaitingUsed[team]++;
     int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed[team];
 
@@ -569,79 +579,6 @@ static void CheckAutoLoadConfig() {
 /**
  * Client and server commands.
  */
-
-public Action Command_Ready(int client, int args) {
-  if (g_GameState != GameState_PreVeto && g_GameState != GameState_Warmup) {
-    return Plugin_Handled;
-  }
-
-  MatchTeam t = GetClientMatchTeam(client);
-  int playerCount = CountPlayersOnMatchTeam(t);
-
-  if (t == MatchTeam_Team1 && !g_TeamReady[MatchTeam_Team1]) {
-    if (playerCount >= g_MinPlayersPerTeam) {
-      g_TeamReady[MatchTeam_Team1] = true;
-      PrintReadyMessage(MatchTeam_Team1);
-    } else {
-      Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", g_MinPlayersPerTeam);
-    }
-
-  } else if (t == MatchTeam_Team2 && !g_TeamReady[MatchTeam_Team2]) {
-    if (playerCount >= g_MinPlayersPerTeam) {
-      g_TeamReady[MatchTeam_Team2] = true;
-      PrintReadyMessage(MatchTeam_Team2);
-    } else {
-      Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", g_MinPlayersPerTeam);
-    }
-  }
-
-  return Plugin_Handled;
-}
-
-static void PrintReadyMessage(MatchTeam team) {
-  CheckTeamNameStatus(team);
-
-  if (g_GameState == GameState_PreVeto) {
-    Get5_MessageToAll("%t", "TeamReadyToVetoInfoMessage", g_FormattedTeamNames[team]);
-  } else if (g_GameState == GameState_Warmup) {
-    SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
-    if (g_WaitingForRoundBackup)
-      Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_FormattedTeamNames[team]);
-    else if (sides == SideChoice_KnifeRound)
-      Get5_MessageToAll("%t", "TeamReadyToKnifeInfoMessage", g_FormattedTeamNames[team]);
-    else
-      Get5_MessageToAll("%t", "TeamReadyToBeginInfoMessage", g_FormattedTeamNames[team]);
-  }
-}
-
-public Action Command_NotReady(int client, int args) {
-  if (g_GameState != GameState_PreVeto && g_GameState != GameState_Warmup) {
-    return Plugin_Handled;
-  }
-
-  MatchTeam t = GetClientMatchTeam(client);
-  if (t == MatchTeam_Team1 && g_TeamReady[MatchTeam_Team1]) {
-    Get5_MessageToAll("%t", "TeamNotReadyInfoMessage", g_FormattedTeamNames[MatchTeam_Team1]);
-    g_TeamReady[MatchTeam_Team1] = false;
-  } else if (t == MatchTeam_Team2 && g_TeamReady[MatchTeam_Team2]) {
-    Get5_MessageToAll("%t", "TeamNotReadyInfoMessage", g_FormattedTeamNames[MatchTeam_Team2]);
-    g_TeamReady[MatchTeam_Team2] = false;
-  }
-  return Plugin_Handled;
-}
-
-public Action Command_ForceReady(int client, int args) {
-  if (g_GameState != GameState_PreVeto && g_GameState != GameState_Warmup) {
-    return Plugin_Handled;
-  }
-
-  Get5_MessageToAll("%t", "AdminForceReadyInfoMessage");
-  LOOP_TEAMS(team) {
-    g_TeamReady[team] = true;
-  }
-
-  return Plugin_Handled;
-}
 
 public Action Command_EndMatch(int client, int args) {
   if (g_GameState == GameState_None) {
@@ -1177,20 +1114,10 @@ static void AddTeamInfo(Handle json, MatchTeam matchTeam) {
   CSTeamString(team, side, sizeof(side));
   set_json_string(json, "name", g_TeamNames[matchTeam]);
   set_json_int(json, "series_score", g_TeamSeriesScores[matchTeam]);
-  set_json_int(json, "ready", g_TeamReady[matchTeam]);
+  set_json_int(json, "ready", IsTeamReady(matchTeam));
   set_json_string(json, "side", side);
   set_json_int(json, "connected_clients", GetNumHumansOnTeam(team));
   set_json_int(json, "current_map_score", CS_GetTeamScore(team));
-}
-
-stock bool AllTeamsReady(bool includeSpec = true) {
-  bool playersReady = g_TeamReady[MatchTeam_Team1] && g_TeamReady[MatchTeam_Team2];
-  if (g_WaitForSpecReadyCvar.IntValue == 0 || GetTeamAuths(MatchTeam_TeamSpec).Length == 0 ||
-      !includeSpec) {
-    return playersReady;
-  } else {
-    return playersReady && g_TeamReady[MatchTeam_TeamSpec];
-  }
 }
 
 public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {

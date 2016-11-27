@@ -20,6 +20,14 @@
     {
         "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to begin."
     }
+    "YouAreReady"
+    {
+        "en"            "You have been marked as ready."
+    }
+    "YouAreNotReady"
+    {
+        "en"            "You have been marked as NOT ready."
+    }
     "WaitingForEnemySwapInfoMessage"
     {
         "#format"       "{1:s}"
@@ -144,6 +152,16 @@
     {
         "#format"       "{1:s}"
         "en"            "{1} is no longer ready."
+    }
+    "ForceReadyInfoMessage"
+    {
+        "#format"       "{1:d}"
+        "en"            "You may type {GREEN}!forceready {NORMAL}to force ready your team if you have less than {GREEN}{1}{NORMAL} players."
+    }
+    "TeammateForceReadied"
+    {
+        "#format"       "{1:N}"
+        "en"            "Your team was force-readied by {GREEN}{1}"
     }
     "AdminForceReadyInfoMessage"
     {
@@ -286,5 +304,13 @@
     "MoveToCoachInfoMessage"
     {
         "en"            "Because your team is full, you were moved to the coach position."
+    }
+    "ReadyTag"
+    {
+        "en"            "[READY]"
+    }
+    "NotReadyTag"
+    {
+        "en"            "[NOT READY]"
     }
 }

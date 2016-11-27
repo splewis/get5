@@ -139,6 +139,12 @@ char g_DefaultTeamColors[][] = {
     TEAM1_COLOR, TEAM2_COLOR, "{NORMAL}", "{NORMAL}",
 };
 
+/** Chat aliases loaded **/
+#define ALIAS_LENGTH 64
+#define COMMAND_LENGTH 64
+ArrayList g_ChatAliases;
+ArrayList g_ChatAliasesCommands;
+
 /** Map game-state **/
 MatchTeam g_KnifeWinnerTeam = MatchTeam_TeamNone;
 
@@ -168,6 +174,7 @@ Handle g_OnEvent = INVALID_HANDLE;
 #include "get5/util.sp"
 
 #include "get5/backups.sp"
+#include "get5/chatcommands.sp"
 #include "get5/eventlogger.sp"
 #include "get5/goinglive.sp"
 #include "get5/jsonhelpers.sp"
@@ -271,20 +278,22 @@ public void OnPluginStart() {
   g_CoachingEnabledCvar = FindConVar("sv_coaching_enabled");
 
   /** Client commands **/
-  RegConsoleCmd("sm_ready", Command_Ready, "Marks the client as ready");
-  RegConsoleCmd("sm_unready", Command_NotReady, "Marks the client as not ready");
-  RegConsoleCmd("sm_notready", Command_NotReady, "Marks the client as not ready");
-  RegConsoleCmd("sm_forceready", Command_ForceReadyClient, "Force marks clients team as ready");
-  RegConsoleCmd("sm_pause", Command_Pause, "Pauses the game");
-  RegConsoleCmd("sm_unpause", Command_Unpause, "Unpauses the game");
-  RegConsoleCmd("sm_coach", Command_SmCoach, "Marks a client as a coach for their team");
-  RegConsoleCmd("sm_stay", Command_Stay,
-                "Elects to stay on the current team after winning a knife round");
-  RegConsoleCmd("sm_swap", Command_Swap,
-                "Elects to swap the current teams after winning a knife round");
-  RegConsoleCmd("sm_t", Command_T, "Elects to start on T side after winning a knife round");
-  RegConsoleCmd("sm_ct", Command_Ct, "Elects to start on CT side after winning a knife round");
-  RegConsoleCmd("sm_stop", Command_Stop, "Elects to stop the game to reload a backup file");
+  g_ChatAliases = new ArrayList(ByteCountToCells(ALIAS_LENGTH));
+  g_ChatAliasesCommands = new ArrayList(ByteCountToCells(COMMAND_LENGTH));
+  AddAliasedCommand("ready", Command_Ready, "Marks the client as ready");
+  AddAliasedCommand("unready", Command_NotReady, "Marks the client as not ready");
+  AddAliasedCommand("notready", Command_NotReady, "Marks the client as not ready");
+  AddAliasedCommand("forceready", Command_ForceReadyClient, "Force marks clients team as ready");
+  AddAliasedCommand("pause", Command_Pause, "Pauses the game");
+  AddAliasedCommand("unpause", Command_Unpause, "Unpauses the game");
+  AddAliasedCommand("coach", Command_SmCoach, "Marks a client as a coach for their team");
+  AddAliasedCommand("stay", Command_Stay,
+                    "Elects to stay on the current team after winning a knife round");
+  AddAliasedCommand("swap", Command_Swap,
+                    "Elects to swap the current teams after winning a knife round");
+  AddAliasedCommand("t", Command_T, "Elects to start on T side after winning a knife round");
+  AddAliasedCommand("ct", Command_Ct, "Elects to start on CT side after winning a knife round");
+  AddAliasedCommand("stop", Command_Stop, "Elects to stop the game to reload a backup file");
 
   /** Admin/server commands **/
   RegAdminCmd(
@@ -447,6 +456,7 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
   if (StrEqual(command, "say")) {
     EventLogger_ClientSay(client, sArgs);
   }
+  CheckForChatAlias(client, command, sArgs);
 }
 
 /**

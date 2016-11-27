@@ -4,6 +4,7 @@
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
   CreateNative("Get5_GetGameState", Native_GetGameState);
   CreateNative("Get5_Message", Native_Message);
+  CreateNative("Get5_MessageToTeam", Native_MessageToTeam);
   CreateNative("Get5_MessageToAll", Native_MessageToAll);
   CreateNative("Get5_LoadMatchConfig", Native_LoadMatchConfig);
   CreateNative("Get5_LoadMatchConfigFromURL", Native_LoadMatchConfigFromURL);
@@ -51,6 +52,32 @@ public int Native_Message(Handle plugin, int numParams) {
   } else if (IsClientInGame(client)) {
     Colorize(finalMsg, sizeof(finalMsg));
     PrintToChat(client, finalMsg);
+  }
+}
+
+public int Native_MessageToTeam(Handle plugin, int numParams) {
+  MatchTeam team = view_as<MatchTeam>(GetNativeCell(1));
+  char prefix[64] = MESSAGE_PREFIX;
+  // g_MessagePrefixCvar.GetString(prefix, sizeof(prefix));
+  char buffer[1024];
+  int bytesWritten = 0;
+
+  for (int i = 0; i <= MaxClients; i++) {
+    if (!IsPlayer(i) || GetClientMatchTeam(i) != team) {
+      continue;
+    }
+
+    SetGlobalTransTarget(i);
+    FormatNativeString(0, 2, 3, sizeof(buffer), bytesWritten, buffer);
+
+    char finalMsg[1024];
+    if (StrEqual(prefix, ""))
+      Format(finalMsg, sizeof(finalMsg), " %s", buffer);
+    else
+      Format(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
+
+    Colorize(finalMsg, sizeof(finalMsg));
+    PrintToChat(i, finalMsg);
   }
 }
 

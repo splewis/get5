@@ -89,6 +89,9 @@ native GameState Get5_GetGameState();
 // Prints a plugin-formatted message to a client.
 native void Get5_Message(int client, const char[] format, any:...);
 
+// Prints a plugin-formatted message to a team.
+native void Get5_MessageToTeam(MatchTeam team, const char[] format, any:...);
+
 // Prints a plugin-formatted message to all clients.
 native void Get5_MessageToAll(const char[] format, any:...);
 
@@ -199,6 +202,7 @@ public SharedPlugin __pl_get5 = {
 public __pl_get5_SetNTVOptional() {
   MarkNativeAsOptional("Get5_GetGameState");
   MarkNativeAsOptional("Get5_Message");
+  MarkNativeAsOptional("Get5_MessageToTeam");
   MarkNativeAsOptional("Get5_MessageToAll");
   MarkNativeAsOptional("Get5_LoadMatchConfig");
   MarkNativeAsOptional("Get5_LoadMatchConfigFromURL");

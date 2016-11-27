@@ -227,8 +227,8 @@ stock void UpdateCoachTarget(int client, int csTeam) {
   SetEntProp(client, Prop_Send, "m_iCoachingTeam", csTeam);
 }
 
-stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "", const char[] logo = "",
-                       const char[] matchstat = "") {
+stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
+                       const char[] logo = "", const char[] matchstat = "") {
   int team_int = (csTeam == CS_TEAM_CT) ? 1 : 2;
 
   char teamCvarName[32];

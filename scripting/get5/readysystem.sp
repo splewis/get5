@@ -135,9 +135,11 @@ public bool IsTeamReady(MatchTeam team) {
 }
 
 public void MissingPlayerInfoMessage() {
-  if (IsTeamReadyButMissingPlayers(MatchTeam_Team1) ||
-      IsTeamReadyButMissingPlayers(MatchTeam_Team2)) {
-    Get5_MessageToAll("%t", "ForceReadyInfoMessage", g_PlayersPerTeam);
+  if (IsTeamReadyButMissingPlayers(MatchTeam_Team1)) {
+    Get5_MessageToTeam(MatchTeam_Team1, "%t", "ForceReadyInfoMessage", g_PlayersPerTeam);
+  }
+  if (IsTeamReadyButMissingPlayers(MatchTeam_Team2)) {
+    Get5_MessageToTeam(MatchTeam_Team2, "%t", "ForceReadyInfoMessage", g_PlayersPerTeam);
   }
 }
 
@@ -182,7 +184,8 @@ public void UpdateClanTags() {
           CS_SetClientClanTag(i, "");
         } else {
           char tag[32];
-          Format(tag, sizeof(tag), "%T", g_ClientReady[i] ? "ReadyTag" : "NotReadyTag", LANG_SERVER);
+          Format(tag, sizeof(tag), "%T", g_ClientReady[i] ? "ReadyTag" : "NotReadyTag",
+                 LANG_SERVER);
           CS_SetClientClanTag(i, tag);
         }
       }

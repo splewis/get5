@@ -1125,7 +1125,7 @@ static void AddTeamInfo(Handle json, MatchTeam matchTeam) {
   CSTeamString(team, side, sizeof(side));
   set_json_string(json, "name", g_TeamNames[matchTeam]);
   set_json_int(json, "series_score", g_TeamSeriesScores[matchTeam]);
-  set_json_int(json, "ready", IsTeamReady(matchTeam));
+  set_json_bool(json, "ready", IsTeamReady(matchTeam));
   set_json_string(json, "side", side);
   set_json_int(json, "connected_clients", GetNumHumansOnTeam(team));
   set_json_int(json, "current_map_score", CS_GetTeamScore(team));

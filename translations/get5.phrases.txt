@@ -10,15 +10,15 @@
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to restore the match backup."
+        "en"            "Type {GREEN}!ready {NORMAL}when you are ready to restore the match backup."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to knife."
+        "en"            "Type {GREEN}!ready {NORMAL}when you are ready to knife."
     }
     "ReadyToStartInfoMessage"
     {
-        "en"            "Type {GREEN}!ready {NORMAL}when your team is ready to begin."
+        "en"            "Type {GREEN}!ready {NORMAL}when you are ready to begin."
     }
     "YouAreReady"
     {

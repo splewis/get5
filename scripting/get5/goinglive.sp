@@ -45,8 +45,7 @@ public Action MatchLive(Handle timer) {
   // We force the match end-delay to extend for the duration of the GOTV broadcast here.
   g_PendingSideSwap = false;
   ConVar mp_match_restart_delay = FindConVar("mp_match_restart_delay");
-  ConVar tv_delay = FindConVar("tv_delay");
-  SetConVarInt(mp_match_restart_delay, tv_delay.IntValue + MATCH_END_DELAY_AFTER_TV + 5);
+  SetConVarInt(mp_match_restart_delay, GetTvDelay() + MATCH_END_DELAY_AFTER_TV + 5);
 
   for (int i = 0; i < 5; i++) {
     Get5_MessageToAll("%t", "MatchIsLiveInfoMessage");

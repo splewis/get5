@@ -756,7 +756,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     Call_PushCell(GetMapNumber() - 1);
     Call_Finish();
 
-    float minDelay = FindConVar("tv_delay").FloatValue + MATCH_END_DELAY_AFTER_TV;
+    float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
     if (g_TeamSeriesScores[MatchTeam_Team1] == g_MapsToWin) {
       SeriesWonMessage(MatchTeam_Team1);
       DelayFunction(minDelay, EndSeries);

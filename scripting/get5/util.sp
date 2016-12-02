@@ -123,6 +123,13 @@ stock bool IsTVEnabled() {
   return tvEnabledCvar.IntValue != 0;
 }
 
+stock int GetTvDelay() {
+  if (IsTVEnabled()) {
+    return GetCvarIntSafe("tv_delay");
+  }
+  return 0;
+}
+
 stock bool Record(const char[] demoName) {
   char szDemoName[256];
   strcopy(szDemoName, sizeof(szDemoName), demoName);

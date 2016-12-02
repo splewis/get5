@@ -19,10 +19,12 @@ public Action Timer_AnnounceKnife(Handle timer) {
   return Plugin_Handled;
 }
 
-public void EndKnifeRound(bool swap) {
+static void PerformSideSwap(bool swap) {
   if (swap) {
-    g_TeamSide[MatchTeam_Team1] = TEAM2_STARTING_SIDE;
-    g_TeamSide[MatchTeam_Team2] = TEAM1_STARTING_SIDE;
+    int tmp = g_TeamSide[MatchTeam_Team2];
+    g_TeamSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team1];
+    g_TeamSide[MatchTeam_Team1] = tmp;
+
     for (int i = 1; i <= MaxClients; i++) {
       if (IsValidClient(i)) {
         int team = GetClientTeam(i);
@@ -43,7 +45,11 @@ public void EndKnifeRound(bool swap) {
 
   g_TeamStartingSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team1];
   g_TeamStartingSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team2];
+  SetMatchTeamCvars();
+}
 
+public void EndKnifeRound(bool swap) {
+  PerformSideSwap(swap);
   EventLogger_KnifeWon(g_KnifeWinnerTeam, swap);
   ChangeState(GameState_GoingLive);
   CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
@@ -70,6 +76,9 @@ public Action Command_Swap(int client, int args) {
     EndKnifeRound(true);
     Get5_MessageToAll("%t", "TeamDecidedToSwapInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
+  } else if (g_GameState == GameState_Warmup && g_InScrimMode &&
+             GetClientMatchTeam(client) == MatchTeam_Team1) {
+    PerformSideSwap(true);
   }
   return Plugin_Handled;
 }

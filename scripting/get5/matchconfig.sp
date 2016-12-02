@@ -856,7 +856,6 @@ public Action Command_CreateScrim(int client, int args) {
     DeleteFile(path);
   }
 
-
   KeyValues kv = new KeyValues("Match");
   kv.SetString("matchid", matchid);
   kv.SetNum("scrim", 1);

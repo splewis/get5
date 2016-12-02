@@ -30,8 +30,17 @@ public Action StartGoingLive(Handle timer) {
 }
 
 public Action MatchLive(Handle timer) {
-  if (g_GameState == GameState_None)
+  if (g_GameState == GameState_None) {
     return Plugin_Handled;
+  }
+
+  // Reset match config cvars. The problem is that when they are first
+  // set in StartGoingLive is that setting them right after executing the
+  // live config causes the live config values to get used for some reason
+  // (asynchronous command execution/cvar setting?), so they're set again
+  // to be sure.
+  SetMatchTeamCvars();
+  ExecuteMatchConfigCvars();
 
   // We force the match end-delay to extend for the duration of the GOTV broadcast here.
   g_PendingSideSwap = false;

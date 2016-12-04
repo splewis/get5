@@ -648,3 +648,16 @@ public Action _DelayFunctionCallback(Handle timer, DataPack data) {
   Call_Finish();
   delete data;
 }
+
+// Deletes a file if it exists. Returns true if the
+// file existed AND there was an error deleting it.
+public void DeleteFileIfExists(const char[] path) {
+  if (FileExists(path)) {
+    if (!DeleteFile(path)) {
+      LogError("Failed to delete file %s", path);
+      return false;
+    }
+  }
+
+  return true;
+}

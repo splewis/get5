@@ -785,11 +785,8 @@ public Action Command_CreateMatch(int client, int args) {
   }
 
   char path[PLATFORM_MAX_PATH];
-  if (FileExists(path)) {
-    DeleteFile(path);
-  }
-
   Format(path, sizeof(path), "get5_%s.cfg", matchid);
+  DeleteFileIfExists(path);
 
   KeyValues kv = new KeyValues("Match");
   kv.SetString("matchid", matchid);
@@ -819,7 +816,12 @@ public Action Command_CreateMatch(int client, int args) {
   AddPlayersToAuthKv(kv, MatchTeam_TeamSpec, teamName);
   kv.GoBack();
 
-  kv.ExportToFile(path);
+  if (!kv.ExportToFile(path)) {
+    delete kv;
+    MatchConfigFail("Failed to read write match config to %s", path);
+    return Plugin_Handled;
+  }
+
   delete kv;
   LoadMatchConfig(path);
   return Plugin_Handled;
@@ -852,9 +854,7 @@ public Action Command_CreateScrim(int client, int args) {
 
   char path[PLATFORM_MAX_PATH];
   Format(path, sizeof(path), "get5_%s.cfg", matchid);
-  if (FileExists(path)) {
-    DeleteFile(path);
-  }
+  DeleteFileIfExists(path);
 
   KeyValues kv = new KeyValues("Match");
   kv.SetString("matchid", matchid);
@@ -865,13 +865,18 @@ public Action Command_CreateScrim(int client, int args) {
 
   char templateFile[PLATFORM_MAX_PATH + 1];
   BuildPath(Path_SM, templateFile, sizeof(templateFile), "configs/get5/scrim_template.cfg");
-  kv.ImportFromFile(templateFile);
+  if (kv.ImportFromFile(templateFile)) {
+    delete kv;
+    MatchConfigFail("Failed to read scrim template in %s", templateFile);
+    return Plugin_Handled;
+  }
 
-  kv.JumpToKey("team2", true);
-  kv.SetString("name", otherTeamName);
-  kv.GoBack();
+  if (!kv.ExportToFile(path)) {
+    delete kv;
+    MatchConfigFail("Failed to read write scrim config to %s", path);
+    return Plugin_Handled;
+  }
 
-  kv.ExportToFile(path);
   delete kv;
   LoadMatchConfig(path);
   return Plugin_Handled;

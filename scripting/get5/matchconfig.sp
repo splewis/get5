@@ -865,7 +865,7 @@ public Action Command_CreateScrim(int client, int args) {
 
   char templateFile[PLATFORM_MAX_PATH + 1];
   BuildPath(Path_SM, templateFile, sizeof(templateFile), "configs/get5/scrim_template.cfg");
-  if (kv.ImportFromFile(templateFile)) {
+  if (!kv.ImportFromFile(templateFile)) {
     delete kv;
     MatchConfigFail("Failed to read scrim template in %s", templateFile);
     return Plugin_Handled;

@@ -871,6 +871,10 @@ public Action Command_CreateScrim(int client, int args) {
     return Plugin_Handled;
   }
 
+  kv.JumpToKey("team2", true);
+  kv.SetString("name", otherTeamName);
+  kv.GoBack();
+
   if (!kv.ExportToFile(path)) {
     delete kv;
     MatchConfigFail("Failed to read write scrim config to %s", path);

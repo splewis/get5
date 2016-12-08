@@ -224,7 +224,7 @@ public void OnPluginStart() {
   g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
                                       "Format for demo file names, use \"\" to disable");
   g_EventLogFormatCvar =
-      CreateConVar("get5_event_log_format", "logs/get5_match{MATCHID}_event_log.log",
+      CreateConVar("get5_event_log_format", "",
                    "Path to use when writing match event logs, use \"\" to disable");
   g_FixedPauseTimeCvar =
       CreateConVar("get5_fixed_pause_time", "0",

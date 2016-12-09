@@ -871,6 +871,22 @@ public Action Command_CreateScrim(int client, int args) {
     return Plugin_Handled;
   }
 
+  if (kv.JumpToKey("team1") && kv.JumpToKey("players") && kv.GotoFirstSubKey(false)) {
+    // Empty string values are found when reading KeyValues, but don't get written out.
+    // So this adds a value for each auth so scrim templates don't have to insert fake values.
+    do {
+      char auth[AUTH_LENGTH];
+      kv.GetString(NULL_STRING, auth, sizeof(auth));
+      // kv.GetSectionName(auth, sizeof(auth));
+      kv.SetString(auth, "x");
+    } while (kv.GotoNextKey(false));
+    kv.Rewind();
+  } else {
+    delete kv;
+    MatchConfigFail("You must add players to team1 on your scrim template!");
+    return Plugin_Handled;
+  }
+
   kv.JumpToKey("team2", true);
   kv.SetString("name", otherTeamName);
   kv.GoBack();

@@ -7,6 +7,7 @@ public Action Command_AdminForceReady(int client, int args) {
   LOOP_TEAMS(team) {
     g_TeamReadyOverride[team] = true;
   }
+  SetMatchTeamCvars();
 
   return Plugin_Handled;
 }
@@ -24,6 +25,7 @@ public Action Command_Ready(int client, int args) {
   Get5_Message(client, "%t", "YouAreReady");
   g_ClientReady[client] = true;
   if (IsTeamReady(team)) {
+    SetMatchTeamCvars();
     PrintReadyMessage(team);
   }
 
@@ -62,6 +64,7 @@ public Action Command_NotReady(int client, int args) {
   Get5_Message(client, "%t", "YouAreNotReady");
 
   if (teamWasReady) {
+    SetMatchTeamCvars();
     Get5_MessageToAll("%t", "TeamNotReadyInfoMessage", g_FormattedTeamNames[team]);
   }
 
@@ -88,6 +91,7 @@ public Action Command_ForceReadyClient(int client, int args) {
         }
       }
       g_TeamReadyOverride[team] = true;
+      SetMatchTeamCvars();
       PrintReadyMessage(team);
 
     } else {

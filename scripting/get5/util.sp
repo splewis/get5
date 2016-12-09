@@ -238,16 +238,29 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
                        const char[] logo = "", const char[] matchstat = "") {
   int team_int = (csTeam == CS_TEAM_CT) ? 1 : 2;
 
-  char teamCvarName[32];
-  char flagCvarName[32];
-  char logoCvarName[32];
-  char textCvarName[32];
+  char teamCvarName[MAX_CVAR_LENGTH];
+  char flagCvarName[MAX_CVAR_LENGTH];
+  char logoCvarName[MAX_CVAR_LENGTH];
+  char textCvarName[MAX_CVAR_LENGTH];
   Format(teamCvarName, sizeof(teamCvarName), "mp_teamname_%d", team_int);
   Format(flagCvarName, sizeof(flagCvarName), "mp_teamflag_%d", team_int);
   Format(logoCvarName, sizeof(logoCvarName), "mp_teamlogo_%d", team_int);
   Format(textCvarName, sizeof(textCvarName), "mp_teammatchstat_%d", team_int);
 
-  SetConVarStringSafe(teamCvarName, name);
+  // Add Ready/Not ready tags to team name if in warmup.
+  char taggedName[MAX_CVAR_LENGTH];
+  if (g_GameState == GameState_Warmup || g_GameState == GameState_PreVeto) {
+    MatchTeam matchTeam = CSTeamToMatchTeam(csTeam);
+    if (IsTeamReady(matchTeam)) {
+      Format(taggedName, sizeof(taggedName), "%T %s", "ReadyTag", LANG_SERVER, name);
+    } else {
+      Format(taggedName, sizeof(taggedName), "%T %s", "NotReadyTag", LANG_SERVER, name);
+    }
+  } else {
+    strcopy(taggedName, sizeof(taggedName), name);
+  }
+
+  SetConVarStringSafe(teamCvarName, taggedName);
   SetConVarStringSafe(flagCvarName, flag);
   SetConVarStringSafe(logoCvarName, logo);
   SetConVarStringSafe(textCvarName, matchstat);

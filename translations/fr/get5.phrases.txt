@@ -2,7 +2,7 @@
 {
     "ReadyToVetoInfoMessage"
     {
-        "fr"            "Entrez {GREEN}!ready {NORMAL}quand votre équipe est prête à opposer son véto."
+        "fr"            "Entrez {GREEN}!ready {NORMAL}quand votre équipe est prête pour le tour de veto."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -38,7 +38,7 @@
     }
     "NoMatchSetupInfoMessage"
     {
-        "fr"            "Il n'y a pas de configuration de match"
+        "fr"            "Aucune configuration de match trouvée"
     }
     "YourAreNotAPlayerInfoMessage"
     {
@@ -94,11 +94,11 @@
     }
     "MatchUnpauseInfoMessage"
     {
-        "fr"            "{1:N} a arrêté la pause du match."
+        "fr"            "{1:N} a mis fin à la pause."
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "fr"            "{1} désire arrêter la pause, en attente que {2} tappe !unpause."
+        "fr"            "{1} désire reprendre le match, en attente que {2} tappe !unpause."
     }
     "PausesLeftInfoMessage"
     {
@@ -114,7 +114,7 @@
     }
     "TeamReadyToVetoInfoMessage"
     {
-        "fr"            "{1} est prêt à poser son veto."
+        "fr"            "{1} est prêt pour le tour de veto."
     }
     "TeamReadyToRestoreBackupInfoMessage"
     {
@@ -250,11 +250,11 @@
     }
     "CaptainLeftOnVetoInfoMessage"
     {
-        "fr"            "Un chef d'équipe a quitté pendant le veto, veto en pause."
+        "fr"            "Un chef d'équipe a quitté pendant le tour de veto, match en pause."
     }
     "ReadyToResumeVetoInfoMessage"
     {
-        "fr"            "Entrez {GREEN}!ready {NORMAL}quand vous êtes prêt(e) à reprendre le veto."
+        "fr"            "Entrez {GREEN}!ready {NORMAL}quand vous êtes prêt(e) à reprendre le tour de veto."
     }
     "MatchConfigLoadedInfoMessage"
     {

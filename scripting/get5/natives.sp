@@ -1,5 +1,5 @@
 // See include/pugsetup.inc for documentation.
-#define MESSAGE_PREFIX "[\x05Get5\x01]"
+#define MESSAGE_PREFIX "[ITGC-CW]"
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
   CreateNative("Get5_GetGameState", Native_GetGameState);

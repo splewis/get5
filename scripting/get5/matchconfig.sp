@@ -99,8 +99,12 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   }
 
   for (int i = 1; i <= MaxClients; i++) {
-    if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == MatchTeam_TeamNone) {
-      KickClient(i, "%t", "YourAreNotAPlayerInfoMessage");
+    if (IsAuthedPlayer(i)) {
+      if (GetClientMatchTeam(i) == MatchTeam_TeamNone) {
+        KickClient(i, "%t", "YourAreNotAPlayerInfoMessage");
+      } else {
+        CheckClientTeam(i);
+      }
     }
   }
 

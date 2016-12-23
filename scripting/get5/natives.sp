@@ -1,5 +1,4 @@
 // See include/pugsetup.inc for documentation.
-#define MESSAGE_PREFIX "[\x05Get5\x01]"
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
   CreateNative("Get5_GetGameState", Native_GetGameState);
@@ -37,8 +36,8 @@ public int Native_Message(Handle plugin, int numParams) {
   SetGlobalTransTarget(client);
   FormatNativeString(0, 2, 3, sizeof(buffer), bytesWritten, buffer);
 
-  char prefix[64] = MESSAGE_PREFIX;
-  // g_MessagePrefixCvar.GetString(prefix, sizeof(prefix));
+  char prefix[64];
+  g_MessagePrefixCvar.GetString(prefix, sizeof(prefix));
 
   char finalMsg[1024];
   if (StrEqual(prefix, ""))
@@ -57,8 +56,9 @@ public int Native_Message(Handle plugin, int numParams) {
 
 public int Native_MessageToTeam(Handle plugin, int numParams) {
   MatchTeam team = view_as<MatchTeam>(GetNativeCell(1));
-  char prefix[64] = MESSAGE_PREFIX;
-  // g_MessagePrefixCvar.GetString(prefix, sizeof(prefix));
+  char prefix[64];
+  g_MessagePrefixCvar.GetString(prefix, sizeof(prefix));
+
   char buffer[1024];
   int bytesWritten = 0;
 
@@ -82,8 +82,8 @@ public int Native_MessageToTeam(Handle plugin, int numParams) {
 }
 
 public int Native_MessageToAll(Handle plugin, int numParams) {
-  char prefix[64] = MESSAGE_PREFIX;
-  // g_MessagePrefixCvar.GetString(prefix, sizeof(prefix));
+  char prefix[64];
+  g_MessagePrefixCvar.GetString(prefix, sizeof(prefix));
   char buffer[1024];
   int bytesWritten = 0;
 

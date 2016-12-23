@@ -51,5 +51,12 @@ public Action MatchLive(Handle timer) {
     Get5_MessageToAll("%t", "MatchIsLiveInfoMessage");
   }
 
+
+  char tag[64];
+  g_MessagePrefixCvar.GetString(tag, sizeof(tag));
+  if (!StrEqual(tag, DEFAULT_TAG)) {
+    Get5_MessageToAll("%t", "MatchPoweredBy");
+  }
+
   return Plugin_Handled;
 }

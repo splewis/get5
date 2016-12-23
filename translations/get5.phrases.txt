@@ -313,4 +313,8 @@
     {
         "en"            "[NOT READY]"
     }
+    "MatchPoweredBy"
+    {
+        "en"        "Powered by {YELLOW}Get5"
+    }
 }

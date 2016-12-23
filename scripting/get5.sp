@@ -45,6 +45,7 @@
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T
 #define KNIFE_CONFIG "get5/knife.cfg"
+#define DEFAULT_TAG "[{YELLOW}Get5{NORMAL}]"
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -246,7 +247,7 @@ public void OnPluginStart() {
   g_MaxPauseTimeCvar =
       CreateConVar("get5_max_pause_time", "300",
                    "Maximum number of time the game can spend paused by a team, 0=unlimited");
-  g_MessagePrefixCvar = CreateConVar("get5_message_prefix", "[{YELLOW}Get5{NORMAL}]",
+  g_MessagePrefixCvar = CreateConVar("get5_message_prefix", DEFAULT_TAG,
                                      "The tag applied before plugin messages.");
   g_ResetPausesEachHalfCvar =
       CreateConVar("get5_reset_pauses_each_half", "1",

@@ -98,16 +98,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     ChangeState(GameState_PreVeto);
   }
 
-  for (int i = 1; i <= MaxClients; i++) {
-    if (IsAuthedPlayer(i)) {
-      if (GetClientMatchTeam(i) == MatchTeam_TeamNone) {
-        KickClient(i, "%t", "YourAreNotAPlayerInfoMessage");
-      } else {
-        CheckClientTeam(i);
-      }
-    }
-  }
-
   if (!restoreBackup) {
     SetStartingTeams();
     ExecCfg(g_WarmupCfgCvar);
@@ -117,6 +107,16 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     Stats_InitSeries();
     Call_StartForward(g_OnSeriesInit);
     Call_Finish();
+  }
+
+  for (int i = 1; i <= MaxClients; i++) {
+    if (IsAuthedPlayer(i)) {
+      if (GetClientMatchTeam(i) == MatchTeam_TeamNone) {
+        KickClient(i, "%t", "YourAreNotAPlayerInfoMessage");
+      } else {
+        CheckClientTeam(i);
+      }
+    }
   }
 
   AddTeamLogosToDownloadTable();

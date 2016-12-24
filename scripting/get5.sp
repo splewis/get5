@@ -247,8 +247,8 @@ public void OnPluginStart() {
   g_MaxPauseTimeCvar =
       CreateConVar("get5_max_pause_time", "300",
                    "Maximum number of time the game can spend paused by a team, 0=unlimited");
-  g_MessagePrefixCvar = CreateConVar("get5_message_prefix", DEFAULT_TAG,
-                                     "The tag applied before plugin messages.");
+  g_MessagePrefixCvar =
+      CreateConVar("get5_message_prefix", DEFAULT_TAG, "The tag applied before plugin messages.");
   g_ResetPausesEachHalfCvar =
       CreateConVar("get5_reset_pauses_each_half", "1",
                    "Whether pause limits will be reset each halftime period");

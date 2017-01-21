@@ -1,0 +1,279 @@
+"Phrases"
+{
+    "ReadyToVetoInfoMessage"
+    {
+        "chi"            "当您的队伍准备好进行Veto(Ban图)时，请输入{GREEN}!ready{NORMAL}。"
+    }
+    "WaitingForCastersReadyInfoMessage"
+    {
+        "chi"            "正在等待裁判输入{GREEN}!ready{NORMAL}来开始比赛。"
+    }
+    "ReadyToRestoreBackupInfoMessage"
+    {
+        "chi"            "当您准备好恢复比赛至备份档案时，请输入{GREEN}!ready{NORMAL}。"
+    }
+    "ReadyToKnifeInfoMessage"
+    {
+        "chi"            "当您准备好进行刀局时，请输入{GREEN}!ready{NORMAL}。"
+    }
+    "ReadyToStartInfoMessage"
+    {
+        "chi"            "当您准备好开始比赛时，请输入{GREEN}!ready{NORMAL}。"
+    }
+    "YouAreReady"
+    {
+        "chi"            "您已被标记为准备就绪。"
+    }
+    "YouAreNotReady"
+    {
+        "chi"            "您已被标记为未准备好。"
+    }
+    "WaitingForEnemySwapInfoMessage"
+    {
+        "chi"            "{1}赢得刀局。等待他们输入!stay或是!swapwon来选择留下还是交换队伍。"
+    }
+    "WaitingForGOTVBrodcastEndingInfoMessage"
+    {
+        "chi"            "当GOTV播放结束时，地图将被切换。"
+    }
+    "NoMatchSetupInfoMessage"
+    {
+        "chi"			"没有设置比赛配置"
+    }
+    "YourAreNotAPlayerInfoMessage"
+    {
+        "chi"            "您并不是这场比赛的玩家"
+    }
+    "TeamIsFullInfoMessage"
+    {
+        "chi"            "您的团队已满"
+    }
+    "TeamForfeitInfoMessage"
+    {
+        "chi"            "{1}未及时准备就绪，已被视为弃权。"
+    }
+    "MinutesToForfeitMessage"
+    {
+        "chi"            "{1}有{2}分的时间来准备就绪，否则将被视为放弃比赛。"
+    }
+    "SecondsToForfeitInfoMessage"
+    {
+        "chi"            "{1}有{2}秒的时间来准备就绪，否则将被视为放弃比赛。"
+    }
+    "10SecondsToForfeitInfoMessage"
+    {
+        "chi"            "{1}有10秒的时间来准备就绪，否则将被视为放弃比赛。"
+    }
+    "PausePeriodSuffix"
+    {
+        "chi"            "于这个半场"
+    }
+    "MaxPausesUsedInfoMessage"
+    {
+        "chi"            "您的队伍已经使用了最大为{1}次的暂停次数{2}。"
+    }
+    "MaxPausesTimeUsedInfoMessage"
+    {
+        "chi"            "您的队伍已经使用了最大为{1}秒的暂停时间{2}。"
+    }
+    "MatchPausedByTeamMessage"
+    {
+        "chi"            "{1}暂停了比赛。"
+    }
+    "PauseTimeExpiration10SecInfoMessage"
+    {
+        "chi"            "{1}的暂停时间即将耗尽，将在10秒后解除暂停。"
+    }
+    "PauseTimeExpirationInfoMessage"
+    {
+        "chi"            "{1}剩余{2}秒的暂停时间{3}。"
+    }
+    "PauseRunoutInfoMessage"
+    {
+        "chi"            "{1}的暂停时间已经耗尽，已解除比赛的暂停。"
+    }
+    "MatchUnpauseInfoMessage"
+    {
+        "chi"            "{1:N}解除了比赛的暂停。"
+    }
+    "WaitingForUnpauseInfoMessage"
+    {
+        "chi"            "{1}想要取消暂停，正在等待{2}输入!unpause来取消暂停。"
+    }
+    "PausesLeftInfoMessage"
+    {
+        "chi"            "{1}剩余{2}次pauses暂停次数{3}。"
+    }
+    "OnePauseLeftInfoMessage"
+    {
+        "chi"            "{1}剩余{2}次pauses暂停次数{3}。"
+    }
+    "TeamFailToReadyMinPlayerCheck"
+    {
+        "chi"            "服务器上至少有{1}名玩家，您才能准备就绪。"
+    }
+    "TeamReadyToVetoInfoMessage"
+    {
+        "chi"            "{1}已准备好进行Veto(Ban图)。"
+    }
+    "TeamReadyToRestoreBackupInfoMessage"
+    {
+        "chi"            "{1}已准备好恢复比赛至备份档案。"
+    }
+    "TeamReadyToKnifeInfoMessage"
+    {
+        "chi"            "{1}已准备好拼刀选边。"
+    }
+    "TeamReadyToBeginInfoMessage"
+    {
+        "chi"            "{1}已准备好开始比赛。"
+    }
+    "TeamNotReadyInfoMessage"
+    {
+        "chi"            "{1}已不在准备就绪状态。"
+    }
+    "ForceReadyInfoMessage"
+    {
+        "chi"            "如果您有不到{1}名玩家，您可以输入{GREEN}!forceready{NORMAL}来强制准备您的队伍。"
+    }
+    "TeammateForceReadied"
+    {
+        "chi"            "您的队伍已被{GREEN}{1}{NORMAL}强制准备就绪。"
+    }
+    "AdminForceReadyInfoMessage"
+    {
+        "chi"            "一名管理员强制准备了所有队伍。"
+    }
+    "AdminForceEndInfoMessage"
+    {
+        "chi"            "一名管理员强制结束了比赛。"
+    }
+    "AdminForcePauseInfoMessage"
+    {
+        "chi"            "一名管理员强制暂停了比赛。"
+    }
+    "AdminForceUnPauseInfoMessage"
+    {
+        "chi"            "一名管理员强制解除了比赛暂停。"
+    }
+    "TeamWantsToReloadLastRoundInfoMessage"
+    {
+        "chi"            "{1}想停止比赛并重新加载比赛至上一回合，需要{2}输入!stop来确认。"
+    }
+    "TeamWinningSeriesInfoMessage"
+    {
+        "chi"            "{1}{NORMAL}在这系列比赛中正处于领先状态 {2}-{3}"
+    }
+    "SeriesTiedInfoMessage"
+    {
+        "chi"            "此系列比赛终结于{1}-{2}"
+    }
+    "NextSeriesMapInfoMessage"
+    {
+        "chi"            "下一张地图在此系列比赛中是{GREEN}{1}"
+    }
+    "TeamWonMatchInfoMessage"
+    {
+        "chi"            "{1}赢得了这局比赛。"
+    }
+    "TeamsSplitSeriesBO2InfoMessage"
+    {
+        "chi"            "{1}和{2}在此系列比赛中平局 1-1。"
+    }
+    "TeamWonSeriesInfoMessage"
+    {
+        "chi"            "{1}赢得了此系列比赛 {2}-{3}."
+    }
+    "MatchFinishedInfoMessage"
+    {
+        "chi"            "这场比赛已完结。"
+    }
+    "CurrentScoreInfoMessage"
+    {
+        "chi"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
+    }
+    "BackupLoadedInfoMessage"
+    {
+        "chi"            "成功加载备份档案 {1}"
+    }
+    "MatchBeginInSecondsInfoMessage"
+    {
+        "chi"            "这场比赛将于{1}后开始。"
+    }
+    "MatchIsLiveInfoMessage"
+    {
+        "chi"            "比赛已{GREEN}开始"
+    }
+    "KnifeIn5SecInfoMessage"
+    {
+        "chi"            "刀局将在5秒后开始。"
+    }
+    "KnifeInfoMessage"
+    {
+        "chi"            "刀局!"
+    }
+    "TeamDecidedToStayInfoMessage"
+    {
+        "chi"            "{1}已决定留下。"
+    }
+    "TeamDecidedToSwapInfoMessage"
+    {
+        "chi"            "{1}已决定交换。"
+    }
+    "TeamLostTimeToDecideInfoMessage"
+    {
+        "chi"            "{1}将会留下来，因为他们没有及时做出决定。"
+    }
+    "ChangingMapInfoMessage"
+    {
+        "chi"            "切换地图至{GREEN}{1}..."
+    }
+    "MapDecidedInfoMessage"
+    {
+        "chi"            "地图已被确定："
+    }
+    "MapIsInfoMessage"
+    {
+        "chi"            "地图 {1}： {GREEN}{2}"
+    }
+    "TeamPickedMapInfoMessage"
+    {
+        "chi"            "{1}挑选了{GREEN}{2}{NORMAL}作为地图 {3}"
+    }
+    "TeamSelectSideInfoMessage"
+    {
+        "chi"            "{1}已选择在{GREEN}{2}{NORMAL}开始 {3}"
+    }
+    "TeamVetoedMapInfoMessage"
+    {
+        "chi"            "{1}vetoed(Ban掉)了{LIGHT_RED}{2}"
+    }
+    "CaptainLeftOnVetoInfoMessage"
+    {
+        "chi"            "一个队长在Veto(Ban图)期间离开，暂停Veto(Ban图)"
+    }
+    "ReadyToResumeVetoInfoMessage"
+    {
+        "chi"            "当您准备好恢复Veto(Ban图)时，请输入{GREEN}!ready{NORMAL}。"
+    }
+    "MatchConfigLoadedInfoMessage"
+    {
+        "chi"            "已加载比赛配置。"
+    }
+    "MoveToCoachInfoMessage"
+    {
+        "chi"            "因为您的团队已经满员，所以您被移到了教练的位置。"
+    }
+    "ReadyTag"
+    {
+        "chi"            "[准备]"
+    }
+    "NotReadyTag"
+    {
+        "chi"            "[未准备]"
+    }
+    "MatchPoweredBy"
+    {
+        "chi"        "Powered by {YELLOW}Get5"
+    }
+}

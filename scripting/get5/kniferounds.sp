@@ -18,7 +18,7 @@ public Action Timer_AnnounceKnife(Handle timer) {
     Get5_MessageToAll("%t", "KnifeInfoMessage");
   }
 
-  g_HasKnifeRoundStarted true;
+  g_HasKnifeRoundStarted = true;
   EventLogger_KnifeStart();
   return Plugin_Handled;
 }

@@ -101,6 +101,7 @@ MatchSideType g_MatchSideType = MatchSideType_Standard;
 ArrayList g_CvarNames = null;
 ArrayList g_CvarValues = null;
 bool g_InScrimMode = false;
+bool g_HasKnifeRoundStarted = false;
 
 /** Other state **/
 GameState g_GameState = GameState_None;
@@ -911,10 +912,11 @@ public void WriteBackup() {
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
-  if (g_DoingBackupRestoreNow)
+  if (g_DoingBackupRestoreNow) {
     return;
+  }
 
-  if (g_GameState == GameState_KnifeRound) {
+  if (g_GameState == GameState_KnifeRound && g_HasKnifeRoundStarted) {
     ChangeState(GameState_WaitingForKnifeRoundDecision);
     CreateTimer(1.0, Timer_PostKnife);
 

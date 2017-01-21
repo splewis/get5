@@ -1,20 +1,24 @@
 public Action StartKnifeRound(Handle timer) {
+  g_HasKnifeRoundStarted = false;
   g_PendingSideSwap = false;
 
   Get5_MessageToAll("%t", "KnifeIn5SecInfoMessage");
-  if (InWarmup())
+  if (InWarmup()) {
     EndWarmup(5);
-  else
+  } else {
     RestartGame(5);
+  }
 
   CreateTimer(10.0, Timer_AnnounceKnife);
   return Plugin_Handled;
 }
 
 public Action Timer_AnnounceKnife(Handle timer) {
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < 5; i++) {
     Get5_MessageToAll("%t", "KnifeInfoMessage");
+  }
 
+  g_HasKnifeRoundStarted true;
   EventLogger_KnifeStart();
   return Plugin_Handled;
 }

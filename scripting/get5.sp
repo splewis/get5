@@ -1018,7 +1018,7 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
 
 public void StartGame(bool knifeRound) {
   if (!IsTVEnabled()) {
-    LogError("GOTV demo could not be recorded since tv_enable is not set to 1");
+    LogMessage("GOTV demo could not be recorded since tv_enable is not set to 1");
   } else {
     char demoName[PLATFORM_MAX_PATH + 1];
     if (FormatCvarString(g_DemoNameFormatCvar, demoName, sizeof(demoName)) && Record(demoName)) {

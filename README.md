@@ -51,7 +51,7 @@ Generally admin commands will have a ``get5_`` prefix and must be used in consol
 
 Some client commands are available also for admin usage. For example, sm_pause and sm_unpause will force pauses if executed by the server (e.g., through rcon).
 
-#### Client Commands
+#### Client Commands (these can be typed by all players in chat)
 - ``!ready``: marks a client's team as ready to begin
 - ``!unready``: marks a client's team as not-ready
 - ``!pause``: requests a freezetime pause
@@ -60,8 +60,9 @@ Some client commands are available also for admin usage. For example, sm_pause a
 - ``!stay``: elects to stay after a knife round win
 - ``!swap``: elects to swap after a knife round win
 - ``!stop``: asks to reload the last match backup file, requires other team to confirm
+- ``!forceready``: force readies your team, letting your team start regardless of player numbers/whether they are ready
 
-#### Server/Admin Commands
+#### Server/Admin Commands (meant to be used by admins in console)
 - ``get5_loadmatch``: loads a match config file (JSON or keyvalues) relative from the ``csgo`` directory
 - ``get5_loadbackup``: loads a get5 backup file
 - ``get5_loadteam``: loads a team section from a file into a team

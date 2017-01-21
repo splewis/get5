@@ -7,6 +7,11 @@ public Action Command_AdminForceReady(int client, int args) {
   LOOP_TEAMS(team) {
     g_TeamReadyOverride[team] = true;
   }
+  for (int i = 1; i <= MaxClients; i++) {
+    if (IsPlayer(i)) {
+      g_ClientReady[i] = true;
+    }
+  }
   SetMatchTeamCvars();
 
   return Plugin_Handled;

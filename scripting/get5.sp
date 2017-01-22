@@ -602,10 +602,29 @@ public Action Command_EndMatch(int client, int args) {
   if (g_GameState == GameState_None) {
     return Plugin_Handled;
   }
+
+  // Call game-ending forwards.
+  char mapName[PLATFORM_MAX_PATH];
+  GetCleanMapName(mapName, sizeof(mapName));
+  Call_StartForward(g_OnMapResult);
+  Call_PushString(mapName);
+  Call_PushCell(MatchTeam_TeamNone);
+  Call_PushCell(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
+  Call_PushCell(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
+  Call_PushCell(GetMapNumber() - 1);
+  Call_Finish();
+
+  Call_StartForward(g_OnSeriesResult);
+  Call_PushCell(MatchTeam_TeamNone);
+  Call_PushCell(g_TeamSeriesScores[MatchTeam_Team1]);
+  Call_PushCell(g_TeamSeriesScores[MatchTeam_Team2]);
+  Call_Finish();
+
   ChangeState(GameState_None);
 
   Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
   RestoreCvars(g_MatchConfigChangedCvars);
+  StopRecording();
 
   return Plugin_Handled;
 }

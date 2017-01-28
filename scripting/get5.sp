@@ -73,6 +73,8 @@ ConVar g_TeamTimeToStartCvar;
 ConVar g_TimeFormatCvar;
 ConVar g_WarmupCfgCvar;
 
+// Autoset convars (not meant for users to set)
+ConVar g_GameStateCvar;
 ConVar g_LastGet5BackupCvar;
 ConVar g_VersionCvar;
 
@@ -275,6 +277,8 @@ public void OnPluginStart() {
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
 
+  g_GameStateCvar =
+      CreateConVar("get5_game_state", "0", "Current game state (see get5.inc)", FCVAR_DONTRECORD);
   g_LastGet5BackupCvar =
       CreateConVar("get5_last_backup_file", "", "Last get5 backup file written", FCVAR_DONTRECORD);
   g_VersionCvar = CreateConVar("get5_version", PLUGIN_VERSION, "Current get5 version",
@@ -1078,6 +1082,7 @@ public Action StopDemo(Handle timer) {
 
 public void ChangeState(GameState state) {
   LogDebug("Change from state %d -> %d", g_GameState, state);
+  g_GameStateCvar.IntValue = view_as<int>(state);
   Call_StartForward(g_OnGameStateChanged);
   Call_PushCell(g_GameState);
   Call_PushCell(state);

@@ -634,16 +634,22 @@ public void SetMatchTeamCvars() {
   }
 
   SetTeamInfo(CS_TEAM_CT, g_TeamNames[ctTeam], g_TeamFlags[ctTeam], g_TeamLogos[ctTeam],
-              ctMatchText);
+              ctMatchText, g_TeamSeriesScores[ctTeam]);
 
-  SetTeamInfo(CS_TEAM_T, g_TeamNames[tTeam], g_TeamFlags[tTeam], g_TeamLogos[tTeam], tMatchText);
+  SetTeamInfo(CS_TEAM_T, g_TeamNames[tTeam], g_TeamFlags[tTeam], g_TeamLogos[tTeam], tMatchText,
+              g_TeamSeriesScores[tTeam]);
 
   // Set prediction cvars.
   SetConVarStringSafe("mp_teamprediction_txt", g_FavoredTeamText);
-  if (g_TeamSide[MatchTeam_Team1] == CS_TEAM_CT)
+  if (g_TeamSide[MatchTeam_Team1] == CS_TEAM_CT) {
     SetConVarIntSafe("mp_teamprediction_pct", g_FavoredTeamPercentage);
-  else
+  } else {
     SetConVarIntSafe("mp_teamprediction_pct", 100 - g_FavoredTeamPercentage);
+  }
+
+  if (g_MapsToWin > 1) {
+    SetConVarIntSafe("mp_teamscore_max", g_MapsToWin);
+  }
 }
 
 public MatchTeam GetMapWinner(int mapNumber) {

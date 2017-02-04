@@ -235,17 +235,19 @@ stock void UpdateCoachTarget(int client, int csTeam) {
 }
 
 stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
-                       const char[] logo = "", const char[] matchstat = "") {
+                       const char[] logo = "", const char[] matchstat = "", int series_score = 0) {
   int team_int = (csTeam == CS_TEAM_CT) ? 1 : 2;
 
   char teamCvarName[MAX_CVAR_LENGTH];
   char flagCvarName[MAX_CVAR_LENGTH];
   char logoCvarName[MAX_CVAR_LENGTH];
   char textCvarName[MAX_CVAR_LENGTH];
+  char scoreCvarNAme[MAX_CVAR_LENGTH];
   Format(teamCvarName, sizeof(teamCvarName), "mp_teamname_%d", team_int);
   Format(flagCvarName, sizeof(flagCvarName), "mp_teamflag_%d", team_int);
   Format(logoCvarName, sizeof(logoCvarName), "mp_teamlogo_%d", team_int);
   Format(textCvarName, sizeof(textCvarName), "mp_teammatchstat_%d", team_int);
+  Format(scoreCvarNAme, sizeof(scoreCvarNAme), "mp_teamscore_%d", team_int);
 
   // Add Ready/Not ready tags to team name if in warmup.
   char taggedName[MAX_CVAR_LENGTH];
@@ -264,6 +266,10 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
   SetConVarStringSafe(flagCvarName, flag);
   SetConVarStringSafe(logoCvarName, logo);
   SetConVarStringSafe(textCvarName, matchstat);
+
+  if (g_MapsToWin > 1) {
+    SetConVarIntSafe(scoreCvarNAme, series_score);
+  }
 }
 
 stock void SetConVarIntSafe(const char[] name, int value) {

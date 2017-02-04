@@ -586,53 +586,6 @@ public void SetMatchTeamCvars() {
                              sizeof(tMatchText));
   }
 
-  // Set the match stat text values to display the previous map
-  // results for a Bo3 series.
-  if (g_MapsToWin == 2 && mapsPlayed >= 1) {
-    MatchTeam map1Winner = GetMapWinner(0);
-    char map1[PLATFORM_MAX_PATH];
-    char map2[PLATFORM_MAX_PATH];
-    char map1Display[PLATFORM_MAX_PATH];
-    char map2Display[PLATFORM_MAX_PATH];
-    g_MapsToPlay.GetString(0, map1, sizeof(map1));
-    g_MapsToPlay.GetString(1, map2, sizeof(map2));
-    FormatMapName(map1, map1Display, sizeof(map1Display), true);
-    FormatMapName(map2, map2Display, sizeof(map2Display), true);
-
-    char team1Text[MAX_CVAR_LENGTH];
-    char team2Text[MAX_CVAR_LENGTH];
-
-    if (mapsPlayed == 1 && HasMapScore(0)) {
-      if (map1Winner == MatchTeam_Team1) {
-        Format(team1Text, sizeof(team1Text), "Won %s %d:%d", map1Display,
-               GetMapScore(0, MatchTeam_Team1), GetMapScore(0, MatchTeam_Team2));
-        Format(team2Text, sizeof(team2Text), "Lost %s", map1Display);
-      } else {
-        Format(team1Text, sizeof(team2Text), "Lost %s", map1Display);
-        Format(team2Text, sizeof(team1Text), "Won %s %d:%d", map1Display,
-               GetMapScore(0, MatchTeam_Team2), GetMapScore(0, MatchTeam_Team1));
-      }
-
-    } else if (mapsPlayed == 2 && HasMapScore(0) && HasMapScore(1)) {
-      MatchTeam map2Winner = GetMapWinner(1);
-      // Note: you can assume map1winner = map2loser and map2winner = map1loser
-      if (map1Winner == MatchTeam_Team1) {
-        Format(team1Text, sizeof(team1Text), "Won %s %d:%d", map1Display,
-               GetMapScore(0, map1Winner), GetMapScore(0, map2Winner));
-        Format(team2Text, sizeof(team2Text), "Won %s %d:%d", map2Display,
-               GetMapScore(1, map2Winner), GetMapScore(1, map1Winner));
-      } else {
-        Format(team1Text, sizeof(team1Text), "Won %s %d:%d", map2Display,
-               GetMapScore(1, map2Winner), GetMapScore(1, map1Winner));
-        Format(team2Text, sizeof(team2Text), "Won %s %d:%d", map1Display,
-               GetMapScore(0, map1Winner), GetMapScore(0, map2Winner));
-      }
-    }
-
-    MatchTeamStringsToCSTeam(team1Text, team2Text, ctMatchText, sizeof(ctMatchText), tMatchText,
-                             sizeof(tMatchText));
-  }
-
   SetTeamInfo(CS_TEAM_CT, g_TeamNames[ctTeam], g_TeamFlags[ctTeam], g_TeamLogos[ctTeam],
               ctMatchText, g_TeamSeriesScores[ctTeam]);
 

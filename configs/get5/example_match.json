@@ -1,6 +1,5 @@
 {
 	"matchid": "example_match",
-	"match_title": "Quarterfinals | Map {MAPNUMBER} of {MAXMAPS}",
 	"maps_to_win": 2,
 	"bo2_series": false,
 	"players_per_team": 1,
@@ -35,7 +34,6 @@
 		"tag": "EnvyUs",
 		"flag": "FR",
 		"logo": "nv",
-		"matchtext": "Beat Ninjas in Pyjamas",
 		"players":
 		[
 			"STEAM_0:1:52245092",
@@ -51,7 +49,6 @@
 		"tag": "Fnatic",
 		"flag": "SE",
 		"logo": "fntc",
-		"matchtext": "Beat Virtus Pro",
 		"players":
 		[
 			"STEAM_1:1:46796472",

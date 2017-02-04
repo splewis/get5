@@ -87,7 +87,6 @@ See the example config in [Valve KeyValues format](configs/get5/example_match.cf
 Of the below fields, only the ``team1`` and ``team2`` fields are actually required. Reasonable defaults are used for entires (bo3 series, 5v5, empty strings for team names, etc.)
 
 - ``matchid``: a string matchid used to identify the match
-- ``match_title``: wrapper on the ``mp_teammatchstat_txt`` cvar, but can use {MAPNUMBER} and {MAXMAPS} as variables that get replaced with their integer values
 - ``maps_to_win``: number of maps needed to win the series (1 in a Bo1, 2 in a Bo3, 3 in a Bo5)
 - ``bo2_series``: whether the series is a bo2 series (will ignore ``maps_to_win`` if it is)
 - ``maplist``: list of the maps in use (an array of strings in JSON, mapnames as keys for KeyValues), you should always use an odd-sized maplist
@@ -102,6 +101,9 @@ Of the below fields, only the ``team1`` and ``team2`` fields are actually requir
 - ``team1``: see the team schema below
 - ``team2``: see the team schema below
 
+Fields you may use, you aren't generally needed to:
+- ``match_title``: wrapper on the ``mp_teammatchstat_txt`` cvar, but can use {MAPNUMBER} and {MAXMAPS} as variables that get replaced with their integer values. In a BoX series, you probably don't want to set this since get5 automatically sets mp_teamscore cvars for the current series score, and take the place of the mp_teammatchstat cvars.
+
 #### Team Schema
 Only ``name`` and ``players`` are required.
 
@@ -109,9 +111,9 @@ Only ``name`` and ``players`` are required.
 - ``tag``: team tag (or short name), this replaces client "clan tags"
 - ``flag``: team flag (2 letter country code, wraps ``mp_teamflag_1``)
 - ``logo`` team logo (wraps ``mp_teamlogo_1``)
-- ``matchtext``: warps ``mp_teammatchstat_1``
 - ``players``: list of Steam id's for users on the team (not used if ``get5_check_auths`` is set to 0)
 - ``series_score``: current score in the series, this can be used to give a team a map advantage or used as a manual backup method, defaults to 0
+- ``matchtext``: wraps ``mp_teammatchstat_1``, you probably don't want to set this, in BoX series mp_teamscore cvars are automatically set and take the place of the mp_teammatchstat cvars
 
 There is advice on handling these match configs in [the wiki](https://github.com/splewis/get5/wiki/Managing-match-configs).
 

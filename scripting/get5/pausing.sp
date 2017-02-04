@@ -65,7 +65,7 @@ public Action Command_Pause(int client, int args) {
 }
 
 public Action Timer_PauseTimeCheck(Handle timer, int data) {
-  if (!Pauseable() || !IsPaused()) {
+  if (!Pauseable() || !IsPaused() || g_FixedPauseTimeCvar.IntValue != 0) {
     return Plugin_Stop;
   }
 
@@ -108,6 +108,10 @@ public Action Command_Unpause(int client, int args) {
     Unpause();
     Get5_MessageToAll("%t", "AdminForceUnPauseInfoMessage");
   } else {
+    if (g_FixedPauseTimeCvar.IntValue != 0) {
+      return Plugin_Handled;
+    }
+
     MatchTeam team = GetClientMatchTeam(client);
     g_TeamReadyForUnpause[team] = true;
 

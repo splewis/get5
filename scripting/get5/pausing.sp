@@ -54,10 +54,10 @@ public Action Command_Pause(int client, int args) {
     int pausesLeft = g_MaxPausesCvar.IntValue - g_TeamPausesUsed[team];
     if (pausesLeft == 1 && g_MaxPausesCvar.IntValue > 0) {
       Get5_MessageToAll("%t", "OnePauseLeftInfoMessage", g_FormattedTeamNames[team],
-                        g_TeamPausesUsed[team], pausePeriodString);
+                        pausesLeft, pausePeriodString);
     } else if (g_MaxPausesCvar.IntValue > 0) {
       Get5_MessageToAll("%t", "PausesLeftInfoMessage", g_FormattedTeamNames[team],
-                        g_TeamPausesUsed[team], pausePeriodString);
+                        pausesLeft, pausePeriodString);
     }
   }
 

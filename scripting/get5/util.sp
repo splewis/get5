@@ -1,5 +1,6 @@
 #define MAX_INTEGER_STRING_LENGTH 16
 #define MAX_FLOAT_STRING_LENGTH 32
+#define AUTH_LENGTH 64
 
 static char _colorNames[][] = {"{NORMAL}", "{DARK_RED}",    "{PINK}",      "{GREEN}",
                                "{YELLOW}", "{LIGHT_GREEN}", "{LIGHT_RED}", "{GRAY}",

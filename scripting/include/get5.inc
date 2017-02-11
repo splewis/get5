@@ -3,8 +3,6 @@
 #endif
 #define _get5_included_
 
-#define AUTH_LENGTH 64
-
 enum GameState {
   GameState_None,                          // no setup has taken place
   GameState_PreVeto,                       // warmup, waiting for the veto
@@ -12,7 +10,6 @@ enum GameState {
   GameState_Warmup,                        // setup done, waiting for players to ready up
   GameState_KnifeRound,                    // in the knife round
   GameState_WaitingForKnifeRoundDecision,  // waiting for a .stay/.swap command after the knife
-                                           // round
   GameState_GoingLive,                     // in the lo3 process
   GameState_Live,                          // the match is live
   GameState_PostGame,                      // postgame screen + waiting for GOTV to finish broadcast
@@ -61,8 +58,7 @@ forward void Get5_OnMapResult(const char[] map, MatchTeam mapWinner, int team1Sc
                               int mapNumber);
 
 // Called at the end of a full match.
-// Note: both Get5_OnMapResult and Get5_OnSeriesResult are called
-// on the last map of a series.
+// Note: both Get5_OnMapResult and Get5_OnSeriesResult are called on the last map of a series.
 forward void Get5_OnSeriesResult(MatchTeam seriesWinner, int team1MapScore, int team2MapScore);
 
 // Called when a match config fails to load.
@@ -72,9 +68,8 @@ forward void Get5_OnLoadMatchConfigFailed(const char[] reason);
 forward void Get5_OnMapVetoed(MatchTeam team, const char[] map);
 
 // Called when a team selects a map.
-// The team parameter will be MatchTeam_TeamNone if the map was
-// selected as the last remaining map and not by one of the teams
-// specifically.
+// The team parameter will be MatchTeam_TeamNone if the map was selected as the last remaining map
+// and not by one of the teams specifically.
 forward void Get5_OnMapPicked(MatchTeam team, const char[] map);
 
 // Called when a demo finishes recording.
@@ -132,7 +127,8 @@ native void Get5_GetMatchID(char[] id, int length);
 // Sets the current matchid.
 native void Get5_SetMatchID(const char[] id);
 
-// Adds a cvar to be set when going live.
+// Adds a cvar to be set when going live. If the cvar is already in the cvars for the match, the new
+// value will replace the old value if the override parameter is true.
 // Note: this should only be used when a match config loaded.
 native void Get5_AddLiveCvar(const char[] name, const char[] value, bool override = true);
 
@@ -189,7 +185,6 @@ native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount
 #define STAT_FIRSTDEATH_CT "firstdeath_ct"
 
 public SharedPlugin __pl_get5 = {
-
     name = "get5", file = "get5.smx",
 #if defined REQUIRE_PLUGIN
     required = 1,

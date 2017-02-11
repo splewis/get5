@@ -42,19 +42,19 @@
     }
     "TeamForfeitInfoMessage"
     {
-        "ru"            "{1} failed to ready up in time and has forfeit."
+        "ru"            "{1} не подтвердили участие и им было засчитано техническое поражение."
     }
     "MinutesToForfeitMessage"
     {
-        "ru"            "{1} has {2} minutes left to ready up or they will forfeit the match."
+        "ru"            "У {1} осталось {2} минут, чтобы подтвердить готовность или им будет засчитано техническое поражение."
     }
     "SecondsToForfeitInfoMessage"
     {
-        "ru"            "SecondsToForfeitInfoMessage"
+        "en"            "У {1} осталось {2} секунд, чтобы подтвердить готовность или им будет засчитано техническое поражение."
     }
     "10SecondsToForfeitInfoMessage"
     {
-        "ru"            "{1} has 10 seconds to ready up or forfeit the match."
+        "ru"            "{1} осталось 10 секунд, чтобы подтвердить готовность."
     }
     "PausePeriodSuffix"
     {

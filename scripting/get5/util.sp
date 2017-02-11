@@ -450,9 +450,6 @@ stock bool IsPlayerTeam(MatchTeam team) {
 
 stock bool GetAuth(int client, char[] auth, int size) {
   bool ret = GetClientAuthId(client, AuthId_SteamID64, auth, size);
-  if (!IsPlayer(client)) {
-    return false;
-  }
   if (!ret) {
     LogError("Failed to get steamid for client %L", client);
   }

@@ -128,6 +128,10 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 }
 
 public bool LoadMatchFile(const char[] config) {
+  Call_StartForward(g_OnPreLoadMatchConfig);
+  Call_PushString(config);
+  Call_Finish();
+
   if (StrContains(config, "json") >= 0) {
     if (!LibraryExists("jansson")) {
       MatchConfigFail("Cannot load a json config without the smjansson extension loaded");

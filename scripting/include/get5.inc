@@ -61,6 +61,8 @@ forward void Get5_OnMapResult(const char[] map, MatchTeam mapWinner, int team1Sc
 // Note: both Get5_OnMapResult and Get5_OnSeriesResult are called on the last map of a series.
 forward void Get5_OnSeriesResult(MatchTeam seriesWinner, int team1MapScore, int team2MapScore);
 
+forward void Get5_OnPreLoadMatchConfig(const char[] filePath);
+
 // Called when a match config fails to load.
 forward void Get5_OnLoadMatchConfigFailed(const char[] reason);
 

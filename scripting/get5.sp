@@ -122,7 +122,7 @@ bool g_SetTeamClutching[4];
 int g_RoundKills[MAXPLAYERS + 1];  // kills per round each client has gotten
 int g_RoundClutchingEnemyCount[MAXPLAYERS +
                                1];  // number of enemies left alive when last alive on your team
-int g_LastFlashBangThrower = -1; // last client to have a flashbang detonate
+int g_LastFlashBangThrower = -1;    // last client to have a flashbang detonate
 int g_RoundFlashedBy[MAXPLAYERS + 1];
 bool g_TeamFirstKillDone[MatchTeam_Count];
 bool g_TeamFirstDeathDone[MatchTeam_Count];
@@ -166,16 +166,17 @@ Handle g_MatchConfigChangedCvars = INVALID_HANDLE;
 /** Forwards **/
 Handle g_OnBackupRestore = INVALID_HANDLE;
 Handle g_OnDemoFinished = INVALID_HANDLE;
+Handle g_OnEvent = INVALID_HANDLE;
 Handle g_OnGameStateChanged = INVALID_HANDLE;
 Handle g_OnGoingLive = INVALID_HANDLE;
 Handle g_OnLoadMatchConfigFailed = INVALID_HANDLE;
 Handle g_OnMapPicked = INVALID_HANDLE;
 Handle g_OnMapResult = INVALID_HANDLE;
 Handle g_OnMapVetoed = INVALID_HANDLE;
+Handle g_OnPreLoadMatchConfig = INVALID_HANDLE;
 Handle g_OnRoundStatsUpdated = INVALID_HANDLE;
 Handle g_OnSeriesInit = INVALID_HANDLE;
 Handle g_OnSeriesResult = INVALID_HANDLE;
-Handle g_OnEvent = INVALID_HANDLE;
 
 #include "get5/util.sp"
 
@@ -372,6 +373,7 @@ public void OnPluginStart() {
   /** Create forwards **/
   g_OnBackupRestore = CreateGlobalForward("Get5_OnBackupRestore", ET_Ignore);
   g_OnDemoFinished = CreateGlobalForward("Get5_OnDemoFinished", ET_Ignore, Param_String);
+  g_OnEvent = CreateGlobalForward("Get5_OnEvent", ET_Ignore, Param_String);
   g_OnGameStateChanged =
       CreateGlobalForward("Get5_OnGameStateChanged", ET_Ignore, Param_Cell, Param_Cell);
   g_OnGoingLive = CreateGlobalForward("Get5_OnGoingLive", ET_Ignore, Param_Cell);
@@ -382,10 +384,11 @@ public void OnPluginStart() {
   g_OnMapPicked = CreateGlobalForward("Get5_OnMapPicked", ET_Ignore, Param_Cell, Param_String);
   g_OnMapVetoed = CreateGlobalForward("Get5_OnMapVetoed", ET_Ignore, Param_Cell, Param_String);
   g_OnRoundStatsUpdated = CreateGlobalForward("Get5_OnRoundStatsUpdated", ET_Ignore);
+  g_OnPreLoadMatchConfig =
+      CreateGlobalForward("Get5_OnPreLoadMatchConfig", ET_Ignore, Param_String);
   g_OnSeriesInit = CreateGlobalForward("Get5_OnSeriesInit", ET_Ignore);
   g_OnSeriesResult =
       CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
-  g_OnEvent = CreateGlobalForward("Get5_OnEvent", ET_Ignore, Param_String);
 
   /** Start any repeating timers **/
   CreateTimer(CHECK_READY_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);

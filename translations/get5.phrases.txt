@@ -317,4 +317,17 @@
     {
         "en"        "Powered by {YELLOW}Get5"
     }
+    "MapVetoPickMenuText"
+    {
+        "en"        "Select a map to PLAY:"
+    }
+    "MapVetoBanMenuText"
+    {
+        "en"        "Select a map to VETO:"
+    }
+    "MapVetoSidePickMenuText"
+    {
+        "#format"       "{1:s}"
+        "en"        "Select a side for {1}"
+    }
 }

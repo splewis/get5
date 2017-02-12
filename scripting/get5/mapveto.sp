@@ -108,7 +108,8 @@ public void MapVetoController(int client) {
 public void GiveMapPickMenu(int client) {
   Menu menu = new Menu(MapPickHandler);
   menu.ExitButton = false;
-  menu.SetTitle("Select a map to PLAY:");
+  menu.SetTitle("%T", "MapVetoPickMenuText", client);
+
   char mapName[PLATFORM_MAX_PATH];
   for (int i = 0; i < g_MapsLeftInVetoPool.Length; i++) {
     g_MapsLeftInVetoPool.GetString(i, mapName, sizeof(mapName));
@@ -153,7 +154,7 @@ public void GiveSidePickMenu(int client) {
   menu.ExitButton = false;
   char mapName[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
-  menu.SetTitle("Select a side for %s", mapName);
+  menu.SetTitle("%T", "MapVetoSidePickMenuText", client, mapName);
   menu.AddItem("CT", "CT");
   menu.AddItem("T", "T");
   menu.Display(client, MENU_TIME_FOREVER);
@@ -202,7 +203,7 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
 public void GiveVetoMenu(int client) {
   Menu menu = new Menu(VetoHandler);
   menu.ExitButton = false;
-  menu.SetTitle("Select a map to VETO:");
+  menu.SetTitle("%T", "MapVetoBanMenuText", client);
   char mapName[PLATFORM_MAX_PATH];
   for (int i = 0; i < g_MapsLeftInVetoPool.Length; i++) {
     g_MapsLeftInVetoPool.GetString(i, mapName, sizeof(mapName));

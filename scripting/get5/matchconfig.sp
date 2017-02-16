@@ -255,7 +255,7 @@ public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
 
   char remoteConfig[PLATFORM_MAX_PATH];
   GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
-  SteamWorks_WriteHTTPResponseBodyToFile(request, REMOTE_CONFIG_PATTERN);
+  SteamWorks_WriteHTTPResponseBodyToFile(request, remoteConfig);
   LoadMatchConfig(remoteConfig);
 }
 

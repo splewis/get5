@@ -30,7 +30,6 @@
 #include <SteamWorks>
 #include <smjansson>
 #include <system2>
-#define REMOTE_CONFIG_FILENAME "remote.json"
 
 #define CHECK_READY_TIMER_INTERVAL 1.0
 #define INFO_MESSAGE_TIMER_INTERVAL 29.0
@@ -66,6 +65,7 @@ ConVar g_MaxPauseTimeCvar;
 ConVar g_MessagePrefixCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_ResetPausesEachHalfCvar;
+ConVar g_ServerIdCvar;
 ConVar g_StatsPathFormatCvar;
 ConVar g_StopCommandEnabledCvar;
 ConVar g_TeamTimeToKnifeDecisionCvar;
@@ -257,6 +257,9 @@ public void OnPluginStart() {
       CreateConVar("get5_reset_pauses_each_half", "1",
                    "Whether pause limits will be reset each halftime period");
   g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
+  g_ServerIdCvar = CreateConVar(
+      "get5_server_id", "0",
+      "Integer that identifies your server. This is used in temp files to prevent collisions.");
   g_StatsPathFormatCvar =
       CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg",
                    "Where match stats are saved (updated each map end), set to \"\" to disable");
@@ -1200,4 +1203,10 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   ReplaceString(buffer, len, "{TEAM2}", team2Str, false);
 
   return true;
+}
+
+// Formats a temp file path based ont he server id. The pattern parameter is expected to have a %d
+// token in it.
+public void GetTempFilePath(char[] path, int len, const char[] pattern) {
+  Format(path, len, pattern, g_ServerIdCvar.IntValue);
 }

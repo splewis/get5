@@ -1,5 +1,5 @@
-#define TEMP_MATCHCONFIG_BACKUP_FILE "get5_match_config_backup.txt"
-#define TEMP_VALVE_BACKUP_FILE "get5_temp_backup.txt"
+#define TEMP_MATCHCONFIG_BACKUP_PATTERN "get5_match_config_backup%d.txt"
+#define TEMP_VALVE_BACKUP_PATTERN "get5_temp_backup%d.txt"
 
 public Action Command_LoadBackup(int client, int args) {
   if (g_BackupSystemEnabledCvar.IntValue == 0) {
@@ -139,10 +139,12 @@ public bool RestoreFromBackup(const char[] path) {
   }
 
   if (kv.JumpToKey("Match")) {
-    kv.ExportToFile(TEMP_MATCHCONFIG_BACKUP_FILE);
-    if (!LoadMatchConfig(TEMP_MATCHCONFIG_BACKUP_FILE, true)) {
+    char tempBackupFile[PLATFORM_MAX_PATH];
+    GetTempFilePath(tempBackupFile, sizeof(tempBackupFile), TEMP_MATCHCONFIG_BACKUP_PATTERN);
+    kv.ExportToFile(tempBackupFile);
+    if (!LoadMatchConfig(tempBackupFile, true)) {
       delete kv;
-      LogError("Could not restore from match config \"%s\"", TEMP_MATCHCONFIG_BACKUP_FILE);
+      LogError("Could not restore from match config \"%s\"", tempBackupFile);
       return false;
     }
     kv.GoBack();
@@ -201,9 +203,11 @@ public bool RestoreFromBackup(const char[] path) {
     kv.GoBack();
   }
 
+  char tempValveBackup[PLATFORM_MAX_PATH];
+  GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   if (kv.JumpToKey("valve_backup")) {
     g_SavedValveBackup = true;
-    kv.ExportToFile(TEMP_VALVE_BACKUP_FILE);
+    kv.ExportToFile(tempValveBackup);
     kv.GoBack();
   } else {
     g_SavedValveBackup = false;
@@ -239,8 +243,10 @@ public void RestoreGet5Backup() {
   if (g_SavedValveBackup) {
     // This variable is reset ona timer since the implementation of the
     // mp_backup_restore_load_file doesn't do everything in one frame.
+    char tempValveBackup[PLATFORM_MAX_PATH];
+    GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
     g_DoingBackupRestoreNow = true;
-    ServerCommand("mp_backup_restore_load_file \"%s\"", TEMP_VALVE_BACKUP_FILE);
+    ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
     Pause();
     CreateTimer(0.1, Timer_FinishBackup);
     ChangeState(GameState_Live);

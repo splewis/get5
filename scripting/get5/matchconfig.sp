@@ -1,3 +1,4 @@
+#define REMOTE_CONFIG_PATTERN "remote_config%d.json"
 #define CONFIG_MATCHID_DEFAULT "matchid"
 #define CONFIG_MATCHTITLE_DEFAULT "Map {MAPNUMBER} of {MAXMAPS}"
 #define CONFIG_PLAYERSPERTEAM_DEFAULT 5
@@ -201,7 +202,9 @@ stock bool LoadMatchFromUrl(const char[] url, bool preferSystem2 = true,
     ReplaceString(cleanedUrl, sizeof(cleanedUrl), "https://", "");
     ReplaceString(cleanedUrl, sizeof(cleanedUrl), "http://", "");
     LogDebug("cleanedUrl (system2) = %s", cleanedUrl);
-    System2_DownloadFile(System2_OnMatchConfigReceived, cleanedUrl, REMOTE_CONFIG_FILENAME);
+    char remoteConfig[PLATFORM_MAX_PATH];
+    GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
+    System2_DownloadFile(System2_OnMatchConfigReceived, cleanedUrl, remoteConfig);
     return true;
 
   } else if (steamWorksAvaliable) {
@@ -250,8 +253,10 @@ public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
     return;
   }
 
-  SteamWorks_WriteHTTPResponseBodyToFile(request, REMOTE_CONFIG_FILENAME);
-  LoadMatchConfig(REMOTE_CONFIG_FILENAME);
+  char remoteConfig[PLATFORM_MAX_PATH];
+  GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
+  SteamWorks_WriteHTTPResponseBodyToFile(request, REMOTE_CONFIG_PATTERN);
+  LoadMatchConfig(remoteConfig);
 }
 
 public int System2_OnMatchConfigReceived(bool finished, const char[] error, float dltotal, float dlnow,
@@ -260,7 +265,9 @@ public int System2_OnMatchConfigReceived(bool finished, const char[] error, floa
     if (!StrEqual(error, "")) {
       MatchConfigFail("Error receiving remote config via system2: %s", error);
     } else if (finished) {
-      LoadMatchConfig(REMOTE_CONFIG_FILENAME);
+      char remoteConfig[PLATFORM_MAX_PATH];
+      GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
+      LoadMatchConfig(remoteConfig);
     }
   }
 }

@@ -253,6 +253,7 @@ public void RestoreGet5Backup() {
   } else {
     SetStartingTeams();
     SetMatchTeamCvars();
+    ExecuteMatchConfigCvars():
     for (int i = 1; i <= MaxClients; i++) {
       if (IsPlayer(i))
         CheckClientTeam(i);

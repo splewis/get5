@@ -252,7 +252,8 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
 
   // Add Ready/Not ready tags to team name if in warmup.
   char taggedName[MAX_CVAR_LENGTH];
-  if (g_GameState == GameState_Warmup || g_GameState == GameState_PreVeto) {
+  if ((g_GameState == GameState_Warmup || g_GameState == GameState_PreVeto) &&
+      !g_DoingBackupRestoreNow) {
     MatchTeam matchTeam = CSTeamToMatchTeam(csTeam);
     if (IsTeamReady(matchTeam)) {
       Format(taggedName, sizeof(taggedName), "%T %s", "ReadyTag", LANG_SERVER, name);

@@ -146,6 +146,16 @@ public void EventLogger_RoundEnd(int csTeamWinner) {
   EventLogger_EndEvent("round_end");
 }
 
+public void EventLogger_SideSwap(int team1Side, int team2Side) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddCSTeam(params, "team1_side", team1Side);
+  AddCSTeam(params, "team2_side", team2Side);
+  set_json_int(params, "team1_score", CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
+  set_json_int(params, "team2_score", CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
+  EventLogger_EndEvent("side_swap");
+}
+
 public void EventLogger_MapEnd(MatchTeam winner) {
   EventLogger_StartEvent();
   AddMapData(params);

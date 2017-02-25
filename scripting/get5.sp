@@ -1030,6 +1030,8 @@ public void SwapSides() {
       g_TeamPausesUsed[team] = 0;
     }
   }
+
+  EventLogger_SideSwap(g_TeamSide[MatchTeam_Team1], g_TeamSide[MatchTeam_Team2]);
 }
 
 /**

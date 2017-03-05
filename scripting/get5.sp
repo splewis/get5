@@ -768,9 +768,15 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
   if (g_GameState == GameState_Live) {
     int t1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
     int t2score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
-    MatchTeam winningTeam = (t1score > t2score) ? MatchTeam_Team1 : MatchTeam_Team2;
-    Stats_UpdateMapScore(winningTeam);
 
+    MatchTeam winningTeam = MatchTeam_TeamNone;
+    if (t1score > t2score) {
+      winningTeam = MatchTeam_Team1;
+    } else if (t2score > t1score) {
+      winningTeam = MatchTeam_Team2;
+    }
+
+    Stats_UpdateMapScore(winningTeam);
     AddMapScore();
     g_TeamSeriesScores[winningTeam]++;
 

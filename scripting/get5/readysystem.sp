@@ -117,6 +117,10 @@ stock bool AllTeamsReady(bool includeSpec = true) {
 }
 
 public bool IsTeamReady(MatchTeam team) {
+  if (g_GameState == GameState_Live) {
+    return true;
+  }
+
   if (team == MatchTeam_TeamNone || team == MatchTeam_TeamSpec) {
     return true;
   }

@@ -109,6 +109,7 @@ public void GiveMapPickMenu(int client) {
   Menu menu = new Menu(MapPickHandler);
   menu.ExitButton = false;
   menu.SetTitle("%T", "MapVetoPickMenuText", client);
+  menu.Pagination = 7;
 
   char mapName[PLATFORM_MAX_PATH];
   for (int i = 0; i < g_MapsLeftInVetoPool.Length; i++) {

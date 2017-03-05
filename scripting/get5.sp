@@ -1112,7 +1112,6 @@ public Action Command_Status(int client, int args) {
 
   Handle json = json_object();
 
-  set_json_string(json, "matchid", g_MatchID);
   set_json_string(json, "plugin_version", PLUGIN_VERSION);
 
 #if defined COMMIT_STRING
@@ -1127,6 +1126,7 @@ public Action Command_Status(int client, int args) {
   set_json_string(json, "gamestate_string", gamestate);
 
   if (g_GameState != GameState_None) {
+    set_json_string(json, "matchid", g_MatchID);
     set_json_string(json, "loaded_config_file", g_LoadedConfigFile);
     set_json_int(json, "map_number", GetMapNumber());
 

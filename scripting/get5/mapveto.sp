@@ -15,6 +15,12 @@ public void CreateVeto() {
   VetoController(g_VetoCaptains[startingTeam]);
 }
 
+static void AbortVeto() {
+  Get5_MessageToAll("%t", "CaptainLeftOnVetoInfoMessage");
+  Get5_MessageToAll("%t", "ReadyToResumeVetoInfoMessage");
+  ChangeState(GameState_PreVeto);
+}
+
 public void VetoFinished() {
   ChangeState(GameState_Warmup);
   Get5_MessageToAll("%t", "MapDecidedInfoMessage");
@@ -27,6 +33,9 @@ public void VetoFinished() {
   g_MapChangePending = true;
   CreateTimer(10.0, Timer_NextMatchMap);
 }
+
+
+// Main Veto Controller
 
 public void VetoController(int client) {
   if (!IsPlayer(client) || GetClientMatchTeam(client) == MatchTeam_TeamSpec) {
@@ -105,6 +114,58 @@ public void VetoController(int client) {
   }
 }
 
+
+// Map Vetos
+
+public void GiveMapVetoMenu(int client) {
+  Menu menu = new Menu(MapVetoMenuHandler);
+  menu.SetTitle("%T", "MapVetoBanMenuText", client);
+  menu.ExitButton = false;
+  // Don't paginate the menu if we have 7 maps or less, as they will fit
+  // on one page when we don't add the pagination options
+  if (g_MapsLeftInVetoPool.Length <= 7) {
+    menu.Pagination = MENU_NO_PAGINATION;
+  }
+
+  char mapName[PLATFORM_MAX_PATH];
+  for (int i = 0; i < g_MapsLeftInVetoPool.Length; i++) {
+    g_MapsLeftInVetoPool.GetString(i, mapName, sizeof(mapName));
+    menu.AddItem(mapName, mapName);
+  }
+  menu.Display(client, MENU_TIME_FOREVER);
+}
+
+public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
+  if (action == MenuAction_Select) {
+    int client = param1;
+    char mapName[PLATFORM_MAX_PATH];
+    menu.GetItem(param2, mapName, sizeof(mapName));
+    RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
+
+    MatchTeam team = GetClientMatchTeam(client);
+    Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], mapName);
+
+    EventLogger_MapVetoed(team, mapName);
+
+    Call_StartForward(g_OnMapVetoed);
+    Call_PushCell(team);
+    Call_PushString(mapName);
+    Call_Finish();
+
+    VetoController(GetNextTeamCaptain(client));
+    g_LastVetoTeam = team;
+
+  } else if (action == MenuAction_Cancel) {
+    AbortVeto();
+
+  } else if (action == MenuAction_End) {
+    delete menu;
+  }
+}
+
+
+// Map Picks
+
 public void GiveMapPickMenu(int client) {
   Menu menu = new Menu(MapPickMenuHandler);
   menu.SetTitle("%T", "MapVetoPickMenuText", client);
@@ -153,6 +214,9 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
     delete menu;
   }
 }
+
+
+// Side Picks
 
 public void GiveSidePickMenu(int client) {
   Menu menu = new Menu(SidePickMenuHandler);
@@ -205,57 +269,8 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
   }
 }
 
-public void GiveMapVetoMenu(int client) {
-  Menu menu = new Menu(MapVetoMenuHandler);
-  menu.SetTitle("%T", "MapVetoBanMenuText", client);
-  menu.ExitButton = false;
-  // Don't paginate the menu if we have 7 maps or less, as they will fit
-  // on one page when we don't add the pagination options
-  if (g_MapsLeftInVetoPool.Length <= 7) {
-    menu.Pagination = MENU_NO_PAGINATION;
-  }
 
-  char mapName[PLATFORM_MAX_PATH];
-  for (int i = 0; i < g_MapsLeftInVetoPool.Length; i++) {
-    g_MapsLeftInVetoPool.GetString(i, mapName, sizeof(mapName));
-    menu.AddItem(mapName, mapName);
-  }
-  menu.Display(client, MENU_TIME_FOREVER);
-}
-
-public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
-  if (action == MenuAction_Select) {
-    int client = param1;
-    char mapName[PLATFORM_MAX_PATH];
-    menu.GetItem(param2, mapName, sizeof(mapName));
-    RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
-
-    MatchTeam team = GetClientMatchTeam(client);
-    Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], mapName);
-
-    EventLogger_MapVetoed(team, mapName);
-
-    Call_StartForward(g_OnMapVetoed);
-    Call_PushCell(team);
-    Call_PushString(mapName);
-    Call_Finish();
-
-    VetoController(GetNextTeamCaptain(client));
-    g_LastVetoTeam = team;
-
-  } else if (action == MenuAction_Cancel) {
-    AbortVeto();
-
-  } else if (action == MenuAction_End) {
-    delete menu;
-  }
-}
-
-static void AbortVeto() {
-  Get5_MessageToAll("%t", "CaptainLeftOnVetoInfoMessage");
-  Get5_MessageToAll("%t", "ReadyToResumeVetoInfoMessage");
-  ChangeState(GameState_PreVeto);
-}
+// Helpers
 
 static int GetNumMapsLeft() {
   return g_MapsLeftInVetoPool.Length;

@@ -85,6 +85,7 @@ Of the below fields, only the ``team1`` and ``team2`` fields are actually requir
 - ``bo2_series``: whether the series is a bo2 series (will ignore ``maps_to_win`` if it is)
 - ``maplist``: list of the maps in use (an array of strings in JSON, mapnames as keys for KeyValues), you should always use an odd-sized maplist
 - ``skip_veto``: whether the veto will be skipped and the maps will come from the maplist (in the order given)
+- ``veto_first``: either "team1", or "team2". If not set, or set to any other value, team 1 will veto first.
 - ``side_type``: either "standard", "never_knife", or "always_knife"; standard means the team that doesn't pick a map gets the side choice, never_knife means team is always on CT first, and always knife means there is always a knife round
 - ``players_per_team``: maximum players per team (doesn't include a coach spot, default: 5)
 - ``min_players_to_ready``: minimum players a team needs to be able to ready up (default: 1)

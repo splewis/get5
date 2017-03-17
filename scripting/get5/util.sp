@@ -450,6 +450,14 @@ stock bool IsPlayerTeam(MatchTeam team) {
   return team == MatchTeam_Team1 || team == MatchTeam_Team2;
 }
 
+public MatchTeam VetoFirstFromString(const char[] str) {
+  if (StrEqual(str, "team2", false)) {
+    return MatchTeam_Team2;
+  } else {
+    return MatchTeam_Team1;
+  }
+}
+
 stock bool GetAuth(int client, char[] auth, int size) {
   bool ret = GetClientAuthId(client, AuthId_SteamID64, auth, size);
   if (!ret) {

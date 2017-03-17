@@ -6,6 +6,7 @@
 #define CONFIG_MAPSTOWIN_DEFAULT 2
 #define CONFIG_BO2_DEFAULT false
 #define CONFIG_SKIPVETO_DEFAULT false
+#define CONFIG_VETOFIRST_DEFAULT "team1"
 #define CONFIG_SIDETYPE_DEFAULT "standard"
 
 stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
@@ -347,9 +348,13 @@ static bool LoadMatchFromKv(KeyValues kv) {
   g_BO2Match = kv.GetNum("bo2_series", CONFIG_BO2_DEFAULT) != 0;
   g_SkipVeto = kv.GetNum("skip_veto", CONFIG_SKIPVETO_DEFAULT) != 0;
 
-  char buf[64];
-  kv.GetString("side_type", buf, sizeof(buf), CONFIG_SIDETYPE_DEFAULT);
-  g_MatchSideType = MatchSideTypeFromString(buf);
+  char vetoFirstBuffer[64];
+  kv.GetString("veto_first", vetoFirstBuffer, sizeof(vetoFirstBuffer), CONFIG_VETOFIRST_DEFAULT);
+  g_LastVetoTeam = OtherMatchTeam(VetoFirstFromString(vetoFirstBuffer));
+
+  char sideTypeBuffer[64];
+  kv.GetString("side_type", sideTypeBuffer, sizeof(sideTypeBuffer), CONFIG_SIDETYPE_DEFAULT);
+  g_MatchSideType = MatchSideTypeFromString(sideTypeBuffer);
 
   g_FavoredTeamPercentage = kv.GetNum("favored_percentage_team1", 0);
   kv.GetString("favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText));
@@ -428,9 +433,13 @@ static bool LoadMatchFromJson(Handle json) {
   g_BO2Match = json_object_get_bool_safe(json, "bo2_series", CONFIG_BO2_DEFAULT);
   g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
 
-  char buf[64];
-  json_object_get_string_safe(json, "side_type", buf, sizeof(buf), CONFIG_SIDETYPE_DEFAULT);
-  g_MatchSideType = MatchSideTypeFromString(buf);
+  char vetoFirstBuffer[64];
+  json_object_get_string_safe(json, "veto_first", vetoFirstBuffer, sizeof(vetoFirstBuffer), CONFIG_VETOFIRST_DEFAULT);
+  g_LastVetoTeam = OtherMatchTeam(VetoFirstFromString(vetoFirstBuffer));
+
+  char sideTypeBuffer[64];
+  json_object_get_string_safe(json, "side_type", sideTypeBuffer, sizeof(sideTypeBuffer), CONFIG_SIDETYPE_DEFAULT);
+  g_MatchSideType = MatchSideTypeFromString(sideTypeBuffer);
 
   json_object_get_string_safe(json, "favored_percentage_text", g_FavoredTeamText,
                               sizeof(g_FavoredTeamText));

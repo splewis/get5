@@ -1,7 +1,7 @@
 /**
  * Map vetoing functions
  */
-public void CreateMapVeto() {
+public void CreateVeto() {
   if (g_MapPoolList.Length % 2 == 0) {
     LogError(
         "Warning, the maplist is odd number sized (%d maps), vetos may not function correctly!",
@@ -12,7 +12,7 @@ public void CreateMapVeto() {
   g_VetoCaptains[MatchTeam_Team2] = GetTeamCaptain(MatchTeam_Team2);
   ResetReadyStatus();
   MatchTeam startingTeam = OtherMatchTeam(g_LastVetoTeam);
-  MapVetoController(g_VetoCaptains[startingTeam]);
+  VetoController(g_VetoCaptains[startingTeam]);
 }
 
 public void VetoFinished() {
@@ -28,7 +28,7 @@ public void VetoFinished() {
   CreateTimer(10.0, Timer_NextMatchMap);
 }
 
-public void MapVetoController(int client) {
+public void VetoController(int client) {
   if (!IsPlayer(client) || GetClientMatchTeam(client) == MatchTeam_TeamSpec) {
     AbortVeto();
   }
@@ -63,11 +63,11 @@ public void MapVetoController(int client) {
 
     } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
       g_MapSides.Push(SideChoice_KnifeRound);
-      MapVetoController(client);
+      VetoController(client);
 
     } else if (g_MatchSideType == MatchSideType_NeverKnife) {
       g_MapSides.Push(SideChoice_Team1CT);
-      MapVetoController(client);
+      VetoController(client);
     }
 
   } else if (mapsLeft == 1) {
@@ -144,7 +144,7 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
     Call_PushString(mapName);
     Call_Finish();
 
-    MapVetoController(GetNextTeamCaptain(client));
+    VetoController(GetNextTeamCaptain(client));
 
   } else if (action == MenuAction_Cancel) {
     AbortVeto();
@@ -195,7 +195,7 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
     Get5_MessageToAll("%t", "TeamSelectSideInfoMessage", g_FormattedTeamNames[team], choice,
                       mapName);
 
-    MapVetoController(client);
+    VetoController(client);
 
   } else if (action == MenuAction_Cancel) {
     AbortVeto();
@@ -240,7 +240,7 @@ public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
     Call_PushString(mapName);
     Call_Finish();
 
-    MapVetoController(GetNextTeamCaptain(client));
+    VetoController(GetNextTeamCaptain(client));
     g_LastVetoTeam = team;
 
   } else if (action == MenuAction_Cancel) {

@@ -107,9 +107,13 @@ public void MapVetoController(int client) {
 
 public void GiveMapPickMenu(int client) {
   Menu menu = new Menu(MapPickHandler);
-  menu.ExitButton = false;
   menu.SetTitle("%T", "MapVetoPickMenuText", client);
-  menu.Pagination = 7;
+  menu.ExitButton = false;
+  // Don't paginate the menu if we have 7 maps or less, as they will fit
+  // on one page when we don't add the pagination options
+  if (g_MapsLeftInVetoPool.Length <= 7) {
+    menu.Pagination = MENU_NO_PAGINATION;
+  }
 
   char mapName[PLATFORM_MAX_PATH];
   for (int i = 0; i < g_MapsLeftInVetoPool.Length; i++) {
@@ -203,8 +207,14 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
 
 public void GiveVetoMenu(int client) {
   Menu menu = new Menu(VetoHandler);
-  menu.ExitButton = false;
   menu.SetTitle("%T", "MapVetoBanMenuText", client);
+  menu.ExitButton = false;
+  // Don't paginate the menu if we have 7 maps or less, as they will fit
+  // on one page when we don't add the pagination options
+  if (g_MapsLeftInVetoPool.Length <= 7) {
+    menu.Pagination = MENU_NO_PAGINATION;
+  }
+
   char mapName[PLATFORM_MAX_PATH];
   for (int i = 0; i < g_MapsLeftInVetoPool.Length; i++) {
     g_MapsLeftInVetoPool.GetString(i, mapName, sizeof(mapName));

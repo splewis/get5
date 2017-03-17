@@ -101,12 +101,12 @@ public void MapVetoController(int client) {
   } else if (mapsLeft + mapsPicked <= maxMaps || bo3_hack || bo2_hack) {
     GiveMapPickMenu(client);
   } else {
-    GiveVetoMenu(client);
+    GiveMapVetoMenu(client);
   }
 }
 
 public void GiveMapPickMenu(int client) {
-  Menu menu = new Menu(MapPickHandler);
+  Menu menu = new Menu(MapPickMenuHandler);
   menu.SetTitle("%T", "MapVetoPickMenuText", client);
   menu.ExitButton = false;
   // Don't paginate the menu if we have 7 maps or less, as they will fit
@@ -123,7 +123,7 @@ public void GiveMapPickMenu(int client) {
   menu.Display(client, MENU_TIME_FOREVER);
 }
 
-public int MapPickHandler(Menu menu, MenuAction action, int param1, int param2) {
+public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     int client = param1;
     MatchTeam team = GetClientMatchTeam(client);
@@ -205,8 +205,8 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
   }
 }
 
-public void GiveVetoMenu(int client) {
-  Menu menu = new Menu(VetoHandler);
+public void GiveMapVetoMenu(int client) {
+  Menu menu = new Menu(MapVetoMenuHandler);
   menu.SetTitle("%T", "MapVetoBanMenuText", client);
   menu.ExitButton = false;
   // Don't paginate the menu if we have 7 maps or less, as they will fit
@@ -223,7 +223,7 @@ public void GiveVetoMenu(int client) {
   menu.Display(client, MENU_TIME_FOREVER);
 }
 
-public int VetoHandler(Menu menu, MenuAction action, int param1, int param2) {
+public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     int client = param1;
     char mapName[PLATFORM_MAX_PATH];

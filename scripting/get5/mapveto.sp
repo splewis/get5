@@ -4,7 +4,7 @@
 public void CreateVeto() {
   if (g_MapPoolList.Length % 2 == 0) {
     LogError(
-        "Warning, the maplist is odd number sized (%d maps), vetos may not function correctly!",
+        "Warning, the maplist is even number sized (%d maps), vetos may not function correctly!",
         g_MapPoolList.Length);
   }
 

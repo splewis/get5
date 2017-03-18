@@ -25,7 +25,7 @@ public Action Timer_VetoCountdown(Handle timer) {
 	} else {
         warningsPrinted++;
         secondsRemaining = secondsRemaining - warningsPrinted;
-        Get5_MessageToAll("%t", "VetoCountdown");
+        Get5_MessageToAll("%t", "VetoCountdown", secondsRemaining);
         return Plugin_Continue;
     }
 }

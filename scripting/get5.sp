@@ -534,7 +534,7 @@ public Action Timer_CheckReady(Handle timer) {
   if (g_GameState == GameState_PreVeto) {
     if (AllTeamsReady(false)) {
       ChangeState(GameState_Veto);
-      CreateMapVeto();
+      CreateVeto();
     } else {
       CheckReadyWaitingTimes();
     }

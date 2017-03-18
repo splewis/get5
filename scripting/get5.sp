@@ -173,6 +173,7 @@ Handle g_OnLoadMatchConfigFailed = INVALID_HANDLE;
 Handle g_OnMapPicked = INVALID_HANDLE;
 Handle g_OnMapResult = INVALID_HANDLE;
 Handle g_OnMapVetoed = INVALID_HANDLE;
+Handle g_OnSidePicked = INVALID_HANDLE;
 Handle g_OnPreLoadMatchConfig = INVALID_HANDLE;
 Handle g_OnRoundStatsUpdated = INVALID_HANDLE;
 Handle g_OnSeriesInit = INVALID_HANDLE;
@@ -386,6 +387,7 @@ public void OnPluginStart() {
       CreateGlobalForward("Get5_OnLoadMatchConfigFailed", ET_Ignore, Param_String);
   g_OnMapPicked = CreateGlobalForward("Get5_OnMapPicked", ET_Ignore, Param_Cell, Param_String);
   g_OnMapVetoed = CreateGlobalForward("Get5_OnMapVetoed", ET_Ignore, Param_Cell, Param_String);
+  g_OnSidePicked = CreateGlobalForward("Get5_OnSidePicked", ET_Ignore, Param_Cell, Param_String, Param_Cell);
   g_OnRoundStatsUpdated = CreateGlobalForward("Get5_OnRoundStatsUpdated", ET_Ignore);
   g_OnPreLoadMatchConfig =
       CreateGlobalForward("Get5_OnPreLoadMatchConfig", ET_Ignore, Param_String);

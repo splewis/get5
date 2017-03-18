@@ -255,9 +255,16 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
     char mapName[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
 
-    EventLogger_SidePicked(team, mapName, g_MapsToPlay.Length - 1, selectedSide);
     Get5_MessageToAll("%t", "TeamSelectSideInfoMessage", g_FormattedTeamNames[team], choice,
                       mapName);
+
+    EventLogger_SidePicked(team, mapName, g_MapsToPlay.Length - 1, selectedSide);
+
+    Call_StartForward(g_OnSidePicked);
+    Call_PushCell(team);
+    Call_PushString(mapName);
+    Call_PushCell(selectedSide);
+    Call_Finish();
 
     VetoController(client);
 

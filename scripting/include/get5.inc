@@ -74,6 +74,9 @@ forward void Get5_OnMapVetoed(MatchTeam team, const char[] map);
 // and not by one of the teams specifically.
 forward void Get5_OnMapPicked(MatchTeam team, const char[] map);
 
+// Called when a team selects a side.
+forward void Get5_OnSidePicked(MatchTeam team, const char[] map, int side);
+
 // Called when a demo finishes recording.
 forward void Get5_OnDemoFinished(const char[] filename);
 

@@ -24,10 +24,13 @@ static void AbortVeto() {
 public void VetoFinished() {
   ChangeState(GameState_Warmup);
   Get5_MessageToAll("%t", "MapDecidedInfoMessage");
-  for (int i = 0; i < g_MapsToPlay.Length; i++) {
+
+  // Use total series score as starting point, to not print skipped maps
+  int seriesScore = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
+  for (int i = seriesScore; i < g_MapsToPlay.Length; i++) {
     char map[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(i, map, sizeof(map));
-    Get5_MessageToAll("%t", "MapIsInfoMessage", i + 1, map);
+    Get5_MessageToAll("%t", "MapIsInfoMessage", i + 1 - seriesScore, map);
   }
 
   g_MapChangePending = true;
@@ -48,6 +51,8 @@ public void VetoController(int client) {
   int mapsPicked = g_MapsToPlay.Length;
   int sidesSet = g_MapSides.Length;
 
+  int seriesScore = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
+
   // This is a dirty hack to get ban/ban/pick/pick/ban/ban
   // instead of straight vetoing until the maplist is the length
   // of the series.
@@ -56,6 +61,13 @@ public void VetoController(int client) {
   bool bo3_hack = false;
   if (maxMaps == 3 && (mapsLeft == 4 || mapsLeft == 5) && g_MapPoolList.Length == 7) {
     bo3_hack = true;
+  }
+
+  // Yet another dirty hack to skip the last two bans if we are
+  // in a situation where one a team has map advantage.
+  bool bo3_last_veto_hack = false;
+  if (maxMaps == 3 && mapsLeft <= 3 && seriesScore > 0 && g_MapPoolList.Length == 7) {
+    bo3_last_veto_hack = true;
   }
 
   // This is also a bit hacky.
@@ -78,6 +90,33 @@ public void VetoController(int client) {
       g_MapSides.Push(SideChoice_Team1CT);
       VetoController(client);
     }
+
+  } else if (mapsLeft == seriesScore || bo3_last_veto_hack) {
+    // We have as many maps left as the total series score, or we can skip the last two
+    // bans in a bo3 which means some maps will be skipped (i.e. they have already been "won" by a team)
+    // If series score is 0 we won't get here
+
+    // Add maps to the front of the active maplist equal to the total series score, as these are the maps
+    // that will be skipped
+    char mapName[PLATFORM_MAX_PATH];
+    for (int i = 0; i < seriesScore; i++) {
+      // Get the next map in the veto pool
+      g_MapsLeftInVetoPool.GetString(0, mapName, sizeof(mapName));
+      g_MapsLeftInVetoPool.Erase(0);
+
+      // Add it to the front of the active maplist
+      g_MapsToPlay.ShiftUp(0);
+      g_MapsToPlay.SetString(0, mapName);
+
+      // Add a side type to map sides too, so the sides don't come out of order
+      g_MapSides.ShiftUp(0);
+      g_MapSides.Set(0, SideChoice_KnifeRound);
+    }
+
+    // We're specifically not firing any events here, as the maps will be skipped anyway
+    // TODO: maybe we should?
+
+    VetoFinished();
 
   } else if (mapsLeft == 1) {
     if (g_BO2Match) {

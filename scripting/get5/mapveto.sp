@@ -42,7 +42,7 @@ public void VetoController(int client) {
     AbortVeto();
   }
 
-  int mapsLeft = GetNumMapsLeft();
+  int mapsLeft = g_MapsLeftInVetoPool.Length;
   int maxMaps = MaxMapsToPlay(g_MapsToWin);
 
   int mapsPicked = g_MapsToPlay.Length;
@@ -267,11 +267,4 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
   } else if (action == MenuAction_End) {
     delete menu;
   }
-}
-
-
-// Helpers
-
-static int GetNumMapsLeft() {
-  return g_MapsLeftInVetoPool.Length;
 }

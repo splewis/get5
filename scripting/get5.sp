@@ -71,6 +71,7 @@ ConVar g_StopCommandEnabledCvar;
 ConVar g_TeamTimeToKnifeDecisionCvar;
 ConVar g_TeamTimeToStartCvar;
 ConVar g_TimeFormatCvar;
+ConVar g_VetoConfirmationTimeCvar;
 ConVar g_WarmupCfgCvar;
 
 // Autoset convars (not meant for users to set)
@@ -99,6 +100,7 @@ char g_FavoredTeamText[MAX_CVAR_LENGTH];
 int g_PlayersPerTeam = 5;
 int g_MinPlayersPerTeam = 4;
 bool g_SkipVeto = false;
+float g_VetoMenuTime = 0.0;
 MatchSideType g_MatchSideType = MatchSideType_Standard;
 ArrayList g_CvarNames = null;
 ArrayList g_CvarValues = null;
@@ -276,6 +278,9 @@ public void OnPluginStart() {
   g_TimeFormatCvar = CreateConVar(
       "get5_time_format", "%Y-%m-%d_%H",
       "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
+  g_VetoConfirmationTimeCvar = CreateConVar(
+      "get5_veto_confirmation_time", "0",
+      "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required, 0 to disable");
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
 

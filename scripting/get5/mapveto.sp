@@ -1,6 +1,9 @@
 /**
  * Map vetoing functions
  */
+
+#define CONFIRM_NEGATIVE_VALUE "_"
+
 public void CreateVeto() {
   if (g_MapPoolList.Length % 2 == 0) {
     LogError(
@@ -115,6 +118,66 @@ public void VetoController(int client) {
 }
 
 
+// Confirmations
+
+public void GiveConfirmationMenu(int client, MenuHandler handler, const char[] title, const char[] confirmChoice) {
+  // Figure out text for positive and negative values
+  char positiveBuffer[1024], negativeBuffer[1024];
+  Format(positiveBuffer, sizeof(positiveBuffer), "%T", "ConfirmPositiveOptionText", client);
+  Format(negativeBuffer, sizeof(negativeBuffer), "%T", "ConfirmNegativeOptionText", client);
+
+  // Create menu
+  Menu menu = new Menu(handler);
+  menu.SetTitle("%T", title, client, confirmChoice);
+  menu.ExitButton = false;
+  menu.Pagination = MENU_NO_PAGINATION;
+
+  // Add rows of padding to move selection out of "danger zone"
+  for (int i = 0; i < 7; i++) {
+    menu.AddItem("spacer", "", ITEMDRAW_NOTEXT);
+  }
+
+  // Add actual choices
+  menu.AddItem(confirmChoice, positiveBuffer);
+  menu.AddItem(CONFIRM_NEGATIVE_VALUE, negativeBuffer);
+
+  // Show menu and disable confirmations
+  menu.Display(client, MENU_TIME_FOREVER);
+  SetConfirmationTime(false);
+}
+
+static void SetConfirmationTime(bool enabled) {
+  if (enabled) {
+    g_VetoMenuTime = GetTickedTime();
+  } else {
+    // Set below 0 to signal that we don't want confirmation
+    g_VetoMenuTime = -1.0;
+  }
+}
+
+static bool ConfirmationNeeded() {
+  // Don't give confirmations if it's been disabled
+  if (g_VetoConfirmationTimeCvar.IntValue == 0) {
+    return false;
+  }
+  // Don't give confirmation if the veto time is less than 0
+  // (in case we're presenting a menu that doesn't need confirmation)
+  if (g_VetoMenuTime < 0.0) {
+    return false;
+  }
+
+  // Figure out if we need to require a confirmation. Round to ceiling
+  // since the convar is an integer, and we don't want e.g. 2.1 seconds to
+  // be equal or less than a setting of 2
+  int diff = RoundToCeil(GetTickedTime() - g_VetoMenuTime);
+  return diff <= g_VetoConfirmationTimeCvar.IntValue;
+}
+
+static bool ConfirmationNegative(const char[] choice) {
+  return StrEqual(choice, CONFIRM_NEGATIVE_VALUE);
+}
+
+
 // Map Vetos
 
 public void GiveMapVetoMenu(int client) {
@@ -133,16 +196,29 @@ public void GiveMapVetoMenu(int client) {
     menu.AddItem(mapName, mapName);
   }
   menu.Display(client, MENU_TIME_FOREVER);
+  SetConfirmationTime(true);
 }
 
 public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     int client = param1;
+    MatchTeam team = GetClientMatchTeam(client);
     char mapName[PLATFORM_MAX_PATH];
     menu.GetItem(param2, mapName, sizeof(mapName));
+
+    // Go back if we were called from a confirmation menu and client selected no
+    if (ConfirmationNegative(mapName)) {
+      GiveMapVetoMenu(client);
+      return;
+    }
+    // If a selection was made too fast, show a confirmation menu
+    if (ConfirmationNeeded()) {
+      GiveConfirmationMenu(client, MapVetoMenuHandler, "MapVetoBanConfirmMenuText", mapName);
+      return;
+    }
+
     RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
-    MatchTeam team = GetClientMatchTeam(client);
     Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], mapName);
 
     EventLogger_MapVetoed(team, mapName);
@@ -182,6 +258,7 @@ public void GiveMapPickMenu(int client) {
     menu.AddItem(mapName, mapName);
   }
   menu.Display(client, MENU_TIME_FOREVER);
+  SetConfirmationTime(true);
 }
 
 public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
@@ -190,6 +267,17 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
     MatchTeam team = GetClientMatchTeam(client);
     char mapName[PLATFORM_MAX_PATH];
     menu.GetItem(param2, mapName, sizeof(mapName));
+
+    // Go back if we were called from a confirmation menu and client selected no
+    if (ConfirmationNegative(mapName)) {
+      GiveMapPickMenu(client);
+      return;
+    }
+    // If a selection was made too fast, show a confirmation menu
+    if (ConfirmationNeeded()) {
+      GiveConfirmationMenu(client, MapPickMenuHandler, "MapVetoPickConfirmMenuText", mapName);
+      return;
+    }
 
     g_MapsToPlay.PushString(mapName);
     RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
@@ -227,17 +315,28 @@ public void GiveSidePickMenu(int client) {
   menu.AddItem("CT", "CT");
   menu.AddItem("T", "T");
   menu.Display(client, MENU_TIME_FOREVER);
+  SetConfirmationTime(true);
 }
 
 public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     int client = param1;
     MatchTeam team = GetClientMatchTeam(client);
-
     char choice[PLATFORM_MAX_PATH];
     menu.GetItem(param2, choice, sizeof(choice));
-    int selectedSide;
 
+    // Go back if we were called from a confirmation menu and client selected no
+    if (ConfirmationNegative(choice)) {
+      GiveSidePickMenu(client);
+      return;
+    }
+    // If a selection was made too fast, show a confirmation menu
+    if (ConfirmationNeeded()) {
+      GiveConfirmationMenu(client, SidePickMenuHandler, "MapVetoSidePickConfirmMenuText", choice);
+      return;
+    }
+
+    int selectedSide;
     if (StrEqual(choice, "CT")) {
       selectedSide = CS_TEAM_CT;
       if (team == MatchTeam_Team1)

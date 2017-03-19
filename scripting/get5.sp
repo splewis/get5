@@ -72,7 +72,7 @@ ConVar g_TeamTimeToKnifeDecisionCvar;
 ConVar g_TeamTimeToStartCvar;
 ConVar g_TimeFormatCvar;
 ConVar g_VetoConfirmationTimeCvar;
-ConVar g_VetoCountdown;
+ConVar g_VetoCountdownCvar;
 ConVar g_WarmupCfgCvar;
 
 // Autoset convars (not meant for users to set)
@@ -282,7 +282,7 @@ public void OnPluginStart() {
   g_VetoConfirmationTimeCvar = CreateConVar(
       "get5_veto_confirmation_time", "0",
       "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required, 0 to disable");
-  g_VetoCountdown =
+  g_VetoCountdownCvar =
       CreateConVar("get5_veto_countdown", "5", "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");

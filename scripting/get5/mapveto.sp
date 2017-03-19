@@ -19,8 +19,8 @@ public void CreateVeto() {
 
 public Action Timer_VetoCountdown(Handle timer) {
     static int warningsPrinted = 0;
-    int secondsRemaining = g_VetoCountdown.IntValue;
-    if (warningsPrinted >= g_VetoCountdown.IntValue) {
+    int secondsRemaining = g_VetoCountdownCvar.IntValue;
+    if (warningsPrinted >= g_VetoCountdownCvar.IntValue) {
         warningsPrinted = 0;
         MatchTeam startingTeam = OtherMatchTeam(g_LastVetoTeam);
         VetoController(g_VetoCaptains[startingTeam]);

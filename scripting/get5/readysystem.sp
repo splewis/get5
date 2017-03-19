@@ -1,3 +1,19 @@
+/**
+ * Ready System
+ */
+
+
+// Client ready status
+
+public bool IsClientReady(int client) {
+  return g_ClientReady[i] == true;
+}
+
+public void SetClientReady(int client, bool ready) {
+  g_ClientReady[i] = ready;
+}
+
+
 public Action Command_AdminForceReady(int client, int args) {
   if (g_GameState != GameState_PreVeto && g_GameState != GameState_Warmup) {
     return Plugin_Handled;
@@ -9,7 +25,7 @@ public Action Command_AdminForceReady(int client, int args) {
   }
   for (int i = 1; i <= MaxClients; i++) {
     if (IsPlayer(i)) {
-      g_ClientReady[i] = true;
+      SetClientReady(i, true);
     }
   }
   SetMatchTeamCvars();
@@ -28,7 +44,7 @@ public Action Command_Ready(int client, int args) {
   }
 
   Get5_Message(client, "%t", "YouAreReady");
-  g_ClientReady[client] = true;
+  SetClientReady(client, true);
   if (IsTeamReady(team)) {
     SetMatchTeamCvars();
     PrintReadyMessage(team);
@@ -64,7 +80,7 @@ public Action Command_NotReady(int client, int args) {
   }
 
   bool teamWasReady = IsTeamReady(team);
-  g_ClientReady[client] = false;
+  SetClientReady(client, false);
   g_TeamReadyOverride[team] = false;
   Get5_Message(client, "%t", "YouAreNotReady");
 
@@ -91,7 +107,7 @@ public Action Command_ForceReadyClient(int client, int args) {
     if (playerCount >= g_MinPlayersToReady) {
       for (int i = 1; i <= MaxClients; i++) {
         if (IsPlayer(i) && GetClientMatchTeam(i) == team) {
-          g_ClientReady[i] = true;
+          SetClientReady(i, true);
           Get5_Message(i, "%t", "TeammateForceReadied", client);
         }
       }
@@ -130,7 +146,7 @@ public bool IsTeamReady(MatchTeam team) {
   for (int i = 0; i <= MaxClients; i++) {
     if (IsPlayer(i) && GetClientMatchTeam(i) == team) {
       playerCount++;
-      if (g_ClientReady[i]) {
+      if (IsClientReady(i)) {
         readyCount++;
       }
     }
@@ -166,7 +182,7 @@ public bool IsTeamReadyButMissingPlayers(MatchTeam team) {
   for (int i = 0; i <= MaxClients; i++) {
     if (IsPlayer(i) && GetClientMatchTeam(i) == team && !IsClientCoaching(i)) {
       playerCount++;
-      if (g_ClientReady[i]) {
+      if (IsClientReady(i)) {
         readyCount++;
       }
     }
@@ -185,7 +201,7 @@ public void ResetReadyStatus() {
     g_TeamReadyOverride[team] = false;
   }
   for (int i = 0; i <= MaxClients; i++) {
-    g_ClientReady[i] = false;
+    SetClientReady(i, false);
   }
 }
 
@@ -197,7 +213,7 @@ public void UpdateClanTags() {
           CS_SetClientClanTag(i, "");
         } else {
           char tag[32];
-          Format(tag, sizeof(tag), "%T", g_ClientReady[i] ? "ReadyTag" : "NotReadyTag",
+          Format(tag, sizeof(tag), "%T", IsClientReady(i) ? "ReadyTag" : "NotReadyTag",
                  LANG_SERVER);
           CS_SetClientClanTag(i, tag);
         }

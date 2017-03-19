@@ -436,7 +436,7 @@ public Action Timer_InfoMessages(Handle timer) {
 }
 
 public void OnClientAuthorized(int client, const char[] auth) {
-  g_ClientReady[client] = false;
+  SetClientReady(client, false);
   g_MovingClientToCoach[client] = false;
   if (StrEqual(auth, "BOT", false)) {
     return;

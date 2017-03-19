@@ -211,7 +211,7 @@ public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
       GiveMapVetoMenu(client);
       return;
     }
-    // If a selection was made too fast, show a confirmation menu
+    // Show a confirmation menu if needed
     if (ConfirmationNeeded()) {
       GiveConfirmationMenu(client, MapVetoMenuHandler, "MapVetoBanConfirmMenuText", mapName);
       return;
@@ -273,7 +273,7 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
       GiveMapPickMenu(client);
       return;
     }
-    // If a selection was made too fast, show a confirmation menu
+    // Show a confirmation menu if needed
     if (ConfirmationNeeded()) {
       GiveConfirmationMenu(client, MapPickMenuHandler, "MapVetoPickConfirmMenuText", mapName);
       return;
@@ -330,7 +330,7 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
       GiveSidePickMenu(client);
       return;
     }
-    // If a selection was made too fast, show a confirmation menu
+    // Show a confirmation menu if needed
     if (ConfirmationNeeded()) {
       GiveConfirmationMenu(client, SidePickMenuHandler, "MapVetoSidePickConfirmMenuText", choice);
       return;

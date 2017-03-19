@@ -353,4 +353,9 @@
     {
         "en"        "No"
     }
+    "VetoCountdown"
+    {
+        "#format"       "{1:i}"
+        "en"        "Veto commencing in {GREEN}{1} {NORMAL}seconds."
+    }
 }

@@ -14,6 +14,17 @@ public void SetClientReady(int client, bool ready) {
 }
 
 
+// Team ready status
+
+public bool IsTeamForcedReady(MatchTeam team) {
+  return g_TeamReadyOverride[team] == true;
+}
+
+public void SetTeamForcedReady(MatchTeam team, bool ready) {
+  g_TeamReadyOverride[team] = ready;
+}
+
+
 public Action Command_AdminForceReady(int client, int args) {
   if (g_GameState != GameState_PreVeto && g_GameState != GameState_Warmup) {
     return Plugin_Handled;
@@ -21,7 +32,7 @@ public Action Command_AdminForceReady(int client, int args) {
 
   Get5_MessageToAll("%t", "AdminForceReadyInfoMessage");
   LOOP_TEAMS(team) {
-    g_TeamReadyOverride[team] = true;
+    SetTeamForcedReady(team, true);
   }
   for (int i = 1; i <= MaxClients; i++) {
     if (IsPlayer(i)) {
@@ -81,7 +92,7 @@ public Action Command_NotReady(int client, int args) {
 
   bool teamWasReady = IsTeamReady(team);
   SetClientReady(client, false);
-  g_TeamReadyOverride[team] = false;
+  SetTeamForcedReady(team, false);
   Get5_Message(client, "%t", "YouAreNotReady");
 
   if (teamWasReady) {
@@ -111,7 +122,7 @@ public Action Command_ForceReadyClient(int client, int args) {
           Get5_Message(i, "%t", "TeammateForceReadied", client);
         }
       }
-      g_TeamReadyOverride[team] = true;
+      SetTeamForcedReady(team, true);
       SetMatchTeamCvars();
       PrintReadyMessage(team);
 
@@ -156,7 +167,7 @@ public bool IsTeamReady(MatchTeam team) {
     return true;
   }
 
-  if (g_TeamReadyOverride[team] && readyCount >= g_MinPlayersToReady) {
+  if (IsTeamForcedReady(team) && readyCount >= g_MinPlayersToReady) {
     return true;
   }
 
@@ -188,7 +199,7 @@ public bool IsTeamReadyButMissingPlayers(MatchTeam team) {
     }
   }
 
-  if (!g_TeamReadyOverride[team] && readyCount >= g_MinPlayersToReady &&
+  if (!IsTeamForcedReady(team) && readyCount >= g_MinPlayersToReady &&
       readyCount < g_PlayersPerTeam && playerCount == readyCount) {
     return true;
   }
@@ -198,7 +209,7 @@ public bool IsTeamReadyButMissingPlayers(MatchTeam team) {
 
 public void ResetReadyStatus() {
   LOOP_TEAMS(team) {
-    g_TeamReadyOverride[team] = false;
+    SetTeamForcedReady(team, false);
   }
   for (int i = 0; i <= MaxClients; i++) {
     SetClientReady(i, false);

@@ -11,8 +11,23 @@ public void CreateVeto() {
   g_VetoCaptains[MatchTeam_Team1] = GetTeamCaptain(MatchTeam_Team1);
   g_VetoCaptains[MatchTeam_Team2] = GetTeamCaptain(MatchTeam_Team2);
   ResetReadyStatus();
-  MatchTeam startingTeam = OtherMatchTeam(g_LastVetoTeam);
-  VetoController(g_VetoCaptains[startingTeam]);
+  CreateTimer(1.0, Timer_VetoCountdown, _, TIMER_REPEAT);
+}
+
+public Action Timer_VetoCountdown(Handle timer) {
+    static int warningsPrinted = 0;
+    int secondsRemaining = g_VetoCountdown.IntValue;
+    if (warningsPrinted >= g_VetoCountdown.IntValue) {
+        warningsPrinted = 0;
+        MatchTeam startingTeam = OtherMatchTeam(g_LastVetoTeam);
+        VetoController(g_VetoCaptains[startingTeam]);
+        return Plugin_Stop;
+	} else {
+        warningsPrinted++;
+        secondsRemaining = secondsRemaining - warningsPrinted;
+        Get5_MessageToAll("%t", "VetoCountdown", secondsRemaining);
+        return Plugin_Continue;
+    }
 }
 
 static void AbortVeto() {

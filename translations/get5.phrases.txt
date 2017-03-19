@@ -330,4 +330,9 @@
         "#format"       "{1:s}"
         "en"        "Select a side for {1}"
     }
+    "VetoCountdown"
+    {
+        "#format"       "{1:i}"
+        "en"        "Veto commencing in {GREEN}{1} {NORMAL}seconds."
+    }
 }

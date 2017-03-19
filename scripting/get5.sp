@@ -71,6 +71,7 @@ ConVar g_StopCommandEnabledCvar;
 ConVar g_TeamTimeToKnifeDecisionCvar;
 ConVar g_TeamTimeToStartCvar;
 ConVar g_TimeFormatCvar;
+ConVar g_VetoCountdown;
 ConVar g_WarmupCfgCvar;
 
 // Autoset convars (not meant for users to set)
@@ -276,6 +277,8 @@ public void OnPluginStart() {
   g_TimeFormatCvar = CreateConVar(
       "get5_time_format", "%Y-%m-%d_%H",
       "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
+  g_VetoCountdown =
+      CreateConVar("get5_veto_countdown", "5", "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
 

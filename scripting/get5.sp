@@ -405,35 +405,49 @@ public void OnPluginStart() {
 }
 
 public Action Timer_InfoMessages(Handle timer) {
+  // Handle pre-veto messages
   if (g_GameState == GameState_PreVeto) {
-    Get5_MessageToAll("%t", "ReadyToVetoInfoMessage");
-    MissingPlayerInfoMessage();
-
-  } else if (g_GameState == GameState_Warmup && !g_MapChangePending) {
-    if (AllTeamsReady(false) && !AllTeamsReady(true)) {
-      Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage");
-      MissingPlayerInfoMessage();
-
+    if (IsTeamsReady() && !IsSpectatorsReady()) {
+      Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage", g_FormattedTeamNames[MatchTeam_TeamSpec]);
     } else {
-      SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
-      if (g_WaitingForRoundBackup) {
-        Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage");
-      } else if (sides == SideChoice_KnifeRound) {
-        Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage");
-        MissingPlayerInfoMessage();
-      } else {
-        Get5_MessageToAll("%t", "ReadyToStartInfoMessage");
-        MissingPlayerInfoMessage();
-      }
+      Get5_MessageToAll("%t", "ReadyToVetoInfoMessage");
+    }
+    MissingPlayerInfoMessage();
+  }
+
+  // Handle warmup state, provided we're not waiting for a map change
+  if (g_GameState == GameState_Warmup && !g_MapChangePending) {
+
+    // Backups take priority
+    if (!IsTeamsReady() && g_WaitingForRoundBackup) {
+      Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage");
+      return Plugin_Continue;
     }
 
-  } else if (g_GameState == GameState_WaitingForKnifeRoundDecision) {
-    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam]);
+    // Find out what we're waiting for
+    if (IsTeamsReady() && !IsSpectatorsReady()) {
+      Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage", g_FormattedTeamNames[MatchTeam_TeamSpec]);
+    } else {
+      if (g_MapSides.Get(GetMapNumber()) == SideChoice_KnifeRound) {
+        Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage");
+      } else {
+        Get5_MessageToAll("%t", "ReadyToStartInfoMessage");
+      }
+    }
+    MissingPlayerInfoMessage();
+  }
 
-  } else if (g_GameState == GameState_PostGame) {
+  // Handle waiting for knife decision
+  if (g_GameState == GameState_WaitingForKnifeRoundDecision) {
+    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam]);
+  }
+
+  // Handle postgame
+  if (g_GameState == GameState_PostGame) {
     Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
   }
+
+  return Plugin_Continue;
 }
 
 public void OnClientAuthorized(int client, const char[] auth) {
@@ -536,26 +550,33 @@ public void OnMapStart() {
 public Action Timer_CheckReady(Handle timer) {
   CheckTeamNameStatus(MatchTeam_Team1);
   CheckTeamNameStatus(MatchTeam_Team2);
+  UpdateClanTags();
 
+  // Handle ready checks for pre-veto state
   if (g_GameState == GameState_PreVeto) {
-    if (AllTeamsReady(false)) {
+    if (IsTeamsReady()) {
+      // We don't wait for spectators when initiating veto
       ChangeState(GameState_Veto);
       CreateVeto();
     } else {
       CheckReadyWaitingTimes();
     }
+  }
 
-  } else if (g_GameState == GameState_Warmup) {
-    if (AllTeamsReady(true) && !g_MapChangePending) {
-      int mapNumber = GetMapNumber();
-      if (g_WaitingForRoundBackup) {
-        g_WaitingForRoundBackup = false;
-        RestoreGet5Backup();
+  // Handle ready checks for warmup, provided we are not waiting for a map change
+  if (g_GameState == GameState_Warmup && !g_MapChangePending) {
 
-      } else if (g_MapSides.Get(mapNumber) == SideChoice_KnifeRound) {
-        ChangeState(GameState_KnifeRound);
+    // We don't wait for spectators when restoring backups
+    if (IsTeamsReady() && g_WaitingForRoundBackup) {
+      g_WaitingForRoundBackup = false;
+      RestoreGet5Backup();
+      return Plugin_Continue;
+    }
+
+    // Wait for both players and spectators before going live
+    if (IsTeamsReady() && IsSpectatorsReady()) {
+      if (g_MapSides.Get(GetMapNumber()) == SideChoice_KnifeRound) {
         StartGame(true);
-
       } else {
         StartGame(false);
       }
@@ -563,8 +584,6 @@ public Action Timer_CheckReady(Handle timer) {
       CheckReadyWaitingTimes();
     }
   }
-
-  UpdateClanTags();
 
   return Plugin_Continue;
 }
@@ -1077,6 +1096,7 @@ public void StartGame(bool knifeRound) {
   ExecCfg(g_LiveCfgCvar);
 
   if (knifeRound) {
+    ChangeState(GameState_KnifeRound);
     if (g_KnifeChangedCvars != INVALID_HANDLE)
       CloseCvarStorage(g_KnifeChangedCvars);
     g_KnifeChangedCvars = ExecuteAndSaveCvars(KNIFE_CONFIG);

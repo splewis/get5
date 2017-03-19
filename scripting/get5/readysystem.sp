@@ -2,6 +2,11 @@
  * Ready System
  */
 
+public void ResetReadyStatus() {
+  SetAllTeamsForcedReady(false);
+  SetAllClientsReady(false);
+}
+
 
 // Client ready status
 
@@ -11,6 +16,12 @@ public bool IsClientReady(int client) {
 
 public void SetClientReady(int client, bool ready) {
   g_ClientReady[client] = ready;
+}
+
+public void SetAllClientsReady(bool ready) {
+  LOOP_CLIENTS(client) {
+    SetClientReady(client, ready);
+  }
 }
 
 
@@ -24,6 +35,13 @@ public void SetTeamForcedReady(MatchTeam team, bool ready) {
   g_TeamReadyOverride[team] = ready;
 }
 
+public void SetAllTeamsForcedReady(bool ready) {
+  LOOP_TEAMS(team) {
+    SetTeamForcedReady(team, ready)
+  }
+}
+
+
 
 public Action Command_AdminForceReady(int client, int args) {
   if (g_GameState != GameState_PreVeto && g_GameState != GameState_Warmup) {
@@ -31,14 +49,8 @@ public Action Command_AdminForceReady(int client, int args) {
   }
 
   Get5_MessageToAll("%t", "AdminForceReadyInfoMessage");
-  LOOP_TEAMS(team) {
-    SetTeamForcedReady(team, true);
-  }
-  for (int i = 1; i <= MaxClients; i++) {
-    if (IsPlayer(i)) {
-      SetClientReady(i, true);
-    }
-  }
+  SetAllTeamsForcedReady(true);
+  SetAllClientsReady(true);
   SetMatchTeamCvars();
 
   return Plugin_Handled;
@@ -205,15 +217,6 @@ public bool IsTeamReadyButMissingPlayers(MatchTeam team) {
   }
 
   return false;
-}
-
-public void ResetReadyStatus() {
-  LOOP_TEAMS(team) {
-    SetTeamForcedReady(team, false);
-  }
-  for (int i = 0; i <= MaxClients; i++) {
-    SetClientReady(i, false);
-  }
 }
 
 public void UpdateClanTags() {

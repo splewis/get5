@@ -6,11 +6,11 @@
 // Client ready status
 
 public bool IsClientReady(int client) {
-  return g_ClientReady[i] == true;
+  return g_ClientReady[client] == true;
 }
 
 public void SetClientReady(int client, bool ready) {
-  g_ClientReady[i] = ready;
+  g_ClientReady[client] = ready;
 }
 
 

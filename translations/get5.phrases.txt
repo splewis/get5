@@ -322,14 +322,37 @@
     {
         "en"        "Select a map to PLAY:"
     }
+    "MapVetoPickConfirmMenuText"
+    {
+        "#format"       "{1:s}"
+        "en"        "Confirm you want to PLAY {1}:"
+    }
     "MapVetoBanMenuText"
     {
         "en"        "Select a map to VETO:"
+    }
+    "MapVetoBanConfirmMenuText"
+    {
+        "#format"       "{1:s}"
+        "en"        "Confirm you want to VETO {1}:"
     }
     "MapVetoSidePickMenuText"
     {
         "#format"       "{1:s}"
         "en"        "Select a side for {1}"
+    }
+    "MapVetoSidePickConfirmMenuText"
+    {
+        "#format"       "{1:s}"
+        "en"        "Confirm you want to start {1}:"
+    }
+    "ConfirmPositiveOptionText"
+    {
+        "en"        "Yes"
+    }
+    "ConfirmNegativeOptionText"
+    {
+        "en"        "No"
     }
     "VetoCountdown"
     {

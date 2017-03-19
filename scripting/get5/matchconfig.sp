@@ -3,6 +3,8 @@
 #define CONFIG_MATCHTITLE_DEFAULT "Map {MAPNUMBER} of {MAXMAPS}"
 #define CONFIG_PLAYERSPERTEAM_DEFAULT 5
 #define CONFIG_MINPLAYERSTOREADY_DEFAULT 1
+#define CONFIG_MINSPECTATORSTOREADY_DEFAULT 0
+#define CONFIG_SPECTATORSNAME_DEFAULT "casters"
 #define CONFIG_MAPSTOWIN_DEFAULT 2
 #define CONFIG_BO2_DEFAULT false
 #define CONFIG_SKIPVETO_DEFAULT false
@@ -344,6 +346,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
   kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
   g_PlayersPerTeam = kv.GetNum("players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
   g_MinPlayersToReady = kv.GetNum("min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
+  g_MinSpectatorsToReady = kv.GetNum("min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
   g_MapsToWin = kv.GetNum("maps_to_win", CONFIG_MAPSTOWIN_DEFAULT);
   g_BO2Match = kv.GetNum("bo2_series", CONFIG_BO2_DEFAULT) != 0;
   g_SkipVeto = kv.GetNum("skip_veto", CONFIG_SKIPVETO_DEFAULT) != 0;
@@ -362,7 +365,11 @@ static bool LoadMatchFromKv(KeyValues kv) {
   GetTeamAuths(MatchTeam_TeamSpec).Clear();
   if (kv.JumpToKey("spectators")) {
     AddSubsectionAuthsToList(kv, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
+    kv.GetString("name", g_TeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH, CONFIG_SPECTATORSNAME_DEFAULT);
     kv.GoBack();
+
+    Format(g_FormattedTeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
+      g_DefaultTeamColors[MatchTeam_TeamSpec], g_TeamNames[MatchTeam_TeamSpec]);
   }
 
   if (kv.JumpToKey("team1")) {
@@ -429,6 +436,8 @@ static bool LoadMatchFromJson(Handle json) {
       json_object_get_int_safe(json, "players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
   g_MinPlayersToReady =
       json_object_get_int_safe(json, "min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
+  g_MinSpectatorsToReady =
+      json_object_get_int_safe(json, "min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
   g_MapsToWin = json_object_get_int_safe(json, "maps_to_win", CONFIG_MAPSTOWIN_DEFAULT);
   g_BO2Match = json_object_get_bool_safe(json, "bo2_series", CONFIG_BO2_DEFAULT);
   g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
@@ -447,8 +456,12 @@ static bool LoadMatchFromJson(Handle json) {
 
   Handle spec = json_object_get(json, "spectators");
   if (spec != INVALID_HANDLE) {
+    json_object_get_string_safe(spec, "name", g_TeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH, CONFIG_SPECTATORSNAME_DEFAULT);
     AddJsonAuthsToList(spec, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
     CloseHandle(spec);
+
+    Format(g_FormattedTeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
+      g_DefaultTeamColors[MatchTeam_TeamSpec], g_TeamNames[MatchTeam_TeamSpec]);
   }
 
   Handle team1 = json_object_get(json, "team1");

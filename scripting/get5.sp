@@ -99,6 +99,7 @@ int g_FavoredTeamPercentage = 0;
 char g_FavoredTeamText[MAX_CVAR_LENGTH];
 int g_PlayersPerTeam = 5;
 int g_MinPlayersToReady = 1;
+int g_MinSpectatorsToReady = 0;
 bool g_SkipVeto = false;
 MatchSideType g_MatchSideType = MatchSideType_Standard;
 ArrayList g_CvarNames = null;

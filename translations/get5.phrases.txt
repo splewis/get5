@@ -6,7 +6,8 @@
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "en"            "Waiting for the casters to type {GREEN}!ready {NORMAL}to begin."
+        "#format"       "{1:s}"
+        "en"            "Waiting for {1} to type {GREEN}!ready {NORMAL}to begin."
     }
     "ReadyToRestoreBackupInfoMessage"
     {

@@ -282,6 +282,8 @@ public void WriteMatchToKv(KeyValues kv) {
   kv.SetNum("bo2_series", g_BO2Match);
   kv.SetNum("skip_veto", g_SkipVeto);
   kv.SetNum("players_per_team", g_PlayersPerTeam);
+  kv.SetNum("min_players_to_ready", g_MinPlayersToReady);
+  kv.SetNum("min_spectators_to_ready", g_MinSpectatorsToReady);
   kv.SetString("match_title", g_MatchTitle);
 
   kv.SetNum("favored_percentage_team1", g_FavoredTeamPercentage);
@@ -331,8 +333,8 @@ static void AddTeamBackupData(KeyValues kv, MatchTeam team) {
   }
   kv.GoBack();
 
+  kv.SetString("name", g_TeamNames[team]);
   if (team != MatchTeam_TeamSpec) {
-    kv.SetString("name", g_TeamNames[team]);
     kv.SetString("tag", g_TeamTags[team]);
     kv.SetString("flag", g_TeamFlags[team]);
     kv.SetString("logo", g_TeamLogos[team]);

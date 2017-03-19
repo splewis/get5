@@ -88,7 +88,7 @@ public Action Command_ForceReadyClient(int client, int args) {
 
   if (team == team && !IsTeamReady(team)) {
     int playerCount = CountPlayersOnMatchTeam(team);
-    if (playerCount >= g_MinPlayersPerTeam) {
+    if (playerCount >= g_MinPlayersToReady) {
       for (int i = 1; i <= MaxClients; i++) {
         if (IsPlayer(i) && GetClientMatchTeam(i) == team) {
           g_ClientReady[i] = true;
@@ -100,7 +100,7 @@ public Action Command_ForceReadyClient(int client, int args) {
       PrintReadyMessage(team);
 
     } else {
-      Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", g_MinPlayersPerTeam);
+      Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", g_MinPlayersToReady);
     }
   }
 
@@ -140,7 +140,7 @@ public bool IsTeamReady(MatchTeam team) {
     return true;
   }
 
-  if (g_TeamReadyOverride[team] && readyCount >= g_MinPlayersPerTeam) {
+  if (g_TeamReadyOverride[team] && readyCount >= g_MinPlayersToReady) {
     return true;
   }
 
@@ -172,7 +172,7 @@ public bool IsTeamReadyButMissingPlayers(MatchTeam team) {
     }
   }
 
-  if (!g_TeamReadyOverride[team] && readyCount >= g_MinPlayersPerTeam &&
+  if (!g_TeamReadyOverride[team] && readyCount >= g_MinPlayersToReady &&
       readyCount < g_PlayersPerTeam && playerCount == readyCount) {
     return true;
   }

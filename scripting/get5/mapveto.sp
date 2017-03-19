@@ -134,7 +134,7 @@ public void GiveConfirmationMenu(int client, MenuHandler handler, const char[] t
 
   // Add rows of padding to move selection out of "danger zone"
   for (int i = 0; i < 7; i++) {
-    menu.AddItem("spacer", "", ITEMDRAW_NOTEXT);
+    menu.AddItem(CONFIRM_NEGATIVE_VALUE, "", ITEMDRAW_NOTEXT);
   }
 
   // Add actual choices

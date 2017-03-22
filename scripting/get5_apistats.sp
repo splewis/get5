@@ -360,9 +360,10 @@ public void Get5_OnRoundStatsUpdated() {
 }
 
 static int MapNumber() {
-  int t1, t2;
+  int t1, t2, n;
   int buf;
   Get5_GetTeamScores(MatchTeam_Team1, t1, buf);
   Get5_GetTeamScores(MatchTeam_Team2, t2, buf);
-  return t1 + t2;
+  Get5_GetTeamScores(MatchTeam_TeamNone, n, buf);
+  return t1 + t2 + n;
 }

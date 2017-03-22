@@ -204,6 +204,11 @@
         "#format"       "{1:s}"
         "en"            "{1} has won the match."
     }
+    "TeamTiedMatchInfoMessage"
+    {
+        "#format"       "{1:s},{2:s}"
+        "en"            "{1} and {2} have tied the match."
+    }
     "TeamsSplitSeriesBO2InfoMessage"
     {
         "#format"       "{1:s},{2:s}"

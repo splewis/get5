@@ -321,11 +321,11 @@ public int GetMapScore(int mapNumber, MatchTeam team) {
 }
 
 public bool HasMapScore(int mapNumber) {
-  return GetMapScore(mapNumber, MatchTeam_Team1) != 0 || GetMapScore(mapNumber, MatchTeam_Team2);
+  return GetMapScore(mapNumber, MatchTeam_Team1) != 0 || GetMapScore(mapNumber, MatchTeam_Team2) != 0;
 }
 
 public int GetMapNumber() {
-  return g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
+  return g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] + g_TeamSeriesScores[MatchTeam_TeamNone];
 }
 
 public bool AddPlayerToTeam(const char[] auth, MatchTeam team) {

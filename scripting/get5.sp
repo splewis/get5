@@ -776,9 +776,9 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 
 public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState == GameState_Live) {
+    // Figure out who won
     int t1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
     int t2score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
-
     MatchTeam winningTeam = MatchTeam_TeamNone;
     if (t1score > t2score) {
       winningTeam = MatchTeam_Team1;
@@ -786,10 +786,12 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       winningTeam = MatchTeam_Team2;
     }
 
+    // Update series scores
     Stats_UpdateMapScore(winningTeam);
     AddMapScore();
     g_TeamSeriesScores[winningTeam]++;
 
+    // Handle map end
     g_MapChangePending = true;
     WriteBackup();
 
@@ -806,36 +808,44 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     Call_PushCell(GetMapNumber() - 1);
     Call_Finish();
 
+    int t1maps = g_TeamSeriesScores[MatchTeam_Team1];
+    int t2maps = g_TeamSeriesScores[MatchTeam_Team2];
+    int tiedMaps = g_TeamSeriesScores[MatchTeam_TeamNone];
+
     float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
-    if (g_TeamSeriesScores[MatchTeam_Team1] == g_MapsToWin) {
-      SeriesWonMessage(MatchTeam_Team1);
+
+    if (t1maps == g_MapsToWin) {
+      // Team 1 won
+      SeriesEndMessage(MatchTeam_Team1);
       DelayFunction(minDelay, EndSeries);
 
-    } else if (g_TeamSeriesScores[MatchTeam_Team2] == g_MapsToWin) {
-      SeriesWonMessage(MatchTeam_Team2);
+    } else if (t2maps == g_MapsToWin) {
+      // Team 2 won
+      SeriesEndMessage(MatchTeam_Team2);
+      DelayFunction(minDelay, EndSeries);
+
+    } else if (t1maps == t2maps && t1maps + tiedMaps == g_MapsToWin) {
+      // The whole series was a tie
+      SeriesEndMessage(MatchTeam_TeamNone);
       DelayFunction(minDelay, EndSeries);
 
     } else if (g_BO2Match && GetMapNumber() == 2) {
-      SeriesWonMessage(MatchTeam_TeamNone);
+      // It was a bo2, and none of the teams got to 2
+      SeriesEndMessage(MatchTeam_TeamNone);
       DelayFunction(minDelay, EndSeries);
 
     } else {
-      if (g_TeamSeriesScores[MatchTeam_Team1] > g_TeamSeriesScores[MatchTeam_Team2]) {
-        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage",
-                          g_FormattedTeamNames[MatchTeam_Team1],
-                          g_TeamSeriesScores[MatchTeam_Team1], g_TeamSeriesScores[MatchTeam_Team2]);
+      if (t1maps > t2maps) {
+        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[MatchTeam_Team1], t1maps, t2maps);
 
-      } else if (g_TeamSeriesScores[MatchTeam_Team2] > g_TeamSeriesScores[MatchTeam_Team1]) {
-        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage",
-                          g_FormattedTeamNames[MatchTeam_Team2],
-                          g_TeamSeriesScores[MatchTeam_Team2], g_TeamSeriesScores[MatchTeam_Team1]);
+      } else if (t2maps > t1maps) {
+        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[MatchTeam_Team2], t2maps, t1maps);
 
       } else {
-        Get5_MessageToAll("%t", "SeriesTiedInfoMessage", g_TeamSeriesScores[MatchTeam_Team1],
-                          g_TeamSeriesScores[MatchTeam_Team1]);
+        Get5_MessageToAll("%t", "SeriesTiedInfoMessage", t1maps, t2maps);
       }
 
-      int index = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
+      int index = GetMapNumber();
       char nextMap[PLATFORM_MAX_PATH];
       g_MapsToPlay.GetString(index, nextMap, sizeof(nextMap));
 
@@ -849,9 +859,14 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
   return Plugin_Continue;
 }
 
-static void SeriesWonMessage(MatchTeam team) {
+static void SeriesEndMessage(MatchTeam team) {
   if (g_MapsToWin == 1) {
-    Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[team]);
+    if (team == MatchTeam_TeamNone) {
+      Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[MatchTeam_Team1],
+        g_FormattedTeamNames[MatchTeam_Team2]);
+    } else {
+      Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[team]);
+    }
   } else {
     if (team == MatchTeam_TeamNone) {
       // BO2 split.
@@ -890,21 +905,24 @@ public void EndSeries() {
   DelayFunction(10.0, KickClientsOnEnd);
   StopRecording();
 
-  MatchTeam winningTeam = MatchTeam_Team1;
-  if (g_TeamSeriesScores[MatchTeam_Team2] > g_TeamSeriesScores[MatchTeam_Team1]) {
+  // Figure out who won
+  int t1maps = g_TeamSeriesScores[MatchTeam_Team1];
+  int t2maps = g_TeamSeriesScores[MatchTeam_Team2];
+
+  MatchTeam winningTeam = MatchTeam_TeamNone;
+  if (t1maps > t2maps) {
+    winningTeam = MatchTeam_Team1;
+  } else if (t2maps > t1maps) {
     winningTeam = MatchTeam_Team2;
-  } else if (g_TeamSeriesScores[MatchTeam_Team1] == g_TeamSeriesScores[MatchTeam_Team2]) {
-    winningTeam = MatchTeam_TeamNone;
   }
 
   Stats_SeriesEnd(winningTeam);
-  EventLogger_SeriesEnd(winningTeam, g_TeamSeriesScores[MatchTeam_Team1],
-                        g_TeamSeriesScores[MatchTeam_Team2]);
+  EventLogger_SeriesEnd(winningTeam, t1maps, t2maps);
 
   Call_StartForward(g_OnSeriesResult);
   Call_PushCell(winningTeam);
-  Call_PushCell(g_TeamSeriesScores[MatchTeam_Team1]);
-  Call_PushCell(g_TeamSeriesScores[MatchTeam_Team2]);
+  Call_PushCell(t1maps);
+  Call_PushCell(t2maps);
   Call_Finish();
 
   RestoreCvars(g_MatchConfigChangedCvars);

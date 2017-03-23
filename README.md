@@ -92,7 +92,7 @@ Of the below fields, only the ``team1`` and ``team2`` fields are actually requir
 - ``favored_percentage_team1``: wrapper for ``mp_teamprediction_pct``
 - ``favored_percentage_text`` wrapper for ``mp_teamprediction_txt``
 - ``cvars``: cvars to be set during the match warmup/knife round/live state
-- ``spectators``: see the team schema below (only the ``players`` section is used for spectators)
+- ``spectators``: see the team schema below (only the ``players`` and ``name`` sections are used for spectators)
 - ``team1``: see the team schema below
 - ``team2``: see the team schema below
 

@@ -10,6 +10,7 @@ static char _colorCodes[][] = {"\x01", "\x02", "\x03", "\x04", "\x05", "\x06",
 
 // Convenience macros.
 #define LOOP_TEAMS(%1) for (MatchTeam %1 = MatchTeam_Team1; %1 < MatchTeam_Count; %1 ++)
+#define LOOP_CLIENTS(%1) for (int %1 = 0; %1 <= MaxClients; %1 ++)
 
 // These match CS:GO's m_gamePhase values.
 enum GamePhase {

@@ -3,6 +3,8 @@
 	"maps_to_win": 2,
 	"bo2_series": false,
 	"players_per_team": 1,
+	"min_players_to_ready": 1,
+	"min_spectators_to_ready": 0,
 	"skip_veto": false,
 	"veto_first": "team1",
 	"side_type": "standard",

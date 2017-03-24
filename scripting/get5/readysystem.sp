@@ -11,7 +11,6 @@ public bool IsReadyGameState() {
   return g_GameState == GameState_PreVeto || g_GameState == GameState_Warmup;
 }
 
-
 // Client ready status
 
 public bool IsClientReady(int client) {
@@ -28,7 +27,6 @@ public void SetAllClientsReady(bool ready) {
   }
 }
 
-
 // Team ready override
 
 public bool IsTeamForcedReady(MatchTeam team) {
@@ -44,7 +42,6 @@ public void SetAllTeamsForcedReady(bool ready) {
     SetTeamForcedReady(team, ready);
   }
 }
-
 
 // Team ready status
 
@@ -126,7 +123,6 @@ public int GetPlayersPerTeam(MatchTeam team) {
   }
 }
 
-
 // Admin commands
 
 public Action Command_AdminForceReady(int client, int args) {
@@ -141,7 +137,6 @@ public Action Command_AdminForceReady(int client, int args) {
 
   return Plugin_Handled;
 }
-
 
 // Client commands
 
@@ -208,7 +203,6 @@ public Action Command_ForceReadyClient(int client, int args) {
   return Plugin_Handled;
 }
 
-
 // Messages
 
 static void PrintReadyMessage(MatchTeam team) {
@@ -247,7 +241,6 @@ public void MissingPlayerInfoMessageTeam(MatchTeam team) {
     Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", minPlayers);
   }
 }
-
 
 // Helpers
 

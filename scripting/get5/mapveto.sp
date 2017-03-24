@@ -18,19 +18,19 @@ public void CreateVeto() {
 }
 
 public Action Timer_VetoCountdown(Handle timer) {
-    static int warningsPrinted = 0;
-    int secondsRemaining = g_VetoCountdownCvar.IntValue;
-    if (warningsPrinted >= g_VetoCountdownCvar.IntValue) {
-        warningsPrinted = 0;
-        MatchTeam startingTeam = OtherMatchTeam(g_LastVetoTeam);
-        VetoController(g_VetoCaptains[startingTeam]);
-        return Plugin_Stop;
-	} else {
-        warningsPrinted++;
-        secondsRemaining = secondsRemaining - warningsPrinted;
-        Get5_MessageToAll("%t", "VetoCountdown", secondsRemaining);
-        return Plugin_Continue;
-    }
+  static int warningsPrinted = 0;
+  int secondsRemaining = g_VetoCountdownCvar.IntValue;
+  if (warningsPrinted >= g_VetoCountdownCvar.IntValue) {
+    warningsPrinted = 0;
+    MatchTeam startingTeam = OtherMatchTeam(g_LastVetoTeam);
+    VetoController(g_VetoCaptains[startingTeam]);
+    return Plugin_Stop;
+  } else {
+    warningsPrinted++;
+    secondsRemaining = secondsRemaining - warningsPrinted;
+    Get5_MessageToAll("%t", "VetoCountdown", secondsRemaining);
+    return Plugin_Continue;
+  }
 }
 
 static void AbortVeto() {
@@ -54,7 +54,6 @@ public void VetoFinished() {
   g_MapChangePending = true;
   CreateTimer(10.0, Timer_NextMatchMap);
 }
-
 
 // Main Veto Controller
 
@@ -111,10 +110,12 @@ public void VetoController(int client) {
 
   } else if (mapsLeft == seriesScore || bo3_last_veto_hack) {
     // We have as many maps left as the total series score, or we can skip the last two
-    // bans in a bo3 which means some maps will be skipped (i.e. they have already been "won" by a team)
+    // bans in a bo3 which means some maps will be skipped (i.e. they have already been "won" by a
+    // team)
     // If series score is 0 we won't get here
 
-    // Add maps to the front of the active maplist equal to the total series score, as these are the maps
+    // Add maps to the front of the active maplist equal to the total series score, as these are the
+    // maps
     // that will be skipped
     char mapName[PLATFORM_MAX_PATH];
     for (int i = 0; i < seriesScore; i++) {
@@ -171,10 +172,10 @@ public void VetoController(int client) {
   }
 }
 
-
 // Confirmations
 
-public void GiveConfirmationMenu(int client, MenuHandler handler, const char[] title, const char[] confirmChoice) {
+public void GiveConfirmationMenu(int client, MenuHandler handler, const char[] title,
+                          const char[] confirmChoice) {
   // Figure out text for positive and negative values
   char positiveBuffer[1024], negativeBuffer[1024];
   Format(positiveBuffer, sizeof(positiveBuffer), "%T", "ConfirmPositiveOptionText", client);
@@ -230,7 +231,6 @@ static bool ConfirmationNeeded() {
 static bool ConfirmationNegative(const char[] choice) {
   return StrEqual(choice, CONFIRM_NEGATIVE_VALUE);
 }
-
 
 // Map Vetos
 
@@ -292,7 +292,6 @@ public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
     delete menu;
   }
 }
-
 
 // Map Picks
 
@@ -356,7 +355,6 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
     delete menu;
   }
 }
-
 
 // Side Picks
 

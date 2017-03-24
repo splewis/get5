@@ -284,7 +284,8 @@ public void OnPluginStart() {
       "get5_veto_confirmation_time", "0",
       "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required, 0 to disable");
   g_VetoCountdownCvar =
-      CreateConVar("get5_veto_countdown", "5", "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
+      CreateConVar("get5_veto_countdown", "5",
+                   "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
 
@@ -396,7 +397,8 @@ public void OnPluginStart() {
       CreateGlobalForward("Get5_OnLoadMatchConfigFailed", ET_Ignore, Param_String);
   g_OnMapPicked = CreateGlobalForward("Get5_OnMapPicked", ET_Ignore, Param_Cell, Param_String);
   g_OnMapVetoed = CreateGlobalForward("Get5_OnMapVetoed", ET_Ignore, Param_Cell, Param_String);
-  g_OnSidePicked = CreateGlobalForward("Get5_OnSidePicked", ET_Ignore, Param_Cell, Param_String, Param_Cell);
+  g_OnSidePicked =
+      CreateGlobalForward("Get5_OnSidePicked", ET_Ignore, Param_Cell, Param_String, Param_Cell);
   g_OnRoundStatsUpdated = CreateGlobalForward("Get5_OnRoundStatsUpdated", ET_Ignore);
   g_OnPreLoadMatchConfig =
       CreateGlobalForward("Get5_OnPreLoadMatchConfig", ET_Ignore, Param_String);
@@ -413,7 +415,8 @@ public Action Timer_InfoMessages(Handle timer) {
   // Handle pre-veto messages
   if (g_GameState == GameState_PreVeto) {
     if (IsTeamsReady() && !IsSpectatorsReady()) {
-      Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage", g_FormattedTeamNames[MatchTeam_TeamSpec]);
+      Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
+                        g_FormattedTeamNames[MatchTeam_TeamSpec]);
     } else {
       Get5_MessageToAll("%t", "ReadyToVetoInfoMessage");
     }
@@ -422,7 +425,6 @@ public Action Timer_InfoMessages(Handle timer) {
 
   // Handle warmup state, provided we're not waiting for a map change
   if (g_GameState == GameState_Warmup && !g_MapChangePending) {
-
     // Backups take priority
     if (!IsTeamsReady() && g_WaitingForRoundBackup) {
       Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage");
@@ -431,7 +433,8 @@ public Action Timer_InfoMessages(Handle timer) {
 
     // Find out what we're waiting for
     if (IsTeamsReady() && !IsSpectatorsReady()) {
-      Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage", g_FormattedTeamNames[MatchTeam_TeamSpec]);
+      Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
+                        g_FormattedTeamNames[MatchTeam_TeamSpec]);
     } else {
       if (g_MapSides.Get(GetMapNumber()) == SideChoice_KnifeRound) {
         Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage");
@@ -444,7 +447,8 @@ public Action Timer_InfoMessages(Handle timer) {
 
   // Handle waiting for knife decision
   if (g_GameState == GameState_WaitingForKnifeRoundDecision) {
-    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam]);
+    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
+                      g_FormattedTeamNames[g_KnifeWinnerTeam]);
   }
 
   // Handle postgame
@@ -570,7 +574,6 @@ public Action Timer_CheckReady(Handle timer) {
 
   // Handle ready checks for warmup, provided we are not waiting for a map change
   if (g_GameState == GameState_Warmup && !g_MapChangePending) {
-
     // We don't wait for spectators when restoring backups
     if (IsTeamsReady() && g_WaitingForRoundBackup) {
       g_WaitingForRoundBackup = false;
@@ -856,10 +859,12 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
     } else {
       if (t1maps > t2maps) {
-        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[MatchTeam_Team1], t1maps, t2maps);
+        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage",
+                          g_FormattedTeamNames[MatchTeam_Team1], t1maps, t2maps);
 
       } else if (t2maps > t1maps) {
-        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[MatchTeam_Team2], t2maps, t1maps);
+        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage",
+                          g_FormattedTeamNames[MatchTeam_Team2], t2maps, t1maps);
 
       } else {
         Get5_MessageToAll("%t", "SeriesTiedInfoMessage", t1maps, t2maps);
@@ -883,7 +888,7 @@ static void SeriesEndMessage(MatchTeam team) {
   if (g_MapsToWin == 1) {
     if (team == MatchTeam_TeamNone) {
       Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[MatchTeam_Team1],
-        g_FormattedTeamNames[MatchTeam_Team2]);
+                        g_FormattedTeamNames[MatchTeam_Team2]);
     } else {
       Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[team]);
     }

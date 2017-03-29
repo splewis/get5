@@ -798,6 +798,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 }
 
 public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast) {
+  LogDebug("Event_MatchOver");
   if (g_GameState == GameState_Live) {
     // Figure out who won
     int t1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
@@ -955,6 +956,7 @@ public void EndSeries() {
 }
 
 public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
+  LogDebug("Event_RoundPreStart");
   if (g_PendingSideSwap) {
     g_PendingSideSwap = false;
     SwapSides();
@@ -1000,6 +1002,7 @@ public void WriteBackup() {
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
+  LogDebug("Event_RoundEnd");
   if (g_DoingBackupRestoreNow) {
     return;
   }

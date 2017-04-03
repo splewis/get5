@@ -1062,19 +1062,26 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     int roundsPerHalf = GetCvarIntSafe("mp_maxrounds") / 2;
     int roundsPerOTHalf = GetCvarIntSafe("mp_overtime_maxrounds") / 2;
 
-    // Regulation halftime. (after round 15)
-    if (roundsPlayed == roundsPerHalf) {
-      LogDebug("Pending regulation side swap");
-      g_PendingSideSwap = true;
-    }
 
-    // Now in OT.
-    if (roundsPlayed >= 2 * roundsPerHalf) {
-      int otround = roundsPlayed - 2 * roundsPerHalf;  // round 33 -> round 3, etc.
-      // Do side swaps at OT halves (rounds 3, 9, ...)
-      if ((otround + roundsPerOTHalf) % (2 * roundsPerOTHalf) == 0) {
-        LogDebug("Pending OT side swap");
+    bool halftimeEnabled = (GetCvarIntSafe("mp_halftime") != 0);
+    if (halftimeEnabled) {
+      // TODO: There should be a better way of detecting when halftime is occuring.
+      // What about the halftime_start event, or one of the intermission events?
+
+      // Regulation halftime. (after round 15)
+      if (roundsPlayed == roundsPerHalf) {
+        LogDebug("Pending regulation side swap");
         g_PendingSideSwap = true;
+      }
+
+      // Now in OT.
+      if (roundsPlayed >= 2 * roundsPerHalf) {
+        int otround = roundsPlayed - 2 * roundsPerHalf;  // round 33 -> round 3, etc.
+        // Do side swaps at OT halves (rounds 3, 9, ...)
+        if ((otround + roundsPerOTHalf) % (2 * roundsPerOTHalf) == 0) {
+          LogDebug("Pending OT side swap");
+          g_PendingSideSwap = true;
+        }
       }
     }
   }

@@ -274,6 +274,6 @@
     }
     "MatchPoweredBy"
     {
-        "pt"        "Oferecido por {BLUE}MixBR Games | LET'S GO PRO!"
+        "pt"        "Oferecido por {YELLOW}Get5"
     }
 }

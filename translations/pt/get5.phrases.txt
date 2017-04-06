@@ -1,0 +1,279 @@
+"Phrases"
+{
+    "ReadyToVetoInfoMessage"
+    {
+        "pt"            "Digite {GREEN}!ready {NORMAL}quando seu time estiver pronto para o veto."
+    }
+    "WaitingForCastersReadyInfoMessage"
+    {
+        "pt"            "Esperando pelos streammers para digitar {GREEN}!ready {NORMAL}pra começar."
+    }
+    "ReadyToRestoreBackupInfoMessage"
+    {
+        "pt"            "Digite {GREEN}!ready {NORMAL}quando vocês estiver pronto para restaurar o backup da partida."
+    }
+    "ReadyToKnifeInfoMessage"
+    {
+        "pt"            "Digite {GREEN}!ready {NORMAL}quando você estiver pronto pro Round Faca."
+    }
+    "ReadyToStartInfoMessage"
+    {
+        "pt"            "Digite {GREEN}!ready {NORMAL}quando você estiver pronto para começar."
+    }
+    "YouAreReady"
+    {
+        "pt"            "Você foi marcado como {GREEN}pronto{NORMAL}."
+    }
+    "YouAreNotReady"
+    {
+        "pt"            "Você foi desmarcado como {GREEN}pronto{NORMAL}."
+    }
+    "WaitingForEnemySwapInfoMessage"
+    {
+        "pt"            "{1} venceu o Round Faca. Esperando pelo time vencedor digitar !stay ou !swap."
+    }
+    "WaitingForGOTVBrodcastEndingInfoMessage"
+    {
+        "pt"            "O mapa vai mudar assim que o broadcast do GOTV acabar."
+    }
+    "NoMatchSetupInfoMessage"
+    {
+        "pt"			"Não existe configuração de partida."
+    }
+    "YourAreNotAPlayerInfoMessage"
+    {
+        "pt"            "Você não é um jogador dessa partida."
+    }
+    "TeamIsFullInfoMessage"
+    {
+        "pt"            "Seu time está cheio."
+    }
+    "TeamForfeitInfoMessage"
+    {
+        "pt"            "{1} não ficou pronto a tempo e se rendeu."
+    }
+    "MinutesToForfeitMessage"
+    {
+        "pt"            "{1} tem {2} minutos para ficar prontos ou eles se renderão."
+    }
+    "SecondsToForfeitInfoMessage"
+    {
+        "pt"            "{1} tem {2} segundos para ficar prontos ou eles se renderão."
+    }
+    "10SecondsToForfeitInfoMessage"
+    {
+        "pt"            "{1} tem 10 segundos para fica prontos ou se render."
+    }
+    "PausePeriodSuffix"
+    {
+        "pt"            "for this half"
+    }
+    "MaxPausesUsedInfoMessage"
+    {
+        "pt"            "Seu time já utilizou o máximo de {1} pausas{2}."
+    }
+    "MaxPausesTimeUsedInfoMessage"
+    {
+        "pt"            "Seu time já usou o máximo de {1} segundos do tempo de pausa{2}."
+    }
+    "MatchPausedByTeamMessage"
+    {
+        "pt"            "{1} pausou a partida."
+    }
+    "PauseTimeExpiration10SecInfoMessage"
+    {
+        "pt"            "{1} está quase no fim do tempo de pausa, resumindo a partida em 10 segundos."
+    }
+    "PauseTimeExpirationInfoMessage"
+    {
+        "pt"            "{1} tem {2} segundos faltando para resumir a partida{3}."
+    }
+    "PauseRunoutInfoMessage"
+    {
+        "pt"            "{1} chegou ao fim do tmepo de pause, resumindo a partida."
+    }
+    "MatchUnpauseInfoMessage"
+    {
+        "pt"            "{1:N} resumiu a partida."
+    }
+    "WaitingForUnpauseInfoMessage"
+    {
+        "pt"            "{1} quer resumir a partida, mas esperando por {2} digitar !unpause."
+    }
+    "PausesLeftInfoMessage"
+    {
+        "pt"            "{1} tem {2} pauses sobrando{3}."
+    }
+    "OnePauseLeftInfoMessage"
+    {
+        "pt"            "{1} tem {2} pause sobrando{3}."
+    }
+    "TeamFailToReadyMinPlayerCheck"
+    {
+        "pt"            "Você precisa ter pelo menos {1} jogadores conectados no server para ficar pronto."
+    }
+    "TeamReadyToVetoInfoMessage"
+    {
+        "pt"            "{1} está pronto para o veto."
+    }
+    "TeamReadyToRestoreBackupInfoMessage"
+    {
+        "pt"            "{1} está pronto para restaurar o backup da partida."
+    }
+    "TeamReadyToKnifeInfoMessage"
+    {
+        "pt"            "{1} está pronto para jogar o Round Faca."
+    }
+    "TeamReadyToBeginInfoMessage"
+    {
+        "pt"            "{1} está pronto para começar a partida."
+    }
+    "TeamNotReadyInfoMessage"
+    {
+        "pt"            "{1} deixou de estar pronto."
+    }
+    "ForceReadyInfoMessage"
+    {
+        "pt"            "Você pode digitar {GREEN}!forceready {NORMAL}para forçar seu time a ficar pronto se você tiver menos de {GREEN}{1}{NORMAL} jogador."
+    }
+    "TeammateForceReadied"
+    {
+        "pt"            "Seu time foi forçado a ficar pronto pelo jogador {GREEN}{1}"
+    }
+    "AdminForceReadyInfoMessage"
+    {
+        "pt"            "O administrador forçou todos os times a ficarem prontos."
+    }
+    "AdminForceEndInfoMessage"
+    {
+        "pt"            "O administrador forçou o fim da partida."
+    }
+    "AdminForcePauseInfoMessage"
+    {
+        "pt"            "O administrador forçou um pause na partida."
+    }
+    "AdminForceUnPauseInfoMessage"
+    {
+        "pt"            "O administrador forçou o resumo de uma partida."
+    }
+    "TeamWantsToReloadLastRoundInfoMessage"
+    {
+        "pt"            "{1} quer parar e recomeçar o último round. Para isso precisa que outros {2} confirmem digitanto !stop."
+    }
+    "TeamWinningSeriesInfoMessage"
+    {
+        "pt"            "{1}{NORMAL} está vencendo a série {2}-{3}"
+    }
+    "SeriesTiedInfoMessage"
+    {
+        "pt"            "A série está empatada em {1}-{2}"
+    }
+    "NextSeriesMapInfoMessage"
+    {
+        "pt"            "O próximo mapa da série será {GREEN}{1}"
+    }
+    "TeamWonMatchInfoMessage"
+    {
+        "pt"            "{1} é a equipe vencedora da partida."
+    }
+    "TeamsSplitSeriesBO2InfoMessage"
+    {
+        "pt"            "{1} e {2} empataram a série em 1-1."
+    }
+    "TeamWonSeriesInfoMessage"
+    {
+        "pt"            "{1} é a equipe vencedora da série {2}-{3}."
+    }
+    "MatchFinishedInfoMessage"
+    {
+        "pt"            "A partida foi fnializada."
+    }
+    "CurrentScoreInfoMessage"
+    {
+        "pt"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
+    }
+    "BackupLoadedInfoMessage"
+    {
+        "pt"            "Backup carregado com sucesso {1}"
+    }
+    "MatchBeginInSecondsInfoMessage"
+    {
+        "pt"            "A partida vai começar em {1} segundos."
+    }
+    "MatchIsLiveInfoMessage"
+    {
+        "pt"            "{GREEN}Começou a partida! Boa diversão e boa sorte!"
+    }
+    "KnifeIn5SecInfoMessage"
+    {
+        "pt"            "O Round Faca vai começar em 5 segundos."
+    }
+    "KnifeInfoMessage"
+    {
+        "pt"            "Round Faca!"
+    }
+    "TeamDecidedToStayInfoMessage"
+    {
+        "pt"            "{1} decidiu ficar no mesmo lado."
+    }
+    "TeamDecidedToSwapInfoMessage"
+    {
+        "pt"            "{1} decidiu trocar de lado."
+    }
+    "TeamLostTimeToDecideInfoMessage"
+    {
+        "pt"            "{1} ficará no mesmo lado uma vez que não decidiu a tempo."
+    }
+    "ChangingMapInfoMessage"
+    {
+        "pt"            "Mudando o mapa para {GREEN}{1}..."
+    }
+    "MapDecidedInfoMessage"
+    {
+        "pt"            "Os mapas foram votados:"
+    }
+    "MapIsInfoMessage"
+    {
+        "pt"            "Mapa {1}: {GREEN}{2}"
+    }
+    "TeamPickedMapInfoMessage"
+    {
+        "pt"            "{1} escolheu {GREEN}{2} {NORMAL}como mapa {3}"
+    }
+    "TeamSelectSideInfoMessage"
+    {
+        "pt"            "{1} escolheu começar no lado {GREEN}{2} {NORMAL}em {3}"
+    }
+    "TeamVetoedMapInfoMessage"
+    {
+        "pt"            "{1} vetou {LIGHT_RED}{2}"
+    }
+    "CaptainLeftOnVetoInfoMessage"
+    {
+        "pt"            "Um capitão deixou a partida durante o veto, pausando o veto."
+    }
+    "ReadyToResumeVetoInfoMessage"
+    {
+        "pt"            "Digite {GREEN}!ready {NORMAL}quando você estiver pronto para resumir o veto."
+    }
+    "MatchConfigLoadedInfoMessage"
+    {
+        "pt"            "A configuração da partida foi carregada com sucesso."
+    }
+    "MoveToCoachInfoMessage"
+    {
+        "pt"            "Você foi movido para a posição de Coach pois seu time está cheio."
+    }
+    "ReadyTag"
+    {
+        "pt"            "[READY]"
+    }
+    "NotReadyTag"
+    {
+        "pt"            "[NOT READY]"
+    }
+    "MatchPoweredBy"
+    {
+        "pt"        "Oferecido por {BLUE}MixBR Games | LET'S GO PRO!"
+    }
+}

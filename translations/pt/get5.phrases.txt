@@ -30,7 +30,7 @@
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "pt"            "{1} venceu o Round Faca. Esperando pelo time vencedor digitar !stay ou !switch."
+        "pt"            "{1} venceu o Round Faca. Esperando pelo time vencedor digitar !stay ou !swap."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {

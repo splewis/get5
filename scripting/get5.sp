@@ -316,6 +316,8 @@ public void OnPluginStart() {
                     "Elects to stay on the current team after winning a knife round");
   AddAliasedCommand("swap", Command_Swap,
                     "Elects to swap the current teams after winning a knife round");
+  AddAliasedCommand("switch", Command_Swap,
+                    "Elects to swap the current teams after winning a knife round");
   AddAliasedCommand("t", Command_T, "Elects to start on T side after winning a knife round");
   AddAliasedCommand("ct", Command_Ct, "Elects to start on CT side after winning a knife round");
   AddAliasedCommand("stop", Command_Stop, "Elects to stop the game to reload a backup file");

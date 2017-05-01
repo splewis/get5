@@ -130,6 +130,8 @@ int g_LastFlashBangThrower = -1;    // last client to have a flashbang detonate
 int g_RoundFlashedBy[MAXPLAYERS + 1];
 bool g_TeamFirstKillDone[MatchTeam_Count];
 bool g_TeamFirstDeathDone[MatchTeam_Count];
+int g_PlayerKilledBy[MAXPLAYERS + 1];
+float g_PlayerKilledByTime[MAXPLAYERS + 1];
 KeyValues g_StatsKv;
 
 ArrayList g_TeamScoresPerMap = null;
@@ -1061,7 +1063,6 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
     int roundsPerHalf = GetCvarIntSafe("mp_maxrounds") / 2;
     int roundsPerOTHalf = GetCvarIntSafe("mp_overtime_maxrounds") / 2;
-
 
     bool halftimeEnabled = (GetCvarIntSafe("mp_halftime") != 0);
     if (halftimeEnabled) {

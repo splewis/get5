@@ -1,3 +1,5 @@
+const float kTimeGivenToTrade = 1.5;
+
 public void Stats_PluginStart() {
   HookEvent("player_death", Stats_PlayerDeathEvent);
   HookEvent("player_hurt", Stats_DamageDealtEvent, EventHookMode_Pre);
@@ -42,6 +44,8 @@ public void Stats_ResetClientRoundValues(int client) {
   g_RoundKills[client] = 0;
   g_RoundClutchingEnemyCount[client] = 0;
   g_RoundFlashedBy[client] = 0;
+  g_PlayerKilledBy[client] = -1;
+  g_PlayerKilledByTime[client] = 0.0;
 }
 
 public void Stats_RoundStart() {
@@ -187,6 +191,11 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
     if (HelpfulAttack(attacker, victim)) {
       g_RoundKills[attacker]++;
+
+      g_PlayerKilledBy[victim] = attacker;
+      g_PlayerKilledByTime[victim] = GetGameTime();
+      UpdateTradeStat(attacker, victim);
+
       IncrementPlayerStat(attacker, STAT_KILLS);
       if (headshot)
         IncrementPlayerStat(attacker, STAT_HEADSHOT_KILLS);
@@ -226,6 +235,19 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   }
 
   return Plugin_Continue;
+}
+
+static void UpdateTradeStat(int attacker, int victim) {
+  // Look to see if victim killed any of attacker's teammates recently.
+  for (int i = 1; i <= MaxClients; i++) {
+    if (IsPlayer(i) && g_PlayerKilledBy[i] == victim &&
+        GetClientTeam(i) == GetClientTeam(attacker)) {
+      float dt = GetGameTime() - g_PlayerKilledByTime[i];
+      if (dt < kTimeGivenToTrade) {
+        IncrementPlayerStat(attacker, STAT_TRADEKILL);
+      }
+    }
+  }
 }
 
 public Action Stats_DamageDealtEvent(Event event, const char[] name, bool dontBroadcast) {

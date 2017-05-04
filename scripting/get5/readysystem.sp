@@ -45,10 +45,6 @@ public void SetAllTeamsForcedReady(bool ready) {
 
 // Team ready status
 
-public bool IsAllReady() {
-  return IsTeamsReady() && IsSpectatorsReady();
-}
-
 public bool IsTeamsReady() {
   return IsTeamReady(MatchTeam_Team1) && IsTeamReady(MatchTeam_Team2);
 }

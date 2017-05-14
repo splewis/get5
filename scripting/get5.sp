@@ -84,7 +84,7 @@ ConVar g_VersionCvar;
 ConVar g_CoachingEnabledCvar;
 
 /** Series config game-state **/
-int g_MapsToWin = 1;  // Maps needed to win the series
+int g_MapsToWin = 1;  // Maps needed to win the series.
 bool g_BO2Match = false;
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;

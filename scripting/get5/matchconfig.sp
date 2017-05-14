@@ -5,8 +5,7 @@
 #define CONFIG_MINPLAYERSTOREADY_DEFAULT 1
 #define CONFIG_MINSPECTATORSTOREADY_DEFAULT 0
 #define CONFIG_SPECTATORSNAME_DEFAULT "casters"
-#define CONFIG_MAPSTOWIN_DEFAULT 2
-#define CONFIG_BO2_DEFAULT false
+#define CONFIG_NUM_MAPSDEFAULT 3
 #define CONFIG_SKIPVETO_DEFAULT false
 #define CONFIG_VETOFIRST_DEFAULT "team1"
 #define CONFIG_SIDETYPE_DEFAULT "standard"
@@ -350,9 +349,28 @@ static bool LoadMatchFromKv(KeyValues kv) {
   g_MinPlayersToReady = kv.GetNum("min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
   g_MinSpectatorsToReady =
       kv.GetNum("min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
-  g_MapsToWin = kv.GetNum("maps_to_win", CONFIG_MAPSTOWIN_DEFAULT);
-  g_BO2Match = kv.GetNum("bo2_series", CONFIG_BO2_DEFAULT) != 0;
   g_SkipVeto = kv.GetNum("skip_veto", CONFIG_SKIPVETO_DEFAULT) != 0;
+
+  // bo2_series and maps_to_win are deprecated. They are used if provided, but otherwise
+  // num_maps' default is the fallback.
+  bool bo2 = (kv.GetNum("bo2_series", false) != 0);
+  int mapsToWin = kv.GetNum("maps_to_win", 0);
+  int numMaps = kv.GetNum("num_maps", CONFIG_NUM_MAPSDEFAULT);
+  if (bo2 || numMaps == 2) {
+    g_BO2Match = true;
+    g_MapsToWin = 2;
+  } else {
+    if (mapsToWin >= 1) {
+      g_MapsToWin = mapsToWin;
+    } else if (numMaps == 2) {
+      // Normal path. No even numbers allowed since we already handled bo2.
+      if (numMaps % 2 == 0) {
+        MatchConfigFail("Cannot create a series of %d maps. Use a odd number or 2.", numMaps);
+        return false;
+      }
+      g_MapsToWin = (numMaps + 1) / 2;
+    }
+  }
 
   char vetoFirstBuffer[64];
   kv.GetString("veto_first", vetoFirstBuffer, sizeof(vetoFirstBuffer), CONFIG_VETOFIRST_DEFAULT);
@@ -442,9 +460,31 @@ static bool LoadMatchFromJson(Handle json) {
       json_object_get_int_safe(json, "min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
   g_MinSpectatorsToReady = json_object_get_int_safe(json, "min_spectators_to_ready",
                                                     CONFIG_MINSPECTATORSTOREADY_DEFAULT);
-  g_MapsToWin = json_object_get_int_safe(json, "maps_to_win", CONFIG_MAPSTOWIN_DEFAULT);
-  g_BO2Match = json_object_get_bool_safe(json, "bo2_series", CONFIG_BO2_DEFAULT);
   g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
+
+
+  // bo2_series and maps_to_win are deprecated. They are used if provided, but otherwise
+  // num_maps' default is the fallback.
+  bool bo2 = json_object_get_bool_safe(json, "bo2_series", false);
+  int mapsToWin = json_object_get_int_safe(json, "maps_to_win", 0);
+  int numMaps = json_object_get_int_safe(json, "num_maps", CONFIG_NUM_MAPSDEFAULT);
+
+  if (bo2 || numMaps == 2) {
+    g_BO2Match = true;
+    g_MapsToWin = 2;
+  } else {
+    if (mapsToWin >= 1) {
+      g_MapsToWin = mapsToWin;
+    } else if (numMaps == 2) {
+      // Normal path. No even numbers allowed since we already handled bo2.
+      if (numMaps % 2 == 0) {
+        MatchConfigFail("Cannot create a series of %d maps. Use a odd number or 2.", numMaps);
+        return false;
+      }
+      g_MapsToWin = (numMaps + 1) / 2;
+    }
+  }
+
 
   char vetoFirstBuffer[64];
   json_object_get_string_safe(json, "veto_first", vetoFirstBuffer, sizeof(vetoFirstBuffer),

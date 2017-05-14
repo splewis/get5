@@ -1,7 +1,6 @@
 {
 	"matchid": "example_match",
-	"maps_to_win": 2,
-	"bo2_series": false,
+	"num_maps": 3,
 	"players_per_team": 1,
 	"min_players_to_ready": 1,
 	"min_spectators_to_ready": 0,

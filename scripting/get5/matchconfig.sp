@@ -462,7 +462,6 @@ static bool LoadMatchFromJson(Handle json) {
                                                     CONFIG_MINSPECTATORSTOREADY_DEFAULT);
   g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
 
-
   // bo2_series and maps_to_win are deprecated. They are used if provided, but otherwise
   // num_maps' default is the fallback.
   bool bo2 = json_object_get_bool_safe(json, "bo2_series", false);
@@ -484,7 +483,6 @@ static bool LoadMatchFromJson(Handle json) {
       g_MapsToWin = (numMaps + 1) / 2;
     }
   }
-
 
   char vetoFirstBuffer[64];
   json_object_get_string_safe(json, "veto_first", vetoFirstBuffer, sizeof(vetoFirstBuffer),

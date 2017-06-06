@@ -659,6 +659,7 @@ public Action Command_EndMatch(int client, int args) {
   }
 
   // Call game-ending forwards.
+  g_MapChangePending = false;
   char mapName[PLATFORM_MAX_PATH];
   GetCleanMapName(mapName, sizeof(mapName));
   Call_StartForward(g_OnMapResult);
@@ -828,7 +829,6 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     g_TeamSeriesScores[winningTeam]++;
 
     // Handle map end
-    g_MapChangePending = true;
     WriteBackup();
 
     EventLogger_MapEnd(winningTeam);

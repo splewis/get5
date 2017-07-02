@@ -238,7 +238,7 @@ public void OnPluginStart() {
   g_DamagePrintCvar =
       CreateConVar("get5_print_damage", "0", "Whether damage reports are printed on round end.");
   g_DamagePrintFormat = CreateConVar(
-      "sm_damageprint_format",
+      "get5_damageprint_format",
       "--> ({DMG_TO} dmg / {HITS_TO} hits) to ({DMG_FROM} dmg / {HITS_FROM} hits) from {NAME} ({HEALTH} HP)",
       "Format of the damage output string. Avaliable tags are in the default, color tags such as {LIGHT_RED} and {GREEN} also work.");
   g_CheckAuthsCvar =

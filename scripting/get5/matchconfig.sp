@@ -1003,6 +1003,7 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
   char logoPath[PLATFORM_MAX_PATH + 1];
   Format(logoPath, sizeof(logoPath), "resource/flash/econ/tournaments/teams/%s.png", logoName);
 
+  LogDebug("Adding file %s to download table", logoName);
   AddFileToDownloadsTable(logoPath);
 }
 

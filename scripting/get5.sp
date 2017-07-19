@@ -56,6 +56,7 @@ ConVar g_CheckAuthsCvar;
 ConVar g_DamagePrintCvar;
 ConVar g_DamagePrintFormat;
 ConVar g_DemoNameFormatCvar;
+ConVar g_EndMatchOnEveryoneLeavesCvar;
 ConVar g_EventLogFormatCvar;
 ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientsWithNoMatchCvar;
@@ -76,7 +77,6 @@ ConVar g_TimeFormatCvar;
 ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
 ConVar g_WarmupCfgCvar;
-ConVar g_EndMatchOnEveryoneLeavesCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;

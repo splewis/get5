@@ -5,6 +5,7 @@
 public void ResetReadyStatus() {
   SetAllTeamsForcedReady(false);
   SetAllClientsReady(false);
+  g_ReadyTimeWaitingUsed = 0;
 }
 
 public bool IsReadyGameState() {

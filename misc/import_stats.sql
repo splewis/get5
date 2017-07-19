@@ -9,7 +9,7 @@ CREATE TABLE `get5_stats_maps` (
   `matchid` int(10) unsigned NOT NULL,
   `mapnumber` smallint(5) unsigned NOT NULL,
   `start_time` datetime NOT NULL,
-  `end_time` datetime NOT NULL,
+  `end_time` datetime,
   `winner` varchar(16) NOT NULL DEFAULT '',
   `mapname` varchar(64) NOT NULL DEFAULT '',
   `team1_score` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -37,7 +37,7 @@ DROP TABLE IF EXISTS `get5_stats_matches`;
 CREATE TABLE `get5_stats_matches` (
   `matchid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `start_time` datetime NOT NULL,
-  `end_time` datetime NOT NULL,
+  `end_time` datetime,
   `winner` varchar(16) NOT NULL DEFAULT '',
   `series_type` varchar(64) NOT NULL DEFAULT '',
   `team1_name` varchar(64) NOT NULL DEFAULT '',

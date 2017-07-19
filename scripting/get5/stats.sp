@@ -46,6 +46,10 @@ public void Stats_ResetClientRoundValues(int client) {
   g_RoundFlashedBy[client] = 0;
   g_PlayerKilledBy[client] = -1;
   g_PlayerKilledByTime[client] = 0.0;
+  for (int i = 1; i <= MaxClients; i++) {
+    g_DamageDone[client][i] = 0;
+    g_DamageDoneHits[client][i] = 0;
+  }
 }
 
 public void Stats_RoundStart() {
@@ -119,6 +123,14 @@ public void Stats_RoundEnd(int csTeamWinner) {
         GetClientName(i, name, sizeof(name));
         g_StatsKv.SetString(STAT_NAME, name);
         GoBackFromPlayer();
+      }
+    }
+  }
+
+  if (g_DamagePrintCvar.IntValue != 0) {
+    for (int i = 1; i <= MaxClients; i++) {
+      if (IsValidClient(i)) {
+        PrintDamageInfo(i);
       }
     }
   }
@@ -272,6 +284,8 @@ public Action Stats_DamageDealtEvent(Event event, const char[] name, bool dontBr
       damage += preDamageHealth;
     }
 
+    g_DamageDone[attacker][victim] += damage;
+    g_DamageDoneHits[attacker][victim]++;
     AddToPlayerStat(attacker, STAT_DAMAGE, damage);
   }
 
@@ -461,5 +475,38 @@ public void DumpToFile() {
   char path[PLATFORM_MAX_PATH + 1];
   if (FormatCvarString(g_StatsPathFormatCvar, path, sizeof(path))) {
     g_StatsKv.ExportToFile(path);
+  }
+}
+
+static void PrintDamageInfo(int client) {
+  if (!IsPlayer(client))
+    return;
+
+  int team = GetClientTeam(client);
+  if (team != CS_TEAM_T && team != CS_TEAM_CT)
+    return;
+
+  char message[256];
+
+  int otherTeam = (team == CS_TEAM_T) ? CS_TEAM_CT : CS_TEAM_T;
+  for (int i = 1; i <= MaxClients; i++) {
+    if (IsPlayer(i) && GetClientTeam(i) == otherTeam) {
+      int health = IsPlayerAlive(i) ? GetClientHealth(i) : 0;
+      char name[64];
+      GetClientName(i, name, sizeof(name));
+
+      g_DamagePrintFormat.GetString(message, sizeof(message));
+      ReplaceStringWithInt(message, sizeof(message), "{DMG_TO}", g_DamageDone[client][i], false);
+      ReplaceStringWithInt(message, sizeof(message), "{HITS_TO}", g_DamageDoneHits[client][i],
+                           false);
+      ReplaceStringWithInt(message, sizeof(message), "{DMG_FROM}", g_DamageDone[i][client], false);
+      ReplaceStringWithInt(message, sizeof(message), "{HITS_FROM}", g_DamageDoneHits[i][client],
+                           false);
+      ReplaceString(message, sizeof(message), "{NAME}", name, false);
+      ReplaceStringWithInt(message, sizeof(message), "{HEALTH}", health, false);
+
+      Colorize(message, sizeof(message));
+      PrintToChat(client, message);
+    }
   }
 }

@@ -81,8 +81,7 @@ See the example config in [Valve KeyValues format](configs/get5/example_match.cf
 Of the below fields, only the ``team1`` and ``team2`` fields are actually required. Reasonable defaults are used for entires (bo3 series, 5v5, empty strings for team names, etc.)
 
 - ``matchid``: a string matchid used to identify the match
-- ``maps_to_win``: number of maps needed to win the series (1 in a Bo1, 2 in a Bo3, 3 in a Bo5)
-- ``bo2_series``: whether the series is a bo2 series (will ignore ``maps_to_win`` if it is)
+- ``num_maps``: number of maps in the series. This must be an odd number of 2.
 - ``maplist``: list of the maps in use (an array of strings in JSON, mapnames as keys for KeyValues), you should always use an odd-sized maplist
 - ``skip_veto``: whether the veto will be skipped and the maps will come from the maplist (in the order given)
 - ``veto_first``: either "team1", or "team2". If not set, or set to any other value, team 1 will veto first.

@@ -53,6 +53,8 @@
 ConVar g_AutoLoadConfigCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
+ConVar g_DamagePrintCvar;
+ConVar g_DamagePrintFormat;
 ConVar g_DemoNameFormatCvar;
 ConVar g_EventLogFormatCvar;
 ConVar g_FixedPauseTimeCvar;
@@ -85,7 +87,7 @@ ConVar g_VersionCvar;
 ConVar g_CoachingEnabledCvar;
 
 /** Series config game-state **/
-int g_MapsToWin = 1;  // Maps needed to win the series
+int g_MapsToWin = 1;  // Maps needed to win the series.
 bool g_BO2Match = false;
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
@@ -133,6 +135,8 @@ bool g_TeamFirstKillDone[MatchTeam_Count];
 bool g_TeamFirstDeathDone[MatchTeam_Count];
 int g_PlayerKilledBy[MAXPLAYERS + 1];
 float g_PlayerKilledByTime[MAXPLAYERS + 1];
+int g_DamageDone[MAXPLAYERS + 1][MAXPLAYERS + 1];
+int g_DamageDoneHits[MAXPLAYERS + 1][MAXPLAYERS + 1];
 KeyValues g_StatsKv;
 
 ArrayList g_TeamScoresPerMap = null;
@@ -236,6 +240,12 @@ public void OnPluginStart() {
                    "Name of a match config file to automatically load when the server loads");
   g_BackupSystemEnabledCvar =
       CreateConVar("get5_backup_system_enabled", "1", "Whether the get5 backup system is enabled");
+  g_DamagePrintCvar =
+      CreateConVar("get5_print_damage", "0", "Whether damage reports are printed on round end.");
+  g_DamagePrintFormat = CreateConVar(
+      "get5_damageprint_format",
+      "--> ({DMG_TO} dmg / {HITS_TO} hits) to ({DMG_FROM} dmg / {HITS_FROM} hits) from {NAME} ({HEALTH} HP)",
+      "Format of the damage output string. Avaliable tags are in the default, color tags such as {LIGHT_RED} and {GREEN} also work.");
   g_CheckAuthsCvar =
       CreateConVar("get5_check_auths", "1",
                    "If set to 0, get5 will not force players to the correct team based on steamid");
@@ -674,6 +684,7 @@ public Action Command_EndMatch(int client, int args) {
   }
 
   // Call game-ending forwards.
+  g_MapChangePending = false;
   char mapName[PLATFORM_MAX_PATH];
   GetCleanMapName(mapName, sizeof(mapName));
   Call_StartForward(g_OnMapResult);
@@ -843,7 +854,6 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     g_TeamSeriesScores[winningTeam]++;
 
     // Handle map end
-    g_MapChangePending = true;
     WriteBackup();
 
     EventLogger_MapEnd(winningTeam);

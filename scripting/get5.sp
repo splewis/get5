@@ -545,9 +545,8 @@ public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
 
 public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
-  int site = event.GetInt("site");
   g_ClientsConnected--;
-  EventLogger_PlayerDisconnect(client, site, g_ClientsConnected);
+  EventLogger_PlayerDisconnect(client, g_ClientsConnected);
 
   if (g_ClientsConnected <= 0) {
     if (g_GameState >= GameState_KnifeRound && g_EndMatchOnEveryoneLeavesCvar.IntValue != 0) {

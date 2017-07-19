@@ -223,11 +223,10 @@ public void EventLogger_BombExploded(int client, int site) {
   EventLogger_EndEvent("bomb_exploded");
 }
 
-public void EventLogger_PlayerDisconnect(int client, int site, int players_connected) {
+public void EventLogger_PlayerDisconnect(int client, int players_connected) {
   EventLogger_StartEvent();
   AddMapData(params);
   AddPlayer(params, "client", client);
-  set_json_int(params, "site", site);
   set_json_int(params, "players_connected", players_connected);
   EventLogger_EndEvent("player_disconnect");
 }

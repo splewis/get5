@@ -66,7 +66,7 @@
     }
     "PausePeriodSuffix"
     {
-        "pt"            "for this half"
+        "pt"            "para essa metade do jogo."
     }
     "MaxPausesUsedInfoMessage"
     {

@@ -175,7 +175,7 @@ Handle g_KnifeChangedCvars = INVALID_HANDLE;
 Handle g_MatchConfigChangedCvars = INVALID_HANDLE;
 
 /** Informational data **/
-int g_ClientsConnected = 0; // Count on that Event_PlayerConnectFull and Event_PlayerDisconnect are fired only once for each client
+int g_ClientsConnected = 0; // Counting on OnClientAuthorized and Event_PlayerDisconnect are fired only once for each client
 
 /** Forwards **/
 Handle g_OnBackupRestore = INVALID_HANDLE;

@@ -74,6 +74,7 @@ ConVar g_TimeFormatCvar;
 ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
 ConVar g_WarmupCfgCvar;
+ConVar g_EndMatchOnEveryoneLeavesCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -169,6 +170,9 @@ bool g_PendingSideSwap = false;
 Handle g_KnifeChangedCvars = INVALID_HANDLE;
 Handle g_MatchConfigChangedCvars = INVALID_HANDLE;
 
+/** Informational data **/
+int g_ClientsConnected = 0; // Count on that Event_PlayerConnectFull and Event_PlayerDisconnect are fired only once for each client
+
 /** Forwards **/
 Handle g_OnBackupRestore = INVALID_HANDLE;
 Handle g_OnDemoFinished = INVALID_HANDLE;
@@ -184,6 +188,7 @@ Handle g_OnPreLoadMatchConfig = INVALID_HANDLE;
 Handle g_OnRoundStatsUpdated = INVALID_HANDLE;
 Handle g_OnSeriesInit = INVALID_HANDLE;
 Handle g_OnSeriesResult = INVALID_HANDLE;
+Handle g_OnSeriesResultWithoutWinners = INVALID_HANDLE;
 
 #include "get5/util.sp"
 
@@ -290,6 +295,9 @@ public void OnPluginStart() {
                    "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
+  g_EndMatchOnEveryoneLeavesCvar =
+      CreateConVar("get5_end_match_when_everyone_leaves", "0",
+                   "Whether the plugin finishes the current match when all clients disconnect");
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
@@ -408,6 +416,8 @@ public void OnPluginStart() {
   g_OnSeriesInit = CreateGlobalForward("Get5_OnSeriesInit", ET_Ignore);
   g_OnSeriesResult =
       CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
+  g_OnSeriesResultWithoutWinners =
+      CreateGlobalForward("Get5_OnSeriesResultWithoutWinners", ET_Ignore);
 
   /** Start any repeating timers **/
   CreateTimer(CHECK_READY_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
@@ -519,13 +529,21 @@ public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
   int client = GetClientOfUserId(event.GetInt("userid"));
   if (client > 0) {
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
+    g_ClientsConnected++;
   }
 }
 
 public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
   int site = event.GetInt("site");
-  EventLogger_PlayerDisconnect(client, site);
+  g_ClientsConnected--;
+  EventLogger_PlayerDisconnect(client, site, g_ClientsConnected);
+
+  if (g_ClientsConnected <= 0) {
+    if (g_GameState == GameState_Live && g_EndMatchOnEveryoneLeavesCvar.IntValue != 0) {
+      EndSeriesWithoutWinners("All clients left the game");
+    }
+  }
 }
 
 public void OnMapStart() {
@@ -958,6 +976,18 @@ public void EndSeries() {
   Call_PushCell(winningTeam);
   Call_PushCell(t1maps);
   Call_PushCell(t2maps);
+  Call_Finish();
+
+  RestoreCvars(g_MatchConfigChangedCvars);
+  ChangeState(GameState_None);
+}
+
+public void EndSeriesWithoutWinners(const char[] reason) {
+  DelayFunction(10.0, KickClientsOnEnd);
+  StopRecording();
+  EventLogger_SeriesEndWithoutWinners(reason);
+
+  Call_StartForward(g_OnSeriesResultWithoutWinners);
   Call_Finish();
 
   RestoreCvars(g_MatchConfigChangedCvars);

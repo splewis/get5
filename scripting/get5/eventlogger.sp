@@ -173,6 +173,12 @@ public void EventLogger_SeriesEnd(MatchTeam winner, int t1score, int t2score) {
   EventLogger_EndEvent("series_end");
 }
 
+public void EventLogger_SeriesEndWithoutWinners(const char[] reason) {
+  EventLogger_StartEvent();
+  set_json_string(params, "reason", reason);
+  EventLogger_EndEvent("series_end_without_winner");
+}
+
 public void EventLogger_BackupLoaded(const char[] path) {
   EventLogger_StartEvent();
   set_json_string(params, "file", path);
@@ -217,10 +223,11 @@ public void EventLogger_BombExploded(int client, int site) {
   EventLogger_EndEvent("bomb_exploded");
 }
 
-public void EventLogger_PlayerDisconnect(int client, int site) {
+public void EventLogger_PlayerDisconnect(int client, int site, int players_connected) {
   EventLogger_StartEvent();
   AddMapData(params);
   AddPlayer(params, "client", client);
   set_json_int(params, "site", site);
+  set_json_int(params, "players_connected", players_connected);
   EventLogger_EndEvent("player_disconnect");
 }

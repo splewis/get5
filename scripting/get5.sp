@@ -365,6 +365,7 @@ public void OnPluginStart() {
   HookEvent("round_end", Event_RoundEnd);
   HookEvent("server_cvar", Event_CvarChanged, EventHookMode_Pre);
   HookEvent("player_connect_full", Event_PlayerConnectFull);
+  HookEvent("player_disconnect", Event_PlayerDisconnect);
   HookEvent("player_team", Event_OnPlayerTeam, EventHookMode_Pre);
   Stats_PluginStart();
   Stats_InitSeries();
@@ -519,6 +520,12 @@ public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
   if (client > 0) {
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
   }
+}
+
+public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
+  int client = GetClientOfUserId(event.GetInt("userid"));
+  int site = event.GetInt("site");
+  EventLogger_PlayerDisconnect(client, site);
 }
 
 public void OnMapStart() {

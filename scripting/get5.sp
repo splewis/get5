@@ -499,6 +499,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
       KickClient(client, "%t", "YourAreNotAPlayerInfoMessage");
     } else {
       int teamCount = CountPlayersOnMatchTeam(team, client);
+      g_ClientsConnected++;
       if (teamCount >= g_PlayersPerTeam && g_CoachingEnabledCvar.IntValue == 0) {
         KickClient(client, "%t", "TeamIsFullInfoMessage");
       }
@@ -539,7 +540,6 @@ public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
   int client = GetClientOfUserId(event.GetInt("userid"));
   if (client > 0) {
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
-    g_ClientsConnected++;
   }
 }
 
@@ -550,7 +550,7 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
   EventLogger_PlayerDisconnect(client, site, g_ClientsConnected);
 
   if (g_ClientsConnected <= 0) {
-    if (g_GameState == GameState_Live && g_EndMatchOnEveryoneLeavesCvar.IntValue != 0) {
+    if (g_GameState >= GameState_KnifeRound && g_EndMatchOnEveryoneLeavesCvar.IntValue != 0) {
       EndSeriesWithoutWinners("All clients left the game");
     }
   }

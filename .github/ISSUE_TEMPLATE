@@ -10,6 +10,9 @@ If reporting a bug, fill in the following sections:
 
 
 ### Steps to reproduce
+
+Please note that "latest" is NOT a version! See https://github.com/splewis/get5/wiki/Debugging-help#finding-get5-version if you need help finding these.
+
 - Plugin version:
 - Sourcemod version:
 

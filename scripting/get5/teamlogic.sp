@@ -330,12 +330,13 @@ public int GetMapNumber() {
          g_TeamSeriesScores[MatchTeam_TeamNone];
 }
 
-public bool AddPlayerToTeam(const char[] auth, MatchTeam team) {
+public bool AddPlayerToTeam(const char[] auth, MatchTeam team, const char[] name) {
   char steam64[AUTH_LENGTH];
   ConvertAuthToSteam64(auth, steam64);
 
   if (GetAuthMatchTeam(steam64) == MatchTeam_TeamNone) {
     GetTeamAuths(team).PushString(steam64);
+    Get5_SetPlayerName(auth, name);
     return true;
   } else {
     return false;

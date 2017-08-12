@@ -409,11 +409,14 @@ stock int AddAuthsToList(KeyValues kv, ArrayList list, int maxKeyLength) {
   int count = 0;
   char[] buffer = new char[maxKeyLength];
   char steam64[AUTH_LENGTH];
+  char name[MAX_NAME_LENGTH];
   if (kv.GotoFirstSubKey(false)) {
     do {
       kv.GetSectionName(buffer, maxKeyLength);
+      kv.GetString(NULL_STRING, name, sizeof(name));
       if (ConvertAuthToSteam64(buffer, steam64)) {
         list.PushString(steam64);
+        Get5_SetPlayerName(steam64, name);
         count++;
       }
     } while (kv.GotoNextKey(false));

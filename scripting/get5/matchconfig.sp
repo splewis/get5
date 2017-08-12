@@ -10,6 +10,10 @@
 #define CONFIG_VETOFIRST_DEFAULT "team1"
 #define CONFIG_SIDETYPE_DEFAULT "standard"
 
+// Dummy value for when we need to write a keyvalue string, but we don't care about he value.
+// Trying to write an empty string often results in the keyvalue not being writte, so we use this.
+#define KEYVALUE_STRING_PLACEHOLDER "__placerholder"
+
 stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   if (g_GameState != GameState_None && !restoreBackup) {
     return false;
@@ -297,7 +301,7 @@ public void WriteMatchToKv(KeyValues kv) {
   for (int i = 0; i < g_MapPoolList.Length; i++) {
     char map[PLATFORM_MAX_PATH];
     g_MapPoolList.GetString(i, map, sizeof(map));
-    kv.SetString(map, "x");
+    kv.SetString(map, KEYVALUE_STRING_PLACEHOLDER);
   }
   kv.GoBack();
 
@@ -327,9 +331,13 @@ public void WriteMatchToKv(KeyValues kv) {
 static void AddTeamBackupData(KeyValues kv, MatchTeam team) {
   kv.JumpToKey("players", true);
   char auth[AUTH_LENGTH];
+  char name[MAX_NAME_LENGTH];
   for (int i = 0; i < GetTeamAuths(team).Length; i++) {
     GetTeamAuths(team).GetString(i, auth, sizeof(auth));
-    kv.SetString(auth, "x");
+    if (!g_PlayerNames.GetString(auth, name, sizeof(name))) {
+      strcopy(name, sizeof(name), KEYVALUE_STRING_PLACEHOLDER);
+    }
+    kv.SetString(auth, name);
   }
   kv.GoBack();
 
@@ -760,8 +768,13 @@ public Action Command_AddPlayer(int client, int args) {
 
   char auth[AUTH_LENGTH];
   char teamString[32];
+  char name[MAX_NAME_LENGTH];
   if (args >= 2 && GetCmdArg(1, auth, sizeof(auth)) &&
       GetCmdArg(2, teamString, sizeof(teamString))) {
+    if (args >= 3) {
+      GetCmdArg(3, name, sizeof(name));
+    }
+
     MatchTeam team = MatchTeam_TeamNone;
     if (StrEqual(teamString, "team1")) {
       team = MatchTeam_Team1;
@@ -774,14 +787,14 @@ public Action Command_AddPlayer(int client, int args) {
       return Plugin_Handled;
     }
 
-    if (AddPlayerToTeam(auth, team)) {
+    if (AddPlayerToTeam(auth, team, name)) {
       ReplyToCommand(client, "Successfully added player %s to team %s", auth, teamString);
     } else {
       ReplyToCommand(client, "Failed to add %s to a match team", auth);
     }
 
   } else {
-    ReplyToCommand(client, "Usage: get5_addplayer <auth> <team1|team2|spec>");
+    ReplyToCommand(client, "Usage: get5_addplayer <auth> <team1|team2|spec> [name]");
   }
   return Plugin_Handled;
 }
@@ -837,7 +850,7 @@ public Action Command_CreateMatch(int client, int args) {
   kv.SetNum("players_per_team", 5);
 
   kv.JumpToKey("maplist", true);
-  kv.SetString(matchMap, "x");
+  kv.SetString(matchMap, KEYVALUE_STRING_PLACEHOLDER);
   kv.GoBack();
 
   char teamName[MAX_CVAR_LENGTH];
@@ -902,7 +915,7 @@ public Action Command_CreateScrim(int client, int args) {
   kv.SetString("matchid", matchid);
   kv.SetNum("scrim", 1);
   kv.JumpToKey("maplist", true);
-  kv.SetString(matchMap, "x");
+  kv.SetString(matchMap, KEYVALUE_STRING_PLACEHOLDER);
   kv.GoBack();
 
   char templateFile[PLATFORM_MAX_PATH + 1];
@@ -920,7 +933,7 @@ public Action Command_CreateScrim(int client, int args) {
       char auth[AUTH_LENGTH];
       kv.GetString(NULL_STRING, auth, sizeof(auth));
       // kv.GetSectionName(auth, sizeof(auth));
-      kv.SetString(auth, "x");
+      kv.SetString(auth, KEYVALUE_STRING_PLACEHOLDER);
     } while (kv.GotoNextKey(false));
     kv.Rewind();
   } else {
@@ -971,7 +984,7 @@ static int AddPlayersToAuthKv(KeyValues kv, MatchTeam team, char teamName[MAX_CV
 
         count++;
         if (GetAuth(i, auth, sizeof(auth))) {
-          kv.SetString(auth, "x");
+          kv.SetString(auth, KEYVALUE_STRING_PLACEHOLDER);
         }
       }
     }

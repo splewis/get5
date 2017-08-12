@@ -70,18 +70,38 @@ stock int AddJsonSubsectionArrayToList(Handle json, const char[] key, ArrayList 
 
 stock int AddJsonAuthsToList(Handle json, const char[] key, ArrayList list, int maxValueLength) {
   int count = 0;
-  Handle array = json_object_get(json, key);
-  if (array != INVALID_HANDLE) {
-    char[] buffer = new char[maxValueLength];
-    for (int i = 0; i < json_array_size(array); i++) {
-      json_array_get_string(array, i, buffer, maxValueLength);
-      char steam64[AUTH_LENGTH];
-      if (ConvertAuthToSteam64(buffer, steam64)) {
-        list.PushString(steam64);
-        count++;
+  // We handle two formats here: one where we get a array of steamids as strings, and in the
+  // 2nd format we have a map of steamid- > player name.
+  Handle data = json_object_get(json, key);
+  if (data != INVALID_HANDLE) {
+    if (json_is_array(data)) {
+      char[] buffer = new char[maxValueLength];
+      for (int i = 0; i < json_array_size(data); i++) {
+        json_array_get_string(data, i, buffer, maxValueLength);
+        char steam64[AUTH_LENGTH];
+        if (ConvertAuthToSteam64(buffer, steam64)) {
+          list.PushString(steam64);
+          count++;
+        }
+      }
+
+    } else if (json_is_object(data)) {
+      for (Handle it = json_object_iter(data); it != INVALID_HANDLE;
+           it = json_object_iter_next(data, it)) {
+        char[] buffer = new char[maxValueLength];
+        char name[MAX_NAME_LENGTH];
+        json_object_iter_key(it, buffer, maxValueLength);
+        json_object_get_string(data, buffer, name, sizeof(name));
+
+        char steam64[AUTH_LENGTH];
+        if (ConvertAuthToSteam64(buffer, steam64)) {
+          Get5_SetPlayerName(steam64, name);
+          list.PushString(steam64);
+          count++;
+        }
       }
     }
-    CloseHandle(array);
+    CloseHandle(data);
   }
   return count;
 }

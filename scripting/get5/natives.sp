@@ -8,6 +8,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
   CreateNative("Get5_LoadMatchConfig", Native_LoadMatchConfig);
   CreateNative("Get5_LoadMatchConfigFromURL", Native_LoadMatchConfigFromURL);
   CreateNative("Get5_AddPlayerToTeam", Native_AddPlayerToTeam);
+  CreateNative("Get5_SetPlayerName", Native_SetPlayerName);
   CreateNative("Get5_RemovePlayerFromTeam", Native_RemovePlayerFromTeam);
   CreateNative("Get5_GetPlayerTeam", Native_GetPlayerTeam);
   CreateNative("Get5_CSTeamToMatchTeam", Native_CSTeamToMatchTeam);
@@ -129,7 +130,23 @@ public int Native_AddPlayerToTeam(Handle plugin, int numParams) {
   char auth[AUTH_LENGTH];
   GetNativeString(1, auth, sizeof(auth));
   MatchTeam team = view_as<MatchTeam>(GetNativeCell(2));
-  return AddPlayerToTeam(auth, team);
+  char name[MAX_NAME_LENGTH];
+  if (numParams >= 3) {
+    GetNativeString(3, name, sizeof(name));
+  }
+  return AddPlayerToTeam(auth, team, name);
+}
+
+public int Native_SetPlayerName(Handle plugin, int numParams) {
+  char auth[AUTH_LENGTH];
+  char name[MAX_NAME_LENGTH];
+  GetNativeString(1, auth, sizeof(auth));
+  GetNativeString(2, name, sizeof(name));
+  char steam64[AUTH_LENGTH];
+  ConvertAuthToSteam64(auth, steam64);
+  if (strlen(name) > 0 && !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
+    g_PlayerNames.SetString(steam64, name);
+  }
 }
 
 public int Native_RemovePlayerFromTeam(Handle plugin, int numParams) {

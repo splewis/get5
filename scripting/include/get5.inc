@@ -106,9 +106,13 @@ native bool Get5_LoadMatchConfig(const char[] filename);
 native bool Get5_LoadMatchConfigFromURL(const char[] url, bool preferSystem2 = true,
                                         ArrayList paramNames = null, ArrayList paramValues = null);
 
-// Adds a player to a match team.
+// Adds a player to a match team. You can optionally force set a player name here as well.
 // Returns if they were successfully added.
-native bool Get5_AddPlayerToTeam(const char[] steamId, MatchTeam team);
+native bool Get5_AddPlayerToTeam(const char[] steamId, MatchTeam team,
+                                 const char[] playerName = "");
+
+// Force sets a steam64 to map to a specified playername
+native bool Get5_SetPlayerName(const char[] steamId, const char[] playerName);
 
 // Removes a player from all match teams.
 // Returns if they were successfully removed (false if not round).
@@ -208,6 +212,7 @@ public __pl_get5_SetNTVOptional() {
   MarkNativeAsOptional("Get5_LoadMatchConfig");
   MarkNativeAsOptional("Get5_LoadMatchConfigFromURL");
   MarkNativeAsOptional("Get5_AddPlayerToTeam");
+  MarkNativeAsOptional("Get5_SetPlayerName");
   MarkNativeAsOptional("Get5_RemovePlayerFromTeam");
   MarkNativeAsOptional("Get5_GetPlayerTeam");
   MarkNativeAsOptional("Get5_CSTeamToMatchTeam");

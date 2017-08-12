@@ -263,3 +263,21 @@ public void UpdateClanTags() {
     }
   }
 }
+
+public void UpdatePlayerNames() {
+  for (int i = 1; i <= MaxClients; i++) {
+    if (IsPlayer(i)) {
+      char auth[AUTH_LENGTH];
+      GetClientAuthId(i, AuthId_SteamID64, auth, sizeof(auth));
+      char savedName[MAX_NAME_LENGTH];
+      int len = 0;
+      if (g_PlayerNames.GetString(auth, savedName, sizeof(savedName), len) && len > 0) {
+        char currentName[MAX_NAME_LENGTH];
+        GetClientName(i, currentName, sizeof(currentName));
+        if (!StrEqual(currentName, savedName)) {
+          SetClientName(i, savedName);
+        }
+      }
+    }
+  }
+}

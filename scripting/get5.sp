@@ -190,9 +190,11 @@ Handle g_OnSeriesInit = INVALID_HANDLE;
 Handle g_OnSeriesResult = INVALID_HANDLE;
 
 #include "get5/util.sp"
+#include "get5/version.sp"
 
 #include "get5/backups.sp"
 #include "get5/chatcommands.sp"
+#include "get5/debug.sp"
 #include "get5/eventlogger.sp"
 #include "get5/goinglive.sp"
 #include "get5/jsonhelpers.sp"
@@ -206,7 +208,6 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 #include "get5/stats.sp"
 #include "get5/teamlogic.sp"
 #include "get5/tests.sp"
-#include "get5/version.sp"
 
 // clang-format off
 public Plugin myinfo = {
@@ -360,6 +361,8 @@ public void OnPluginStart() {
               "Lists get5 match backups for the current matchid or a given one");
   RegAdminCmd("get5_loadbackup", Command_LoadBackup, ADMFLAG_CHANGEMAP,
               "Loads a get5 match backup");
+  RegAdminCmd("get5_debuginfo", Command_DebugInfo, ADMFLAG_CHANGEMAP,
+              "Dumps debug info to get5_debug.txt");
 
   /** Other commands **/
   RegConsoleCmd("get5_status", Command_Status, "Prints JSON formatted match state info");

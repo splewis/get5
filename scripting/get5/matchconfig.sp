@@ -362,7 +362,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
   } else {
     if (mapsToWin >= 1) {
       g_MapsToWin = mapsToWin;
-    } else if (numMaps == 2) {
+    } else {
       // Normal path. No even numbers allowed since we already handled bo2.
       if (numMaps % 2 == 0) {
         MatchConfigFail("Cannot create a series of %d maps. Use a odd number or 2.", numMaps);

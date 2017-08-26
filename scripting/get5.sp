@@ -362,7 +362,7 @@ public void OnPluginStart() {
   RegAdminCmd("get5_loadbackup", Command_LoadBackup, ADMFLAG_CHANGEMAP,
               "Loads a get5 match backup");
   RegAdminCmd("get5_debuginfo", Command_DebugInfo, ADMFLAG_CHANGEMAP,
-              "Dumps debug info to get5_debug.txt");
+              "Dumps debug info to a file (addons/sourcemod/logs/get5_debug.txt by default)");
 
   /** Other commands **/
   RegConsoleCmd("get5_status", Command_Status, "Prints JSON formatted match state info");

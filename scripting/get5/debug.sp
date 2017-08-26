@@ -2,7 +2,13 @@
 // Also consider the last K lines from the most recent errors_* file?
 
 public Action Command_DebugInfo(int client, int args) {
-  File f = OpenFile("get5_debug.txt", "w");
+  char path[PLATFORM_MAX_PATH + 1];
+
+  if (args == 0 || !GetCmdArg(1, path, sizeof(path))) {
+    BuildPath(Path_SM, path, sizeof(path), "logs/get5_debug.txt");
+  }
+
+  File f = OpenFile(path, "w");
   if (f == null) {
     LogError("Failed to open get5_debug.txt for writing");
     return Plugin_Handled;
@@ -16,7 +22,7 @@ public Action Command_DebugInfo(int client, int args) {
 
   delete f;
 
-  ReplyToCommand(client, "Wrote debug data to get5_debug.txt");
+  ReplyToCommand(client, "Wrote debug data to %s", path);
   return Plugin_Handled;
 }
 

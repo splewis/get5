@@ -21,7 +21,7 @@ Features of this include:
 - Coaching support
 - Automatically executing match config files
 - Automatically setting team names/logos/match text values for spectator/GOTV clients
-- [Stats collection](https://github.com/splewis/get5/wiki/Stats) and optional MySQL result/stats upload
+- [Stats collection](https://github.com/splewis/get5/wiki/Stats-system) and optional MySQL result/stats upload
 - Allows lightweight usage for [scrims](https://github.com/splewis/get5/wiki/Using-get5-for-scrims)
 - Has its own [event logging](https://github.com/splewis/get5/wiki/Event-logs) system
 

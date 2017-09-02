@@ -826,13 +826,15 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       winningTeam = MatchTeam_Team2;
     }
 
+    //Write backup before series score increments
+    WriteBackup();
+    
     // Update series scores
     Stats_UpdateMapScore(winningTeam);
     AddMapScore();
     g_TeamSeriesScores[winningTeam]++;
 
-    // Handle map end
-    WriteBackup();
+    //Handle map end
 
     EventLogger_MapEnd(winningTeam);
 

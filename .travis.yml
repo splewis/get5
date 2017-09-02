@@ -3,7 +3,6 @@ sudo: false
 addons:
     apt_packages:
         - lib32stdc++6  # needed for spcomp
-        - python-demjson  # needed for jsonlint
 
 env:
     - SMVERSION=1.8
@@ -33,7 +32,6 @@ before_script:
 
 script:
     - smbuilder --flags="-E"
-    - jsonlint -v configs/get5/example_match.json
 
 notifications:
     email: true

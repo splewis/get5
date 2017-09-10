@@ -580,6 +580,7 @@ public Action Timer_CheckReady(Handle timer) {
   if (g_GameState == GameState_PreVeto) {
     if (IsTeamsReady()) {
       // We don't wait for spectators when initiating veto
+      LogDebug("Timer_CheckReady: starting veto");
       ChangeState(GameState_Veto);
       CreateVeto();
     } else {
@@ -591,6 +592,7 @@ public Action Timer_CheckReady(Handle timer) {
   if (g_GameState == GameState_Warmup && !g_MapChangePending) {
     // We don't wait for spectators when restoring backups
     if (IsTeamsReady() && g_WaitingForRoundBackup) {
+      LogDebug("Timer_CheckReady: restoring from backup");
       g_WaitingForRoundBackup = false;
       RestoreGet5Backup();
       return Plugin_Continue;
@@ -598,9 +600,12 @@ public Action Timer_CheckReady(Handle timer) {
 
     // Wait for both players and spectators before going live
     if (IsTeamsReady() && IsSpectatorsReady()) {
+      LogDebug("Timer_CheckReady: all teams ready to start");
       if (g_MapSides.Get(GetMapNumber()) == SideChoice_KnifeRound) {
+        LogDebug("Timer_CheckReady: starting with a knife round");
         StartGame(true);
       } else {
+        LogDebug("Timer_CheckReady: starting without a knife round");
         StartGame(false);
       }
     } else {
@@ -828,7 +833,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
     //Write backup before series score increments
     WriteBackup();
-    
+
     // Update series scores
     Stats_UpdateMapScore(winningTeam);
     AddMapScore();
@@ -1135,6 +1140,7 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
 }
 
 public void StartGame(bool knifeRound) {
+  LogDebug("StartGame");
   if (!IsTVEnabled()) {
     LogMessage("GOTV demo could not be recorded since tv_enable is not set to 1");
   } else {
@@ -1150,20 +1156,24 @@ public void StartGame(bool knifeRound) {
   ExecCfg(g_LiveCfgCvar);
 
   if (knifeRound) {
+    LogDebug("StartGame: about to begin knife round");
     ChangeState(GameState_KnifeRound);
-    if (g_KnifeChangedCvars != INVALID_HANDLE)
+    if (g_KnifeChangedCvars != INVALID_HANDLE) {
       CloseCvarStorage(g_KnifeChangedCvars);
+    }
     g_KnifeChangedCvars = ExecuteAndSaveCvars(KNIFE_CONFIG);
     CreateTimer(1.0, StartKnifeRound);
   } else {
+    LogDebug("StartGame: about to go live");
     ChangeState(GameState_GoingLive);
     CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
   }
 }
 
 public Action Timer_PostKnife(Handle timer) {
-  if (g_KnifeChangedCvars != INVALID_HANDLE)
+  if (g_KnifeChangedCvars != INVALID_HANDLE) {
     RestoreCvars(g_KnifeChangedCvars, true);
+  }
 
   ExecCfg(g_WarmupCfgCvar);
   EnsurePausedWarmup();

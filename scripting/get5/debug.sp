@@ -5,7 +5,7 @@ public Action Command_DebugInfo(int client, int args) {
   char path[PLATFORM_MAX_PATH + 1];
 
   if (args == 0 || !GetCmdArg(1, path, sizeof(path))) {
-    BuildPath(Path_SM, path, sizeof(path), "logs/get5_debug.txt");
+    BuildPath(Path_SM, path, sizeof(path), "logs/get5_debuginfo.txt");
   }
 
   File f = OpenFile(path, "w");
@@ -19,6 +19,10 @@ public Action Command_DebugInfo(int client, int args) {
   AddGlobalStateInfo(f);
   AddSpacing(f);
   AddInterestingCvars(f);
+  AddSpacing(f);
+  AddLogLines(f, "errors_", 50);
+  AddSpacing(f);
+  AddLogLines(f, "get5_debug", 200);
 
   delete f;
 
@@ -69,6 +73,7 @@ static void AddVersionInfo(File f) {
 }
 
 static void AddGlobalStateInfo(File f) {
+  f.WriteLine("Global state:");
   char buffer[256];
   GameStateString(g_GameState, buffer, sizeof(buffer));
   f.WriteLine("g_GameState = %d (%s)", g_GameState, buffer);
@@ -120,6 +125,7 @@ static void AddGlobalStateInfo(File f) {
 }
 
 static void AddInterestingCvars(File f) {
+  f.WriteLine("Interesting cvars:");
   WriteCvarString(f, "get5_autoload_config");
   WriteCvarString(f, "get5_check_auths");
   WriteCvarString(f, "get5_fixed_pause_time");
@@ -142,7 +148,59 @@ static void AddInterestingCvars(File f) {
   WriteCvarString(f, "mp_round_restart_delay");
   WriteCvarString(f, "mp_timelimit");
   WriteCvarString(f, "mp_warmup_pausetimer");
+  WriteCvarString(f, "mp_warmuptime_all_players_connected");
   WriteCvarString(f, "sv_coaching_enabled");
   WriteCvarString(f, "tv_delay");
   WriteCvarString(f, "tv_enable");
+
+}
+
+static void AddLogLines(File f, const char[] pattern, int maxLines) {
+  char logsDir[PLATFORM_MAX_PATH];
+  BuildPath(Path_SM, logsDir, sizeof(logsDir), "logs");
+  DirectoryListing dir = OpenDirectory(logsDir);
+  if (dir == null) {
+    f.WriteLine("Can't open logs dir at %s", logsDir);
+    return;
+  }
+
+  char filename[PLATFORM_MAX_PATH];
+  FileType type;
+  ArrayList logFilenames = new ArrayList(sizeof(filename));
+  while (dir.GetNext(filename, sizeof(filename), type)) {
+    if (type == FileType_File && StrContains(filename, pattern) >= 0) {
+      char fullPath[PLATFORM_MAX_PATH];
+      Format(fullPath, sizeof(fullPath), "%s/%s", logsDir, filename);
+      logFilenames.PushString(fullPath);
+    }
+  }
+  SortADTArray(logFilenames, Sort_Descending, Sort_String);
+  if (logFilenames.Length > 0) {
+    logFilenames.GetString(0, filename, sizeof(filename));
+    File logFile = OpenFile(filename, "r");
+    if (logFile != null) {
+      f.WriteLine("Last log info from %s:", filename);
+      int maxLineLength = 1024;
+      ArrayList lines = new ArrayList(maxLineLength);
+      char[] line = new char[maxLineLength];
+      while (logFile.ReadLine(line, maxLineLength)) {
+        lines.PushString(line);
+      }
+
+      for (int i = 0; i < maxLines; i++) {
+        int idx = lines.Length - 1 - i;
+        if (idx < 0 || idx >= lines.Length) {
+          break;
+        }
+        lines.GetString(idx, line, maxLineLength);
+        f.WriteString(line, true);
+      }
+
+      delete logFile;
+    } else {
+      f.WriteLine("Couldn't read log file %s", filename);
+    }
+  }
+
+  delete dir;
 }

@@ -133,14 +133,15 @@ static void AddInterestingCvars(File f) {
   WriteCvarString(f, "get5_live_cfg");
   WriteCvarString(f, "get5_max_pause_time");
   WriteCvarString(f, "get5_max_pauses");
+  WriteCvarString(f, "get5_mysql_force_matchid");
   WriteCvarString(f, "get5_pausing_enabled");
   WriteCvarString(f, "get5_reset_pauses_each_half");
+  WriteCvarString(f, "get5_web_api_url");
   WriteCvarString(f, "mp_freezetime");
   WriteCvarString(f, "mp_halftime");
   WriteCvarString(f, "mp_halftime_duration");
   WriteCvarString(f, "mp_halftime_pausetimer");
   WriteCvarString(f, "mp_match_end_restart");
-  WriteCvarString(f, "mp_maxrounds");
   WriteCvarString(f, "mp_maxrounds");
   WriteCvarString(f, "mp_overtime_enable");
   WriteCvarString(f, "mp_overtime_halftime_pausetimer");

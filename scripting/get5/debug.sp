@@ -153,7 +153,6 @@ static void AddInterestingCvars(File f) {
   WriteCvarString(f, "sv_coaching_enabled");
   WriteCvarString(f, "tv_delay");
   WriteCvarString(f, "tv_enable");
-
 }
 
 static void AddLogLines(File f, const char[] pattern, int maxLines) {

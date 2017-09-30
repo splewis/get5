@@ -50,7 +50,7 @@ The get5 releases contain 2 additional plugins, disabled by default. They are in
 
 ##### get5_mysqlstats
 
-``get5_mysqlstats``: is an optional plugin for recording match stats. To use it, create a "get5" section in your ``addons/sourcemod/configs/databases.cfg`` file and use [these MySQL commands](misc/import_stats.sql) to create the tables. You can also set ``get5_mysql_force_matchid`` to 1 to make get5 ignore the matchid in match configs, and instead set it based on the id assigned when the plugin inserts into ``get5_stats_matches``.
+``get5_mysqlstats``: is an optional plugin for recording match stats. To use it, create a "get5" section in your ``addons/sourcemod/configs/databases.cfg`` file and use [these MySQL commands](misc/import_stats.sql) to create the tables. You can also set ``get5_mysql_force_matchid`` to a matchid to make get5 ignore the matchid in match configs, and use the one in the cvar. Otherwise, the matchid will be set based on matchid returned by MySQL from the SQL ``insert`` statement.
 
 
 ## Commands

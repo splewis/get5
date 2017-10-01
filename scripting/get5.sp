@@ -150,7 +150,7 @@ bool g_TeamReadyForUnpause[MatchTeam_Count];
 bool g_TeamGivenStopCommand[MatchTeam_Count];
 int g_TeamPauseTimeUsed[MatchTeam_Count];
 int g_TeamPausesUsed[MatchTeam_Count];
-int g_ReadyTimeWaitingUsed[MatchTeam_Count];
+int g_ReadyTimeWaitingUsed = 0;
 char g_DefaultTeamColors[][] = {
     TEAM1_COLOR, TEAM2_COLOR, "{NORMAL}", "{NORMAL}",
 };
@@ -544,7 +544,6 @@ public void OnMapStart() {
     g_TeamReadyForUnpause[team] = false;
     g_TeamPauseTimeUsed[team] = 0;
     g_TeamPausesUsed[team] = 0;
-    g_ReadyTimeWaitingUsed[team] = 0;
   }
 
   if (g_WaitingForRoundBackup) {
@@ -618,6 +617,7 @@ public Action Timer_CheckReady(Handle timer) {
 
 static void CheckReadyWaitingTimes() {
   if (g_TeamTimeToStartCvar.IntValue > 0) {
+    g_ReadyTimeWaitingUsed++;
     CheckReadyWaitingTime(MatchTeam_Team1);
     CheckReadyWaitingTime(MatchTeam_Team2);
   }
@@ -625,8 +625,7 @@ static void CheckReadyWaitingTimes() {
 
 static void CheckReadyWaitingTime(MatchTeam team) {
   if (!IsTeamReady(team) && g_GameState != GameState_None) {
-    g_ReadyTimeWaitingUsed[team]++;
-    int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed[team];
+    int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed;
 
     if (timeLeft <= 0) {
       Get5_MessageToAll("%t", "TeamForfeitInfoMessage", g_FormattedTeamNames[team]);

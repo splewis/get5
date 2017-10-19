@@ -192,7 +192,6 @@ Handle g_OnPreLoadMatchConfig = INVALID_HANDLE;
 Handle g_OnRoundStatsUpdated = INVALID_HANDLE;
 Handle g_OnSeriesInit = INVALID_HANDLE;
 Handle g_OnSeriesResult = INVALID_HANDLE;
-Handle g_OnSeriesResultWithoutWinners = INVALID_HANDLE;
 
 #include "get5/util.sp"
 
@@ -426,8 +425,6 @@ public void OnPluginStart() {
   g_OnSeriesInit = CreateGlobalForward("Get5_OnSeriesInit", ET_Ignore);
   g_OnSeriesResult =
       CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
-  g_OnSeriesResultWithoutWinners =
-      CreateGlobalForward("Get5_OnSeriesResultWithoutWinners", ET_Ignore);
 
   /** Start any repeating timers **/
   CreateTimer(CHECK_READY_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
@@ -996,7 +993,6 @@ public void EndSeriesWithoutWinners(const char[] reason) {
   StopRecording();
   EventLogger_SeriesEndWithoutWinners(reason);
 
-  Call_StartForward(g_OnSeriesResultWithoutWinners);
   Call_Finish();
 
   RestoreCvars(g_MatchConfigChangedCvars);

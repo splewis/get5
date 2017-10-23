@@ -71,6 +71,11 @@ public Action Timer_PauseTimeCheck(Handle timer, int data) {
     return Plugin_Stop;
   }
 
+  // Unlimited pause time.
+  if (g_MaxPauseTimeCvar.IntValue == 0) {
+    return Plugin_Stop;
+  }
+
   char pausePeriodString[32];
   if (g_ResetPausesEachHalfCvar.IntValue != 0) {
     Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");

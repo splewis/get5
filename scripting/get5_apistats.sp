@@ -53,7 +53,7 @@ public Plugin myinfo = {
 // clang-format on
 
 public void OnPluginStart() {
-  InitDebugLog("get5_apistats_debug", "get5_api");
+  InitDebugLog("get5_debug", "get5_api");
   LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
 
   g_APIKeyCvar =

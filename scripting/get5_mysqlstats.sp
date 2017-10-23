@@ -97,6 +97,8 @@ public void Get5_OnSeriesInit() {
   delete tmpStats;
 
   g_DisableStats = false;
+  LogDebug("Setting up series stats, get5_mysql_force_matchid = %d", g_ForceMatchIDCvar.IntValue);
+
   if (g_ForceMatchIDCvar.IntValue > 0) {
     SetMatchID(g_ForceMatchIDCvar.IntValue);
     g_ForceMatchIDCvar.IntValue = 0;

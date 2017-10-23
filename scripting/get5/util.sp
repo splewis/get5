@@ -284,21 +284,25 @@ stock void SetConVarIntSafe(const char[] name, int value) {
   }
 }
 
-stock void SetConVarStringSafe(const char[] name, const char[] value) {
+stock bool SetConVarStringSafe(const char[] name, const char[] value) {
   ConVar cvar = FindConVar(name);
   if (cvar == null) {
     LogError("Failed to find cvar: \"%s\"", name);
+    return false;
   } else {
     cvar.SetString(value);
+    return true;
   }
 }
 
-stock void GetConVarStringSafe(const char[] name, char[] value, int len) {
+stock bool GetConVarStringSafe(const char[] name, char[] value, int len) {
   ConVar cvar = FindConVar(name);
   if (cvar == null) {
     LogError("Failed to find cvar: \"%s\"", name);
+    return false;
   } else {
     cvar.GetString(value, len);
+    return true;
   }
 }
 

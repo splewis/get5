@@ -194,9 +194,11 @@ Handle g_OnSeriesInit = INVALID_HANDLE;
 Handle g_OnSeriesResult = INVALID_HANDLE;
 
 #include "get5/util.sp"
+#include "get5/version.sp"
 
 #include "get5/backups.sp"
 #include "get5/chatcommands.sp"
+#include "get5/debug.sp"
 #include "get5/eventlogger.sp"
 #include "get5/goinglive.sp"
 #include "get5/jsonhelpers.sp"
@@ -210,7 +212,6 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 #include "get5/stats.sp"
 #include "get5/teamlogic.sp"
 #include "get5/tests.sp"
-#include "get5/version.sp"
 
 // clang-format off
 public Plugin myinfo = {
@@ -367,6 +368,8 @@ public void OnPluginStart() {
               "Lists get5 match backups for the current matchid or a given one");
   RegAdminCmd("get5_loadbackup", Command_LoadBackup, ADMFLAG_CHANGEMAP,
               "Loads a get5 match backup");
+  RegAdminCmd("get5_debuginfo", Command_DebugInfo, ADMFLAG_CHANGEMAP,
+              "Dumps debug info to a file (addons/sourcemod/logs/get5_debuginfo.txt by default)");
 
   /** Other commands **/
   RegConsoleCmd("get5_status", Command_Status, "Prints JSON formatted match state info");
@@ -598,6 +601,7 @@ public Action Timer_CheckReady(Handle timer) {
   if (g_GameState == GameState_PreVeto) {
     if (IsTeamsReady()) {
       // We don't wait for spectators when initiating veto
+      LogDebug("Timer_CheckReady: starting veto");
       ChangeState(GameState_Veto);
       CreateVeto();
     } else {
@@ -609,6 +613,7 @@ public Action Timer_CheckReady(Handle timer) {
   if (g_GameState == GameState_Warmup && !g_MapChangePending) {
     // We don't wait for spectators when restoring backups
     if (IsTeamsReady() && g_WaitingForRoundBackup) {
+      LogDebug("Timer_CheckReady: restoring from backup");
       g_WaitingForRoundBackup = false;
       RestoreGet5Backup();
       return Plugin_Continue;
@@ -616,9 +621,12 @@ public Action Timer_CheckReady(Handle timer) {
 
     // Wait for both players and spectators before going live
     if (IsTeamsReady() && IsSpectatorsReady()) {
+      LogDebug("Timer_CheckReady: all teams ready to start");
       if (g_MapSides.Get(GetMapNumber()) == SideChoice_KnifeRound) {
+        LogDebug("Timer_CheckReady: starting with a knife round");
         StartGame(true);
       } else {
+        LogDebug("Timer_CheckReady: starting without a knife round");
         StartGame(false);
       }
     } else {
@@ -844,13 +852,15 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       winningTeam = MatchTeam_Team2;
     }
 
+    // Write backup before series score increments
+    WriteBackup();
+
     // Update series scores
     Stats_UpdateMapScore(winningTeam);
     AddMapScore();
     g_TeamSeriesScores[winningTeam]++;
 
     // Handle map end
-    WriteBackup();
 
     EventLogger_MapEnd(winningTeam);
 
@@ -1162,6 +1172,7 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
 }
 
 public void StartGame(bool knifeRound) {
+  LogDebug("StartGame");
   if (!IsTVEnabled()) {
     LogMessage("GOTV demo could not be recorded since tv_enable is not set to 1");
   } else {
@@ -1177,20 +1188,24 @@ public void StartGame(bool knifeRound) {
   ExecCfg(g_LiveCfgCvar);
 
   if (knifeRound) {
+    LogDebug("StartGame: about to begin knife round");
     ChangeState(GameState_KnifeRound);
-    if (g_KnifeChangedCvars != INVALID_HANDLE)
+    if (g_KnifeChangedCvars != INVALID_HANDLE) {
       CloseCvarStorage(g_KnifeChangedCvars);
+    }
     g_KnifeChangedCvars = ExecuteAndSaveCvars(KNIFE_CONFIG);
     CreateTimer(1.0, StartKnifeRound);
   } else {
+    LogDebug("StartGame: about to go live");
     ChangeState(GameState_GoingLive);
     CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
   }
 }
 
 public Action Timer_PostKnife(Handle timer) {
-  if (g_KnifeChangedCvars != INVALID_HANDLE)
+  if (g_KnifeChangedCvars != INVALID_HANDLE) {
     RestoreCvars(g_KnifeChangedCvars, true);
+  }
 
   ExecCfg(g_WarmupCfgCvar);
   EnsurePausedWarmup();

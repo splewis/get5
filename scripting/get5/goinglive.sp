@@ -1,5 +1,6 @@
 /** Begins the LO3 process. **/
 public Action StartGoingLive(Handle timer) {
+  LogDebug("StartGoingLive");
   ExecCfg(g_LiveCfgCvar);
   SetMatchTeamCvars();
   ExecuteMatchConfigCvars();

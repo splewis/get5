@@ -1,5 +1,6 @@
 *.smx
 *.zip
+*.tar.gz
 builds
 
 # MacOS users

@@ -19,7 +19,6 @@ public void CreateVeto() {
 
 public Action Timer_VetoCountdown(Handle timer) {
   static int warningsPrinted = 0;
-  int secondsRemaining = g_VetoCountdownCvar.IntValue;
   if (warningsPrinted >= g_VetoCountdownCvar.IntValue) {
     warningsPrinted = 0;
     MatchTeam startingTeam = OtherMatchTeam(g_LastVetoTeam);
@@ -27,7 +26,7 @@ public Action Timer_VetoCountdown(Handle timer) {
     return Plugin_Stop;
   } else {
     warningsPrinted++;
-    secondsRemaining = secondsRemaining - warningsPrinted;
+    int secondsRemaining = g_VetoCountdownCvar.IntValue - warningsPrinted + 1;
     Get5_MessageToAll("%t", "VetoCountdown", secondsRemaining);
     return Plugin_Continue;
   }

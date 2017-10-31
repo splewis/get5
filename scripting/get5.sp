@@ -294,7 +294,7 @@ public void OnPluginStart() {
       "get5_time_format", "%Y-%m-%d_%H",
       "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
   g_VetoConfirmationTimeCvar = CreateConVar(
-      "get5_veto_confirmation_time", "0",
+      "get5_veto_confirmation_time", "2.0",
       "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required, 0 to disable");
   g_VetoCountdownCvar =
       CreateConVar("get5_veto_countdown", "5",

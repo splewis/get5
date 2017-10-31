@@ -211,7 +211,7 @@ static void SetConfirmationTime(bool enabled) {
 
 static bool ConfirmationNeeded() {
   // Don't give confirmations if it's been disabled
-  if (g_VetoConfirmationTimeCvar.IntValue == 0) {
+  if (g_VetoConfirmationTimeCvar.FloatValue <= 0.0) {
     return false;
   }
   // Don't give confirmation if the veto time is less than 0
@@ -220,11 +220,8 @@ static bool ConfirmationNeeded() {
     return false;
   }
 
-  // Figure out if we need to require a confirmation. Round to ceiling
-  // since the convar is an integer, and we don't want e.g. 2.1 seconds to
-  // be equal or less than a setting of 2
-  int diff = RoundToCeil(GetTickedTime() - g_VetoMenuTime);
-  return diff <= g_VetoConfirmationTimeCvar.IntValue;
+  float diff = GetTickedTime() - g_VetoMenuTime;
+  return diff <= g_VetoConfirmationTimeCvar.FloatValue;
 }
 
 static bool ConfirmationNegative(const char[] choice) {

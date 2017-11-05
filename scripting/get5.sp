@@ -380,8 +380,6 @@ public void OnPluginStart() {
   HookEvent("server_cvar", Event_CvarChanged, EventHookMode_Pre);
   HookEvent("player_connect_full", Event_PlayerConnectFull);
   HookEvent("player_team", Event_OnPlayerTeam, EventHookMode_Pre);
-  HookEvent("player_changename", Event_OnNameChange, EventHookMode_Pre);
-  HookUserMessage(GetUserMessageId("TextMsg"), Event_TextMsg, true);
   Stats_PluginStart();
   Stats_InitSeries();
 
@@ -538,33 +536,6 @@ public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
   }
 }
 
-public Action Event_OnNameChange(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState == GameState_None) {
-    return Plugin_Continue;
-  }
-
-  int client = GetClientOfUserId(event.GetInt("userid"));
-  if (client > 0) {
-    return Plugin_Handled;
-  }
-
-  return Plugin_Continue;
-}
-
-public Action Event_TextMsg(UserMsg msg_id, Handle pb, const int[] players, int playersNum, bool reliable,
-                     bool init) {
-  PrintToServer("Event_TextMsg");
-  if (reliable) {
-    char text[64];
-    PbReadString(pb, "params", text, sizeof(text), 0);
-    PrintToServer(text);
-    if (StrContains(text, "#Chat_SavePlayer_", false) != -1) {
-      return Plugin_Handled;
-    }
-  }
-  return Plugin_Continue;
-}
-
 public void OnMapStart() {
   g_MapChangePending = false;
   DeleteOldBackups();
@@ -606,7 +577,6 @@ public Action Timer_CheckReady(Handle timer) {
   CheckTeamNameStatus(MatchTeam_Team1);
   CheckTeamNameStatus(MatchTeam_Team2);
   UpdateClanTags();
-  UpdatePlayerNames();
 
   // Handle ready checks for pre-veto state
   if (g_GameState == GameState_PreVeto) {

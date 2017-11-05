@@ -361,3 +361,25 @@ public bool RemovePlayerFromTeams(const char[] auth) {
   }
   return false;
 }
+
+public void LoadPlayerNames() {
+  KeyValues namesKv = new KeyValues("Names");
+  LOOP_TEAMS(team) {
+    char id[AUTH_LENGTH + 1];
+    char name[MAX_NAME_LENGTH + 1];
+    ArrayList ids = GetTeamAuths(team);
+    for (int i = 0; i < ids.Length; i++) {
+      ids.GetString(i, id, sizeof(id));
+      g_PlayerNames.GetString(id, name, sizeof(name));
+      if (!StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
+        namesKv.SetString(id, name);
+      }
+    }
+  }
+
+  char nameFile[] = "get5_names.txt";
+  namesKv.ExportToFile(nameFile);
+  delete namesKv;
+
+  ServerCommand("sv_load_forced_client_names_file %s", nameFile);
+}

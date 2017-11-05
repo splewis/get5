@@ -10,10 +10,6 @@
 #define CONFIG_VETOFIRST_DEFAULT "team1"
 #define CONFIG_SIDETYPE_DEFAULT "standard"
 
-// Dummy value for when we need to write a keyvalue string, but we don't care about he value.
-// Trying to write an empty string often results in the keyvalue not being writte, so we use this.
-#define KEYVALUE_STRING_PLACEHOLDER "__placerholder"
-
 stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   if (g_GameState != GameState_None && !restoreBackup) {
     return false;
@@ -109,6 +105,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     SetStartingTeams();
     ExecCfg(g_WarmupCfgCvar);
     ExecuteMatchConfigCvars();
+    LoadPlayerNames();
     EnsurePausedWarmup();
 
     EventLogger_SeriesStart();
@@ -130,6 +127,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   AddTeamLogosToDownloadTable();
   SetMatchTeamCvars();
   ExecuteMatchConfigCvars();
+  LoadPlayerNames();
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
 
   return true;
@@ -931,9 +929,10 @@ public Action Command_CreateScrim(int client, int args) {
     // So this adds a value for each auth so scrim templates don't have to insert fake values.
     do {
       char auth[AUTH_LENGTH];
-      kv.GetString(NULL_STRING, auth, sizeof(auth));
-      // kv.GetSectionName(auth, sizeof(auth));
-      kv.SetString(auth, KEYVALUE_STRING_PLACEHOLDER);
+      char name[MAX_NAME_LENGTH];
+      kv.GetString(NULL_STRING, name, sizeof(name), KEYVALUE_STRING_PLACEHOLDER);
+      kv.GetSectionName(auth, sizeof(auth));
+      kv.SetString(NULL_STRING, name);
     } while (kv.GotoNextKey(false));
     kv.Rewind();
   } else {

@@ -353,17 +353,6 @@ public void Get5_OnSeriesResult(MatchTeam seriesWinner, int team1MapScore, int t
   g_APIKeyCvar.SetString("");
 }
 
-public void Get5_OnSeriesResultWithoutWinners() {
-  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%d/finish", g_MatchID);
-  if (req != INVALID_HANDLE) {
-    AddStringParam(req, "winner", "");
-    AddIntParam(req, "forfeit", 0);
-    SteamWorks_SendHTTPRequest(req);
-  }
-
-  g_APIKeyCvar.SetString("");
-}
-
 public void Get5_OnRoundStatsUpdated() {
   if (Get5_GetGameState() == GameState_Live) {
     UpdateRoundStats(MapNumber());

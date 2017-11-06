@@ -550,7 +550,7 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
 
   if (g_ClientsConnected <= 0) {
     if (g_GameState >= GameState_KnifeRound && g_EndMatchOnEveryoneLeavesCvar.IntValue != 0) {
-      EndSeriesWithoutWinners("All clients left the game");
+      EndSeries();
     }
   }
 }
@@ -992,17 +992,6 @@ public void EndSeries() {
   Call_PushCell(winningTeam);
   Call_PushCell(t1maps);
   Call_PushCell(t2maps);
-  Call_Finish();
-
-  RestoreCvars(g_MatchConfigChangedCvars);
-  ChangeState(GameState_None);
-}
-
-public void EndSeriesWithoutWinners(const char[] reason) {
-  DelayFunction(10.0, KickClientsOnEnd);
-  StopRecording();
-  EventLogger_SeriesEndWithoutWinners(reason);
-
   Call_Finish();
 
   RestoreCvars(g_MatchConfigChangedCvars);

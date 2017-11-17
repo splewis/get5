@@ -1068,6 +1068,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
   if (g_GameState == GameState_Live) {
     int csTeamWinner = event.GetInt("winner");
+    int csReason = event.GetInt("reason");
 
     Get5_MessageToAll("%t", "CurrentScoreInfoMessage", g_TeamNames[MatchTeam_Team1],
                       CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
@@ -1078,7 +1079,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     Call_StartForward(g_OnRoundStatsUpdated);
     Call_Finish();
 
-    EventLogger_RoundEnd(csTeamWinner);
+    EventLogger_RoundEnd(csTeamWinner, csReason);
 
     int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
     LogDebug("m_totalRoundsPlayed = %d", roundsPlayed);

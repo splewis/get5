@@ -136,11 +136,12 @@ public void EventLogger_PlayerDeath(int killer, int victim, bool headshot, int a
   EventLogger_EndEvent("player_death");
 }
 
-public void EventLogger_RoundEnd(int csTeamWinner) {
+public void EventLogger_RoundEnd(int csTeamWinner, int csReason) {
   EventLogger_StartEvent();
   AddMapData(params);
   AddCSTeam(params, "winner_side", csTeamWinner);
   AddTeam(params, "winner", CSTeamToMatchTeam(csTeamWinner));
+  set_json_int(params, "reason", csReason);
   set_json_int(params, "team1_score", CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
   set_json_int(params, "team2_score", CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
   EventLogger_EndEvent("round_end");

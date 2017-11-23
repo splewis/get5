@@ -176,6 +176,10 @@
     {
         "chi"            "{1}赢得了这局比赛。"
     }
+    "TeamTiedMatchInfoMessage"
+    {
+        "chi"            "{1}与{2}打成了平局。"
+    }
     "TeamsSplitSeriesBO2InfoMessage"
     {
         "chi"            "{1}和{2}在此系列比赛中平局 1-1。"
@@ -226,7 +230,7 @@
     }
     "ChangingMapInfoMessage"
     {
-        "chi"            "切换地图至{GREEN}{1}..."
+        "chi"            "切换地图至{GREEN}{1}......"
     }
     "MapDecidedInfoMessage"
     {
@@ -275,5 +279,42 @@
     "MatchPoweredBy"
     {
         "chi"        "Powered by {YELLOW}Get5"
+    }
+    "MapVetoPickMenuText"
+    {
+        "chi"        "请选择一张想玩的地图："
+    }
+    "MapVetoPickConfirmMenuText"
+    {
+        "chi"        "你确定想玩{1}："
+    }
+    "MapVetoBanMenuText"
+    {
+        "chi"        "请选择一张想VETO(Ban图)的地图："
+    }
+    "MapVetoBanConfirmMenuText"
+    {
+        "chi"        "你确定想VETO(Ban图){1}："
+    }
+    "MapVetoSidePickMenuText"
+    {
+        "chi"        "请为{1}选择队伍"
+    }
+    "MapVetoSidePickConfirmMenuText"
+    {
+
+        "chi"        "你确定想开始{1}："
+    }
+    "ConfirmPositiveOptionText"
+    {
+        "chi"        "是"
+    }
+    "ConfirmNegativeOptionText"
+    {
+        "chi"        "否"
+    }
+    "VetoCountdown"
+    {
+        "chi"        "Veto(Ban图)还剩{GREEN}{1}秒。"
     }
 }

@@ -932,6 +932,14 @@ public Action Command_CreateScrim(int client, int args) {
       char name[MAX_NAME_LENGTH];
       kv.GetString(NULL_STRING, name, sizeof(name), KEYVALUE_STRING_PLACEHOLDER);
       kv.GetSectionName(auth, sizeof(auth));
+
+      // This shouldn't be necessary, but when the name field was empty, the
+      // use of KEYVALUE_STRING_PLACEHOLDER as a default doesn't seem to work.
+      // TODO: figure out what's going on with needing this here.
+      if (StrEqual(name, "")) {
+        name = KEYVALUE_STRING_PLACEHOLDER;
+      }
+
       kv.SetString(NULL_STRING, name);
     } while (kv.GotoNextKey(false));
     kv.Rewind();

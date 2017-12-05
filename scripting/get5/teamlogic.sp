@@ -377,7 +377,9 @@ public void LoadPlayerNames() {
     }
   }
 
+
   char nameFile[] = "get5_names.txt";
+  DeleteFile(nameFile);
   namesKv.ExportToFile(nameFile);
   delete namesKv;
 

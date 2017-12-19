@@ -353,7 +353,7 @@ public bool RemovePlayerFromTeams(const char[] auth) {
     if (index >= 0) {
       GetTeamAuths(team).Erase(index);
       int target = AuthToClient(steam64);
-      if (IsAuthedPlayer(target)) {
+      if (IsAuthedPlayer(target) && !g_InScrimMode) {
         KickClient(target, "%t", "YourAreNotAPlayerInfoMessage");
       }
       return true;
@@ -377,11 +377,23 @@ public void LoadPlayerNames() {
     }
   }
 
-
   char nameFile[] = "get5_names.txt";
   DeleteFile(nameFile);
   namesKv.ExportToFile(nameFile);
   delete namesKv;
 
   ServerCommand("sv_load_forced_client_names_file %s", nameFile);
+}
+
+public void SwapScrimTeamStatus(int client) {
+  // If we're in any team -> remove from any team list.
+  // If we're not in any team -> add to team1.
+  char auth[AUTH_LENGTH];
+  if (GetAuth(client, auth, sizeof(auth))) {
+    bool alreadyInList = RemovePlayerFromTeams(auth);
+    if (!alreadyInList) {
+      AddPlayerToTeam(auth, MatchTeam_Team1, "");
+    }
+    CheckClientTeam(client);
+  }
 }

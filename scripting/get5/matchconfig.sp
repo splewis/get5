@@ -964,6 +964,27 @@ public Action Command_CreateScrim(int client, int args) {
   return Plugin_Handled;
 }
 
+public Action Command_Ringer(int client, int args) {
+  if (g_GameState == GameState_None || !g_InScrimMode) {
+    ReplyToCommand(client, "This command can only be used in scrim mode");
+    return Plugin_Handled;
+  }
+
+  char arg1[32];
+  if (args >= 1 && GetCmdArg(1, arg1, sizeof(arg1))) {
+    int target = FindTarget(client, arg1, true, false);
+    if (IsAuthedPlayer(target)) {
+      SwapScrimTeamStatus(target);
+    } else {
+      ReplyToCommand(client, "Player not found");
+    }
+  } else {
+    ReplyToCommand(client, "Usage: sm_ringer <player>");
+  }
+
+  return Plugin_Handled;
+}
+
 static int AddPlayersToAuthKv(KeyValues kv, MatchTeam team, char teamName[MAX_CVAR_LENGTH]) {
   int count = 0;
   kv.JumpToKey("players", true);

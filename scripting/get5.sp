@@ -230,6 +230,7 @@ public void OnPluginStart() {
 
   /** Translations **/
   LoadTranslations("get5.phrases");
+  LoadTranslations("common.phrases");
 
   /** ConVars **/
   g_AutoLoadConfigCvar =
@@ -350,10 +351,17 @@ public void OnPluginStart() {
               "Removes a steamid from a match team");
   RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP,
               "Creates and loads a match using the players currently on the server as a Bo1");
+
   RegAdminCmd("get5_scrim", Command_CreateScrim, ADMFLAG_CHANGEMAP,
               "Creates and loads a match using the scrim template");
   RegAdminCmd("sm_scrim", Command_CreateScrim, ADMFLAG_CHANGEMAP,
               "Creates and loads a match using the scrim template");
+
+  RegAdminCmd("get5_ringer", Command_Ringer, ADMFLAG_CHANGEMAP,
+              "Adds/removes a ringer to/from the home scrim team");
+  RegAdminCmd("sm_ringer", Command_Ringer, ADMFLAG_CHANGEMAP,
+              "Adds/removes a ringer to/from the home scrim team");
+
   RegAdminCmd("get5_forceready", Command_AdminForceReady, ADMFLAG_CHANGEMAP,
               "Force readies all current teams");
   RegAdminCmd("get5_dumpstats", Command_DumpStats, ADMFLAG_CHANGEMAP,

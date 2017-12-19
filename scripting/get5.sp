@@ -364,6 +364,9 @@ public void OnPluginStart() {
 
   RegAdminCmd("get5_forceready", Command_AdminForceReady, ADMFLAG_CHANGEMAP,
               "Force readies all current teams");
+  RegAdminCmd("get5_forcestart", Command_AdminForceReady, ADMFLAG_CHANGEMAP,
+              "Force readies all current teams");
+
   RegAdminCmd("get5_dumpstats", Command_DumpStats, ADMFLAG_CHANGEMAP,
               "Dumps match stats to a file");
   RegAdminCmd("get5_listbackups", Command_ListBackups, ADMFLAG_CHANGEMAP,

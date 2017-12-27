@@ -227,6 +227,7 @@ public Plugin myinfo = {
 public void OnPluginStart() {
   InitDebugLog(DEBUG_CVAR, "get5");
   LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
+  HookUserMessage(GetUserMessageId("VGUIMenu"), TeamMenuHook, true);
 
   /** Translations **/
   LoadTranslations("get5.phrases");
@@ -396,7 +397,6 @@ public void OnPluginStart() {
 
   AddCommandListener(Command_Coach, "coach");
   AddCommandListener(Command_JoinTeam, "jointeam");
-  AddCommandListener(Command_JoinGame, "joingame");
 
   /** Setup data structures **/
   g_MapPoolList = new ArrayList(PLATFORM_MAX_PATH);

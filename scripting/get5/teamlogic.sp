@@ -1,15 +1,26 @@
-public Action Command_JoinGame(int client, const char[] command, int argc) {
+// Method taken from joao7yt on alliedmodders:
+// https://forums.alliedmods.net/showthread.php?t=300549
+public Action TeamMenuHook(UserMsg msg_id, Protobuf msg, const int[] players, int playersNum,
+                    bool reliable, bool init) {
   if (g_GameState == GameState_None) {
     return Plugin_Continue;
   }
 
-  // TODO: if we want to bypass the teammenu, this is probably the best
-  // place to put the player onto a team.
-  // if (IsPlayer(client)) {
-  //     FakeClientCommand(client, "jointeam 2");
-  // }
+  char buffermsg[64];
+  PbReadString(msg, "name", buffermsg, sizeof(buffermsg));
+  if (StrEqual(buffermsg, "team", true)) {
+    int client = players[0];
+    CreateTimer(0.1, Timer_CheckClientTeam, GetClientSerial(client));
+  }
 
   return Plugin_Continue;
+}
+
+public Action Timer_CheckClientTeam(Handle timer, int serial) {
+  int client = GetClientFromSerial(serial);
+  if (client > 0) {
+    CheckClientTeam(client);
+  }
 }
 
 public void CheckClientTeam(int client) {
@@ -27,8 +38,9 @@ public void CheckClientTeam(int client) {
 }
 
 public Action Command_JoinTeam(int client, const char[] command, int argc) {
-  if (!IsAuthedPlayer(client) || argc < 1)
+  if (!IsAuthedPlayer(client) || argc < 1) {
     return Plugin_Stop;
+  }
 
   // Don't do anything if not live/not in startup phase.
   if (g_GameState == GameState_None) {
@@ -44,10 +56,11 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
   GetCmdArg(1, arg, sizeof(arg));
   int team_to = StringToInt(arg);
 
-  LogDebug("%L jointeam command, from %d to %d", client, GetClientTeam(client), team_to);
+  LogDebug("%L jointeam command to %d", client, team_to);
 
   // don't let someone change to a "none" team (e.g. using auto-select)
   if (team_to == CS_TEAM_NONE) {
+    LogDebug("Blocked join to none team");
     return Plugin_Stop;
   }
 
@@ -152,6 +165,8 @@ public Action Command_Coach(int client, const char[] command, int argc) {
   if (g_MovingClientToCoach[client]) {
     return Plugin_Continue;
   }
+
+  // TODO: add a way for a client to leave the coaching slot.
 
   MoveClientToCoach(client);
   return Plugin_Stop;

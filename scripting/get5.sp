@@ -118,6 +118,7 @@ ArrayList g_MapsToPlay = null;
 ArrayList g_MapSides = null;
 ArrayList g_MapsLeftInVetoPool = null;
 MatchTeam g_LastVetoTeam;
+Menu g_ActiveVetoMenu = null;
 
 /** Backup data **/
 bool g_WaitingForRoundBackup = false;
@@ -702,6 +703,10 @@ public Action Command_EndMatch(int client, int args) {
   Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
   RestoreCvars(g_MatchConfigChangedCvars);
   StopRecording();
+
+  if (g_ActiveVetoMenu != null) {
+    g_ActiveVetoMenu.Cancel();
+  }
 
   return Plugin_Handled;
 }

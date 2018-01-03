@@ -788,7 +788,7 @@ public Action Command_AddPlayer(int client, int args) {
     if (AddPlayerToTeam(auth, team, name)) {
       ReplyToCommand(client, "Successfully added player %s to team %s", auth, teamString);
     } else {
-      ReplyToCommand(client, "Failed to add %s to a match team", auth);
+      ReplyToCommand(client, "Player %s is already on a match team.", auth);
     }
 
   } else {

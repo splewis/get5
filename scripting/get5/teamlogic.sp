@@ -149,7 +149,7 @@ public Action Command_Coach(int client, const char[] command, int argc) {
     return Plugin_Stop;
   }
 
-  if (g_MovingClientToCoach[client]) {
+  if (g_MovingClientToCoach[client] || g_CheckAuthsCvar.IntValue == 0) {
     return Plugin_Continue;
   }
 

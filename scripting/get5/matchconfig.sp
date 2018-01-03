@@ -764,6 +764,12 @@ public Action Command_AddPlayer(int client, int args) {
     return Plugin_Handled;
   }
 
+  if (g_InScrimMode) {
+    ReplyToCommand(
+        client, "Cannot use get5_addplayer in scrim mode. Use get5_ringer to swap a players team.");
+    return Plugin_Handled;
+  }
+
   char auth[AUTH_LENGTH];
   char teamString[32];
   char name[MAX_NAME_LENGTH];
@@ -803,12 +809,19 @@ public Action Command_RemovePlayer(int client, int args) {
     return Plugin_Handled;
   }
 
+  if (g_InScrimMode) {
+    ReplyToCommand(
+        client,
+        "Cannot use get5_removeplayer in scrim mode. Use get5_ringer to swap a players team.");
+    return Plugin_Handled;
+  }
+
   char auth[AUTH_LENGTH];
   if (args >= 1 && GetCmdArg(1, auth, sizeof(auth))) {
     if (RemovePlayerFromTeams(auth)) {
       ReplyToCommand(client, "Successfully removed player %s", auth);
     } else {
-      ReplyToCommand(client, "Failed to remove %s from team auth lists", auth);
+      ReplyToCommand(client, "Player %s not found in auth lists.", auth);
     }
   } else {
     ReplyToCommand(client, "Usage: get5_removeplayer <auth>");

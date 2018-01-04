@@ -586,6 +586,10 @@ public void OnMapStart() {
 }
 
 public Action Timer_CheckReady(Handle timer) {
+  if (g_GameState == GameState_None) {
+    return Plugin_Continue;
+  }
+
   CheckTeamNameStatus(MatchTeam_Team1);
   CheckTeamNameStatus(MatchTeam_Team2);
   UpdateClanTags();
@@ -698,6 +702,7 @@ public Action Command_EndMatch(int client, int args) {
   Call_PushCell(g_TeamSeriesScores[MatchTeam_Team2]);
   Call_Finish();
 
+  UpdateClanTags();
   ChangeState(GameState_None);
 
   Get5_MessageToAll("%t", "AdminForceEndInfoMessage");

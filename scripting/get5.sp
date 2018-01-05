@@ -198,6 +198,7 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 #include "get5/chatcommands.sp"
 #include "get5/debug.sp"
 #include "get5/eventlogger.sp"
+#include "get5/get5menu.sp"
 #include "get5/goinglive.sp"
 #include "get5/jsonhelpers.sp"
 #include "get5/kniferounds.sp"
@@ -362,6 +363,8 @@ public void OnPluginStart() {
               "Adds/removes a ringer to/from the home scrim team");
   RegAdminCmd("sm_ringer", Command_Ringer, ADMFLAG_CHANGEMAP,
               "Adds/removes a ringer to/from the home scrim team");
+
+  RegAdminCmd("sm_get5", Command_Get5AdminMenu, ADMFLAG_CHANGEMAP, "Displays a helper menu");
 
   RegAdminCmd("get5_forceready", Command_AdminForceReady, ADMFLAG_CHANGEMAP,
               "Force readies all current teams");
@@ -814,7 +817,7 @@ public Action Command_Stop(int client, int args) {
   return Plugin_Handled;
 }
 
-static bool RestoreLastRound() {
+public bool RestoreLastRound() {
   LOOP_TEAMS(x) {
     g_TeamGivenStopCommand[x] = false;
   }

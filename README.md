@@ -85,6 +85,10 @@ Some client commands are available also for admin usage. For example, sm_pause a
 - ``get5_status``: replies with JSON formatted match state (available to all clients, requires [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604))
 - ``get5_listbackups``: lists backup files for the current matchid or a given matchid
 
+#### Other commands
+
+- ``!get5`` opens a menu that wraps some common commands. It's mostly intended for people using scrim settings, and has menu buttons for starting a scrim, force-starting, force-ending, adding a ringer, and loading the most recent backup file.
+
 ## Match Schema
 
 See the example config in [Valve KeyValues format](configs/get5/example_match.cfg) or [JSON format](configs/get5/example_match.json) to learn how to format the configs. Both files contain equivalent match data.

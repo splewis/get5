@@ -128,6 +128,10 @@ public void MoveClientToCoach(int client) {
 }
 
 public Action Command_SmCoach(int client, int args) {
+  if (g_GameState == GameState_None) {
+    return Plugin_Continue;
+  }
+
   if (g_CoachingEnabledCvar.IntValue == 0) {
     return Plugin_Handled;
   }

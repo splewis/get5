@@ -17,6 +17,11 @@ public void AddChatAlias(const char[] alias, const char[] command) {
 }
 
 public void CheckForChatAlias(int client, const char[] command, const char[] sArgs) {
+  // No chat aliases are needed if the game isn't setup at all.
+  if (g_GameState == GameState_None) {
+    return;
+  }
+
   // Splits to find the first word to do a chat alias command check.
   char chatCommand[COMMAND_LENGTH];
   char chatArgs[255];

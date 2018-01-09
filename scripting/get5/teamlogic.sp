@@ -400,8 +400,10 @@ public void SwapScrimTeamStatus(int client) {
   if (GetAuth(client, auth, sizeof(auth))) {
     bool alreadyInList = RemovePlayerFromTeams(auth);
     if (!alreadyInList) {
-      AddPlayerToTeam(auth, MatchTeam_Team1, "");
+      char steam64[AUTH_LENGTH];
+      ConvertAuthToSteam64(auth, steam64);
+      GetTeamAuths(MatchTeam_Team1).PushString(steam64);
     }
-    CheckClientTeam(client);
   }
+  CheckClientTeam(client);
 }

@@ -379,7 +379,7 @@ public void LoadPlayerNames() {
     for (int i = 0; i < ids.Length; i++) {
       ids.GetString(i, id, sizeof(id));
       g_PlayerNames.GetString(id, name, sizeof(name));
-      if (!StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
+      if (!StrEqual(name, "") && !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
         namesKv.SetString(id, name);
       }
     }

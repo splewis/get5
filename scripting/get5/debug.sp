@@ -23,6 +23,8 @@ public Action Command_DebugInfo(int client, int args) {
   AddLogLines(f, "errors_", 50);
   AddSpacing(f);
   AddLogLines(f, "get5_debug.log", 200);
+  AddSpacing(f);
+  AddPluginList(f);
 
   delete f;
 
@@ -211,4 +213,26 @@ static void AddLogLines(File f, const char[] pattern, int maxLines) {
   }
 
   delete dir;
+}
+
+static void AddPluginList(File f) {
+  f.WriteLine("sm plugins list:");
+  Handle iter = GetPluginIterator();
+  while (MorePlugins(iter)) {
+    Handle plugin = ReadPlugin(iter);
+    char filename[PLATFORM_MAX_PATH + 1];
+    GetPluginFilename(plugin, filename, sizeof(filename));
+    char name[128];
+    char author[128];
+    char desc[128];
+    char version[128];
+    char url[128];
+    GetPluginInfo(plugin, PlInfo_Name, name, sizeof(name));
+    GetPluginInfo(plugin, PlInfo_Author, author, sizeof(author));
+    GetPluginInfo(plugin, PlInfo_Description, desc, sizeof(desc));
+    GetPluginInfo(plugin, PlInfo_Version, version, sizeof(version));
+    GetPluginInfo(plugin, PlInfo_URL, url, sizeof(url));
+    f.WriteLine("%s: %s by %s: %s (%s, %s)", filename, name, author, desc, version, url);
+  }
+  CloseHandle(iter);
 }

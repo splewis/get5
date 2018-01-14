@@ -38,13 +38,21 @@ static void AddSpacing(File f) {
   }
 }
 
+static bool GetCvar(const char[] name, char[] value, int len) {
+  ConVar cvar = FindConVar(name);
+  if (cvar == null) {
+    Format(value, len, "NULL CVAR");
+    return false;
+  } else {
+    cvar.GetString(value, len);
+    return true;
+  }
+}
+
 static void WriteCvarString(File f, const char[] cvar) {
   char buffer[128];
-  if (GetConVarStringSafe(cvar, buffer, sizeof(buffer))) {
-    f.WriteLine("%s = %s", cvar, buffer);
-  } else {
-    f.WriteLine("%s = NULL CVAR", cvar);
-  }
+  GetCvar(cvar, buffer, sizeof(buffer));
+  f.WriteLine("%s = %s", cvar, buffer);
 }
 
 static void WriteArrayList(File f, const char[] name, ArrayList list) {

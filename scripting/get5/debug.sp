@@ -22,7 +22,7 @@ public Action Command_DebugInfo(int client, int args) {
   AddSpacing(f);
   AddLogLines(f, "errors_", 50);
   AddSpacing(f);
-  AddLogLines(f, "get5_debug", 200);
+  AddLogLines(f, "get5_debug.log", 200);
 
   delete f;
 

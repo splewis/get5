@@ -532,7 +532,7 @@ public void OnClientPutInServer(int client) {
 }
 
 public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs) {
-  if (StrEqual(command, "say")) {
+  if (StrEqual(command, "say") && g_GameState != GameState_None) {
     EventLogger_ClientSay(client, sArgs);
   }
   CheckForChatAlias(client, command, sArgs);

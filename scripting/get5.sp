@@ -29,7 +29,6 @@
 #undef REQUIRE_EXTENSIONS
 #include <SteamWorks>
 #include <smjansson>
-#include <system2>
 
 #define CHECK_READY_TIMER_INTERVAL 1.0
 #define INFO_MESSAGE_TIMER_INTERVAL 29.0

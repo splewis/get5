@@ -192,27 +192,15 @@ static void MatchConfigFail(const char[] reason, any...) {
   Call_Finish();
 }
 
-stock bool LoadMatchFromUrl(const char[] url, bool preferSystem2 = true,
-                            ArrayList paramNames = null, ArrayList paramValues = null) {
+stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
+                            ArrayList paramValues = null) {
   bool steamWorksAvaliable = LibraryExists("SteamWorks");
-  bool system2Avaliable = LibraryExists("system2");
-  bool forceSteamworks = (steamWorksAvaliable && !preferSystem2);
 
   char cleanedUrl[1024];
   strcopy(cleanedUrl, sizeof(cleanedUrl), url);
   ReplaceString(cleanedUrl, sizeof(cleanedUrl), "\"", "");
 
-  if (system2Avaliable && !forceSteamworks) {
-    // No protocal strings here.
-    ReplaceString(cleanedUrl, sizeof(cleanedUrl), "https://", "");
-    ReplaceString(cleanedUrl, sizeof(cleanedUrl), "http://", "");
-    LogDebug("cleanedUrl (system2) = %s", cleanedUrl);
-    char remoteConfig[PLATFORM_MAX_PATH];
-    GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
-    System2_DownloadFile(System2_OnMatchConfigReceived, cleanedUrl, remoteConfig);
-    return true;
-
-  } else if (steamWorksAvaliable) {
+  if (steamWorksAvaliable) {
     // Add the protocl strings. Only allow http since SteamWorks doesn't support http it seems?
     ReplaceString(cleanedUrl, sizeof(cleanedUrl), "https://", "http://");
     if (StrContains(cleanedUrl, "http://") == -1) {
@@ -245,7 +233,7 @@ stock bool LoadMatchFromUrl(const char[] url, bool preferSystem2 = true,
     return true;
 
   } else {
-    MatchConfigFail("Neither steamworks nor system2 extensions avaliable");
+    MatchConfigFail("SteamWorks extension is not available");
     return false;
   }
 }
@@ -262,19 +250,6 @@ public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
   GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
   SteamWorks_WriteHTTPResponseBodyToFile(request, remoteConfig);
   LoadMatchConfig(remoteConfig);
-}
-
-public int System2_OnMatchConfigReceived(bool finished, const char[] error, float dltotal, float dlnow,
-                                  float ultotal, float ulnow, int serial) {
-  if (finished) {
-    if (!StrEqual(error, "")) {
-      MatchConfigFail("Error receiving remote config via system2: %s", error);
-    } else if (finished) {
-      char remoteConfig[PLATFORM_MAX_PATH];
-      GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
-      LoadMatchConfig(remoteConfig);
-    }
-  }
 }
 
 public void WriteMatchToKv(KeyValues kv) {

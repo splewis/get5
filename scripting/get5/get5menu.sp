@@ -6,19 +6,17 @@ public Action Command_Get5AdminMenu(int client, int args) {
   menu.SetTitle("Get5 Admin Menu");
 
   // Add actual choices
-  menu.AddItem("get5_scrim", "Create a scrim",
-               g_GameState == GameState_None ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+  menu.AddItem("get5_scrim", "Create a scrim", EnabledIf(g_GameState == GameState_None));
   menu.AddItem("get5_creatematch", "Create match with current players",
-               g_GameState == GameState_None ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+               EnabledIf(g_GameState == GameState_None));
   menu.AddItem("get5_forceready", "Force-ready all players",
-               g_GameState == GameState_Warmup || g_GameState == GameState_PreVeto
-                   ? ITEMDRAW_DEFAULT
-                   : ITEMDRAW_DISABLED);
-  menu.AddItem("get5_endmatch", "End match",
-               g_GameState == GameState_None ? ITEMDRAW_DISABLED : ITEMDRAW_DEFAULT);
-  menu.AddItem("ringer", "Add scrim ringer", g_InScrimMode && g_GameState != GameState_None
-                                                 ? ITEMDRAW_DEFAULT
-                                                 : ITEMDRAW_DISABLED);
+               EnabledIf(g_GameState == GameState_Warmup || g_GameState == GameState_PreVeto));
+  menu.AddItem("get5_endmatch", "End match", EnabledIf(g_GameState != GameState_None));
+  menu.AddItem("ringer", "Add scrim ringer",
+               EnabledIf(g_InScrimMode && g_GameState != GameState_None));
+  menu.AddItem("sm_swap", "Swap scrim sides",
+               EnabledIf(g_InScrimMode && g_GameState == GameState_Warmup));
+  menu.Pagination = MENU_NO_PAGINATION;
 
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
@@ -30,13 +28,18 @@ public Action Command_Get5AdminMenu(int client, int args) {
   return Plugin_Handled;
 }
 
+static int EnabledIf(bool cond) {
+  return cond ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED;
+}
+
 public int AdminMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     int client = param1;
     char infoString[64];
     menu.GetItem(param2, infoString, sizeof(infoString));
     if (StrEqual(infoString, "get5_scrim") || StrEqual(infoString, "get5_creatematch") ||
-        StrEqual(infoString, "get5_forceready") || StrEqual(infoString, "get5_endmatch")) {
+        StrEqual(infoString, "get5_forceready") || StrEqual(infoString, "get5_endmatch") ||
+        StrEqual(infoString, "sm_swap")) {
       FakeClientCommand(client, infoString);
     } else if (StrEqual(infoString, "ringer")) {
       GiveRingerMenu(client);

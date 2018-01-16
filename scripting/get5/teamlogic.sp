@@ -118,9 +118,11 @@ public void MoveClientToCoach(int client) {
   if (!InWarmup() && !InFreezeTime()) {
     // TODO: this needs to be tested more thoroughly,
     // it might need to be done in reverse order (?)
+    LogDebug("Moving %L directly to coach slot", client);
     SwitchPlayerTeam(client, CS_TEAM_SPECTATOR);
     UpdateCoachTarget(client, csTeam);
   } else {
+    LogDebug("Moving %L indirectly to coach slot via coach cmd", client);
     g_MovingClientToCoach[client] = true;
     FakeClientCommand(client, "coach %s", teamString);
     g_MovingClientToCoach[client] = false;
@@ -158,6 +160,7 @@ public Action Command_Coach(int client, const char[] command, int argc) {
   }
 
   if (g_MovingClientToCoach[client] || g_CheckAuthsCvar.IntValue == 0) {
+    LogDebug("Command_Coach: %L, letting pass-through");
     return Plugin_Continue;
   }
 

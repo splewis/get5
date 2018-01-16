@@ -342,7 +342,7 @@ public void OnPluginStart() {
       "Loads a match config file (json or keyvalues) from a file relative to the csgo/ directory");
   RegAdminCmd(
       "get5_loadmatch_url", Command_LoadMatchUrl, ADMFLAG_CHANGEMAP,
-      "Loads a JSON config file by sending a GET request to download it. Requires either the SteamWorks or system2 extensions");
+      "Loads a JSON config file by sending a GET request to download it. Requires either the SteamWorks extension.");
   RegAdminCmd("get5_loadteam", Command_LoadTeam, ADMFLAG_CHANGEMAP,
               "Loads a team data from a file into a team");
   RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP, "Force ends the current match");
@@ -743,12 +743,9 @@ public Action Command_LoadMatchUrl(int client, int args) {
   }
 
   bool steamWorksAvaliable = LibraryExists("SteamWorks");
-  bool system2Avaliable = LibraryExists("system2");
-
-  if (!steamWorksAvaliable && !system2Avaliable) {
-    ReplyToCommand(
-        client,
-        "Cannot load matches from a url without the SteamWorks or system2 extension running");
+  if (!steamWorksAvaliable) {
+    ReplyToCommand(client,
+                   "Cannot load matches from a url without the SteamWorks extension running");
   } else {
     char arg[PLATFORM_MAX_PATH];
     if (args >= 1 && GetCmdArgString(arg, sizeof(arg))) {

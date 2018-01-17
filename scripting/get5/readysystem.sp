@@ -138,7 +138,7 @@ public Action Command_AdminForceReady(int client, int args) {
 
 public Action Command_Ready(int client, int args) {
   MatchTeam team = GetClientMatchTeam(client);
-  if (!IsReadyGameState() || team == MatchTeam_TeamNone) {
+  if (!IsReadyGameState() || team == MatchTeam_TeamNone || IsClientReady(client)) {
     return Plugin_Handled;
   }
 
@@ -155,7 +155,7 @@ public Action Command_Ready(int client, int args) {
 
 public Action Command_NotReady(int client, int args) {
   MatchTeam team = GetClientMatchTeam(client);
-  if (!IsReadyGameState() || team == MatchTeam_TeamNone) {
+  if (!IsReadyGameState() || team == MatchTeam_TeamNone || !IsClientReady(client)) {
     return Plugin_Handled;
   }
 
@@ -208,12 +208,13 @@ static void PrintReadyMessage(MatchTeam team) {
     Get5_MessageToAll("%t", "TeamReadyToVetoInfoMessage", g_FormattedTeamNames[team]);
   } else if (g_GameState == GameState_Warmup) {
     SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
-    if (g_WaitingForRoundBackup)
+    if (g_WaitingForRoundBackup) {
       Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_FormattedTeamNames[team]);
-    else if (sides == SideChoice_KnifeRound)
+    } else if (sides == SideChoice_KnifeRound) {
       Get5_MessageToAll("%t", "TeamReadyToKnifeInfoMessage", g_FormattedTeamNames[team]);
-    else
+    } else {
       Get5_MessageToAll("%t", "TeamReadyToBeginInfoMessage", g_FormattedTeamNames[team]);
+    }
   }
 }
 

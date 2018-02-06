@@ -4,7 +4,7 @@
 
 // Dummy value for when we need to write a keyvalue string, but we don't care about he value.
 // Trying to write an empty string often results in the keyvalue not being writte, so we use this.
-#define KEYVALUE_STRING_PLACEHOLDER "__placerholder"
+#define KEYVALUE_STRING_PLACEHOLDER "__placeholder"
 
 static char _colorNames[][] = {"{NORMAL}", "{DARK_RED}",    "{PINK}",      "{GREEN}",
                                "{YELLOW}", "{LIGHT_GREEN}", "{LIGHT_RED}", "{GRAY}",

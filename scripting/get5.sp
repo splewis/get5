@@ -67,6 +67,7 @@ ConVar g_MessagePrefixCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_ResetPausesEachHalfCvar;
 ConVar g_ServerIdCvar;
+ConVar g_SetHostnameCvar;
 ConVar g_StatsPathFormatCvar;
 ConVar g_StopCommandEnabledCvar;
 ConVar g_TeamTimeToKnifeDecisionCvar;
@@ -281,6 +282,9 @@ public void OnPluginStart() {
   g_ServerIdCvar = CreateConVar(
       "get5_server_id", "0",
       "Integer that identifies your server. This is used in temp files to prevent collisions.");
+  g_SetHostnameCvar = CreateConVar(
+      "get5_set_hostname", "0",
+      "Should the server name be set to \"<Team-1 Name> vs <Team-2 Name>\" on match start");
   g_StatsPathFormatCvar =
       CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg",
                    "Where match stats are saved (updated each map end), set to \"\" to disable");

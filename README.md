@@ -2,6 +2,7 @@ get5
 ===========================
 
 [![Build status](http://ci.splewis.net/job/get5/badge/icon)](http://ci.splewis.net/job/get5/)
+[![GitHub Downloads](https://img.shields.io/github/downloads/splewis/get5/total.svg?style=flat-square&label=Downloads)](https://github.com/splewis/get5/releases/latest)
 
 Get5 is a standalone [SourceMod](http://www.sourcemod.net/) plugin for CS:GO servers for running matches. It is originally based on [pugsetup](https://github.com/splewis/csgo-pug-setup) and is inspired by [eBot](https://github.com/deStrO/eBot-CSGO).
 

@@ -663,6 +663,12 @@ public void SetMatchTeamCvars() {
   if (g_MapsToWin > 1) {
     SetConVarIntSafe("mp_teamscore_max", g_MapsToWin);
   }
+
+  char formattedHostname[128];
+
+  if (FormatCvarString(g_SetHostnameCvar, formattedHostname, sizeof(formattedHostname))) {
+    SetConVarStringSafe("hostname", formattedHostname);
+  }
 }
 
 public MatchTeam GetMapWinner(int mapNumber) {

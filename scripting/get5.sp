@@ -67,6 +67,7 @@ ConVar g_MessagePrefixCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_ResetPausesEachHalfCvar;
 ConVar g_ServerIdCvar;
+ConVar g_SetHostnameCvar;
 ConVar g_StatsPathFormatCvar;
 ConVar g_StopCommandEnabledCvar;
 ConVar g_TeamTimeToKnifeDecisionCvar;
@@ -281,6 +282,9 @@ public void OnPluginStart() {
   g_ServerIdCvar = CreateConVar(
       "get5_server_id", "0",
       "Integer that identifies your server. This is used in temp files to prevent collisions.");
+  g_SetHostnameCvar = CreateConVar(
+      "get5_hostname_format", "Get5: {TEAM1} vs {TEAM2}",
+      "Template that the server hostname will follow when a match is live. Leave field blank to disable. Valid parameters are: {MAPNUMBER}, {MATCHID}, {SERVERID}, {MAPNAME}, {TIME}, {TEAM1}, {TEAM2}");
   g_StatsPathFormatCvar =
       CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg",
                    "Where match stats are saved (updated each map end), set to \"\" to disable");
@@ -1319,6 +1323,7 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", mapNumber, false);
   ReplaceString(buffer, len, "{MATCHID}", g_MatchID, false);
   ReplaceString(buffer, len, "{MAPNAME}", mapName, false);
+  ReplaceStringWithInt(buffer, len, "{SERVERID}", g_ServerIdCvar.IntValue, false);
   ReplaceString(buffer, len, "{TIME}", formattedTime, false);
   ReplaceString(buffer, len, "{TEAM1}", team1Str, false);
   ReplaceString(buffer, len, "{TEAM2}", team2Str, false);

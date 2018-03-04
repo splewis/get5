@@ -4,6 +4,8 @@ get5
 [![Build status](http://ci.splewis.net/job/get5/badge/icon)](http://ci.splewis.net/job/get5/)
 [![GitHub Downloads](https://img.shields.io/github/downloads/splewis/get5/total.svg?style=flat-square&label=Downloads)](https://github.com/splewis/get5/releases/latest)
 
+**Status: Supported, actively developed.**
+
 Get5 is a standalone [SourceMod](http://www.sourcemod.net/) plugin for CS:GO servers for running matches. It is originally based on [pugsetup](https://github.com/splewis/csgo-pug-setup) and is inspired by [eBot](https://github.com/deStrO/eBot-CSGO).
 
 The core idea behind its use is all match details being fully defined in a single config file. Check out [this example config](configs/get5/example_match.cfg). Its main target use-case is tournaments and leagues (online or LAN). All that is required of the server-admins is to load match config file to the server and the match should run without any more manual actions from the admins. This plugin is not invasive - most of its functionality is built to work within how the CS:GO server normally operates, not replacing its functionality. **No, it is not recommended for your new matchmaking service. It is intended for competitive play, not pickup games.**

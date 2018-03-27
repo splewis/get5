@@ -16,6 +16,7 @@ public Action Command_Pause(int client, int args) {
   if (client == 0) {
     Pause();
     Get5_MessageToAll("%t", "AdminForcePauseInfoMessage");
+    return Plugin_Handled;
   } else {
     int maxPauses = g_MaxPausesCvar.IntValue;
     if (maxPauses > 0 && g_TeamPausesUsed[team] >= maxPauses && IsPlayerTeam(team)) {
@@ -114,6 +115,7 @@ public Action Command_Unpause(int client, int args) {
   if (client == 0) {
     Unpause();
     Get5_MessageToAll("%t", "AdminForceUnPauseInfoMessage");
+    return Plugin_Handled;
   } else {
     if (g_FixedPauseTimeCvar.IntValue != 0) {
       return Plugin_Handled;

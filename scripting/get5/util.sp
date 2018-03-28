@@ -471,6 +471,9 @@ public MatchTeam VetoFirstFromString(const char[] str) {
 }
 
 stock bool GetAuth(int client, char[] auth, int size) {
+  if (client == 0)
+    return false;
+
   bool ret = GetClientAuthId(client, AuthId_SteamID64, auth, size);
   if (!ret) {
     LogError("Failed to get steamid for client %L", client);

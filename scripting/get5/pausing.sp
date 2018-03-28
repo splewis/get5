@@ -3,26 +3,26 @@ public bool Pauseable() {
 }
 
 public Action Command_Pause(int client, int args) {
-  if (!Pauseable() || IsPaused())
+  if (!Pauseable() || IsPaused()) {
     return Plugin_Handled;
-
-  char pausePeriodString[32];
-  if (g_ResetPausesEachHalfCvar.IntValue != 0) {
-    Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
   }
-
-  MatchTeam team = GetClientMatchTeam(client);
 
   if (client == 0) {
     Pause();
     Get5_MessageToAll("%t", "AdminForcePauseInfoMessage");
     return Plugin_Handled;
-  } else {
-    int maxPauses = g_MaxPausesCvar.IntValue;
-    if (maxPauses > 0 && g_TeamPausesUsed[team] >= maxPauses && IsPlayerTeam(team)) {
-      Get5_Message(client, "%t", "MaxPausesUsedInfoMessage", maxPauses, pausePeriodString);
-      return Plugin_Handled;
-    }
+  }
+
+  MatchTeam team = GetClientMatchTeam(client);
+  int maxPauses = g_MaxPausesCvar.IntValue;
+  char pausePeriodString[32];
+  if (g_ResetPausesEachHalfCvar.IntValue != 0) {
+    Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
+  }
+
+  if (maxPauses > 0 && g_TeamPausesUsed[team] >= maxPauses && IsPlayerTeam(team)) {
+    Get5_Message(client, "%t", "MaxPausesUsedInfoMessage", maxPauses, pausePeriodString);
+    return Plugin_Handled;
   }
 
   int maxPauseTime = g_MaxPauseTimeCvar.IntValue;
@@ -116,26 +116,26 @@ public Action Command_Unpause(int client, int args) {
     Unpause();
     Get5_MessageToAll("%t", "AdminForceUnPauseInfoMessage");
     return Plugin_Handled;
-  } else {
-    if (g_FixedPauseTimeCvar.IntValue != 0) {
-      return Plugin_Handled;
-    }
+  }
 
-    MatchTeam team = GetClientMatchTeam(client);
-    g_TeamReadyForUnpause[team] = true;
+  if (g_FixedPauseTimeCvar.IntValue != 0) {
+    return Plugin_Handled;
+  }
 
-    if (g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2]) {
-      Unpause();
-      if (IsPlayer(client)) {
-        Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", client);
-      }
-    } else if (g_TeamReadyForUnpause[MatchTeam_Team1] && !g_TeamReadyForUnpause[MatchTeam_Team2]) {
-      Get5_MessageToAll("%t", "WaitingForUnpauseInfoMessage", g_FormattedTeamNames[MatchTeam_Team1],
-                        g_FormattedTeamNames[MatchTeam_Team2]);
-    } else if (!g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2]) {
-      Get5_MessageToAll("%t", "WaitingForUnpauseInfoMessage", g_FormattedTeamNames[MatchTeam_Team2],
-                        g_FormattedTeamNames[MatchTeam_Team1]);
+  MatchTeam team = GetClientMatchTeam(client);
+  g_TeamReadyForUnpause[team] = true;
+
+  if (g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2]) {
+    Unpause();
+    if (IsPlayer(client)) {
+      Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", client);
     }
+  } else if (g_TeamReadyForUnpause[MatchTeam_Team1] && !g_TeamReadyForUnpause[MatchTeam_Team2]) {
+    Get5_MessageToAll("%t", "WaitingForUnpauseInfoMessage", g_FormattedTeamNames[MatchTeam_Team1],
+                      g_FormattedTeamNames[MatchTeam_Team2]);
+  } else if (!g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2]) {
+    Get5_MessageToAll("%t", "WaitingForUnpauseInfoMessage", g_FormattedTeamNames[MatchTeam_Team2],
+                      g_FormattedTeamNames[MatchTeam_Team1]);
   }
 
   return Plugin_Handled;

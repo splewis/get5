@@ -28,6 +28,8 @@ Features of this include:
 - Allows lightweight usage for [scrims](https://github.com/splewis/get5/wiki/Using-get5-for-scrims)
 - Has its own [event logging](https://github.com/splewis/get5/wiki/Event-logs) system you can interface with
 
+Get5 also aims to make it easy to build automation for it. Commands are added so that a remote server can manage get5, collect stats, etc. The [get5 web panel](https://github.com/splewis/get5-web) is an (functional) proof-of-concept for this.
+
 ## Download and Installation
 
 #### Requirements
@@ -49,7 +51,7 @@ The get5 releases contain 2 additional plugins, disabled by default. They are in
 
 ##### get5_apistats
 
-``get5_apistats`` is for integration with the [get5 web panel](https://github.com/splewis/get5-web). You don't need it unless you're using the web panel.
+``get5_apistats`` is for integration with the [get5 web panel](https://github.com/splewis/get5-web). You don't need it unless you're using the web panel. Note you need the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) extension for this plugin.
 
 ##### get5_mysqlstats
 
@@ -77,7 +79,7 @@ Some client commands are available also for admin usage. For example, sm_pause a
 - ``get5_loadmatch``: loads a match config file (JSON or keyvalues) relative from the ``csgo`` directory
 - ``get5_loadbackup``: loads a get5 backup file
 - ``get5_loadteam``: loads a team section from a file into a team
-- ``get5_loadmatch_url``: loads a remote (JSON formatted) match config by sending a HTTP GET to the given url, this requires the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) Extensions
+- ``get5_loadmatch_url``: loads a remote (JSON formatted) match config by sending a HTTP GET to the given url, this requires the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) extension
 - ``get5_endmatch``: force ends the current match
 - ``get5_creatematch``: creates a Bo1 match with the current players on the server on the current map
 - ``get5_scrim``: creates a Bo1 match with the using settings from ``configs/get5/scrim_template.cfg``

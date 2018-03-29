@@ -57,6 +57,7 @@ ConVar g_DamagePrintFormat;
 ConVar g_DemoNameFormatCvar;
 ConVar g_EventLogFormatCvar;
 ConVar g_FixedPauseTimeCvar;
+ConVar g_KickClientImmunity;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
@@ -257,6 +258,9 @@ public void OnPluginStart() {
   g_FixedPauseTimeCvar =
       CreateConVar("get5_fixed_pause_time", "0",
                    "If set to non-zero, this will be the fixed length of any pause");
+  g_KickClientImmunity =
+      CreateConVar("get5_kick_immunity", "1",
+                   "Whether or not admins with the changemap flag will be immune to kicks from \"get5_kick_when_no_match_loaded\". Set to \"0\" to disable");
   g_KickClientsWithNoMatchCvar =
       CreateConVar("get5_kick_when_no_match_loaded", "1",
                    "Whether the plugin kicks new clients when no match is loaded");
@@ -502,7 +506,9 @@ public void OnClientAuthorized(int client, const char[] auth) {
   }
 
   if (g_GameState == GameState_None && g_KickClientsWithNoMatchCvar.IntValue != 0) {
-    KickClient(client, "%t", "NoMatchSetupInfoMessage");
+    if (g_KickClientImmunity.IntValue == 0 || !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
+      KickClient(client, "%t", "NoMatchSetupInfoMessage");
+    }
   }
 
   if (g_GameState != GameState_None && g_CheckAuthsCvar.IntValue != 0) {
@@ -968,7 +974,7 @@ public Action Timer_NextMatchMap(Handle timer) {
 public void KickClientsOnEnd() {
   if (g_KickClientsWithNoMatchCvar.IntValue != 0) {
     for (int i = 1; i <= MaxClients; i++) {
-      if (IsPlayer(i)) {
+      if (IsPlayer(i) && !(g_KickClientImmunity.IntValue != 0 && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
         KickClient(i, "%t", "MatchFinishedInfoMessage");
       }
     }

@@ -49,6 +49,7 @@
 #pragma newdecls required
 
 /** ConVar handles **/
+ConVar g_AllowTechPause;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
@@ -72,6 +73,7 @@ ConVar g_StatsPathFormatCvar;
 ConVar g_StopCommandEnabledCvar;
 ConVar g_TeamTimeToKnifeDecisionCvar;
 ConVar g_TeamTimeToStartCvar;
+ConVar g_TechCaptainRestrict;
 ConVar g_TimeFormatCvar;
 ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
@@ -235,6 +237,8 @@ public void OnPluginStart() {
   LoadTranslations("common.phrases");
 
   /** ConVars **/
+  g_AllowTechPause =
+      CreateConVar("get5_allow_technical_pause", "1", "Whether or not Technical pauses are allowed");
   g_AutoLoadConfigCvar =
       CreateConVar("get5_autoload_config", "",
                    "Name of a match config file to automatically load when the server loads");
@@ -294,6 +298,8 @@ public void OnPluginStart() {
   g_TeamTimeToStartCvar = CreateConVar(
       "get5_time_to_start", "0",
       "Time (in seconds) teams have to ready up before forfeiting the match, 0=unlimited");
+  g_TechCaptainRestrict = CreateConVar("get5_captain_initiate_technical_pause", "0",
+                                       "Whether or not only captains can call for Technical pauses. Will fallback to all members of the team if the captain has disconnected.");
   g_TeamTimeToKnifeDecisionCvar = CreateConVar(
       "get5_time_to_make_knife_decision", "60",
       "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited");
@@ -329,6 +335,7 @@ public void OnPluginStart() {
   AddAliasedCommand("unready", Command_NotReady, "Marks the client as not ready");
   AddAliasedCommand("notready", Command_NotReady, "Marks the client as not ready");
   AddAliasedCommand("forceready", Command_ForceReadyClient, "Force marks clients team as ready");
+  AddAliasedCommand("tech", Command_TechPause, "Calls for a tech pause");
   AddAliasedCommand("pause", Command_Pause, "Pauses the game");
   AddAliasedCommand("unpause", Command_Unpause, "Unpauses the game");
   AddAliasedCommand("coach", Command_SmCoach, "Marks a client as a coach for their team");

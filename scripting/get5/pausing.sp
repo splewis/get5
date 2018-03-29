@@ -2,6 +2,37 @@ public bool Pauseable() {
   return g_GameState >= GameState_KnifeRound && g_PausingEnabledCvar.IntValue != 0;
 }
 
+public Action Command_TechPause(int client, int args) {
+  if (!g_AllowTechPause.BoolValue || !Pauseable() || IsPaused()) {
+    return Plugin_Handled;
+  }
+
+  if (g_TechCaptainRestrict.BoolValue) {
+    MatchTeam team = GetClientMatchTeam(client);
+
+    if (team == MatchTeam_TeamNone) {
+      if (client == 0) {
+        Pause();
+        Get5_MessageToAll("%t", "AdminForceTechPauseInfoMessage");
+      }
+
+      return Plugin_Handled;
+    }
+
+    int captain = GetTeamCaptain(team);
+
+    if (client != captain && IsClientConnected(captain)) {
+      Get5_Message(client, "%t", "CaptainOnlyTechPause");
+      return Plugin_Handled;
+    }
+  }
+
+  Pause();
+  Get5_MessageToAll("%t", "MatchTechPausedByTeamMessage", client);
+
+  return Plugin_Handled;
+}
+
 public Action Command_Pause(int client, int args) {
   if (!Pauseable() || IsPaused()) {
     return Plugin_Handled;

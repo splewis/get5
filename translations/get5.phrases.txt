@@ -89,6 +89,15 @@
         "#format"       "{1:N}"
         "en"            "{1} paused the match."
     }
+    "MatchTechPausedByTeamMessage"
+    {
+        "#format"       "{1:N}"
+        "en"            "{1} has called for a Technical pause."
+    }
+    "AdminForceTechPauseInfoMessage"
+    {
+        "en"            "An admin has called for a Technical pause."
+    }
     "PauseTimeExpiration10SecInfoMessage"
     {
         "#format"       "{1:s}"
@@ -363,5 +372,9 @@
     {
         "#format"       "{1:i}"
         "en"        "Veto commencing in {GREEN}{1} {NORMAL}seconds."
+    }
+    "CaptainOnlyTechPause"
+    {
+        "en"        "You must be the team captain to call for a Technical pause."
     }
 }

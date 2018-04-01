@@ -579,21 +579,22 @@ public void OnMapStart() {
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
     EnsurePausedWarmup();
+  }
+}
 
-  } else {
-    SetStartingTeams();
-    CheckAutoLoadConfig();
+public void OnConfigsExecuted() {
+  SetStartingTeams();
+  CheckAutoLoadConfig();
 
-    if (g_GameState == GameState_PostGame) {
-      ChangeState(GameState_Warmup);
-    }
+  if (g_GameState == GameState_PostGame) {
+    ChangeState(GameState_Warmup);
+  }
 
-    if (g_GameState == GameState_Warmup || g_GameState == GameState_Veto) {
-      ExecCfg(g_WarmupCfgCvar);
-      SetMatchTeamCvars();
-      ExecuteMatchConfigCvars();
-      EnsurePausedWarmup();
-    }
+  if (g_GameState == GameState_Warmup || g_GameState == GameState_Veto) {
+    ExecCfg(g_WarmupCfgCvar);
+    SetMatchTeamCvars();
+    ExecuteMatchConfigCvars();
+    EnsurePausedWarmup();
   }
 }
 

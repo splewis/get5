@@ -215,7 +215,7 @@ stock bool Pause(int pauseTime = 0, int csTeam = CS_TEAM_NONE) {
     if (csTeam == CS_TEAM_T) {
       GameRules_SetProp("m_bTerroristTimeOutActive", true);
       GameRules_SetPropFloat("m_flTerroristTimeOutRemaining", float(pauseTime));
-    } else {
+    } else if (csTeam == CS_TEAM_CT) {
       GameRules_SetProp("m_bCTTimeOutActive", true);
       GameRules_SetPropFloat("m_flCTTimeOutRemaining", float(pauseTime));
     }

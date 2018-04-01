@@ -89,6 +89,15 @@
         "#format"       "{1:N}"
         "en"            "{1} paused the match."
     }
+    "MatchTechPausedByTeamMessage"
+    {
+        "#format"       "{1:N}"
+        "en"            "{1} has called for a technical pause."
+    }
+    "AdminForceTechPauseInfoMessage"
+    {
+        "en"            "An admin has called for a technical pause."
+    }
     "PauseTimeExpiration10SecInfoMessage"
     {
         "#format"       "{1:s}"

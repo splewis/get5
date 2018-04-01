@@ -49,6 +49,7 @@
 #pragma newdecls required
 
 /** ConVar handles **/
+ConVar g_AllowTechPause;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
@@ -236,6 +237,8 @@ public void OnPluginStart() {
   LoadTranslations("common.phrases");
 
   /** ConVars **/
+  g_AllowTechPause =
+      CreateConVar("get5_allow_technical_pause", "1", "Whether or not technical pauses are allowed");
   g_AutoLoadConfigCvar =
       CreateConVar("get5_autoload_config", "",
                    "Name of a match config file to automatically load when the server loads");
@@ -333,6 +336,7 @@ public void OnPluginStart() {
   AddAliasedCommand("unready", Command_NotReady, "Marks the client as not ready");
   AddAliasedCommand("notready", Command_NotReady, "Marks the client as not ready");
   AddAliasedCommand("forceready", Command_ForceReadyClient, "Force marks clients team as ready");
+  AddAliasedCommand("tech", Command_TechPause, "Calls for a tech pause");
   AddAliasedCommand("pause", Command_Pause, "Pauses the game");
   AddAliasedCommand("unpause", Command_Unpause, "Unpauses the game");
   AddAliasedCommand("coach", Command_SmCoach, "Marks a client as a coach for their team");

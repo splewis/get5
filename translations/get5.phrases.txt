@@ -373,8 +373,4 @@
         "#format"       "{1:i}"
         "en"        "Veto commencing in {GREEN}{1} {NORMAL}seconds."
     }
-    "CaptainOnlyTechPause"
-    {
-        "en"        "You must be the team captain to call for a technical pause."
-    }
 }

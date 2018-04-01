@@ -160,7 +160,7 @@ public Action Command_Coach(int client, const char[] command, int argc) {
   }
 
   if (g_MovingClientToCoach[client] || g_CheckAuthsCvar.IntValue == 0) {
-    LogDebug("Command_Coach: %L, letting pass-through");
+    LogDebug("Command_Coach: %L, letting pass-through", client);
     return Plugin_Continue;
   }
 

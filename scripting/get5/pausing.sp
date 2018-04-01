@@ -7,6 +7,8 @@ public Action Command_TechPause(int client, int args) {
     return Plugin_Handled;
   }
 
+  g_InExtendedPause = true;
+
   if (client == 0) {
     Pause();
     Get5_MessageToAll("%t", "AdminForceTechPauseInfoMessage");
@@ -24,7 +26,11 @@ public Action Command_Pause(int client, int args) {
     return Plugin_Handled;
   }
 
+  g_InExtendedPause = false;
+
   if (client == 0) {
+    g_InExtendedPause = true;
+
     Pause();
     Get5_MessageToAll("%t", "AdminForcePauseInfoMessage");
     return Plugin_Handled;
@@ -135,7 +141,7 @@ public Action Command_Unpause(int client, int args) {
     return Plugin_Handled;
   }
 
-  if (g_FixedPauseTimeCvar.IntValue != 0) {
+  if (g_FixedPauseTimeCvar.IntValue != 0 && !g_InExtendedPause) {
     return Plugin_Handled;
   }
 

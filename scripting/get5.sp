@@ -152,6 +152,7 @@ int g_TeamSide[MatchTeam_Count];            // Current CS_TEAM_* side for the te
 int g_TeamStartingSide[MatchTeam_Count];
 bool g_TeamReadyForUnpause[MatchTeam_Count];
 bool g_TeamGivenStopCommand[MatchTeam_Count];
+bool g_InExtendedPause;
 int g_TeamPauseTimeUsed[MatchTeam_Count];
 int g_TeamPausesUsed[MatchTeam_Count];
 int g_ReadyTimeWaitingUsed[MatchTeam_Count];

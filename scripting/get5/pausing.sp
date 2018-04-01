@@ -7,24 +7,10 @@ public Action Command_TechPause(int client, int args) {
     return Plugin_Handled;
   }
 
-  if (g_TechCaptainRestrict.BoolValue) {
-    MatchTeam team = GetClientMatchTeam(client);
-
-    if (team == MatchTeam_TeamNone) {
-      if (client == 0) {
-        Pause();
-        Get5_MessageToAll("%t", "AdminForceTechPauseInfoMessage");
-      }
-
-      return Plugin_Handled;
-    }
-
-    int captain = GetTeamCaptain(team);
-
-    if (client != captain && IsClientConnected(captain)) {
-      Get5_Message(client, "%t", "CaptainOnlyTechPause");
-      return Plugin_Handled;
-    }
+  if (client == 0) {
+    Pause();
+    Get5_MessageToAll("%t", "AdminForceTechPauseInfoMessage");
+    return Plugin_Handled;
   }
 
   Pause();

@@ -92,11 +92,11 @@
     "MatchTechPausedByTeamMessage"
     {
         "#format"       "{1:N}"
-        "en"            "{1} has called for a Technical pause."
+        "en"            "{1} has called for a technical pause."
     }
     "AdminForceTechPauseInfoMessage"
     {
-        "en"            "An admin has called for a Technical pause."
+        "en"            "An admin has called for a technical pause."
     }
     "PauseTimeExpiration10SecInfoMessage"
     {
@@ -375,6 +375,6 @@
     }
     "CaptainOnlyTechPause"
     {
-        "en"        "You must be the team captain to call for a Technical pause."
+        "en"        "You must be the team captain to call for a technical pause."
     }
 }

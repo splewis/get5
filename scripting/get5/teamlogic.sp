@@ -375,6 +375,7 @@ public bool RemovePlayerFromTeams(const char[] auth) {
 
 public void LoadPlayerNames() {
   KeyValues namesKv = new KeyValues("Names");
+  int numNames = 0;
   LOOP_TEAMS(team) {
     char id[AUTH_LENGTH + 1];
     char name[MAX_NAME_LENGTH + 1];
@@ -384,16 +385,22 @@ public void LoadPlayerNames() {
       if (g_PlayerNames.GetString(id, name, sizeof(name)) && !StrEqual(name, "") &&
           !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
         namesKv.SetString(id, name);
+        numNames++;
       }
     }
   }
 
-  char nameFile[] = "get5_names.txt";
-  DeleteFile(nameFile);
-  namesKv.ExportToFile(nameFile);
-  delete namesKv;
+  if (numNames > 0) {
+    char nameFile[] = "get5_names.txt";
+    DeleteFile(nameFile);
+    if (namesKv.ExportToFile(nameFile)) {
+      ServerCommand("sv_load_forced_client_names_file %s", nameFile);
+    } else {
+      LogError("Failed to write names keyvalue file to %s", nameFile);
+    }
+  }
 
-  ServerCommand("sv_load_forced_client_names_file %s", nameFile);
+  delete namesKv;
 }
 
 public void SwapScrimTeamStatus(int client) {

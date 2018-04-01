@@ -69,6 +69,7 @@ Some client commands are available also for admin usage. For example, sm_pause a
 - ``!unready``: marks a client's team as not-ready
 - ``!pause``: requests a freezetime pause
 - ``!unpause``: requests an unpause, requires the other team to confirm
+- ``!tech``: requests a technical pause (technical pauses have no time limit or max number of uses)
 - ``!coach``: moves a client to coach for their team
 - ``!stay``: elects to stay after a knife round win
 - ``!swap``: elects to swap after a knife round win

@@ -49,7 +49,7 @@
 #pragma newdecls required
 
 /** ConVar handles **/
-ConVar g_AllowTechPause;
+ConVar g_AllowTechPauseCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
@@ -237,8 +237,8 @@ public void OnPluginStart() {
   LoadTranslations("common.phrases");
 
   /** ConVars **/
-  g_AllowTechPause =
-      CreateConVar("get5_allow_technical_pause", "1", "Whether or not technical pauses are allowed");
+  g_AllowTechPauseCvar = CreateConVar("get5_allow_technical_pause", "1",
+                                      "Whether or not technical pauses are allowed");
   g_AutoLoadConfigCvar =
       CreateConVar("get5_autoload_config", "",
                    "Name of a match config file to automatically load when the server loads");
@@ -261,9 +261,9 @@ public void OnPluginStart() {
   g_FixedPauseTimeCvar =
       CreateConVar("get5_fixed_pause_time", "0",
                    "If set to non-zero, this will be the fixed length of any pause");
-  g_KickClientImmunity =
-      CreateConVar("get5_kick_immunity", "1",
-                   "Whether or not admins with the changemap flag will be immune to kicks from \"get5_kick_when_no_match_loaded\". Set to \"0\" to disable");
+  g_KickClientImmunity = CreateConVar(
+      "get5_kick_immunity", "1",
+      "Whether or not admins with the changemap flag will be immune to kicks from \"get5_kick_when_no_match_loaded\". Set to \"0\" to disable");
   g_KickClientsWithNoMatchCvar =
       CreateConVar("get5_kick_when_no_match_loaded", "1",
                    "Whether the plugin kicks new clients when no match is loaded");
@@ -510,7 +510,8 @@ public void OnClientAuthorized(int client, const char[] auth) {
   }
 
   if (g_GameState == GameState_None && g_KickClientsWithNoMatchCvar.IntValue != 0) {
-    if (g_KickClientImmunity.IntValue == 0 || !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
+    if (g_KickClientImmunity.IntValue == 0 ||
+        !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
       KickClient(client, "%t", "NoMatchSetupInfoMessage");
     }
   }
@@ -979,7 +980,9 @@ public Action Timer_NextMatchMap(Handle timer) {
 public void KickClientsOnEnd() {
   if (g_KickClientsWithNoMatchCvar.IntValue != 0) {
     for (int i = 1; i <= MaxClients; i++) {
-      if (IsPlayer(i) && !(g_KickClientImmunity.IntValue != 0 && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
+      if (IsPlayer(i) &&
+          !(g_KickClientImmunity.IntValue != 0 &&
+            CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
         KickClient(i, "%t", "MatchFinishedInfoMessage");
       }
     }

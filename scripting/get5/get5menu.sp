@@ -16,13 +16,14 @@ public Action Command_Get5AdminMenu(int client, int args) {
                EnabledIf(g_InScrimMode && g_GameState != GameState_None));
   menu.AddItem("sm_swap", "Swap scrim sides",
                EnabledIf(g_InScrimMode && g_GameState == GameState_Warmup));
-  menu.Pagination = MENU_NO_PAGINATION;
 
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
   menu.AddItem("backup", "Load last backup file",
-               g_GameState == GameState_None || StrEqual(lastBackup, "") ? ITEMDRAW_DISABLED
-                                                                         : ITEMDRAW_DEFAULT);
+               EnabledIf(g_GameState != GameState_None && !StrEqual(lastBackup, "")));
+
+  menu.Pagination = MENU_NO_PAGINATION;
+  menu.ExitButton = true;
 
   menu.Display(client, MENU_TIME_FOREVER);
   return Plugin_Handled;

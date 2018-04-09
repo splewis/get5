@@ -42,6 +42,8 @@ char g_APIKey[128];
 ConVar g_APIURLCvar;
 char g_APIURL[128];
 
+#define LOGO_DIR "resource/flash/econ/tournaments/teams"
+
 // clang-format off
 public Plugin myinfo = {
   name = "Get5 Web API Integration",
@@ -152,9 +154,9 @@ public void Get5_OnSeriesInit() {
   g_MatchID = StringToInt(matchid);
 
   // Handle new logos.
-  if (!DirExists("resource/flash/econ/tournaments/teams")) {
-    if (!CreateDirectory("resource/flash/econ/tournaments/teams", 755)) {
-      LogError("Failed to create logo directory");
+  if (!DirExists(LOGO_DIR)) {
+    if (!CreateDirectory(LOGO_DIR, 755)) {
+      LogError("Failed to create logo directory: %s", LOGO_DIR);
     }
   }
 
@@ -172,7 +174,7 @@ public void CheckForLogo(const char[] logo) {
   }
 
   char logoPath[PLATFORM_MAX_PATH + 1];
-  Format(logoPath, sizeof(logoPath), "resource/flash/econ/tournaments/teams/%s.png", logo);
+  Format(logoPath, sizeof(logoPath), "%s/%s.png", LOGO_DIR, logo);
 
   // Try to fetch the file if we don't have it.
   if (!FileExists(logoPath)) {
@@ -203,7 +205,7 @@ public int LogoCallback(Handle request, bool failure, bool successful, EHTTPStat
   pack.ReadString(logo, sizeof(logo));
 
   char logoPath[PLATFORM_MAX_PATH + 1];
-  Format(logoPath, sizeof(logoPath), "resource/flash/econ/tournaments/teams/%s.png", logo);
+  Format(logoPath, sizeof(logoPath), "%s/%s.png", LOGO_DIR, logo);
 
   LogMessage("Saved logo for %s to %s", logo, logoPath);
   SteamWorks_WriteHTTPResponseBodyToFile(request, logoPath);

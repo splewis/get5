@@ -80,6 +80,9 @@ static void AddVersionInfo(File f) {
   f.WriteLine("Plugin version: %s", PLUGIN_VERSION);
   WriteCvarString(f, "sourcemod_version");
   WriteCvarString(f, "metamod_version");
+#if defined COMMIT_STRING
+  f.WriteLine("get5 git commit: %s", COMMIT_STRING);
+#endif
 }
 
 static void AddGlobalStateInfo(File f) {

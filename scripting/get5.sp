@@ -56,6 +56,7 @@ ConVar g_CheckAuthsCvar;
 ConVar g_DamagePrintCvar;
 ConVar g_DamagePrintFormat;
 ConVar g_DemoNameFormatCvar;
+ConVar g_EndMatchOnEveryoneLeavesCvar;
 ConVar g_EventLogFormatCvar;
 ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunity;
@@ -177,6 +178,9 @@ bool g_PendingSideSwap = false;
 
 Handle g_KnifeChangedCvars = INVALID_HANDLE;
 Handle g_MatchConfigChangedCvars = INVALID_HANDLE;
+
+/** Informational data **/
+int g_ClientsConnected = 0; // Counting on OnClientAuthorized and Event_PlayerDisconnect are fired only once for each client
 
 /** Forwards **/
 Handle g_OnBackupRestore = INVALID_HANDLE;
@@ -316,6 +320,9 @@ public void OnPluginStart() {
                    "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
+  g_EndMatchOnEveryoneLeavesCvar =
+      CreateConVar("get5_end_match_when_everyone_leaves", "0",
+                   "Whether the plugin finishes the current match when all clients disconnect");
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
@@ -406,6 +413,7 @@ public void OnPluginStart() {
   HookEvent("round_end", Event_RoundEnd);
   HookEvent("server_cvar", Event_CvarChanged, EventHookMode_Pre);
   HookEvent("player_connect_full", Event_PlayerConnectFull);
+  HookEvent("player_disconnect", Event_PlayerDisconnect);
   HookEvent("player_team", Event_OnPlayerTeam, EventHookMode_Pre);
   Stats_PluginStart();
   Stats_InitSeries();
@@ -523,6 +531,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
       KickClient(client, "%t", "YourAreNotAPlayerInfoMessage");
     } else {
       int teamCount = CountPlayersOnMatchTeam(team, client);
+      g_ClientsConnected++;
       if (teamCount >= g_PlayersPerTeam && g_CoachingEnabledCvar.IntValue == 0) {
         KickClient(client, "%t", "TeamIsFullInfoMessage");
       }
@@ -563,6 +572,18 @@ public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
   int client = GetClientOfUserId(event.GetInt("userid"));
   if (client > 0) {
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
+  }
+}
+
+public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
+  int client = GetClientOfUserId(event.GetInt("userid"));
+  g_ClientsConnected--;
+  EventLogger_PlayerDisconnect(client);
+
+  if (g_ClientsConnected <= 0) {
+    if (g_GameState >= GameState_KnifeRound && g_EndMatchOnEveryoneLeavesCvar.IntValue != 0) {
+      EndSeries();
+    }
   }
 }
 

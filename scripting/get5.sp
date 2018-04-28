@@ -161,6 +161,9 @@ char g_DefaultTeamColors[][] = {
     TEAM1_COLOR, TEAM2_COLOR, "{NORMAL}", "{NORMAL}",
 };
 
+bool g_ForceWinnerSignal = false;
+MatchTeam g_ForcedWinner = MatchTeam_TeamNone;
+
 /** Chat aliases loaded **/
 #define ALIAS_LENGTH 64
 #define COMMAND_LENGTH 64
@@ -575,6 +578,7 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
   int client = GetClientOfUserId(event.GetInt("userid"));
   EventLogger_PlayerDisconnect(client);
 
+  // TODO: consider adding a forfeit if a full team disconnects.
   if (g_EndMatchOnEmptyServerCvar.BoolValue && g_GameState >= GameState_Warmup &&
       g_GameState < GameState_PostGame && GetRealClientCount() == 0 && !g_MapChangePending) {
     g_TeamSeriesScores[MatchTeam_Team1] = 0;
@@ -683,6 +687,8 @@ static void CheckReadyWaitingTime(MatchTeam team) {
     int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed[team];
 
     if (timeLeft <= 0) {
+      g_ForceWinnerSignal = true;
+      g_ForcedWinner = (team == MatchTeam_Team1) ? MatchTeam_Team2 : MatchTeam_Team1;
       Get5_MessageToAll("%t", "TeamForfeitInfoMessage", g_FormattedTeamNames[team]);
       ChangeState(GameState_None);
       Stats_Forfeit(team);
@@ -1020,6 +1026,10 @@ public void EndSeries() {
     winningTeam = MatchTeam_Team1;
   } else if (t2maps > t1maps) {
     winningTeam = MatchTeam_Team2;
+  }
+
+  if (g_ForceWinnerSignal) {
+    winningTeam = g_ForcedWinner;
   }
 
   Stats_SeriesEnd(winningTeam);

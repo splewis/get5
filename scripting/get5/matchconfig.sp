@@ -26,6 +26,9 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     ClearArray(GetTeamAuths(team));
   }
 
+  g_ForceWinnerSignal = false;
+  g_ForcedWinner = MatchTeam_TeamNone;
+
   g_LastVetoTeam = MatchTeam_Team2;
   g_MapPoolList.Clear();
   g_MapsLeftInVetoPool.Clear();

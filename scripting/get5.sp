@@ -56,6 +56,7 @@ ConVar g_CheckAuthsCvar;
 ConVar g_DamagePrintCvar;
 ConVar g_DamagePrintFormat;
 ConVar g_DemoNameFormatCvar;
+ConVar g_EndMatchOnEmptyServerCvar;
 ConVar g_EventLogFormatCvar;
 ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunity;
@@ -256,6 +257,9 @@ public void OnPluginStart() {
                    "If set to 0, get5 will not force players to the correct team based on steamid");
   g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
                                       "Format for demo file names, use \"\" to disable");
+  g_EndMatchOnEmptyServerCvar = CreateConVar(
+      "get5_end_match_on_empty_server", "0",
+      "Whether to end the match if all players disconnect before ending. No winner is set if this happens.");
   g_EventLogFormatCvar =
       CreateConVar("get5_event_log_format", "",
                    "Path to use when writing match event logs, use \"\" to disable");
@@ -570,6 +574,13 @@ public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
 public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
   EventLogger_PlayerDisconnect(client);
+
+  if (g_EndMatchOnEmptyServerCvar.BoolValue && g_GameState >= GameState_Warmup &&
+      g_GameState < GameState_PostGame && GetRealClientCount() == 0 && !g_MapChangePending) {
+    g_TeamSeriesScores[MatchTeam_Team1] = 0;
+    g_TeamSeriesScores[MatchTeam_Team2] = 0;
+    EndSeries();
+  }
 }
 
 public void OnMapStart() {

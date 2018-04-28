@@ -217,3 +217,17 @@ public void EventLogger_BombExploded(int client, int site) {
   set_json_int(params, "site", site);
   EventLogger_EndEvent("bomb_exploded");
 }
+
+public void EventLogger_PlayerConnect(int client) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddPlayer(params, "client", client);
+  EventLogger_EndEvent("player_connect");
+}
+
+public void EventLogger_PlayerDisconnect(int client) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddPlayer(params, "client", client);
+  EventLogger_EndEvent("player_disconnect");
+}

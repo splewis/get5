@@ -561,9 +561,15 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
  */
 public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
+  EventLogger_PlayerConnect(client);
   if (client > 0) {
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
   }
+}
+
+public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
+  int client = GetClientOfUserId(event.GetInt("userid"));
+  EventLogger_PlayerDisconnect(client);
 }
 
 public void OnMapStart() {

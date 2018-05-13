@@ -58,6 +58,20 @@ The get5 releases contain 2 additional plugins, disabled by default. They are in
 ``get5_mysqlstats``: is an optional plugin for recording match stats. To use it, create a "get5" section in your ``addons/sourcemod/configs/databases.cfg`` file and use [these MySQL commands](misc/import_stats.sql) to create the tables. You can also set ``get5_mysql_force_matchid`` to a matchid to make get5 ignore the matchid in match configs, and use the one in the cvar. Otherwise, the matchid will be set based on matchid returned by MySQL from the SQL ``insert`` statement.
 
 
+## Quickstart
+
+To use get5, you generally create a [match config](https://github.com/splewis/get5#match-schema). In this file, you'll set up the match - what players, what map(s), etc.
+
+
+Once you create the match config anywhere under the server's ``csgo`` directory, run ``get5_loadmatch <file>`` in the server console. Everything will happen automatically after that.
+
+If you don't want to create a match config, you can set ``get5_check_auths 0`` in ``cfg/sourcemod/get5.cfg`` and then run the ``get5_creatematch`` command once all players are in the server.
+
+Alternatively, you can also up your server for [scrims](https://github.com/splewis/get5/wiki/Using-get5-for-scrims) by creating a scrim template specifying your team and run ``get5_scrim`` in console.
+
+The ``!get5`` command in-game will let you run the ``get5_creatematch`` and ``get5_scrim`` via a simple menu.
+
+
 ## Commands
 
 Generally admin commands will have a ``get5_`` prefix and must be used in console. Commands intended for general player usage are created with ``sm_`` prefixes, which means sourcemod automtically registers a ``!`` chat version of the command. (For example: sm_ready in console is equivalent to !ready in chat)
@@ -97,7 +111,7 @@ Some client commands are available also for admin usage. For example, sm_pause a
 
 ## Match Schema
 
-See the example config in [Valve KeyValues format](configs/get5/example_match.cfg) or [JSON format](configs/get5/example_match.json) to learn how to format the configs. Both files contain equivalent match data.
+See the example config in [Valve KeyValues format](configs/get5/example_match.cfg) or [JSON format](configs/get5/example_match.json) to learn how to format the configs. Both example files contain equivalent match data.
 
 **Note:** to use a JSON match file, you must install the [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604) sourcemod extension on the server.
 

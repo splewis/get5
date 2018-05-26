@@ -282,7 +282,7 @@
     }
     "MapDecidedInfoMessage"
     {
-        "en"            "The map(s) are decided:"
+        "en"            "The maps have been decided:"
     }
     "MapIsInfoMessage"
     {

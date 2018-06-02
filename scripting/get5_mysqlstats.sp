@@ -323,7 +323,7 @@ public int SQLErrorCheckCallback(Handle owner, Handle hndl, const char[] error, 
 }
 
 public void Get5_OnRoundStatsUpdated() {
-  if (Get5_GetGameState() == GameState_Live && !g_DisableStats) {
+  if (Get5_GetGameState() == Get5State_Live && !g_DisableStats) {
     UpdateRoundStats(MapNumber());
   }
 }

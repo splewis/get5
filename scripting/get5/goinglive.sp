@@ -31,7 +31,7 @@ public Action StartGoingLive(Handle timer) {
 }
 
 public Action MatchLive(Handle timer) {
-  if (g_GameState == GameState_None) {
+  if (g_GameState == Get5State_None) {
     return Plugin_Handled;
   }
 

@@ -357,7 +357,7 @@ public void Get5_OnSeriesResult(MatchTeam seriesWinner, int team1MapScore, int t
 }
 
 public void Get5_OnRoundStatsUpdated() {
-  if (Get5_GetGameState() == GameState_Live) {
+  if (Get5_GetGameState() == Get5State_Live) {
     UpdateRoundStats(MapNumber());
   }
 }

@@ -4,8 +4,8 @@ public Action Command_Test(int args) {
 }
 
 public void Get5_Test() {
-  if (g_GameState != GameState_None) {
-    g_GameState = GameState_None;
+  if (g_GameState != Get5State_None) {
+    g_GameState = Get5State_None;
   }
   char path[PLATFORM_MAX_PATH];
   BuildPath(Path_SM, path, sizeof(path), "configs/get5/example_match.cfg");
@@ -14,7 +14,7 @@ public void Get5_Test() {
   Utils_Test();
   KV_Test();
 
-  g_GameState = GameState_None;
+  g_GameState = Get5State_None;
 }
 
 static void Utils_Test() {

@@ -6,21 +6,21 @@ public Action Command_Get5AdminMenu(int client, int args) {
   menu.SetTitle("Get5 Admin Menu");
 
   // Add actual choices
-  menu.AddItem("get5_scrim", "Create a scrim", EnabledIf(g_GameState == GameState_None));
+  menu.AddItem("get5_scrim", "Create a scrim", EnabledIf(g_GameState == Get5State_None));
   menu.AddItem("get5_creatematch", "Create match with current players",
-               EnabledIf(g_GameState == GameState_None));
+               EnabledIf(g_GameState == Get5State_None));
   menu.AddItem("get5_forceready", "Force-ready all players",
-               EnabledIf(g_GameState == GameState_Warmup || g_GameState == GameState_PreVeto));
-  menu.AddItem("get5_endmatch", "End match", EnabledIf(g_GameState != GameState_None));
+               EnabledIf(g_GameState == Get5State_Warmup || g_GameState == Get5State_PreVeto));
+  menu.AddItem("get5_endmatch", "End match", EnabledIf(g_GameState != Get5State_None));
   menu.AddItem("ringer", "Add scrim ringer",
-               EnabledIf(g_InScrimMode && g_GameState != GameState_None));
+               EnabledIf(g_InScrimMode && g_GameState != Get5State_None));
   menu.AddItem("sm_swap", "Swap scrim sides",
-               EnabledIf(g_InScrimMode && g_GameState == GameState_Warmup));
+               EnabledIf(g_InScrimMode && g_GameState == Get5State_Warmup));
 
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
   menu.AddItem("backup", "Load last backup file",
-               EnabledIf(g_GameState != GameState_None && !StrEqual(lastBackup, "")));
+               EnabledIf(g_GameState != Get5State_None && !StrEqual(lastBackup, "")));
 
   menu.Pagination = MENU_NO_PAGINATION;
   menu.ExitButton = true;

@@ -1,5 +1,5 @@
 public bool Pauseable() {
-  return g_GameState >= GameState_KnifeRound && g_PausingEnabledCvar.IntValue != 0;
+  return g_GameState >= Get5State_KnifeRound && g_PausingEnabledCvar.IntValue != 0;
 }
 
 public Action Command_TechPause(int client, int args) {

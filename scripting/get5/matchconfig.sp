@@ -11,7 +11,7 @@
 #define CONFIG_SIDETYPE_DEFAULT "standard"
 
 stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
-  if (g_GameState != GameState_None && !restoreBackup) {
+  if (g_GameState != Get5State_None && !restoreBackup) {
     return false;
   }
 
@@ -93,7 +93,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     }
 
     g_MapPoolList.GetString(GetMapNumber(), mapName, sizeof(mapName));
-    ChangeState(GameState_Warmup);
+    ChangeState(Get5State_Warmup);
 
     char currentMap[PLATFORM_MAX_PATH];
     GetCurrentMap(currentMap, sizeof(currentMap));
@@ -101,7 +101,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
       ChangeMap(mapName);
     }
   } else {
-    ChangeState(GameState_PreVeto);
+    ChangeState(Get5State_PreVeto);
   }
 
   if (!restoreBackup) {
@@ -705,7 +705,7 @@ public void ExecuteMatchConfigCvars() {
 }
 
 public Action Command_LoadTeam(int client, int args) {
-  if (g_GameState == GameState_None) {
+  if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
     return Plugin_Handled;
   }
@@ -743,7 +743,7 @@ public Action Command_LoadTeam(int client, int args) {
 }
 
 public Action Command_AddPlayer(int client, int args) {
-  if (g_GameState == GameState_None) {
+  if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
     return Plugin_Handled;
   }
@@ -788,7 +788,7 @@ public Action Command_AddPlayer(int client, int args) {
 }
 
 public Action Command_RemovePlayer(int client, int args) {
-  if (g_GameState == GameState_None) {
+  if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
     return Plugin_Handled;
   }
@@ -814,7 +814,7 @@ public Action Command_RemovePlayer(int client, int args) {
 }
 
 public Action Command_CreateMatch(int client, int args) {
-  if (g_GameState != GameState_None) {
+  if (g_GameState != Get5State_None) {
     ReplyToCommand(client, "Cannot create a match when a match is already loaded");
     return Plugin_Handled;
   }
@@ -878,7 +878,7 @@ public Action Command_CreateMatch(int client, int args) {
 }
 
 public Action Command_CreateScrim(int client, int args) {
-  if (g_GameState != GameState_None) {
+  if (g_GameState != Get5State_None) {
     ReplyToCommand(client, "Cannot create a match when a match is already loaded");
     return Plugin_Handled;
   }
@@ -962,7 +962,7 @@ public Action Command_CreateScrim(int client, int args) {
 }
 
 public Action Command_Ringer(int client, int args) {
-  if (g_GameState == GameState_None || !g_InScrimMode) {
+  if (g_GameState == Get5State_None || !g_InScrimMode) {
     ReplyToCommand(client, "This command can only be used in scrim mode");
     return Plugin_Handled;
   }

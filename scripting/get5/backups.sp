@@ -60,15 +60,15 @@ public void WriteBackStructure(const char[] path) {
   char mapName[PLATFORM_MAX_PATH];
   GetCurrentMap(mapName, sizeof(mapName));
 
-  if (g_GameState == GameState_Veto) {
-    kv.SetNum("gamestate", view_as<int>(GameState_PreVeto));
-  } else if (g_GameState == GameState_Warmup ||
-             g_GameState == GameState_WaitingForKnifeRoundDecision ||
-             g_GameState == GameState_KnifeRound || g_GameState == GameState_GoingLive ||
-             g_GameState == GameState_PostGame) {
-    kv.SetNum("gamestate", view_as<int>(GameState_Warmup));
-  } else if (g_GameState == GameState_Live) {
-    kv.SetNum("gamestate", view_as<int>(GameState_Live));
+  if (g_GameState == Get5State_Veto) {
+    kv.SetNum("gamestate", view_as<int>(Get5State_PreVeto));
+  } else if (g_GameState == Get5State_Warmup ||
+             g_GameState == Get5State_WaitingForKnifeRoundDecision ||
+             g_GameState == Get5State_KnifeRound || g_GameState == Get5State_GoingLive ||
+             g_GameState == Get5State_PostGame) {
+    kv.SetNum("gamestate", view_as<int>(Get5State_Warmup));
+  } else if (g_GameState == Get5State_Live) {
+    kv.SetNum("gamestate", view_as<int>(Get5State_Live));
   }
 
   kv.SetNum("team1_side", g_TeamSide[MatchTeam_Team1]);
@@ -110,7 +110,7 @@ public void WriteBackStructure(const char[] path) {
   // Write valve's backup format into the file.
   char lastBackup[PLATFORM_MAX_PATH];
   ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
-  if (g_GameState == GameState_Live && lastBackupCvar != null) {
+  if (g_GameState == Get5State_Live && lastBackupCvar != null) {
     lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
     KeyValues valveBackup = new KeyValues("valve_backup");
     if (valveBackup.ImportFromFile(lastBackup)) {
@@ -151,7 +151,7 @@ public bool RestoreFromBackup(const char[] path) {
   }
 
   kv.GetString("matchid", g_MatchID, sizeof(g_MatchID));
-  g_GameState = view_as<GameState>(kv.GetNum("gamestate"));
+  g_GameState = view_as<Get5State>(kv.GetNum("gamestate"));
 
   g_TeamSide[MatchTeam_Team1] = kv.GetNum("team1_side");
   g_TeamSide[MatchTeam_Team2] = kv.GetNum("team2_side");
@@ -163,7 +163,7 @@ public bool RestoreFromBackup(const char[] path) {
   g_TeamSeriesScores[MatchTeam_Team2] = kv.GetNum("team2_series_score");
 
   char mapName[PLATFORM_MAX_PATH];
-  if (g_GameState > GameState_Veto) {
+  if (g_GameState > Get5State_Veto) {
     if (kv.JumpToKey("maps")) {
       g_MapsToPlay.Clear();
       g_MapSides.Clear();
@@ -221,7 +221,7 @@ public bool RestoreFromBackup(const char[] path) {
 
   if (!StrEqual(currentMap, currentSeriesMap)) {
     ChangeMap(currentSeriesMap, 1.0);
-    g_WaitingForRoundBackup = (g_GameState >= GameState_Live);
+    g_WaitingForRoundBackup = (g_GameState >= Get5State_Live);
 
   } else {
     RestoreGet5Backup();
@@ -249,7 +249,7 @@ public void RestoreGet5Backup() {
     ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
     Pause();
     CreateTimer(0.1, Timer_FinishBackup);
-    ChangeState(GameState_Live);
+    ChangeState(Get5State_Live);
   } else {
     SetStartingTeams();
     SetMatchTeamCvars();
@@ -259,7 +259,7 @@ public void RestoreGet5Backup() {
         CheckClientTeam(i);
     }
 
-    if (g_GameState == GameState_Live) {
+    if (g_GameState == Get5State_Live) {
       EndWarmup();
       EndWarmup();
       ServerCommand("mp_restartgame 5");

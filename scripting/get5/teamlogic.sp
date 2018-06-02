@@ -1,5 +1,5 @@
 public Action Command_JoinGame(int client, const char[] command, int argc) {
-  if (g_GameState == GameState_None) {
+  if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
 
@@ -31,7 +31,7 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
     return Plugin_Stop;
 
   // Don't do anything if not live/not in startup phase.
-  if (g_GameState == GameState_None) {
+  if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
 
@@ -130,7 +130,7 @@ public void MoveClientToCoach(int client) {
 }
 
 public Action Command_SmCoach(int client, int args) {
-  if (g_GameState == GameState_None) {
+  if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
 
@@ -143,7 +143,7 @@ public Action Command_SmCoach(int client, int args) {
 }
 
 public Action Command_Coach(int client, const char[] command, int argc) {
-  if (g_GameState == GameState_None) {
+  if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
 
@@ -206,7 +206,7 @@ public MatchTeam CSTeamToMatchTeam(int csTeam) {
 }
 
 public MatchTeam GetAuthMatchTeam(const char[] steam64) {
-  if (g_GameState == GameState_None) {
+  if (g_GameState == Get5State_None) {
     return MatchTeam_TeamNone;
   }
 

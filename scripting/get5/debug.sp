@@ -139,6 +139,7 @@ static void AddGlobalStateInfo(File f) {
 
 static void AddInterestingCvars(File f) {
   f.WriteLine("Interesting cvars:");
+  WriteCvarString(f, "get5_allow_technical_pause");
   WriteCvarString(f, "get5_autoload_config");
   WriteCvarString(f, "get5_check_auths");
   WriteCvarString(f, "get5_fixed_pause_time");

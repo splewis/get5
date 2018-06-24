@@ -81,7 +81,8 @@ public Action Command_Avaliable(int client, int args) {
   Handle json = json_object();
 
   set_json_int(json, "gamestate", view_as<int>(Get5_GetGameState()));
-  set_json_int(json, "avaliable", 1);
+  set_json_int(json, "avaliable", 1); // legacy version since I'm bad at spelling
+  set_json_int(json, "available", 1);
   set_json_string(json, "plugin_version", versionString);
 
   char buffer[128];

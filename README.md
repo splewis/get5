@@ -53,6 +53,8 @@ The get5 releases contain 2 additional plugins, disabled by default. They are in
 
 ``get5_apistats`` is for integration with the [get5 web panel](https://github.com/splewis/get5-web). You don't need it unless you're using the web panel. Note you need the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) extension for this plugin.
 
+**NOTE**: The HTTP API requests this plugin sends are **not** part of a public API. They are the communication between this plugin and the [get5-web](https://github.com/splewis/get5-web) project; you should not rely on the API being stable. If you're a developer writing your own server listening to get5_apistats, consider forking the get5_apistats plugin and renaming it to something else.
+
 ##### get5_mysqlstats
 
 ``get5_mysqlstats``: is an optional plugin for recording match stats. To use it, create a "get5" section in your ``addons/sourcemod/configs/databases.cfg`` file and use [these MySQL commands](misc/import_stats.sql) to create the tables. You can also set ``get5_mysql_force_matchid`` to a matchid to make get5 ignore the matchid in match configs, and use the one in the cvar. Otherwise, the matchid will be set based on matchid returned by MySQL from the SQL ``insert`` statement.
@@ -159,14 +161,14 @@ You should either set these in the above file, or in the match config's ``cvars`
 
 Get5 can be interacted with in several ways. At a glance:
 
-1. You can write another sourcemod plugin that uses the [get5 natives and forwards](scripting/include/get5.inc). This is exactly what the [get5_apistats](scripting/get5_apistats.sp) and [get5_mysqlstats](get5_mysqlstats.sp) plugins do.
+1. You can write another sourcemod plugin that uses the [get5 natives and forwards](scripting/include/get5.inc). This is exactly what the [get5_apistats](scripting/get5_apistats.sp) and [get5_mysqlstats](get5_mysqlstats.sp) plugins do. Considering starting from those plugin and making any changes you want (forking the get5 plugin itself is strongly discouraged; but just making another plugin using the get5 plugin api like get5_apistats does is encouraged).
 
 1. You can read [event logs](https://github.com/splewis/get5/wiki/Event-logs) from a file on disk (set by ``get5_event_log_format``), through a RCON
-connection to the server console since they are outputted there, or through another sourcemod plugin (see #1).
+connection to the server console since they are output there, or through another sourcemod plugin (see #1).
 
-1. You can read the [stats](https://github.com/splewis/get5/wiki/Stats-system) get5 collects from a file on disk (set by ``get5_stats_path_format``), or through another sourcemod (see #1).
+1. You can read the [stats](https://github.com/splewis/get5/wiki/Stats-system) get5 collects from a file on disk (set by ``get5_stats_path_format``), or through another sourcemod plugin (see #1).
 
-1. You can execute the ``get5_loadmatch`` command or ``get5_loadmatch_url`` commands via another plugin or via a RCON connection to begin matches. Of course, you could execute any get5 command as well.
+1. You can execute the ``get5_loadmatch`` command or ``get5_loadmatch_url`` commands via another plugin or via a RCON connection to begin matches. Of course, you could execute any get5 command you want as well.
 
 ## Other things
 

@@ -80,6 +80,14 @@
     {
         "chi"            "{1}暂停了比赛。"
     }
+    "MatchTechPausedByTeamMessage"
+    {
+        "chi"            "{1}要求发起一个技术暂停。"
+    }
+    "AdminForceTechPauseInfoMessage"
+    {
+        "chi"            "一位管理员发起了技术暂停。"
+    }
     "PauseTimeExpiration10SecInfoMessage"
     {
         "chi"            "{1}的暂停时间即将耗尽，将在10秒后解除暂停。"
@@ -278,7 +286,7 @@
     }
     "MatchPoweredBy"
     {
-        "chi"        "Powered by {YELLOW}Get5"
+        "chi"        "由{YELLOW}Get5{NORMAL}强力驱动"
     }
     "MapVetoPickMenuText"
     {
@@ -302,7 +310,6 @@
     }
     "MapVetoSidePickConfirmMenuText"
     {
-
         "chi"        "你确定想开始{1}："
     }
     "ConfirmPositiveOptionText"

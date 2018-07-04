@@ -413,6 +413,7 @@ public void OnPluginStart() {
   HookEvent("round_end", Event_RoundEnd);
   HookEvent("server_cvar", Event_CvarChanged, EventHookMode_Pre);
   HookEvent("player_connect_full", Event_PlayerConnectFull);
+  HookEvent("player_disconnect", Event_PlayerDisconnect);
   HookEvent("player_team", Event_OnPlayerTeam, EventHookMode_Pre);
   Stats_PluginStart();
   Stats_InitSeries();

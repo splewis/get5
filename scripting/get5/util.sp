@@ -248,12 +248,12 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
   char flagCvarName[MAX_CVAR_LENGTH];
   char logoCvarName[MAX_CVAR_LENGTH];
   char textCvarName[MAX_CVAR_LENGTH];
-  char scoreCvarNAme[MAX_CVAR_LENGTH];
+  char scoreCvarName[MAX_CVAR_LENGTH];
   Format(teamCvarName, sizeof(teamCvarName), "mp_teamname_%d", team_int);
   Format(flagCvarName, sizeof(flagCvarName), "mp_teamflag_%d", team_int);
   Format(logoCvarName, sizeof(logoCvarName), "mp_teamlogo_%d", team_int);
   Format(textCvarName, sizeof(textCvarName), "mp_teammatchstat_%d", team_int);
-  Format(scoreCvarNAme, sizeof(scoreCvarNAme), "mp_teamscore_%d", team_int);
+  Format(scoreCvarName, sizeof(scoreCvarName), "mp_teamscore_%d", team_int);
 
   // Add Ready/Not ready tags to team name if in warmup.
   char taggedName[MAX_CVAR_LENGTH];
@@ -275,7 +275,7 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
   SetConVarStringSafe(textCvarName, matchstat);
 
   if (g_MapsToWin > 1) {
-    SetConVarIntSafe(scoreCvarNAme, series_score);
+    SetConVarIntSafe(scoreCvarName, series_score);
   }
 }
 

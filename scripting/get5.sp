@@ -968,7 +968,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       g_MapChangePending = true;
       Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap);
       ChangeState(Get5State_PostGame);
-      CreateTimer(minDelay, Timer_NextMatchMap);
+      CreateTimer(0.1, Timer_NextMatchMap);
     }
   }
 
@@ -1005,7 +1005,7 @@ public Action Timer_NextMatchMap(Handle timer) {
   char map[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(index, map, sizeof(map));
 
-  if (g_DisplayGotvVeto.BoolValue) {
+  if (index > 1 || (g_DisplayGotvVeto.BoolValue && index == 1)) {
     float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
     ChangeMap(map, minDelay);
   } else {

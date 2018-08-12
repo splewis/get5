@@ -262,7 +262,7 @@ public void OnPluginStart() {
   g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
                                       "Format for demo file names, use \"\" to disable");
   g_DisplayGotvVeto = CreateConVar("get5_display_gotv_veto", "0",
-                                      "Whether to wait for map vetos to be printed to GOTV before changing map, use \"\" to disable");
+                                      "Whether to wait for map vetos to be printed to GOTV before changing map");
   g_EndMatchOnEmptyServerCvar = CreateConVar(
       "get5_end_match_on_empty_server", "0",
       "Whether to end the match if all players disconnect before ending. No winner is set if this happens.");

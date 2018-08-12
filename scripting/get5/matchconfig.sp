@@ -142,11 +142,6 @@ public bool LoadMatchFile(const char[] config) {
   Call_Finish();
 
   if (StrContains(config, "json") >= 0) {
-    if (!LibraryExists("jansson")) {
-      MatchConfigFail("Cannot load a json config without the smjansson extension loaded");
-      return false;
-    }
-
     char configFile[PLATFORM_MAX_PATH];
     strcopy(configFile, sizeof(configFile), config);
     if (!FileExists(configFile)) {

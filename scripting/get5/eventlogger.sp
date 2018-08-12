@@ -1,6 +1,4 @@
 #define EventLogger_StartEvent() \
-  if (!LibraryExists("jansson")) \
-    return;                      \
   JSON_Object params = new JSON_Object()
 
 #define EventLogger_EndEvent(%1) EventLogger_LogEvent(%1, params)

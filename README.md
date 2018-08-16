@@ -144,7 +144,7 @@ Only ``name`` and ``players`` are required.
 - ``tag``: team tag (or short name), this replaces client "clan tags"
 - ``flag``: team flag (2 letter country code, wraps ``mp_teamflag_1``)
 - ``logo`` team logo (wraps ``mp_teamlogo_1``)
-- ``players``: list of Steam id's for users on the team (not used if ``get5_check_auths`` is set to 0)
+- ``players``: list of Steam id's for users on the team (not used if ``get5_check_auths`` is set to 0). You can also force player names in here; in JSON you may use either an array of steamids or a dictionary of steamids to names.
 - ``series_score``: current score in the series, this can be used to give a team a map advantage or used as a manual backup method, defaults to 0
 - ``matchtext``: wraps ``mp_teammatchstat_1``, you probably don't want to set this, in BoX series mp_teamscore cvars are automatically set and take the place of the mp_teammatchstat cvars
 

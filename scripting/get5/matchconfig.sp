@@ -567,7 +567,7 @@ static void LoadTeamDataJson(JSON_Object json, MatchTeam matchTeam) {
       LogError("Cannot load team config from file \"%s\", fromfile");
     } else {
       LoadTeamDataJson(fromfileJson, matchTeam);
-      fromfileJson.Close();
+      fromfileJson.Cleanup();
       delete fromfileJson;
     }
   }

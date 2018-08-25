@@ -1288,14 +1288,10 @@ public Action Command_Status(int client, int args) {
     JSON_Object team1 = new JSON_Object();
     AddTeamInfo(team1, MatchTeam_Team1);
     json.SetObject("team1", team1);
-    team1.Cleanup();
-    delete team1;
 
     JSON_Object team2 = new JSON_Object();
     AddTeamInfo(team2, MatchTeam_Team2);
     json.SetObject("team2", team2);
-    team2.Cleanup();
-    delete team2;
   }
 
   if (g_GameState > Get5State_Veto) {
@@ -1311,8 +1307,6 @@ public Action Command_Status(int client, int args) {
       maps.SetString(mapKey, mapName);
     }
     json.SetObject("maps", maps);
-    maps.Cleanup();
-    delete maps;
   }
 
   char buffer[4096];

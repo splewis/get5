@@ -56,6 +56,7 @@ ConVar g_CheckAuthsCvar;
 ConVar g_DamagePrintCvar;
 ConVar g_DamagePrintFormat;
 ConVar g_DemoNameFormatCvar;
+ConVar g_DisplayGotvVeto;
 ConVar g_EndMatchOnEmptyServerCvar;
 ConVar g_EventLogFormatCvar;
 ConVar g_FixedPauseTimeCvar;
@@ -260,6 +261,8 @@ public void OnPluginStart() {
                    "If set to 0, get5 will not force players to the correct team based on steamid");
   g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
                                       "Format for demo file names, use \"\" to disable");
+  g_DisplayGotvVeto = CreateConVar("get5_display_gotv_veto", "0",
+                                      "Whether to wait for map vetos to be printed to GOTV before changing map");
   g_EndMatchOnEmptyServerCvar = CreateConVar(
       "get5_end_match_on_empty_server", "0",
       "Whether to end the match if all players disconnect before ending. No winner is set if this happens.");
@@ -495,6 +498,8 @@ public Action Timer_InfoMessages(Handle timer) {
       }
     }
     MissingPlayerInfoMessage();
+  } else if (g_DisplayGotvVeto.BoolValue && g_GameState == Get5State_Warmup && g_MapChangePending) {
+    Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
   }
 
   // Handle waiting for knife decision
@@ -999,7 +1004,13 @@ public Action Timer_NextMatchMap(Handle timer) {
   int index = GetMapNumber();
   char map[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(index, map, sizeof(map));
-  ChangeMap(map);
+
+  if (!g_SkipVeto && g_DisplayGotvVeto.BoolValue && index == 0) {
+    float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
+    ChangeMap(map, minDelay);
+  } else {
+    ChangeMap(map);
+  }
 }
 
 public void KickClientsOnEnd() {

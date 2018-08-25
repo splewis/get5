@@ -38,6 +38,10 @@
     {
         "en"            "The map will change once the GOTV broadcast has ended."
     }
+    "WaitingForGOTVVetoInfoMessage"
+    {
+        "en"            "The map will change once the GOTV broadcast has been displayed the map vetos."
+    }
     "NoMatchSetupInfoMessage"
     {
         "en"			"There is no match setup"

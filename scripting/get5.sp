@@ -1005,7 +1005,7 @@ public Action Timer_NextMatchMap(Handle timer) {
   char map[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(index, map, sizeof(map));
 
-  if (g_DisplayGotvVeto.BoolValue && index == 0) {
+  if (!g_SkipVeto && g_DisplayGotvVeto.BoolValue && index == 0) {
     float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
     ChangeMap(map, minDelay);
   } else {

@@ -56,6 +56,7 @@ ConVar g_CheckAuthsCvar;
 ConVar g_DamagePrintCvar;
 ConVar g_DamagePrintFormat;
 ConVar g_DemoNameFormatCvar;
+ConVar g_DisplayGotvVeto;
 ConVar g_EndMatchOnEmptyServerCvar;
 ConVar g_EventLogFormatCvar;
 ConVar g_FixedPauseTimeCvar;
@@ -260,6 +261,9 @@ public void OnPluginStart() {
                    "If set to 0, get5 will not force players to the correct team based on steamid");
   g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
                                       "Format for demo file names, use \"\" to disable");
+  g_DisplayGotvVeto =
+      CreateConVar("get5_display_gotv_veto", "0",
+                   "Whether to wait for map vetos to be printed to GOTV before changing map");
   g_EndMatchOnEmptyServerCvar = CreateConVar(
       "get5_end_match_on_empty_server", "0",
       "Whether to end the match if all players disconnect before ending. No winner is set if this happens.");
@@ -495,6 +499,8 @@ public Action Timer_InfoMessages(Handle timer) {
       }
     }
     MissingPlayerInfoMessage();
+  } else if (g_DisplayGotvVeto.BoolValue && g_GameState == Get5State_Warmup && g_MapChangePending) {
+    Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
   }
 
   // Handle waiting for knife decision
@@ -518,20 +524,20 @@ public void OnClientAuthorized(int client, const char[] auth) {
     return;
   }
 
-  if (g_GameState == Get5State_None && g_KickClientsWithNoMatchCvar.IntValue != 0) {
-    if (g_KickClientImmunity.IntValue == 0 ||
+  if (g_GameState == Get5State_None && g_KickClientsWithNoMatchCvar.BoolValue) {
+    if (!g_KickClientImmunity.BoolValue ||
         !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
       KickClient(client, "%t", "NoMatchSetupInfoMessage");
     }
   }
 
-  if (g_GameState != Get5State_None && g_CheckAuthsCvar.IntValue != 0) {
+  if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue) {
     MatchTeam team = GetClientMatchTeam(client);
     if (team == MatchTeam_TeamNone) {
       KickClient(client, "%t", "YourAreNotAPlayerInfoMessage");
     } else {
       int teamCount = CountPlayersOnMatchTeam(team, client);
-      if (teamCount >= g_PlayersPerTeam && g_CoachingEnabledCvar.IntValue == 0) {
+      if (teamCount >= g_PlayersPerTeam && !g_CoachingEnabledCvar.BoolValue) {
         KickClient(client, "%t", "TeamIsFullInfoMessage");
       }
     }
@@ -825,7 +831,7 @@ public Action Command_DumpStats(int client, int args) {
 }
 
 public Action Command_Stop(int client, int args) {
-  if (g_StopCommandEnabledCvar.IntValue == 0) {
+  if (!g_StopCommandEnabledCvar.BoolValue) {
     return Plugin_Handled;
   }
 
@@ -999,14 +1005,20 @@ public Action Timer_NextMatchMap(Handle timer) {
   int index = GetMapNumber();
   char map[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(index, map, sizeof(map));
-  ChangeMap(map);
+
+  if (!g_SkipVeto && g_DisplayGotvVeto.BoolValue && index == 0) {
+    float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
+    ChangeMap(map, minDelay);
+  } else {
+    ChangeMap(map);
+  }
 }
 
 public void KickClientsOnEnd() {
-  if (g_KickClientsWithNoMatchCvar.IntValue != 0) {
+  if (g_KickClientsWithNoMatchCvar.BoolValue) {
     for (int i = 1; i <= MaxClients; i++) {
       if (IsPlayer(i) &&
-          !(g_KickClientImmunity.IntValue != 0 &&
+          !(g_KickClientImmunity.BoolValue &&
             CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
         KickClient(i, "%t", "MatchFinishedInfoMessage");
       }
@@ -1071,7 +1083,7 @@ public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
 }
 
 public void WriteBackup() {
-  if (g_BackupSystemEnabledCvar.IntValue == 0) {
+  if (!g_BackupSystemEnabledCvar.BoolValue) {
     return;
   }
 
@@ -1184,7 +1196,7 @@ public void SwapSides() {
   g_TeamSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team2];
   g_TeamSide[MatchTeam_Team2] = tmp;
 
-  if (g_ResetPausesEachHalfCvar.IntValue != 0) {
+  if (g_ResetPausesEachHalfCvar.BoolValue) {
     LOOP_TEAMS(team) {
       g_TeamPauseTimeUsed[team] = 0;
       g_TeamPausesUsed[team] = 0;

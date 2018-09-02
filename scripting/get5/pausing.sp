@@ -1,9 +1,9 @@
 public bool Pauseable() {
-  return g_GameState >= Get5State_KnifeRound && g_PausingEnabledCvar.IntValue != 0;
+  return g_GameState >= Get5State_KnifeRound && g_PausingEnabledCvar.BoolValue;
 }
 
 public Action Command_TechPause(int client, int args) {
-  if (!g_AllowTechPauseCvar.BoolValue || !Pauseable() || IsPaused()) {
+  if (g_AllowTechPauseCvar.BoolValue || !Pauseable() || IsPaused()) {
     return Plugin_Handled;
   }
 
@@ -39,7 +39,7 @@ public Action Command_Pause(int client, int args) {
   MatchTeam team = GetClientMatchTeam(client);
   int maxPauses = g_MaxPausesCvar.IntValue;
   char pausePeriodString[32];
-  if (g_ResetPausesEachHalfCvar.IntValue != 0) {
+  if (g_ResetPausesEachHalfCvar.BoolValue) {
     Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
   }
 
@@ -71,7 +71,7 @@ public Action Command_Pause(int client, int args) {
     g_TeamPausesUsed[team]++;
 
     pausePeriodString = "";
-    if (g_ResetPausesEachHalfCvar.IntValue != 0) {
+    if (g_ResetPausesEachHalfCvar.BoolValue) {
       Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
     }
 
@@ -91,17 +91,17 @@ public Action Command_Pause(int client, int args) {
 }
 
 public Action Timer_PauseTimeCheck(Handle timer, int data) {
-  if (!Pauseable() || !IsPaused() || g_FixedPauseTimeCvar.IntValue != 0) {
+  if (!Pauseable() || !IsPaused() || g_FixedPauseTimeCvar.BoolValue) {
     return Plugin_Stop;
   }
 
   // Unlimited pause time.
-  if (g_MaxPauseTimeCvar.IntValue == 0) {
+  if (g_MaxPauseTimeCvar.IntValue <= 0) {
     return Plugin_Stop;
   }
 
   char pausePeriodString[32];
-  if (g_ResetPausesEachHalfCvar.IntValue != 0) {
+  if (g_ResetPausesEachHalfCvar.BoolValue) {
     Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
   }
 
@@ -141,7 +141,7 @@ public Action Command_Unpause(int client, int args) {
     return Plugin_Handled;
   }
 
-  if (g_FixedPauseTimeCvar.IntValue != 0 && !g_InExtendedPause) {
+  if (g_FixedPauseTimeCvar.BoolValue && !g_InExtendedPause) {
     return Plugin_Handled;
   }
 

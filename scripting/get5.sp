@@ -25,10 +25,10 @@
 #include <sdktools>
 #include <sourcemod>
 #include <testing>
+#include <json> // github.com/clugg/sm-json
 
 #undef REQUIRE_EXTENSIONS
 #include <SteamWorks>
-#include <smjansson>
 
 #define CHECK_READY_TIMER_INTERVAL 1.0
 #define INFO_MESSAGE_TIMER_INTERVAL 29.0
@@ -1277,44 +1277,37 @@ public void ChangeState(Get5State state) {
 }
 
 public Action Command_Status(int client, int args) {
-  if (!LibraryExists("jansson")) {
-    ReplyToCommand(client, "get5_status requires the smjansson extension to be loaded");
-    return Plugin_Handled;
-  }
+  JSON_Object json = new JSON_Object();
 
-  Handle json = json_object();
-
-  set_json_string(json, "plugin_version", PLUGIN_VERSION);
+  json.SetString("plugin_version", PLUGIN_VERSION);
 
 #if defined COMMIT_STRING
-  set_json_string(json, "commit", COMMIT_STRING);
+  json.SetString("commit", COMMIT_STRING);
 #endif
 
-  set_json_int(json, "gamestate", view_as<int>(g_GameState));
-  set_json_bool(json, "paused", IsPaused());
+  json.SetInt("gamestate", view_as<int>(g_GameState));
+  json.SetBool("paused", IsPaused());
 
   char gamestate[64];
   GameStateString(g_GameState, gamestate, sizeof(gamestate));
-  set_json_string(json, "gamestate_string", gamestate);
+  json.SetString("gamestate_string", gamestate);
 
   if (g_GameState != Get5State_None) {
-    set_json_string(json, "matchid", g_MatchID);
-    set_json_string(json, "loaded_config_file", g_LoadedConfigFile);
-    set_json_int(json, "map_number", GetMapNumber());
+    json.SetString("matchid", g_MatchID);
+    json.SetString("loaded_config_file", g_LoadedConfigFile);
+    json.SetInt("map_number", GetMapNumber());
 
-    Handle team1 = json_object();
+    JSON_Object team1 = new JSON_Object();
     AddTeamInfo(team1, MatchTeam_Team1);
-    json_object_set(json, "team1", team1);
-    CloseHandle(team1);
+    json.SetObject("team1", team1);
 
-    Handle team2 = json_object();
+    JSON_Object team2 = new JSON_Object();
     AddTeamInfo(team2, MatchTeam_Team2);
-    json_object_set(json, "team2", team2);
-    CloseHandle(team2);
+    json.SetObject("team2", team2);
   }
 
   if (g_GameState > Get5State_Veto) {
-    Handle maps = json_object();
+    JSON_Object maps = new JSON_Object();
 
     for (int i = 0; i < g_MapsToPlay.Length; i++) {
       char mapKey[64];
@@ -1323,30 +1316,30 @@ public Action Command_Status(int client, int args) {
       char mapName[PLATFORM_MAX_PATH];
       g_MapsToPlay.GetString(i, mapName, sizeof(mapName));
 
-      set_json_string(maps, mapKey, mapName);
+      maps.SetString(mapKey, mapName);
     }
-    json_object_set(json, "maps", maps);
-    CloseHandle(maps);
+    json.SetObject("maps", maps);
   }
 
   char buffer[4096];
-  json_dump(json, buffer, sizeof(buffer));
+  json.Encode(buffer, sizeof(buffer));
   ReplyToCommand(client, buffer);
 
-  CloseHandle(json);
+  json.Cleanup();
+  delete json;
   return Plugin_Handled;
 }
 
-static void AddTeamInfo(Handle json, MatchTeam matchTeam) {
+static void AddTeamInfo(JSON_Object json, MatchTeam matchTeam) {
   int team = MatchTeamToCSTeam(matchTeam);
   char side[4];
   CSTeamString(team, side, sizeof(side));
-  set_json_string(json, "name", g_TeamNames[matchTeam]);
-  set_json_int(json, "series_score", g_TeamSeriesScores[matchTeam]);
-  set_json_bool(json, "ready", IsTeamReady(matchTeam));
-  set_json_string(json, "side", side);
-  set_json_int(json, "connected_clients", GetNumHumansOnTeam(team));
-  set_json_int(json, "current_map_score", CS_GetTeamScore(team));
+  json.SetString( "name", g_TeamNames[matchTeam]);
+  json.SetInt("series_score", g_TeamSeriesScores[matchTeam]);
+  json.SetBool("ready", IsTeamReady(matchTeam));
+  json.SetString( "side", side);
+  json.SetInt("connected_clients", GetNumHumansOnTeam(team));
+  json.SetInt("current_map_score", CS_GetTeamScore(team));
 }
 
 public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {

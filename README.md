@@ -51,7 +51,7 @@ The get5 releases contain 2 additional plugins, disabled by default. They are in
 
 ##### get5_apistats
 
-``get5_apistats`` is for integration with the [get5 web panel](https://github.com/splewis/get5-web). You don't need it unless you're using the web panel. Note you need the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) and [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604)) extensions for this plugin.
+``get5_apistats`` is for integration with the [get5 web panel](https://github.com/splewis/get5-web). You don't need it unless you're using the web panel. Note you need the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) extension for this plugin.
 
 **NOTE**: The HTTP API requests this plugin sends are **not** part of a public API. They are the communication between this plugin and the [get5-web](https://github.com/splewis/get5-web) project; you should not rely on the API being stable. If you're a developer writing your own server listening to get5_apistats, consider forking the get5_apistats plugin and renaming it to something else.
 
@@ -104,7 +104,7 @@ Some client commands are available also for admin usage. For example, sm_pause a
 - ``get5_removeplayer``: removes a steamid from all teams (any format for steamid)
 - ``get5_forceready``: marks all teams as ready
 - ``get5_dumpstats``: dumps current match stats to a file
-- ``get5_status``: replies with JSON formatted match state (available to all clients, requires [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604))
+- ``get5_status``: replies with JSON formatted match state (available to all clients)
 - ``get5_listbackups``: lists backup files for the current matchid or a given matchid
 
 #### Other commands
@@ -114,8 +114,6 @@ Some client commands are available also for admin usage. For example, sm_pause a
 ## Match Schema
 
 See the example config in [Valve KeyValues format](configs/get5/example_match.cfg) or [JSON format](configs/get5/example_match.json) to learn how to format the configs. Both example files contain equivalent match data.
-
-**Note:** to use a JSON match file, you must install the [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604) sourcemod extension on the server.
 
 Of the below fields, only the ``team1`` and ``team2`` fields are actually required. Reasonable defaults are used for entires (bo3 series, 5v5, empty strings for team names, etc.)
 

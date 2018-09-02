@@ -142,11 +142,6 @@ public bool LoadMatchFile(const char[] config) {
   Call_Finish();
 
   if (StrContains(config, "json") >= 0) {
-    if (!LibraryExists("jansson")) {
-      MatchConfigFail("Cannot load a json config without the smjansson extension loaded");
-      return false;
-    }
-
     char configFile[PLATFORM_MAX_PATH];
     strcopy(configFile, sizeof(configFile), config);
     if (!FileExists(configFile)) {
@@ -154,9 +149,10 @@ public bool LoadMatchFile(const char[] config) {
       return false;
     }
 
-    Handle json = json_load_file(configFile);
-    if (json != INVALID_HANDLE && LoadMatchFromJson(json)) {
-      CloseHandle(json);
+    JSON_Object json = json_load_file(configFile);
+    if (json != null && LoadMatchFromJson(json)) {
+      json.Cleanup();
+      delete json;
       Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
     } else {
       MatchConfigFail("invalid match json");
@@ -432,7 +428,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
   return true;
 }
 
-static bool LoadMatchFromJson(Handle json) {
+static bool LoadMatchFromJson(JSON_Object json) {
   json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID),
                               CONFIG_MATCHID_DEFAULT);
   g_InScrimMode = json_object_get_bool_safe(json, "scrim", false);
@@ -483,30 +479,27 @@ static bool LoadMatchFromJson(Handle json) {
                               sizeof(g_FavoredTeamText));
   g_FavoredTeamPercentage = json_object_get_int_safe(json, "favored_percentage_team1", 0);
 
-  Handle spec = json_object_get(json, "spectators");
-  if (spec != INVALID_HANDLE) {
+  JSON_Object spec = json.GetObject("spectators");
+  if (spec != null) {
     json_object_get_string_safe(spec, "name", g_TeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH,
                                 CONFIG_SPECTATORSNAME_DEFAULT);
     AddJsonAuthsToList(spec, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
-    CloseHandle(spec);
 
     Format(g_FormattedTeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
            g_DefaultTeamColors[MatchTeam_TeamSpec], g_TeamNames[MatchTeam_TeamSpec]);
   }
 
-  Handle team1 = json_object_get(json, "team1");
-  if (team1 != INVALID_HANDLE) {
+  JSON_Object team1 = json.GetObject("team1");
+  if (team1 != null) {
     LoadTeamDataJson(team1, MatchTeam_Team1);
-    CloseHandle(team1);
   } else {
     MatchConfigFail("Missing \"team1\" section in match json");
     return false;
   }
 
-  Handle team2 = json_object_get(json, "team2");
-  if (team2 != INVALID_HANDLE) {
+  JSON_Object team2 = json.GetObject("team2");
+  if (team2 != null) {
     LoadTeamDataJson(team2, MatchTeam_Team2);
-    CloseHandle(team2);
   } else {
     MatchConfigFail("Missing \"team2\" section in match json");
     return false;
@@ -518,45 +511,50 @@ static bool LoadMatchFromJson(Handle json) {
   }
 
   if (g_SkipVeto) {
-    Handle array = json_object_get(json, "map_sides");
-    if (array != INVALID_HANDLE) {
-      for (int i = 0; i < json_array_size(array); i++) {
+    JSON_Object array = json.GetObject("map_sides");
+    if (array != null) {
+      if (!array.IsArray) {
+        MatchConfigFail("Expected \"map_sides\" section to be an array");
+        return false;
+      }
+      for (int i = 0; i < array.Length; i++) {
+        char keyAsString[64];
         char buffer[64];
-        json_array_get_string(array, i, buffer, sizeof(buffer));
+        array.GetIndexString(keyAsString, sizeof(keyAsString), i);
+        array.GetString(keyAsString, buffer, sizeof(buffer));
         g_MapSides.Push(SideTypeFromString(buffer));
       }
       CloseHandle(array);
     }
   }
 
-  Handle cvars = json_object_get(json, "cvars");
-  if (cvars != INVALID_HANDLE) {
+  JSON_Object cvars = json.GetObject("cvars");
+  if (cvars != null) {
     char cvarName[MAX_CVAR_LENGTH];
     char cvarValue[MAX_CVAR_LENGTH];
 
-    Handle iterator = json_object_iter(cvars);
-    while (iterator != INVALID_HANDLE) {
-      json_object_iter_key(iterator, cvarName, sizeof(cvarName));
-      Handle value = json_object_iter_value(iterator);
-      json_string_value(value, cvarValue, sizeof(cvarValue));
+    StringMapSnapshot snap = cvars.Snapshot();
+    for (int i = 0; i < snap.Length; i++) {
+      snap.GetKey(i, cvarName, sizeof(cvarName));
+      cvars.GetString(cvarName, cvarValue, sizeof(cvarValue));
       g_CvarNames.PushString(cvarName);
       g_CvarValues.PushString(cvarValue);
-      CloseHandle(value);
-      iterator = json_object_iter_next(cvars, iterator);
     }
-    CloseHandle(cvars);
+
   }
 
   return true;
 }
 
-static void LoadTeamDataJson(Handle json, MatchTeam matchTeam) {
+static void LoadTeamDataJson(JSON_Object json, MatchTeam matchTeam) {
   GetTeamAuths(matchTeam).Clear();
 
   char fromfile[PLATFORM_MAX_PATH];
   json_object_get_string_safe(json, "fromfile", fromfile, sizeof(fromfile));
 
   if (StrEqual(fromfile, "")) {
+    // TODO: this needs to support both an array and a dictionary
+    // For now, it only supports an array
     AddJsonAuthsToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
     json_object_get_string_safe(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH);
@@ -564,12 +562,13 @@ static void LoadTeamDataJson(Handle json, MatchTeam matchTeam) {
     json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
   } else {
-    Handle fromfileJson = json_load_file(fromfile);
-    if (fromfileJson == INVALID_HANDLE) {
+    JSON_Object fromfileJson = json_load_file(fromfile);
+    if (fromfileJson == null) {
       LogError("Cannot load team config from file \"%s\", fromfile");
     } else {
       LoadTeamDataJson(fromfileJson, matchTeam);
-      CloseHandle(fromfileJson);
+      fromfileJson.Cleanup();
+      delete fromfileJson;
     }
   }
 

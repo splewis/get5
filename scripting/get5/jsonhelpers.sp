@@ -1,83 +1,115 @@
-stock bool json_has_key(Handle hObj, const char[] key, json_type expectedType = JSON_NULL) {
-  Handle h = json_object_get(hObj, key);
-  if (h == INVALID_HANDLE) {
+stock JSON_Object json_load_file(const char[] path) {
+  File f = OpenFile(path, "r");
+  char contents[8192];
+  f.ReadString(contents, sizeof(contents));
+  delete f;
+  return json_decode(contents);
+}
+
+stock void json_string_type(JSON_CELL_TYPE type, char[] output, int maxlength) {
+  switch (type) {
+    case Type_Invalid:  Format(output, maxlength, "invalid");
+    case Type_String:  Format(output, maxlength, "string");
+    case Type_Int:  Format(output, maxlength, "int");
+    case Type_Float:  Format(output, maxlength, "float");
+    case Type_Bool:  Format(output, maxlength, "bool");
+    case Type_Null:  Format(output, maxlength, "null");
+    case Type_Object:  Format(output, maxlength, "object");
+  }
+}
+
+stock bool json_has_key(JSON_Object json, const char[] key, JSON_CELL_TYPE expectedType) {
+  if (json == null) {
+    return false;
+  } else if (!json.HasKey(key)) {
     return false;
   } else {
     // Perform type-checking.
-    json_type actualType = json_typeof(h);
-    if (expectedType != JSON_NULL && actualType != expectedType) {
+    JSON_CELL_TYPE actualType = json.GetKeyType(key);
+    if (actualType != expectedType) {
       char expectedTypeStr[16];
       char actualTypeStr[16];
-      Stringify_json_type(expectedType, expectedTypeStr, sizeof(expectedTypeStr));
-      Stringify_json_type(actualType, actualTypeStr, sizeof(actualTypeStr));
+      json_string_type(expectedType, expectedTypeStr, sizeof(expectedTypeStr));
+      json_string_type(actualType, actualTypeStr, sizeof(actualTypeStr));
       LogError("Type mismatch for key \"%s\", got %s when expected a %s", key, actualTypeStr,
                expectedTypeStr);
       return false;
     }
-    CloseHandle(h);
     return true;
   }
 }
 
-stock int json_object_get_string_safe(Handle hObj, const char[] key, char[] buffer, int maxlength,
+stock int json_object_get_string_safe(JSON_Object json, const char[] key, char[] buffer, int maxlength,
                                       const char[] defaultValue = "") {
-  if (json_has_key(hObj, key, JSON_STRING)) {
-    return json_object_get_string(hObj, key, buffer, maxlength);
+  if (json_has_key(json, key, Type_String)) {
+    return json.GetString(key, buffer, maxlength);
   } else {
     return strcopy(buffer, maxlength, defaultValue);
   }
 }
 
-stock int json_object_get_int_safe(Handle hObj, const char[] key, int defaultValue = 0) {
-  if (json_has_key(hObj, key, JSON_INTEGER)) {
-    return json_object_get_int(hObj, key);
+stock int json_object_get_int_safe(JSON_Object json, const char[] key, int defaultValue = 0) {
+  if (json_has_key(json, key, Type_Int)) {
+    return json.GetInt(key);
   } else {
     return defaultValue;
   }
 }
 
-stock bool json_object_get_bool_safe(Handle hObj, const char[] key, bool defaultValue = false) {
-  if (json_has_key(hObj, key)) {
-    return json_object_get_bool(hObj, key);
+stock bool json_object_get_bool_safe(JSON_Object json, const char[] key, bool defaultValue = false) {
+  if (json_has_key(json, key, Type_Bool)) {
+    return json.GetBool(key);
   } else {
     return defaultValue;
   }
 }
 
-stock float json_object_get_float_safe(Handle hObj, const char[] key, float defaultValue = 0.0) {
-  if (json_has_key(hObj, key, JSON_REAL)) {
-    return json_object_get_float(hObj, key);
+stock float json_object_get_float_safe(JSON_Object json, const char[] key, float defaultValue = 0.0) {
+  if (json_has_key(json, key, Type_Float)) {
+    return json.GetFloat(key);
   } else {
     return defaultValue;
   }
 }
 
-stock int AddJsonSubsectionArrayToList(Handle json, const char[] key, ArrayList list,
+// Used for parsing an Array[String] to a sourcepawn ArrayList of strings
+stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, ArrayList list,
                                        int maxValueLength) {
+  if (json_has_key(json, key, Type_Object)) {
+    return 0;
+  }
+
   int count = 0;
-  Handle array = json_object_get(json, key);
-  if (array != INVALID_HANDLE) {
+  JSON_Object array = json.GetObject(key);
+  if (array != null) {
     char[] buffer = new char[maxValueLength];
-    for (int i = 0; i < json_array_size(array); i++) {
-      json_array_get_string(array, i, buffer, maxValueLength);
+    for (int i = 0; i < array.Length; i++) {
+      char keyAsString[64];
+      array.GetIndexString(keyAsString, sizeof(keyAsString), i);
+      array.GetString(keyAsString, buffer, maxValueLength);
       list.PushString(buffer);
       count++;
     }
-    CloseHandle(array);
+    array.Cleanup();
+    delete array;
   }
   return count;
 }
 
-stock int AddJsonAuthsToList(Handle json, const char[] key, ArrayList list, int maxValueLength) {
+// Used for mapping a keyvalue section
+stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list, int maxValueLength) {
   int count = 0;
   // We handle two formats here: one where we get a array of steamids as strings, and in the
   // 2nd format we have a map of steamid- > player name.
-  Handle data = json_object_get(json, key);
-  if (data != INVALID_HANDLE) {
-    if (json_is_array(data)) {
+  JSON_Object data = json.GetObject(key);
+  if (data != null) {
+    if (data.IsArray) {
       char[] buffer = new char[maxValueLength];
-      for (int i = 0; i < json_array_size(data); i++) {
-        json_array_get_string(data, i, buffer, maxValueLength);
+      for (int i = 0; i < data.Length; i++) {
+        char keyAsString[64];
+        data.GetIndexString(keyAsString, sizeof(keyAsString), i);
+        data.GetString(keyAsString, buffer, maxValueLength);
+
         char steam64[AUTH_LENGTH];
         if (ConvertAuthToSteam64(buffer, steam64)) {
           list.PushString(steam64);
@@ -85,13 +117,13 @@ stock int AddJsonAuthsToList(Handle json, const char[] key, ArrayList list, int 
         }
       }
 
-    } else if (json_is_object(data)) {
-      for (Handle it = json_object_iter(data); it != INVALID_HANDLE;
-           it = json_object_iter_next(data, it)) {
-        char[] buffer = new char[maxValueLength];
-        char name[MAX_NAME_LENGTH];
-        json_object_iter_key(it, buffer, maxValueLength);
-        json_object_get_string(data, buffer, name, sizeof(name));
+    } else {
+      StringMapSnapshot snap = data.Snapshot();
+      char[] buffer = new char[maxValueLength];
+      char name[MAX_NAME_LENGTH];
+      for (int i = 0; i < snap.Length; i++) {
+        snap.GetKey(i, buffer, maxValueLength);
+        data.GetString(buffer, name, sizeof(name));
 
         char steam64[AUTH_LENGTH];
         if (ConvertAuthToSteam64(buffer, steam64)) {
@@ -100,26 +132,9 @@ stock int AddJsonAuthsToList(Handle json, const char[] key, ArrayList list, int 
           count++;
         }
       }
+      delete snap;
     }
-    CloseHandle(data);
+
   }
   return count;
-}
-
-stock void set_json_string(Handle root_json, const char[] key, const char[] value) {
-  Handle value_json = json_string(value);
-  json_object_set(root_json, key, value_json);
-  CloseHandle(value_json);
-}
-
-stock void set_json_int(Handle root_json, const char[] key, int value) {
-  Handle value_json = json_integer(value);
-  json_object_set(root_json, key, value_json);
-  CloseHandle(value_json);
-}
-
-stock void set_json_bool(Handle root_json, const char[] key, bool value) {
-  Handle value_json = json_boolean(value);
-  json_object_set(root_json, key, value_json);
-  CloseHandle(value_json);
 }

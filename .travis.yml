@@ -22,10 +22,10 @@ before_script:
     - cd addons/sourcemod/scripting/
     - chmod +x spcomp
     - PATH+=":$PWD"
-
     - cd include
     - wget https://raw.githubusercontent.com/KyleSanderson/SteamWorks/master/Pawn/includes/SteamWorks.inc
-    - wget https://raw.githubusercontent.com/thraaawn/SMJansson/master/pawn/scripting/include/smjansson.inc
+    - git clone https://github.com/clugg/sm-json
+    - cp -r sm-json/addons/sourcemod/scripting/include/* .
     - cd ../../../..
 
 script:

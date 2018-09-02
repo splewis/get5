@@ -48,7 +48,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     return false;
   }
 
-  if (g_CheckAuthsCvar.IntValue == 0 &&
+  if (!g_CheckAuthsCvar.BoolValue &&
       (GetTeamAuths(MatchTeam_Team1).Length != 0 || GetTeamAuths(MatchTeam_Team2).Length != 0)) {
     LogError(
         "Setting player auths in the \"players\" section has no impact with get5_check_auths 0");

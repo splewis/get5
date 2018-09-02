@@ -2,7 +2,7 @@
 #define TEMP_VALVE_BACKUP_PATTERN "get5_temp_backup%d.txt"
 
 public Action Command_LoadBackup(int client, int args) {
-  if (g_BackupSystemEnabledCvar.IntValue == 0) {
+  if (!g_BackupSystemEnabledCvar.BoolValue) {
     ReplyToCommand(client, "The backup system is disabled");
     return Plugin_Handled;
   }
@@ -22,7 +22,7 @@ public Action Command_LoadBackup(int client, int args) {
 }
 
 public Action Command_ListBackups(int client, int args) {
-  if (g_BackupSystemEnabledCvar.IntValue == 0) {
+  if (!g_BackupSystemEnabledCvar.BoolValue) {
     ReplyToCommand(client, "The backup system is disabled");
     return Plugin_Handled;
   }

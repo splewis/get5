@@ -126,7 +126,7 @@ stock bool IsTVEnabled() {
     LogError("Failed to get tv_enable cvar");
     return false;
   }
-  return tvEnabledCvar.IntValue != 0;
+  return tvEnabledCvar.BoolValue;
 }
 
 stock int GetTvDelay() {

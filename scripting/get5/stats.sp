@@ -127,7 +127,7 @@ public void Stats_RoundEnd(int csTeamWinner) {
     }
   }
 
-  if (g_DamagePrintCvar.IntValue != 0) {
+  if (g_DamagePrintCvar.BoolValue) {
     for (int i = 1; i <= MaxClients; i++) {
       if (IsValidClient(i)) {
         PrintDamageInfo(i);

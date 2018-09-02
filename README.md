@@ -51,7 +51,7 @@ The get5 releases contain 2 additional plugins, disabled by default. They are in
 
 ##### get5_apistats
 
-``get5_apistats`` is for integration with the [get5 web panel](https://github.com/splewis/get5-web). You don't need it unless you're using the web panel. Note you need the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) extension for this plugin.
+``get5_apistats`` is for integration with the [get5 web panel](https://github.com/splewis/get5-web). You don't need it unless you're using the web panel. Note you need the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) and [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604)) extensions for this plugin.
 
 **NOTE**: The HTTP API requests this plugin sends are **not** part of a public API. They are the communication between this plugin and the [get5-web](https://github.com/splewis/get5-web) project; you should not rely on the API being stable. If you're a developer writing your own server listening to get5_apistats, consider forking the get5_apistats plugin and renaming it to something else.
 

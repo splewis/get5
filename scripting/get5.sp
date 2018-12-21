@@ -22,10 +22,10 @@
 #include "include/logdebug.inc"
 #include "include/restorecvars.inc"
 #include <cstrike>
+#include <json>  // github.com/clugg/sm-json
 #include <sdktools>
 #include <sourcemod>
 #include <testing>
-#include <json> // github.com/clugg/sm-json
 
 #undef REQUIRE_EXTENSIONS
 #include <SteamWorks>
@@ -71,6 +71,7 @@ ConVar g_MessagePrefixCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_ResetPausesEachHalfCvar;
 ConVar g_ServerIdCvar;
+ConVar g_SetClientClanTagCvar;
 ConVar g_SetHostnameCvar;
 ConVar g_StatsPathFormatCvar;
 ConVar g_StopCommandEnabledCvar;
@@ -301,6 +302,8 @@ public void OnPluginStart() {
   g_ServerIdCvar = CreateConVar(
       "get5_server_id", "0",
       "Integer that identifies your server. This is used in temp files to prevent collisions.");
+  g_SetClientClanTagCvar = CreateConVar("get5_set_client_clan_tags", "1",
+                                        "Whether to set client clan tags to player ready status.");
   g_SetHostnameCvar = CreateConVar(
       "get5_hostname_format", "Get5: {TEAM1} vs {TEAM2}",
       "Template that the server hostname will follow when a match is live. Leave field blank to disable. Valid parameters are: {MAPNUMBER}, {MATCHID}, {SERVERID}, {MAPNAME}, {TIME}, {TEAM1}, {TEAM2}");
@@ -1334,10 +1337,10 @@ static void AddTeamInfo(JSON_Object json, MatchTeam matchTeam) {
   int team = MatchTeamToCSTeam(matchTeam);
   char side[4];
   CSTeamString(team, side, sizeof(side));
-  json.SetString( "name", g_TeamNames[matchTeam]);
+  json.SetString("name", g_TeamNames[matchTeam]);
   json.SetInt("series_score", g_TeamSeriesScores[matchTeam]);
   json.SetBool("ready", IsTeamReady(matchTeam));
-  json.SetString( "side", side);
+  json.SetString("side", side);
   json.SetInt("connected_clients", GetNumHumansOnTeam(team));
   json.SetInt("current_map_score", CS_GetTeamScore(team));
 }

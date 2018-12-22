@@ -481,8 +481,8 @@ static bool LoadMatchFromJson(JSON_Object json) {
 
   JSON_Object spec = json.GetObject("spectators");
   if (spec != null) {
-    json_object_get_string_safe(spec, "name", g_TeamConfig[MatchTeam_TeamSpec].name, MAX_CVAR_LENGTH,
-                                CONFIG_SPECTATORSNAME_DEFAULT);
+    json_object_get_string_safe(spec, "name", g_TeamConfig[MatchTeam_TeamSpec].name,
+                                MAX_CVAR_LENGTH, CONFIG_SPECTATORSNAME_DEFAULT);
     AddJsonAuthsToList(spec, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
 
     Format(g_TeamConfig[MatchTeam_TeamSpec].formatted_name, MAX_CVAR_LENGTH, "%s%s{NORMAL}",
@@ -540,7 +540,6 @@ static bool LoadMatchFromJson(JSON_Object json) {
       g_CvarNames.PushString(cvarName);
       g_CvarValues.PushString(cvarValue);
     }
-
   }
 
   return true;
@@ -560,7 +559,8 @@ static void LoadTeamDataJson(JSON_Object json, MatchTeam matchTeam) {
     json_object_get_string_safe(json, "tag", g_TeamConfig[matchTeam].tag, MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "flag", g_TeamConfig[matchTeam].flag, MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "logo", g_TeamConfig[matchTeam].logo, MAX_CVAR_LENGTH);
-    json_object_get_string_safe(json, "matchtext", g_TeamConfig[matchTeam].match_text, MAX_CVAR_LENGTH);
+    json_object_get_string_safe(json, "matchtext", g_TeamConfig[matchTeam].match_text,
+                                MAX_CVAR_LENGTH);
   } else {
     JSON_Object fromfileJson = json_load_file(fromfile);
     if (fromfileJson == null) {
@@ -648,11 +648,11 @@ public void SetMatchTeamCvars() {
                              sizeof(tMatchText));
   }
 
-  SetTeamInfo(CS_TEAM_CT, g_TeamConfig[ctTeam].name, g_TeamConfig[ctTeam].flag, g_TeamConfig[ctTeam].logo,
-              ctMatchText, g_TeamSeriesScores[ctTeam]);
+  SetTeamInfo(CS_TEAM_CT, g_TeamConfig[ctTeam].name, g_TeamConfig[ctTeam].flag,
+              g_TeamConfig[ctTeam].logo, ctMatchText, g_TeamSeriesScores[ctTeam]);
 
-  SetTeamInfo(CS_TEAM_T, g_TeamConfig[tTeam].name, g_TeamConfig[tTeam].flag, g_TeamConfig[tTeam].logo, tMatchText,
-              g_TeamSeriesScores[tTeam]);
+  SetTeamInfo(CS_TEAM_T, g_TeamConfig[tTeam].name, g_TeamConfig[tTeam].flag,
+              g_TeamConfig[tTeam].logo, tMatchText, g_TeamSeriesScores[tTeam]);
 
   // Set prediction cvars.
   SetConVarStringSafe("mp_teamprediction_txt", g_FavoredTeamText);

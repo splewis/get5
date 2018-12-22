@@ -1,5 +1,4 @@
-#define EventLogger_StartEvent() \
-  JSON_Object params = new JSON_Object()
+#define EventLogger_StartEvent() JSON_Object params = new JSON_Object()
 
 #define EventLogger_EndEvent(%1) EventLogger_LogEvent(%1, params)
 

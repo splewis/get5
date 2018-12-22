@@ -98,15 +98,16 @@ ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MatchTeam_Count];
 StringMap g_PlayerNames;
 
+// clang-format off
 enum struct TeamConfig {
-  char name[MAX_CVAR_LENGTH];
-  char formatted_name[MAX_CVAR_LENGTH];
+  char name[MAX_CVAR_LENGTH]; 
+  char formatted_name[MAX_CVAR_LENGTH]; 
   char tag[MAX_CVAR_LENGTH];
   char flag[MAX_CVAR_LENGTH];
   char logo[MAX_CVAR_LENGTH];
   char match_text[MAX_CVAR_LENGTH];
-
 }
+// clang-format on
 TeamConfig g_TeamConfig[MatchTeam_Count];
 
 char g_MatchTitle[MAX_CVAR_LENGTH];
@@ -711,10 +712,12 @@ static void CheckReadyWaitingTime(MatchTeam team) {
       EndSeries();
 
     } else if (timeLeft >= 300 && timeLeft % 60 == 0) {
-      Get5_MessageToAll("%t", "MinutesToForfeitMessage", g_TeamConfig[team].formatted_name, timeLeft / 60);
+      Get5_MessageToAll("%t", "MinutesToForfeitMessage", g_TeamConfig[team].formatted_name,
+                        timeLeft / 60);
 
     } else if (timeLeft < 300 && timeLeft % 30 == 0) {
-      Get5_MessageToAll("%t", "SecondsToForfeitInfoMessage", g_TeamConfig[team].formatted_name, timeLeft);
+      Get5_MessageToAll("%t", "SecondsToForfeitInfoMessage", g_TeamConfig[team].formatted_name,
+                        timeLeft);
 
     } else if (timeLeft == 10) {
       Get5_MessageToAll("%t", "10SecondsToForfeitInfoMessage", g_TeamConfig[team].formatted_name,
@@ -858,10 +861,12 @@ public Action Command_Stop(int client, int args) {
 
   if (g_TeamGivenStopCommand[MatchTeam_Team1] && !g_TeamGivenStopCommand[MatchTeam_Team2]) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_TeamConfig[MatchTeam_Team1].formatted_name, g_TeamConfig[MatchTeam_Team2].formatted_name);
+                      g_TeamConfig[MatchTeam_Team1].formatted_name,
+                      g_TeamConfig[MatchTeam_Team2].formatted_name);
   } else if (!g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_TeamConfig[MatchTeam_Team2].formatted_name, g_TeamConfig[MatchTeam_Team1].formatted_name);
+                      g_TeamConfig[MatchTeam_Team2].formatted_name,
+                      g_TeamConfig[MatchTeam_Team1].formatted_name);
   } else if (g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
     RestoreLastRound();
   }
@@ -988,7 +993,8 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 static void SeriesEndMessage(MatchTeam team) {
   if (g_MapsToWin == 1) {
     if (team == MatchTeam_TeamNone) {
-      Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_TeamConfig[MatchTeam_Team1].formatted_name,
+      Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage",
+                        g_TeamConfig[MatchTeam_Team1].formatted_name,
                         g_TeamConfig[MatchTeam_Team2].formatted_name);
     } else {
       Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_TeamConfig[team].formatted_name);

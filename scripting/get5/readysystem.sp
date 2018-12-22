@@ -209,7 +209,8 @@ static void PrintReadyMessage(MatchTeam team) {
   } else if (g_GameState == Get5State_Warmup) {
     SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
     if (g_WaitingForRoundBackup) {
-      Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_TeamConfig[team].formatted_name);
+      Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage",
+                        g_TeamConfig[team].formatted_name);
     } else if (sides == SideChoice_KnifeRound) {
       Get5_MessageToAll("%t", "TeamReadyToKnifeInfoMessage", g_TeamConfig[team].formatted_name);
     } else {

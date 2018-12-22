@@ -63,8 +63,8 @@ static void AddPlayer(JSON_Object params, const char[] key, int client) {
 
 public void EventLogger_SeriesStart() {
   EventLogger_StartEvent();
-  params.SetString("team1_name", g_TeamNames[MatchTeam_Team1]);
-  params.SetString("team2_name", g_TeamNames[MatchTeam_Team2]);
+  params.SetString("team1_name", g_TeamConfig[MatchTeam_Team1].name);
+  params.SetString("team2_name", g_TeamConfig[MatchTeam_Team2].name);
   EventLogger_EndEvent("series_start");
 }
 

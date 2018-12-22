@@ -118,13 +118,13 @@ static void AddGlobalStateInfo(File f) {
   LOOP_TEAMS(team) {
     GetTeamString(team, buffer, sizeof(buffer));
     f.WriteLine("Team info for team %s (%d):", buffer, team);
-    f.WriteLine("g_TeamNames = %s", g_TeamNames[team]);
+    f.WriteLine("g_TeamNames = %s", g_TeamConfig[team].name);
     WriteArrayList(f, "g_TeamAuths", g_TeamAuths[team]);
-    f.WriteLine("g_TeamTags = %s", g_TeamTags[team]);
-    f.WriteLine("g_FormattedTeamNames = %s", g_FormattedTeamNames[team]);
-    f.WriteLine("g_TeamFlags = %s", g_TeamFlags[team]);
-    f.WriteLine("g_TeamLogos = %s", g_TeamLogos[team]);
-    f.WriteLine("g_TeamMatchTexts = %s", g_TeamMatchTexts[team]);
+    f.WriteLine("g_TeamTags = %s", g_TeamConfig[team].tag);
+    f.WriteLine("g_FormattedTeamNames = %s", g_TeamConfig[team].formatted_name);
+    f.WriteLine("g_TeamFlags = %s", g_TeamConfig[team].flag);
+    f.WriteLine("g_TeamLogos = %s", g_TeamConfig[team].logo);
+    f.WriteLine("g_TeamMatchTexts = %s", g_TeamConfig[team].match_text);
 
     CSTeamString(g_TeamSide[team], buffer, sizeof(buffer));
     f.WriteLine("g_TeamSide = %s (%d)", buffer, g_TeamSide[team]);

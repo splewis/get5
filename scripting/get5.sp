@@ -97,12 +97,18 @@ char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MatchTeam_Count];
 StringMap g_PlayerNames;
-char g_TeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
-char g_TeamTags[MatchTeam_Count][MAX_CVAR_LENGTH];
-char g_FormattedTeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
-char g_TeamFlags[MatchTeam_Count][MAX_CVAR_LENGTH];
-char g_TeamLogos[MatchTeam_Count][MAX_CVAR_LENGTH];
-char g_TeamMatchTexts[MatchTeam_Count][MAX_CVAR_LENGTH];
+
+enum struct TeamConfig {
+  char name[MAX_CVAR_LENGTH];
+  char formatted_name[MAX_CVAR_LENGTH];
+  char tag[MAX_CVAR_LENGTH];
+  char flag[MAX_CVAR_LENGTH];
+  char logo[MAX_CVAR_LENGTH];
+  char match_text[MAX_CVAR_LENGTH];
+
+}
+TeamConfig g_TeamConfig[MatchTeam_Count];
+
 char g_MatchTitle[MAX_CVAR_LENGTH];
 int g_FavoredTeamPercentage = 0;
 char g_FavoredTeamText[MAX_CVAR_LENGTH];
@@ -475,7 +481,7 @@ public Action Timer_InfoMessages(Handle timer) {
   if (g_GameState == Get5State_PreVeto) {
     if (IsTeamsReady() && !IsSpectatorsReady()) {
       Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
-                        g_FormattedTeamNames[MatchTeam_TeamSpec]);
+                        g_TeamConfig[MatchTeam_TeamSpec].formatted_name);
     } else {
       Get5_MessageToAll("%t", "ReadyToVetoInfoMessage");
     }
@@ -493,7 +499,7 @@ public Action Timer_InfoMessages(Handle timer) {
     // Find out what we're waiting for
     if (IsTeamsReady() && !IsSpectatorsReady()) {
       Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
-                        g_FormattedTeamNames[MatchTeam_TeamSpec]);
+                        g_TeamConfig[MatchTeam_TeamSpec].formatted_name);
     } else {
       if (g_MapSides.Get(GetMapNumber()) == SideChoice_KnifeRound) {
         Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage");
@@ -509,7 +515,7 @@ public Action Timer_InfoMessages(Handle timer) {
   // Handle waiting for knife decision
   if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam]);
+                      g_TeamConfig[g_KnifeWinnerTeam].formatted_name);
   }
 
   // Handle postgame
@@ -699,19 +705,19 @@ static void CheckReadyWaitingTime(MatchTeam team) {
     if (timeLeft <= 0) {
       g_ForceWinnerSignal = true;
       g_ForcedWinner = (team == MatchTeam_Team1) ? MatchTeam_Team2 : MatchTeam_Team1;
-      Get5_MessageToAll("%t", "TeamForfeitInfoMessage", g_FormattedTeamNames[team]);
+      Get5_MessageToAll("%t", "TeamForfeitInfoMessage", g_TeamConfig[team].formatted_name);
       ChangeState(Get5State_None);
       Stats_Forfeit(team);
       EndSeries();
 
     } else if (timeLeft >= 300 && timeLeft % 60 == 0) {
-      Get5_MessageToAll("%t", "MinutesToForfeitMessage", g_FormattedTeamNames[team], timeLeft / 60);
+      Get5_MessageToAll("%t", "MinutesToForfeitMessage", g_TeamConfig[team].formatted_name, timeLeft / 60);
 
     } else if (timeLeft < 300 && timeLeft % 30 == 0) {
-      Get5_MessageToAll("%t", "SecondsToForfeitInfoMessage", g_FormattedTeamNames[team], timeLeft);
+      Get5_MessageToAll("%t", "SecondsToForfeitInfoMessage", g_TeamConfig[team].formatted_name, timeLeft);
 
     } else if (timeLeft == 10) {
-      Get5_MessageToAll("%t", "10SecondsToForfeitInfoMessage", g_FormattedTeamNames[team],
+      Get5_MessageToAll("%t", "10SecondsToForfeitInfoMessage", g_TeamConfig[team].formatted_name,
                         timeLeft);
     }
   }
@@ -852,10 +858,10 @@ public Action Command_Stop(int client, int args) {
 
   if (g_TeamGivenStopCommand[MatchTeam_Team1] && !g_TeamGivenStopCommand[MatchTeam_Team2]) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_FormattedTeamNames[MatchTeam_Team1], g_FormattedTeamNames[MatchTeam_Team2]);
+                      g_TeamConfig[MatchTeam_Team1].formatted_name, g_TeamConfig[MatchTeam_Team2].formatted_name);
   } else if (!g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_FormattedTeamNames[MatchTeam_Team2], g_FormattedTeamNames[MatchTeam_Team1]);
+                      g_TeamConfig[MatchTeam_Team2].formatted_name, g_TeamConfig[MatchTeam_Team1].formatted_name);
   } else if (g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
     RestoreLastRound();
   }
@@ -955,11 +961,11 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     } else {
       if (t1maps > t2maps) {
         Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage",
-                          g_FormattedTeamNames[MatchTeam_Team1], t1maps, t2maps);
+                          g_TeamConfig[MatchTeam_Team1].formatted_name, t1maps, t2maps);
 
       } else if (t2maps > t1maps) {
         Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage",
-                          g_FormattedTeamNames[MatchTeam_Team2], t2maps, t1maps);
+                          g_TeamConfig[MatchTeam_Team2].formatted_name, t2maps, t1maps);
 
       } else {
         Get5_MessageToAll("%t", "SeriesTiedInfoMessage", t1maps, t2maps);
@@ -982,20 +988,20 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 static void SeriesEndMessage(MatchTeam team) {
   if (g_MapsToWin == 1) {
     if (team == MatchTeam_TeamNone) {
-      Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[MatchTeam_Team1],
-                        g_FormattedTeamNames[MatchTeam_Team2]);
+      Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_TeamConfig[MatchTeam_Team1].formatted_name,
+                        g_TeamConfig[MatchTeam_Team2].formatted_name);
     } else {
-      Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[team]);
+      Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_TeamConfig[team].formatted_name);
     }
   } else {
     if (team == MatchTeam_TeamNone) {
       // BO2 split.
       Get5_MessageToAll("%t", "TeamsSplitSeriesBO2InfoMessage",
-                        g_FormattedTeamNames[MatchTeam_Team1],
-                        g_FormattedTeamNames[MatchTeam_Team2]);
+                        g_TeamConfig[MatchTeam_Team1].formatted_name,
+                        g_TeamConfig[MatchTeam_Team2].formatted_name);
 
     } else {
-      Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_FormattedTeamNames[team],
+      Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_TeamConfig[team].formatted_name,
                         g_TeamSeriesScores[team], g_TeamSeriesScores[OtherMatchTeam(team)]);
     }
   }
@@ -1142,7 +1148,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
     g_KnifeWinnerTeam = CSTeamToMatchTeam(winningCSTeam);
     Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam]);
+                      g_TeamConfig[g_KnifeWinnerTeam].formatted_name);
 
     if (g_TeamTimeToKnifeDecisionCvar.FloatValue > 0)
       CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision);
@@ -1152,10 +1158,10 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     int csTeamWinner = event.GetInt("winner");
     int csReason = event.GetInt("reason");
 
-    Get5_MessageToAll("%t", "CurrentScoreInfoMessage", g_TeamNames[MatchTeam_Team1],
+    Get5_MessageToAll("%t", "CurrentScoreInfoMessage", g_TeamConfig[MatchTeam_Team1].name,
                       CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
                       CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
-                      g_TeamNames[MatchTeam_Team2]);
+                      g_TeamConfig[MatchTeam_Team2].name);
 
     Stats_RoundEnd(csTeamWinner);
     Call_StartForward(g_OnRoundStatsUpdated);
@@ -1337,7 +1343,7 @@ static void AddTeamInfo(JSON_Object json, MatchTeam matchTeam) {
   int team = MatchTeamToCSTeam(matchTeam);
   char side[4];
   CSTeamString(team, side, sizeof(side));
-  json.SetString("name", g_TeamNames[matchTeam]);
+  json.SetString("name", g_TeamConfig[matchTeam].name);
   json.SetInt("series_score", g_TeamSeriesScores[matchTeam]);
   json.SetBool("ready", IsTeamReady(matchTeam));
   json.SetString("side", side);
@@ -1363,11 +1369,11 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
 
   // Get team names with spaces removed.
   char team1Str[MAX_CVAR_LENGTH];
-  strcopy(team1Str, sizeof(team1Str), g_TeamNames[MatchTeam_Team1]);
+  strcopy(team1Str, sizeof(team1Str), g_TeamConfig[MatchTeam_Team1].name);
   ReplaceString(team1Str, sizeof(team1Str), " ", "_");
 
   char team2Str[MAX_CVAR_LENGTH];
-  strcopy(team2Str, sizeof(team2Str), g_TeamNames[MatchTeam_Team2]);
+  strcopy(team2Str, sizeof(team2Str), g_TeamConfig[MatchTeam_Team2].name);
   ReplaceString(team2Str, sizeof(team2Str), " ", "_");
 
   int mapNumber = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] + 1;

@@ -166,7 +166,7 @@ public Action Command_NotReady(int client, int args) {
   SetTeamForcedReady(team, false);
   if (teamWasReady) {
     SetMatchTeamCvars();
-    Get5_MessageToAll("%t", "TeamNotReadyInfoMessage", g_FormattedTeamNames[team]);
+    Get5_MessageToAll("%t", "TeamNotReadyInfoMessage", g_TeamConfig[team].formatted_name);
   }
 
   return Plugin_Handled;
@@ -205,15 +205,15 @@ static void PrintReadyMessage(MatchTeam team) {
   CheckTeamNameStatus(team);
 
   if (g_GameState == Get5State_PreVeto) {
-    Get5_MessageToAll("%t", "TeamReadyToVetoInfoMessage", g_FormattedTeamNames[team]);
+    Get5_MessageToAll("%t", "TeamReadyToVetoInfoMessage", g_TeamConfig[team].formatted_name);
   } else if (g_GameState == Get5State_Warmup) {
     SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
     if (g_WaitingForRoundBackup) {
-      Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_FormattedTeamNames[team]);
+      Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_TeamConfig[team].formatted_name);
     } else if (sides == SideChoice_KnifeRound) {
-      Get5_MessageToAll("%t", "TeamReadyToKnifeInfoMessage", g_FormattedTeamNames[team]);
+      Get5_MessageToAll("%t", "TeamReadyToKnifeInfoMessage", g_TeamConfig[team].formatted_name);
     } else {
-      Get5_MessageToAll("%t", "TeamReadyToBeginInfoMessage", g_FormattedTeamNames[team]);
+      Get5_MessageToAll("%t", "TeamReadyToBeginInfoMessage", g_TeamConfig[team].formatted_name);
     }
   }
 }
@@ -263,7 +263,7 @@ public void UpdateClanTags() {
         if (IsReadyGameState()) {
           CS_SetClientClanTag(i, IsClientReady(i) ? readyTag : notReadyTag);
         } else {
-          CS_SetClientClanTag(i, g_TeamTags[GetClientMatchTeam(i)]);
+          CS_SetClientClanTag(i, g_TeamConfig[GetClientMatchTeam(i)].tag);
         }
       }
     }

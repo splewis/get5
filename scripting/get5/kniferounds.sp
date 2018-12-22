@@ -70,7 +70,7 @@ public Action Command_Stay(int client, int args) {
   if (AwaitingKnifeDecision(client)) {
     EndKnifeRound(false);
     Get5_MessageToAll("%t", "TeamDecidedToStayInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam]);
+                      g_TeamConfig[g_KnifeWinnerTeam].formatted_name);
   }
   return Plugin_Handled;
 }
@@ -79,7 +79,7 @@ public Action Command_Swap(int client, int args) {
   if (AwaitingKnifeDecision(client)) {
     EndKnifeRound(true);
     Get5_MessageToAll("%t", "TeamDecidedToSwapInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam]);
+                      g_TeamConfig[g_KnifeWinnerTeam].formatted_name);
   } else if (g_GameState == Get5State_Warmup && g_InScrimMode &&
              GetClientMatchTeam(client) == MatchTeam_Team1) {
     PerformSideSwap(true);
@@ -116,6 +116,6 @@ public Action Timer_ForceKnifeDecision(Handle timer) {
   if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     EndKnifeRound(false);
     Get5_MessageToAll("%t", "TeamLostTimeToDecideInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam]);
+                      g_TeamConfig[g_KnifeWinnerTeam].formatted_name);
   }
 }

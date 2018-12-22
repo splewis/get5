@@ -271,7 +271,7 @@ public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
 
     RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
-    Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], mapName);
+    Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_TeamConfig[team].formatted_name, mapName);
 
     EventLogger_MapVetoed(team, mapName);
 
@@ -334,7 +334,7 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
     g_MapsToPlay.PushString(mapName);
     RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
-    Get5_MessageToAll("%t", "TeamPickedMapInfoMessage", g_FormattedTeamNames[team], mapName,
+    Get5_MessageToAll("%t", "TeamPickedMapInfoMessage",g_TeamConfig[team].formatted_name, mapName,
                       g_MapsToPlay.Length);
     g_LastVetoTeam = team;
 
@@ -406,7 +406,7 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
     char mapName[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
 
-    Get5_MessageToAll("%t", "TeamSelectSideInfoMessage", g_FormattedTeamNames[team], choice,
+    Get5_MessageToAll("%t", "TeamSelectSideInfoMessage",g_TeamConfig[team].formatted_name, choice,
                       mapName);
 
     EventLogger_SidePicked(team, mapName, g_MapsToPlay.Length - 1, selectedSide);

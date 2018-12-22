@@ -22,8 +22,8 @@ public void Stats_InitSeries() {
   char seriesType[32];
   Format(seriesType, sizeof(seriesType), "bo%d", MaxMapsToPlay(g_MapsToWin));
   g_StatsKv.SetString(STAT_SERIESTYPE, seriesType);
-  g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamNames[MatchTeam_Team1]);
-  g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[MatchTeam_Team2]);
+  g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamConfig[MatchTeam_Team1].name);
+  g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamConfig[MatchTeam_Team2].name);
   DumpToFile();
 }
 

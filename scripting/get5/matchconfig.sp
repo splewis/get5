@@ -313,12 +313,12 @@ static void AddTeamBackupData(KeyValues kv, MatchTeam team) {
   }
   kv.GoBack();
 
-  kv.SetString("name", g_TeamNames[team]);
+  kv.SetString("name", g_TeamConfig[team].name);
   if (team != MatchTeam_TeamSpec) {
-    kv.SetString("tag", g_TeamTags[team]);
-    kv.SetString("flag", g_TeamFlags[team]);
-    kv.SetString("logo", g_TeamLogos[team]);
-    kv.SetString("matchtext", g_TeamMatchTexts[team]);
+    kv.SetString("tag", g_TeamConfig[team].tag);
+    kv.SetString("flag", g_TeamConfig[team].flag);
+    kv.SetString("logo", g_TeamConfig[team].logo);
+    kv.SetString("matchtext", g_TeamConfig[team].match_text);
   }
 }
 
@@ -367,12 +367,12 @@ static bool LoadMatchFromKv(KeyValues kv) {
   GetTeamAuths(MatchTeam_TeamSpec).Clear();
   if (kv.JumpToKey("spectators")) {
     AddSubsectionAuthsToList(kv, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
-    kv.GetString("name", g_TeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH,
+    kv.GetString("name", g_TeamConfig[MatchTeam_TeamSpec].name, MAX_CVAR_LENGTH,
                  CONFIG_SPECTATORSNAME_DEFAULT);
     kv.GoBack();
 
-    Format(g_FormattedTeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
-           g_DefaultTeamColors[MatchTeam_TeamSpec], g_TeamNames[MatchTeam_TeamSpec]);
+    Format(g_TeamConfig[MatchTeam_TeamSpec].formatted_name, MAX_CVAR_LENGTH, "%s%s{NORMAL}",
+           g_DefaultTeamColors[MatchTeam_TeamSpec], g_TeamConfig[MatchTeam_TeamSpec].name);
   }
 
   if (kv.JumpToKey("team1")) {
@@ -481,12 +481,12 @@ static bool LoadMatchFromJson(JSON_Object json) {
 
   JSON_Object spec = json.GetObject("spectators");
   if (spec != null) {
-    json_object_get_string_safe(spec, "name", g_TeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH,
+    json_object_get_string_safe(spec, "name", g_TeamConfig[MatchTeam_TeamSpec].name, MAX_CVAR_LENGTH,
                                 CONFIG_SPECTATORSNAME_DEFAULT);
     AddJsonAuthsToList(spec, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
 
-    Format(g_FormattedTeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
-           g_DefaultTeamColors[MatchTeam_TeamSpec], g_TeamNames[MatchTeam_TeamSpec]);
+    Format(g_TeamConfig[MatchTeam_TeamSpec].formatted_name, MAX_CVAR_LENGTH, "%s%s{NORMAL}",
+           g_DefaultTeamColors[MatchTeam_TeamSpec], g_TeamConfig[MatchTeam_TeamSpec].name);
   }
 
   JSON_Object team1 = json.GetObject("team1");
@@ -556,11 +556,11 @@ static void LoadTeamDataJson(JSON_Object json, MatchTeam matchTeam) {
     // TODO: this needs to support both an array and a dictionary
     // For now, it only supports an array
     AddJsonAuthsToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
-    json_object_get_string_safe(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH);
-    json_object_get_string_safe(json, "tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH);
-    json_object_get_string_safe(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
-    json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
-    json_object_get_string_safe(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
+    json_object_get_string_safe(json, "name", g_TeamConfig[matchTeam].name, MAX_CVAR_LENGTH);
+    json_object_get_string_safe(json, "tag", g_TeamConfig[matchTeam].tag, MAX_CVAR_LENGTH);
+    json_object_get_string_safe(json, "flag", g_TeamConfig[matchTeam].flag, MAX_CVAR_LENGTH);
+    json_object_get_string_safe(json, "logo", g_TeamConfig[matchTeam].logo, MAX_CVAR_LENGTH);
+    json_object_get_string_safe(json, "matchtext", g_TeamConfig[matchTeam].match_text, MAX_CVAR_LENGTH);
   } else {
     JSON_Object fromfileJson = json_load_file(fromfile);
     if (fromfileJson == null) {
@@ -573,8 +573,8 @@ static void LoadTeamDataJson(JSON_Object json, MatchTeam matchTeam) {
   }
 
   g_TeamSeriesScores[matchTeam] = json_object_get_int_safe(json, "series_score", 0);
-  Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
-         g_DefaultTeamColors[matchTeam], g_TeamNames[matchTeam]);
+  Format(g_TeamConfig[matchTeam].formatted_name, MAX_CVAR_LENGTH, "%s%s{NORMAL}",
+         g_DefaultTeamColors[matchTeam], g_TeamConfig[matchTeam].name);
 }
 
 static void LoadTeamData(KeyValues kv, MatchTeam matchTeam) {
@@ -584,11 +584,11 @@ static void LoadTeamData(KeyValues kv, MatchTeam matchTeam) {
 
   if (StrEqual(fromfile, "")) {
     AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
-    kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, "");
-    kv.GetString("tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH, "");
-    kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
-    kv.GetString("logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH, "");
-    kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");
+    kv.GetString("name", g_TeamConfig[matchTeam].name, MAX_CVAR_LENGTH, "");
+    kv.GetString("tag", g_TeamConfig[matchTeam].tag, MAX_CVAR_LENGTH, "");
+    kv.GetString("flag", g_TeamConfig[matchTeam].flag, MAX_CVAR_LENGTH, "");
+    kv.GetString("logo", g_TeamConfig[matchTeam].logo, MAX_CVAR_LENGTH, "");
+    kv.GetString("matchtext", g_TeamConfig[matchTeam].match_text, MAX_CVAR_LENGTH, "");
   } else {
     KeyValues fromfilekv = new KeyValues("team");
     if (fromfilekv.ImportFromFile(fromfile)) {
@@ -600,8 +600,8 @@ static void LoadTeamData(KeyValues kv, MatchTeam matchTeam) {
   }
 
   g_TeamSeriesScores[matchTeam] = kv.GetNum("series_score", 0);
-  Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
-         g_DefaultTeamColors[matchTeam], g_TeamNames[matchTeam]);
+  Format(g_TeamConfig[matchTeam].formatted_name, MAX_CVAR_LENGTH, "%s%s{NORMAL}",
+         g_DefaultTeamColors[matchTeam], g_TeamConfig[matchTeam].name);
 }
 
 static void LoadDefaultMapList(ArrayList list) {
@@ -628,8 +628,8 @@ public void SetMatchTeamCvars() {
   // These might be modified so copies are made here.
   char ctMatchText[MAX_CVAR_LENGTH];
   char tMatchText[MAX_CVAR_LENGTH];
-  strcopy(ctMatchText, sizeof(ctMatchText), g_TeamMatchTexts[ctTeam]);
-  strcopy(tMatchText, sizeof(tMatchText), g_TeamMatchTexts[tTeam]);
+  strcopy(ctMatchText, sizeof(ctMatchText), g_TeamConfig[ctTeam].match_text);
+  strcopy(tMatchText, sizeof(tMatchText), g_TeamConfig[tTeam].match_text);
 
   // Update mp_teammatchstat_txt with the match title.
   char mapstat[MAX_CVAR_LENGTH];
@@ -648,10 +648,10 @@ public void SetMatchTeamCvars() {
                              sizeof(tMatchText));
   }
 
-  SetTeamInfo(CS_TEAM_CT, g_TeamNames[ctTeam], g_TeamFlags[ctTeam], g_TeamLogos[ctTeam],
+  SetTeamInfo(CS_TEAM_CT, g_TeamConfig[ctTeam].name, g_TeamConfig[ctTeam].flag, g_TeamConfig[ctTeam].logo,
               ctMatchText, g_TeamSeriesScores[ctTeam]);
 
-  SetTeamInfo(CS_TEAM_T, g_TeamNames[tTeam], g_TeamFlags[tTeam], g_TeamLogos[tTeam], tMatchText,
+  SetTeamInfo(CS_TEAM_T, g_TeamConfig[tTeam].name, g_TeamConfig[tTeam].flag, g_TeamConfig[tTeam].logo, tMatchText,
               g_TeamSeriesScores[tTeam]);
 
   // Set prediction cvars.
@@ -1030,8 +1030,8 @@ static void MatchTeamStringsToCSTeam(const char[] team1Str, const char[] team2St
 
 // Adds the team logos to the download table.
 static void AddTeamLogosToDownloadTable() {
-  AddTeamLogoToDownloadTable(g_TeamLogos[MatchTeam_Team1]);
-  AddTeamLogoToDownloadTable(g_TeamLogos[MatchTeam_Team2]);
+  AddTeamLogoToDownloadTable(g_TeamConfig[MatchTeam_Team1].logo);
+  AddTeamLogoToDownloadTable(g_TeamConfig[MatchTeam_Team2].logo);
 }
 
 static void AddTeamLogoToDownloadTable(const char[] logoName) {
@@ -1046,13 +1046,13 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
 }
 
 public void CheckTeamNameStatus(MatchTeam team) {
-  if (StrEqual(g_TeamNames[team], "") && team != MatchTeam_TeamSpec) {
+  if (StrEqual(g_TeamConfig[team].name, "") && team != MatchTeam_TeamSpec) {
     for (int i = 1; i <= MaxClients; i++) {
       if (IsAuthedPlayer(i)) {
         if (GetClientMatchTeam(i) == team) {
           char clientName[MAX_NAME_LENGTH];
           GetClientName(i, clientName, sizeof(clientName));
-          Format(g_TeamNames[team], MAX_CVAR_LENGTH, "team_%s", clientName);
+          Format(g_TeamConfig[team].name, MAX_CVAR_LENGTH, "team_%s", clientName);
           break;
         }
       }
@@ -1062,7 +1062,7 @@ public void CheckTeamNameStatus(MatchTeam team) {
     if (team == MatchTeam_Team2)
       colorTag = TEAM2_COLOR;
 
-    Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag,
-           g_TeamNames[team]);
+    Format(g_TeamConfig[team].formatted_name, MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag,
+           g_TeamConfig[team].name);
   }
 }

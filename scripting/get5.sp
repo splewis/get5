@@ -166,7 +166,6 @@ enum struct TeamState {
   int pause_time_used;
   int num_pauses_used;
   int ready_time_used;
-
 }
 // clang-format on
 TeamState g_TeamState[MatchTeam_Count];

@@ -116,25 +116,24 @@ static void AddGlobalStateInfo(File f) {
   f.WriteLine("g_DoingBackupRestoreNow = %d", g_DoingBackupRestoreNow);
 
   LOOP_TEAMS(team) {
-    // TODO: update the string names below.
     GetTeamString(team, buffer, sizeof(buffer));
     f.WriteLine("Team info for team %s (%d):", buffer, team);
-    f.WriteLine("g_TeamNames = %s", g_TeamConfig[team].name);
+    f.WriteLine("TeamConfig.name = %s", g_TeamConfig[team].name);
     WriteArrayList(f, "g_TeamAuths", g_TeamAuths[team]);
-    f.WriteLine("g_TeamTags = %s", g_TeamConfig[team].tag);
-    f.WriteLine("g_FormattedTeamNames = %s", g_TeamConfig[team].formatted_name);
-    f.WriteLine("g_TeamFlags = %s", g_TeamConfig[team].flag);
-    f.WriteLine("g_TeamLogos = %s", g_TeamConfig[team].logo);
-    f.WriteLine("g_TeamMatchTexts = %s", g_TeamConfig[team].match_text);
+    f.WriteLine("TeamConfig.tag = %s", g_TeamConfig[team].tag);
+    f.WriteLine("TeamConfig.formatted_team_State = %s", g_TeamConfig[team].formatted_name);
+    f.WriteLine("TeamConfig.flags = %s", g_TeamConfig[team].flag);
+    f.WriteLine("TeamConfig.logo = %s", g_TeamConfig[team].logo);
+    f.WriteLine("TeamConfig.match_text = %s", g_TeamConfig[team].match_text);
 
     CSTeamString(g_TeamState[team].side, buffer, sizeof(buffer));
-    f.WriteLine("g_TeamSide = %s (%d)", buffer, g_TeamState[team].side);
-    f.WriteLine("g_TeamSeriesScores = %d", g_TeamState[team].series_score);
-    f.WriteLine("g_TeamReadyOverride = %d", g_TeamState[team].ready_override);
-    f.WriteLine("g_TeamStartingSide = %d", g_TeamState[team].starting_side);
-    f.WriteLine("g_TeamPauseTimeUsed = %d", g_TeamState[team].pause_time_used);
-    f.WriteLine("g_TeamPausesUsed = %d", g_TeamState[team].num_pauses_used);
-    f.WriteLine("g_ReadyTimeWaitingUsed = %d", g_TeamState[team].ready_time_used);
+    f.WriteLine("TeamState.side = %s (%d)", buffer, g_TeamState[team].side);
+    f.WriteLine("TeamState.series_score = %d", g_TeamState[team].series_score);
+    f.WriteLine("TeamState.ready_override = %d", g_TeamState[team].ready_override);
+    f.WriteLine("TeamState.starting_side = %d", g_TeamState[team].starting_side);
+    f.WriteLine("TeamState.pause_time_used = %d", g_TeamState[team].pause_time_used);
+    f.WriteLine("TeamState.num_pauses_used = %d", g_TeamState[team].num_pauses_used);
+    f.WriteLine("TeamState.ready_time_used = %d", g_TeamState[team].ready_time_used);
   }
 }
 

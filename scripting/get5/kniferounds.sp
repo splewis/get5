@@ -25,9 +25,9 @@ public Action Timer_AnnounceKnife(Handle timer) {
 
 static void PerformSideSwap(bool swap) {
   if (swap) {
-    int tmp = g_TeamSide[MatchTeam_Team2];
-    g_TeamSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team1];
-    g_TeamSide[MatchTeam_Team1] = tmp;
+    int tmp = g_TeamState[MatchTeam_Team2].side;
+    g_TeamState[MatchTeam_Team2].side = g_TeamState[MatchTeam_Team1].side;
+    g_TeamState[MatchTeam_Team1].side = tmp;
 
     for (int i = 1; i <= MaxClients; i++) {
       if (IsValidClient(i)) {
@@ -43,12 +43,12 @@ static void PerformSideSwap(bool swap) {
       }
     }
   } else {
-    g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
-    g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
+    g_TeamState[MatchTeam_Team1].side = TEAM1_STARTING_SIDE;
+    g_TeamState[MatchTeam_Team2].side = TEAM2_STARTING_SIDE;
   }
 
-  g_TeamStartingSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team1];
-  g_TeamStartingSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team2];
+  g_TeamState[MatchTeam_Team1].starting_side = g_TeamState[MatchTeam_Team1].side;
+  g_TeamState[MatchTeam_Team2].starting_side = g_TeamState[MatchTeam_Team2].side;
   SetMatchTeamCvars();
 }
 

@@ -43,19 +43,19 @@ public Action Command_Pause(int client, int args) {
     Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
   }
 
-  if (maxPauses > 0 && g_TeamPausesUsed[team] >= maxPauses && IsPlayerTeam(team)) {
+  if (maxPauses > 0 && g_TeamState[team].num_pauses_used >= maxPauses && IsPlayerTeam(team)) {
     Get5_Message(client, "%t", "MaxPausesUsedInfoMessage", maxPauses, pausePeriodString);
     return Plugin_Handled;
   }
 
   int maxPauseTime = g_MaxPauseTimeCvar.IntValue;
-  if (maxPauseTime > 0 && g_TeamPauseTimeUsed[team] >= maxPauseTime && IsPlayerTeam(team)) {
+  if (maxPauseTime > 0 && g_TeamState[team].pause_time_used >= maxPauseTime && IsPlayerTeam(team)) {
     Get5_Message(client, "%t", "MaxPausesTimeUsedInfoMessage", maxPauseTime, pausePeriodString);
     return Plugin_Handled;
   }
 
-  g_TeamReadyForUnpause[MatchTeam_Team1] = false;
-  g_TeamReadyForUnpause[MatchTeam_Team2] = false;
+  g_TeamState[MatchTeam_Team1].ready_for_unpause = false;
+  g_TeamState[MatchTeam_Team2].ready_for_unpause = false;
 
   // If the pause will need explicit resuming, we will create a timer to poll the pause status.
   bool need_resume = Pause(g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team));
@@ -68,7 +68,7 @@ public Action Command_Pause(int client, int args) {
       CreateTimer(1.0, Timer_PauseTimeCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
     }
 
-    g_TeamPausesUsed[team]++;
+    g_TeamState[team].num_pauses_used++;
 
     pausePeriodString = "";
     if (g_ResetPausesEachHalfCvar.BoolValue) {
@@ -76,7 +76,7 @@ public Action Command_Pause(int client, int args) {
     }
 
     if (g_MaxPausesCvar.IntValue > 0) {
-      int pausesLeft = g_MaxPausesCvar.IntValue - g_TeamPausesUsed[team];
+      int pausesLeft = g_MaxPausesCvar.IntValue - g_TeamState[team].num_pauses_used;
       if (pausesLeft == 1 && g_MaxPausesCvar.IntValue > 0) {
         Get5_MessageToAll("%t", "OnePauseLeftInfoMessage", g_TeamConfig[team].formatted_name,
                           pausesLeft, pausePeriodString);
@@ -106,12 +106,12 @@ public Action Timer_PauseTimeCheck(Handle timer, int data) {
   }
 
   MatchTeam team = view_as<MatchTeam>(data);
-  int timeLeft = g_MaxPauseTimeCvar.IntValue - g_TeamPauseTimeUsed[team];
+  int timeLeft = g_MaxPauseTimeCvar.IntValue - g_TeamState[team].pause_time_used;
 
   // Only count against the team's pause time if we're actually in the freezetime
   // pause and they haven't requested an unpause yet.
-  if (InFreezeTime() && !g_TeamReadyForUnpause[team]) {
-    g_TeamPauseTimeUsed[team]++;
+  if (InFreezeTime() && !g_TeamState[team].ready_for_unpause) {
+    g_TeamState[team].pause_time_used++;
 
     if (timeLeft == 10) {
       Get5_MessageToAll("%t", "PauseTimeExpiration10SecInfoMessage",
@@ -147,18 +147,21 @@ public Action Command_Unpause(int client, int args) {
   }
 
   MatchTeam team = GetClientMatchTeam(client);
-  g_TeamReadyForUnpause[team] = true;
+  g_TeamState[team].ready_for_unpause = true;
 
-  if (g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2]) {
+  if (g_TeamState[MatchTeam_Team1].ready_for_unpause &&
+      g_TeamState[MatchTeam_Team2].ready_for_unpause) {
     Unpause();
     if (IsPlayer(client)) {
       Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", client);
     }
-  } else if (g_TeamReadyForUnpause[MatchTeam_Team1] && !g_TeamReadyForUnpause[MatchTeam_Team2]) {
+  } else if (g_TeamState[MatchTeam_Team1].ready_for_unpause &&
+             !g_TeamState[MatchTeam_Team2].ready_for_unpause) {
     Get5_MessageToAll("%t", "WaitingForUnpauseInfoMessage",
                       g_TeamConfig[MatchTeam_Team1].formatted_name,
                       g_TeamConfig[MatchTeam_Team2].formatted_name);
-  } else if (!g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2]) {
+  } else if (!g_TeamState[MatchTeam_Team1].ready_for_unpause &&
+             g_TeamState[MatchTeam_Team2].ready_for_unpause) {
     Get5_MessageToAll("%t", "WaitingForUnpauseInfoMessage",
                       g_TeamConfig[MatchTeam_Team2].formatted_name,
                       g_TeamConfig[MatchTeam_Team1].formatted_name);

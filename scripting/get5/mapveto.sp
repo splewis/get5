@@ -11,8 +11,8 @@ public void CreateVeto() {
         g_MapPoolList.Length);
   }
 
-  g_VetoCaptains[MatchTeam_Team1] = GetTeamCaptain(MatchTeam_Team1);
-  g_VetoCaptains[MatchTeam_Team2] = GetTeamCaptain(MatchTeam_Team2);
+  g_TeamState[MatchTeam_Team1].veto_captain = GetTeamCaptain(MatchTeam_Team1);
+  g_TeamState[MatchTeam_Team2].veto_captain = GetTeamCaptain(MatchTeam_Team2);
   ResetReadyStatus();
   CreateTimer(1.0, Timer_VetoCountdown, _, TIMER_REPEAT);
 }
@@ -22,7 +22,7 @@ public Action Timer_VetoCountdown(Handle timer) {
   if (warningsPrinted >= g_VetoCountdownCvar.IntValue) {
     warningsPrinted = 0;
     MatchTeam startingTeam = OtherMatchTeam(g_LastVetoTeam);
-    VetoController(g_VetoCaptains[startingTeam]);
+    VetoController(g_TeamState[startingTeam].veto_captain);
     return Plugin_Stop;
   } else {
     warningsPrinted++;
@@ -43,7 +43,8 @@ public void VetoFinished() {
   Get5_MessageToAll("%t", "MapDecidedInfoMessage");
 
   // Use total series score as starting point, to not print skipped maps
-  int seriesScore = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
+  int seriesScore =
+      g_TeamState[MatchTeam_Team1].series_score + g_TeamState[MatchTeam_Team2].series_score;
   for (int i = seriesScore; i < g_MapsToPlay.Length; i++) {
     char map[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(i, map, sizeof(map));
@@ -67,7 +68,8 @@ public void VetoController(int client) {
   int mapsPicked = g_MapsToPlay.Length;
   int sidesSet = g_MapSides.Length;
 
-  int seriesScore = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
+  int seriesScore =
+      g_TeamState[MatchTeam_Team1].series_score + g_TeamState[MatchTeam_Team2].series_score;
 
   // This is a dirty hack to get ban/ban/pick/pick/ban/ban
   // instead of straight vetoing until the maplist is the length

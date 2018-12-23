@@ -107,7 +107,7 @@ public void EventLogger_KnifeWon(MatchTeam winner, bool swap) {
   EventLogger_StartEvent();
   AddMapData(params);
   AddTeam(params, "winner", winner);
-  AddCSTeam(params, "selected_side", g_TeamStartingSide[winner]);
+  AddCSTeam(params, "selected_side", g_TeamState[winner].starting_side);
   EventLogger_EndEvent("knife_won");
 }
 

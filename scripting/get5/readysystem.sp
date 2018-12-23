@@ -30,11 +30,11 @@ public void SetAllClientsReady(bool ready) {
 // Team ready override
 
 public bool IsTeamForcedReady(MatchTeam team) {
-  return g_TeamReadyOverride[team] == true;
+  return g_TeamState[team].ready_override;
 }
 
 public void SetTeamForcedReady(MatchTeam team, bool ready) {
-  g_TeamReadyOverride[team] = ready;
+  g_TeamState[team].ready_override = ready;
 }
 
 public void SetAllTeamsForcedReady(bool ready) {

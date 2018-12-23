@@ -183,9 +183,9 @@ public MatchTeam GetClientMatchTeam(int client) {
 
 public int MatchTeamToCSTeam(MatchTeam t) {
   if (t == MatchTeam_Team1) {
-    return g_TeamSide[MatchTeam_Team1];
+    return g_TeamState[MatchTeam_Team1].side;
   } else if (t == MatchTeam_Team2) {
-    return g_TeamSide[MatchTeam_Team2];
+    return g_TeamState[MatchTeam_Team2].side;
   } else if (t == MatchTeam_TeamSpec) {
     return CS_TEAM_SPECTATOR;
   } else {
@@ -194,9 +194,9 @@ public int MatchTeamToCSTeam(MatchTeam t) {
 }
 
 public MatchTeam CSTeamToMatchTeam(int csTeam) {
-  if (csTeam == g_TeamSide[MatchTeam_Team1]) {
+  if (csTeam == g_TeamState[MatchTeam_Team1].side) {
     return MatchTeam_Team1;
-  } else if (csTeam == g_TeamSide[MatchTeam_Team2]) {
+  } else if (csTeam == g_TeamState[MatchTeam_Team2].side) {
     return MatchTeam_Team2;
   } else if (csTeam == CS_TEAM_SPECTATOR) {
     return MatchTeam_TeamSpec;
@@ -283,10 +283,10 @@ public int GetTeamCaptain(MatchTeam team) {
 }
 
 public int GetNextTeamCaptain(int client) {
-  if (client == g_VetoCaptains[MatchTeam_Team1]) {
-    return g_VetoCaptains[MatchTeam_Team2];
+  if (client == g_TeamState[MatchTeam_Team1].veto_captain) {
+    return g_TeamState[MatchTeam_Team2].veto_captain;
   } else {
-    return g_VetoCaptains[MatchTeam_Team1];
+    return g_TeamState[MatchTeam_Team1].veto_captain;
   }
 }
 
@@ -301,20 +301,20 @@ public bool IsAuthOnTeam(const char[] auth, MatchTeam team) {
 public void SetStartingTeams() {
   int mapNumber = GetMapNumber();
   if (mapNumber >= g_MapSides.Length || g_MapSides.Get(mapNumber) == SideChoice_KnifeRound) {
-    g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
-    g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
+    g_TeamState[MatchTeam_Team1].side = TEAM1_STARTING_SIDE;
+    g_TeamState[MatchTeam_Team2].side = TEAM2_STARTING_SIDE;
   } else {
     if (g_MapSides.Get(mapNumber) == SideChoice_Team1CT) {
-      g_TeamSide[MatchTeam_Team1] = CS_TEAM_CT;
-      g_TeamSide[MatchTeam_Team2] = CS_TEAM_T;
+      g_TeamState[MatchTeam_Team1].side = CS_TEAM_CT;
+      g_TeamState[MatchTeam_Team2].side = CS_TEAM_T;
     } else {
-      g_TeamSide[MatchTeam_Team1] = CS_TEAM_T;
-      g_TeamSide[MatchTeam_Team2] = CS_TEAM_CT;
+      g_TeamState[MatchTeam_Team1].side = CS_TEAM_T;
+      g_TeamState[MatchTeam_Team2].side = CS_TEAM_CT;
     }
   }
 
-  g_TeamStartingSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team1];
-  g_TeamStartingSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team2];
+  g_TeamState[MatchTeam_Team1].starting_side = g_TeamState[MatchTeam_Team1].side;
+  g_TeamState[MatchTeam_Team2].starting_side = g_TeamState[MatchTeam_Team2].side;
 }
 
 public void AddMapScore() {
@@ -337,8 +337,8 @@ public bool HasMapScore(int mapNumber) {
 }
 
 public int GetMapNumber() {
-  return g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] +
-         g_TeamSeriesScores[MatchTeam_TeamNone];
+  return g_TeamState[MatchTeam_Team1].series_score + g_TeamState[MatchTeam_Team2].series_score +
+         g_TeamState[MatchTeam_TeamNone].series_score;
 }
 
 public bool AddPlayerToTeam(const char[] auth, MatchTeam team, const char[] name) {

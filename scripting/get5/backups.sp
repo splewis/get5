@@ -71,14 +71,14 @@ public void WriteBackStructure(const char[] path) {
     kv.SetNum("gamestate", view_as<int>(Get5State_Live));
   }
 
-  kv.SetNum("team1_side", g_TeamSide[MatchTeam_Team1]);
-  kv.SetNum("team2_side", g_TeamSide[MatchTeam_Team2]);
+  kv.SetNum("team1_side", g_TeamState[MatchTeam_Team1].side);
+  kv.SetNum("team2_side", g_TeamState[MatchTeam_Team2].side);
 
-  kv.SetNum("team1_start_side", g_TeamStartingSide[MatchTeam_Team1]);
-  kv.SetNum("team2_start_side", g_TeamStartingSide[MatchTeam_Team2]);
+  kv.SetNum("team1_start_side", g_TeamState[MatchTeam_Team1].starting_side);
+  kv.SetNum("team2_start_side", g_TeamState[MatchTeam_Team2].starting_side);
 
-  kv.SetNum("team1_series_score", g_TeamSeriesScores[MatchTeam_Team1]);
-  kv.SetNum("team2_series_score", g_TeamSeriesScores[MatchTeam_Team2]);
+  kv.SetNum("team1_series_score", g_TeamState[MatchTeam_Team1].series_score);
+  kv.SetNum("team2_series_score", g_TeamState[MatchTeam_Team2].series_score);
 
   // Write original maplist.
   kv.JumpToKey("maps", true);
@@ -153,14 +153,14 @@ public bool RestoreFromBackup(const char[] path) {
   kv.GetString("matchid", g_MatchID, sizeof(g_MatchID));
   g_GameState = view_as<Get5State>(kv.GetNum("gamestate"));
 
-  g_TeamSide[MatchTeam_Team1] = kv.GetNum("team1_side");
-  g_TeamSide[MatchTeam_Team2] = kv.GetNum("team2_side");
+  g_TeamState[MatchTeam_Team1].side = kv.GetNum("team1_side");
+  g_TeamState[MatchTeam_Team2].side = kv.GetNum("team2_side");
 
-  g_TeamStartingSide[MatchTeam_Team1] = kv.GetNum("team1_start_side");
-  g_TeamStartingSide[MatchTeam_Team2] = kv.GetNum("team2_start_side");
+  g_TeamState[MatchTeam_Team1].starting_side = kv.GetNum("team1_start_side");
+  g_TeamState[MatchTeam_Team2].starting_side = kv.GetNum("team2_start_side");
 
-  g_TeamSeriesScores[MatchTeam_Team1] = kv.GetNum("team1_series_score");
-  g_TeamSeriesScores[MatchTeam_Team2] = kv.GetNum("team2_series_score");
+  g_TeamState[MatchTeam_Team1].series_score = kv.GetNum("team1_series_score");
+  g_TeamState[MatchTeam_Team2].series_score = kv.GetNum("team2_series_score");
 
   char mapName[PLATFORM_MAX_PATH];
   if (g_GameState > Get5State_Veto) {

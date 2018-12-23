@@ -152,20 +152,29 @@ int g_DamageDone[MAXPLAYERS + 1][MAXPLAYERS + 1];
 int g_DamageDoneHits[MAXPLAYERS + 1][MAXPLAYERS + 1];
 KeyValues g_StatsKv;
 
+// clang-format off
+enum struct TeamState {
+  int veto_captain; // Client doing the map vetos.
+  int series_score; // Current number of maps won.
+  bool ready_override; // Whether a team has been force readied.
+  int side; // Current CS_TEAM_* side.
+  int starting_side;
+
+  // Pause info.
+  bool ready_for_unpause;
+  bool gave_stop_command;
+  int pause_time_used;
+  int num_pauses_used;
+  int ready_time_used;
+
+}
+// clang-format on
+TeamState g_TeamState[MatchTeam_Count];
+
 ArrayList g_TeamScoresPerMap = null;
 char g_LoadedConfigFile[PLATFORM_MAX_PATH];
-int g_VetoCaptains[MatchTeam_Count];        // Clients doing the map vetos.
-int g_TeamSeriesScores[MatchTeam_Count];    // Current number of maps won per-team.
-bool g_TeamReadyOverride[MatchTeam_Count];  // Whether a team has been voluntarily force readied.
-bool g_ClientReady[MAXPLAYERS + 1];         // Whether clients are marked ready.
-int g_TeamSide[MatchTeam_Count];            // Current CS_TEAM_* side for the team.
-int g_TeamStartingSide[MatchTeam_Count];
-bool g_TeamReadyForUnpause[MatchTeam_Count];
-bool g_TeamGivenStopCommand[MatchTeam_Count];
+bool g_ClientReady[MAXPLAYERS + 1];  // Whether clients are marked ready.
 bool g_InExtendedPause;
-int g_TeamPauseTimeUsed[MatchTeam_Count];
-int g_TeamPausesUsed[MatchTeam_Count];
-int g_ReadyTimeWaitingUsed[MatchTeam_Count];
 char g_DefaultTeamColors[][] = {
     TEAM1_COLOR, TEAM2_COLOR, "{NORMAL}", "{NORMAL}",
 };
@@ -598,8 +607,8 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
   // TODO: consider adding a forfeit if a full team disconnects.
   if (g_EndMatchOnEmptyServerCvar.BoolValue && g_GameState >= Get5State_Warmup &&
       g_GameState < Get5State_PostGame && GetRealClientCount() == 0 && !g_MapChangePending) {
-    g_TeamSeriesScores[MatchTeam_Team1] = 0;
-    g_TeamSeriesScores[MatchTeam_Team2] = 0;
+    g_TeamState[MatchTeam_Team1].series_score = 0;
+    g_TeamState[MatchTeam_Team2].series_score = 0;
     EndSeries();
   }
 }
@@ -610,11 +619,11 @@ public void OnMapStart() {
 
   ResetReadyStatus();
   LOOP_TEAMS(team) {
-    g_TeamGivenStopCommand[team] = false;
-    g_TeamReadyForUnpause[team] = false;
-    g_TeamPauseTimeUsed[team] = 0;
-    g_TeamPausesUsed[team] = 0;
-    g_ReadyTimeWaitingUsed[team] = 0;
+    g_TeamState[team].gave_stop_command = false;
+    g_TeamState[team].ready_for_unpause = false;
+    g_TeamState[team].pause_time_used = 0;
+    g_TeamState[team].num_pauses_used = 0;
+    g_TeamState[team].ready_time_used = 0;
   }
 
   if (g_WaitingForRoundBackup) {
@@ -700,8 +709,8 @@ static void CheckReadyWaitingTimes() {
 
 static void CheckReadyWaitingTime(MatchTeam team) {
   if (!IsTeamReady(team) && g_GameState != Get5State_None) {
-    g_ReadyTimeWaitingUsed[team]++;
-    int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed[team];
+    g_TeamState[team].ready_time_used++;
+    int timeLeft = g_TeamTimeToStartCvar.IntValue - g_TeamState[team].ready_time_used;
 
     if (timeLeft <= 0) {
       g_ForceWinnerSignal = true;
@@ -759,8 +768,8 @@ public Action Command_EndMatch(int client, int args) {
 
   Call_StartForward(g_OnSeriesResult);
   Call_PushCell(MatchTeam_TeamNone);
-  Call_PushCell(g_TeamSeriesScores[MatchTeam_Team1]);
-  Call_PushCell(g_TeamSeriesScores[MatchTeam_Team2]);
+  Call_PushCell(g_TeamState[MatchTeam_Team1].series_score);
+  Call_PushCell(g_TeamState[MatchTeam_Team2].series_score);
   Call_Finish();
 
   UpdateClanTags();
@@ -857,17 +866,20 @@ public Action Command_Stop(int client, int args) {
   }
 
   MatchTeam team = GetClientMatchTeam(client);
-  g_TeamGivenStopCommand[team] = true;
+  g_TeamState[team].gave_stop_command = true;
 
-  if (g_TeamGivenStopCommand[MatchTeam_Team1] && !g_TeamGivenStopCommand[MatchTeam_Team2]) {
+  if (g_TeamState[MatchTeam_Team1].gave_stop_command &&
+      !g_TeamState[MatchTeam_Team2].gave_stop_command) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
                       g_TeamConfig[MatchTeam_Team1].formatted_name,
                       g_TeamConfig[MatchTeam_Team2].formatted_name);
-  } else if (!g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
+  } else if (!g_TeamState[MatchTeam_Team1].gave_stop_command &&
+             g_TeamState[MatchTeam_Team2].gave_stop_command) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
                       g_TeamConfig[MatchTeam_Team2].formatted_name,
                       g_TeamConfig[MatchTeam_Team1].formatted_name);
-  } else if (g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
+  } else if (g_TeamState[MatchTeam_Team1].gave_stop_command &&
+             g_TeamState[MatchTeam_Team2].gave_stop_command) {
     RestoreLastRound();
   }
 
@@ -876,7 +888,7 @@ public Action Command_Stop(int client, int args) {
 
 public bool RestoreLastRound() {
   LOOP_TEAMS(x) {
-    g_TeamGivenStopCommand[x] = false;
+    g_TeamState[x].gave_stop_command = false;
   }
 
   char lastBackup[PLATFORM_MAX_PATH];
@@ -920,7 +932,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     // Update series scores
     Stats_UpdateMapScore(winningTeam);
     AddMapScore();
-    g_TeamSeriesScores[winningTeam]++;
+    g_TeamState[winningTeam].series_score++;
 
     // Handle map end
 
@@ -937,9 +949,9 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     Call_PushCell(GetMapNumber() - 1);
     Call_Finish();
 
-    int t1maps = g_TeamSeriesScores[MatchTeam_Team1];
-    int t2maps = g_TeamSeriesScores[MatchTeam_Team2];
-    int tiedMaps = g_TeamSeriesScores[MatchTeam_TeamNone];
+    int t1maps = g_TeamState[MatchTeam_Team1].series_score;
+    int t2maps = g_TeamState[MatchTeam_Team2].series_score;
+    int tiedMaps = g_TeamState[MatchTeam_TeamNone].series_score;
 
     float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
 
@@ -1008,7 +1020,8 @@ static void SeriesEndMessage(MatchTeam team) {
 
     } else {
       Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_TeamConfig[team].formatted_name,
-                        g_TeamSeriesScores[team], g_TeamSeriesScores[OtherMatchTeam(team)]);
+                        g_TeamState[team].series_score,
+                        g_TeamState[OtherMatchTeam(team)].series_score);
     }
   }
 }
@@ -1046,8 +1059,8 @@ public void EndSeries() {
   StopRecording();
 
   // Figure out who won
-  int t1maps = g_TeamSeriesScores[MatchTeam_Team1];
-  int t2maps = g_TeamSeriesScores[MatchTeam_Team2];
+  int t1maps = g_TeamState[MatchTeam_Team1].series_score;
+  int t2maps = g_TeamState[MatchTeam_Team2].series_score;
 
   MatchTeam winningTeam = MatchTeam_TeamNone;
   if (t1maps > t2maps) {
@@ -1207,18 +1220,18 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
 public void SwapSides() {
   LogDebug("SwapSides");
-  int tmp = g_TeamSide[MatchTeam_Team1];
-  g_TeamSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team2];
-  g_TeamSide[MatchTeam_Team2] = tmp;
+  int tmp = g_TeamState[MatchTeam_Team1].side;
+  g_TeamState[MatchTeam_Team1].side = g_TeamState[MatchTeam_Team2].side;
+  g_TeamState[MatchTeam_Team2].side = tmp;
 
   if (g_ResetPausesEachHalfCvar.BoolValue) {
     LOOP_TEAMS(team) {
-      g_TeamPauseTimeUsed[team] = 0;
-      g_TeamPausesUsed[team] = 0;
+      g_TeamState[team].pause_time_used = 0;
+      g_TeamState[team].num_pauses_used = 0;
     }
   }
 
-  EventLogger_SideSwap(g_TeamSide[MatchTeam_Team1], g_TeamSide[MatchTeam_Team2]);
+  EventLogger_SideSwap(g_TeamState[MatchTeam_Team1].side, g_TeamState[MatchTeam_Team2].side);
 }
 
 /**
@@ -1350,7 +1363,7 @@ static void AddTeamInfo(JSON_Object json, MatchTeam matchTeam) {
   char side[4];
   CSTeamString(team, side, sizeof(side));
   json.SetString("name", g_TeamConfig[matchTeam].name);
-  json.SetInt("series_score", g_TeamSeriesScores[matchTeam]);
+  json.SetInt("series_score", g_TeamState[matchTeam].series_score);
   json.SetBool("ready", IsTeamReady(matchTeam));
   json.SetString("side", side);
   json.SetInt("connected_clients", GetNumHumansOnTeam(team));
@@ -1382,7 +1395,8 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   strcopy(team2Str, sizeof(team2Str), g_TeamConfig[MatchTeam_Team2].name);
   ReplaceString(team2Str, sizeof(team2Str), " ", "_");
 
-  int mapNumber = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] + 1;
+  int mapNumber =
+      g_TeamState[MatchTeam_Team1].series_score + g_TeamState[MatchTeam_Team2].series_score + 1;
   ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", mapNumber, false);
   ReplaceString(buffer, len, "{MATCHID}", g_MatchID, false);
   ReplaceString(buffer, len, "{MAPNAME}", mapName, false);

@@ -17,12 +17,12 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
   ResetReadyStatus();
   LOOP_TEAMS(team) {
-    g_TeamSeriesScores[team] = 0;
-    g_TeamReadyForUnpause[team] = false;
-    g_TeamGivenStopCommand[team] = false;
-    g_TeamPauseTimeUsed[team] = 0;
-    g_TeamPausesUsed[team] = 0;
-    g_ReadyTimeWaitingUsed[team] = 0;
+    g_TeamState[team].series_score = 0;
+    g_TeamState[team].ready_for_unpause = false;
+    g_TeamState[team].gave_stop_command = false;
+    g_TeamState[team].pause_time_used = 0;
+    g_TeamState[team].num_pauses_used = 0;
+    g_TeamState[team].ready_time_used = 0;
     ClearArray(GetTeamAuths(team));
   }
 
@@ -572,7 +572,7 @@ static void LoadTeamDataJson(JSON_Object json, MatchTeam matchTeam) {
     }
   }
 
-  g_TeamSeriesScores[matchTeam] = json_object_get_int_safe(json, "series_score", 0);
+  g_TeamState[matchTeam].series_score = json_object_get_int_safe(json, "series_score", 0);
   Format(g_TeamConfig[matchTeam].formatted_name, MAX_CVAR_LENGTH, "%s%s{NORMAL}",
          g_DefaultTeamColors[matchTeam], g_TeamConfig[matchTeam].name);
 }
@@ -599,7 +599,7 @@ static void LoadTeamData(KeyValues kv, MatchTeam matchTeam) {
     delete fromfilekv;
   }
 
-  g_TeamSeriesScores[matchTeam] = kv.GetNum("series_score", 0);
+  g_TeamState[matchTeam].series_score = kv.GetNum("series_score", 0);
   Format(g_TeamConfig[matchTeam].formatted_name, MAX_CVAR_LENGTH, "%s%s{NORMAL}",
          g_DefaultTeamColors[matchTeam], g_TeamConfig[matchTeam].name);
 }
@@ -617,7 +617,7 @@ static void LoadDefaultMapList(ArrayList list) {
 public void SetMatchTeamCvars() {
   MatchTeam ctTeam = MatchTeam_Team1;
   MatchTeam tTeam = MatchTeam_Team2;
-  if (g_TeamStartingSide[MatchTeam_Team1] == CS_TEAM_T) {
+  if (g_TeamState[MatchTeam_Team1].starting_side == CS_TEAM_T) {
     ctTeam = MatchTeam_Team2;
     tTeam = MatchTeam_Team1;
   }
@@ -641,22 +641,22 @@ public void SetMatchTeamCvars() {
   if (g_MapsToWin >= 3) {
     char team1Text[MAX_CVAR_LENGTH];
     char team2Text[MAX_CVAR_LENGTH];
-    IntToString(g_TeamSeriesScores[MatchTeam_Team1], team1Text, sizeof(team1Text));
-    IntToString(g_TeamSeriesScores[MatchTeam_Team2], team2Text, sizeof(team2Text));
+    IntToString(g_TeamState[MatchTeam_Team1].series_score, team1Text, sizeof(team1Text));
+    IntToString(g_TeamState[MatchTeam_Team2].series_score, team2Text, sizeof(team2Text));
 
     MatchTeamStringsToCSTeam(team1Text, team2Text, ctMatchText, sizeof(ctMatchText), tMatchText,
                              sizeof(tMatchText));
   }
 
   SetTeamInfo(CS_TEAM_CT, g_TeamConfig[ctTeam].name, g_TeamConfig[ctTeam].flag,
-              g_TeamConfig[ctTeam].logo, ctMatchText, g_TeamSeriesScores[ctTeam]);
+              g_TeamConfig[ctTeam].logo, ctMatchText, g_TeamState[ctTeam].series_score);
 
   SetTeamInfo(CS_TEAM_T, g_TeamConfig[tTeam].name, g_TeamConfig[tTeam].flag,
-              g_TeamConfig[tTeam].logo, tMatchText, g_TeamSeriesScores[tTeam]);
+              g_TeamConfig[tTeam].logo, tMatchText, g_TeamState[tTeam].series_score);
 
   // Set prediction cvars.
   SetConVarStringSafe("mp_teamprediction_txt", g_FavoredTeamText);
-  if (g_TeamSide[MatchTeam_Team1] == CS_TEAM_CT) {
+  if (g_TeamState[MatchTeam_Team1].side == CS_TEAM_CT) {
     SetConVarIntSafe("mp_teamprediction_pct", g_FavoredTeamPercentage);
   } else {
     SetConVarIntSafe("mp_teamprediction_pct", 100 - g_FavoredTeamPercentage);

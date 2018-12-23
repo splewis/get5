@@ -177,7 +177,7 @@ public int Native_MatchTeamToCSTeam(Handle plugin, int numParams) {
 public int Native_GetTeamScores(Handle plugin, int numParams) {
   MatchTeam team = GetNativeCell(1);
   if (team == MatchTeam_Team1 || team == MatchTeam_Team2) {
-    SetNativeCellRef(2, g_TeamSeriesScores[team]);
+    SetNativeCellRef(2, g_TeamState[team].series_score);
     SetNativeCellRef(3, CS_GetTeamScore(MatchTeamToCSTeam(team)));
   }
 }

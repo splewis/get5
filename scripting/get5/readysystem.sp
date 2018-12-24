@@ -100,9 +100,9 @@ public int GetTeamPlayerCount(MatchTeam team) {
 
 public int GetTeamMinReady(MatchTeam team) {
   if (team == MatchTeam_Team1 || team == MatchTeam_Team2) {
-    return g_MinPlayersToReady;
+    return g_MatchConfig.min_players_to_ready;
   } else if (team == MatchTeam_TeamSpec) {
-    return g_MinSpectatorsToReady;
+    return g_MatchConfig.min_spectators_to_ready;
   } else {
     return 0;
   }
@@ -110,10 +110,10 @@ public int GetTeamMinReady(MatchTeam team) {
 
 public int GetPlayersPerTeam(MatchTeam team) {
   if (team == MatchTeam_Team1 || team == MatchTeam_Team2) {
-    return g_PlayersPerTeam;
+    return g_MatchConfig.players_per_team;
   } else if (team == MatchTeam_TeamSpec) {
     // TODO: maybe this should be specified separately in a config?
-    return g_MinSpectatorsToReady;
+    return g_MatchConfig.min_spectators_to_ready;
   } else {
     return 0;
   }

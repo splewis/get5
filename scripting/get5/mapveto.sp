@@ -97,14 +97,14 @@ public void VetoController(int client) {
   }
 
   if (sidesSet < mapsPicked) {
-    if (g_MatchSideType == MatchSideType_Standard) {
+    if (g_MatchConfig.side_type == MatchSideType_Standard) {
       GiveSidePickMenu(client);
 
-    } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
+    } else if (g_MatchConfig.side_type == MatchSideType_AlwaysKnife) {
       g_MapSides.Push(SideChoice_KnifeRound);
       VetoController(client);
 
-    } else if (g_MatchSideType == MatchSideType_NeverKnife) {
+    } else if (g_MatchConfig.side_type == MatchSideType_NeverKnife) {
       g_MapSides.Push(SideChoice_Team1CT);
       VetoController(client);
     }
@@ -150,11 +150,11 @@ public void VetoController(int client) {
     g_MapsLeftInVetoPool.GetString(0, mapName, sizeof(mapName));
     g_MapsToPlay.PushString(mapName);
 
-    if (g_MatchSideType == MatchSideType_Standard) {
+    if (g_MatchConfig.side_type == MatchSideType_Standard) {
       g_MapSides.Push(SideChoice_KnifeRound);
-    } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
+    } else if (g_MatchConfig.side_type == MatchSideType_AlwaysKnife) {
       g_MapSides.Push(SideChoice_KnifeRound);
-    } else if (g_MatchSideType == MatchSideType_NeverKnife) {
+    } else if (g_MatchConfig.side_type == MatchSideType_NeverKnife) {
       g_MapSides.Push(SideChoice_Team1CT);
     }
 

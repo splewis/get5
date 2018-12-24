@@ -90,6 +90,7 @@ ConVar g_VersionCvar;
 // Hooked cvars built into csgo
 ConVar g_CoachingEnabledCvar;
 
+// clang-format off
 /** Series config game-state **/
 int g_MapsToWin = 1;  // Maps needed to win the series.
 bool g_BO2Match = false;
@@ -98,7 +99,6 @@ ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MatchTeam_Count];
 StringMap g_PlayerNames;
 
-// clang-format off
 enum struct TeamConfig {
   char name[MAX_CVAR_LENGTH]; 
   char formatted_name[MAX_CVAR_LENGTH]; 
@@ -107,21 +107,25 @@ enum struct TeamConfig {
   char logo[MAX_CVAR_LENGTH];
   char match_text[MAX_CVAR_LENGTH];
 }
-// clang-format on
 TeamConfig g_TeamConfig[MatchTeam_Count];
 
-char g_MatchTitle[MAX_CVAR_LENGTH];
-int g_FavoredTeamPercentage = 0;
-char g_FavoredTeamText[MAX_CVAR_LENGTH];
-int g_PlayersPerTeam = 5;
-int g_MinPlayersToReady = 1;
-int g_MinSpectatorsToReady = 0;
-bool g_SkipVeto = false;
+enum struct MatchConfig {
+  char title[MAX_CVAR_LENGTH];
+  int favored_team_percentage;
+  char favored_team_text[MAX_CVAR_LENGTH];
+  int players_per_team;
+  int min_spectators_to_ready;
+  int min_players_to_ready;
+  bool skip_veto;
+  // float veto_menu_time;
+  MatchSideType side_type;
+  ArrayList cvar_values;
+  ArrayList cvar_names;
+  bool scrim_mode;
+};
+MatchConfig g_MatchConfig;
+
 float g_VetoMenuTime = 0.0;
-MatchSideType g_MatchSideType = MatchSideType_Standard;
-ArrayList g_CvarNames = null;
-ArrayList g_CvarValues = null;
-bool g_InScrimMode = false;
 bool g_HasKnifeRoundStarted = false;
 
 /** Other state **/
@@ -152,7 +156,6 @@ int g_DamageDone[MAXPLAYERS + 1][MAXPLAYERS + 1];
 int g_DamageDoneHits[MAXPLAYERS + 1][MAXPLAYERS + 1];
 KeyValues g_StatsKv;
 
-// clang-format off
 enum struct TeamState {
   int veto_captain; // Client doing the map vetos.
   int series_score; // Current number of maps won.
@@ -167,7 +170,6 @@ enum struct TeamState {
   int num_pauses_used;
   int ready_time_used;
 }
-// clang-format on
 TeamState g_TeamState[MatchTeam_Count];
 
 ArrayList g_TeamScoresPerMap = null;
@@ -236,7 +238,6 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 #include "get5/teamlogic.sp"
 #include "get5/tests.sp"
 
-// clang-format off
 public Plugin myinfo = {
   name = "Get5",
   author = "splewis",
@@ -449,8 +450,8 @@ public void OnPluginStart() {
   g_MapsLeftInVetoPool = new ArrayList(PLATFORM_MAX_PATH);
   g_MapsToPlay = new ArrayList(PLATFORM_MAX_PATH);
   g_MapSides = new ArrayList();
-  g_CvarNames = new ArrayList(MAX_CVAR_LENGTH);
-  g_CvarValues = new ArrayList(MAX_CVAR_LENGTH);
+  g_MatchConfig.cvar_names = new ArrayList(MAX_CVAR_LENGTH);
+  g_MatchConfig.cvar_values = new ArrayList(MAX_CVAR_LENGTH);
   g_TeamScoresPerMap = new ArrayList(view_as<int>(MatchTeam_Count));
 
   for (int i = 0; i < sizeof(g_TeamAuths); i++) {
@@ -555,7 +556,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
       KickClient(client, "%t", "YourAreNotAPlayerInfoMessage");
     } else {
       int teamCount = CountPlayersOnMatchTeam(team, client);
-      if (teamCount >= g_PlayersPerTeam && !g_CoachingEnabledCvar.BoolValue) {
+      if (teamCount >= g_MatchConfig.players_per_team && !g_CoachingEnabledCvar.BoolValue) {
         KickClient(client, "%t", "TeamIsFullInfoMessage");
       }
     }
@@ -1033,7 +1034,7 @@ public Action Timer_NextMatchMap(Handle timer) {
   char map[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(index, map, sizeof(map));
 
-  if (!g_SkipVeto && g_DisplayGotvVeto.BoolValue && index == 0) {
+  if (!g_MatchConfig.skip_veto && g_DisplayGotvVeto.BoolValue && index == 0) {
     float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
     ChangeMap(map, minDelay);
   } else {

@@ -34,8 +34,8 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   g_MapsLeftInVetoPool.Clear();
   g_MapsToPlay.Clear();
   g_MapSides.Clear();
-  g_CvarNames.Clear();
-  g_CvarValues.Clear();
+  g_MatchConfig.cvar_names.Clear();
+  g_MatchConfig.cvar_values.Clear();
   g_TeamScoresPerMap.Clear();
 
   g_WaitingForRoundBackup = false;
@@ -74,7 +74,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     return false;
   }
 
-  if (g_SkipVeto) {
+  if (g_MatchConfig.skip_veto) {
     // Copy the first k maps from the maplist to the final match maps.
     for (int i = 0; i < MaxMapsToPlay(g_MapsToWin); i++) {
       g_MapPoolList.GetString(i, mapName, sizeof(mapName));
@@ -82,11 +82,11 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
       // Push a map side if one hasn't been set yet.
       if (g_MapSides.Length < g_MapsToPlay.Length) {
-        if (g_MatchSideType == MatchSideType_Standard) {
+        if (g_MatchConfig.side_type == MatchSideType_Standard) {
           g_MapSides.Push(SideChoice_KnifeRound);
-        } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
+        } else if (g_MatchConfig.side_type == MatchSideType_AlwaysKnife) {
           g_MapSides.Push(SideChoice_KnifeRound);
-        } else if (g_MatchSideType == MatchSideType_NeverKnife) {
+        } else if (g_MatchConfig.side_type == MatchSideType_NeverKnife) {
           g_MapSides.Push(SideChoice_Team1CT);
         }
       }
@@ -253,20 +253,20 @@ public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
 
 public void WriteMatchToKv(KeyValues kv) {
   kv.SetString("matchid", g_MatchID);
-  kv.SetNum("scrim", g_InScrimMode);
+  kv.SetNum("scrim", g_MatchConfig.scrim_mode);
   kv.SetNum("maps_to_win", g_MapsToWin);
   kv.SetNum("bo2_series", g_BO2Match);
-  kv.SetNum("skip_veto", g_SkipVeto);
-  kv.SetNum("players_per_team", g_PlayersPerTeam);
-  kv.SetNum("min_players_to_ready", g_MinPlayersToReady);
-  kv.SetNum("min_spectators_to_ready", g_MinSpectatorsToReady);
-  kv.SetString("match_title", g_MatchTitle);
+  kv.SetNum("skip_veto", g_MatchConfig.skip_veto);
+  kv.SetNum("players_per_team", g_MatchConfig.players_per_team);
+  kv.SetNum("min_players_to_ready", g_MatchConfig.min_players_to_ready);
+  kv.SetNum("min_spectators_to_ready", g_MatchConfig.min_spectators_to_ready);
+  kv.SetString("match_title", g_MatchConfig.title);
 
-  kv.SetNum("favored_percentage_team1", g_FavoredTeamPercentage);
-  kv.SetString("favored_percentage_text", g_FavoredTeamText);
+  kv.SetNum("favored_percentage_team1", g_MatchConfig.favored_team_percentage);
+  kv.SetString("favored_percentage_text", g_MatchConfig.favored_team_text);
 
   char sideType[64];
-  MatchSideTypeToString(g_MatchSideType, sideType, sizeof(sideType));
+  MatchSideTypeToString(g_MatchConfig.side_type, sideType, sizeof(sideType));
   kv.SetString("side_type", sideType);
 
   kv.JumpToKey("maplist", true);
@@ -290,11 +290,11 @@ public void WriteMatchToKv(KeyValues kv) {
   kv.GoBack();
 
   kv.JumpToKey("cvars", true);
-  for (int i = 0; i < g_CvarNames.Length; i++) {
+  for (int i = 0; i < g_MatchConfig.cvar_names.Length; i++) {
     char cvarName[MAX_CVAR_LENGTH];
     char cvarValue[MAX_CVAR_LENGTH];
-    g_CvarNames.GetString(i, cvarName, sizeof(cvarName));
-    g_CvarValues.GetString(i, cvarValue, sizeof(cvarValue));
+    g_MatchConfig.cvar_names.GetString(i, cvarName, sizeof(cvarName));
+    g_MatchConfig.cvar_values.GetString(i, cvarValue, sizeof(cvarValue));
     kv.SetString(cvarName, cvarValue);
   }
   kv.GoBack();
@@ -324,13 +324,15 @@ static void AddTeamBackupData(KeyValues kv, MatchTeam team) {
 
 static bool LoadMatchFromKv(KeyValues kv) {
   kv.GetString("matchid", g_MatchID, sizeof(g_MatchID), CONFIG_MATCHID_DEFAULT);
-  g_InScrimMode = kv.GetNum("scrim") != 0;
-  kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
-  g_PlayersPerTeam = kv.GetNum("players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
-  g_MinPlayersToReady = kv.GetNum("min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
-  g_MinSpectatorsToReady =
+  g_MatchConfig.scrim_mode = kv.GetNum("scrim") != 0;
+  kv.GetString("match_title", g_MatchConfig.title, sizeof(g_MatchConfig.title),
+               CONFIG_MATCHTITLE_DEFAULT);
+  g_MatchConfig.players_per_team = kv.GetNum("players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
+  g_MatchConfig.min_players_to_ready =
+      kv.GetNum("min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
+  g_MatchConfig.min_spectators_to_ready =
       kv.GetNum("min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
-  g_SkipVeto = kv.GetNum("skip_veto", CONFIG_SKIPVETO_DEFAULT) != 0;
+  g_MatchConfig.skip_veto = kv.GetNum("skip_veto", CONFIG_SKIPVETO_DEFAULT) != 0;
 
   // bo2_series and maps_to_win are deprecated. They are used if provided, but otherwise
   // num_maps' default is the fallback.
@@ -359,10 +361,11 @@ static bool LoadMatchFromKv(KeyValues kv) {
 
   char sideTypeBuffer[64];
   kv.GetString("side_type", sideTypeBuffer, sizeof(sideTypeBuffer), CONFIG_SIDETYPE_DEFAULT);
-  g_MatchSideType = MatchSideTypeFromString(sideTypeBuffer);
+  g_MatchConfig.side_type = MatchSideTypeFromString(sideTypeBuffer);
 
-  g_FavoredTeamPercentage = kv.GetNum("favored_percentage_team1", 0);
-  kv.GetString("favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText));
+  g_MatchConfig.favored_team_percentage = kv.GetNum("favored_percentage_team1", 0);
+  kv.GetString("favored_percentage_text", g_MatchConfig.favored_team_text,
+               sizeof(g_MatchConfig.favored_team_text));
 
   GetTeamAuths(MatchTeam_TeamSpec).Clear();
   if (kv.JumpToKey("spectators")) {
@@ -396,7 +399,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
     LoadDefaultMapList(g_MapPoolList);
   }
 
-  if (g_SkipVeto) {
+  if (g_MatchConfig.skip_veto) {
     if (kv.JumpToKey("map_sides")) {
       if (kv.GotoFirstSubKey(false)) {
         do {
@@ -417,8 +420,8 @@ static bool LoadMatchFromKv(KeyValues kv) {
       do {
         kv.GetSectionName(name, sizeof(name));
         kv.GetString(NULL_STRING, value, sizeof(value));
-        g_CvarNames.PushString(name);
-        g_CvarValues.PushString(value);
+        g_MatchConfig.cvar_names.PushString(name);
+        g_MatchConfig.cvar_values.PushString(value);
       } while (kv.GotoNextKey(false));
       kv.GoBack();
     }
@@ -431,17 +434,17 @@ static bool LoadMatchFromKv(KeyValues kv) {
 static bool LoadMatchFromJson(JSON_Object json) {
   json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID),
                               CONFIG_MATCHID_DEFAULT);
-  g_InScrimMode = json_object_get_bool_safe(json, "scrim", false);
-  json_object_get_string_safe(json, "match_title", g_MatchTitle, sizeof(g_MatchTitle),
+  g_MatchConfig.scrim_mode = json_object_get_bool_safe(json, "scrim", false);
+  json_object_get_string_safe(json, "match_title", g_MatchConfig.title, sizeof(g_MatchConfig.title),
                               CONFIG_MATCHTITLE_DEFAULT);
 
-  g_PlayersPerTeam =
+  g_MatchConfig.players_per_team =
       json_object_get_int_safe(json, "players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
-  g_MinPlayersToReady =
+  g_MatchConfig.min_players_to_ready =
       json_object_get_int_safe(json, "min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
-  g_MinSpectatorsToReady = json_object_get_int_safe(json, "min_spectators_to_ready",
-                                                    CONFIG_MINSPECTATORSTOREADY_DEFAULT);
-  g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
+  g_MatchConfig.min_spectators_to_ready = json_object_get_int_safe(
+      json, "min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
+  g_MatchConfig.skip_veto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
 
   // bo2_series and maps_to_win are deprecated. They are used if provided, but otherwise
   // num_maps' default is the fallback.
@@ -473,11 +476,12 @@ static bool LoadMatchFromJson(JSON_Object json) {
   char sideTypeBuffer[64];
   json_object_get_string_safe(json, "side_type", sideTypeBuffer, sizeof(sideTypeBuffer),
                               CONFIG_SIDETYPE_DEFAULT);
-  g_MatchSideType = MatchSideTypeFromString(sideTypeBuffer);
+  g_MatchConfig.side_type = MatchSideTypeFromString(sideTypeBuffer);
 
-  json_object_get_string_safe(json, "favored_percentage_text", g_FavoredTeamText,
-                              sizeof(g_FavoredTeamText));
-  g_FavoredTeamPercentage = json_object_get_int_safe(json, "favored_percentage_team1", 0);
+  json_object_get_string_safe(json, "favored_percentage_text", g_MatchConfig.favored_team_text,
+                              sizeof(g_MatchConfig.favored_team_text));
+  g_MatchConfig.favored_team_percentage =
+      json_object_get_int_safe(json, "favored_percentage_team1", 0);
 
   JSON_Object spec = json.GetObject("spectators");
   if (spec != null) {
@@ -510,7 +514,7 @@ static bool LoadMatchFromJson(JSON_Object json) {
     LoadDefaultMapList(g_MapPoolList);
   }
 
-  if (g_SkipVeto) {
+  if (g_MatchConfig.skip_veto) {
     JSON_Object array = json.GetObject("map_sides");
     if (array != null) {
       if (!array.IsArray) {
@@ -537,8 +541,8 @@ static bool LoadMatchFromJson(JSON_Object json) {
     for (int i = 0; i < snap.Length; i++) {
       snap.GetKey(i, cvarName, sizeof(cvarName));
       cvars.GetString(cvarName, cvarValue, sizeof(cvarValue));
-      g_CvarNames.PushString(cvarName);
-      g_CvarValues.PushString(cvarValue);
+      g_MatchConfig.cvar_names.PushString(cvarName);
+      g_MatchConfig.cvar_values.PushString(cvarValue);
     }
   }
 
@@ -633,7 +637,7 @@ public void SetMatchTeamCvars() {
 
   // Update mp_teammatchstat_txt with the match title.
   char mapstat[MAX_CVAR_LENGTH];
-  strcopy(mapstat, sizeof(mapstat), g_MatchTitle);
+  strcopy(mapstat, sizeof(mapstat), g_MatchConfig.title);
   ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAPNUMBER}", mapsPlayed + 1);
   ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAXMAPS}", MaxMapsToPlay(g_MapsToWin));
   SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
@@ -655,11 +659,11 @@ public void SetMatchTeamCvars() {
               g_TeamConfig[tTeam].logo, tMatchText, g_TeamState[tTeam].series_score);
 
   // Set prediction cvars.
-  SetConVarStringSafe("mp_teamprediction_txt", g_FavoredTeamText);
+  SetConVarStringSafe("mp_teamprediction_txt", g_MatchConfig.favored_team_text);
   if (g_TeamState[MatchTeam_Team1].side == CS_TEAM_CT) {
-    SetConVarIntSafe("mp_teamprediction_pct", g_FavoredTeamPercentage);
+    SetConVarIntSafe("mp_teamprediction_pct", g_MatchConfig.favored_team_percentage);
   } else {
-    SetConVarIntSafe("mp_teamprediction_pct", 100 - g_FavoredTeamPercentage);
+    SetConVarIntSafe("mp_teamprediction_pct", 100 - g_MatchConfig.favored_team_percentage);
   }
 
   if (g_MapsToWin > 1) {
@@ -686,14 +690,14 @@ public MatchTeam GetMapWinner(int mapNumber) {
 public void ExecuteMatchConfigCvars() {
   // Save the original match cvar values if we haven't already.
   if (g_MatchConfigChangedCvars == INVALID_HANDLE) {
-    g_MatchConfigChangedCvars = SaveCvars(g_CvarNames);
+    g_MatchConfigChangedCvars = SaveCvars(g_MatchConfig.cvar_names);
   }
 
   char name[MAX_CVAR_LENGTH];
   char value[MAX_CVAR_LENGTH];
-  for (int i = 0; i < g_CvarNames.Length; i++) {
-    g_CvarNames.GetString(i, name, sizeof(name));
-    g_CvarValues.GetString(i, value, sizeof(value));
+  for (int i = 0; i < g_MatchConfig.cvar_names.Length; i++) {
+    g_MatchConfig.cvar_names.GetString(i, name, sizeof(name));
+    g_MatchConfig.cvar_values.GetString(i, value, sizeof(value));
     ConVar cvar = FindConVar(name);
     if (cvar == null) {
       ServerCommand("%s %s", name, value);
@@ -747,7 +751,7 @@ public Action Command_AddPlayer(int client, int args) {
     return Plugin_Handled;
   }
 
-  if (g_InScrimMode) {
+  if (g_MatchConfig.scrim_mode) {
     ReplyToCommand(
         client, "Cannot use get5_addplayer in scrim mode. Use get5_ringer to swap a players team.");
     return Plugin_Handled;
@@ -792,7 +796,7 @@ public Action Command_RemovePlayer(int client, int args) {
     return Plugin_Handled;
   }
 
-  if (g_InScrimMode) {
+  if (g_MatchConfig.scrim_mode) {
     ReplyToCommand(
         client,
         "Cannot use get5_removeplayer in scrim mode. Use get5_ringer to swap a players team.");
@@ -961,7 +965,7 @@ public Action Command_CreateScrim(int client, int args) {
 }
 
 public Action Command_Ringer(int client, int args) {
-  if (g_GameState == Get5State_None || !g_InScrimMode) {
+  if (g_GameState == Get5State_None || !g_MatchConfig.scrim_mode) {
     ReplyToCommand(client, "This command can only be used in scrim mode");
     return Plugin_Handled;
   }

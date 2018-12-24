@@ -13,9 +13,9 @@ public Action Command_Get5AdminMenu(int client, int args) {
                EnabledIf(g_GameState == Get5State_Warmup || g_GameState == Get5State_PreVeto));
   menu.AddItem("get5_endmatch", "End match", EnabledIf(g_GameState != Get5State_None));
   menu.AddItem("ringer", "Add scrim ringer",
-               EnabledIf(g_InScrimMode && g_GameState != Get5State_None));
+               EnabledIf(g_MatchConfig.scrim_mode && g_GameState != Get5State_None));
   menu.AddItem("sm_swap", "Swap scrim sides",
-               EnabledIf(g_InScrimMode && g_GameState == Get5State_Warmup));
+               EnabledIf(g_MatchConfig.scrim_mode && g_GameState == Get5State_Warmup));
 
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));

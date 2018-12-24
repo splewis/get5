@@ -80,7 +80,7 @@ public Action Command_Swap(int client, int args) {
     EndKnifeRound(true);
     Get5_MessageToAll("%t", "TeamDecidedToSwapInfoMessage",
                       g_TeamConfig[g_KnifeWinnerTeam].formatted_name);
-  } else if (g_GameState == Get5State_Warmup && g_InScrimMode &&
+  } else if (g_GameState == Get5State_Warmup && g_MatchConfig.scrim_mode &&
              GetClientMatchTeam(client) == MatchTeam_Team1) {
     PerformSideSwap(true);
   }

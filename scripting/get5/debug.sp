@@ -100,13 +100,14 @@ static void AddGlobalStateInfo(File f) {
   WriteArrayList(f, "g_MapsLeftInVetoPool", g_MapsLeftInVetoPool);
   // TODO: write g_MapSides (it's not a string so WriteArrayList doesn't work).
 
-  f.WriteLine("g_MatchTitle = %s", g_MatchTitle);
-  f.WriteLine("g_PlayersPerTeam = %d", g_PlayersPerTeam);
-  f.WriteLine("g_MinPlayersToReady = %d", g_MinPlayersToReady);
-  f.WriteLine("g_MinSpectatorsToReady = %d", g_MinSpectatorsToReady);
-  f.WriteLine("g_SkipVeto = %d", g_SkipVeto);
-  f.WriteLine("g_MatchSideType = %d", g_MatchSideType);
-  f.WriteLine("g_InScrimMode = %d", g_InScrimMode);
+  // TODO: update names here
+  f.WriteLine("g_MatchTitle = %s", g_MatchConfig.title);
+  f.WriteLine("g_PlayersPerTeam = %d", g_MatchConfig.players_per_team);
+  f.WriteLine("g_MinPlayersToReady = %d", g_MatchConfig.min_players_to_ready);
+  f.WriteLine("g_MinSpectatorsToReady = %d", g_MatchConfig.min_spectators_to_ready);
+  f.WriteLine("g_SkipVeto = %d", g_MatchConfig.skip_veto);
+  f.WriteLine("g_MatchSideType = %d", g_MatchConfig.side_type);
+  f.WriteLine("g_InScrimMode = %d", g_MatchConfig.scrim_mode);
   f.WriteLine("g_HasKnifeRoundStarted = %d", g_HasKnifeRoundStarted);
 
   f.WriteLine("g_MapChangePending = %d", g_MapChangePending);

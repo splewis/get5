@@ -70,7 +70,7 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
     // SwitchPlayerTeam(client, csTeam);
     int count = CountPlayersOnCSTeam(csTeam);
 
-    if (count >= g_PlayersPerTeam) {
+    if (count >= g_MatchConfig.players_per_team) {
       if (!g_CoachingEnabledCvar.BoolValue) {
         KickClient(client, "%t", "TeamIsFullInfoMessage");
       } else {
@@ -210,7 +210,7 @@ public MatchTeam GetAuthMatchTeam(const char[] steam64) {
     return MatchTeam_TeamNone;
   }
 
-  if (g_InScrimMode) {
+  if (g_MatchConfig.scrim_mode) {
     return IsAuthOnTeam(steam64, MatchTeam_Team1) ? MatchTeam_Team1 : MatchTeam_Team2;
   }
 
@@ -364,7 +364,7 @@ public bool RemovePlayerFromTeams(const char[] auth) {
     if (index >= 0) {
       GetTeamAuths(team).Erase(index);
       int target = AuthToClient(steam64);
-      if (IsAuthedPlayer(target) && !g_InScrimMode) {
+      if (IsAuthedPlayer(target) && !g_MatchConfig.scrim_mode) {
         KickClient(target, "%t", "YourAreNotAPlayerInfoMessage");
       }
       return true;

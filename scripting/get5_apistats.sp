@@ -22,7 +22,6 @@
 #include "include/logdebug.inc"
 #include <cstrike>
 #include <sourcemod>
-#include <sdktools>
 
 
 #include "get5/util.sp"

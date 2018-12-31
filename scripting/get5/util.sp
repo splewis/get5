@@ -1,3 +1,5 @@
+#include <sdktools>
+
 #define MAX_INTEGER_STRING_LENGTH 16
 #define MAX_FLOAT_STRING_LENGTH 32
 #define AUTH_LENGTH 64

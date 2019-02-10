@@ -506,7 +506,7 @@ static bool LoadMatchFromJson(JSON_Object json) {
   }
 
   if (AddJsonSubsectionArrayToList(json, "maplist", g_MapPoolList, PLATFORM_MAX_PATH) <= 0) {
-    LogMessage("Failed to find \"maplist\" array in match json, using fallback maplist.");
+    MatchConfigFail("Failed to find \"maplist\" array in match json, using fallback maplist.");
     LoadDefaultMapList(g_MapPoolList);
   }
 

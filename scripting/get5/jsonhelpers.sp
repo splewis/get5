@@ -75,7 +75,7 @@ stock float json_object_get_float_safe(JSON_Object json, const char[] key, float
 // Used for parsing an Array[String] to a sourcepawn ArrayList of strings
 stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, ArrayList list,
                                        int maxValueLength) {
-  if (json_has_key(json, key, Type_Object)) {
+  if (!json_has_key(json, key, Type_Object)) {
     return 0;
   }
 
@@ -91,7 +91,6 @@ stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, Array
       count++;
     }
     array.Cleanup();
-    delete array;
   }
   return count;
 }

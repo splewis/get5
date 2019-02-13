@@ -97,7 +97,8 @@ stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, Array
 }
 
 // Used for mapping a keyvalue section
-stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list, int maxValueLength) {
+stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list,
+                             int maxValueLength) {
   int count = 0;
   // We handle two formats here: one where we get a array of steamids as strings, and in the
   // 2nd format we have a map of steamid- > player name.
@@ -123,8 +124,13 @@ stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list,
       char name[MAX_NAME_LENGTH];
       for (int i = 0; i < snap.Length; i++) {
         snap.GetKey(i, buffer, maxValueLength);
-        data.GetString(buffer, name, sizeof(name));
 
+        // Skip json meta keys.
+        if (json_is_meta_key(buffer)) {
+          continue;
+        }
+
+        data.GetString(buffer, name, sizeof(name));
         char steam64[AUTH_LENGTH];
         if (ConvertAuthToSteam64(buffer, steam64)) {
           Get5_SetPlayerName(steam64, name);
@@ -134,7 +140,6 @@ stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list,
       }
       delete snap;
     }
-
   }
   return count;
 }

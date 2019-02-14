@@ -392,7 +392,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
   }
 
   if (AddSubsectionKeysToList(kv, "maplist", g_MapPoolList, PLATFORM_MAX_PATH) <= 0) {
-    MatchConfigFail("Failed to find \"maplist\" section in config, using fallback maplist.");
+    LogMessage("Failed to find \"maplist\" section in config, using fallback maplist.");
     LoadDefaultMapList(g_MapPoolList);
   }
 
@@ -506,7 +506,7 @@ static bool LoadMatchFromJson(JSON_Object json) {
   }
 
   if (AddJsonSubsectionArrayToList(json, "maplist", g_MapPoolList, PLATFORM_MAX_PATH) <= 0) {
-    MatchConfigFail("Failed to find \"maplist\" array in match json, using fallback maplist.");
+    LogMessage("Failed to find \"maplist\" array in match json, using fallback maplist.");
     LoadDefaultMapList(g_MapPoolList);
   }
 

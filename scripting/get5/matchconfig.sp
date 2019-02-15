@@ -536,6 +536,11 @@ static bool LoadMatchFromJson(JSON_Object json) {
     StringMapSnapshot snap = cvars.Snapshot();
     for (int i = 0; i < snap.Length; i++) {
       snap.GetKey(i, cvarName, sizeof(cvarName));
+      // Skip json meta keys.
+      if (json_is_meta_key(cvarName)) {
+        continue;
+      }
+
       cvars.GetString(cvarName, cvarValue, sizeof(cvarValue));
       g_CvarNames.PushString(cvarName);
       g_CvarValues.PushString(cvarValue);

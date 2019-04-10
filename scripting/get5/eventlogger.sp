@@ -7,7 +7,7 @@ static void EventLogger_LogEvent(const char[] eventName, JSON_Object params) {
   // Handle json = json_object();
   JSON_Object json = new JSON_Object();
   json.SetString("event", eventName);
-  json.SetString("matchid`", g_MatchID);
+  json.SetString("matchid", g_MatchID);
   json.SetObject("params", params);
 
   const int kMaxCharacters = 1000;

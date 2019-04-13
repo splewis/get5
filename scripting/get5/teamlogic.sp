@@ -348,6 +348,7 @@ public bool AddPlayerToTeam(const char[] auth, MatchTeam team, const char[] name
   if (GetAuthMatchTeam(steam64) == MatchTeam_TeamNone) {
     GetTeamAuths(team).PushString(steam64);
     Get5_SetPlayerName(auth, name);
+    LoadPlayerNames();
     return true;
   } else {
     return false;

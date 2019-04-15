@@ -158,7 +158,7 @@ bool g_TeamGivenStopCommand[MatchTeam_Count];
 bool g_InExtendedPause;
 int g_TeamPauseTimeUsed[MatchTeam_Count];
 int g_TeamPausesUsed[MatchTeam_Count];
-int g_ReadyTimeWaitingUsed[MatchTeam_Count];
+int g_ReadyTimeWaitingUsed = 0;
 char g_DefaultTeamColors[][] = {
     TEAM1_COLOR, TEAM2_COLOR, "{NORMAL}", "{NORMAL}",
 };
@@ -607,7 +607,7 @@ public void OnMapStart() {
     g_TeamReadyForUnpause[team] = false;
     g_TeamPauseTimeUsed[team] = 0;
     g_TeamPausesUsed[team] = 0;
-    g_ReadyTimeWaitingUsed[team] = 0;
+    g_ReadyTimeWaitingUsed = 0;
   }
 
   if (g_WaitingForRoundBackup) {
@@ -686,24 +686,46 @@ public Action Timer_CheckReady(Handle timer) {
 
 static void CheckReadyWaitingTimes() {
   if (g_TeamTimeToStartCvar.IntValue > 0) {
-    CheckReadyWaitingTime(MatchTeam_Team1);
-    CheckReadyWaitingTime(MatchTeam_Team2);
+    bool team1Forfeited;
+    bool team2Forfeited;
+
+    g_ReadyTimeWaitingUsed++;
+
+    team1Forfeited = CheckReadyWaitingTime(MatchTeam_Team1);
+    team2Forfeited = CheckReadyWaitingTime(MatchTeam_Team2);
+
+    if (team1Forfeited && team2Forfeited)
+    {
+      g_ForcedWinner = MatchTeam_TeamNone;
+      Stats_Forfeit(MatchTeam_Team1);
+      Stats_Forfeit(MatchTeam_Team2);
+    }
+    else if (team1Forfeited)
+    {
+      g_ForcedWinner = MatchTeam_Team2;
+      Stats_Forfeit(MatchTeam_Team1);
+    }
+    else if (team2Forfeited)
+    {
+      g_ForcedWinner = MatchTeam_Team1;
+      Stats_Forfeit(MatchTeam_Team2);
+    }
+
+    if (team1Forfeited || team2Forfeited) {
+      g_ForceWinnerSignal = true;
+      ChangeState(Get5State_None);
+      EndSeries();
+    }
   }
 }
 
-static void CheckReadyWaitingTime(MatchTeam team) {
+static bool CheckReadyWaitingTime(MatchTeam team) {
   if (!IsTeamReady(team) && g_GameState != Get5State_None) {
-    g_ReadyTimeWaitingUsed[team]++;
-    int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed[team];
+    int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed;
 
     if (timeLeft <= 0) {
-      g_ForceWinnerSignal = true;
-      g_ForcedWinner = (team == MatchTeam_Team1) ? MatchTeam_Team2 : MatchTeam_Team1;
       Get5_MessageToAll("%t", "TeamForfeitInfoMessage", g_FormattedTeamNames[team]);
-      ChangeState(Get5State_None);
-      Stats_Forfeit(team);
-      EndSeries();
-
+      return true;
     } else if (timeLeft >= 300 && timeLeft % 60 == 0) {
       Get5_MessageToAll("%t", "MinutesToForfeitMessage", g_FormattedTeamNames[team], timeLeft / 60);
 
@@ -711,10 +733,10 @@ static void CheckReadyWaitingTime(MatchTeam team) {
       Get5_MessageToAll("%t", "SecondsToForfeitInfoMessage", g_FormattedTeamNames[team], timeLeft);
 
     } else if (timeLeft == 10) {
-      Get5_MessageToAll("%t", "10SecondsToForfeitInfoMessage", g_FormattedTeamNames[team],
-                        timeLeft);
+      Get5_MessageToAll("%t", "10SecondsToForfeitInfoMessage", g_FormattedTeamNames[team], timeLeft);
     }
   }
+  return false;
 }
 
 static void CheckAutoLoadConfig() {

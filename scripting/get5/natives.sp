@@ -141,10 +141,21 @@ public int Native_SetPlayerName(Handle plugin, int numParams) {
   char name[MAX_NAME_LENGTH];
   GetNativeString(1, auth, sizeof(auth));
   GetNativeString(2, name, sizeof(name));
+  char nameFile[] = "get5_names.txt";
+  KeyValues namesKv = new KeyValues("Names");
   char steam64[AUTH_LENGTH];
   ConvertAuthToSteam64(auth, steam64);
   if (strlen(name) > 0 && !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
     g_PlayerNames.SetString(steam64, name);
+    // Create temp namesKv to only load one name at a time, 
+    // instead of loading in every PlayerName.
+    namesKv.SetString(steam64, name);
+    DeleteFile(nameFile);
+    if (namesKv.ExportToFile(nameFile)) {
+      ServerCommand("sv_load_forced_client_names_file %s", nameFile);
+    } else {
+      LogError("Failed to write names keyvalue file to %s", nameFile);
+    }
   }
 }
 

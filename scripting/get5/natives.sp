@@ -151,11 +151,11 @@ public int Native_SetPlayerName(Handle plugin, int numParams) {
         namesKv.ImportFromFile(nameFile);
         DeleteFile(nameFile);
         if(namesKv.JumpToKey(steam64)) {
-            namesKv.DeleteThis();
-	          namesKv.Rewind();
-            namesKv.SetString(steam64, name);
+          namesKv.DeleteThis();
+          namesKv.Rewind();
+          namesKv.SetString(steam64, name);
         } else {
-            namesKv.SetString(steam64, name);
+          namesKv.SetString(steam64, name);
         }
     } else {
       namesKv.SetString(steam64, name);
@@ -165,6 +165,7 @@ public int Native_SetPlayerName(Handle plugin, int numParams) {
     }
   }
 }
+
 
 public int Native_RemovePlayerFromTeam(Handle plugin, int numParams) {
   char auth[AUTH_LENGTH];

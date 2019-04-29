@@ -686,27 +686,19 @@ public Action Timer_CheckReady(Handle timer) {
 
 static void CheckReadyWaitingTimes() {
   if (g_TeamTimeToStartCvar.IntValue > 0) {
-    bool team1Forfeited;
-    bool team2Forfeited;
-
     g_ReadyTimeWaitingUsed++;
 
-    team1Forfeited = CheckReadyWaitingTime(MatchTeam_Team1);
-    team2Forfeited = CheckReadyWaitingTime(MatchTeam_Team2);
+    bool team1Forfeited = CheckReadyWaitingTime(MatchTeam_Team1);
+    bool team2Forfeited = CheckReadyWaitingTime(MatchTeam_Team2);
 
-    if (team1Forfeited && team2Forfeited)
-    {
+    if (team1Forfeited && team2Forfeited) {
       g_ForcedWinner = MatchTeam_TeamNone;
       Stats_Forfeit(MatchTeam_Team1);
       Stats_Forfeit(MatchTeam_Team2);
-    }
-    else if (team1Forfeited)
-    {
+    } else if (team1Forfeited) {
       g_ForcedWinner = MatchTeam_Team2;
       Stats_Forfeit(MatchTeam_Team1);
-    }
-    else if (team2Forfeited)
-    {
+    } else if (team2Forfeited) {
       g_ForcedWinner = MatchTeam_Team1;
       Stats_Forfeit(MatchTeam_Team2);
     }

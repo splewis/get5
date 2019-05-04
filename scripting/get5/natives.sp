@@ -139,30 +139,13 @@ public int Native_AddPlayerToTeam(Handle plugin, int numParams) {
 public int Native_SetPlayerName(Handle plugin, int numParams) {
   char auth[AUTH_LENGTH];
   char name[MAX_NAME_LENGTH];
-  KeyValues namesKv = new KeyValues("Names");
-  char nameFile[] = "get5_names.txt";
   GetNativeString(1, auth, sizeof(auth));
   GetNativeString(2, name, sizeof(name));
   char steam64[AUTH_LENGTH];
   ConvertAuthToSteam64(auth, steam64);
   if (strlen(name) > 0 && !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
     g_PlayerNames.SetString(steam64, name);
-    if(FileExists(nameFile)) {
-        namesKv.ImportFromFile(nameFile);
-        DeleteFile(nameFile);
-        if(namesKv.JumpToKey(steam64)) {
-          namesKv.DeleteThis();
-          namesKv.Rewind();
-          namesKv.SetString(steam64, name);
-        } else {
-          namesKv.SetString(steam64, name);
-        }
-    } else {
-      namesKv.SetString(steam64, name);
-    }
-    if(namesKv.ExportToFile(nameFile)) {
-      ServerCommand("sv_load_forced_client_names_file %s", nameFile);
-    }
+    LoadPlayerNames();
   }
 }
 

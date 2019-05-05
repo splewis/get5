@@ -3,7 +3,7 @@ public bool Pauseable() {
 }
 
 public Action Command_TechPause(int client, int args) {
-  if (g_AllowTechPauseCvar.BoolValue || !Pauseable() || IsPaused()) {
+  if (!g_AllowTechPauseCvar.BoolValue || !Pauseable() || IsPaused()) {
     return Plugin_Handled;
   }
 

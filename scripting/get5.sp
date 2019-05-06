@@ -697,8 +697,7 @@ static void CheckReadyWaitingTimes() {
     if (team1Forfeited && team2Forfeited)
     {
       g_ForcedWinner = MatchTeam_TeamNone;
-      Stats_Forfeit(MatchTeam_Team1);
-      Stats_Forfeit(MatchTeam_Team2);
+      Stats_Forfeit(MatchTeam_None);
     }
     else if (team1Forfeited)
     {

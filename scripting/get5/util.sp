@@ -209,24 +209,32 @@ stock bool IsPaused() {
 
 // Pauses and returns if the match will automatically unpause after the duration ends.
 stock bool Pause(int pauseTime = 0, int csTeam = CS_TEAM_NONE) {
+  
+  MatchTeam matchTeam = CSTeamToMatchTeam(csTeam);
+  bool retval;
   if (pauseTime == 0 || csTeam == CS_TEAM_SPECTATOR || csTeam == CS_TEAM_NONE) {
-    ServerCommand("mp_pause_match");
-    return false;
+    ServerCommand("mp_pause_match");    
+    retval = false;
   } else {
     ServerCommand("mp_pause_match");
     if (csTeam == CS_TEAM_T) {
       GameRules_SetProp("m_bTerroristTimeOutActive", true);
       GameRules_SetPropFloat("m_flTerroristTimeOutRemaining", float(pauseTime));
+
     } else if (csTeam == CS_TEAM_CT) {
       GameRules_SetProp("m_bCTTimeOutActive", true);
       GameRules_SetPropFloat("m_flCTTimeOutRemaining", float(pauseTime));
-    }
-    return true;
+    }    
+    retval = true;    
   }
+
+  EventLogger_Pause(matchTeam);    
+  return retval;
 }
 
 stock void Unpause() {
   ServerCommand("mp_unpause_match");
+  EventLogger_Unpause();
 }
 
 stock void RestartGame(int delay) {

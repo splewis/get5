@@ -230,3 +230,16 @@ public void EventLogger_PlayerDisconnect(int client) {
   AddPlayer(params, "client", client);
   EventLogger_EndEvent("player_disconnect");
 }
+
+public void EventLogger_Pause(MatchTeam team) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddTeam(params, "request_team", team);
+  EventLogger_EndEvent("pause");
+}
+
+public void EventLogger_Unpause() { 
+  EventLogger_StartEvent();
+  AddMapData(params);
+  EventLogger_EndEvent("unpause");
+}

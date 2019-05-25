@@ -724,7 +724,8 @@ static bool CheckReadyWaitingTime(MatchTeam team) {
       Get5_MessageToAll("%t", "SecondsToForfeitInfoMessage", g_FormattedTeamNames[team], timeLeft);
 
     } else if (timeLeft == 10) {
-      Get5_MessageToAll("%t", "10SecondsToForfeitInfoMessage", g_FormattedTeamNames[team], timeLeft);
+      Get5_MessageToAll("%t", "10SecondsToForfeitInfoMessage", g_FormattedTeamNames[team],
+                        timeLeft);
     }
   }
   return false;
@@ -753,14 +754,21 @@ public Action Command_EndMatch(int client, int args) {
   g_MapChangePending = false;
   char mapName[PLATFORM_MAX_PATH];
   GetCleanMapName(mapName, sizeof(mapName));
+  int team1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
+  int team2score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
+  LogDebug("Calling Get5_OnMapResult(map=%s, winner=%d, team1score=%d, team2score=%d, mapnum=%d)",
+           mapName, MatchTeam_TeamNone, team1score, team2score, GetMapNumber() - 1);
   Call_StartForward(g_OnMapResult);
   Call_PushString(mapName);
   Call_PushCell(MatchTeam_TeamNone);
-  Call_PushCell(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
-  Call_PushCell(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
+  Call_PushCell(team1score);
+  Call_PushCell(team2score);
   Call_PushCell(GetMapNumber() - 1);
   Call_Finish();
 
+  LogDebug("Calling Get5_OnSeriesResult(winner=%d, team1_series_score=%d, team2_series_score=%d)",
+           MatchTeam_TeamNone, g_TeamSeriesScores[MatchTeam_Team1],
+           g_TeamSeriesScores[MatchTeam_Team2]);
   Call_StartForward(g_OnSeriesResult);
   Call_PushCell(MatchTeam_TeamNone);
   Call_PushCell(g_TeamSeriesScores[MatchTeam_Team1]);
@@ -930,12 +938,16 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
     char mapName[PLATFORM_MAX_PATH];
     GetCleanMapName(mapName, sizeof(mapName));
+    int team1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
+    int team2score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
 
+    LogDebug("Calling Get5_OnMapResult(map=%s, winner=%d, team1score=%d, team2score=%d, mapnum=%d)",
+             mapName, winningTeam, team1score, team2score, GetMapNumber() - 1);
     Call_StartForward(g_OnMapResult);
     Call_PushString(mapName);
     Call_PushCell(winningTeam);
-    Call_PushCell(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
-    Call_PushCell(CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
+    Call_PushCell(team1score);
+    Call_PushCell(team2score);
     Call_PushCell(GetMapNumber() - 1);
     Call_Finish();
 
@@ -1064,6 +1076,7 @@ public void EndSeries() {
   Stats_SeriesEnd(winningTeam);
   EventLogger_SeriesEnd(winningTeam, t1maps, t2maps);
 
+  LogDebug("Calling Get5_OnSeriesResult(winner=%d, t1maps=%d, t2maps=%d)", winningTeam, t1maps, t2maps);
   Call_StartForward(g_OnSeriesResult);
   Call_PushCell(winningTeam);
   Call_PushCell(t1maps);
@@ -1171,6 +1184,8 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
                       g_TeamNames[MatchTeam_Team2]);
 
     Stats_RoundEnd(csTeamWinner);
+
+    LogDebug("Calling Get5_OnRoundStatsUpdated");
     Call_StartForward(g_OnRoundStatsUpdated);
     Call_Finish();
 
@@ -1283,8 +1298,8 @@ public Action StopDemo(Handle timer) {
 }
 
 public void ChangeState(Get5State state) {
-  LogDebug("Change from state %d -> %d", g_GameState, state);
   g_GameStateCvar.IntValue = view_as<int>(state);
+  LogDebug("Get5_OnGameStateChanged(from=%d, to=%d)", g_GameState, state);
   Call_StartForward(g_OnGameStateChanged);
   Call_PushCell(g_GameState);
   Call_PushCell(state);

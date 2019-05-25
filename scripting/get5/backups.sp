@@ -229,6 +229,7 @@ public bool RestoreFromBackup(const char[] path) {
 
   delete kv;
 
+  LogDebug("Calling Get5_OnBackupRestore");
   Call_StartForward(g_OnBackupRestore);
   Call_Finish();
 

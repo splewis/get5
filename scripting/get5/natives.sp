@@ -149,7 +149,6 @@ public int Native_SetPlayerName(Handle plugin, int numParams) {
   }
 }
 
-
 public int Native_RemovePlayerFromTeam(Handle plugin, int numParams) {
   char auth[AUTH_LENGTH];
   GetNativeString(1, auth, sizeof(auth));

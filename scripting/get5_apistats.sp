@@ -23,13 +23,12 @@
 #include <cstrike>
 #include <sourcemod>
 
-
 #include "get5/util.sp"
 #include "get5/version.sp"
 
 #include <SteamWorks>
+#include <json>  // github.com/clugg/sm-json
 
-#include <json> // github.com/clugg/sm-json
 #include "get5/jsonhelpers.sp"
 
 #pragma semicolon 1
@@ -82,7 +81,7 @@ public Action Command_Avaliable(int client, int args) {
   JSON_Object json = new JSON_Object();
 
   json.SetInt("gamestate", view_as<int>(Get5_GetGameState()));
-  json.SetInt("avaliable", 1); // legacy version since I'm bad at spelling
+  json.SetInt("avaliable", 1);  // legacy version since I'm bad at spelling
   json.SetInt("available", 1);
   json.SetString("plugin_version", versionString);
 

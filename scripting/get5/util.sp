@@ -155,6 +155,7 @@ stock bool Record(const char[] demoName) {
 
 stock void StopRecording() {
   ServerCommand("tv_stoprecord");
+  LogDebug("Calling Get5_OnDemoFinished(file=%s)", g_DemoFileName);
   Call_StartForward(g_OnDemoFinished);
   Call_PushString(g_DemoFileName);
   Call_Finish();

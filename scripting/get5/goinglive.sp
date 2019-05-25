@@ -23,6 +23,7 @@ public Action StartGoingLive(Handle timer) {
 
   EventLogger_GoingLive();
 
+  LogDebug("Calling Get5_OnGoingLive(mapnum=%d)", GetMapNumber());
   Call_StartForward(g_OnGoingLive);
   Call_PushCell(GetMapNumber());
   Call_Finish();

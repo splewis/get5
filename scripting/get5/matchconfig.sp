@@ -113,6 +113,8 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
     EventLogger_SeriesStart();
     Stats_InitSeries();
+
+    LogDebug("Calling Get5_OnSeriesInit");
     Call_StartForward(g_OnSeriesInit);
     Call_Finish();
   }
@@ -137,6 +139,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 }
 
 public bool LoadMatchFile(const char[] config) {
+  LogDebug("Calling Get5_OnPreLoadMatchConfig(config=%s)", config);
   Call_StartForward(g_OnPreLoadMatchConfig);
   Call_PushString(config);
   Call_Finish();
@@ -186,6 +189,7 @@ static void MatchConfigFail(const char[] reason, any...) {
 
   EventLogger_MatchConfigFail(buffer);
 
+  LogDebug("Calling Get5_OnLoadMatchConfigFailed(reason=%s)", buffer);
   Call_StartForward(g_OnLoadMatchConfigFailed);
   Call_PushString(buffer);
   Call_Finish();
@@ -545,7 +549,6 @@ static bool LoadMatchFromJson(JSON_Object json) {
       g_CvarNames.PushString(cvarName);
       g_CvarValues.PushString(cvarValue);
     }
-
   }
 
   return true;

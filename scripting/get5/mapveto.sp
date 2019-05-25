@@ -158,6 +158,7 @@ public void VetoController(int client) {
 
     EventLogger_MapPicked(MatchTeam_TeamNone, mapName, g_MapsToPlay.Length - 1);
 
+    LogDebug("Calling Get5_OnMapPicked(team=%d, map=%s)", MatchTeam_TeamNone, mapName);
     Call_StartForward(g_OnMapPicked);
     Call_PushCell(MatchTeam_TeamNone);
     Call_PushString(mapName);
@@ -275,6 +276,7 @@ public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
 
     EventLogger_MapVetoed(team, mapName);
 
+    LogDebug("Calling Get5_OnMapVetoed(team=%d, map=%s)", team, mapName);
     Call_StartForward(g_OnMapVetoed);
     Call_PushCell(team);
     Call_PushString(mapName);
@@ -340,6 +342,7 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
 
     EventLogger_MapPicked(team, mapName, g_MapsToPlay.Length - 1);
 
+    LogDebug("Calling Get5_OnMapPicked(team=%d, map=%s)", team, mapName);
     Call_StartForward(g_OnMapPicked);
     Call_PushCell(team);
     Call_PushString(mapName);
@@ -411,6 +414,7 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
 
     EventLogger_SidePicked(team, mapName, g_MapsToPlay.Length - 1, selectedSide);
 
+    LogDebug("Calling Get5_OnSidePicked(team=%d, map=%s, side=%d)", team, mapName, selectedSide);
     Call_StartForward(g_OnSidePicked);
     Call_PushCell(team);
     Call_PushString(mapName);

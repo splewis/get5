@@ -98,7 +98,7 @@
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "fr"            "{1} désire reprendre le match, en attente que {2} tappe !unpause."
+        "fr"            "{1} désire reprendre le match, en attente que {2} tape !unpause."
     }
     "PausesLeftInfoMessage"
     {

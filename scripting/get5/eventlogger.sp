@@ -230,3 +230,20 @@ public void EventLogger_PlayerDisconnect(int client) {
   AddPlayer(params, "client", client);
   EventLogger_EndEvent("player_disconnect");
 }
+
+public void EventLogger_TeamReady(MatchTeam team, const char[] stage) {
+  EventLogger_StartEvent();
+
+  AddTeam(params, "team", team);
+  params.SetString("stage", stage);
+
+  EventLogger_EndEvent("team_ready");
+}
+
+public void EventLogger_TeamUnready(MatchTeam team) {
+  EventLogger_StartEvent();
+
+  AddTeam(params, "team", team);
+
+  EventLogger_EndEvent("team_unready");
+}

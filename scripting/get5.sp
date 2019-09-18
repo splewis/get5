@@ -528,7 +528,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
   }
 
   if (g_GameState == Get5State_None && g_KickClientsWithNoMatchCvar.BoolValue) {
-    if (!g_KickClientImmunity.BoolValue ||
+    if (!g_KickClientImmunity.BoolValue &&
         !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
       KickClient(client, "%t", "NoMatchSetupInfoMessage");
     }

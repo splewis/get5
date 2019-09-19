@@ -43,7 +43,6 @@ ConVar g_APIURLCvar;
 char g_APIURL[128];
 
 //This logo dir its for old csgo hud
-//#define LOGO_DIR "resource/flash/econ/tournaments/teams"
 #define LOGO_DIR "materials/panorama/images/tournaments/teams"
 
 // clang-format off

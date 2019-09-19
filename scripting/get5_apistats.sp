@@ -42,7 +42,9 @@ char g_APIKey[128];
 ConVar g_APIURLCvar;
 char g_APIURL[128];
 
-#define LOGO_DIR "resource/flash/econ/tournaments/teams"
+//This logo dir its for old csgo hud
+//#define LOGO_DIR "resource/flash/econ/tournaments/teams"
+#define LOGO_DIR "materials/panorama/images/tournaments/teams"
 
 // clang-format off
 public Plugin myinfo = {
@@ -175,12 +177,14 @@ public void CheckForLogo(const char[] logo) {
   }
 
   char logoPath[PLATFORM_MAX_PATH + 1];
-  Format(logoPath, sizeof(logoPath), "%s/%s.png", LOGO_DIR, logo);
+  //change png to svg because it's better supported
+  Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
 
   // Try to fetch the file if we don't have it.
   if (!FileExists(logoPath)) {
     LogDebug("Fetching logo for %s", logo);
-    Handle req = CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.png", logo);
+    //change to svg
+    Handle req = CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.svg", logo);
     if (req == INVALID_HANDLE) {
       return;
     }
@@ -206,7 +210,8 @@ public int LogoCallback(Handle request, bool failure, bool successful, EHTTPStat
   pack.ReadString(logo, sizeof(logo));
 
   char logoPath[PLATFORM_MAX_PATH + 1];
-  Format(logoPath, sizeof(logoPath), "%s/%s.png", LOGO_DIR, logo);
+  //change to svg
+  Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
 
   LogMessage("Saved logo for %s to %s", logo, logoPath);
   SteamWorks_WriteHTTPResponseBodyToFile(request, logoPath);

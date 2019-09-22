@@ -69,6 +69,7 @@ ConVar g_MaxPausesCvar;
 ConVar g_MaxPauseTimeCvar;
 ConVar g_MessagePrefixCvar;
 ConVar g_PausingEnabledCvar;
+ConVar g_PrettyPrintJsonCvar;
 ConVar g_ResetPausesEachHalfCvar;
 ConVar g_ServerIdCvar;
 ConVar g_SetClientClanTagCvar;
@@ -299,6 +300,7 @@ public void OnPluginStart() {
       CreateConVar("get5_reset_pauses_each_half", "1",
                    "Whether pause limits will be reset each halftime period");
   g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
+  g_PrettyPrintJsonCvar = CreateConVar("get5_pretty_print_json", "1", "Whether all JSON output is in pretty-print format.");
   g_ServerIdCvar = CreateConVar(
       "get5_server_id", "0",
       "Integer that identifies your server. This is used in temp files to prevent collisions.");
@@ -1353,7 +1355,7 @@ public Action Command_Status(int client, int args) {
   }
 
   char buffer[4096];
-  json.Encode(buffer, sizeof(buffer), true);
+  json.Encode(buffer, sizeof(buffer), g_PrettyPrintJsonCvar.BoolValue);
   ReplyToCommand(client, buffer);
 
   json.Cleanup();

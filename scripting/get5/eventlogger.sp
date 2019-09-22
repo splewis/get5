@@ -12,7 +12,7 @@ static void EventLogger_LogEvent(const char[] eventName, JSON_Object params) {
   const int kMaxCharacters = 1000;
   char buffer[2048];
 
-  json.Encode(buffer, sizeof(buffer));
+  json.Encode(buffer, sizeof(buffer), g_PrettyPrintJsonCvar.BoolValue);
   if (strlen(buffer) > kMaxCharacters) {
     LogError("Event JSON too long (%d characters, %d max): %s", eventName, strlen(buffer),
              kMaxCharacters);

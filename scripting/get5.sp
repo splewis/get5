@@ -1353,7 +1353,7 @@ public Action Command_Status(int client, int args) {
   }
 
   char buffer[4096];
-  json.Encode(buffer, sizeof(buffer));
+  json.Encode(buffer, sizeof(buffer), true);
   ReplyToCommand(client, buffer);
 
   json.Cleanup();

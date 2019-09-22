@@ -86,7 +86,7 @@ public Action Command_Avaliable(int client, int args) {
   json.SetString("plugin_version", versionString);
 
   char buffer[128];
-  json.Encode(buffer, sizeof(buffer));
+  json.Encode(buffer, sizeof(buffer), true);
   ReplyToCommand(client, buffer);
 
   delete json;

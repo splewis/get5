@@ -125,7 +125,7 @@
     "WaitingForUnpauseInfoMessage"
     {
         "#format"       "{1:s},{2:s}"
-        "fr"            "{1} désire reprendre le match, fr attente que {2} tape !unpause"
+        "fr"            "{1} désire reprendre le match, en attente que {2} tape !unpause"
     }
     "PausesLeftInfoMessage"
     {
@@ -187,7 +187,7 @@
     }
     "AdminForcePauseInfoMessage"
     {
-        "fr"            "Un admin a forcé le match fr pause."
+        "fr"            "Un admin a forcé le match en pause."
     }
     "AdminForceUnPauseInfoMessage"
     {

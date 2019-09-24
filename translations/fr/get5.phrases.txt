@@ -40,7 +40,7 @@
     }
     "WaitingForGOTVVetoInfoMessage"
     {
-        "fr"            "The map will change once the GOTV broadcast has been displayed the map vetos."
+        "fr"            "La map changera une fois que la GOTV aura diffusé le tour de veto."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -310,7 +310,7 @@
     }
     "CaptainLeftOnVetoInfoMessage"
     {
-        "fr"            "Un chef d'équipe a quitté pendant le tour de veto, match fr pause."
+        "fr"            "Un chef d'équipe a quitté pendant le tour de veto, match en pause."
     }
     "ReadyToResumeVetoInfoMessage"
     {

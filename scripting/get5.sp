@@ -244,6 +244,7 @@ public void OnPluginStart() {
   LoadTranslations("common.phrases");
 
   /** ConVars **/
+  g_UseSVGCvar = CreateConVar("get5_use_svg", "0", "suport use svg image"); 
   g_AllowTechPauseCvar = CreateConVar("get5_allow_technical_pause", "1",
                                       "Whether or not technical pauses are allowed");
   g_AutoLoadConfigCvar =
@@ -333,7 +334,6 @@ public void OnPluginStart() {
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
-
   g_GameStateCvar =
       CreateConVar("get5_game_state", "0", "Current game state (see get5.inc)", FCVAR_DONTRECORD);
   g_LastGet5BackupCvar =

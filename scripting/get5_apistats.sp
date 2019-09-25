@@ -174,16 +174,27 @@ public void CheckForLogo(const char[] logo) {
   if (StrEqual(logo, "")) {
     return;
   }
-
+    
   char logoPath[PLATFORM_MAX_PATH + 1];
   //change png to svg because it's better supported
-  Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
+    if (!g_UseSVGCvar.BoolValue || !Pauseable() || IsPaused()) {
+      Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
+    }
+    else{
+      Format(logoPath, sizeof(logoPath), "%s/%s.png", LOGO_DIR, logo);
+     }
+
 
   // Try to fetch the file if we don't have it.
   if (!FileExists(logoPath)) {
     LogDebug("Fetching logo for %s", logo);
     //change to svg
-    Handle req = CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.svg", logo);
+    if (!g_UseSVGCvar.BoolValue || !Pauseable() || IsPaused()) {
+      Handle req = CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.svg", logo);
+    }
+    else{
+      Handle req = CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.png", logo);
+    }
     if (req == INVALID_HANDLE) {
       return;
     }
@@ -210,7 +221,12 @@ public int LogoCallback(Handle request, bool failure, bool successful, EHTTPStat
 
   char logoPath[PLATFORM_MAX_PATH + 1];
   //change to svg
-  Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
+  if (!g_UseSVGCvar.BoolValue || !Pauseable() || IsPaused()) {
+    Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
+  }
+  else{
+    Format(logoPath, sizeof(logoPath), "%s/%s.png", LOGO_DIR, logo);
+  }
 
   LogMessage("Saved logo for %s to %s", logo, logoPath);
   SteamWorks_WriteHTTPResponseBodyToFile(request, logoPath);

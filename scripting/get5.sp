@@ -49,6 +49,7 @@
 #pragma newdecls required
 
 /** ConVar handles **/
+ConVar g_UseSVGCvar
 ConVar g_AllowTechPauseCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_BackupSystemEnabledCvar;

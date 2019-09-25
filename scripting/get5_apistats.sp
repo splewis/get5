@@ -35,7 +35,7 @@
 #pragma newdecls required
 
 int g_MatchID = -1;
-
+ConVar g_UseSVGCvar;
 ConVar g_APIKeyCvar;
 char g_APIKey[128];
 
@@ -58,7 +58,7 @@ public Plugin myinfo = {
 public void OnPluginStart() {
   InitDebugLog("get5_debug", "get5_api");
   LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
-
+  g_UseSVGCvar = CreateConVar("get5_use_svg", "0", "suport use svg image"); 
   g_APIKeyCvar =
       CreateConVar("get5_web_api_key", "", "Match API key, this is automatically set through rcon");
   HookConVarChange(g_APIKeyCvar, ApiInfoChanged);
@@ -177,12 +177,12 @@ public void CheckForLogo(const char[] logo) {
     
   char logoPath[PLATFORM_MAX_PATH + 1];
   //change png to svg because it's better supported
-    if (!g_UseSVGCvar.BoolValue || !Pauseable() || IsPaused()) {
-      Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
-    }
-    else{
-      Format(logoPath, sizeof(logoPath), "%s/%s.png", LOGO_DIR, logo);
-     }
+  if (!g_UseSVGCvar.BoolValue || !Pauseable() || IsPaused()) {
+    Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
+  }
+  else{
+    Format(logoPath, sizeof(logoPath), "%s/%s.png", LOGO_DIR, logo);
+  }
 
 
   // Try to fetch the file if we don't have it.

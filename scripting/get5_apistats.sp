@@ -45,8 +45,7 @@ char g_APIURL[128];
 //This logo dir its for old csgo hud
     if (g_UseSVGCvar.BoolValue) {
       #define LOGO_DIR "materials/panorama/images/tournaments/teams"
-    }
-    else{
+    } else {
       #define LOGO_DIR "resource/flash/econ/tournaments/teams"
     }
 
@@ -185,8 +184,7 @@ public void CheckForLogo(const char[] logo) {
   //change png to svg because it's better supported
   if (g_UseSVGCvar.BoolValue) {
     Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
-  }
-  else{
+  } else {
     Format(logoPath, sizeof(logoPath), "%s/%s.png", LOGO_DIR, logo);
   }
 
@@ -197,8 +195,7 @@ public void CheckForLogo(const char[] logo) {
     //change to svg
     if (g_UseSVGCvar.BoolValue) {
       Handle req = CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.svg", logo);
-    }
-    else{
+    } else {
       Handle req = CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.png", logo);
     }
     if (req == INVALID_HANDLE) {
@@ -229,8 +226,7 @@ public int LogoCallback(Handle request, bool failure, bool successful, EHTTPStat
   //change to svg
   if (g_UseSVGCvar.BoolValue) {
     Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
-  }
-  else{
+  } else {
     Format(logoPath, sizeof(logoPath), "%s/%s.png", LOGO_DIR, logo);
   }
 

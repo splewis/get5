@@ -43,7 +43,7 @@ ConVar g_APIURLCvar;
 char g_APIURL[128];
 
 //This logo dir its for old csgo hud
-if (g_UseSVGCvar.BoolValue) {
+    if (g_UseSVGCvar.BoolValue) {
       #define LOGO_DIR "materials/panorama/images/tournaments/teams"
     }
     else{

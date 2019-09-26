@@ -177,7 +177,7 @@ public void CheckForLogo(const char[] logo) {
     
   char logoPath[PLATFORM_MAX_PATH + 1];
   //change png to svg because it's better supported
-  if (!g_UseSVGCvar.BoolValue || !Pauseable() || IsPaused()) {
+  if (g_UseSVGCvar.BoolValue) {
     Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
   }
   else{
@@ -189,7 +189,7 @@ public void CheckForLogo(const char[] logo) {
   if (!FileExists(logoPath)) {
     LogDebug("Fetching logo for %s", logo);
     //change to svg
-    if (!g_UseSVGCvar.BoolValue || !Pauseable() || IsPaused()) {
+    if (g_UseSVGCvar.BoolValue) {
       Handle req = CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.svg", logo);
     }
     else{
@@ -221,7 +221,7 @@ public int LogoCallback(Handle request, bool failure, bool successful, EHTTPStat
 
   char logoPath[PLATFORM_MAX_PATH + 1];
   //change to svg
-  if (!g_UseSVGCvar.BoolValue || !Pauseable() || IsPaused()) {
+  if (g_UseSVGCvar.BoolValue) {
     Format(logoPath, sizeof(logoPath), "%s/%s.svg", LOGO_DIR, logo);
   }
   else{

@@ -49,7 +49,6 @@
 #pragma newdecls required
 
 /** ConVar handles **/
-ConVar g_UseSVGCvar
 ConVar g_AllowTechPauseCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_BackupSystemEnabledCvar;
@@ -245,7 +244,6 @@ public void OnPluginStart() {
   LoadTranslations("common.phrases");
 
   /** ConVars **/
-  g_UseSVGCvar = CreateConVar("get5_use_svg", "0", "suport use svg image"); 
   g_AllowTechPauseCvar = CreateConVar("get5_allow_technical_pause", "1",
                                       "Whether or not technical pauses are allowed");
   g_AutoLoadConfigCvar =

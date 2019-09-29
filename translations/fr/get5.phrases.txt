@@ -36,9 +36,13 @@
     {
         "fr"            "La carte changera dès que la diffusion GOTV sera terminée."
     }
+    "WaitingForGOTVVetoInfoMessage"
+    {
+        "fr"            "La map changera une fois que la GOTV aura diffusé le tour de veto."
+    }
     "NoMatchSetupInfoMessage"
     {
-        "fr"            "Aucune configuration de match trouvée"
+        "fr"			"Aucune configuration de match trouvée"
     }
     "YourAreNotAPlayerInfoMessage"
     {
@@ -50,11 +54,11 @@
     }
     "TeamForfeitInfoMessage"
     {
-        "fr"            "{1} ne s'est pas déclaré prête à temps et a déclaré forfait."
+        "fr"            "{1} ne s'est pas déclarée prête à temps et a déclaré forfait."
     }
     "MinutesToForfeitMessage"
     {
-        "fr"            "{1} dispose encore de {2} minutes pour se déclarer prête, sinon elle déclarera forfait."
+        "fr"            "{1} dispose encore de {2} minutes pour se déclarer prête, sinon elle déclarera forfait.."
     }
     "SecondsToForfeitInfoMessage"
     {
@@ -62,7 +66,7 @@
     }
     "10SecondsToForfeitInfoMessage"
     {
-        "fr"            "{1} a 10 secondes pour se déclarer prêt(e), sinon il/elle déclarera forfait."
+        "fr"            "{1} a 10 secondes pour se déclarer prêt(e), sinon il/elle déclarera forfait"
     }
     "PausePeriodSuffix"
     {
@@ -70,15 +74,23 @@
     }
     "MaxPausesUsedInfoMessage"
     {
-        "fr"            "Votre équipe a déjà utilisé son maximum de {1} pauses{2}."
+        "fr"            "Votre équipe a déjà utilisé son maximum de {1} pauses {2}."
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "fr"            "Votre équipe a déjà utilisé son maximum de {1} secondes de pause{2}."
+        "fr"            "Votre équipe a déjà utilisé son maximum de {1} secondes de pause {2}."
     }
     "MatchPausedByTeamMessage"
     {
         "fr"            "{1} a mis le match en pause."
+    }
+    "MatchTechPausedByTeamMessage"
+    {
+        "fr"            "{1} a demandé une pause technique."
+    }
+    "AdminForceTechPauseInfoMessage"
+    {
+        "fr"            "Un admin a demandé une pause technique."
     }
     "PauseTimeExpiration10SecInfoMessage"
     {
@@ -98,7 +110,7 @@
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "fr"            "{1} désire reprendre le match, en attente que {2} tape !unpause."
+        "fr"            "{1} désire reprendre le match, en attente que {2} tape !unpause"
     }
     "PausesLeftInfoMessage"
     {
@@ -134,7 +146,7 @@
     }
     "ForceReadyInfoMessage"
     {
-        "fr"            "Vous pouvez entrer {GREEN}!forceready {NORMAL}pour forcer votre équipe à être prête si vous avez moins de {GREEN}{1}{NORMAL} joueurs."
+        "fr"            "Vous pouvez entrer {GREEN}!forceready {NORMAL}pour forcer votre équipe à être prête si vous avez moins de {GREEN}{1}{NORMAL} joueurs"
     }
     "TeammateForceReadied"
     {
@@ -176,6 +188,10 @@
     {
         "fr"            "{1} a remporté la victoire."
     }
+    "TeamTiedMatchInfoMessage"
+    {
+        "fr"            "{1} et {2} ont fait match nul."
+    }
     "TeamsSplitSeriesBO2InfoMessage"
     {
         "fr"            "{1} et {2} ont gagné autant de match (1-1)."
@@ -202,19 +218,19 @@
     }
     "MatchIsLiveInfoMessage"
     {
-        "fr"            "Le match est en {GREEN}LIVE"
+        "fr"            "Match est en {GREEN}LIVE"
     }
     "KnifeIn5SecInfoMessage"
     {
-        "fr"            "Le knife round commencera dans 5 secondes."
+        "fr"            "Le round au couteau va commencer dans 5 secondes !"
     }
     "KnifeInfoMessage"
     {
-        "fr"            "Knife !"
+        "fr"            "Knife!"
     }
     "TeamDecidedToStayInfoMessage"
     {
-        "fr"            "{1} a décidé de rester."
+        "fr"            "{1} {1} a décidé de rester.."
     }
     "TeamDecidedToSwapInfoMessage"
     {
@@ -234,11 +250,11 @@
     }
     "MapIsInfoMessage"
     {
-        "fr"            "Map {1} : {GREEN}{2}"
+        "fr"            "Map {1}: {GREEN}{2}"
     }
     "TeamPickedMapInfoMessage"
     {
-        "fr"            "{1} a choisi {GREEN}{2} {NORMAL}comme map {3}"
+        "fr"            "{1} a choisi {GREEN}{2} {NORMAL}comme map {3}}"
     }
     "TeamSelectSideInfoMessage"
     {
@@ -271,5 +287,45 @@
     "NotReadyTag"
     {
         "fr"            "[PAS PRÊT]"
+    }
+    "MatchPoweredBy"
+    {
+        "fr"        "Powered by {YELLOW}Get5"
+    }
+    "MapVetoPickMenuText"
+    {
+        "fr"        "Selectionnez une map à JOUER:"
+    }
+    "MapVetoPickConfirmMenuText"
+    {
+        "fr"        "Confirmez que vous souhaitez la jouer {1}:"
+    }
+    "MapVetoBanMenuText"
+    {
+        "fr"        "Selectionnez une map à BANNIR:"
+    }
+    "MapVetoBanConfirmMenuText"
+    {
+        "fr"        "Confirmez que vous souhaitez la bannir {1}:"
+    }
+    "MapVetoSidePickMenuText"
+    {
+        "fr"        "Selectionner un côté pourr {1}"
+    }
+    "MapVetoSidePickConfirmMenuText"
+    {
+        "fr"        "Confirmez que vous voulez commencer {1}:"
+    }
+    "ConfirmPositiveOptionText"
+    {
+        "fr"        "Oui"
+    }
+    "ConfirmNegativeOptionText"
+    {
+        "fr"        "Non"
+    }
+    "VetoCountdown"
+    {
+        "fr"        "Le Veto commencera dans {GREEN}{1} {NORMAL}secondes."
     }
 }

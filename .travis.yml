@@ -9,6 +9,9 @@ env:
     - SMVERSION=1.10
 
 before_script:
+    # setup submodules
+    - git submodule update --init
+
     # install smbuilder
     - git clone https://github.com/splewis/sm-builder
     - cd sm-builder
@@ -25,9 +28,9 @@ before_script:
     - PATH+=":$PWD"
     - cd include
     - wget https://raw.githubusercontent.com/KyleSanderson/SteamWorks/master/Pawn/includes/SteamWorks.inc
-    - git clone https://github.com/clugg/sm-json
-    - cp -r sm-json/addons/sourcemod/scripting/include/* .
     - cd ../../../..
+    - cp -r ./dependencies/sm-json/addons/sourcemod/scripting/include/* ./addons/sourcemod/scripting/include
+    
 
 script:
     - smbuilder --flags="-E"

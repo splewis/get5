@@ -6,7 +6,6 @@ addons:
 
 env:
     - SMVERSION=1.9
-    - SMVERSION=1.10
 
 before_script:
     # install smbuilder

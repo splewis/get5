@@ -528,7 +528,6 @@ static bool LoadMatchFromJson(JSON_Object json) {
         array.GetString(keyAsString, buffer, sizeof(buffer));
         g_MapSides.Push(SideTypeFromString(buffer));
       }
-      CloseHandle(array);
     }
   }
 

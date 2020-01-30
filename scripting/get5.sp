@@ -1142,6 +1142,8 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
   }
 
   if (g_GameState == Get5State_KnifeRound && g_HasKnifeRoundStarted) {
+    g_HasKnifeRoundStarted = false;
+
     ChangeState(Get5State_WaitingForKnifeRoundDecision);
     CreateTimer(1.0, Timer_PostKnife);
 

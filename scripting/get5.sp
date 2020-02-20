@@ -907,9 +907,13 @@ public bool RestoreLastRound() {
 public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_None && g_GameState < Get5State_KnifeRound) {
     int client = GetClientOfUserId(event.GetInt("userid"));
-    if (IsPlayer(client) && OnActiveTeam(client)) {
-      SetEntProp(client, Prop_Send, "m_iAccount", GetCvarIntSafe("mp_maxmoney"));
-    }
+    CreateTimer(0.1, Timer_ReplenishMoney, client, TIMER_FLAG_NO_MAPCHANGE);
+  }
+}
+
+public Action Timer_ReplenishMoney(Handle timer, int client) {
+  if (IsPlayer(client) && OnActiveTeam(client)) {
+    SetEntProp(client, Prop_Send, "m_iAccount", GetCvarIntSafe("mp_maxmoney"));
   }
 }
 

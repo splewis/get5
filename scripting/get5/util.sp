@@ -360,6 +360,8 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
       strcopy(buffer, len, "Overpass");
     } else if (StrEqual(buffer, "de_nuke")) {
       strcopy(buffer, len, "Nuke");
+    } else if (StrEqual(buffer, "de_vertigo")) {
+      strcopy(buffer, len, "Vertigo");
     }
   }
 }

@@ -531,13 +531,6 @@ public void OnClientAuthorized(int client, const char[] auth) {
     return;
   }
 
-  if (g_GameState == Get5State_None && g_KickClientsWithNoMatchCvar.BoolValue) {
-    if (!g_KickClientImmunity.BoolValue ||
-        !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
-      KickClient(client, "%t", "NoMatchSetupInfoMessage");
-    }
-  }
-
   if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue) {
     MatchTeam team = GetClientMatchTeam(client);
     if (team == MatchTeam_TeamNone) {
@@ -546,6 +539,17 @@ public void OnClientAuthorized(int client, const char[] auth) {
       int teamCount = CountPlayersOnMatchTeam(team, client);
       if (teamCount >= g_PlayersPerTeam && !g_CoachingEnabledCvar.BoolValue) {
         KickClient(client, "%t", "TeamIsFullInfoMessage");
+      }
+    }
+  }
+}
+
+public void AdminClientKickCheck(int client) {
+  if (IsPlayer(client)) {
+    if (g_GameState == Get5State_None && g_KickClientsWithNoMatchCvar.BoolValue) {
+      if (!g_KickClientImmunity.BoolValue ||
+          !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
+            KickClient(client, "%t", "NoMatchSetupInfoMessage");
       }
     }
   }
@@ -565,6 +569,10 @@ public void OnClientPutInServer(int client) {
   }
 
   Stats_ResetClientRoundValues(client);
+}
+
+public void OnClientPostAdminCheck(int client){
+  AdminClientKickCheck(client);
 }
 
 public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs) {

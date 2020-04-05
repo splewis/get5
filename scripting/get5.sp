@@ -70,6 +70,7 @@ ConVar g_MaxPauseTimeCvar;
 ConVar g_MessagePrefixCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_PrettyPrintJsonCvar;
+ConVar g_ReadyTeamTag;
 ConVar g_ResetPausesEachHalfCvar;
 ConVar g_ServerIdCvar;
 ConVar g_SetClientClanTagCvar;
@@ -296,6 +297,7 @@ public void OnPluginStart() {
                    "Maximum number of time the game can spend paused by a team, 0=unlimited");
   g_MessagePrefixCvar =
       CreateConVar("get5_message_prefix", DEFAULT_TAG, "The tag applied before plugin messages.");
+   g_ReadyTeamTag = CreateConVar ("get5_ready_team_tag", "1", "Add [READY][NOT READY] Tag before Team Names in Warmup. 0 to disable it");
   g_ResetPausesEachHalfCvar =
       CreateConVar("get5_reset_pauses_each_half", "1",
                    "Whether pause limits will be reset each halftime period");

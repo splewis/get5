@@ -522,17 +522,6 @@ public Action Timer_InfoMessages(Handle timer) {
   return Plugin_Continue;
 }
 
-public void AdminClientKickCheck(int client) {
-  if (IsPlayer(client)) {
-    if (g_GameState == Get5State_None && g_KickClientsWithNoMatchCvar.BoolValue) {
-      if (!g_KickClientImmunity.BoolValue ||
-          !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
-            KickClient(client, "%t", "NoMatchSetupInfoMessage");
-      }
-    }
-  }
-}
-
 public void OnClientAuthorized(int client, const char[] auth) {
   SetClientReady(client, false);
   g_MovingClientToCoach[client] = false;
@@ -570,7 +559,14 @@ public void OnClientPutInServer(int client) {
 }
 
 public void OnClientPostAdminCheck(int client){
-  AdminClientKickCheck(client);
+  if (IsPlayer(client)) {
+    if (g_GameState == Get5State_None && g_KickClientsWithNoMatchCvar.BoolValue) {
+      if (!g_KickClientImmunity.BoolValue ||
+          !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
+            KickClient(client, "%t", "NoMatchSetupInfoMessage");
+      }
+    }
+  }
 }
 
 public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs) {

@@ -332,6 +332,7 @@ public void UpdatePlayerStats(KeyValues kv, MatchTeam team) {
         AddIntStat(req, kv, STAT_FIRSTDEATH_T);
         AddIntStat(req, kv, STAT_FIRSTDEATH_CT);
         AddIntStat(req, kv, STAT_TRADEKILL);
+        AddIntStat(req, kv, STAT_CONTRIBUTION_SCORE);
         SteamWorks_SendHTTPRequest(req);
       }
 

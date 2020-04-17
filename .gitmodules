@@ -1,4 +1,3 @@
 [submodule "dependencies/sm-json"]
 	path = dependencies/sm-json
 	url = https://github.com/clugg/sm-json
-	branch = v2.x

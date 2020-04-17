@@ -1,3 +1,5 @@
+#include <string>
+
 stock JSON_Object json_load_file(const char[] path) {
   File f = OpenFile(path, "r");
   char contents[8192];
@@ -6,33 +8,31 @@ stock JSON_Object json_load_file(const char[] path) {
   return json_decode(contents);
 }
 
-stock void json_string_type(JSON_CELL_TYPE type, char[] output, int maxlength) {
+stock void json_string_type(JSONCellType type, char[] output, int maxlength) {
   switch (type) {
-    case Type_Invalid:
+    case JSON_Type_Invalid:
       Format(output, maxlength, "invalid");
-    case Type_String:
+    case JSON_Type_String:
       Format(output, maxlength, "string");
-    case Type_Int:
+    case JSON_Type_Int:
       Format(output, maxlength, "int");
-    case Type_Float:
+    case JSON_Type_Float:
       Format(output, maxlength, "float");
-    case Type_Bool:
+    case JSON_Type_Bool:
       Format(output, maxlength, "bool");
-    case Type_Null:
-      Format(output, maxlength, "null");
-    case Type_Object:
+    case JSON_Type_Object:
       Format(output, maxlength, "object");
   }
 }
 
-stock bool json_has_key(JSON_Object json, const char[] key, JSON_CELL_TYPE expectedType) {
+stock bool json_has_key(JSON_Object json, const char[] key, JSONCellType expectedType) {
   if (json == null) {
     return false;
   } else if (!json.HasKey(key)) {
     return false;
   } else {
     // Perform type-checking.
-    JSON_CELL_TYPE actualType = json.GetKeyType(key);
+    JSONCellType actualType = json.GetKeyType(key);
     if (actualType != expectedType) {
       char expectedTypeStr[16];
       char actualTypeStr[16];
@@ -48,7 +48,7 @@ stock bool json_has_key(JSON_Object json, const char[] key, JSON_CELL_TYPE expec
 
 stock int json_object_get_string_safe(JSON_Object json, const char[] key, char[] buffer,
                                       int maxlength, const char[] defaultValue = "") {
-  if (json_has_key(json, key, Type_String)) {
+  if (json_has_key(json, key, JSON_Type_String)) {
     return json.GetString(key, buffer, maxlength);
   } else {
     return strcopy(buffer, maxlength, defaultValue);
@@ -56,7 +56,7 @@ stock int json_object_get_string_safe(JSON_Object json, const char[] key, char[]
 }
 
 stock int json_object_get_int_safe(JSON_Object json, const char[] key, int defaultValue = 0) {
-  if (json_has_key(json, key, Type_Int)) {
+  if (json_has_key(json, key, JSON_Type_Int)) {
     return json.GetInt(key);
   } else {
     return defaultValue;
@@ -65,7 +65,7 @@ stock int json_object_get_int_safe(JSON_Object json, const char[] key, int defau
 
 stock bool json_object_get_bool_safe(JSON_Object json, const char[] key,
                                      bool defaultValue = false) {
-  if (json_has_key(json, key, Type_Bool)) {
+  if (json_has_key(json, key, JSON_Type_Bool)) {
     return json.GetBool(key);
   } else {
     return defaultValue;
@@ -74,7 +74,7 @@ stock bool json_object_get_bool_safe(JSON_Object json, const char[] key,
 
 stock float json_object_get_float_safe(JSON_Object json, const char[] key,
                                        float defaultValue = 0.0) {
-  if (json_has_key(json, key, Type_Float)) {
+  if (json_has_key(json, key, JSON_Type_Float)) {
     return json.GetFloat(key);
   } else {
     return defaultValue;
@@ -84,7 +84,7 @@ stock float json_object_get_float_safe(JSON_Object json, const char[] key,
 // Used for parsing an Array[String] to a sourcepawn ArrayList of strings
 stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, ArrayList list,
                                        int maxValueLength) {
-  if (!json_has_key(json, key, Type_Object)) {
+  if (!json_has_key(json, key, JSON_Type_Object)) {
     return 0;
   }
 
@@ -94,7 +94,7 @@ stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, Array
     char[] buffer = new char[maxValueLength];
     for (int i = 0; i < array.Length; i++) {
       char keyAsString[64];
-      array.GetIndexString(keyAsString, sizeof(keyAsString), i);
+      IntToString(i, keyAsString, sizeof(keyAsString));
       array.GetString(keyAsString, buffer, maxValueLength);
       list.PushString(buffer);
       count++;
@@ -116,7 +116,7 @@ stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list,
       char[] buffer = new char[maxValueLength];
       for (int i = 0; i < data.Length; i++) {
         char keyAsString[64];
-        data.GetIndexString(keyAsString, sizeof(keyAsString), i);
+        IntToString(i, keyAsString, sizeof(keyAsString));
         data.GetString(keyAsString, buffer, maxValueLength);
 
         char steam64[AUTH_LENGTH];

@@ -1,3 +1,5 @@
+#include <string>
+
 #define REMOTE_CONFIG_PATTERN "remote_config%d.json"
 #define CONFIG_MATCHID_DEFAULT "matchid"
 #define CONFIG_MATCHTITLE_DEFAULT "Map {MAPNUMBER} of {MAXMAPS}"
@@ -524,7 +526,7 @@ static bool LoadMatchFromJson(JSON_Object json) {
       for (int i = 0; i < array.Length; i++) {
         char keyAsString[64];
         char buffer[64];
-        array.GetIndexString(keyAsString, sizeof(keyAsString), i);
+        IntToString(i, keyAsString, sizeof(keyAsString));
         array.GetString(keyAsString, buffer, sizeof(buffer));
         g_MapSides.Push(SideTypeFromString(buffer));
       }

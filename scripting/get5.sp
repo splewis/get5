@@ -96,14 +96,14 @@ int g_MapsToWin = 1;  // Maps needed to win the series.
 bool g_BO2Match = false;
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
-ArrayList g_TeamAuths[MatchTeam_Count];
+ArrayList g_TeamAuths[MATCHTEAM_COUNT];
 StringMap g_PlayerNames;
-char g_TeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
-char g_TeamTags[MatchTeam_Count][MAX_CVAR_LENGTH];
-char g_FormattedTeamNames[MatchTeam_Count][MAX_CVAR_LENGTH];
-char g_TeamFlags[MatchTeam_Count][MAX_CVAR_LENGTH];
-char g_TeamLogos[MatchTeam_Count][MAX_CVAR_LENGTH];
-char g_TeamMatchTexts[MatchTeam_Count][MAX_CVAR_LENGTH];
+char g_TeamNames[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
+char g_TeamTags[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
+char g_FormattedTeamNames[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
+char g_TeamFlags[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
+char g_TeamLogos[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
+char g_TeamMatchTexts[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
 char g_MatchTitle[MAX_CVAR_LENGTH];
 int g_FavoredTeamPercentage = 0;
 char g_FavoredTeamText[MAX_CVAR_LENGTH];
@@ -138,8 +138,8 @@ int g_RoundClutchingEnemyCount[MAXPLAYERS +
                                1];  // number of enemies left alive when last alive on your team
 int g_LastFlashBangThrower = -1;    // last client to have a flashbang detonate
 int g_RoundFlashedBy[MAXPLAYERS + 1];
-bool g_TeamFirstKillDone[MatchTeam_Count];
-bool g_TeamFirstDeathDone[MatchTeam_Count];
+bool g_TeamFirstKillDone[MATCHTEAM_COUNT];
+bool g_TeamFirstDeathDone[MATCHTEAM_COUNT];
 int g_PlayerKilledBy[MAXPLAYERS + 1];
 float g_PlayerKilledByTime[MAXPLAYERS + 1];
 int g_DamageDone[MAXPLAYERS + 1][MAXPLAYERS + 1];
@@ -148,17 +148,17 @@ KeyValues g_StatsKv;
 
 ArrayList g_TeamScoresPerMap = null;
 char g_LoadedConfigFile[PLATFORM_MAX_PATH];
-int g_VetoCaptains[MatchTeam_Count];        // Clients doing the map vetos.
-int g_TeamSeriesScores[MatchTeam_Count];    // Current number of maps won per-team.
-bool g_TeamReadyOverride[MatchTeam_Count];  // Whether a team has been voluntarily force readied.
+int g_VetoCaptains[MATCHTEAM_COUNT];        // Clients doing the map vetos.
+int g_TeamSeriesScores[MATCHTEAM_COUNT];    // Current number of maps won per-team.
+bool g_TeamReadyOverride[MATCHTEAM_COUNT];  // Whether a team has been voluntarily force readied.
 bool g_ClientReady[MAXPLAYERS + 1];         // Whether clients are marked ready.
-int g_TeamSide[MatchTeam_Count];            // Current CS_TEAM_* side for the team.
-int g_TeamStartingSide[MatchTeam_Count];
-bool g_TeamReadyForUnpause[MatchTeam_Count];
-bool g_TeamGivenStopCommand[MatchTeam_Count];
+int g_TeamSide[MATCHTEAM_COUNT];            // Current CS_TEAM_* side for the team.
+int g_TeamStartingSide[MATCHTEAM_COUNT];
+bool g_TeamReadyForUnpause[MATCHTEAM_COUNT];
+bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
 bool g_InExtendedPause;
-int g_TeamPauseTimeUsed[MatchTeam_Count];
-int g_TeamPausesUsed[MatchTeam_Count];
+int g_TeamPauseTimeUsed[MATCHTEAM_COUNT];
+int g_TeamPausesUsed[MATCHTEAM_COUNT];
 int g_ReadyTimeWaitingUsed = 0;
 char g_DefaultTeamColors[][] = {
     TEAM1_COLOR, TEAM2_COLOR, "{NORMAL}", "{NORMAL}",
@@ -438,7 +438,7 @@ public void OnPluginStart() {
   g_MapSides = new ArrayList();
   g_CvarNames = new ArrayList(MAX_CVAR_LENGTH);
   g_CvarValues = new ArrayList(MAX_CVAR_LENGTH);
-  g_TeamScoresPerMap = new ArrayList(view_as<int>(MatchTeam_Count));
+  g_TeamScoresPerMap = new ArrayList(MATCHTEAM_COUNT);
 
   for (int i = 0; i < sizeof(g_TeamAuths); i++) {
     g_TeamAuths[i] = new ArrayList(AUTH_LENGTH);

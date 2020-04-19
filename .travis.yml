@@ -5,7 +5,7 @@ addons:
         - lib32stdc++6  # needed for spcomp
 
 env:
-    - SMVERSION=1.9
+    - SMVERSION=1.10
 
 before_script:
     # setup submodules

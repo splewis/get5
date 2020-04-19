@@ -140,7 +140,7 @@
     "TeamFailToReadyMinPlayerCheck"
     {
         "#format"       "{1:d}"
-        "en"            "You must have at least {1} players on the server to ready up."
+        "en"            "You must have at least {1} player(s) on the server to ready up."
     }
     "TeamReadyToVetoInfoMessage"
     {

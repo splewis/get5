@@ -214,7 +214,7 @@ public MatchTeam GetAuthMatchTeam(const char[] steam64) {
     return IsAuthOnTeam(steam64, MatchTeam_Team1) ? MatchTeam_Team1 : MatchTeam_Team2;
   }
 
-  for (int i = 0; i < view_as<int>(MatchTeam_Count); i++) {
+  for (int i = 0; i < MATCHTEAM_COUNT; i++) {
     MatchTeam team = view_as<MatchTeam>(i);
     if (IsAuthOnTeam(steam64, team)) {
       return team;
@@ -358,7 +358,7 @@ public bool RemovePlayerFromTeams(const char[] auth) {
   char steam64[AUTH_LENGTH];
   ConvertAuthToSteam64(auth, steam64);
 
-  for (int i = 0; i < view_as<int>(MatchTeam_Count); i++) {
+  for (int i = 0; i < MATCHTEAM_COUNT; i++) {
     MatchTeam team = view_as<MatchTeam>(i);
     int index = GetTeamAuths(team).FindString(steam64);
     if (index >= 0) {

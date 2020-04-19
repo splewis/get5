@@ -15,6 +15,8 @@ enum Get5State {
   Get5State_PostGame,                      // postgame screen + waiting for GOTV to finish broadcast
 };
 
+#define MATCHTEAM_COUNT 4
+
 enum MatchTeam {
   MatchTeam_Team1,
   MatchTeam_Team2,

@@ -27,7 +27,7 @@
 #include "get5/version.sp"
 
 #include <SteamWorks>
-#include <json> // github.com/clugg/sm-json
+#include <json>  // github.com/clugg/sm-json
 
 #include "get5/jsonhelpers.sp"
 
@@ -180,22 +180,25 @@ public void CheckForLogo(const char[] logo) {
   if (StrEqual(logo, "")) {
     return;
   }
-    
+
   char logoPath[PLATFORM_MAX_PATH + 1];
-  //change png to svg because it's better supported
-  if (g_UseSVGCvar.BoolValue)
+  // change png to svg because it's better supported
+  if (g_UseSVGCvar.BoolValue) {
     Format(logoPath, sizeof(logoPath), "%s/%s.svg", g_LogoBasePath, logo);
-   else
+  } else {
     Format(logoPath, sizeof(logoPath), "%s/%s.png", g_LogoBasePath, logo);
+  }
 
   // Try to fetch the file if we don't have it.
   if (!FileExists(logoPath)) {
     LogDebug("Fetching logo for %s", logo);
-    Handle req = g_UseSVGCvar.BoolValue ?
-      CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.svg", logo) :
-      CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.png", logo);
+    Handle req = g_UseSVGCvar.BoolValue
+                     ? CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.svg", logo)
+                     : CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.png", logo);
 
-    if (req == INVALID_HANDLE) return;
+    if (req == INVALID_HANDLE) {
+      return;
+    }
 
     Handle pack = CreateDataPack();
     WritePackString(pack, logo);
@@ -218,11 +221,11 @@ public int LogoCallback(Handle request, bool failure, bool successful, EHTTPStat
   pack.ReadString(logo, sizeof(logo));
 
   char logoPath[PLATFORM_MAX_PATH + 1];
-  //change to svg
-  if (g_UseSVGCvar.BoolValue)
+  if (g_UseSVGCvar.BoolValue) {
     Format(logoPath, sizeof(logoPath), "%s/%s.svg", g_LogoBasePath, logo);
-  else
+  } else {
     Format(logoPath, sizeof(logoPath), "%s/%s.png", g_LogoBasePath, logo);
+  }
 
   LogMessage("Saved logo for %s to %s", logo, logoPath);
   SteamWorks_WriteHTTPResponseBodyToFile(request, logoPath);
@@ -252,7 +255,6 @@ public void UpdateRoundStats(int mapNumber) {
     SteamWorks_SendHTTPRequest(req);
   }
 
-  // Update player stats
   KeyValues kv = new KeyValues("Stats");
   Get5_GetMatchStats(kv);
   char mapKey[32];

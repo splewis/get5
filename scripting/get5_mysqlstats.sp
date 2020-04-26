@@ -291,7 +291,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
                 %d, %d, \
                 %d, %d, %d, %d, %d, \
                 %d, %d, %d, %d, \
-                %d, %d, %d, %d, 
+                %d, %d, %d, %d, \
                 %d, %d)",
              g_MatchID, mapNumber, authSz, teamString, 
              roundsplayed, nameSz, kills, deaths, flashbang_assists, 

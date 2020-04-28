@@ -271,6 +271,7 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
       }
     } else {
       strcopy(taggedName, sizeof(taggedName), name);
+    }
   } else {
     strcopy(taggedName, sizeof(taggedName), name);
   }

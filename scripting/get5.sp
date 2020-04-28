@@ -297,7 +297,7 @@ public void OnPluginStart() {
                    "Maximum number of time the game can spend paused by a team, 0=unlimited");
   g_MessagePrefixCvar =
       CreateConVar("get5_message_prefix", DEFAULT_TAG, "The tag applied before plugin messages.");
-   g_ReadyTeamTag =
+  g_ReadyTeamTag =
       CreateConVar("get5_ready_team_tag", "1", "Add [READY][NOT READY] Tag before Team Names in Warmup. 0 to disable it");
   g_ResetPausesEachHalfCvar =
       CreateConVar("get5_reset_pauses_each_half", "1",

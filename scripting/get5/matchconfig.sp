@@ -678,7 +678,6 @@ public void SetMatchTeamCvars() {
   char formattedHostname[128];
 
   if (FormatCvarString(g_SetHostnameCvar, formattedHostname, sizeof(formattedHostname))) {
-    ReplaceString(formattedHostname, sizeof(formattedHostname), "{MATCHTITLE}", g_MatchTitle, false);
     SetConVarStringSafe("hostname", formattedHostname);
   }
 }

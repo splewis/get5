@@ -1414,6 +1414,7 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
 
   int mapNumber = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] + 1;
   ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", mapNumber, false);
+  ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle, false);
   ReplaceString(buffer, len, "{MATCHID}", g_MatchID, false);
   ReplaceString(buffer, len, "{MAPNAME}", mapName, false);
   ReplaceStringWithInt(buffer, len, "{SERVERID}", g_ServerIdCvar.IntValue, false);

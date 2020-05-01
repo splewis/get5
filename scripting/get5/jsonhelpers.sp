@@ -1,5 +1,3 @@
-#include <string>
-
 stock JSON_Object json_load_file(const char[] path) {
   File f = OpenFile(path, "r");
   char contents[8192];

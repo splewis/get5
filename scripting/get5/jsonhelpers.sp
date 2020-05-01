@@ -89,13 +89,11 @@ stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, Array
   }
 
   int count = 0;
-  JSON_Object array = json.GetObject(key);
+  JSON_Array array = view_as<JSON_Array>(json.GetObject(key));
   if (array != null) {
     char[] buffer = new char[maxValueLength];
     for (int i = 0; i < array.Length; i++) {
-      char keyAsString[64];
-      IntToString(i, keyAsString, sizeof(keyAsString));
-      array.GetString(keyAsString, buffer, maxValueLength);
+      array.GetString(i, buffer, maxValueLength);
       list.PushString(buffer);
       count++;
     }
@@ -113,12 +111,10 @@ stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list,
   JSON_Object data = json.GetObject(key);
   if (data != null) {
     if (data.IsArray) {
+      JSON_Array array = view_as<JSON_Array>(data);
       char[] buffer = new char[maxValueLength];
-      for (int i = 0; i < data.Length; i++) {
-        char keyAsString[64];
-        IntToString(i, keyAsString, sizeof(keyAsString));
-        data.GetString(keyAsString, buffer, maxValueLength);
-
+      for (int i = 0; i < array.Length; i++) {
+        array.GetString(i, buffer, maxValueLength);
         char steam64[AUTH_LENGTH];
         if (ConvertAuthToSteam64(buffer, steam64)) {
           list.PushString(steam64);

@@ -517,17 +517,15 @@ static bool LoadMatchFromJson(JSON_Object json) {
   }
 
   if (g_SkipVeto) {
-    JSON_Object array = json.GetObject("map_sides");
+    JSON_Array array = view_as<JSON_Array>(json.GetObject("map_sides"));
     if (array != null) {
       if (!array.IsArray) {
         MatchConfigFail("Expected \"map_sides\" section to be an array");
         return false;
       }
       for (int i = 0; i < array.Length; i++) {
-        char keyAsString[64];
         char buffer[64];
-        IntToString(i, keyAsString, sizeof(keyAsString));
-        array.GetString(keyAsString, buffer, sizeof(buffer));
+        array.GetString(i, buffer, sizeof(buffer));
         g_MapSides.Push(SideTypeFromString(buffer));
       }
     }

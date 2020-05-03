@@ -621,6 +621,16 @@ static void LoadDefaultMapList(ArrayList list) {
   list.PushString("de_nuke");
   list.PushString("de_overpass");
   list.PushString("de_train");
+  
+  if (g_SkipVeto) {
+    char currentMap[PLATFORM_MAX_PATH];
+    GetCurrentMap(currentMap, sizeof(currentMap));
+
+    int currentMapIndex = list.FindString(currentMap);
+    if (currentMapIndex > 0) {
+      list.SwapAt(0, currentMapIndex);
+    }
+  }
 }
 
 public void SetMatchTeamCvars() {

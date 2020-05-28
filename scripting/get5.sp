@@ -1237,6 +1237,8 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
 public void SwapSides() {
   LogDebug("SwapSides");
+  EventLogger_SideSwap(g_TeamSide[MatchTeam_Team1], g_TeamSide[MatchTeam_Team2]);
+
   int tmp = g_TeamSide[MatchTeam_Team1];
   g_TeamSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team2];
   g_TeamSide[MatchTeam_Team2] = tmp;
@@ -1247,8 +1249,6 @@ public void SwapSides() {
       g_TeamPausesUsed[team] = 0;
     }
   }
-
-  EventLogger_SideSwap(g_TeamSide[MatchTeam_Team1], g_TeamSide[MatchTeam_Team2]);
 }
 
 /**

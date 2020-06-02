@@ -22,12 +22,14 @@ before_script:
     - SMPACKAGE="http://sourcemod.net/latest.php?os=linux&version=${SMVERSION}"
     - wget $SMPACKAGE
     - tar xfz $(basename $SMPACKAGE)
+    - SWPACKAGE="https://github.com/KyleSanderson/SteamWorks/releases/download/1.2.3b/package-lin.tgz"
+    - wget $SWPACKAGE
+    - tar xfz $(basename $SWPACKAGE)
+    - cp package/addons/sourcemod/scripting/include/SteamWorks.inc addons/sourcemod/scripting/include/
     - cd addons/sourcemod/scripting/
     - chmod +x spcomp
     - PATH+=":$PWD"
-    - cd include
-    - wget https://raw.githubusercontent.com/KyleSanderson/SteamWorks/master/Pawn/includes/SteamWorks.inc
-    - cd ../../../..
+    - cd ../../..
     - cp -r ./dependencies/sm-json/addons/sourcemod/scripting/include/* ./addons/sourcemod/scripting/include
     
 

@@ -61,6 +61,7 @@ public void OnPluginStart() {
   LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
   g_UseSVGCvar = CreateConVar("get5_use_svg", "1", "support svg team logos");
   HookConVarChange(g_UseSVGCvar, LogoBasePathChanged);
+  g_LogoBasePath = g_UseSVGCvar.BoolValue ? LOGO_DIR : LEGACY_LOGO_DIR;
   g_APIKeyCvar =
       CreateConVar("get5_web_api_key", "", "Match API key, this is automatically set through rcon");
   HookConVarChange(g_APIKeyCvar, ApiInfoChanged);

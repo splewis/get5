@@ -45,7 +45,7 @@ public Action MatchLive(Handle timer) {
   ExecuteMatchConfigCvars();
 
 
-  //If there is a set amount of timeouts available update the built-in convar and game rule properties to show the correct amount of timeouts remainning in gsi and in-game
+  //If there is a set amount of timeouts available update the built-in convar and game rule properties to show the correct amount of timeouts remaining in gsi and in-game
   if (g_MaxPausesCvar.IntValue > 0){
     ServerCommand("mp_team_timeout_max %d", g_MaxPausesCvar.IntValue);
     GameRules_SetProp("m_nTerroristTimeOuts", g_MaxPausesCvar.IntValue);

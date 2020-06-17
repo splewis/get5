@@ -57,8 +57,15 @@ public Action Command_Pause(int client, int args) {
   g_TeamReadyForUnpause[MatchTeam_Team1] = false;
   g_TeamReadyForUnpause[MatchTeam_Team2] = false;
 
+  int pausesLeft = 1;
+  if (g_MaxPausesCvar.IntValue > 0 && IsPlayerTeam(team)) {
+    //Update the built-in convar to ensure correct max amount is displayed
+    ServerCommand("mp_team_timeout_max %d", g_MaxPausesCvar.IntValue);
+    pausesLeft = g_MaxPausesCvar.IntValue - g_TeamPausesUsed[team] - 1;
+  }
+
   // If the pause will need explicit resuming, we will create a timer to poll the pause status.
-  bool need_resume = Pause(g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team));
+  bool need_resume = Pause(g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team), pausesLeft);
   if (IsPlayer(client)) {
     Get5_MessageToAll("%t", "MatchPausedByTeamMessage", client);
   }
@@ -76,7 +83,6 @@ public Action Command_Pause(int client, int args) {
     }
 
     if (g_MaxPausesCvar.IntValue > 0) {
-      int pausesLeft = g_MaxPausesCvar.IntValue - g_TeamPausesUsed[team];
       if (pausesLeft == 1 && g_MaxPausesCvar.IntValue > 0) {
         Get5_MessageToAll("%t", "OnePauseLeftInfoMessage", g_FormattedTeamNames[team], pausesLeft,
                           pausePeriodString);

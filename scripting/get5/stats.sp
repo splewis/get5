@@ -46,6 +46,9 @@ public void Stats_ResetClientRoundValues(int client) {
   g_RoundFlashedBy[client] = 0;
   g_PlayerKilledBy[client] = -1;
   g_PlayerKilledByTime[client] = 0.0;
+  g_PlayerRoundKillOrAssistOrTradedDeath[client] = false;
+  g_PlayerSurvived[client] = true;
+
   for (int i = 1; i <= MaxClients; i++) {
     g_DamageDone[client][i] = 0;
     g_DamageDoneHits[client][i] = 0;
@@ -85,7 +88,7 @@ public void Stats_RoundEnd(int csTeamWinner) {
   g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
   GoBackFromTeam();
 
-  // Update player 1vx and x-kill values.
+  // Update player 1vx, x-kill, and KAST values.
   for (int i = 1; i <= MaxClients; i++) {
     if (IsPlayer(i)) {
       MatchTeam team = GetClientMatchTeam(i);
@@ -116,6 +119,10 @@ public void Stats_RoundEnd(int csTeamWinner) {
             case 5:
               IncrementPlayerStat(i, STAT_V5);
           }
+        }
+
+        if (g_PlayerRoundKillOrAssistOrTradedDeath[i] || g_PlayerSurvived[i]) {
+          IncrementPlayerStat(i, STAT_KAST);
         }
 
         GoToPlayer(i);
@@ -189,6 +196,9 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
   if (validVictim) {
     IncrementPlayerStat(victim, STAT_DEATHS);
+    
+    // used for calculating round KAST
+    g_PlayerSurvived[victim] = false;
 
     int victim_team = GetClientTeam(victim);
     if (!g_TeamFirstDeathDone[victim_team]) {
@@ -214,10 +224,15 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
       UpdateTradeStat(attacker, victim);
 
       IncrementPlayerStat(attacker, STAT_KILLS);
+      g_PlayerRoundKillOrAssistOrTradedDeath[attacker] = true;
+
       if (headshot)
         IncrementPlayerStat(attacker, STAT_HEADSHOT_KILLS);
-      if (IsValidClient(assister))
+      
+      if (IsValidClient(assister)) {
         IncrementPlayerStat(assister, STAT_ASSISTS);
+        g_PlayerRoundKillOrAssistOrTradedDeath[assister] = true;
+      }
 
       int flasher = g_RoundFlashedBy[victim];
       if (IsValidClient(flasher) && flasher != attacker)
@@ -262,6 +277,8 @@ static void UpdateTradeStat(int attacker, int victim) {
       float dt = GetGameTime() - g_PlayerKilledByTime[i];
       if (dt < kTimeGivenToTrade) {
         IncrementPlayerStat(attacker, STAT_TRADEKILL);
+        // teammate (i) was traded
+        g_PlayerRoundKillOrAssistOrTradedDeath[i] = true;
       }
     }
   }

@@ -144,6 +144,8 @@ int g_PlayerKilledBy[MAXPLAYERS + 1];
 float g_PlayerKilledByTime[MAXPLAYERS + 1];
 int g_DamageDone[MAXPLAYERS + 1][MAXPLAYERS + 1];
 int g_DamageDoneHits[MAXPLAYERS + 1][MAXPLAYERS + 1];
+bool g_PlayerRoundKillOrAssistOrTradedDeath[MAXPLAYERS + 1];
+bool g_PlayerSurvived[MAXPLAYERS + 1];
 KeyValues g_StatsKv;
 
 ArrayList g_TeamScoresPerMap = null;

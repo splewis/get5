@@ -268,6 +268,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
       int firstdeath_t = kv.GetNum(STAT_FIRSTDEATH_T);
       int firstdeath_ct = kv.GetNum(STAT_FIRSTDEATH_CT);
       int tradekill = kv.GetNum(STAT_TRADEKILL);
+      int kast = kv.GetNum(STAT_KAST);
       int contribution_score = kv.GetNum(STAT_CONTRIBUTION_SCORE);
 
       char teamString[16];
@@ -283,7 +284,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
                 v1, v2, v3, v4, v5, \
                 2k, 3k, 4k, 5k, \
                 firstkill_t, firstkill_ct, firstdeath_t, firstdeath_ct, \
-                tradekill, contribution_score \
+                tradekill, kast, contribution_score \
                 ) VALUES \
                 (%d, %d, '%s', '%s', \
                 %d, '%s', %d, %d, %d, \
@@ -292,7 +293,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
                 %d, %d, %d, %d, %d, \
                 %d, %d, %d, %d, \
                 %d, %d, %d, %d, \
-                %d, %d)",
+                %d, %d, %d)",
              g_MatchID, mapNumber, authSz, teamString, 
              roundsplayed, nameSz, kills, deaths, flashbang_assists, 
              assists, teamkills, headshot_kills, damage, 
@@ -300,7 +301,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
              v1, v2, v3, v4, v5, 
              k2, k3, k4, k5, 
              firstkill_t, firstkill_ct, firstdeath_t, firstdeath_ct,
-             tradekill, contribution_score);
+             tradekill, kast, contribution_score);
 
       LogDebug(queryBuffer);
       db.Query(SQLErrorCheckCallback, queryBuffer);

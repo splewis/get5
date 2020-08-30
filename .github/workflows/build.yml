@@ -1,0 +1,41 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+      with:
+        repository: clugg/sm-json
+        path: 'json'
+
+    - uses: actions/checkout@v2
+      with:
+        path: 'get5'
+
+    - uses: rumblefrog/setup-sp@master
+      with:
+        version: '1.10.x'
+
+    - run: wget https://raw.githubusercontent.com/KyleSanderson/SteamWorks/master/Pawn/includes/SteamWorks.inc -P steamworks
+
+    - run: mkdir -p output/addons/sourcemod/plugins/disabled
+    - run: cp -R get5/cfg output
+    - run: cp -R get5/translations output/addons/sourcemod
+    - run: cp -R get5/configs output/addons/sourcemod
+    - run: cp -R get5/scripting output/addons/sourcemod
+    - run: cp README.md output
+    - run: cp LICENSE output
+    - run: spcomp get5/scripting/get5.sp -i steamworks -i json/addons/sourcemod/scripting/include -o output/addons/sourcemod/plugins/get5.smx
+    - run: spcomp get5/scripting/get5_apistats.sp -i steamworks -i json/addons/sourcemod/scripting/include -o output/addons/sourcemod/plugins/disabled/get5_apistats.smx
+    - run: spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i json/addons/sourcemod/scripting/include -o output/addons/sourcemod/plugins/disabled/get5_mysqlstats.smx
+
+    - run: tar -zcvf build.tar.gz output/
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: build.tar.gz
+        path: build.tar.gz

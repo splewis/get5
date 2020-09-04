@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-18.04
     env:
       OUTPUT_SM_PATH: output/addons/sourcemod
-      SM_JSON_INC_PATH: dependencies/sm-json/addons/sourcemod/scripting/include
+      SM_JSON_INC_PATH: get5/dependencies/sm-json/addons/sourcemod/scripting/include
     steps:
     - uses: actions/checkout@v2
       with:

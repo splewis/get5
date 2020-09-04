@@ -8,6 +8,7 @@ jobs:
     env:
       OUTPUT_SM_PATH: output/addons/sourcemod
       SM_JSON_INC_PATH: get5/dependencies/sm-json/addons/sourcemod/scripting/include
+      STEAMWORKS_URL: https://raw.githubusercontent.com/KyleSanderson/SteamWorks/1.2.3c/Pawn/includes/SteamWorks.inc
     steps:
     - uses: actions/checkout@v2
       with:
@@ -18,7 +19,7 @@ jobs:
       with:
         version: '1.10.x'
 
-    - run: wget https://raw.githubusercontent.com/KyleSanderson/SteamWorks/master/Pawn/includes/SteamWorks.inc -P steamworks
+    - run: wget $STEAMWORKS_URL -P steamworks
 
     - run: mkdir -p $OUTPUT_SM_PATH/plugins/disabled
     - run: cp -R get5/cfg output

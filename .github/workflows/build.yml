@@ -28,8 +28,8 @@ jobs:
     - run: cp get5/README.md output
     - run: cp get5/LICENSE output
     - run: spcomp get5/scripting/get5.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/get5.smx
-    - run: spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_PATH/plugins/disabled/get5_apistats.smx
-    - run: spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_PATH/plugins/disabled/get5_mysqlstats.smx
+    - run: spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_apistats.smx
+    - run: spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx
 
     - run: tar -zcvf build.tar.gz output/
 

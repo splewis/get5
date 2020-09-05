@@ -33,14 +33,11 @@ jobs:
     - run: spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_apistats.smx
     - run: spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx
 
-    - run: tar -zcvf get5.tar.gz $OUTPUT_PATH/
-    - uses: actions/upload-artifact@v2
-      with:
-        name: get5.tar.gz
-        path: get5.tar.gz
+    - run: mkdir -p artifacts
+    - run: tar -zcvf artifacts/get5.tar.gz $OUTPUT_PATH/
+    - run: zip -r artifacts/get5.zip $OUTPUT_PATH/
 
-    - run: zip -r get5.zip $OUTPUT_PATH/
     - uses: actions/upload-artifact@v2
       with:
-        name: get5.zip
-        path: get5.zip
+        name: build
+        path: artifacts

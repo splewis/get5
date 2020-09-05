@@ -33,8 +33,13 @@ jobs:
     - run: spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx
 
     - run: tar -zcvf build.tar.gz output/
-
     - uses: actions/upload-artifact@v2
       with:
         name: build.tar.gz
         path: build.tar.gz
+
+    - run: zip -r build.zip output/
+    - uses: actions/upload-artifact@v2
+      with:
+        name: build.zip
+        path: build.zip

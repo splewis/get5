@@ -150,6 +150,7 @@ KeyValues g_StatsKv;
 
 ArrayList g_TeamScoresPerMap = null;
 char g_LoadedConfigFile[PLATFORM_MAX_PATH];
+char g_LoadedConfigUrl[PLATFORM_MAX_PATH];
 int g_VetoCaptains[MATCHTEAM_COUNT];        // Clients doing the map vetos.
 int g_TeamSeriesScores[MATCHTEAM_COUNT];    // Current number of maps won per-team.
 bool g_TeamReadyOverride[MATCHTEAM_COUNT];  // Whether a team has been voluntarily force readied.

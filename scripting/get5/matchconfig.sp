@@ -201,9 +201,11 @@ stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
                             ArrayList paramValues = null) {
   bool steamWorksAvaliable = LibraryExists("SteamWorks");
 
+
   char cleanedUrl[1024];
   strcopy(cleanedUrl, sizeof(cleanedUrl), url);
   ReplaceString(cleanedUrl, sizeof(cleanedUrl), "\"", "");
+  strcopy(g_LoadedConfigUrl, sizeof(g_LoadedConfigUrl), cleanedUrl);
 
   if (steamWorksAvaliable) {
     // Add the protocl strings. Only allow http since SteamWorks doesn't support http it seems?
@@ -255,6 +257,8 @@ public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
   GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
   SteamWorks_WriteHTTPResponseBodyToFile(request, remoteConfig);
   LoadMatchConfig(remoteConfig);
+
+  strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), g_LoadedConfigUrl);
 }
 
 public void WriteMatchToKv(KeyValues kv) {

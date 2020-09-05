@@ -6,7 +6,8 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     env:
-      OUTPUT_SM_PATH: output/addons/sourcemod
+      OUTPUT_PATH: output/get5
+      OUTPUT_SM_PATH: output/get5/addons/sourcemod
       SM_JSON_INC_PATH: get5/dependencies/sm-json/addons/sourcemod/scripting/include
       STEAMWORKS_URL: https://raw.githubusercontent.com/KyleSanderson/SteamWorks/1.2.3c/Pawn/includes/SteamWorks.inc
     steps:
@@ -22,24 +23,24 @@ jobs:
     - run: wget $STEAMWORKS_URL -P steamworks
 
     - run: mkdir -p $OUTPUT_SM_PATH/plugins/disabled
-    - run: cp -R get5/cfg output
+    - run: cp -R get5/cfg $OUTPUT_PATH
     - run: cp -R get5/translations $OUTPUT_SM_PATH
     - run: cp -R get5/configs $OUTPUT_SM_PATH
     - run: cp -R get5/scripting $OUTPUT_SM_PATH
-    - run: cp get5/README.md output
-    - run: cp get5/LICENSE output
+    - run: cp get5/README.md $OUTPUT_PATH
+    - run: cp get5/LICENSE $OUTPUT_PATH
     - run: spcomp get5/scripting/get5.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/get5.smx
     - run: spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_apistats.smx
     - run: spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx
 
-    - run: tar -zcvf build.tar.gz output/
+    - run: tar -zcvf get5.tar.gz $OUTPUT_PATH/
     - uses: actions/upload-artifact@v2
       with:
-        name: build.tar.gz
-        path: build.tar.gz
+        name: get5.tar.gz
+        path: get5.tar.gz
 
-    - run: zip -r build.zip output/
+    - run: zip -r get5.zip $OUTPUT_PATH/
     - uses: actions/upload-artifact@v2
       with:
-        name: build.zip
-        path: build.zip
+        name: get5.zip
+        path: get5.zip

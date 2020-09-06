@@ -1343,6 +1343,7 @@ public Action Command_Status(int client, int args) {
   if (g_GameState != Get5State_None) {
     json.SetString("matchid", g_MatchID);
     json.SetString("loaded_config_file", g_LoadedConfigFile);
+    json.SetString("loaded_config_url", g_LoadedConfigUrl);
     json.SetInt("map_number", GetMapNumber());
 
     JSON_Object team1 = new JSON_Object();

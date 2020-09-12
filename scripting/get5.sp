@@ -53,6 +53,7 @@ ConVar g_AllowTechPauseCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
+ConVar g_StatusLogCvar;
 ConVar g_DamagePrintCvar;
 ConVar g_DamagePrintFormat;
 ConVar g_DemoNameFormatCvar;
@@ -255,6 +256,8 @@ public void OnPluginStart() {
                    "Name of a match config file to automatically load when the server loads");
   g_BackupSystemEnabledCvar =
       CreateConVar("get5_backup_system_enabled", "1", "Whether the get5 backup system is enabled");
+  g_StatusLogCvar =
+      CreateConVar("get5_log_status", "0", "Whether the native status is logged when a match is going live.");
   g_DamagePrintCvar =
       CreateConVar("get5_print_damage", "0", "Whether damage reports are printed on round end.");
   g_DamagePrintFormat = CreateConVar(

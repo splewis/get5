@@ -16,6 +16,10 @@ public Action StartGoingLive(Handle timer) {
   // Always disable sv_cheats!
   ServerCommand("sv_cheats 0");
 
+  if (g_StatusLogCvar.BoolValue) {
+    ServerCommand("status");
+  }
+
   // Delayed an extra 5 seconds for the final 3-second countdown
   // the game uses after the origina countdown.
   float delay = float(5 + g_LiveCountdownTimeCvar.IntValue);

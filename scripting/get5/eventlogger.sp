@@ -61,6 +61,14 @@ static void AddPlayer(JSON_Object params, const char[] key, int client) {
   params.SetString(key, value);
 }
 
+static void AddIpAddress(JSON_Object params, int client) {
+    char value[32];
+    if (IsValidClient(client)) {
+        GetClientIP(client, value, sizeof(value));
+    }
+    params.SetString("ip", value);
+}
+
 public void EventLogger_SeriesStart() {
   EventLogger_StartEvent();
   params.SetString("team1_name", g_TeamNames[MatchTeam_Team1]);
@@ -221,6 +229,7 @@ public void EventLogger_PlayerConnect(int client) {
   EventLogger_StartEvent();
   AddMapData(params);
   AddPlayer(params, "client", client);
+  AddIpAddress(params, client);
   EventLogger_EndEvent("player_connect");
 }
 

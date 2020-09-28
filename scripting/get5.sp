@@ -776,7 +776,7 @@ public Action Command_EndMatch(int client, int args) {
   Call_PushCell(GetMapNumber() - 1);
   Call_Finish();
 
-  EventLogger_SeriesCancel(MatchTeam_TeamNone, g_TeamSeriesScores[MatchTeam_Team1], g_TeamSeriesScores[MatchTeam_Team2]);
+  EventLogger_SeriesCancel(g_TeamSeriesScores[MatchTeam_Team1], g_TeamSeriesScores[MatchTeam_Team2]);
   LogDebug("Calling Get5_OnSeriesResult(winner=%d, team1_series_score=%d, team2_series_score=%d)",
            MatchTeam_TeamNone, g_TeamSeriesScores[MatchTeam_Team1],
            g_TeamSeriesScores[MatchTeam_Team2]);

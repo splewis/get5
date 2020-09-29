@@ -181,6 +181,13 @@ public void EventLogger_SeriesEnd(MatchTeam winner, int t1score, int t2score) {
   EventLogger_EndEvent("series_end");
 }
 
+public void EventLogger_SeriesCancel(int t1score, int t2score) {
+  EventLogger_StartEvent();
+  params.SetInt("team1_series_score", t1score);
+  params.SetInt("team2_series_score", t2score);
+  EventLogger_EndEvent("series_cancel");
+}
+
 public void EventLogger_BackupLoaded(const char[] path) {
   EventLogger_StartEvent();
   params.SetString("file", path);

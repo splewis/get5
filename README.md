@@ -96,7 +96,7 @@ Some client commands are available also for admin usage. For example, sm_pause a
 - ``get5_loadmatch``: loads a match config file (JSON or keyvalues) relative from the ``csgo`` directory
 - ``get5_loadbackup``: loads a get5 backup file
 - ``get5_loadteam``: loads a team section from a file into a team
-- ``get5_loadmatch_url``: loads a remote (JSON formatted) match config by sending a HTTP GET to the given url, this requires the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) extension
+- ``get5_loadmatch_url``: loads a remote (JSON formatted) match config by sending a HTTP(S) GET to the given url, this requires the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) extension. When specifying an url with http:// or https:// in front, you have to put it in quotation marks. 
 - ``get5_endmatch``: force ends the current match
 - ``get5_creatematch``: creates a Bo1 match with the current players on the server on the current map
 - ``get5_scrim``: creates a Bo1 match with the using settings from ``configs/get5/scrim_template.cfg``

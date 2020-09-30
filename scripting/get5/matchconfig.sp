@@ -208,9 +208,8 @@ stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
   strcopy(g_LoadedConfigUrl, sizeof(g_LoadedConfigUrl), cleanedUrl);
 
   if (steamWorksAvaliable) {
-    // Add the protocl strings. Only allow http since SteamWorks doesn't support http it seems?
-    ReplaceString(cleanedUrl, sizeof(cleanedUrl), "https://", "http://");
-    if (StrContains(cleanedUrl, "http://") == -1) {
+    // Add the protocol strings if missing (only http).
+    if (StrContains(cleanedUrl, "http://") == -1 && StrContains(cleanedUrl, "https://") == -1) {
       Format(cleanedUrl, sizeof(cleanedUrl), "http://%s", cleanedUrl);
     }
     LogDebug("cleanedUrl (SteamWorks) = %s", cleanedUrl);

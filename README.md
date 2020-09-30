@@ -177,3 +177,14 @@ Please make a [github issue](https://github.com/splewis/get5/issues) and fill ou
 ### Contributions
 
 Pull requests are welcome. Please follow the general coding formatting style as much as possible. If you're concerned about a pull request not being merged, please feel free to make an  [issue](https://github.com/splewis/get5/issues) and inquire if the feature is worth adding.
+
+### Building
+
+You can use Docker to Build get5. At first you need to build the container image locally. Therefore go to the repository folder and run:
+
+	docker build . -t get5build:latest
+
+Afterwards you can build get5 with the following command: (specify /path/to/your/build/output)
+
+	docker run -v /path/to/your/build/output:/get5/builds get5build:latest
+

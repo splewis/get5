@@ -168,6 +168,54 @@ connection to the server console since they are output there, or through another
 
 1. You can execute the ``get5_loadmatch`` command or ``get5_loadmatch_url`` commands via another plugin or via a RCON connection to begin matches. Of course, you could execute any get5 command you want as well.
 
+### Status schema
+
+The following is the `get_status` response's schema.
+
+#### Static part
+- `plugin_version`: Get5's version number.
+- `commit`: Only here if `COMMIT_STRING` is defined (probably not your case).
+- `gamestate`: A number representing the game's state.
+  - **0** - No setup has taken place.
+  - **1** - Warmup, waiting for the veto.
+  - **2** - Warmup, doing the veto.
+  - **3** - Setup done, waiting for players to ready up.
+  - **4** - In the knife round.
+  - **5** - Waiting for a !stay or !swap command after the knife.
+  - **6** - In the lo3 process.
+  - **7** - The match is live.
+  - **8** - Postgame screen + waiting for GOTV to finish broadcast.
+- `paused`: Is the match paused?
+- `gamestate_string`: A human-readable gamestate which is a translation of `gamestate`.
+  - `"none"`
+  - `"waiting for map veto"`
+  - `"map veto"`
+  - `"warmup"`
+  - `"knife round"`
+  - `"waiting for knife round decision"`
+  - `"going live"`
+  - `"live"`
+  - `"postgame"`
+
+#### Additional parts
+
+**If current game state isn't "none"**
+- `matchid`: The current match's id. You can set it in match configs, with the property which has the same name.
+- `loaded_config_file`: The name of the loaded config file. If you used `get5_loadmatch <file>`, it's this file's name. If you used `get5_loadmatch_url`, the pattern of the file is `remote_config%d.json`, where `%d` is the server's id, which you can set with `get5_server_id`.
+- `map_number`: The current map number in the series.
+- `team1` and `team2`: Two JSON objects which share the same properties.
+  - `name`: Name of the team.
+  - `series_score`: The score in the series.
+  - `ready`: Boolean indicating if the team is ready.
+  - `side`: The side on which the team is. Can be `"CT"`, `"T"` or `"none"`.
+  - `connected_clients`: The number of human clients connected in the team.
+  - `current_map_score`: The team's score on the current map.
+
+**If current game state is past the veto**
+- `maps`: A JSON object which contains one property per map.
+  - Key: `"map%d"`, where `%d` is the map index in the array.
+  - Value: The name of the map (taken from the match config).
+
 ## Other things
 
 ### Reporting bugs

@@ -353,6 +353,7 @@ public void OnPluginStart() {
   /** Client commands **/
   g_ChatAliases = new ArrayList(ByteCountToCells(ALIAS_LENGTH));
   g_ChatAliasesCommands = new ArrayList(ByteCountToCells(COMMAND_LENGTH));
+  AddAliasedCommand("r", Command_Ready, "Marks the client as ready");
   AddAliasedCommand("ready", Command_Ready, "Marks the client as ready");
   AddAliasedCommand("unready", Command_NotReady, "Marks the client as not ready");
   AddAliasedCommand("notready", Command_NotReady, "Marks the client as not ready");

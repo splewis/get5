@@ -26,6 +26,7 @@ public Action Command_ListBackups(int client, int args) {
     ReplyToCommand(client, "The backup system is disabled");
     return Plugin_Handled;
   }
+  
   char matchID[MATCH_ID_LENGTH];
   if (args >= 1) {
     GetCmdArg(1, matchID, sizeof(matchID));
@@ -39,15 +40,95 @@ public Action Command_ListBackups(int client, int args) {
   DirectoryListing files = OpenDirectory(".");
   if (files != null) {
     char path[PLATFORM_MAX_PATH];
+    char backupInfo[150];
+
     while (files.GetNext(path, sizeof(path))) {
       if (StrContains(path, pattern) == 0) {
-        ReplyToCommand(client, path);
+        if (GetBackupInfo(path, backupInfo, sizeof(backupInfo))) {
+          ReplyToCommand(client, backupInfo);
+        } else {
+          ReplyToCommand(client, path);
+        }
       }
     }
     delete files;
   }
 
   return Plugin_Handled;
+}
+
+public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
+  KeyValues kv = new KeyValues("Backup");
+  if (!kv.ImportFromFile(path)) {
+    LogError("Failed to find or read backup file \"%s\"", path);
+    delete kv;
+    return false;
+  }
+
+  char timestamp[64];
+  kv.GetString("timestamp", timestamp, sizeof(timestamp));
+
+  char team1Name[MAX_NAME_LENGTH], team2Name[MAX_NAME_LENGTH];
+  
+  // Enter Match section.
+  kv.JumpToKey("Match");
+
+  kv.JumpToKey("team1");
+  kv.GetString("name", team1Name, sizeof(team1Name), "");
+  kv.GoBack();
+
+  kv.JumpToKey("team2");
+  kv.GetString("name", team2Name, sizeof(team2Name), "");
+  kv.GoBack();
+
+  // Exit Match section.
+  kv.GoBack();
+
+  if (StrEqual(team1Name, "") || StrEqual(team2Name, "")) {
+    LogError("A team name is empty in \"%s\"", path);
+    delete kv;
+    return false;
+  }
+
+  // Try entering Valve's backup section (it doesn't always exist).
+  if (!kv.JumpToKey("valve_backup")) {
+    Format(info, maxlength, "%s %s %s %s", path, timestamp, team1Name, team2Name);
+    delete kv;
+    return true;
+  }
+
+  char map[15];
+  kv.GetString("map", map, sizeof(map));
+
+  // Try entering FirstHalfScore section.
+  if (!kv.JumpToKey("FirstHalfScore")) {
+    Format(info, maxlength, "%s %s %s %s %s %d %d", path, timestamp, team1Name, team2Name, map, 0, 0);
+    delete kv;
+    return true;
+  }
+
+  int team1Score = kv.GetNum("team1");
+  int team2Score = kv.GetNum("team2");
+
+  // Exit FirstHalfScore section.
+  kv.GoBack();
+
+  // Try entering SecondHalfScore section.
+  if (!kv.JumpToKey("SecondHalfScore")) {
+    Format(info, maxlength, "%s %s %s %s %s %d %d", path, timestamp, team1Name, team2Name, map, team1Score, team2Score);
+    delete kv;
+    return true;
+  }
+  
+  team1Score += kv.GetNum("team1");
+  team2Score += kv.GetNum("team2");
+
+  // Exit SecondHalfScore section.
+  kv.GoBack();
+  delete kv;
+  
+  Format(info, maxlength, "%s %s %s %s %s %d %d", path, timestamp, team1Name, team2Name, map, team1Score, team2Score);
+  return true;
 }
 
 public void WriteBackStructure(const char[] path) {

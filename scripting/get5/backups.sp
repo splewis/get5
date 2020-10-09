@@ -40,7 +40,7 @@ public Action Command_ListBackups(int client, int args) {
   DirectoryListing files = OpenDirectory(".");
   if (files != null) {
     char path[PLATFORM_MAX_PATH];
-    char backupInfo[150];
+    char backupInfo[256];
 
     while (files.GetNext(path, sizeof(path))) {
       if (StrContains(path, pattern) == 0) {
@@ -97,7 +97,7 @@ public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
     return true;
   }
 
-  char map[15];
+  char map[128];
   kv.GetString("map", map, sizeof(map));
 
   // Try entering FirstHalfScore section.

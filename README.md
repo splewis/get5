@@ -232,7 +232,7 @@ You can use Docker to Build get5. At first you need to build the container image
 
 	docker build . -t get5build:latest
 
-Afterwards you can build get5 with the following command: (specify /path/to/your/build/output)
+Afterwards you can build get5 with the following command: (specify /path/to/your/build/output and /path/to/your/get5src)
 
-	docker run -v /path/to/your/build/output:/get5/builds get5build:latest
-
+	docker run --rm -v /path/to/your/get5src:/get5src -v /path/to/your/build/output:/get5/builds get5build:latest
+	

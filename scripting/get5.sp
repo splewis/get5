@@ -167,6 +167,8 @@ char g_DefaultTeamColors[][] = {
     TEAM1_COLOR, TEAM2_COLOR, "{NORMAL}", "{NORMAL}",
 };
 
+char g_LastKickedPlayerAuth[64];
+
 bool g_ForceWinnerSignal = false;
 MatchTeam g_ForcedWinner = MatchTeam_TeamNone;
 
@@ -382,6 +384,8 @@ public void OnPluginStart() {
   RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP, "Force ends the current match");
   RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP,
               "Adds a steamid to a match team");
+  RegAdminCmd("get5_addkickedplayer", Command_AddKickedPlayer, ADMFLAG_CHANGEMAP,
+              "Adds the last kicked steamid to a match team");
   RegAdminCmd("get5_removeplayer", Command_RemovePlayer, ADMFLAG_CHANGEMAP,
               "Removes a steamid from a match team");
   RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP,
@@ -537,7 +541,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
   if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue) {
     MatchTeam team = GetClientMatchTeam(client);
     if (team == MatchTeam_TeamNone) {
-      KickClient(client, "%t", "YourAreNotAPlayerInfoMessage");
+      RememberAndKickClient(client, "%t", "YourAreNotAPlayerInfoMessage");
     } else {
       int teamCount = CountPlayersOnMatchTeam(team, client);
       if (teamCount >= g_PlayersPerTeam && !g_CoachingEnabledCvar.BoolValue) {
@@ -545,6 +549,11 @@ public void OnClientAuthorized(int client, const char[] auth) {
       }
     }
   }
+}
+
+public void RememberAndKickClient(int client, const char[] format, const char[] translationPhrase) {
+  GetAuth(client, g_LastKickedPlayerAuth, sizeof(g_LastKickedPlayerAuth));
+  KickClient(client, format, translationPhrase);
 }
 
 public void OnClientPutInServer(int client) {

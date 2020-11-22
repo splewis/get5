@@ -365,7 +365,7 @@ public bool RemovePlayerFromTeams(const char[] auth) {
       GetTeamAuths(team).Erase(index);
       int target = AuthToClient(steam64);
       if (IsAuthedPlayer(target) && !g_InScrimMode) {
-        KickClient(target, "%t", "YourAreNotAPlayerInfoMessage");
+        RememberAndKickClient(target, "%t", "YourAreNotAPlayerInfoMessage");
       }
       return true;
     }

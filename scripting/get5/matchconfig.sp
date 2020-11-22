@@ -124,7 +124,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   for (int i = 1; i <= MaxClients; i++) {
     if (IsAuthedPlayer(i)) {
       if (GetClientMatchTeam(i) == MatchTeam_TeamNone) {
-        KickClient(i, "%t", "YourAreNotAPlayerInfoMessage");
+        RememberAndKickClient(i, "%t", "YourAreNotAPlayerInfoMessage");
       } else {
         CheckClientTeam(i);
       }
@@ -802,6 +802,54 @@ public Action Command_AddPlayer(int client, int args) {
 
   } else {
     ReplyToCommand(client, "Usage: get5_addplayer <auth> <team1|team2|spec> [name]");
+  }
+  return Plugin_Handled;
+}
+
+public Action Command_AddKickedPlayer(int client, int args) {
+  if (g_GameState == Get5State_None) {
+    ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
+    return Plugin_Handled;
+  }
+
+  if (g_InScrimMode) {
+    ReplyToCommand(
+        client, "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a players team.");
+    return Plugin_Handled;
+  }
+
+  if (StrEqual(g_LastKickedPlayerAuth, "")) {
+    ReplyToCommand(client, "No player has been kicked yet.");
+    return Plugin_Handled;
+  }
+
+  char teamString[32];
+  char name[MAX_NAME_LENGTH];
+  if (args >= 1 && GetCmdArg(1, teamString, sizeof(teamString))) {
+    if (args >= 2) {
+      GetCmdArg(2, name, sizeof(name));
+    }
+
+    MatchTeam team = MatchTeam_TeamNone;
+    if (StrEqual(teamString, "team1")) {
+      team = MatchTeam_Team1;
+    } else if (StrEqual(teamString, "team2")) {
+      team = MatchTeam_Team2;
+    } else if (StrEqual(teamString, "spec")) {
+      team = MatchTeam_TeamSpec;
+    } else {
+      ReplyToCommand(client, "Unknown team: must be one of team1, team2, spec");
+      return Plugin_Handled;
+    }
+
+    if (AddPlayerToTeam(g_LastKickedPlayerAuth, team, name)) {
+      ReplyToCommand(client, "Successfully added kicked player %s to team %s", g_LastKickedPlayerAuth, teamString);
+    } else {
+      ReplyToCommand(client, "Player %s is already on a match team.", g_LastKickedPlayerAuth);
+    }
+
+  } else {
+    ReplyToCommand(client, "Usage: get5_addkickedplayer <team1|team2|spec> [name]");
   }
   return Plugin_Handled;
 }

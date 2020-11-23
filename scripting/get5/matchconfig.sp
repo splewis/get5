@@ -880,6 +880,32 @@ public Action Command_RemovePlayer(int client, int args) {
   return Plugin_Handled;
 }
 
+public Action Command_RemoveKickedPlayer(int client, int args) {
+  if (g_GameState == Get5State_None) {
+    ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
+    return Plugin_Handled;
+  }
+
+  if (g_InScrimMode) {
+    ReplyToCommand(
+        client,
+        "Cannot use get5_removekickedplayer in scrim mode. Use get5_ringer to swap a players team.");
+    return Plugin_Handled;
+  }
+
+  if (StrEqual(g_LastKickedPlayerAuth, "")) {
+    ReplyToCommand(client, "No player has been kicked yet.");
+    return Plugin_Handled;
+  }
+
+  if (RemovePlayerFromTeams(g_LastKickedPlayerAuth)) {
+    ReplyToCommand(client, "Successfully removed kicked player %s", g_LastKickedPlayerAuth);
+  } else {
+    ReplyToCommand(client, "Player %s not found in auth lists.", g_LastKickedPlayerAuth);
+  }
+  return Plugin_Handled;
+}
+
 public Action Command_CreateMatch(int client, int args) {
   if (g_GameState != Get5State_None) {
     ReplyToCommand(client, "Cannot create a match when a match is already loaded");

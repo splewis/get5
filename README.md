@@ -101,8 +101,9 @@ Some client commands are available also for admin usage. For example, sm_pause a
 - ``get5_creatematch``: creates a Bo1 match with the current players on the server on the current map
 - ``get5_scrim``: creates a Bo1 match with the using settings from ``configs/get5/scrim_template.cfg``
 - ``get5_addplayer``: adds a steamid to a team (any format for steamid)
-- ``get5_addkickedplayer``: adds the last kicked steamid to a team
 - ``get5_removeplayer``: removes a steamid from all teams (any format for steamid)
+- ``get5_addkickedplayer``: adds the last kicked steamid to a team
+- ``get5_removekickedplayer``: removes the last kicked steamid from all teams
 - ``get5_forceready``: marks all teams as ready
 - ``get5_dumpstats``: dumps current match stats to a file
 - ``get5_status``: replies with JSON formatted match state (available to all clients)

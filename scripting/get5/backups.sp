@@ -92,7 +92,7 @@ public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
 
   // Try entering Valve's backup section (it doesn't always exist).
   if (!kv.JumpToKey("valve_backup")) {
-    Format(info, maxlength, "%s %s %s %s", path, timestamp, team1Name, team2Name);
+    Format(info, maxlength, "%s %s \"%s\" \"%s\"", path, timestamp, team1Name, team2Name);
     delete kv;
     return true;
   }
@@ -102,7 +102,7 @@ public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
 
   // Try entering FirstHalfScore section.
   if (!kv.JumpToKey("FirstHalfScore")) {
-    Format(info, maxlength, "%s %s %s %s %s %d %d", path, timestamp, team1Name, team2Name, map, 0, 0);
+    Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name, map, 0, 0);
     delete kv;
     return true;
   }
@@ -115,7 +115,7 @@ public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
 
   // Try entering SecondHalfScore section.
   if (!kv.JumpToKey("SecondHalfScore")) {
-    Format(info, maxlength, "%s %s %s %s %s %d %d", path, timestamp, team1Name, team2Name, map, team1Score, team2Score);
+    Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name, map, team1Score, team2Score);
     delete kv;
     return true;
   }
@@ -127,7 +127,7 @@ public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
   kv.GoBack();
   delete kv;
   
-  Format(info, maxlength, "%s %s %s %s %s %d %d", path, timestamp, team1Name, team2Name, map, team1Score, team2Score);
+  Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name, map, team1Score, team2Score);
   return true;
 }
 

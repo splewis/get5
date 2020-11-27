@@ -846,6 +846,10 @@ public Action Command_LoadMatchUrl(int client, int args) {
       if (!LoadMatchFromUrl(arg)) {
         ReplyToCommand(client, "Failed to load match config.");
       }
+      else
+      {
+        ReplyToCommand(client, "Match config loading initialized.");
+      }
     } else {
       ReplyToCommand(client, "Usage: get5_loadmatch_url <url>");
     }

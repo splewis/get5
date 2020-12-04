@@ -67,6 +67,10 @@ public bool IsTeamReady(MatchTeam team) {
   int playerCount = GetTeamPlayerCount(team);
   int readyCount = GetTeamReadyCount(team);
 
+  if (team == MatchTeam_TeamSpec && minReady == 0) {
+    return true;
+  }
+
   if (playerCount == readyCount && playerCount >= minPlayers) {
     return true;
   }

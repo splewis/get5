@@ -196,7 +196,7 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
   if (validVictim) {
     IncrementPlayerStat(victim, STAT_DEATHS);
-    
+
     // used for calculating round KAST
     g_PlayerSurvived[victim] = false;
 
@@ -228,7 +228,7 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
       if (headshot)
         IncrementPlayerStat(attacker, STAT_HEADSHOT_KILLS);
-      
+
       if (IsValidClient(assister)) {
         IncrementPlayerStat(assister, STAT_ASSISTS);
         g_PlayerRoundKillOrAssistOrTradedDeath[assister] = true;

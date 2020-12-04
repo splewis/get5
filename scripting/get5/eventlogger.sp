@@ -62,11 +62,11 @@ static void AddPlayer(JSON_Object params, const char[] key, int client) {
 }
 
 static void AddIpAddress(JSON_Object params, int client) {
-    char value[32];
-    if (IsValidClient(client)) {
-        GetClientIP(client, value, sizeof(value));
-    }
-    params.SetString("ip", value);
+  char value[32];
+  if (IsValidClient(client)) {
+    GetClientIP(client, value, sizeof(value));
+  }
+  params.SetString("ip", value);
 }
 
 public void EventLogger_SeriesStart() {

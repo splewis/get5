@@ -164,7 +164,10 @@ int g_TeamPauseTimeUsed[MATCHTEAM_COUNT];
 int g_TeamPausesUsed[MATCHTEAM_COUNT];
 int g_ReadyTimeWaitingUsed = 0;
 char g_DefaultTeamColors[][] = {
-    TEAM1_COLOR, TEAM2_COLOR, "{NORMAL}", "{NORMAL}",
+    TEAM1_COLOR,
+    TEAM2_COLOR,
+    "{NORMAL}",
+    "{NORMAL}",
 };
 
 char g_LastKickedPlayerAuth[64];
@@ -788,7 +791,8 @@ public Action Command_EndMatch(int client, int args) {
   Call_PushCell(GetMapNumber() - 1);
   Call_Finish();
 
-  EventLogger_SeriesCancel(g_TeamSeriesScores[MatchTeam_Team1], g_TeamSeriesScores[MatchTeam_Team2]);
+  EventLogger_SeriesCancel(g_TeamSeriesScores[MatchTeam_Team1],
+                           g_TeamSeriesScores[MatchTeam_Team2]);
   LogDebug("Calling Get5_OnSeriesResult(winner=%d, team1_series_score=%d, team2_series_score=%d)",
            MatchTeam_TeamNone, g_TeamSeriesScores[MatchTeam_Team1],
            g_TeamSeriesScores[MatchTeam_Team2]);
@@ -1076,9 +1080,8 @@ public Action Timer_NextMatchMap(Handle timer) {
 public void KickClientsOnEnd() {
   if (g_KickClientsWithNoMatchCvar.BoolValue) {
     for (int i = 1; i <= MaxClients; i++) {
-      if (IsPlayer(i) &&
-          !(g_KickClientImmunity.BoolValue &&
-            CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
+      if (IsPlayer(i) && !(g_KickClientImmunity.BoolValue &&
+                           CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
         KickClient(i, "%t", "MatchFinishedInfoMessage");
       }
     }

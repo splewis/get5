@@ -197,7 +197,8 @@ native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount
 #define STAT_CONTRIBUTION_SCORE "contribution_score"
 
 public SharedPlugin __pl_get5 = {
-    name = "get5", file = "get5.smx",
+    name = "get5",
+    file = "get5.smx",
 #if defined REQUIRE_PLUGIN
     required = 1,
 #else

@@ -276,6 +276,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
 
       // TODO: this should really get split up somehow. Once it hits 32-arguments
       // (aka just a few more) it will cause runtime errors and the Format will fail.
+      // clang-format off
       Format(queryBuffer, sizeof(queryBuffer), "REPLACE INTO `get5_stats_players` \
                 (matchid, mapnumber, steamid64, team, \
                 rounds_played, name, kills, deaths, flashbang_assists, \
@@ -302,6 +303,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
              k2, k3, k4, k5, 
              firstkill_t, firstkill_ct, firstdeath_t, firstdeath_ct,
              tradekill, kast, contribution_score);
+      // clang-format on
 
       LogDebug(queryBuffer);
       db.Query(SQLErrorCheckCallback, queryBuffer);

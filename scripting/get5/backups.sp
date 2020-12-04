@@ -26,7 +26,7 @@ public Action Command_ListBackups(int client, int args) {
     ReplyToCommand(client, "The backup system is disabled");
     return Plugin_Handled;
   }
-  
+
   char matchID[MATCH_ID_LENGTH];
   if (args >= 1) {
     GetCmdArg(1, matchID, sizeof(matchID));
@@ -69,7 +69,7 @@ public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
   kv.GetString("timestamp", timestamp, sizeof(timestamp));
 
   char team1Name[MAX_NAME_LENGTH], team2Name[MAX_NAME_LENGTH];
-  
+
   // Enter Match section.
   kv.JumpToKey("Match");
 
@@ -102,7 +102,8 @@ public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
 
   // Try entering FirstHalfScore section.
   if (!kv.JumpToKey("FirstHalfScore")) {
-    Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name, map, 0, 0);
+    Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
+           map, 0, 0);
     delete kv;
     return true;
   }
@@ -115,19 +116,21 @@ public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
 
   // Try entering SecondHalfScore section.
   if (!kv.JumpToKey("SecondHalfScore")) {
-    Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name, map, team1Score, team2Score);
+    Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
+           map, team1Score, team2Score);
     delete kv;
     return true;
   }
-  
+
   team1Score += kv.GetNum("team1");
   team2Score += kv.GetNum("team2");
 
   // Exit SecondHalfScore section.
   kv.GoBack();
   delete kv;
-  
-  Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name, map, team1Score, team2Score);
+
+  Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
+         map, team1Score, team2Score);
   return true;
 }
 

@@ -201,7 +201,6 @@ stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
                             ArrayList paramValues = null) {
   bool steamWorksAvaliable = LibraryExists("SteamWorks");
 
-
   char cleanedUrl[1024];
   strcopy(cleanedUrl, sizeof(cleanedUrl), url);
   ReplaceString(cleanedUrl, sizeof(cleanedUrl), "\"", "");
@@ -622,7 +621,7 @@ static void LoadDefaultMapList(ArrayList list) {
   list.PushString("de_nuke");
   list.PushString("de_overpass");
   list.PushString("de_train");
-  
+
   if (g_SkipVeto) {
     char currentMap[PLATFORM_MAX_PATH];
     GetCurrentMap(currentMap, sizeof(currentMap));
@@ -814,7 +813,8 @@ public Action Command_AddKickedPlayer(int client, int args) {
 
   if (g_InScrimMode) {
     ReplyToCommand(
-        client, "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a players team.");
+        client,
+        "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a players team.");
     return Plugin_Handled;
   }
 
@@ -843,7 +843,8 @@ public Action Command_AddKickedPlayer(int client, int args) {
     }
 
     if (AddPlayerToTeam(g_LastKickedPlayerAuth, team, name)) {
-      ReplyToCommand(client, "Successfully added kicked player %s to team %s", g_LastKickedPlayerAuth, teamString);
+      ReplyToCommand(client, "Successfully added kicked player %s to team %s",
+                     g_LastKickedPlayerAuth, teamString);
     } else {
       ReplyToCommand(client, "Player %s is already on a match team.", g_LastKickedPlayerAuth);
     }

@@ -31,7 +31,7 @@
 #pragma newdecls required
 
 Database db = null;
-char queryBuffer[1024];
+char queryBuffer[2048];
 
 int g_MatchID = -1;
 
@@ -61,7 +61,7 @@ public void OnPluginStart() {
     SetFailState("Could not connect to get5 database: %s", error);
   } else {
     g_DisableStats = false;
-    db.SetCharset("utf8");
+    db.SetCharset("utf8mb4");
   }
 }
 
@@ -112,39 +112,28 @@ public void Get5_OnSeriesInit() {
     LogMessage("Starting match id %d", g_MatchID);
 
   } else {
-    Transaction t = SQL_CreateTransaction();
 
     Format(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
             (series_type, team1_name, team2_name, start_time) VALUES \
             ('%s', '%s', '%s', NOW())",
            seriesTypeSz, team1NameSz, team2NameSz);
     LogDebug(queryBuffer);
-    t.AddQuery(queryBuffer);
+    db.Query(MatchInitCallback, queryBuffer);
 
-    Format(queryBuffer, sizeof(queryBuffer), "SELECT LAST_INSERT_ID()");
-    LogDebug(queryBuffer);
-    t.AddQuery(queryBuffer);
-
-    db.Execute(t, MatchInitSuccess, MatchInitFailure);
   }
 }
 
-public void MatchInitSuccess(Database database, any data, int numQueries, Handle[] results,
-                      any[] queryData) {
-  Handle matchidResult = results[1];
-  if (SQL_FetchRow(matchidResult)) {
-    SetMatchID(SQL_FetchInt(matchidResult, 0));
-    LogMessage("Starting match id %d", g_MatchID);
-  } else {
+public void MatchInitCallback(Database dbObj, DBResultSet results, const char[] error, any data) {
+
+  if (results == null) {
     LogError("Failed to get matchid from match init query");
     g_DisableStats = true;
+  } else {
+    if (results.InsertId > 0) {
+      SetMatchID(results.InsertId);
+    }
+    LogMessage("Starting match id %d", g_MatchID);
   }
-}
-
-public void MatchInitFailure(Database database, any data, int numQueries, const char[] error,
-                      int failIndex, any[] queryData) {
-  LogError("Failed match creation query, error = %s", error);
-  g_DisableStats = true;
 }
 
 static void SetMatchID(int matchid) {
@@ -277,15 +266,16 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
       // TODO: this should really get split up somehow. Once it hits 32-arguments
       // (aka just a few more) it will cause runtime errors and the Format will fail.
       // clang-format off
-      Format(queryBuffer, sizeof(queryBuffer), "REPLACE INTO `get5_stats_players` \
-                (matchid, mapnumber, steamid64, team, \
-                rounds_played, name, kills, deaths, flashbang_assists, \
-                assists, teamkills, headshot_kills, damage, \
-                bomb_plants, bomb_defuses, \
-                v1, v2, v3, v4, v5, \
-                2k, 3k, 4k, 5k, \
-                firstkill_t, firstkill_ct, firstdeath_t, firstdeath_ct, \
-                tradekill, kast, contribution_score \
+      Format(queryBuffer, sizeof(queryBuffer),
+                "INSERT INTO `get5_stats_players` \
+                (`matchid`, `mapnumber`, `steamid64`, `team`, \
+                `rounds_played`, `name`, `kills`, `deaths`, `flashbang_assists`, \
+                `assists`, `teamkills`, `headshot_kills`, `damage`, \
+                `bomb_plants`, `bomb_defuses`, \
+                `v1`, `v2`, `v3`, `v4`, `v5`, \
+                `2k`, `3k`, `4k`, `5k`, \
+                `firstkill_t`, `firstkill_ct`, `firstdeath_t`, `firstdeath_ct`, \
+                `tradekill`, `kast`, `contribution_score` \
                 ) VALUES \
                 (%d, %d, '%s', '%s', \
                 %d, '%s', %d, %d, %d, \
@@ -294,7 +284,34 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
                 %d, %d, %d, %d, %d, \
                 %d, %d, %d, %d, \
                 %d, %d, %d, %d, \
-                %d, %d, %d)",
+                %d, %d, %d) \
+                ON DUPLICATE KEY UPDATE \
+                `rounds_played` = VALUES(`rounds_played`), \
+                `kills` = VALUES(`kills`), \
+                `deaths` = VALUES(`deaths`), \
+                `flashbang_assists` = VALUES(`flashbang_assists`), \
+                `assists` = VALUES(`assists`), \
+                `teamkills` = VALUES(`teamkills`), \
+                `headshot_kills` = VALUES(`headshot_kills`), \
+                `damage` = VALUES(`damage`), \
+                `bomb_plants` = VALUES(`bomb_plants`), \
+                `bomb_defuses` = VALUES(`bomb_defuses`), \
+                `v1` = VALUES(`v1`), \
+                `v2` = VALUES(`v2`), \
+                `v3` = VALUES(`v3`), \
+                `v4` = VALUES(`v4`), \
+                `v5` = VALUES(`v5`), \
+                `2k` = VALUES(`2k`), \
+                `3k` = VALUES(`3k`), \
+                `4k` = VALUES(`4k`), \
+                `5k` = VALUES(`5k`), \
+                `firstkill_t` = VALUES(`firstkill_t`), \
+                `firstkill_ct` = VALUES(`firstkill_ct`), \
+                `firstdeath_t` = VALUES(`firstdeath_t`), \
+                `firstdeath_ct` = VALUES(`firstdeath_ct`), \
+                `tradekill` = VALUES(`tradekill`), \
+                `kast` = VALUES(`kast`), \
+                `contribution_score` = VALUES(`contribution_score`)",
              g_MatchID, mapNumber, authSz, teamString, 
              roundsplayed, nameSz, kills, deaths, flashbang_assists, 
              assists, teamkills, headshot_kills, damage, 

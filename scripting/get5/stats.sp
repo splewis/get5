@@ -8,6 +8,7 @@ public void Stats_PluginStart() {
   HookEvent("bomb_exploded", Stats_BombExplodedEvent);
   HookEvent("flashbang_detonate", Stats_FlashbangDetonateEvent, EventHookMode_Pre);
   HookEvent("player_blind", Stats_PlayerBlindEvent);
+  HookEvent("round_mvp", Stats_RoundMVPEvent);
 }
 
 public void Stats_Reset() {
@@ -388,6 +389,21 @@ public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBr
   int userid = event.GetInt("userid");
   int client = GetClientOfUserId(userid);
   RequestFrame(GetFlashInfo, GetClientSerial(client));
+
+  return Plugin_Continue;
+}
+
+public Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroadcast) {
+  if (g_GameState != Get5State_Live) {
+    return Plugin_Continue;
+  }
+
+  int userid = event.GetInt("userid");
+  int client = GetClientOfUserId(userid);
+
+  if (IsValidClient(client)) {
+    IncrementPlayerStat(client, STAT_MVP);
+  }
 
   return Plugin_Continue;
 }

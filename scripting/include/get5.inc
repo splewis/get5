@@ -195,6 +195,7 @@ native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount
 #define STAT_TRADEKILL "tradekill"
 #define STAT_KAST "kast"
 #define STAT_CONTRIBUTION_SCORE "contribution_score"
+#define STAT_MVP "mvp"
 
 public SharedPlugin __pl_get5 = {
     name = "get5",

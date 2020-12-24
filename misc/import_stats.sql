@@ -65,6 +65,7 @@ CREATE TABLE `get5_stats_players`
     `tradekill`          smallint(5) unsigned NOT NULL,
     `kast`               smallint(5) unsigned NOT NULL,
     `contribution_score` smallint(5) unsigned NOT NULL,
+    `mvp`                smallint(5) unsigned NOT NULL,
     PRIMARY KEY (`matchid`, `mapnumber`, `steamid64`),
     KEY `steamid64` (`steamid64`),
     CONSTRAINT `get5_stats_players_matchid` FOREIGN KEY (`matchid`) REFERENCES `get5_stats_matches` (`matchid`)

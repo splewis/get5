@@ -78,6 +78,8 @@ public void Get5_OnSeriesInit() {
   char team1Name[64];
   char team2Name[64];
 
+  int serverId = Get5_GetServerID();
+
   char seriesTypeSz[sizeof(seriesType) * 2 + 1];
   char team1NameSz[sizeof(team1Name) * 2 + 1];
   char team2NameSz[sizeof(team2Name) * 2 + 1];
@@ -103,9 +105,9 @@ public void Get5_OnSeriesInit() {
     SetMatchID(g_ForceMatchIDCvar.IntValue);
     g_ForceMatchIDCvar.IntValue = 0;
     Format(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
-            (matchid, series_type, team1_name, team2_name, start_time) VALUES \
-            (%d, '%s', '%s', '%s', NOW())",
-           g_MatchID, seriesTypeSz, team1NameSz, team2NameSz);
+            (matchid, series_type, team1_name, team2_name, start_time, server_id) VALUES \
+            (%d, '%s', '%s', '%s', NOW(), %d)",
+           g_MatchID, seriesTypeSz, team1NameSz, team2NameSz, serverId);
     LogDebug(queryBuffer);
     db.Query(SQLErrorCheckCallback, queryBuffer);
 
@@ -114,9 +116,9 @@ public void Get5_OnSeriesInit() {
   } else {
 
     Format(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
-            (series_type, team1_name, team2_name, start_time) VALUES \
-            ('%s', '%s', '%s', NOW())",
-           seriesTypeSz, team1NameSz, team2NameSz);
+            (series_type, team1_name, team2_name, start_time, server_id) VALUES \
+            ('%s', '%s', '%s', NOW(), %d)",
+           seriesTypeSz, team1NameSz, team2NameSz, serverId);
     LogDebug(queryBuffer);
     db.Query(MatchInitCallback, queryBuffer);
 

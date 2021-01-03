@@ -13,6 +13,7 @@ CREATE TABLE `get5_stats_matches`
     `team1_score` smallint(5) unsigned NOT NULL DEFAULT '0',
     `team2_name`  varchar(64)          NOT NULL DEFAULT '',
     `team2_score` smallint(5) unsigned NOT NULL DEFAULT '0',
+    `server_id`   int(10) unsigned     NOT NULL DEFAULT '0',
     PRIMARY KEY (`matchid`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

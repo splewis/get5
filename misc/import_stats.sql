@@ -14,14 +14,15 @@ CREATE TABLE `get5_stats_matches`
     `team2_name`  varchar(64)          NOT NULL DEFAULT '',
     `team2_score` smallint(5) unsigned NOT NULL DEFAULT '0',
     `server_id`   int(10) unsigned     NOT NULL DEFAULT '0',
-    PRIMARY KEY (`matchid`)
+    PRIMARY KEY (`matchid`),
+    KEY `server_id` (`server_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE `get5_stats_maps`
 (
     `matchid`     int(10) unsigned     NOT NULL,
-    `mapnumber`   smallint(5) unsigned NOT NULL,
+    `mapnumber`   tinyint(3) unsigned  NOT NULL,
     `start_time`  datetime             NOT NULL,
     `end_time`    datetime             NULL     DEFAULT NULL,
     `winner`      varchar(16)          NOT NULL DEFAULT '',
@@ -36,8 +37,8 @@ CREATE TABLE `get5_stats_maps`
 CREATE TABLE `get5_stats_players`
 (
     `matchid`            int(10) unsigned     NOT NULL,
-    `mapnumber`          smallint(5) unsigned NOT NULL,
-    `steamid64`          varchar(32)          NOT NULL,
+    `mapnumber`          tinyint(3) unsigned  NOT NULL,
+    `steamid64`          bigint(21) unsigned  NOT NULL,
     `team`               varchar(16)          NOT NULL DEFAULT '',
     `rounds_played`      smallint(5) unsigned NOT NULL,
     `name`               varchar(64)          NOT NULL,

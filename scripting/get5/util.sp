@@ -719,6 +719,15 @@ public bool DeleteFileIfExists(const char[] path) {
   return true;
 }
 
+stock void GetPauseType(PauseType pause, char[] buffer, int len) {
+  if (pause == PauseType_Tech) {
+    Format(buffer, len, "technical");
+  } else if (pause == PauseType_Tactical) {
+    Format(buffer, len, "tactical");
+  } else {
+    Format(buffer, len, "unknown");
+  }
+}
 public bool IsJSONPath(const char[] path) {
   int length = strlen(path);
   if (length >= 5) {

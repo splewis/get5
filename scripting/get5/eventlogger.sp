@@ -52,6 +52,12 @@ static void AddTeam(JSON_Object params, const char[] key, MatchTeam team) {
   params.SetString(key, value);
 }
 
+static void AddPause(JSON_Object params, const char[] key, PauseType pause) {
+  char value[16];
+  GetPauseType(pause, value, sizeof(value));
+  params.SetString(key, value);
+}
+
 static void AddCSTeam(JSON_Object params, const char[] key, int team) {
   char value[16];
   CSTeamString(team, value, sizeof(value));
@@ -269,4 +275,19 @@ public void EventLogger_TeamUnready(MatchTeam team) {
   AddTeam(params, "team", team);
 
   EventLogger_EndEvent("team_unready");
+}
+
+public void EventLogger_PauseCommand(MatchTeam team, PauseType pauseReason) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddTeam(params, "request_team", team);
+  AddPause(params, "pause_reason", pauseReason);
+  EventLogger_EndEvent("pause_command");
+}
+
+public void EventLogger_UnpauseCommand(MatchTeam team) { 
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddTeam(params, "request_team", team);
+  EventLogger_EndEvent("unpause_command");
 }

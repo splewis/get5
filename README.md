@@ -88,7 +88,7 @@ Some client commands are available also for admin usage. For example, sm_pause a
 - ``!tech``: requests a technical pause (technical pauses have no time limit or max number of uses)
 - ``!coach``: moves a client to coach for their team
 - ``!stay``: elects to stay after a knife round win
-- ``!swap``: elects to swap after a knife round win
+- ``!swap`` or ``!switch``: elects to swap team side after a knife round win
 - ``!stop``: asks to reload the last match backup file, requires other team to confirm
 - ``!forceready``: force readies your team, letting your team start regardless of player numbers/whether they are ready
 

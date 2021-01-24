@@ -22,7 +22,14 @@ static void EventLogger_LogEvent(const char[] eventName, JSON_Object params) {
 
     char logPath[PLATFORM_MAX_PATH];
     if (FormatCvarString(g_EventLogFormatCvar, logPath, sizeof(logPath))) {
-      LogToFileEx(logPath, buffer);
+      File hLogFile = OpenFile(logPath, "a+");
+
+      if (hLogFile) {
+        LogToOpenFileEx(hLogFile, buffer);
+        CloseHandle(hLogFile);
+      } else {
+        LogError("Could not open file \"%s\"", logPath);
+      }
     }
 
     LogDebug("Calling Get5_OnEvent(event name = %s)", eventName);

@@ -27,6 +27,8 @@ static void EventLogger_LogEvent(const char[] eventName, JSON_Object params) {
       if (hLogFile) {
         LogToOpenFileEx(hLogFile, buffer);
         CloseHandle(hLogFile);
+      } else {
+        LogError("Could not open file \"%s\"", logPath);
       }
     }
 

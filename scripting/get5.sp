@@ -259,8 +259,9 @@ public void OnPluginStart() {
   g_AutoLoadConfigCvar =
       CreateConVar("get5_autoload_config", "",
                    "Name of a match config file to automatically load when the server loads");
-  g_AutoReadyActivePlayers = CreateConVar("get5_auto_ready_active_players", "0",
-                   "Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase.");
+  g_AutoReadyActivePlayers = CreateConVar(
+      "get5_auto_ready_active_players", "0",
+      "Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase.");
   g_BackupSystemEnabledCvar =
       CreateConVar("get5_backup_system_enabled", "1", "Whether the get5 backup system is enabled");
   g_DamagePrintCvar =
@@ -854,9 +855,7 @@ public Action Command_LoadMatchUrl(int client, int args) {
     if (args >= 1 && GetCmdArgString(arg, sizeof(arg))) {
       if (!LoadMatchFromUrl(arg)) {
         ReplyToCommand(client, "Failed to load match config.");
-      }
-      else
-      {
+      } else {
         ReplyToCommand(client, "Match config loading initialized.");
       }
     } else {

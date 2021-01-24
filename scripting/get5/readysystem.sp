@@ -141,7 +141,6 @@ public Action Command_AdminForceReady(int client, int args) {
 // Client commands
 // Re-used to automatically ready players on warmup-activity, hence the helper-method.
 public void HandleReadyCommand(int client, bool autoReady) {
-
   if (!IsReadyGameState()) {
     return;
   }
@@ -162,7 +161,6 @@ public void HandleReadyCommand(int client, bool autoReady) {
     SetMatchTeamCvars();
     HandleReadyMessage(team);
   }
-
 }
 
 public Action Command_Ready(int client, int args) {

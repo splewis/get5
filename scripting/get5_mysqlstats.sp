@@ -112,19 +112,16 @@ public void Get5_OnSeriesInit() {
     LogMessage("Starting match id %d", g_MatchID);
 
   } else {
-
     Format(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
             (series_type, team1_name, team2_name, start_time) VALUES \
             ('%s', '%s', '%s', NOW())",
            seriesTypeSz, team1NameSz, team2NameSz);
     LogDebug(queryBuffer);
     db.Query(MatchInitCallback, queryBuffer);
-
   }
 }
 
 public void MatchInitCallback(Database dbObj, DBResultSet results, const char[] error, any data) {
-
   if (results == null) {
     LogError("Failed to get matchid from match init query");
     g_DisableStats = true;

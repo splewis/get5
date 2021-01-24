@@ -291,7 +291,7 @@ public void OnPluginStart() {
       "get5_kick_immunity", "1",
       "Whether or not admins with the changemap flag will be immune to kicks from \"get5_kick_when_no_match_loaded\". Set to \"0\" to disable");
   g_KickClientsWithNoMatchCvar =
-      CreateConVar("get5_kick_when_no_match_loaded", "1",
+      CreateConVar("get5_kick_when_no_match_loaded", "0",
                    "Whether the plugin kicks new clients when no match is loaded");
   g_LiveCfgCvar =
       CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to exec when the game goes live");

@@ -139,14 +139,23 @@ public Action Command_AdminForceReady(int client, int args) {
 }
 
 // Client commands
+// Re-used to automatically ready players on warmup-activity, hence the helper-method.
+public void HandleReadyCommand(int client, bool autoReady) {
 
-public Action Command_Ready(int client, int args) {
+  if (!IsReadyGameState()) {
+    return;
+  }
+
   MatchTeam team = GetClientMatchTeam(client);
-  if (!IsReadyGameState() || team == MatchTeam_TeamNone || IsClientReady(client)) {
-    return Plugin_Handled;
+  if (team == MatchTeam_TeamNone || IsClientReady(client)) {
+    return;
   }
 
   Get5_Message(client, "%t", "YouAreReady");
+
+  if (autoReady) {
+    PrintHintText(client, "%t", "YouAreReadyAuto");
+  }
 
   SetClientReady(client, true);
   if (IsTeamReady(team)) {
@@ -154,6 +163,10 @@ public Action Command_Ready(int client, int args) {
     HandleReadyMessage(team);
   }
 
+}
+
+public Action Command_Ready(int client, int args) {
+  HandleReadyCommand(client, false);
   return Plugin_Handled;
 }
 

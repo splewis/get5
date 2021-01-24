@@ -25,6 +25,10 @@
     {
         "en"            "You have been marked as ready."
     }
+    "YouAreReadyAuto"
+    {
+        "en"            "NOTE: You have been marked as ready due to game activity. Type !unready if you are not ready."
+    }
     "YouAreNotReady"
     {
         "en"            "You have been marked as NOT ready."

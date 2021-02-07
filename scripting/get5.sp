@@ -808,8 +808,8 @@ public Action Command_EndMatch(int client, int args) {
   Call_PushCell(g_TeamSeriesScores[MatchTeam_Team2]);
   Call_Finish();
 
-  UpdateClanTags();
   ChangeState(Get5State_None);
+  UpdateClanTags();
 
   Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
   RestoreCvars(g_MatchConfigChangedCvars);

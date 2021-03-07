@@ -83,6 +83,8 @@ ConVar g_TimeFormatCvar;
 ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
 ConVar g_WarmupCfgCvar;
+ConVar g_RoundBackupFormatCvar;
+ConVar g_PreLiveBackupFormatCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -345,6 +347,12 @@ public void OnPluginStart() {
                    "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
+  g_RoundBackupFormatCvar = CreateConVar(
+      "get5_backup_format", "get5_backup_match%s_map%d_round%d.cfg",
+      "Path where round backups will be stored.");
+  g_PreLiveBackupFormatCvar = CreateConVar(
+      "get5_backup_format", "get5_backup_match%s_map%d_prelive.cfg",
+      "Path where pre-live backups will be stored.");
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
@@ -1155,13 +1163,14 @@ public void WriteBackup() {
     return;
   }
 
+  char backupFormat[PLATFORM_MAX_PATH];
   char path[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
-    Format(path, sizeof(path), "get5_backup_match%s_map%d_round%d.cfg", g_MatchID,
-           GetMapStatsNumber(), GameRules_GetProp("m_totalRoundsPlayed"));
+    g_RoundBackupFormatCvar.GetString(backupFormat, sizeof(backupFormat));
+    Format(path, sizeof(path), backupFormat, g_MatchID, GetMapStatsNumber(), GameRules_GetProp("m_totalRoundsPlayed"));
   } else {
-    Format(path, sizeof(path), "get5_backup_match%s_map%d_prelive.cfg", g_MatchID,
-           GetMapStatsNumber());
+    g_PreLiveBackupFormatCvar.GetString(backupFormat, sizeof(backupFormat));
+    Format(path, sizeof(path), backupFormat, g_MatchID, GetMapStatsNumber());
   }
   LogDebug("created path %s", path);
 

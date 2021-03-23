@@ -336,7 +336,7 @@ public void RestoreGet5Backup() {
 
     // There are some timing issues leading to incorrect score when restoring matches in second half.
     // Doing the restore on a timer    
-    CreateTimer(0.1, Time_StartRestore);   
+    CreateTimer(1.0, Time_StartRestore);   
   } else {
     SetStartingTeams();
     SetMatchTeamCvars();
@@ -360,11 +360,12 @@ public void RestoreGet5Backup() {
 }
 
 public Action Time_StartRestore(Handle timer) {
+  Pause();
+
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
   CreateTimer(0.1, Timer_FinishBackup);
-  Pause();
 }
 
 public Action Timer_FinishBackup(Handle timer) {

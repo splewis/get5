@@ -323,18 +323,22 @@ public bool RestoreFromBackup(const char[] path) {
 }
 
 public void RestoreGet5Backup() {
+  // This variable is reset on a timer since the implementation of the
+  // mp_backup_restore_load_file doesn't do everything in one frame.
+  g_DoingBackupRestoreNow = true;
   ExecCfg(g_LiveCfgCvar);
 
   if (g_SavedValveBackup) {
-    // This variable is reset ona timer since the implementation of the
-    // mp_backup_restore_load_file doesn't do everything in one frame.
-    char tempValveBackup[PLATFORM_MAX_PATH];
-    GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
-    g_DoingBackupRestoreNow = true;
-    ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
-    Pause();
-    CreateTimer(0.1, Timer_FinishBackup);
     ChangeState(Get5State_Live);
+    SetMatchTeamCvars();
+    ExecuteMatchConfigCvars();
+    SetMatchRestartDelay();
+
+    Pause();
+
+    // There are some timing issues leading to incorrect score when restoring matches in second half.
+    // Doing the restore on a timer    
+    CreateTimer(0.1, Time_StartRestore);   
   } else {
     SetStartingTeams();
     SetMatchTeamCvars();
@@ -352,7 +356,17 @@ public void RestoreGet5Backup() {
     } else {
       EnsurePausedWarmup();
     }
+
+    g_DoingBackupRestoreNow = false;
   }
+}
+
+public Action Time_StartRestore(Handle timer) {
+  char tempValveBackup[PLATFORM_MAX_PATH];
+  GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
+  ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
+  CreateTimer(0.1, Timer_FinishBackup);
+  Pause();
 }
 
 public Action Timer_FinishBackup(Handle timer) {

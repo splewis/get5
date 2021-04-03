@@ -182,7 +182,7 @@ public void Stats_SeriesEnd(MatchTeam winner) {
 public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBroadcast) {
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
 
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow) {
     if (g_AutoReadyActivePlayers.BoolValue) {
       // HandleReadyCommand checks for game state, so we don't need to do that here as well.
       HandleReadyCommand(attacker, true);

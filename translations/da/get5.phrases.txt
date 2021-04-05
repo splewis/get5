@@ -174,7 +174,7 @@
     "ForceReadyInfoMessage"
     {
         "#format"       "{1:d}"
-        "da"            "Du kan skrive {GREEN}!forcready {NORMAL} for tvinge dit hold klar hvis der er mindre end {GREEN}{1}{NORMAL} spillere."
+        "da"            "Du kan skrive {GREEN}!forceready {NORMAL} for tvinge dit hold klar hvis der er mindre end {GREEN}{1}{NORMAL} spillere."
     }
     "TeammateForceReadied"
     {

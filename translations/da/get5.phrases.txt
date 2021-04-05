@@ -378,6 +378,6 @@
     "VetoCountdown"
     {
         "#format"       "{1:i}"
-        "da"        "Veto begynder om {GREEN}{1} {NORMAL}sekunder."
+        "da"        "Veto begynder om {GREEN}{1}{NORMAL} sekunder."
     }
 }

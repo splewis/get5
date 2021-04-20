@@ -6,7 +6,6 @@
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "Venter på at, {1} skriver {GREEN}!ready {NORMAL}for at begynde."
     }
     "ReadyToRestoreBackupInfoMessage"
@@ -35,7 +34,6 @@
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} vandt knife runden. Venter på at de skriver !stay eller !swap."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
@@ -60,22 +58,18 @@
     }
     "TeamForfeitInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} var ikke i stand til at gøre sig klar i tide og har forfeited."
     }
     "MinutesToForfeitMessage"
     {
-        "#format"       "{1:s},{2:d}"
         "da"            "{1} har {2} minutter tilbage til at gøre sig klar eller kampen bliver forfeited."
     }
     "SecondsToForfeitInfoMessage"
     {
-        "#format"       "{1:s},{2:d}"
         "da"            "{1} har {2} sekunder tilbage til at gøre sig klar eller kampen bliver forfeited."
     }
     "10SecondsToForfeitInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} har 10 sekunder til at gøre sig klar eller kampen bliver forfeited."
     }
     "PausePeriodSuffix"
@@ -84,22 +78,18 @@
     }
     "MaxPausesUsedInfoMessage"
     {
-        "#format"       "{1:d},{2:s}"
         "da"            "Dit hold har allerede brugt max {1} pauser{2}."
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "#format"       "{1:d},{2:s}"
         "da"            "Dit hold har allerede brugt max {1} sekunder af pause tid{2}."
     }
     "MatchPausedByTeamMessage"
     {
-        "#format"       "{1:N}"
         "da"            "{1} paused kampen."
     }
     "MatchTechPausedByTeamMessage"
     {
-        "#format"       "{1:N}"
         "da"            "{1} har bedt om en teknisk pause."
     }
     "AdminForceTechPauseInfoMessage"
@@ -108,77 +98,62 @@
     }
     "PauseTimeExpiration10SecInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} har næsten ikke mere pause tid, unpauser om 10 sekunder."
     }
     "PauseTimeExpirationInfoMessage"
     {
-        "#format"       "{1:s},{2:d},{3:s}"
         "da"            "{1} har {2} sekunder af pause tid tilbage {3}."
     }
     "PauseRunoutInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} er løbet tør for pause tid, unpauser kampen."
     }
     "MatchUnpauseInfoMessage"
     {
-        "#format"       "{1:N}"
         "da"            "{1:N} unpaused kampen."
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "#format"       "{1:s},{2:s}"
         "da"            "{1} vil gerne unpause, venter på {2} til at skrive !unpause."
     }
     "PausesLeftInfoMessage"
     {
-        "#format"       "{1:s},{2:d},{3:s}"
         "da"            "{1} har {2} pauser tilbage {3}."
     }
     "OnePauseLeftInfoMessage"
     {
-        "#format"       "{1:s},{2:d},{3:s}"
         "da"            "{1} har {2} pauser tilbage{3}."
     }
     "TeamFailToReadyMinPlayerCheck"
     {
-        "#format"       "{1:d}"
         "da"            "Der skal være minimum {1} spiller(e) på serveren for at gøre klar."
     }
     "TeamReadyToVetoInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} er klar til at veto."
     }
     "TeamReadyToRestoreBackupInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} er klar til at genoprette match backup."
     }
     "TeamReadyToKnifeInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} er klar til at knife om sider."
     }
     "TeamReadyToBeginInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} er klar til at begynde kmapen."
     }
     "TeamNotReadyInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} er ikke længere klar."
     }
     "ForceReadyInfoMessage"
     {
-        "#format"       "{1:d}"
         "da"            "Du kan skrive {GREEN}!forceready {NORMAL} for tvinge dit hold klar hvis der er mindre end {GREEN}{1}{NORMAL} spillere."
     }
     "TeammateForceReadied"
     {
-        "#format"       "{1:N}"
         "da"            "Dit hold blev tvunget klar af {GREEN}{1}"
     }
     "AdminForceReadyInfoMessage"
@@ -199,42 +174,34 @@
     }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
-        "#format"       "{1:s},{2:s}"
         "da"            "{1} vil stoppe og reloade sidste runde, mangler {2} til at bekræfte med !stop."
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "#format"       "{1:s},{2:d},{3:d}"
         "da"            "{1}{NORMAL} vinder serien {2}-{3}"
     }
     "SeriesTiedInfoMessage"
     {
-        "#format"       "{1:d},{2:d}"
         "da"            "Serien er uafgjort {1}-{2}"
     }
     "NextSeriesMapInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "Det næste map i serien er{GREEN}{1}"
     }
     "TeamWonMatchInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} har vundet kampen."
     }
     "TeamTiedMatchInfoMessage"
     {
-        "#format"       "{1:s},{2:s}"
         "da"            "{1} og {2} har spillet kampen uafgjort."
     }
     "TeamsSplitSeriesBO2InfoMessage"
     {
-        "#format"       "{1:s},{2:s}"
         "da"            "{1} og {2} har splittet serien 1-1."
     }
     "TeamWonSeriesInfoMessage"
     {
-        "#format"       "{1:s},{2:d},{3:d}"
         "da"            "{1} har vundet serien {2}-{3}."
     }
     "MatchFinishedInfoMessage"
@@ -243,17 +210,14 @@
     }
     "CurrentScoreInfoMessage"
     {
-        "#format"       "{1:s},{2:d},{3:d},{4:s}"
         "da"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
     }
     "BackupLoadedInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "Backup loadet med succes {1}"
     }
     "MatchBeginInSecondsInfoMessage"
     {
-        "#format"       "{1:d}"
         "da"            "Kampen begynder om {1} sekunder."
     }
     "MatchIsLiveInfoMessage"
@@ -270,22 +234,18 @@
     }
     "TeamDecidedToStayInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} har besluttet at blive."
     }
     "TeamDecidedToSwapInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} har besluttet at skifte."
     }
     "TeamLostTimeToDecideInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "{1} bliver da de ikke nåede at tage en beslutning i tide."
     }
     "ChangingMapInfoMessage"
     {
-        "#format"       "{1:s}"
         "da"            "Skifter map til {GREEN}{1}..."
     }
     "MapDecidedInfoMessage"
@@ -294,22 +254,18 @@
     }
     "MapIsInfoMessage"
     {
-        "#format"       "{1:d},{2:s}"
         "da"            "Map {1}: {GREEN}{2}"
     }
     "TeamPickedMapInfoMessage"
     {
-        "#format"       "{1:s},{2:s},{3:d}"
         "da"            "{1} valgte {GREEN}{2} {NORMAL}som deres map {3}"
     }
     "TeamSelectSideInfoMessage"
     {
-        "#format"       "{1:s},{2:s},{3:s}"
         "da"            "{1} har valgt at start som {GREEN}{2} {NORMAL}på {3}"
     }
     "TeamVetoedMapInfoMessage"
     {
-        "#format"       "{1:s},{2:s}"
         "da"            "{1} vetoed {LIGHT_RED}{2}"
     }
     "CaptainLeftOnVetoInfoMessage"
@@ -345,7 +301,6 @@
     }
     "MapVetoPickConfirmMenuText"
     {
-        "#format"       "{1:s}"
         "da"        "Bekræft at du vil spille {1}:"
     }
     "MapVetoBanMenuText"
@@ -354,17 +309,14 @@
     }
     "MapVetoBanConfirmMenuText"
     {
-        "#format"       "{1:s}"
         "da"        "Bekræft at du vil VEOT {1}:"
     }
     "MapVetoSidePickMenuText"
     {
-        "#format"       "{1:s}"
         "da"        "Vælg en side på {1}"
     }
     "MapVetoSidePickConfirmMenuText"
     {
-        "#format"       "{1:s}"
         "da"        "Bekræft at du vil starte {1}:"
     }
     "ConfirmPositiveOptionText"
@@ -377,7 +329,6 @@
     }
     "VetoCountdown"
     {
-        "#format"       "{1:i}"
         "da"        "Veto begynder om {GREEN}{1} {NORMAL}sekunder."
     }
 }

@@ -6,7 +6,7 @@
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "da"            "Venter på at, {1} skriver {GREEN}!ready {NORMAL}for at begynde."
+        "da"            "Venter på, at {1} skriver {GREEN}!ready {NORMAL}."
     }
     "ReadyToRestoreBackupInfoMessage"
     {
@@ -18,7 +18,7 @@
     }
     "ReadyToStartInfoMessage"
     {
-        "da"            "Skriv {GREEN}!ready {NORMAL}når du er klar til at begynde."
+        "da"            "Skriv {GREEN}!ready {NORMAL}når du er klar til at spille."
     }
     "YouAreReady"
     {
@@ -26,15 +26,15 @@
     }
     "YouAreReadyAuto"
     {
-        "da"            "NOTE: Du er blevet markeret som klar grundet din game aktivitet. Skriv !unready hvis du ikke er klar."
+        "da"            "NOTE: Du er blevet markeret som klar grundet din spilaktivitet. Skriv !unready hvis du ikke er klar."
     }
     "YouAreNotReady"
     {
-        "da"            "Du er blevet markeret IKKE klar."
+        "da"            "Du er blevet markeret som ikke-klar."
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "da"            "{1} vandt knife runden. Venter på at de skriver !stay eller !swap."
+        "da"            "{1} vandt knife-runden. Venter på, at de skriver !stay eller !swap."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
@@ -58,19 +58,19 @@
     }
     "TeamForfeitInfoMessage"
     {
-        "da"            "{1} var ikke i stand til at gøre sig klar i tide og har forfeited."
+        "da"            "{1} var ikke i stand til at gøre sig klar i tide og har opgivet."
     }
     "MinutesToForfeitMessage"
     {
-        "da"            "{1} har {2} minutter tilbage til at gøre sig klar eller kampen bliver forfeited."
+        "da"            "{1} har {2} minutter til at gøre sig klar før de opgiver kampen."
     }
     "SecondsToForfeitInfoMessage"
     {
-        "da"            "{1} har {2} sekunder tilbage til at gøre sig klar eller kampen bliver forfeited."
+        "da"            "{1} har {2} sekunder til at gøre sig klar før de opgiver kampen."
     }
     "10SecondsToForfeitInfoMessage"
     {
-        "da"            "{1} har 10 sekunder til at gøre sig klar eller kampen bliver forfeited."
+        "da"            "{1} har 10 sekunder til at gøre sig klar før de opgiver kampen."
     }
     "PausePeriodSuffix"
     {
@@ -86,43 +86,43 @@
     }
     "MatchPausedByTeamMessage"
     {
-        "da"            "{1} paused kampen."
+        "da"            "{1} satte kampen på pause."
     }
     "MatchTechPausedByTeamMessage"
     {
-        "da"            "{1} har bedt om en teknisk pause."
+        "da"            "{1} har bedt om teknisk pause."
     }
     "AdminForceTechPauseInfoMessage"
     {
-        "da"            "En admin har bedt om en teknisk pause."
+        "da"            "En admin har bedt om teknisk pause."
     }
     "PauseTimeExpiration10SecInfoMessage"
     {
-        "da"            "{1} har næsten ikke mere pause tid, unpauser om 10 sekunder."
+        "da"            "{1}s pause udløber om 10 sekunder."
     }
     "PauseTimeExpirationInfoMessage"
     {
-        "da"            "{1} har {2} sekunder af pause tid tilbage {3}."
+        "da"            "{1} har {2} sekunder pausetid tilbage {3}."
     }
     "PauseRunoutInfoMessage"
     {
-        "da"            "{1} er løbet tør for pause tid, unpauser kampen."
+        "da"            "{1} er løbet tør for pausetid. Kampen fortsættes."
     }
     "MatchUnpauseInfoMessage"
     {
-        "da"            "{1:N} unpaused kampen."
+        "da"            "{1:N} fortsatte kampen."
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "da"            "{1} vil gerne unpause, venter på {2} til at skrive !unpause."
+        "da"            "{1} vil gerne fortsætte kampen. Afventer !unpause fra {2}."
     }
     "PausesLeftInfoMessage"
     {
-        "da"            "{1} har {2} pauser tilbage {3}."
+        "da"            "{1} har {2} pauser tilbage{3}."
     }
     "OnePauseLeftInfoMessage"
     {
-        "da"            "{1} har {2} pauser tilbage{3}."
+        "da"            "{1} har {2} pause tilbage{3}."
     }
     "TeamFailToReadyMinPlayerCheck"
     {
@@ -150,11 +150,11 @@
     }
     "ForceReadyInfoMessage"
     {
-        "da"            "Du kan skrive {GREEN}!forceready {NORMAL} for tvinge dit hold klar hvis der er mindre end {GREEN}{1}{NORMAL} spillere."
+        "da"            "Du kan skrive {GREEN}!forceready {NORMAL} for tvinge dit hold klar, hvis der er mindre end {GREEN}{1}{NORMAL} spillere."
     }
     "TeammateForceReadied"
     {
-        "da"            "Dit hold blev tvunget klar af {GREEN}{1}"
+        "da"            "Dit hold blev tvunget klar af {GREEN}{1}."
     }
     "AdminForceReadyInfoMessage"
     {
@@ -170,11 +170,11 @@
     }
     "AdminForceUnPauseInfoMessage"
     {
-        "da"            "En admin har tvunget kampen til at unpause."
+        "da"            "En admin har tvunget kampen til at fortsætte."
     }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
-        "da"            "{1} vil stoppe og reloade sidste runde, mangler {2} til at bekræfte med !stop."
+        "da"            "{1} vil stoppe og genindlæse sidste runde. Afventer !stop fra {2}."
     }
     "TeamWinningSeriesInfoMessage"
     {
@@ -206,7 +206,7 @@
     }
     "MatchFinishedInfoMessage"
     {
-        "da"            "Kampen er afgjort"
+        "da"            "Kampen er afgjort."
     }
     "CurrentScoreInfoMessage"
     {
@@ -214,7 +214,7 @@
     }
     "BackupLoadedInfoMessage"
     {
-        "da"            "Backup loadet med succes {1}"
+        "da"            "Backup {1} indlæst."
     }
     "MatchBeginInSecondsInfoMessage"
     {
@@ -226,7 +226,7 @@
     }
     "KnifeIn5SecInfoMessage"
     {
-        "da"            "Kniv runden begynder om 5 sekunder."
+        "da"            "Kniv-runden begynder om 5 sekunder."
     }
     "KnifeInfoMessage"
     {
@@ -242,7 +242,7 @@
     }
     "TeamLostTimeToDecideInfoMessage"
     {
-        "da"            "{1} bliver da de ikke nåede at tage en beslutning i tide."
+        "da"            "{1} bliver, da de ikke tog en beslutning i tide."
     }
     "ChangingMapInfoMessage"
     {
@@ -275,13 +275,14 @@
     "ReadyToResumeVetoInfoMessage"
     {
         "da"            "Skriv {GREEN}!ready {NORMAL}når du er klar til at genoptage veto."
+    }
     "MatchConfigLoadedInfoMessage"
     {
-        "da"            "Loaded kamp config."
+        "da"            "Indlæste kampopsætning."
     }
     "MoveToCoachInfoMessage"
     {
-        "da"            "Fordi dit hold er fuld, blev du flyttet til træner position."
+        "da"            "Da dit hold er fuldt, blev du flyttet til trænerposition."
     }
     "ReadyTag"
     {
@@ -309,7 +310,7 @@
     }
     "MapVetoBanConfirmMenuText"
     {
-        "da"        "Bekræft at du vil VEOT {1}:"
+        "da"        "Bekræft at du vil VETO {1}:"
     }
     "MapVetoSidePickMenuText"
     {

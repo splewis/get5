@@ -134,7 +134,7 @@ public void EventLogger_GoingLive() {
 }
 
 public void EventLogger_PlayerDeath(int killer, int victim, bool headshot, int assister,
-                             int flash_assister, const char[] weapon) {
+                             bool flash_assist, const char[] weapon) {
   EventLogger_StartEvent();
   AddMapData(params);
   AddPlayer(params, "attacker", killer);
@@ -142,10 +142,10 @@ public void EventLogger_PlayerDeath(int killer, int victim, bool headshot, int a
   params.SetInt("headshot", headshot);
   params.SetString("weapon", weapon);
 
-  if (assister > 0)
+  if (assister > 0) {
     AddPlayer(params, "assister", assister);
-  if (flash_assister > 0)
-    AddPlayer(params, "flash_assister", flash_assister);
+    params.SetBool("flash_assist", flash_assist);
+  }
 
   EventLogger_EndEvent("player_death");
 }

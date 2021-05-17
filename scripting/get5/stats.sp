@@ -514,11 +514,66 @@ static int GetClutchingClient(int csTeam) {
   }
 }
 
-public void DumpToFile() {
+public bool DumpToFile() {
   char path[PLATFORM_MAX_PATH + 1];
   if (FormatCvarString(g_StatsPathFormatCvar, path, sizeof(path))) {
-    g_StatsKv.ExportToFile(path);
+    //g_StatsKv.ExportToFile(path);
+    
+    return DumpToFilePath(path);
+  } else {
+    return false;
   }
+}
+
+public bool DumpToFilePath(const char[] path) {
+  g_StatsKv.Rewind();
+  JSON_Object stats = EncodeKeyValue(g_StatsKv);
+  
+  File stats_file = OpenFile(path, "w");
+  if (stats_file == null) {
+    LogError("Failed to open stats file");
+    return false;
+  }
+
+  char jsonBuffer[32768]; // 32 KiB
+  stats.Encode(jsonBuffer, sizeof(jsonBuffer));
+  json_cleanup_and_delete(stats);
+  stats_file.WriteString(jsonBuffer, false);
+
+  stats_file.Flush();
+  stats_file.Close();
+
+  return true;
+}
+
+JSON_Object EncodeKeyValue(KeyValues kv) {
+  char keyBuffer[256];
+  char valBuffer[256];
+  char sectionName[256];
+  JSON_Object json_kv = new JSON_Object();
+
+  do {
+    if (kv.GotoFirstSubKey(false)) {
+      // Current key is a section. Browse it recursively.
+      kv.GetSectionName(sectionName, sizeof(sectionName));
+      json_kv.SetObject(sectionName, EncodeKeyValue(kv));
+      kv.GoBack();
+    } else {
+      // Current key is a regular key, or an empty section.
+      KvDataTypes keyType = kv.GetDataType(NULL_STRING);
+      kv.GetSectionName(keyBuffer, sizeof(keyBuffer));
+      if (keyType == KvData_String) {
+        kv.GetString(NULL_STRING, valBuffer, sizeof(valBuffer));
+        json_kv.SetString(keyBuffer, valBuffer);
+      } else if (keyType == KvData_Int) {
+        json_kv.SetInt(keyBuffer, kv.GetNum(NULL_STRING));
+      } else if (keyType == KvData_Float) {
+        json_kv.SetFloat(keyBuffer, kv.GetFloat(NULL_STRING));
+      }
+    }
+  } while (kv.GotoNextKey(false));
+  
+  return json_kv;
 }
 
 static void PrintDamageInfo(int client) {

@@ -879,7 +879,7 @@ public Action Command_DumpStats(int client, int args) {
     GetCmdArg(1, arg, sizeof(arg));
   }
 
-  if (g_StatsKv.ExportToFile(arg)) {
+  if (DumpToFilePath(arg)) {
     g_StatsKv.Rewind();
     ReplyToCommand(client, "Saved match stats to %s", arg);
   } else {

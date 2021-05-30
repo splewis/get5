@@ -527,7 +527,9 @@ public bool DumpToFile() {
 
 public bool DumpToFilePath(const char[] path) {
   g_StatsKv.Rewind();
+  g_StatsKv.GotoFirstSubKey(false);
   JSON_Object stats = EncodeKeyValue(g_StatsKv);
+  g_StatsKv.Rewind();
   
   File stats_file = OpenFile(path, "w");
   if (stats_file == null) {
@@ -555,9 +557,10 @@ JSON_Object EncodeKeyValue(KeyValues kv) {
   do {
     if (kv.GotoFirstSubKey(false)) {
       // Current key is a section. Browse it recursively.
-      kv.GetSectionName(sectionName, sizeof(sectionName));
-      json_kv.SetObject(sectionName, EncodeKeyValue(kv));
+      JSON_Object obj = EncodeKeyValue(kv);
       kv.GoBack();
+      kv.GetSectionName(sectionName, sizeof(sectionName));
+      json_kv.SetObject(sectionName, obj);
     } else {
       // Current key is a regular key, or an empty section.
       KvDataTypes keyType = kv.GetDataType(NULL_STRING);

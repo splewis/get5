@@ -572,6 +572,8 @@ JSON_Object EncodeKeyValue(KeyValues kv) {
         json_kv.SetInt(keyBuffer, kv.GetNum(NULL_STRING));
       } else if (keyType == KvData_Float) {
         json_kv.SetFloat(keyBuffer, kv.GetFloat(NULL_STRING));
+      } else {
+        LogDebug("Can't JSON encode key '%s' with type %d", keyBuffer, keyType);
       }
     }
   } while (kv.GotoNextKey(false));

@@ -614,13 +614,13 @@ static void LoadTeamData(KeyValues kv, MatchTeam matchTeam) {
 }
 
 static void LoadDefaultMapList(ArrayList list) {
-  list.PushString("de_cache");
+  list.PushString("de_ancient");
   list.PushString("de_dust2");
   list.PushString("de_inferno");
   list.PushString("de_mirage");
   list.PushString("de_nuke");
   list.PushString("de_overpass");
-  list.PushString("de_train");
+  list.PushString("de_vertigo");
 
   if (g_SkipVeto) {
     char currentMap[PLATFORM_MAX_PATH];

@@ -366,7 +366,9 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
       strcopy(buffer, len, "Nuke");
     } else if (StrEqual(buffer, "de_vertigo")) {
       strcopy(buffer, len, "Vertigo");
-    }
+    } else if (StrEqual(buffer, "de_ancient")) {
+      strcopy(buffer, len, "Ancient");
+    } 
   }
 }
 

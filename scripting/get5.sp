@@ -315,8 +315,9 @@ public void OnPluginStart() {
   g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
   g_PrettyPrintJsonCvar = CreateConVar("get5_pretty_print_json", "1",
                                        "Whether all JSON output is in pretty-print format.");
-  g_ReadyTeamTagCvar = CreateConVar("get5_ready_team_tag" , "1",
-                                    "Adds [READY] [NOT READY] Tags before Team Names. 0 to disable it.");
+  g_ReadyTeamTagCvar =
+      CreateConVar("get5_ready_team_tag", "1",
+                   "Adds [READY] [NOT READY] Tags before Team Names. 0 to disable it.");
   g_ServerIdCvar = CreateConVar(
       "get5_server_id", "0",
       "Integer that identifies your server. This is used in temp files to prevent collisions.");

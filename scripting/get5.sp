@@ -1279,6 +1279,11 @@ public void SwapSides() {
       g_TeamPauseTimeUsed[team] = 0;
       g_TeamPausesUsed[team] = 0;
     }
+    //Reset the built-in timeout counter of the game
+    if (g_MaxPausesCvar.IntValue > 0){
+      GameRules_SetProp("m_nTerroristTimeOuts", g_MaxPausesCvar.IntValue);
+      GameRules_SetProp("m_nCTTimeOuts", g_MaxPausesCvar.IntValue);
+    }
   }
 }
 

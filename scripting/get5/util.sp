@@ -260,13 +260,17 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
 
   // Add Ready/Not ready tags to team name if in warmup.
   char taggedName[MAX_CVAR_LENGTH];
-  if ((g_GameState == Get5State_Warmup || g_GameState == Get5State_PreVeto) &&
-      !g_DoingBackupRestoreNow) {
-    MatchTeam matchTeam = CSTeamToMatchTeam(csTeam);
-    if (IsTeamReady(matchTeam)) {
-      Format(taggedName, sizeof(taggedName), "%T %s", "ReadyTag", LANG_SERVER, name);
+  if (g_ReadyTeamTagCvar.BoolValue) {
+    if ((g_GameState == Get5State_Warmup || g_GameState == Get5State_PreVeto) &&
+        !g_DoingBackupRestoreNow) {
+      MatchTeam matchTeam = CSTeamToMatchTeam(csTeam);
+      if (IsTeamReady(matchTeam)) {
+        Format(taggedName, sizeof(taggedName), "%T %s", "ReadyTag", LANG_SERVER, name);
+      } else {
+        Format(taggedName, sizeof(taggedName), "%T %s", "NotReadyTag", LANG_SERVER, name);
+      }
     } else {
-      Format(taggedName, sizeof(taggedName), "%T %s", "NotReadyTag", LANG_SERVER, name);
+      strcopy(taggedName, sizeof(taggedName), name);
     }
   } else {
     strcopy(taggedName, sizeof(taggedName), name);
@@ -362,6 +366,8 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
       strcopy(buffer, len, "Nuke");
     } else if (StrEqual(buffer, "de_vertigo")) {
       strcopy(buffer, len, "Vertigo");
+    } else if (StrEqual(buffer, "de_ancient")) {
+      strcopy(buffer, len, "Ancient");
     }
   }
 }

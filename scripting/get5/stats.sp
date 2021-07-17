@@ -514,23 +514,39 @@ static int GetClutchingClient(int csTeam) {
   }
 }
 
-public bool DumpToFile() {
+public void DumpToFile() {
   char path[PLATFORM_MAX_PATH + 1];
   if (FormatCvarString(g_StatsPathFormatCvar, path, sizeof(path))) {
-    //g_StatsKv.ExportToFile(path);
-    
-    return DumpToFilePath(path);
-  } else {
-    return false;
+    DumpToFilePath(path);
   }
 }
 
 public bool DumpToFilePath(const char[] path) {
+  int path_length = strlen(path);
+  // Check if path ends in ".json"
+  if (path_length >= 5) {
+    char ext[5];
+    ext[0] = path[path_length-5];
+    ext[1] = path[path_length-4];
+    ext[2] = path[path_length-3];
+    ext[3] = path[path_length-2];
+    ext[4] = path[path_length-1];
+    if (StrEqual(".json", ext, false)) {
+      // Dump in json format
+      return DumpToJSONFile(path);
+    }
+  }
+
+  // Does not end with json, default to VKV
+  return g_StatsKv.ExportToFile(path);
+}
+
+public bool DumpToJSONFile(const char[] path) {
   g_StatsKv.Rewind();
   g_StatsKv.GotoFirstSubKey(false);
   JSON_Object stats = EncodeKeyValue(g_StatsKv);
   g_StatsKv.Rewind();
-  
+
   File stats_file = OpenFile(path, "w");
   if (stats_file == null) {
     LogError("Failed to open stats file");
@@ -577,7 +593,7 @@ JSON_Object EncodeKeyValue(KeyValues kv) {
       }
     }
   } while (kv.GotoNextKey(false));
-  
+
   return json_kv;
 }
 

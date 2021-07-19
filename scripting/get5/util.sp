@@ -716,3 +716,12 @@ public bool DeleteFileIfExists(const char[] path) {
 
   return true;
 }
+
+public bool IsJSONPath(const char[] path) {
+  int length = strlen(path);
+  if (length >= 5) {
+    return strcmp(path[length - 5], ".json", false) == 0;
+  } else {
+    return false;
+  }
+}

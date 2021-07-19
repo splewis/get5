@@ -522,23 +522,7 @@ public void DumpToFile() {
 }
 
 public bool DumpToFilePath(const char[] path) {
-  int path_length = strlen(path);
-  // Check if path ends in ".json"
-  if (path_length >= 5) {
-    char ext[5];
-    ext[0] = path[path_length-5];
-    ext[1] = path[path_length-4];
-    ext[2] = path[path_length-3];
-    ext[3] = path[path_length-2];
-    ext[4] = path[path_length-1];
-    if (StrEqual(".json", ext, false)) {
-      // Dump in json format
-      return DumpToJSONFile(path);
-    }
-  }
-
-  // Does not end with json, default to VKV
-  return g_StatsKv.ExportToFile(path);
+  return IsJSONPath(path) ? DumpToJSONFile(path) : g_StatsKv.ExportToFile(path);
 }
 
 public bool DumpToJSONFile(const char[] path) {

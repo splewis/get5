@@ -285,6 +285,9 @@ public void OnPluginStart() {
   g_EventLogFormatCvar =
       CreateConVar("get5_event_log_format", "",
                    "Path to use when writing match event logs, use \"\" to disable");
+  g_FreezePlayersVetoCvar =
+      CreateConVar("get5_freeze_players_on_veto", "0",
+                   "Set 1 to freezes all Players during Veto");
   g_FixedPauseTimeCvar =
       CreateConVar("get5_fixed_pause_time", "0",
                    "If set to non-zero, this will be the fixed length of any pause");
@@ -685,6 +688,7 @@ public Action Timer_CheckReady(Handle timer) {
       // We don't wait for spectators when initiating veto
       LogDebug("Timer_CheckReady: starting veto");
       ChangeState(Get5State_Veto);
+      ServerCommand("mp_restartgame 1");
       CreateVeto();
     } else {
       CheckReadyWaitingTimes();

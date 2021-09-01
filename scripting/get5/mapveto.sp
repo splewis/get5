@@ -17,7 +17,7 @@ public void CreateVeto() {
   if (g_FreezePlayersVetoCvar.BoolValue)
   {
     Pause();
-    for (int i = 1; i <= MaxClients; i++) {
+    LOOP_CLIENTS(i) {
       if (IsPlayer(i)) {
         SetEntityMoveType(i, MOVETYPE_NONE);
       }
@@ -53,7 +53,7 @@ public void VetoFinished() {
 
   if (g_FreezePlayersVetoCvar.BoolValue) {
     Unpause();
-    for (int i = 1; i <= MaxClients; i++) {
+    LOOP_CLIENTS(i) {
       if (IsPlayer(i)) {
         SetEntityMoveType(i, MOVETYPE_WALK);
 	      SetEntityRenderColor(i, 255, 255, 255, 255);

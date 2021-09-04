@@ -56,7 +56,6 @@ public void VetoFinished() {
     LOOP_CLIENTS(i) {
       if (IsPlayer(i)) {
         SetEntityMoveType(i, MOVETYPE_WALK);
-	      SetEntityRenderColor(i, 255, 255, 255, 255);
       }
     }
   }

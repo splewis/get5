@@ -294,7 +294,7 @@
     }
     "MatchPoweredBy"
     {
-        "da"        "Drevet af {YELLOW}Get5"
+        "da"        "{GREEN}RISE OF THE TITANS"
     }
     "MapVetoPickMenuText"
     {

@@ -290,7 +290,7 @@
     }
     "MatchPoweredBy"
     {
-        "es"        "Gestionado con {YELLOW}Get5"
+        "es"        "{GREEN}RISE OF THE TITANS"
     }
     "MapVetoPickMenuText"
     {

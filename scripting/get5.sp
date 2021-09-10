@@ -43,7 +43,7 @@
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T
 #define KNIFE_CONFIG "get5/knife.cfg"
-#define DEFAULT_TAG "[{YELLOW}Get5{NORMAL}]"
+#define DEFAULT_TAG "[{GREEN}RISE OF THE TITANS{NORMAL}]"
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -234,11 +234,11 @@ Handle g_OnSeriesResult = INVALID_HANDLE;
 
 // clang-format off
 public Plugin myinfo = {
-  name = "Get5",
-  author = "splewis",
+  name = "RISE OF THE TITANS",
+  author = "splewis, Gilson F B Souza",
   description = "",
   version = PLUGIN_VERSION,
-  url = "https://github.com/splewis/get5"
+  url = "https://github.com/gilsonsouzah/get5"
 };
 // clang-format on
 
@@ -324,7 +324,7 @@ public void OnPluginStart() {
   g_SetClientClanTagCvar = CreateConVar("get5_set_client_clan_tags", "1",
                                         "Whether to set client clan tags to player ready status.");
   g_SetHostnameCvar = CreateConVar(
-      "get5_hostname_format", "Get5: {TEAM1} vs {TEAM2}",
+      "get5_hostname_format", "RISE OF THE TITANS: {TEAM1} vs {TEAM2}",
       "Template that the server hostname will follow when a match is live. Leave field blank to disable. Valid parameters are: {MAPNUMBER}, {MATCHID}, {SERVERID}, {MAPNAME}, {TIME}, {TEAM1}, {TEAM2}");
   g_StatsPathFormatCvar =
       CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg",

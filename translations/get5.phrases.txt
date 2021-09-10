@@ -338,7 +338,7 @@
     }
     "MatchPoweredBy"
     {
-        "en"        "Powered by {YELLOW}Get5"
+        "en"        "{GREEN}RISE OF THE TITANS"
     }
     "MapVetoPickMenuText"
     {

@@ -3,7 +3,7 @@
 
 public Action Command_Get5AdminMenu(int client, int args) {
   Menu menu = new Menu(AdminMenuHandler);
-  menu.SetTitle("Get5 Admin Menu");
+  menu.SetTitle("RISE OF THE TITANS | Admin Menu");
 
   // Add actual choices
   menu.AddItem("get5_scrim", "Create a scrim", EnabledIf(g_GameState == Get5State_None));

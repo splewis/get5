@@ -286,7 +286,7 @@
     }
     "MatchPoweredBy"
     {
-        "chi"        "由{YELLOW}Get5{NORMAL}强力驱动"
+        "chi"        "由{GREEN}RISE OF THE TITANS{NORMAL}强力驱动"
     }
     "MapVetoPickMenuText"
     {

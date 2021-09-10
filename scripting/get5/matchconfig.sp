@@ -1098,7 +1098,7 @@ static int AddPlayersToAuthKv(KeyValues kv, MatchTeam team, char teamName[MAX_CV
           gotClientName = true;
           char clientName[MAX_NAME_LENGTH];
           GetClientName(i, clientName, sizeof(clientName));
-          Format(teamName, sizeof(teamName), "team_%s", clientName);
+          Format(teamName, sizeof(teamName), "Time %s", clientName);
         }
 
         count++;
@@ -1147,7 +1147,7 @@ public void CheckTeamNameStatus(MatchTeam team) {
         if (GetClientMatchTeam(i) == team) {
           char clientName[MAX_NAME_LENGTH];
           GetClientName(i, clientName, sizeof(clientName));
-          Format(g_TeamNames[team], MAX_CVAR_LENGTH, "team_%s", clientName);
+          Format(g_TeamNames[team], MAX_CVAR_LENGTH, "Time %s", clientName);
           break;
         }
       }

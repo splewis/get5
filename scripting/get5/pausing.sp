@@ -65,15 +65,12 @@ public Action Command_Pause(int client, int args) {
   }
 
   // If the pause will need explicit resuming, we will create a timer to poll the pause status.
-  bool need_resume = Pause(g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team), pausesLeft);
   if (IsPlayer(client)) {
     Get5_MessageToAll("%t", "MatchPausedByTeamMessage", client);
   }
 
   if (IsPlayerTeam(team)) {
-    if (need_resume) {
-      CreateTimer(1.0, Timer_PauseTimeCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
-    }
+    CreateTimer(1.0, Timer_PauseTimeCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
 
     g_TeamPausesUsed[team]++;
 

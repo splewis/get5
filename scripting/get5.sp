@@ -303,9 +303,9 @@ public void OnPluginStart() {
       CreateConVar("get5_max_backup_age", "160000",
                    "Number of seconds before a backup file is automatically deleted, 0 to disable");
   g_MaxPausesCvar =
-      CreateConVar("get5_max_pauses", "0", "Maximum number of pauses a team can use, 0=unlimited");
+      CreateConVar("get5_max_pauses", "4", "Maximum number of pauses a team can use, 0=unlimited");
   g_MaxPauseTimeCvar =
-      CreateConVar("get5_max_pause_time", "300",
+      CreateConVar("get5_max_pause_time", "30",
                    "Maximum number of time the game can spend paused by a team, 0=unlimited");
   g_MessagePrefixCvar =
       CreateConVar("get5_message_prefix", DEFAULT_TAG, "The tag applied before plugin messages.");
@@ -371,7 +371,7 @@ public void OnPluginStart() {
   AddAliasedCommand("unready", Command_NotReady, "Marks the client as not ready");
   AddAliasedCommand("notready", Command_NotReady, "Marks the client as not ready");
   AddAliasedCommand("forceready", Command_ForceReadyClient, "Force marks clients team as ready");
-  AddAliasedCommand("tech", Command_TechPause, "Calls for a tech pause");
+  AddAliasedCommand("tec", Command_TechPause, "Calls for a tech pause");
   AddAliasedCommand("pause", Command_Pause, "Pauses the game");
   AddAliasedCommand("unpause", Command_Unpause, "Unpauses the game");
   AddAliasedCommand("coach", Command_SmCoach, "Marks a client as a coach for their team");
@@ -383,7 +383,6 @@ public void OnPluginStart() {
                     "Elects to swap the current teams after winning a knife round");
   AddAliasedCommand("t", Command_T, "Elects to start on T side after winning a knife round");
   AddAliasedCommand("ct", Command_Ct, "Elects to start on CT side after winning a knife round");
-  AddAliasedCommand("stop", Command_Stop, "Elects to stop the game to reload a backup file");
 
   /** Admin/server commands **/
   RegAdminCmd(

@@ -51,7 +51,7 @@ public void VetoFinished() {
   }
 
   g_MapChangePending = true;
-  CreateTimer(10.0, Timer_NextMatchMap);
+  CreateTimer(5.0, Timer_NextMatchMap);
 }
 
 // Main Veto Controller

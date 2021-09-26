@@ -6,7 +6,6 @@ public void Stats_PluginStart() {
   HookEvent("bomb_planted", Stats_BombPlantedEvent);
   HookEvent("bomb_defused", Stats_BombDefusedEvent);
   HookEvent("bomb_exploded", Stats_BombExplodedEvent);
-  HookEvent("flashbang_detonate", Stats_FlashbangDetonateEvent, EventHookMode_Pre);
   HookEvent("player_blind", Stats_PlayerBlindEvent);
   HookEvent("round_mvp", Stats_RoundMVPEvent);
 }
@@ -44,7 +43,6 @@ public void Stats_ResetRoundValues() {
 public void Stats_ResetClientRoundValues(int client) {
   g_RoundKills[client] = 0;
   g_RoundClutchingEnemyCount[client] = 0;
-  g_RoundFlashedBy[client] = 0;
   g_PlayerKilledBy[client] = -1;
   g_PlayerKilledByTime[client] = 0.0;
   g_PlayerRoundKillOrAssistOrTradedDeath[client] = false;
@@ -193,6 +191,7 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   int victim = GetClientOfUserId(event.GetInt("userid"));
   int assister = GetClientOfUserId(event.GetInt("assister"));
   bool headshot = event.GetBool("headshot");
+  bool assistedFlash = event.GetBool("assistedflash");
 
   char weapon[32];
   event.GetString("weapon", weapon, sizeof(weapon));
@@ -232,21 +231,44 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
       IncrementPlayerStat(attacker, STAT_KILLS);
       g_PlayerRoundKillOrAssistOrTradedDeath[attacker] = true;
 
-      if (headshot)
+      if (headshot) {
         IncrementPlayerStat(attacker, STAT_HEADSHOT_KILLS);
-
-      if (IsValidClient(assister)) {
-        IncrementPlayerStat(assister, STAT_ASSISTS);
-        g_PlayerRoundKillOrAssistOrTradedDeath[assister] = true;
       }
 
-      int flasher = g_RoundFlashedBy[victim];
-      if (IsValidClient(flasher) && flasher != attacker)
-        IncrementPlayerStat(flasher, STAT_FLASHBANG_ASSISTS);
-      else
-        flasher = 0;
+      // We need the weapon ID to reliably translate to a knife. The regular "bayonet" - as the only knife -  is not
+      // prefixed with "knife" for whatever reason, so searching weapon name strings is unsafe.
+      CSWeaponID weaponId = CS_AliasToWeaponID(weapon);
 
-      EventLogger_PlayerDeath(attacker, victim, headshot, assister, flasher, weapon);
+      // Other than these constants, all knives can be found after CSWeapon_MAX_WEAPONS_NO_KNIFES.
+      // See https://sourcemod.dev/#/cstrike/enumeration.CSWeaponID
+      if (weaponId == CSWeapon_KNIFE
+      || weaponId == CSWeapon_KNIFE_GG
+      || weaponId == CSWeapon_KNIFE_T
+      || weaponId == CSWeapon_KNIFE_GHOST
+      || weaponId > CSWeapon_MAX_WEAPONS_NO_KNIFES) {
+        IncrementPlayerStat(attacker, STAT_KNIFE_KILLS);
+      }
+
+      // Assists should only count towards opposite team
+      if (HelpfulAttack(assister, victim)) {
+
+        // You cannot flash-assist and regular-assist for the same kill.
+        if (assistedFlash) {
+            IncrementPlayerStat(assister, STAT_FLASHBANG_ASSISTS);
+        } else {
+            IncrementPlayerStat(assister, STAT_ASSISTS);
+            g_PlayerRoundKillOrAssistOrTradedDeath[assister] = true;
+        }
+
+      } else {
+
+        // Don't count friendly-fire assist at all.
+        assister = 0;
+        assistedFlash = false;
+
+      }
+
+      EventLogger_PlayerDeath(attacker, victim, headshot, assister, assistedFlash, weapon);
 
     } else {
       if (attacker == victim)
@@ -297,10 +319,8 @@ public Action Stats_DamageDealtEvent(Event event, const char[] name, bool dontBr
 
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
   int victim = GetClientOfUserId(event.GetInt("userid"));
-  bool validAttacker = IsValidClient(attacker);
-  bool validVictim = IsValidClient(victim);
 
-  if (validAttacker && validVictim) {
+  if (HelpfulAttack(attacker, victim)) {
     int preDamageHealth = GetClientHealth(victim);
     int damage = event.GetInt("dmg_health");
     int postDamageHealth = event.GetInt("health");
@@ -314,7 +334,19 @@ public Action Stats_DamageDealtEvent(Event event, const char[] name, bool dontBr
 
     g_DamageDone[attacker][victim] += damage;
     g_DamageDoneHits[attacker][victim]++;
+
     AddToPlayerStat(attacker, STAT_DAMAGE, damage);
+
+    // Damage can be dealt by throwing grenades "at" people, physically, but the regular score board does not
+    // count this as utility damage, so neither do we. Hence no 'smokegrenade' or 'flashbang' here.
+
+    char weapon[32];
+    event.GetString("weapon", weapon, sizeof(weapon));
+
+    if (StrEqual(weapon, "hegrenade") || StrEqual(weapon, "inferno")) {
+      AddToPlayerStat(attacker, STAT_UTILITY_DAMAGE, damage);
+    }
+
   }
 
   return Plugin_Continue;
@@ -364,36 +396,35 @@ public Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontB
   return Plugin_Continue;
 }
 
-public Action Stats_FlashbangDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
-    return Plugin_Continue;
-  }
-
-  int userid = event.GetInt("userid");
-  int client = GetClientOfUserId(userid);
-
-  if (IsValidClient(client)) {
-    g_LastFlashBangThrower = client;
-  }
-
-  return Plugin_Continue;
-}
-
-public Action Timer_ResetFlashStatus(Handle timer, int serial) {
-  int client = GetClientFromSerial(serial);
-  if (IsValidClient(client)) {
-    g_RoundFlashedBy[client] = -1;
-  }
-}
-
 public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live) {
     return Plugin_Continue;
   }
 
-  int userid = event.GetInt("userid");
-  int client = GetClientOfUserId(userid);
-  RequestFrame(GetFlashInfo, GetClientSerial(client));
+  float duration = event.GetFloat("blind_duration");
+
+  if (duration < 2.5) {
+    // 2.5 is an arbitrary value that closely matches the "enemies flashed" column of the in-game scoreboard.
+    return Plugin_Continue;
+  }
+
+  int victim = GetClientOfUserId(event.GetInt("userid"));
+  int attacker = GetClientOfUserId(event.GetInt("attacker"));
+
+  if (attacker == victim || !IsValidClient(attacker) || !IsValidClient(victim)) {
+    return Plugin_Continue;
+  }
+
+  int victimTeam = GetClientTeam(victim);
+  if (victimTeam == CS_TEAM_SPECTATOR || victimTeam == CS_TEAM_NONE) {
+    return Plugin_Continue;
+  }
+
+  if (GetClientTeam(attacker) != victimTeam) {
+    IncrementPlayerStat(attacker, STAT_ENEMIES_FLASHED);
+  } else {
+    IncrementPlayerStat(attacker, STAT_FRIENDLIES_FLASHED);
+  }
 
   return Plugin_Continue;
 }
@@ -411,18 +442,6 @@ public Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroad
   }
 
   return Plugin_Continue;
-}
-
-public void GetFlashInfo(int serial) {
-  int client = GetClientFromSerial(serial);
-  if (IsValidClient(client)) {
-    float flashDuration =
-        GetEntDataFloat(client, FindSendPropInfo("CCSPlayer", "m_flFlashDuration"));
-    if (flashDuration >= 2.5) {
-      g_RoundFlashedBy[client] = g_LastFlashBangThrower;
-    }
-    CreateTimer(flashDuration, Timer_ResetFlashStatus, serial);
-  }
 }
 
 static int GetPlayerStat(int client, const char[] field) {

@@ -138,8 +138,6 @@ bool g_SetTeamClutching[4];
 int g_RoundKills[MAXPLAYERS + 1];  // kills per round each client has gotten
 int g_RoundClutchingEnemyCount[MAXPLAYERS +
                                1];  // number of enemies left alive when last alive on your team
-int g_LastFlashBangThrower = -1;    // last client to have a flashbang detonate
-int g_RoundFlashedBy[MAXPLAYERS + 1];
 bool g_TeamFirstKillDone[MATCHTEAM_COUNT];
 bool g_TeamFirstDeathDone[MATCHTEAM_COUNT];
 int g_PlayerKilledBy[MAXPLAYERS + 1];

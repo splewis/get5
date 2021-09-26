@@ -536,8 +536,68 @@ static int GetClutchingClient(int csTeam) {
 public void DumpToFile() {
   char path[PLATFORM_MAX_PATH + 1];
   if (FormatCvarString(g_StatsPathFormatCvar, path, sizeof(path))) {
-    g_StatsKv.ExportToFile(path);
+    DumpToFilePath(path);
   }
+}
+
+public bool DumpToFilePath(const char[] path) {
+  return IsJSONPath(path) ? DumpToJSONFile(path) : g_StatsKv.ExportToFile(path);
+}
+
+public bool DumpToJSONFile(const char[] path) {
+  g_StatsKv.Rewind();
+  g_StatsKv.GotoFirstSubKey(false);
+  JSON_Object stats = EncodeKeyValue(g_StatsKv);
+  g_StatsKv.Rewind();
+
+  File stats_file = OpenFile(path, "w");
+  if (stats_file == null) {
+    LogError("Failed to open stats file");
+    return false;
+  }
+
+  char jsonBuffer[8192]; // 8 KiB
+  stats.Encode(jsonBuffer, sizeof(jsonBuffer));
+  json_cleanup_and_delete(stats);
+  stats_file.WriteString(jsonBuffer, false);
+
+  stats_file.Flush();
+  stats_file.Close();
+
+  return true;
+}
+
+JSON_Object EncodeKeyValue(KeyValues kv) {
+  char keyBuffer[256];
+  char valBuffer[256];
+  char sectionName[256];
+  JSON_Object json_kv = new JSON_Object();
+
+  do {
+    if (kv.GotoFirstSubKey(false)) {
+      // Current key is a section. Browse it recursively.
+      JSON_Object obj = EncodeKeyValue(kv);
+      kv.GoBack();
+      kv.GetSectionName(sectionName, sizeof(sectionName));
+      json_kv.SetObject(sectionName, obj);
+    } else {
+      // Current key is a regular key, or an empty section.
+      KvDataTypes keyType = kv.GetDataType(NULL_STRING);
+      kv.GetSectionName(keyBuffer, sizeof(keyBuffer));
+      if (keyType == KvData_String) {
+        kv.GetString(NULL_STRING, valBuffer, sizeof(valBuffer));
+        json_kv.SetString(keyBuffer, valBuffer);
+      } else if (keyType == KvData_Int) {
+        json_kv.SetInt(keyBuffer, kv.GetNum(NULL_STRING));
+      } else if (keyType == KvData_Float) {
+        json_kv.SetFloat(keyBuffer, kv.GetFloat(NULL_STRING));
+      } else {
+        LogDebug("Can't JSON encode key '%s' with type %d", keyBuffer, keyType);
+      }
+    }
+  } while (kv.GotoNextKey(false));
+
+  return json_kv;
 }
 
 static void PrintDamageInfo(int client) {

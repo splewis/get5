@@ -238,7 +238,11 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
       int assists = kv.GetNum(STAT_ASSISTS);
       int teamkills = kv.GetNum(STAT_TEAMKILLS);
       int damage = kv.GetNum(STAT_DAMAGE);
+      int utility_damage = kv.GetNum(STAT_UTILITY_DAMAGE);
+      int enemies_flashed = kv.GetNum(STAT_ENEMIES_FLASHED);
+      int friendlies_flashed = kv.GetNum(STAT_FRIENDLIES_FLASHED);
       int headshot_kills = kv.GetNum(STAT_HEADSHOT_KILLS);
+      int knife_kills = kv.GetNum(STAT_KNIFE_KILLS);
       int roundsplayed = kv.GetNum(STAT_ROUNDSPLAYED);
       int plants = kv.GetNum(STAT_BOMBPLANTS);
       int defuses = kv.GetNum(STAT_BOMBDEFUSES);
@@ -263,14 +267,15 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
       char teamString[16];
       GetTeamString(team, teamString, sizeof(teamString));
 
-      // TODO: this should really get split up somehow. Once it hits 32-arguments
-      // (aka just a few more) it will cause runtime errors and the Format will fail.
+      // Note that Format() has a 127 argument limit. See SP_MAX_CALL_ARGUMENTS in sourcepawn.
+      // At this time we're at around 33, so this should not be a problem in the foreseeable future.
       // clang-format off
       Format(queryBuffer, sizeof(queryBuffer),
                 "INSERT INTO `get5_stats_players` \
                 (`matchid`, `mapnumber`, `steamid64`, `team`, \
                 `rounds_played`, `name`, `kills`, `deaths`, `flashbang_assists`, \
-                `assists`, `teamkills`, `headshot_kills`, `damage`, \
+                `assists`, `teamkills`, `knife_kills`, `headshot_kills`, \
+                `damage`, `utility_damage`, `enemies_flashed`, `friendlies_flashed`, \
                 `bomb_plants`, `bomb_defuses`, \
                 `v1`, `v2`, `v3`, `v4`, `v5`, \
                 `2k`, `3k`, `4k`, `5k`, \
@@ -280,7 +285,7 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
                 (%d, %d, '%s', '%s', \
                 %d, '%s', %d, %d, %d, \
                 %d, %d, %d, %d, \
-                %d, %d, \
+                %d, %d, %d, %d, %d, %d, \
                 %d, %d, %d, %d, %d, \
                 %d, %d, %d, %d, \
                 %d, %d, %d, %d, \
@@ -292,8 +297,12 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
                 `flashbang_assists` = VALUES(`flashbang_assists`), \
                 `assists` = VALUES(`assists`), \
                 `teamkills` = VALUES(`teamkills`), \
+                `knife_kills` = VALUES(`knife_kills`), \
                 `headshot_kills` = VALUES(`headshot_kills`), \
                 `damage` = VALUES(`damage`), \
+                `utility_damage` = VALUES(`utility_damage`), \
+                `enemies_flashed` = VALUES(`enemies_flashed`), \
+                `friendlies_flashed` = VALUES(`friendlies_flashed`), \
                 `bomb_plants` = VALUES(`bomb_plants`), \
                 `bomb_defuses` = VALUES(`bomb_defuses`), \
                 `v1` = VALUES(`v1`), \
@@ -315,7 +324,8 @@ public void AddPlayerStats(KeyValues kv, MatchTeam team) {
                 `mvp` = VALUES(`mvp`)",
              g_MatchID, mapNumber, authSz, teamString, 
              roundsplayed, nameSz, kills, deaths, flashbang_assists, 
-             assists, teamkills, headshot_kills, damage, 
+             assists, teamkills, knife_kills, headshot_kills, damage, utility_damage,
+             enemies_flashed, friendlies_flashed,
              plants, defuses, 
              v1, v2, v3, v4, v5, 
              k2, k3, k4, k5, 

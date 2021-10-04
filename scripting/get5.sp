@@ -49,6 +49,9 @@
 #pragma newdecls required
 
 /** ConVar handles **/
+ConVar g_EnableInfoMessagesCvar;
+ConVar g_AutoReadyPlayerOnJoinCvar;
+ConVar g_DisableUnreadyCommandCvar;
 ConVar g_AllowTechPauseCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_AutoReadyActivePlayers;
@@ -253,6 +256,9 @@ public void OnPluginStart() {
   LoadTranslations("common.phrases");
 
   /** ConVars **/
+  g_EnableInfoMessagesCvar = CreateConVar("get5_enable_info_messages", "1", "Whether or not to display info messages in chat");
+  g_AutoReadyPlayerOnJoinCvar = CreateConVar("get5_auto_ready_players_on_join", "0", "Whether or not to auto ready up players when they join");
+  g_DisableUnreadyCommandCvar = CreateConVar("get5_disable_unready_command", "0", "Whether or not to allow users to use the unready command");
   g_AllowTechPauseCvar = CreateConVar("get5_allow_technical_pause", "1",
                                       "Whether or not technical pauses are allowed");
   g_AutoLoadConfigCvar =
@@ -495,6 +501,10 @@ public void OnPluginStart() {
 }
 
 public Action Timer_InfoMessages(Handle timer) {
+  if (!g_EnableInfoMessagesCvar.BoolValue) {
+    return Plugin_Continue;
+  }
+
   // Handle pre-veto messages
   if (g_GameState == Get5State_PreVeto) {
     if (IsTeamsReady() && !IsSpectatorsReady()) {
@@ -614,6 +624,9 @@ public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
   EventLogger_PlayerConnect(client);
   if (client > 0) {
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
+  }
+  if (g_AutoReadyPlayerOnJoinCvar.BoolValue) {
+    SetClientReady(client, true);
   }
 }
 

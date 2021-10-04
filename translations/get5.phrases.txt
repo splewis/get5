@@ -33,6 +33,10 @@
     {
         "en"            "You have been marked as NOT ready."
     }
+    "YouCannotUnready"
+    {
+        "en"            "Unready has been disabled"
+    }
     "WaitingForEnemySwapInfoMessage"
     {
         "#format"       "{1:s}"

@@ -174,6 +174,11 @@ public Action Command_NotReady(int client, int args) {
     return Plugin_Handled;
   }
 
+  if (g_DisableUnreadyCommandCvar.BoolValue) {
+    Get5_Message(client, "%t", "YouCannotUnready");
+    return Plugin_Handled;
+  }
+
   Get5_Message(client, "%t", "YouAreNotReady");
 
   bool teamWasReady = IsTeamReady(team);
@@ -263,7 +268,6 @@ public void MissingPlayerInfoMessageTeam(MatchTeam team) {
 
 public void UpdateClanTags() {
   if (!g_SetClientClanTagCvar.BoolValue) {
-    LogMessage("Not setting client clang tags because get5_set_client_clan_tags is 0");
     return;
   }
 

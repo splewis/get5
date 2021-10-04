@@ -49,18 +49,18 @@
 #pragma newdecls required
 
 /** ConVar handles **/
-ConVar g_EnableInfoMessagesCvar;
-ConVar g_AutoReadyPlayerOnJoinCvar;
-ConVar g_DisableUnreadyCommandCvar;
 ConVar g_AllowTechPauseCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_AutoReadyActivePlayers;
+ConVar g_AutoReadyPlayerOnJoinCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
 ConVar g_DamagePrintCvar;
 ConVar g_DamagePrintFormat;
 ConVar g_DemoNameFormatCvar;
+ConVar g_DisableUnreadyCommandCvar;
 ConVar g_DisplayGotvVeto;
+ConVar g_EnableInfoMessagesCvar;
 ConVar g_EndMatchOnEmptyServerCvar;
 ConVar g_EventLogFormatCvar;
 ConVar g_FixedPauseTimeCvar;
@@ -256,9 +256,6 @@ public void OnPluginStart() {
   LoadTranslations("common.phrases");
 
   /** ConVars **/
-  g_EnableInfoMessagesCvar = CreateConVar("get5_enable_info_messages", "1", "Whether or not to display info messages in chat");
-  g_AutoReadyPlayerOnJoinCvar = CreateConVar("get5_auto_ready_players_on_join", "0", "Whether or not to auto ready up players when they join");
-  g_DisableUnreadyCommandCvar = CreateConVar("get5_disable_unready_command", "0", "Whether or not to allow users to use the unready command");
   g_AllowTechPauseCvar = CreateConVar("get5_allow_technical_pause", "1",
                                       "Whether or not technical pauses are allowed");
   g_AutoLoadConfigCvar =
@@ -267,6 +264,9 @@ public void OnPluginStart() {
   g_AutoReadyActivePlayers = CreateConVar(
       "get5_auto_ready_active_players", "0",
       "Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase.");
+  g_AutoReadyPlayerOnJoinCvar = CreateConVar(
+      "get5_auto_ready_players_on_join", "0",
+      "Whether or not to auto ready up players when they join");
   g_BackupSystemEnabledCvar =
       CreateConVar("get5_backup_system_enabled", "1", "Whether the get5 backup system is enabled");
   g_DamagePrintCvar =
@@ -280,9 +280,13 @@ public void OnPluginStart() {
                    "If set to 0, get5 will not force players to the correct team based on steamid");
   g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
                                       "Format for demo file names, use \"\" to disable");
+  g_DisableUnreadyCommandCvar = CreateConVar("get5_disable_unready_command", "0", "Whether or not to allow users to use the unready command");
   g_DisplayGotvVeto =
       CreateConVar("get5_display_gotv_veto", "0",
                    "Whether to wait for map vetos to be printed to GOTV before changing map");
+  g_EnableInfoMessagesCvar = 
+      CreateConVar("get5_enable_info_messages", "1",
+                   "Whether or not to display info messages in chat");
   g_EndMatchOnEmptyServerCvar = CreateConVar(
       "get5_end_match_on_empty_server", "0",
       "Whether to end the match if all players disconnect before ending. No winner is set if this happens.");

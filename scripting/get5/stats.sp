@@ -556,7 +556,7 @@ public bool DumpToJSONFile(const char[] path) {
     return false;
   }
 
-  char jsonBuffer[65536]; // 8 KiB
+  char jsonBuffer[65536]; // 64 KiB
   stats.Encode(jsonBuffer, sizeof(jsonBuffer));
   json_cleanup_and_delete(stats);
   stats_file.WriteString(jsonBuffer, false);

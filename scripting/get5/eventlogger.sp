@@ -139,8 +139,8 @@ public void EventLogger_GoingLive() {
   EventLogger_EndEvent("going_live");
 }
 
-public void EventLogger_PlayerDeath(int killer, int victim, bool headshot, int assister,
-                             bool flash_assist, const char[] weapon) {
+public void EventLogger_PlayerDeath(int killer, int victim, bool headshot, int assister, bool flash_assist,
+                             const char[] weapon) {
   EventLogger_StartEvent();
   AddMapData(params);
   AddPlayer(params, "attacker", killer);
@@ -285,7 +285,7 @@ public void EventLogger_PauseCommand(MatchTeam team, PauseType pauseReason) {
   EventLogger_EndEvent("pause_command");
 }
 
-public void EventLogger_UnpauseCommand(MatchTeam team) { 
+public void EventLogger_UnpauseCommand(MatchTeam team) {
   EventLogger_StartEvent();
   AddMapData(params);
   AddTeam(params, "request_team", team);

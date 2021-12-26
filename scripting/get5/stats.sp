@@ -235,37 +235,33 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
         IncrementPlayerStat(attacker, STAT_HEADSHOT_KILLS);
       }
 
-      // We need the weapon ID to reliably translate to a knife. The regular "bayonet" - as the only knife -  is not
-      // prefixed with "knife" for whatever reason, so searching weapon name strings is unsafe.
+      // We need the weapon ID to reliably translate to a knife. The regular "bayonet" - as the only
+      // knife -  is not prefixed with "knife" for whatever reason, so searching weapon name strings
+      // is unsafe.
       CSWeaponID weaponId = CS_AliasToWeaponID(weapon);
 
       // Other than these constants, all knives can be found after CSWeapon_MAX_WEAPONS_NO_KNIFES.
       // See https://sourcemod.dev/#/cstrike/enumeration.CSWeaponID
-      if (weaponId == CSWeapon_KNIFE
-      || weaponId == CSWeapon_KNIFE_GG
-      || weaponId == CSWeapon_KNIFE_T
-      || weaponId == CSWeapon_KNIFE_GHOST
-      || weaponId > CSWeapon_MAX_WEAPONS_NO_KNIFES) {
+      if (weaponId == CSWeapon_KNIFE || weaponId == CSWeapon_KNIFE_GG ||
+          weaponId == CSWeapon_KNIFE_T || weaponId == CSWeapon_KNIFE_GHOST ||
+          weaponId > CSWeapon_MAX_WEAPONS_NO_KNIFES) {
         IncrementPlayerStat(attacker, STAT_KNIFE_KILLS);
       }
 
       // Assists should only count towards opposite team
       if (HelpfulAttack(assister, victim)) {
-
         // You cannot flash-assist and regular-assist for the same kill.
         if (assistedFlash) {
-            IncrementPlayerStat(assister, STAT_FLASHBANG_ASSISTS);
+          IncrementPlayerStat(assister, STAT_FLASHBANG_ASSISTS);
         } else {
-            IncrementPlayerStat(assister, STAT_ASSISTS);
-            g_PlayerRoundKillOrAssistOrTradedDeath[assister] = true;
+          IncrementPlayerStat(assister, STAT_ASSISTS);
+          g_PlayerRoundKillOrAssistOrTradedDeath[assister] = true;
         }
 
       } else {
-
         // Don't count friendly-fire assist at all.
         assister = 0;
         assistedFlash = false;
-
       }
 
       EventLogger_PlayerDeath(attacker, victim, headshot, assister, assistedFlash, weapon);
@@ -337,8 +333,9 @@ public Action Stats_DamageDealtEvent(Event event, const char[] name, bool dontBr
 
     AddToPlayerStat(attacker, STAT_DAMAGE, damage);
 
-    // Damage can be dealt by throwing grenades "at" people, physically, but the regular score board does not
-    // count this as utility damage, so neither do we. Hence no 'smokegrenade' or 'flashbang' here.
+    // Damage can be dealt by throwing grenades "at" people, physically, but the regular score board
+    // does not count this as utility damage, so neither do we. Hence no 'smokegrenade' or
+    // 'flashbang' here.
 
     char weapon[32];
     event.GetString("weapon", weapon, sizeof(weapon));
@@ -346,7 +343,6 @@ public Action Stats_DamageDealtEvent(Event event, const char[] name, bool dontBr
     if (StrEqual(weapon, "hegrenade") || StrEqual(weapon, "inferno")) {
       AddToPlayerStat(attacker, STAT_UTILITY_DAMAGE, damage);
     }
-
   }
 
   return Plugin_Continue;
@@ -404,7 +400,8 @@ public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBr
   float duration = event.GetFloat("blind_duration");
 
   if (duration < 2.5) {
-    // 2.5 is an arbitrary value that closely matches the "enemies flashed" column of the in-game scoreboard.
+    // 2.5 is an arbitrary value that closely matches the "enemies flashed" column of the in-game
+    // scoreboard.
     return Plugin_Continue;
   }
 
@@ -558,7 +555,7 @@ public bool DumpToJSONFile(const char[] path) {
 
   // Mark the JSON buffer static to avoid running into limited haep/stack space, see
   // https://forums.alliedmods.net/showpost.php?p=2620835&postcount=6
-  static char jsonBuffer[65536]; // 64 KiB
+  static char jsonBuffer[65536];  // 64 KiB
   stats.Encode(jsonBuffer, sizeof(jsonBuffer));
   json_cleanup_and_delete(stats);
   stats_file.WriteString(jsonBuffer, false);

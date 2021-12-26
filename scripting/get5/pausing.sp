@@ -12,7 +12,8 @@ public Action Command_TechPause(int client, int args) {
   if (client == 0) {
     Pause();
     EventLogger_PauseCommand(MatchTeam_TeamNone, PauseType_Tech);
-    LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", MatchTeam_TeamNone, PauseType_Tech);
+    LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", MatchTeam_TeamNone,
+             PauseType_Tech);
     Call_StartForward(g_OnMatchPaused);
     Call_PushCell(MatchTeam_TeamNone);
     Call_PushCell(PauseType_Tech);
@@ -46,7 +47,8 @@ public Action Command_Pause(int client, int args) {
 
     Pause();
     EventLogger_PauseCommand(MatchTeam_TeamNone, PauseType_Tactical);
-    LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", MatchTeam_TeamNone, PauseType_Tactical);
+    LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", MatchTeam_TeamNone,
+             PauseType_Tactical);
     Call_StartForward(g_OnMatchPaused);
     Call_PushCell(MatchTeam_TeamNone);
     Call_PushCell(PauseType_Tactical);
@@ -78,7 +80,7 @@ public Action Command_Pause(int client, int args) {
 
   int pausesLeft = 1;
   if (g_MaxPausesCvar.IntValue > 0 && IsPlayerTeam(team)) {
-    //Update the built-in convar to ensure correct max amount is displayed
+    // Update the built-in convar to ensure correct max amount is displayed
     ServerCommand("mp_team_timeout_max %d", g_MaxPausesCvar.IntValue);
     pausesLeft = g_MaxPausesCvar.IntValue - g_TeamPausesUsed[team] - 1;
   }
@@ -100,7 +102,8 @@ public Action Command_Pause(int client, int args) {
     if (need_resume) {
       g_PauseTimeUsed = g_PauseTimeUsed + g_FixedPauseTimeCvar.IntValue - 1;
       CreateTimer(1.0, Timer_PauseTimeCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
-      // Keep track of timer, since we don't want several timers created for one pause checking instance.
+      // Keep track of timer, since we don't want several timers created for one pause checking
+      // instance.
       CreateTimer(1.0, Timer_UnpauseEventCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
     }
 

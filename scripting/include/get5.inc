@@ -39,8 +39,8 @@ enum SideChoice {
 };
 
 enum PauseType {
-  PauseType_Tech,     // Technical pause
-  PauseType_Tactical,      // Tactical Pause
+  PauseType_Tech,      // Technical pause
+  PauseType_Tactical,  // Tactical Pause
 };
 
 // Called each get5-event with JSON formatted event text.

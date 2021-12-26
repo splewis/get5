@@ -51,6 +51,9 @@ public void Stats_ResetClientRoundValues(int client) {
   for (int i = 1; i <= MaxClients; i++) {
     g_DamageDone[client][i] = 0;
     g_DamageDoneHits[client][i] = 0;
+    g_DamageDoneKill[client][i] = false;
+    g_DamageDoneAssist[client][i] = false;
+    g_DamageDoneFlashAssist[client][i] = false;
   }
 }
 
@@ -226,6 +229,7 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
       g_PlayerKilledBy[victim] = attacker;
       g_PlayerKilledByTime[victim] = GetGameTime();
+      g_DamageDoneKill[attacker][victim] = true;
       UpdateTradeStat(attacker, victim);
 
       IncrementPlayerStat(attacker, STAT_KILLS);
@@ -253,9 +257,11 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
         // You cannot flash-assist and regular-assist for the same kill.
         if (assistedFlash) {
           IncrementPlayerStat(assister, STAT_FLASHBANG_ASSISTS);
+          g_DamageDoneFlashAssist[assister][victim] = true;
         } else {
           IncrementPlayerStat(assister, STAT_ASSISTS);
           g_PlayerRoundKillOrAssistOrTradedDeath[assister] = true;
+          g_DamageDoneAssist[assister][victim] = true;
         }
 
       } else {
@@ -618,11 +624,31 @@ static void PrintDamageInfo(int client) {
 
       g_DamagePrintFormat.GetString(message, sizeof(message));
       ReplaceStringWithInt(message, sizeof(message), "{DMG_TO}", g_DamageDone[client][i], false);
-      ReplaceStringWithInt(message, sizeof(message), "{HITS_TO}", g_DamageDoneHits[client][i],
-                           false);
+      ReplaceStringWithInt(message, sizeof(message), "{HITS_TO}", g_DamageDoneHits[client][i], false);
+
+      if (g_DamageDoneKill[client][i]) {
+          ReplaceString(message, sizeof(message), "{KILL_TO}", "{GREEN}X{NORMAL}", false);
+      } else if (g_DamageDoneAssist[client][i]) {
+          ReplaceString(message, sizeof(message), "{KILL_TO}", "{YELLOW}A{NORMAL}", false);
+      } else if (g_DamageDoneFlashAssist[client][i]) {
+          ReplaceString(message, sizeof(message), "{KILL_TO}", "{YELLOW}F{NORMAL}", false);
+      } else {
+          ReplaceString(message, sizeof(message), "{KILL_TO}", "–", false);
+      }
+
       ReplaceStringWithInt(message, sizeof(message), "{DMG_FROM}", g_DamageDone[i][client], false);
-      ReplaceStringWithInt(message, sizeof(message), "{HITS_FROM}", g_DamageDoneHits[i][client],
-                           false);
+      ReplaceStringWithInt(message, sizeof(message), "{HITS_FROM}", g_DamageDoneHits[i][client], false);
+
+      if (g_DamageDoneKill[i][client]) {
+          ReplaceString(message, sizeof(message), "{KILL_FROM}", "{DARK_RED}X{NORMAL}", false);
+      } else if (g_DamageDoneAssist[i][client]) {
+          ReplaceString(message, sizeof(message), "{KILL_FROM}", "{YELLOW}A{NORMAL}", false);
+      } else if (g_DamageDoneFlashAssist[i][client]) {
+          ReplaceString(message, sizeof(message), "{KILL_FROM}", "{YELLOW}F{NORMAL}", false);
+      } else {
+          ReplaceString(message, sizeof(message), "{KILL_FROM}", "–", false);
+      }
+
       ReplaceString(message, sizeof(message), "{NAME}", name, false);
       ReplaceStringWithInt(message, sizeof(message), "{HEALTH}", health, false);
 

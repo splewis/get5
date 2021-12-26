@@ -556,7 +556,9 @@ public bool DumpToJSONFile(const char[] path) {
     return false;
   }
 
-  char jsonBuffer[65536]; // 64 KiB
+  // Mark the JSON buffer static to avoid running into limited haep/stack space, see
+  // https://forums.alliedmods.net/showpost.php?p=2620835&postcount=6
+  static char jsonBuffer[65536]; // 64 KiB
   stats.Encode(jsonBuffer, sizeof(jsonBuffer));
   json_cleanup_and_delete(stats);
   stats_file.WriteString(jsonBuffer, false);

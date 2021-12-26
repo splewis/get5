@@ -144,6 +144,9 @@ int g_PlayerKilledBy[MAXPLAYERS + 1];
 float g_PlayerKilledByTime[MAXPLAYERS + 1];
 int g_DamageDone[MAXPLAYERS + 1][MAXPLAYERS + 1];
 int g_DamageDoneHits[MAXPLAYERS + 1][MAXPLAYERS + 1];
+bool g_DamageDoneKill[MAXPLAYERS + 1][MAXPLAYERS + 1];
+bool g_DamageDoneAssist[MAXPLAYERS + 1][MAXPLAYERS + 1];
+bool g_DamageDoneFlashAssist[MAXPLAYERS + 1][MAXPLAYERS + 1];
 bool g_PlayerRoundKillOrAssistOrTradedDeath[MAXPLAYERS + 1];
 bool g_PlayerSurvived[MAXPLAYERS + 1];
 KeyValues g_StatsKv;
@@ -270,8 +273,8 @@ public void OnPluginStart() {
       CreateConVar("get5_print_damage", "0", "Whether damage reports are printed on round end.");
   g_DamagePrintFormat = CreateConVar(
       "get5_damageprint_format",
-      "--> ({DMG_TO} dmg / {HITS_TO} hits) to ({DMG_FROM} dmg / {HITS_FROM} hits) from {NAME} ({HEALTH} HP)",
-      "Format of the damage output string. Avaliable tags are in the default, color tags such as {LIGHT_RED} and {GREEN} also work.");
+      "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)",
+      "Format of the damage output string. Available tags are in the default, color tags such as {LIGHT_RED} and {GREEN} also work. {KILL_TO} and {KILL_FROM} indicate kills, assists and flash assists as booleans, all of which are mutually exclusive.");
   g_CheckAuthsCvar =
       CreateConVar("get5_check_auths", "1",
                    "If set to 0, get5 will not force players to the correct team based on steamid");

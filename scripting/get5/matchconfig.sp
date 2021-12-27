@@ -349,6 +349,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
     g_BO2Match = true;
     g_MapsToWin = 2;
   } else {
+    g_BO2Match = false;
     if (mapsToWin >= 1) {
       g_MapsToWin = mapsToWin;
     } else {
@@ -461,6 +462,7 @@ static bool LoadMatchFromJson(JSON_Object json) {
     g_BO2Match = true;
     g_MapsToWin = 2;
   } else {
+    g_BO2Match = false;
     if (mapsToWin >= 1) {
       g_MapsToWin = mapsToWin;
     } else {

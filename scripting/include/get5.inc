@@ -81,6 +81,26 @@ forward void Get5_OnMapVetoed(MatchTeam team, const char[] map);
 // and not by one of the teams specifically.
 forward void Get5_OnMapPicked(MatchTeam team, const char[] map);
 
+// Called when a player is elected the MVP of the round.
+forward void Get5_OnPlayerBecameMVP(int mapNumber, int roundNumber, int client, int clientSide, int reason);
+
+// Called when a player is killed in a live match. Used by MySQL stats. roundTime is milliseconds.
+forward void Get5_OnPlayerDied(char[] weapon, bool headshot, int mapNumber, int roundNumber, int roundTime,
+    int attacker, int victim, int assister, bool flashAssist, int penetratedObjects, bool thruSmoke, bool noScope,
+    bool attackerBlind, int attackerSide, int assisterSide, int victimSide);
+
+// Called when a round starts. Used by MySQL stats.
+forward void Get5_OnRoundStart(int mapNumber, int roundNumber);
+
+// Called when the round ends. Used by MySQL stats. roundLength is milliseconds.
+forward void Get5_OnRoundEnd(int winnerSide, char[] winningTeam, int mapNumber, int roundNumber, int roundLength, int reason);
+
+// Called when the bomb is defused. Used by MySQL stats. roundTime is milliseconds.
+forward void Get5_OnBombDefused(int client, int site, int mapNumber, int roundNumber, int roundTime, int milliSecondsRemaining);
+
+// Called when the bomb is planted. Used by MySQL stats. roundTime is milliseconds.
+forward void Get5_OnBombPlanted(int client, int site, int mapNumber, int roundNumber, int roundTime);
+
 // Called when a team selects a side.
 forward void Get5_OnSidePicked(MatchTeam team, const char[] map, int side);
 

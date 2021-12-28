@@ -1,12 +1,13 @@
 const float kTimeGivenToTrade = 1.5;
 
 public void Stats_PluginStart() {
-  HookEvent("player_death", Stats_PlayerDeathEvent);
-  HookEvent("player_hurt", Stats_DamageDealtEvent, EventHookMode_Pre);
-  HookEvent("bomb_planted", Stats_BombPlantedEvent);
   HookEvent("bomb_defused", Stats_BombDefusedEvent);
   HookEvent("bomb_exploded", Stats_BombExplodedEvent);
+  HookEvent("bomb_planted", Stats_BombPlantedEvent);
+  HookEvent("grenade_thrown", Stats_GrenadeThrownEvent);
   HookEvent("player_blind", Stats_PlayerBlindEvent);
+  HookEvent("player_death", Stats_PlayerDeathEvent);
+  HookEvent("player_hurt", Stats_DamageDealtEvent, EventHookMode_Pre);
   HookEvent("round_mvp", Stats_RoundMVPEvent);
 }
 
@@ -180,6 +181,40 @@ public void Stats_SeriesEnd(MatchTeam winner) {
   DumpToFile();
 }
 
+public Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dontBroadcast) {
+  if (g_GameState != Get5State_Live) {
+    return Plugin_Continue;
+  }
+
+  int attacker = GetClientOfUserId(event.GetInt("userid"));
+
+  if (IsValidClient(attacker)) {
+
+    char weapon[32];
+    event.GetString("weapon", weapon, sizeof(weapon));
+
+    EventLogger_GrenadeThrown(attacker, weapon);
+
+    int roundTime = GetMilliSecondsPassedSince(g_RoundStartedTime);
+    int attackerTeam = GetClientTeam(attacker);
+    int mapNumber = GetMapNumber();
+
+    LogDebug("Calling Get5_OnGrenadeThrown(client=%d, weapon=%s, mapNumber=%d, roundNumber=%d, roundTime=%d, team=%d)",
+        attacker, weapon, mapNumber, g_RoundNumber, roundTime, attackerTeam);
+
+    Call_StartForward(g_OnGrenadeThrown);
+    Call_PushCell(attacker);
+    Call_PushString(weapon);
+    Call_PushCell(mapNumber);
+    Call_PushCell(g_RoundNumber);
+    Call_PushCell(roundTime);
+    Call_PushCell(attackerTeam);
+    Call_Finish();
+
+  }
+  return Plugin_Continue;
+}
+
 public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBroadcast) {
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
 
@@ -193,38 +228,42 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
   int victim = GetClientOfUserId(event.GetInt("userid"));
   int assister = GetClientOfUserId(event.GetInt("assister"));
+
+  bool validAttacker = IsValidClient(attacker);
+  bool validVictim = IsValidClient(victim);
+  bool validAssister = assister > 0 && IsValidClient(assister);
+
+  if (!validVictim) {
+    return Plugin_Continue; // Not sure how this would happen, but it's not something we care about.
+  }
+
   bool headshot = event.GetBool("headshot");
   bool assistedFlash = event.GetBool("assistedflash");
 
   char weapon[32];
   event.GetString("weapon", weapon, sizeof(weapon));
 
-  bool validAttacker = IsValidClient(attacker);
-  bool validVictim = IsValidClient(victim);
+  int attackerTeam = GetClientTeam(attacker);
+  int victimTeam = GetClientTeam(victim);
 
-  if (validVictim) {
-    IncrementPlayerStat(victim, STAT_DEATHS);
+  IncrementPlayerStat(victim, STAT_DEATHS);
+  // used for calculating round KAST
+  g_PlayerSurvived[victim] = false;
 
-    // used for calculating round KAST
-    g_PlayerSurvived[victim] = false;
-
-    int victim_team = GetClientTeam(victim);
-    if (!g_TeamFirstDeathDone[victim_team]) {
-      g_TeamFirstDeathDone[victim_team] = true;
-      IncrementPlayerStat(victim,
-                          (victim_team == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
-    }
+  if (!g_TeamFirstDeathDone[victimTeam]) {
+    g_TeamFirstDeathDone[victimTeam] = true;
+    IncrementPlayerStat(victim, (victimTeam == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
   }
 
   if (validAttacker) {
-    int attacker_team = GetClientTeam(attacker);
-    if (!g_TeamFirstKillDone[attacker_team]) {
-      g_TeamFirstKillDone[attacker_team] = true;
-      IncrementPlayerStat(attacker,
-                          (attacker_team == CS_TEAM_CT) ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
-    }
 
     if (HelpfulAttack(attacker, victim)) {
+
+      if (!g_TeamFirstKillDone[attackerTeam]) {
+        g_TeamFirstKillDone[attackerTeam] = true;
+        IncrementPlayerStat(attacker, (attackerTeam == CS_TEAM_CT) ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
+      }
+
       g_RoundKills[attacker]++;
 
       g_PlayerKilledBy[victim] = attacker;
@@ -240,7 +279,7 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
       }
 
       // We need the weapon ID to reliably translate to a knife. The regular "bayonet" - as the only
-      // knife -  is not prefixed with "knife" for whatever reason, so searching weapon name strings
+      // knife - is not prefixed with "knife" for whatever reason, so searching weapon name strings
       // is unsafe.
       CSWeaponID weaponId = CS_AliasToWeaponID(weapon);
 
@@ -252,31 +291,30 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
         IncrementPlayerStat(attacker, STAT_KNIFE_KILLS);
       }
 
-      // Assists should only count towards opposite team
-      if (HelpfulAttack(assister, victim)) {
-        // You cannot flash-assist and regular-assist for the same kill.
-        if (assistedFlash) {
-          IncrementPlayerStat(assister, STAT_FLASHBANG_ASSISTS);
-          g_DamageDoneFlashAssist[assister][victim] = true;
-        } else {
-          IncrementPlayerStat(assister, STAT_ASSISTS);
-          g_PlayerRoundKillOrAssistOrTradedDeath[assister] = true;
-          g_DamageDoneAssist[assister][victim] = true;
-        }
-
-      } else {
-        // Don't count friendly-fire assist at all.
-        assister = 0;
-        assistedFlash = false;
-      }
-
-      EventLogger_PlayerDeath(attacker, victim, headshot, assister, assistedFlash, weapon);
-
+    } else if (attacker == victim) {
+      IncrementPlayerStat(attacker, STAT_SUICIDES); // If killed by self; i.e. own grenade.
     } else {
-      if (attacker == victim)
-        IncrementPlayerStat(attacker, STAT_SUICIDES);
-      else
-        IncrementPlayerStat(attacker, STAT_TEAMKILLS);
+      IncrementPlayerStat(attacker, STAT_TEAMKILLS);
+    }
+  } else {
+    IncrementPlayerStat(victim, STAT_SUICIDES); // Fall damage or world.
+  }
+
+  int assisterTeam = 0;
+
+  if (validAssister) {
+    assisterTeam = GetClientTeam(assister);
+    // Assists should only count towards opposite team
+    if (HelpfulAttack(assister, victim)) {
+      // You cannot flash-assist and regular-assist for the same kill.
+      if (assistedFlash) {
+        IncrementPlayerStat(assister, STAT_FLASHBANG_ASSISTS);
+        g_DamageDoneFlashAssist[assister][victim] = true;
+      } else {
+        IncrementPlayerStat(assister, STAT_ASSISTS);
+        g_PlayerRoundKillOrAssistOrTradedDeath[assister] = true;
+        g_DamageDoneAssist[assister][victim] = true;
+      }
     }
   }
 
@@ -295,6 +333,54 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
     int clutcher = GetClutchingClient(CS_TEAM_CT);
     g_RoundClutchingEnemyCount[clutcher] = tCount;
   }
+
+  int mapNumber = GetMapNumber();
+  int roundTime = GetMilliSecondsPassedSince(g_RoundStartedTime);
+  int penetrated = event.GetInt("penetrated");
+  bool thruSmoke = event.GetBool("thrusmoke");
+  bool attackerBlind = event.GetBool("attackerblind");
+  bool noScope = event.GetBool("noscope");
+  bool friendlyFire = validAttacker ? attackerTeam == victimTeam : false;
+  bool assistFriendlyFire = validAssister ? assisterTeam == victimTeam : false;
+
+  EventLogger_PlayerDeath(
+    g_RoundNumber,
+    roundTime,
+    validAttacker ? attacker : 0,
+    victim, // we already checked that victim is valid.
+    headshot,
+    validAssister ? assister : 0,
+    assistedFlash,
+    weapon,
+    friendlyFire,
+    assistFriendlyFire,
+    penetrated,
+    thruSmoke,
+    noScope,
+    attackerBlind
+  );
+
+  LogDebug("Calling Get5_OnPlayerDied(weapon=%s, headshot=%d, mapNumber=%d, roundNumber=%d, roundTime=%d, attacker=%d, victim=%d, assister=%d, assistedFlash=%d, penetrated=%d, thruSmoke=%d, noScope=%d, attackerBlind=%d, attackerTeam=%d, assisterTeam=%d, victimTeam=%d)",
+           weapon, headshot, mapNumber, g_RoundNumber, roundTime, attacker, victim, assister, assistedFlash, penetrated, thruSmoke, noScope, attackerBlind, attackerTeam, assisterTeam, victimTeam);
+
+  Call_StartForward(g_OnPlayerDied);
+  Call_PushString(weapon);
+  Call_PushCell(headshot);
+  Call_PushCell(mapNumber);
+  Call_PushCell(g_RoundNumber);
+  Call_PushCell(roundTime);
+  Call_PushCell(attacker);
+  Call_PushCell(victim);
+  Call_PushCell(assister);
+  Call_PushCell(assistedFlash);
+  Call_PushCell(penetrated);
+  Call_PushCell(thruSmoke);
+  Call_PushCell(noScope);
+  Call_PushCell(attackerBlind);
+  Call_PushCell(attackerTeam);
+  Call_PushCell(assisterTeam);
+  Call_PushCell(victimTeam);
+  Call_Finish();
 
   return Plugin_Continue;
 }
@@ -359,11 +445,28 @@ public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBr
     return Plugin_Continue;
   }
 
+  g_BombPlantedTime = GetEngineTime();
+
   int client = GetClientOfUserId(event.GetInt("userid"));
   int site = event.GetInt("site");
   if (IsValidClient(client)) {
     IncrementPlayerStat(client, STAT_BOMBPLANTS);
     EventLogger_BombPlanted(client, site);
+
+    int mapNumber = GetMapNumber();
+    int roundTime = GetMilliSecondsPassedSince(g_RoundStartedTime);
+
+    LogDebug("Calling Get5_OnBombPlanted(client=%d, site=%d, mapNumber=%d, roundNumber=%d, roundTime=%d)",
+               client, site, mapNumber, g_RoundNumber, roundTime);
+
+    Call_StartForward(g_OnBombPlanted);
+    Call_PushCell(client);
+    Call_PushCell(site);
+    Call_PushCell(mapNumber);
+    Call_PushCell(g_RoundNumber);
+    Call_PushCell(roundTime);
+    Call_Finish();
+
   }
 
   return Plugin_Continue;
@@ -378,7 +481,25 @@ public Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBr
   int site = event.GetInt("site");
   if (IsValidClient(client)) {
     IncrementPlayerStat(client, STAT_BOMBDEFUSES);
-    EventLogger_BombDefused(client, site);
+
+    int timeRemaining = (GetCvarIntSafe("mp_c4timer") * 1000) - GetMilliSecondsPassedSince(g_BombPlantedTime);
+    int mapNumber = GetMapNumber();
+    int roundTime = GetMilliSecondsPassedSince(g_RoundStartedTime);
+
+    EventLogger_BombDefused(client, site, timeRemaining);
+
+    LogDebug("Calling Get5_OnBombDefused(client=%d, site=%d, mapNumber=%d, roundNumber=%d, roundTime=%d, timeRemaining=%d)",
+                   client, site, mapNumber, g_RoundNumber, roundTime, timeRemaining);
+
+    Call_StartForward(g_OnBombDefused);
+    Call_PushCell(client);
+    Call_PushCell(site);
+    Call_PushCell(mapNumber);
+    Call_PushCell(g_RoundNumber);
+    Call_PushCell(roundTime);
+    Call_PushCell(timeRemaining);
+    Call_Finish();
+
   }
 
   return Plugin_Continue;
@@ -437,11 +558,28 @@ public Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroad
     return Plugin_Continue;
   }
 
-  int userid = event.GetInt("userid");
-  int client = GetClientOfUserId(userid);
+  int client = GetClientOfUserId(event.GetInt("userid"));
 
   if (IsValidClient(client)) {
     IncrementPlayerStat(client, STAT_MVP);
+
+    int reason = event.GetInt("reason");
+    int mapNumber = GetMapNumber();
+    int clientTeam = GetClientTeam(client);
+
+    EventLogger_MVP(client, reason);
+
+    LogDebug("Calling Get5_OnPlayerBecameMVP(client=%d, mapNumber=%d, roundNumber=%d, clientTeam=%d, reason=%d)",
+               client, mapNumber, g_RoundNumber, clientTeam, reason);
+
+    Call_StartForward(g_OnPlayerBecameMVP);
+    Call_PushCell(client);
+    Call_PushCell(mapNumber);
+    Call_PushCell(g_RoundNumber);
+    Call_PushCell(clientTeam);
+    Call_PushCell(reason);
+    Call_Finish();
+
   }
 
   return Plugin_Continue;

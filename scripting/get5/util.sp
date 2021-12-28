@@ -4,7 +4,7 @@
 #define MAX_FLOAT_STRING_LENGTH 32
 #define AUTH_LENGTH 64
 
-// Dummy value for when we need to write a keyvalue string, but we don't care about he value.
+// Dummy value for when we need to write a keyvalue string, but we don't care about the value.
 // Trying to write an empty string often results in the keyvalue not being written, so we use this.
 #define KEYVALUE_STRING_PLACEHOLDER "__placeholder"
 

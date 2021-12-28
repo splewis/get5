@@ -139,26 +139,66 @@ public void EventLogger_GoingLive() {
   EventLogger_EndEvent("going_live");
 }
 
-public void EventLogger_PlayerDeath(int killer, int victim, bool headshot, int assister, bool flash_assist,
-                             const char[] weapon) {
+public void EventLogger_GrenadeThrown(int attacker, const char[] weapon) {
   EventLogger_StartEvent();
   AddMapData(params);
-  AddPlayer(params, "attacker", killer);
-  AddPlayer(params, "victim", victim);
-  params.SetInt("headshot", headshot);
+  AddPlayer(params, "attacker", attacker);
   params.SetString("weapon", weapon);
+  EventLogger_EndEvent("grenade_thrown");
+}
+
+public void EventLogger_PlayerDeath(int roundNumber, int roundTime, int killer, int victim, bool headshot, int assister,
+                             bool flashAssist, const char[] weapon, bool friendlyFire,
+                             bool assistFriendlyFire, int penetrated, bool thruSmoke,
+                             bool noScope, bool attackerBlind) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+
+  if (killer > 0) {
+    AddPlayer(params, "attacker", killer);
+  } else {
+    params.SetObject("attacker", null); // In case of non-player killer, such as fall damage.
+  }
+
+  AddPlayer(params, "victim", victim);
+  params.SetInt("round_number", roundNumber);
+  params.SetInt("round_time", roundTime);
+  params.SetInt("headshot", headshot);
+  params.SetInt("penetrated", penetrated);
+  params.SetBool("thru_smoke", thruSmoke);
+  params.SetBool("no_scope", noScope);
+  params.SetBool("attacker_blind", attackerBlind);
+  params.SetString("weapon", weapon);
+  params.SetBool("friendly_fire", friendlyFire);
 
   if (assister > 0) {
-    AddPlayer(params, "assister", assister);
-    params.SetBool("flash_assist", flash_assist);
+
+    JSON_Object assist = new JSON_Object();
+    AddPlayer(assist, "assister", assister);
+    assist.SetBool("flash_assist", flashAssist);
+    assist.SetBool("friendly_fire", assistFriendlyFire);
+
+    params.SetObject("assist", assist);
+
+  } else {
+    params.SetObject("assist", null); // Set to null instead of omitting for JSON consistency.
   }
 
   EventLogger_EndEvent("player_death");
 }
 
-public void EventLogger_RoundEnd(int csTeamWinner, int csReason) {
+public void EventLogger_RoundStart(int roundNumber) {
   EventLogger_StartEvent();
   AddMapData(params);
+  params.SetInt("round_number", roundNumber);
+  EventLogger_EndEvent("round_start");
+}
+
+public void EventLogger_RoundEnd(int roundNumber, int csTeamWinner, int csReason, int roundDuration) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  params.SetInt("round_number", roundNumber);
+  params.SetInt("round_duration", roundDuration);
   AddCSTeam(params, "winner_side", csTeamWinner);
   AddTeam(params, "winner", CSTeamToMatchTeam(csTeamWinner));
   params.SetInt("reason", csReason);
@@ -229,12 +269,21 @@ public void EventLogger_BombPlanted(int client, int site) {
   EventLogger_EndEvent("bomb_planted");
 }
 
-public void EventLogger_BombDefused(int client, int site) {
+public void EventLogger_BombDefused(int client, int site, int bombTimeRemaining) {
   EventLogger_StartEvent();
   AddMapData(params);
   AddPlayer(params, "client", client);
   params.SetInt("site", site);
+  params.SetInt("bomb_time_remaining", bombTimeRemaining);
   EventLogger_EndEvent("bomb_defused");
+}
+
+public void EventLogger_MVP(int client, int reason) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddPlayer(params, "client", client);
+  params.SetInt("reason", reason);
+  EventLogger_EndEvent("mvp");
 }
 
 public void EventLogger_BombExploded(int client, int site) {

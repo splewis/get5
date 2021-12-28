@@ -35,11 +35,11 @@ The following is the `get_status` response's schema.
     - **3**: Setup done, waiting for players to ready up.
     - **4**: In the knife round.
     - **5**: Waiting for a !stay or !swap command after the knife.
-    - **6**: In the lo3 process.
+    - **6**: Countdown to live.
     - **7**: The match is live.
     - **8**: Postgame screen + waiting for GOTV to finish broadcast.
 - `paused`: Is the match paused?
-- `gamestate_string`:  human-readable gamestate which is a translation of `gamestate`.
+- `gamestate_string`: Human-readable gamestate which is a translation of `gamestate`.
     - `"none"`
     - `"waiting for map veto"`
     - `"map veto"`
@@ -59,6 +59,8 @@ The following is the `get_status` response's schema.
   If you used `get5_loadmatch_url`, the pattern of the file is `remote_config%d.json`, where `%d` is the server's id,
   which you can set with `get5_server_id`.
 - `map_number`: The current map number in the series.
+- `round_number`: The round number, starting at 0. -1 if the game is not live.
+- `round_time`: The number of milliseconds elapsed since the current round started.
 - `team1` and `team2`: Two JSON objects which share the same properties.
     - `name`: Name of the team.
     - `series_score`: The score in the series.

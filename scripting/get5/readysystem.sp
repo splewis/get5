@@ -180,9 +180,22 @@ public Action Command_NotReady(int client, int args) {
   SetClientReady(client, false);
   SetTeamForcedReady(team, false);
   if (teamWasReady) {
+
+    Get5TeamReadyStatusChangedEvent readyEvent = new Get5TeamReadyStatusChangedEvent(
+      g_MatchID,
+      team,
+      false,
+      Get5_GetGameState()
+    );
+
+    LogDebug("Calling Get5_OnTeamReadyStatusChanged()");
+
+    Call_StartForward(g_OnTeamReadyStatusChanged);
+    Call_PushCell(readyEvent);
+    Call_Finish();
+
     SetMatchTeamCvars();
     Get5_MessageToAll("%t", "TeamNotReadyInfoMessage", g_FormattedTeamNames[team]);
-    EventLogger_TeamUnready(team);
   }
 
   return Plugin_Handled;
@@ -220,20 +233,31 @@ public Action Command_ForceReadyClient(int client, int args) {
 static void HandleReadyMessage(MatchTeam team) {
   CheckTeamNameStatus(team);
 
+  Get5TeamReadyStatusChangedEvent readyEvent = new Get5TeamReadyStatusChangedEvent(
+    g_MatchID,
+    team,
+    true,
+    Get5_GetGameState()
+  );
+
+  LogDebug("Calling Get5_OnTeamReadyStatusChanged()");
+
+  Call_StartForward(g_OnTeamReadyStatusChanged);
+  Call_PushCell(readyEvent);
+  Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(readyEvent);
+
   if (g_GameState == Get5State_PreVeto) {
     Get5_MessageToAll("%t", "TeamReadyToVetoInfoMessage", g_FormattedTeamNames[team]);
-    EventLogger_TeamReady(team, "veto");
   } else if (g_GameState == Get5State_Warmup) {
-    SideChoice sides = view_as<SideChoice>(g_MapSides.Get(GetMapNumber()));
+    SideChoice sides = view_as<SideChoice>(g_MapSides.Get(Get5_GetMapNumber()));
     if (g_WaitingForRoundBackup) {
       Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_FormattedTeamNames[team]);
-      EventLogger_TeamReady(team, "backup_restore");
     } else if (sides == SideChoice_KnifeRound) {
       Get5_MessageToAll("%t", "TeamReadyToKnifeInfoMessage", g_FormattedTeamNames[team]);
-      EventLogger_TeamReady(team, "knife");
     } else {
       Get5_MessageToAll("%t", "TeamReadyToBeginInfoMessage", g_FormattedTeamNames[team]);
-      EventLogger_TeamReady(team, "start");
     }
   }
 }

@@ -16,7 +16,7 @@ public void CreateVeto() {
   ResetReadyStatus();
   if (g_PauseOnVetoCvar.BoolValue) {
     if (g_PausingEnabledCvar.BoolValue){
-      Pause(PauseType_Admin); 
+      PauseGame(MatchTeam_TeamNone, Get5PauseType_Admin, 1);
     }
     else {
       ServerCommand("mp_pause_match");
@@ -168,13 +168,15 @@ public void VetoController(int client) {
       g_MapSides.Push(SideChoice_Team1CT);
     }
 
-    EventLogger_MapPicked(MatchTeam_TeamNone, mapName, g_MapsToPlay.Length - 1);
+    Get5MapPickedEvent event = new Get5MapPickedEvent(g_MatchID, MatchTeam_TeamNone, mapName, g_MapsToPlay.Length - 1);
 
-    LogDebug("Calling Get5_OnMapPicked(team=%d, map=%s)", MatchTeam_TeamNone, mapName);
+    LogDebug("Calling Get5_OnMapPicked()");
+
     Call_StartForward(g_OnMapPicked);
-    Call_PushCell(MatchTeam_TeamNone);
-    Call_PushString(mapName);
+    Call_PushCell(event);
     Call_Finish();
+
+    EventLogger_LogAndDeleteEvent(event);
 
     VetoFinished();
   } else if (mapsLeft + mapsPicked <= maxMaps || bo3_hack || bo2_hack) {
@@ -286,13 +288,14 @@ public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
 
     Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], mapName);
 
-    EventLogger_MapVetoed(team, mapName);
+    Get5MapVetoedEvent event = new Get5MapVetoedEvent(g_MatchID, team, mapName);
 
-    LogDebug("Calling Get5_OnMapVetoed(team=%d, map=%s)", team, mapName);
+    LogDebug("Calling Get5_OnMapVetoed()");
     Call_StartForward(g_OnMapVetoed);
-    Call_PushCell(team);
-    Call_PushString(mapName);
+    Call_PushCell(event);
     Call_Finish();
+
+    EventLogger_LogAndDeleteEvent(event);
 
     VetoController(GetNextTeamCaptain(client));
     g_LastVetoTeam = team;
@@ -354,13 +357,15 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
                       g_MapsToPlay.Length);
     g_LastVetoTeam = team;
 
-    EventLogger_MapPicked(team, mapName, g_MapsToPlay.Length - 1);
+    Get5MapPickedEvent event = new Get5MapPickedEvent(g_MatchID, team, mapName, g_MapsToPlay.Length - 1);
 
-    LogDebug("Calling Get5_OnMapPicked(team=%d, map=%s)", team, mapName);
+    LogDebug("Calling Get5_OnMapPicked()");
+
     Call_StartForward(g_OnMapPicked);
-    Call_PushCell(team);
-    Call_PushString(mapName);
+    Call_PushCell(event);
     Call_Finish();
+
+    EventLogger_LogAndDeleteEvent(event);
 
     VetoController(GetNextTeamCaptain(client));
 
@@ -421,21 +426,23 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
       else
         g_MapSides.Push(SideChoice_Team1CT);
     }
+     
+    int mapNumber = g_MapsToPlay.Length - 1;
 
     char mapName[PLATFORM_MAX_PATH];
-    g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
+    g_MapsToPlay.GetString(mapNumber, mapName, sizeof(mapName));
 
-    Get5_MessageToAll("%t", "TeamSelectSideInfoMessage", g_FormattedTeamNames[team], choice,
-                      mapName);
+    Get5_MessageToAll("%t", "TeamSelectSideInfoMessage", g_FormattedTeamNames[team], choice, mapName);
 
-    EventLogger_SidePicked(team, mapName, g_MapsToPlay.Length - 1, selectedSide);
+    Get5SidePickedEvent event = new Get5SidePickedEvent(g_MatchID, mapNumber, mapName, team, view_as<Get5Side>(selectedSide));
 
-    LogDebug("Calling Get5_OnSidePicked(team=%d, map=%s, side=%d)", team, mapName, selectedSide);
+    LogDebug("Calling Get5_OnSidePicked()");
+
     Call_StartForward(g_OnSidePicked);
-    Call_PushCell(team);
-    Call_PushString(mapName);
-    Call_PushCell(selectedSide);
+    Call_PushCell(event);
     Call_Finish();
+
+    EventLogger_LogAndDeleteEvent(event);
 
     VetoController(client);
 

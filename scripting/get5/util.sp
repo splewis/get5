@@ -4,7 +4,7 @@
 #define MAX_FLOAT_STRING_LENGTH 32
 #define AUTH_LENGTH 64
 
-// Dummy value for when we need to write a keyvalue string, but we don't care about he value.
+// Dummy value for when we need to write a keyvalue string, but we don't care about the value.
 // Trying to write an empty string often results in the keyvalue not being written, so we use this.
 #define KEYVALUE_STRING_PLACEHOLDER "__placeholder"
 
@@ -93,6 +93,64 @@ stock bool IsAuthedPlayer(int client) {
 }
 
 /**
+ * Used to consistently set string keys on JSON objects that receive a Get5Side parameter, which
+ * should be output as ct, t, spec or null in JSON.
+ */
+stock void ConvertGet5SideToStringInJson(const JSON_Object obj, const char[] key, Get5Side side) {
+  if (side == Get5Side_T) {
+    obj.SetString(key, "t");
+  } else if (side == Get5Side_CT) {
+    obj.SetString(key, "ct");
+  } else if (side == Get5Side_Spec) {
+    obj.SetString(key, "spec");
+  } else {
+    obj.SetObject(key, null);
+  }
+}
+
+/**
+ * Used to consistently set string keys on JSON objects that receive a MatchTeam parameter, which
+ * should be output as team1, team2, spec or null in JSON.
+ */
+stock void ConvertGet5TeamToStringInJson(const JSON_Object obj, const char[] key, MatchTeam team) {
+  if (team == MatchTeam_Team1) {
+    obj.SetString(key, "team1");
+  } else if (team == MatchTeam_Team2) {
+    obj.SetString(key, "team2");
+  } else if (team == MatchTeam_TeamSpec) {
+    obj.SetString(key, "spec");
+  } else {
+    obj.SetObject(key, null);
+  }
+}
+
+/**
+ * Used to consistently map a Get5PauseType to string in JSON.
+ */
+stock void ConvertGet5PauseTypeToStringInJson(const JSON_Object obj, const char[] key, Get5PauseType pauseType) {
+  if (pauseType == Get5PauseType_Admin) {
+    obj.SetString(key, "admin");
+  } else if (pauseType == Get5PauseType_Tech) {
+    obj.SetString(key, "technical");
+  } else if (pauseType == Get5PauseType_Tactical) {
+    obj.SetString(key, "tactical");
+  } else if (pauseType == Get5PauseType_Backup) {
+    obj.SetString(key, "backup");
+  } else {
+    obj.SetObject(key, null);
+  }
+}
+
+/**
+ * Used to consistently set string keys on JSON objects that receive a Get5State parameter.
+ */
+stock void ConvertGameStateToStringInJson(const JSON_Object obj, const char[] key, const Get5State state) {
+  char gameStateString[64];
+  GameStateString(state, gameStateString, sizeof(gameStateString));
+  obj.SetString(key, gameStateString);
+}
+
+/**
  * Returns the number of clients that are actual players in the game.
  */
 stock int GetRealClientCount() {
@@ -155,10 +213,17 @@ stock bool Record(const char[] demoName) {
 
 stock void StopRecording() {
   ServerCommand("tv_stoprecord");
-  LogDebug("Calling Get5_OnDemoFinished(file=%s)", g_DemoFileName);
+
+  Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(g_MatchID, Get5_GetMapNumber(), g_DemoFileName);
+
+  LogDebug("Calling Get5_OnDemoFinished()");
+
   Call_StartForward(g_OnDemoFinished);
-  Call_PushString(g_DemoFileName);
+  Call_PushCell(event);
   Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(event);
+
 }
 
 stock bool InWarmup() {
@@ -209,16 +274,16 @@ stock bool IsPaused() {
 }
 
 // Pauses and returns if the match will automatically unpause after the duration ends.
-stock bool Pause(PauseType pauseType, int pauseTime = 0, int csTeam = CS_TEAM_NONE, int pausesLeft = 1) {
-  if (pauseType == PauseType_None) {
-    LogMessage("Pause() called with PauseType_None. Please call Unpause() instead.");
+stock bool Pause(Get5PauseType pauseType, int pauseTime, int csTeam, int pausesLeft) {
+  if (pauseType == Get5PauseType_None) {
+    LogMessage("Pause() called with Get5PauseType_None. Please call Unpause() instead.");
     Unpause();
     return false;
   }
 
   g_PauseType = pauseType;
   ServerCommand("mp_pause_match");
-  if (pauseTime == 0 || csTeam == CS_TEAM_SPECTATOR || csTeam == CS_TEAM_NONE) {
+  if (pauseType == Get5PauseType_Tech || pauseTime == 0 || csTeam == CS_TEAM_SPECTATOR || csTeam == CS_TEAM_NONE) {
     return false;
   } else {
     if (csTeam == CS_TEAM_T) {
@@ -235,7 +300,7 @@ stock bool Pause(PauseType pauseType, int pauseTime = 0, int csTeam = CS_TEAM_NO
 }
 
 stock void Unpause() {
-  g_PauseType = PauseType_None;
+  g_PauseType = Get5PauseType_None;
   ServerCommand("mp_unpause_match");
 }
 
@@ -551,21 +616,21 @@ stock void GameStateString(Get5State state, char[] buffer, int length) {
     case Get5State_None:
       Format(buffer, length, "none");
     case Get5State_PreVeto:
-      Format(buffer, length, "waiting for map veto");
+      Format(buffer, length, "pre_veto");
     case Get5State_Veto:
-      Format(buffer, length, "map veto");
+      Format(buffer, length, "veto");
     case Get5State_Warmup:
       Format(buffer, length, "warmup");
     case Get5State_KnifeRound:
-      Format(buffer, length, "knife round");
+      Format(buffer, length, "knife");
     case Get5State_WaitingForKnifeRoundDecision:
-      Format(buffer, length, "waiting for knife round decision");
+      Format(buffer, length, "waiting_for_knife_decision");
     case Get5State_GoingLive:
-      Format(buffer, length, "going live");
+      Format(buffer, length, "going_live");
     case Get5State_Live:
       Format(buffer, length, "live");
     case Get5State_PostGame:
-      Format(buffer, length, "postgame");
+      Format(buffer, length, "post_game");
   }
 }
 
@@ -674,12 +739,8 @@ stock bool ConvertAuthToSteam64(const char[] inputId, char outputId[AUTH_LENGTH]
 }
 
 stock bool HelpfulAttack(int attacker, int victim) {
-  if (!IsValidClient(attacker) || !IsValidClient(victim)) {
-    return false;
-  }
-  int attackerTeam = GetClientTeam(attacker);
-  int victimTeam = GetClientTeam(victim);
-  return attackerTeam != victimTeam && attacker != victim;
+  // Assumes both attacker and victim are valid clients; check this before calling this function.
+  return attacker != victim && GetClientTeam(attacker) != GetClientTeam(victim);
 }
 
 stock SideChoice SideTypeFromString(const char[] input) {
@@ -728,15 +789,6 @@ public bool DeleteFileIfExists(const char[] path) {
   return true;
 }
 
-stock void GetPauseType(PauseType pause, char[] buffer, int len) {
-  if (pause == PauseType_Tech) {
-    Format(buffer, len, "technical");
-  } else if (pause == PauseType_Tactical) {
-    Format(buffer, len, "tactical");
-  } else {
-    Format(buffer, len, "unknown");
-  }
-}
 public bool IsJSONPath(const char[] path) {
   int length = strlen(path);
   if (length >= 5) {
@@ -744,4 +796,12 @@ public bool IsJSONPath(const char[] path) {
   } else {
     return false;
   }
+}
+
+public int GetMilliSecondsPassedSince(float timestamp) {
+  return RoundToFloor((GetEngineTime() - timestamp) * 1000);
+}
+
+public int GetRoundsPlayed() {
+  return GameRules_GetProp("m_totalRoundsPlayed");
 }

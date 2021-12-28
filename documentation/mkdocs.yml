@@ -3,8 +3,9 @@ site_url: https://splewis.github.io/get5
 repo_url: https://github.com/splewis/get5
 repo_name: get5
 theme:
-  name: readthedocs
-
+  name: material
+plugins:
+  - swagger-ui-tag
 nav:
   - Home: index.md
   - Commands: commands.md

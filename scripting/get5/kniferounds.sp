@@ -18,8 +18,20 @@ public Action Timer_AnnounceKnife(Handle timer) {
     Get5_MessageToAll("%t", "KnifeInfoMessage");
   }
 
+  Get5KnifeRoundStartedEvent knifeEvent = new Get5KnifeRoundStartedEvent(
+    g_MatchID,
+    g_MapNumber
+  );
+
+  LogDebug("Calling Get5_OnKnifeRoundStarted()");
+
+  Call_StartForward(g_OnKnifeRoundStarted);
+  Call_PushCell(knifeEvent);
+  Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(knifeEvent);
+
   g_HasKnifeRoundStarted = true;
-  EventLogger_KnifeStart();
   return Plugin_Handled;
 }
 
@@ -46,9 +58,9 @@ static void PerformSideSwap(bool swap) {
     // that way set starting teams won't swap on round 0,
     // since a temp valve backup does not exist.
     if (g_TeamSide[MatchTeam_Team1] == CS_TEAM_CT)
-      g_MapSides.Set(GetMapNumber(), SideChoice_Team1CT);
+      g_MapSides.Set(Get5_GetMapNumber(), SideChoice_Team1CT);
     else
-      g_MapSides.Set(GetMapNumber(), SideChoice_Team1T);
+      g_MapSides.Set(Get5_GetMapNumber(), SideChoice_Team1T);
   } else {
     g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
     g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
@@ -61,7 +73,23 @@ static void PerformSideSwap(bool swap) {
 
 public void EndKnifeRound(bool swap) {
   PerformSideSwap(swap);
-  EventLogger_KnifeWon(g_KnifeWinnerTeam, swap);
+
+  Get5KnifeRoundWonEvent knifeEvent = new Get5KnifeRoundWonEvent(
+    g_MatchID,
+    g_MapNumber,
+    g_KnifeWinnerTeam,
+    view_as<Get5Side>(g_TeamStartingSide[g_KnifeWinnerTeam]),
+    swap
+  );
+
+  LogDebug("Calling Get5_OnKnifeRoundWon()");
+
+  Call_StartForward(g_OnKnifeRoundWon);
+  Call_PushCell(knifeEvent);
+  Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(knifeEvent);
+
   ChangeState(Get5State_GoingLive);
   CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
 }

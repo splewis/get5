@@ -34,7 +34,6 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-int g_MatchID = -1;
 ConVar g_UseSVGCvar;
 char g_LogoBasePath[128];
 ConVar g_APIKeyCvar;
@@ -70,12 +69,10 @@ public void OnPluginStart() {
 
   HookConVarChange(g_APIURLCvar, ApiInfoChanged);
 
-  RegConsoleCmd("get5_web_avaliable",
-                Command_Avaliable);  // legacy version since I'm bad at spelling
-  RegConsoleCmd("get5_web_available", Command_Avaliable);
+  RegConsoleCmd("get5_web_available", Command_Available);
 }
 
-public Action Command_Avaliable(int client, int args) {
+public Action Command_Available(int client, int args) {
   char versionString[64] = "unknown";
   ConVar versionCvar = FindConVar("get5_version");
   if (versionCvar != null) {
@@ -85,7 +82,6 @@ public Action Command_Avaliable(int client, int args) {
   JSON_Object json = new JSON_Object();
 
   json.SetInt("gamestate", view_as<int>(Get5_GetGameState()));
-  json.SetInt("avaliable", 1);  // legacy version since I'm bad at spelling
   json.SetInt("available", 1);
   json.SetString("plugin_version", versionString);
 
@@ -93,7 +89,7 @@ public Action Command_Avaliable(int client, int args) {
   json.Encode(buffer, sizeof(buffer), true);
   ReplyToCommand(client, buffer);
 
-  delete json;
+  json_cleanup_and_delete(json);
 
   return Plugin_Handled;
 }
@@ -151,16 +147,7 @@ public int RequestCallback(Handle request, bool failure, bool requestSuccessful,
   }
 }
 
-public void Get5_OnBackupRestore() {
-  char matchid[64];
-  Get5_GetMatchID(matchid, sizeof(matchid));
-  g_MatchID = StringToInt(matchid);
-}
-
-public void Get5_OnSeriesInit() {
-  char matchid[64];
-  Get5_GetMatchID(matchid, sizeof(matchid));
-  g_MatchID = StringToInt(matchid);
+public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
 
   // Handle new logos.
   if (!DirExists(g_LogoBasePath)) {
@@ -232,10 +219,14 @@ public int LogoCallback(Handle request, bool failure, bool successful, EHTTPStat
   SteamWorks_WriteHTTPResponseBodyToFile(request, logoPath);
 }
 
-public void Get5_OnGoingLive(int mapNumber) {
+public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
   char mapName[64];
   GetCurrentMap(mapName, sizeof(mapName));
-  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%d/map/%d/start", g_MatchID, mapNumber);
+
+  char matchId[64];
+  event.GetMatchId(matchId, sizeof(matchId));
+
+  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/start", matchId, event.MapNumber);
   if (req != INVALID_HANDLE) {
     AddStringParam(req, "mapname", mapName);
     SteamWorks_SendHTTPRequest(req);
@@ -245,11 +236,11 @@ public void Get5_OnGoingLive(int mapNumber) {
   Get5_AddLiveCvar("get5_web_api_url", g_APIURL);
 }
 
-public void UpdateRoundStats(int mapNumber) {
+public void UpdateRoundStats(const char[] matchId, int mapNumber) {
   int t1score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(MatchTeam_Team1));
   int t2score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(MatchTeam_Team2));
 
-  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%d/map/%d/update", g_MatchID, mapNumber);
+  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/update", matchId, mapNumber);
   if (req != INVALID_HANDLE) {
     AddIntParam(req, "team1score", t1score);
     AddIntParam(req, "team2score", t2score);
@@ -262,11 +253,11 @@ public void UpdateRoundStats(int mapNumber) {
   Format(mapKey, sizeof(mapKey), "map%d", mapNumber);
   if (kv.JumpToKey(mapKey)) {
     if (kv.JumpToKey("team1")) {
-      UpdatePlayerStats(kv, MatchTeam_Team1);
+      UpdatePlayerStats(matchId, kv, MatchTeam_Team1);
       kv.GoBack();
     }
     if (kv.JumpToKey("team2")) {
-      UpdatePlayerStats(kv, MatchTeam_Team2);
+      UpdatePlayerStats(matchId, kv, MatchTeam_Team2);
       kv.GoBack();
     }
     kv.GoBack();
@@ -274,15 +265,18 @@ public void UpdateRoundStats(int mapNumber) {
   delete kv;
 }
 
-public void Get5_OnMapResult(const char[] map, MatchTeam mapWinner, int team1Score, int team2Score,
-                      int mapNumber) {
-  char winnerString[64];
-  GetTeamString(mapWinner, winnerString, sizeof(winnerString));
+public void Get5_OnMapResult(const Get5MapResultEvent event) {
 
-  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%d/map/%d/finish", g_MatchID, mapNumber);
+  char matchId[64];
+  event.GetMatchId(matchId, sizeof(matchId));
+
+  char winnerString[64];
+  GetTeamString(event.Winner.Team, winnerString, sizeof(winnerString));
+
+  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/finish", matchId, event.MapNumber);
   if (req != INVALID_HANDLE) {
-    AddIntParam(req, "team1score", team1Score);
-    AddIntParam(req, "team2score", team2Score);
+    AddIntParam(req, "team1score", event.Team1Score);
+    AddIntParam(req, "team2score", event.Team2Score);
     AddStringParam(req, "winner", winnerString);
     SteamWorks_SendHTTPRequest(req);
   }
@@ -292,10 +286,10 @@ static void AddIntStat(Handle req, KeyValues kv, const char[] field) {
   AddIntParam(req, field, kv.GetNum(field));
 }
 
-public void UpdatePlayerStats(KeyValues kv, MatchTeam team) {
+public void UpdatePlayerStats(const char[] matchId, KeyValues kv, MatchTeam team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
-  int mapNumber = MapNumber();
+  int mapNumber = Get5_GetMapNumber();
 
   if (kv.GotoFirstSubKey()) {
     do {
@@ -304,7 +298,7 @@ public void UpdatePlayerStats(KeyValues kv, MatchTeam team) {
       char teamString[16];
       GetTeamString(team, teamString, sizeof(teamString));
 
-      Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%d/map/%d/player/%s/update", g_MatchID,
+      Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/player/%s/update", matchId,
                                  mapNumber, auth);
       if (req != INVALID_HANDLE) {
         AddStringParam(req, "team", teamString);
@@ -359,16 +353,20 @@ static void AddIntParam(Handle request, const char[] key, int value) {
   AddStringParam(request, key, buffer);
 }
 
-public void Get5_OnSeriesResult(MatchTeam seriesWinner, int team1MapScore, int team2MapScore) {
+public void Get5_OnSeriesResult(const Get5SeriesResultEvent event) {
+
+  char matchId[64];
+  event.GetMatchId(matchId, sizeof(matchId));
+
   char winnerString[64];
-  GetTeamString(seriesWinner, winnerString, sizeof(winnerString));
+  GetTeamString(event.Winner.Team, winnerString, sizeof(winnerString));
 
   KeyValues kv = new KeyValues("Stats");
   Get5_GetMatchStats(kv);
   bool forfeit = kv.GetNum(STAT_SERIES_FORFEIT, 0) != 0;
   delete kv;
 
-  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%d/finish", g_MatchID);
+  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/finish", matchId);
   if (req != INVALID_HANDLE) {
     AddStringParam(req, "winner", winnerString);
     AddIntParam(req, "forfeit", forfeit);
@@ -378,17 +376,10 @@ public void Get5_OnSeriesResult(MatchTeam seriesWinner, int team1MapScore, int t
   g_APIKeyCvar.SetString("");
 }
 
-public void Get5_OnRoundStatsUpdated() {
+public void Get5_OnRoundStatsUpdated(const Get5RoundStatsUpdatedEvent event) {
   if (Get5_GetGameState() == Get5State_Live) {
-    UpdateRoundStats(MapNumber());
+    char matchId[64];
+    event.GetMatchId(matchId, sizeof(matchId));
+    UpdateRoundStats(matchId, Get5_GetMapNumber());
   }
-}
-
-static int MapNumber() {
-  int t1, t2, n;
-  int buf;
-  Get5_GetTeamScores(MatchTeam_Team1, t1, buf);
-  Get5_GetTeamScores(MatchTeam_Team2, t2, buf);
-  Get5_GetTeamScores(MatchTeam_TeamNone, n, buf);
-  return t1 + t2 + n;
 }

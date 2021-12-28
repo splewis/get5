@@ -3,7 +3,7 @@
 ## SourceMod & MetaMod
 
 You must have [SourceMod](https://www.sourcemod.net/) downloaded and installed on your server. Please note that Get5
-requires SourceMod version 1.09 or higher. Instructions of how to install SourceMod and MetaMod (requirement of
+requires SourceMod version 1.10 or higher. Instructions of how to install SourceMod and MetaMod (requirement of
 SourceMod) can be found on their website.
 
 ## Download Get5

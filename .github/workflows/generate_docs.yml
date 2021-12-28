@@ -2,7 +2,8 @@ name: Publish MKDocs to GH Pages
 on:
   push:
     branches:
-      - master
+      - "master"
+      - "0.9"
 
 jobs:
   build:
@@ -19,3 +20,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CONFIG_FILE: documentation/mkdocs.yml
           EXTRA_PACKAGES: build-base
+          REQUIREMENTS: documentation/requirements.txt

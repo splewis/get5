@@ -1,0 +1,1057 @@
+---
+openapi: "3.0.3"
+info:
+  title: ""
+  version: ""
+paths:
+  "/Get5_OnGameStateChanged":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when the game state changes.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5GameStateChangedEvent
+              allOf:
+                - $ref: "#/components/schemas/Get5Event"
+              properties:
+                event:
+                  enum:
+                    - game_state_changed
+                new_state:
+                  description: The state the game has transitioned to. `NewState`
+                    in SourceMod.
+                  allOf:
+                    - "$ref": "#/components/schemas/Get5State"
+                old_state:
+                  description: The state the game has transitioned from. `OldState`
+                    in SourceMod.
+                  allOf:
+                    - "$ref": "#/components/schemas/Get5State"
+      responses: { }
+  "/Get5_OnPlayerConnected":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when a player connects to the server.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5PlayerConnectedEvent
+              allOf:
+                - $ref: "#/components/schemas/Get5Event"
+              properties:
+                event:
+                  enum:
+                    - player_connect
+                player:
+                  $ref: "#/components/schemas/Get5Player"
+      responses: { }
+  "/Get5_OnPlayerDisconnected":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when a player disconnects from the server.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5PlayerDisconnectedEvent
+              allOf:
+                - $ref: "#/components/schemas/Get5Event"
+              properties:
+                event:
+                  enum:
+                    - player_disconnect
+                player:
+                  $ref: "#/components/schemas/Get5Player"
+      responses: { }
+  "/Get5_OnPreLoadMatchConfig":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when the server attempts to load a match config.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5PreloadMatchConfigEvent
+              allOf:
+                - $ref: "#/components/schemas/Get5Event"
+              properties:
+                event:
+                  enum:
+                    - preload_match_config
+                filename:
+                  type: string
+                  description: The file the server attempted to load. `GetFileName()`
+                    and `SetFileName()` in SourceMod.
+      responses: { }
+  "/Get5_OnLoadMatchConfigFailed":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when a match config fails to load.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5LoadMatchConfigFailedEvent
+              allOf:
+                - $ref: "#/components/schemas/Get5Event"
+              properties:
+                event:
+                  enum:
+                    - match_config_load_fail
+                reason:
+                  type: string
+                  description: The error description for why the config load failed.
+                    `GetReason()` and `SetReason()` in SourceMod.
+                  example: You done goofed.
+      responses: { }
+  "/Get5_OnSeriesInit":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when a series is started after loading a match config.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5SeriesStartedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MatchEvent"
+              properties:
+                event:
+                  enum:
+                    - series_start
+                team1_name:
+                  type: string
+                  example: NaVi
+                  description: The name of team 1. `GetTeam1Name()` and `SetTeam1Name()`
+                    in SourceMod.
+                team2_name:
+                  type: string
+                  example: Astralis
+                  description: The name of team 2. `GetTeam2Name()` and `SetTeam2Name()`
+                    in SourceMod.
+      responses: { }
+  "/Get5_OnMatchPaused":
+    post:
+      tags:
+        - Map Flow
+      description: |
+        Fired when the match is paused.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5MatchPausedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MapTeamEvent"
+              properties:
+                event:
+                  enum:
+                    - game_paused
+                pause_type:
+                  $ref: "#/components/schemas/Get5PauseType"
+      responses: { }
+  "/Get5_OnMatchUnpaused":
+    post:
+      tags:
+        - Map Flow
+      description: |
+        Fired when the match is unpaused.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5MatchUnpausedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MapTeamEvent"
+              properties:
+                event:
+                  enum:
+                    - game_unpaused
+      responses: { }
+  "/Get5_OnMapResult":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when the map ends.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5MapResultEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MapEvent"
+              properties:
+                event:
+                  enum:
+                    - map_result
+                team1_score:
+                  type: integer
+                  minimum: 0
+                  description: The score of team1. `Team1Score` in SourceMod.
+                  example: 16
+                team2_score:
+                  type: integer
+                  minimum: 0
+                  description: The score of team2. `Team2Score` in SourceMod.
+                  example: 13
+                winner:
+                  $ref: "#/components/schemas/Get5Winner"
+      responses: { }
+  "/Get5_OnSeriesResult":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when a series is over. `winner` indicates team and side 0 if there was no winner in cases of a draw or if the series was forcefully canceled.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5SeriesResultEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MatchEvent"
+              properties:
+                event:
+                  enum:
+                    - series_end
+                team1_series_score:
+                  type: integer
+                  minimum: 0
+                  example: 2
+                  description: The map/series score of team1. `Team1SeriesScore` in
+                    SourceMod.
+                team2_series_score:
+                  type: integer
+                  minimum: 0
+                  description: The map/series score of team2. `Team2SeriesScore` in
+                    SourceMod.
+                winner:
+                  $ref: "#/components/schemas/Get5Winner"
+      responses: { }
+  "/Get5_OnKnifeRoundStarted":
+    post:
+      tags:
+        - Map Flow
+      description: |
+        Fired when the knife round starts.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5KnifeRoundStartedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MapEvent"
+              properties:
+                event:
+                  enum:
+                    - knife_start
+      responses: { }
+  "/Get5_OnKnifeRoundWon":
+    post:
+      tags:
+        - Map Flow
+      description: |
+        Fired when the knife round is over and the teams have elected to swap or stay. `side` represents the chosen side
+        of the winning team, not the side that won the knife round.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5KnifeRoundWonEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MapTeamEvent"
+              properties:
+                event:
+                  enum:
+                    - knife_won
+                side:
+                  $ref: "#/components/schemas/Get5Side"
+                swapped:
+                  type: boolean
+                  description: Indicates if the winning team elected to swap sides
+                    or not. `Swapped` on SourceMod.
+      responses: { }
+  "/Get5_OnSidePicked":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when a side is picked by a team.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5SidePickedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MapSelectionEvent"
+              properties:
+                event:
+                  enum:
+                    - side_picked
+                side:
+                  $ref: "#/components/schemas/Get5Side"
+                map_number:
+                  type: integer
+                  minimum: 0
+                  description: The map number the team chose a side for. `MapNumber`
+                    in SourceMod.
+      responses: { }
+  "/Get5_OnMapPicked":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when a team picks a map.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5MapPickedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MapSelectionEvent"
+              properties:
+                event:
+                  enum:
+                    - map_picked
+                map_number:
+                  type: integer
+                  minimum: 0
+                  description: The map number of the chosen map.
+      responses: { }
+  "/Get5_OnMapVetoed":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when a team vetos a map.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5MapPickedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MapSelectionEvent"
+              properties:
+                event:
+                  enum:
+                    - map_vetoed
+      responses: { }
+  "/Get5_OnTeamReadyStatusChanged":
+    post:
+      tags:
+        - Map Flow
+      description: |
+        Fired when a team's ready status changes.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5TeamReadyStatusChangedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MatchTeamEvent"
+              properties:
+                event:
+                  enum:
+                    - team_ready_status_changed
+                ready:
+                  type: boolean
+                  description: Indicates if the team was marked as ready or not (unready).
+                game_state:
+                  description: The game state the ready change was announced during. `GameState` in SourceMod and represented as an integer enum.
+                  allOf:
+                    - "$ref": "#/components/schemas/Get5State"
+      responses: { }
+  "/Get5_OnGoingLive":
+    post:
+      tags:
+        - Map Flow
+      description: |
+        Fired when a map is going live.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5GoingLiveEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MapEvent"
+              properties:
+                event:
+                  enum:
+                    - going_live
+      responses: { }
+  "/Get5_OnRoundStart":
+    post:
+      tags:
+        - Map Flow
+      description: |
+        Fired when a round starts (when freezetime begins).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5RoundStartedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5RoundEvent"
+              properties:
+                event:
+                  enum:
+                    - round_start
+      responses: { }
+  "/Get5_OnRoundEnd":
+    post:
+      tags:
+        - Map Flow
+      description: |
+        Fired when a round ends - when the result is in; not when the round stops. Game activity can occur after this.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5RoundEndedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5TimedRoundEvent"
+              properties:
+                event:
+                  enum:
+                    - round_end
+                reason:
+                  type: integer
+                  minimum: 0
+                  description: The reason for the round ending. `Reason` in SourceMod.
+                    See https://sm.alliedmods.net/new-api/cstrike/CSRoundEndReason.
+                winner:
+                  $ref: "#/components/schemas/Get5Winner"
+                team1_score:
+                  type: integer
+                  minimum: 0
+                  description: The round score of team 1. `Team1Score` in SourceMod.
+                team2_score:
+                  type: integer
+                  minimum: 0
+                  description: The round score of team 2. `Team2Score` in SourceMod.
+      responses: { }
+  "/Get5_OnRoundStatsUpdated":
+    post:
+      tags:
+        - Map Flow
+      description: |
+        Fired after the stats update on round end.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5RoundStatsUpdatedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5RoundEvent"
+              properties:
+                event:
+                  enum:
+                    - stats_updated
+      responses: { }
+  "/Get5_OnBackupRestore":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when a round is restored from a backup.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5BackupRestoredEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MapEvent"
+              properties:
+                event:
+                  enum:
+                    - backup_loaded
+                filename:
+                  type: string
+                  description: The name of the file that was used to restore the game
+                    state from. `GetFileName()` and `SetFileName()` in SourceMod.
+      responses: { }
+  "/Get5_OnDemoFinished":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when the GOTV recording has ended.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5DemoFinishedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MapEvent"
+              properties:
+                event:
+                  enum:
+                    - demo_finished
+                filename:
+                  type: string
+                  example: "1324_map_0_de_nuke.dem"
+                  description: The name of the file containing the GOTV recording of the map. The format is determined by the `get5_demo_name_format` parameter.
+      responses: { }
+  "/Get5_OnPlayerBecameMVP":
+    post:
+      tags:
+        - Map Flow
+      description: |
+        Fired when a player is elected the MVP of the round.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5RoundMVPEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5PlayerRoundEvent"
+              properties:
+                event:
+                  enum:
+                    - round_mvp
+                reason:
+                  type: integer
+                  minimum: 0
+                  description: The reason for the MVP assignment. `Reason` in SourceMod.
+      responses: { }
+  "/Get5_OnGrenadeThrown":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired whenever a grenade is thrown by a player. The `weapon` property reflects the grenade used.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5GrenadeThrownEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5PlayerWeaponEvent"
+              properties:
+                event:
+                  enum:
+                    - grenade_thrown
+      responses: { }
+  "/Get5_OnPlayerDeath":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when a player dies. Note that `attacker` is `null` if the player was not killed by a player (i.e. suicide from falling).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5PlayerDeathEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5PlayerWeaponEvent"
+              properties:
+                event:
+                  enum:
+                    - player_death
+                headshot:
+                  type: boolean
+                  description: Indicates if the player died from a headshot. `Headshot`
+                    in SourceMod.
+                thru_smoke:
+                  type: boolean
+                  description: Indicates if the player was killed through smoke. `ThruSmoke`
+                    in SourceMod.
+                penetrated:
+                  type: boolean
+                  description: Indicates if the player was killed through an object
+                    (another player or walls). `Penetrated` in SourceMod.
+                attacker_blind:
+                  type: boolean
+                  description: Indicates if the attacker was blind while the player
+                    died. `AttackerBlind` in SourceMod.
+                no_scope:
+                  type: boolean
+                  description: Indicates if the attacker killed the player with a
+                    rifle without scoping. `NoScope` in SourceMod.
+                suicide:
+                  type: boolean
+                  description: Indicates if the player died from suicide, such as
+                    falling or dying from their own grenade. C4 bomb kills do not
+                    count as suicide. `Suicide` in SourceMod.
+                friendly_fire:
+                  type: boolean
+                  description: Indicates if the player died from friendly fire. `FriendlyFire`
+                    in SourceMod.
+                attacker:
+                  "$ref": "#/components/schemas/Get5Player"
+                assist:
+                  "$ref": "#/components/schemas/Get5AssisterObject"
+      responses: { }
+  "/Get5_OnPlayerSay":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when a player types in chat.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5PlayerSayEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5PlayerTimedRoundEvent"
+              properties:
+                event:
+                  enum:
+                    - player_say
+                command:
+                  type: string
+                  enum:
+                    - say
+                    - say_team
+                  example: say
+                  description: The command the player sent. `GetCommand()` and `SetCommand()` in SourceMod.
+                message:
+                  type: string
+                  minLength: 1
+                  example: gg have fun
+                  description: The arguments passed to the command; the message written. `GetMessage()` and `SetMessage()` in SourceMod.
+      responses: { }
+  "/Get5_OnHEGrenadeDetonated":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when an HE grenade detonates. `player` describes who threw the HE and `victims` who were affected.
+        `weapon` is always an HE grenade.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5HEDetonatedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5VictimWithDamageGrenadeEvent"
+              properties:
+                event:
+                  enum:
+                    - hegrenade_detonated
+      responses: { }
+  "/Get5_OnMolotovDetonated":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when a molotov grenade expires. `player` describes
+        who threw the molotov and `victims` who were affected. `weapon` is
+        always a molotov grenade. Note that `round_time` reflects the time
+        at which the grenade detonated (started burning).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5MolotovDetonatedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5VictimWithDamageGrenadeEvent"
+              properties:
+                event:
+                  enum:
+                    - molotov_detonated
+      responses: { }
+  "/Get5_OnFlashbangDetonated":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when a flash bang grenade detonates. `player` describes
+        who threw the flash bang and `victims` who were affected. `weapon`
+        is always a flash bang grenade.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5FlashbangDetonatedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5VictimGrenadeEvent"
+              properties:
+                event:
+                  enum:
+                    - flashbang_detonated
+      responses: { }
+  "/Get5_OnSmokeGrenadeDetonated":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when an smoke grenade expires. `player` describes
+        who threw the grenade. `weapon` is always a smoke grenade.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5SmokeDetonatedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5PlayerWeaponEvent"
+              properties:
+                event:
+                  enum:
+                    - smokegrenade_detonated
+                extinguished_molotov:
+                  type: boolean
+                  description: Indicates if the smoke distinguished an active molotov/firebomb.
+                    `ExtinguishedMolotov` in SourceMod.
+      responses: { }
+  "/Get5_OnDecoyStarted":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when a decoy starts making noise. `player` describes
+        who threw the grenade. `weapon` is always a decoy grenade.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5DecoyStartedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5PlayerWeaponEvent"
+              properties:
+                event:
+                  enum:
+                    - decoygrenade_started
+      responses: { }
+  "/Get5_OnBombPlanted":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when the bomb is planted. `player` describes who planted the bomb.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5BombPlantedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5PlayerBombEvent"
+              properties:
+                event:
+                  enum:
+                    - bomb_planted
+      responses: { }
+  "/Get5_OnBombDefused":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when the bomb is defused. `player` describes who defused the bomb.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5BombDefusedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5PlayerBombEvent"
+              properties:
+                event:
+                  enum:
+                    - bomb_defused
+                bomb_time_remaining:
+                  type: number
+                  minimum: 0
+                  example: 12438
+                  description: Indicates how many milliseconds remained on the bomb
+                    timer when it was defused.
+      responses: { }
+  "/Get5_OnBombExploded":
+    post:
+      tags:
+        - Client Actions
+      description: |
+        Fired when the bomb explodes.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5BombExplodedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5BombEvent"
+              properties:
+                event:
+                  enum:
+                    - bomb_exploded
+      responses: { }
+components:
+  schemas:
+    Get5State:
+      type: string
+      enum:
+        - "none"
+        - "pre_veto"
+        - "veto"
+        - "warmup"
+        - "knife"
+        - "waiting_for_knife_decision"
+        - "going_live"
+        - "live"
+        - "post_game"
+      description: |
+        Represents the state of a Get5 match.
+    Get5Event:
+      type: object
+      properties:
+        event:
+          type: string
+          description: The name of the event `GetEvent()` and `SetEvent()` in SourceMod.
+    Get5MatchEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5Event"
+      properties:
+        matchid:
+          type: string
+          description: The ID of the match. `GetMatchId()` and `SetMatchId()` in SourceMod.
+          example: '14272'
+    Get5MatchTeamEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5MatchEvent"
+      properties:
+        team:
+          $ref: "#/components/schemas/Get5Team"
+    Get5MapEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5MatchEvent"
+      properties:
+        map_number:
+          type: integer
+          minimum: 0
+          example: 0
+          description: The map number in the series, starting at 0. `MapNumber` in
+            SourceMod.
+    Get5MapSelectionEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5MatchTeamEvent"
+      properties:
+        map_name:
+          type: string
+          example: de_nuke
+          description: The name of the map related to the event (map picked/banned
+            etc.). `GetMapName()` and `SetMapName()` in SourceMod.
+    Get5MapTeamEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5MapEvent"
+      properties:
+        team:
+          $ref: "#/components/schemas/Get5Team"
+    Get5RoundEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5MapEvent"
+      properties:
+        round_number:
+          type: integer
+          minimum: 0
+          example: 13
+          description: The round number of the map, starting at 0. `RoundNumber` in
+            SourceMod.
+    Get5PlayerRoundEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5RoundEvent"
+      properties:
+        player:
+          "$ref": "#/components/schemas/Get5Player"
+    Get5TimedRoundEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5RoundEvent"
+      properties:
+        round_time:
+          type: integer
+          description: The number of milliseconds into the round the event occurred.
+            `RoundTime` in SourceMod.
+          minimum: 0
+          example: 51434
+    Get5BombEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5TimedRoundEvent"
+      properties:
+        site:
+          $ref: "#/components/schemas/Get5Site"
+    Get5PlayerBombEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5PlayerTimedRoundEvent"
+      properties:
+        site:
+          $ref: "#/components/schemas/Get5Site"
+    Get5PlayerTimedRoundEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5TimedRoundEvent"
+      properties:
+        player:
+          "$ref": "#/components/schemas/Get5Player"
+    Get5PlayerWeaponEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5PlayerTimedRoundEvent"
+      properties:
+        weapon:
+          "$ref": "#/components/schemas/Get5Weapon"
+    Get5Winner:
+      type: object
+      description: Describes a winning team (their side and team number). `Winner` in SourceMod.
+      properties:
+        side:
+          $ref: "#/components/schemas/Get5Side"
+        team:
+          $ref: "#/components/schemas/Get5Team"
+    Get5Team:
+      type: string
+      nullable: true
+      description: Represents a team. `null` if no team. `Team` in SourceMod and represented as an integer enum.
+      enum:
+        - team1
+        - team2
+        - spec
+    Get5Side:
+      type: string
+      nullable: true
+      description: Represents a side (CT vs T). `null` if no side. `Side` in SourceMod and represented as an integer enum.
+      enum:
+        - ct
+        - t
+        - spec
+    Get5PauseType:
+      type: string
+      description: Describes a pause type. `PauseType` in SourceMod and represented as an integer enum where 0 means no pause. The `backup` pause is a special pause type fired when the game is paused due to a round backup restore.
+      enum:
+        - tactical
+        - technical
+        - admin
+        - backup
+    Get5Player:
+      type: object
+      nullable: true
+      properties:
+        steamid:
+          type: string
+          example: '76561198279375306'
+          description: The SteamID64 of the player. `GetSteamId()` and `SetSteamId()`
+            in SourceMod.
+        side:
+          $ref: "#/components/schemas/Get5Side"
+      description: Describes a player. `Player` in SourceMod (or `Attacker` on `Get5PlayerDeathEvent` - use `HasAttacker()` on that object to ensure that it is not `null`.).
+    Get5Weapon:
+      type: object
+      properties:
+        name:
+          type: string
+          example: ak47
+          description: The in-game console name of the weapon used. `GetName()` and
+            `SetName()` in SourceMod.
+        id:
+          type: integer
+          minimum: 0
+          example: 27
+          description: The weapon ID used. See https://sm.alliedmods.net/new-api/cstrike/CSWeaponID
+            `Id` in SourceMod.
+      description: Describes a weapon. `Weapon` in SourceMod.
+    Get5AssisterObject:
+      type: object
+      nullable: true
+      properties:
+        player:
+          "$ref": "#/components/schemas/Get5Player"
+        friendly_fire:
+          type: boolean
+          description: Indicates if the assist was friendly fire. `FriendlyFire` in
+            SourceMod.
+        flash_assist:
+          type: boolean
+          description: Indicates if the assist was a flash assist. `FlashAssist` in
+            SourceMod.
+      description: 'Describes an assist to a kill. `null` if no assister. `Assist`
+        in SourceMod. **Note: Use `HasAssist()` in SourceMod to determine if the property
+        exists before accessing it.**'
+    Get5GrenadeVictim:
+      type: object
+      properties:
+        player:
+          "$ref": "#/components/schemas/Get5Player"
+        friendly_fire:
+          type: boolean
+          description: Indicates if the grenade victim (`player`) was a friendly.
+            `FriendlyFire` in SourceMod.
+    Get5VictimGrenadeEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5PlayerWeaponEvent"
+      properties:
+        victims:
+          type: array
+          items:
+            oneOf:
+              - "$ref": "#/components/schemas/Get5BlindedGrenadeVictim"
+              - "$ref": "#/components/schemas/Get5DamageGrenadeVictim"
+          description: Describes the victims of the grenade. For flash bangs, these
+            are `Get5BlindedGrenadeVictim` and for molotovs/firebombs and HE, these
+            are `Get5DamageGrenadeVictim`. The array is empty if the grenade did not
+            affect anyone. `Victims` in SourceMod.
+    Get5VictimWithDamageGrenadeEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5VictimGrenadeEvent"
+      properties:
+        damage_enemies:
+          type: integer
+          minimum: 0
+          description: The total damage the grenade did to enemies. `DamageEnemies`
+            in SourceMod.
+        damage_friendlies:
+          type: integer
+          minimum: 0
+          description: The total damage the grenade did to friendlies. `DamageFriendlies`
+            in SourceMod.
+    Get5DamageGrenadeVictim:
+      allOf:
+        - "$ref": "#/components/schemas/Get5GrenadeVictim"
+      properties:
+        damage:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: The damage afflicted to the player by the grenade. `Damage`
+            in SourceMod.
+        killed:
+          type: boolean
+          description: Indicates if the grenade victim (`player`) was killed by the
+            grenade. `Killed` in SourceMod.
+      description: Describes a victim of a HE or molotov/firebomb.
+    Get5BlindedGrenadeVictim:
+      allOf:
+        - "$ref": "#/components/schemas/Get5GrenadeVictim"
+      properties:
+        blind_duration:
+          type: number
+          maximum: 5
+          minimum: 0.5
+          description: The duration in seconds the victim (`player`) was blinded by
+            the grenade. `BlindDuration` in SourceMod.
+      description: Describes a victim of a flash bang.
+    Get5Site:
+      type: integer
+      example: 342
+      description: The site index at which the bomb was planted on. This varies
+        for each map and might change when the maps are updated. `Site` in SourceMod.
+
+tags:
+  - name: Series Flow
+    description: Events the occur in relation to setting up a match or series.
+  - name: Map Flow
+    description: Events the occur in relation to a map pick or match-events on a map (pausing).
+  - name: Client Actions
+    description: Events that occur based on players' in-game activity.
+

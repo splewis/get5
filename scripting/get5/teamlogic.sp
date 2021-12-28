@@ -1,14 +1,15 @@
 public Action Command_JoinGame(int client, const char[] command, int argc) {
-  if (g_GameState == Get5State_None) {
+  if (g_GameState == Get5State_None || !IsPlayer(client)) {
     return Plugin_Continue;
   }
 
-  // TODO: if we want to bypass the teammenu, this is probably the best
-  // place to put the player onto a team.
-  // if (IsPlayer(client)) {
-  //     FakeClientCommand(client, "jointeam 2");
-  // }
-
+  if (g_CheckAuthsCvar.IntValue > 0 && !g_PendingSideSwap) {
+    int clientTeam = MatchTeamToCSTeam(GetClientMatchTeam(client));
+    if (clientTeam == CS_TEAM_NONE || clientTeam == CS_TEAM_SPECTATOR) {
+      return Plugin_Continue;
+    }
+    ChangeClientTeam(client, clientTeam);
+  }
   return Plugin_Continue;
 }
 
@@ -324,10 +325,6 @@ stock int CountPlayersOnMatchTeam(MatchTeam team, int exclude = -1) {
   return count;
 }
 
-public Action Event_OnPlayerTeam(Event event, const char[] name, bool dontBroadcast) {
-  return Plugin_Continue;
-}
-
 // Returns the match team a client is the captain of, or MatchTeam_None.
 public MatchTeam GetCaptainTeam(int client) {
   if (client == GetTeamCaptain(MatchTeam_Team1)) {
@@ -388,7 +385,7 @@ public bool IsAuthOnTeamCoach(const char[] auth, MatchTeam team) {
 }
 
 public void SetStartingTeams() {
-  int mapNumber = GetMapNumber();
+  int mapNumber = Get5_GetMapNumber();
   if (mapNumber >= g_MapSides.Length || g_MapSides.Get(mapNumber) == SideChoice_KnifeRound) {
     g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
     g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
@@ -407,7 +404,7 @@ public void SetStartingTeams() {
 }
 
 public void AddMapScore() {
-  int currentMapNumber = GetMapNumber();
+  int currentMapNumber = Get5_GetMapNumber();
 
   g_TeamScoresPerMap.Set(currentMapNumber, CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
                          view_as<int>(MatchTeam_Team1));
@@ -423,11 +420,6 @@ public int GetMapScore(int mapNumber, MatchTeam team) {
 public bool HasMapScore(int mapNumber) {
   return GetMapScore(mapNumber, MatchTeam_Team1) != 0 ||
          GetMapScore(mapNumber, MatchTeam_Team2) != 0;
-}
-
-public int GetMapNumber() {
-  return g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] +
-         g_TeamSeriesScores[MatchTeam_TeamNone];
 }
 
 public bool AddPlayerToTeam(const char[] auth, MatchTeam team, const char[] name) {

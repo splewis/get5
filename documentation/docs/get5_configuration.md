@@ -111,7 +111,9 @@ server.*
 - `get5_auto_ready_active_players`: Whether to automatically mark players as ready if they kill anyone in the warmup or
   veto phase. Default is 0.
 - `get5_set_client_clan_tags`: Whether to set client clan tags to player ready status. Default is 1.
-- `get5_print_damage`: Whether to print damage reports on round ends, default is 0.
-- `get5_damageprint_format`: Formatting of damage reports in the text chat. defaults
+- `get5_print_damage`: Whether to print damage reports on round ends. Default is 0.
+- `get5_print_damage_excess`: Whether to discard damage that exceeds the remaining health of a player in the chat
+  report. Defaults to 0. If enabled, you can inflict more than 100 damage to a player in the damage report.
+- `get5_damageprint_format`: Formatting of damage reports in the text chat. Defaults
   to `- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)`.
 - `get5_message_prefix`: The tag applied before plugin messages, default is `Get5`.

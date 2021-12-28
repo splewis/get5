@@ -301,7 +301,7 @@ public bool RestoreFromBackup(const char[] path) {
   GetCurrentMap(currentMap, sizeof(currentMap));
 
   char currentSeriesMap[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(GetMapNumber(), currentSeriesMap, sizeof(currentSeriesMap));
+  g_MapsToPlay.GetString(Get5_GetMapNumber(), currentSeriesMap, sizeof(currentSeriesMap));
 
   if (!StrEqual(currentMap, currentSeriesMap)) {
     ChangeMap(currentSeriesMap, 1.0);
@@ -313,11 +313,15 @@ public bool RestoreFromBackup(const char[] path) {
 
   delete kv;
 
-  LogDebug("Calling Get5_OnBackupRestore");
+  LogDebug("Calling Get5_OnBackupRestore()");
+
+  Get5BackupRestoredEvent backupEvent = new Get5BackupRestoredEvent(g_MatchID, Get5_GetMapNumber(), path);
+
   Call_StartForward(g_OnBackupRestore);
+  Call_PushCell(backupEvent);
   Call_Finish();
 
-  EventLogger_BackupLoaded(path);
+  EventLogger_LogAndDeleteEvent(backupEvent);
 
   return true;
 }
@@ -350,7 +354,7 @@ public void RestoreGet5Backup() {
       EndWarmup();
       EndWarmup();
       ServerCommand("mp_restartgame 5");
-      Pause(PauseType_Backup);
+      PauseGame(MatchTeam_TeamNone, Get5PauseType_Backup, 1);
       if (g_CoachingEnabledCvar.BoolValue) {
         CreateTimer(6.0, Timer_SwapCoaches);
       }
@@ -368,12 +372,12 @@ public Action Timer_SwapCoaches(Handle timer) {
       CheckIfClientCoaching(i, MatchTeam_Team1);
       CheckIfClientCoaching(i, MatchTeam_Team2);
     }
-      
+
   }
 }
 
 public Action Time_StartRestore(Handle timer) {
-  Pause(PauseType_Backup);
+  PauseGame(MatchTeam_TeamNone, Get5PauseType_Backup, 1);
 
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);

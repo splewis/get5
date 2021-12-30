@@ -87,6 +87,12 @@ forward void Get5_OnSidePicked(MatchTeam team, const char[] map, int side);
 // Called when a demo finishes recording.
 forward void Get5_OnDemoFinished(const char[] filename);
 
+// Called when a match is paused.
+forward void Get5_OnMatchPaused(MatchTeam team, PauseType pauseReason);
+
+// Called when a match is unpaused.
+forward void Get5_OnMatchUnpaused(MatchTeam team);
+
 // Called when a match backup is restored.
 forward void Get5_OnBackupRestore();
 

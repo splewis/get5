@@ -1,7 +1,7 @@
 #include <string>
 
 #define REMOTE_CONFIG_PATTERN "remote_config%d.json"
-#define CONFIG_MATCHID_DEFAULT "matchid"
+#define CONFIG_MATCHID_DEFAULT "" // empty string if no match ID defined in config.
 #define CONFIG_MATCHTITLE_DEFAULT "Map {MAPNUMBER} of {MAXMAPS}"
 #define CONFIG_PLAYERSPERTEAM_DEFAULT 5
 #define CONFIG_MINPLAYERSTOREADY_DEFAULT 0
@@ -118,6 +118,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
     LogDebug("Calling Get5_OnSeriesInit");
     Call_StartForward(g_OnSeriesInit);
+    Call_PushString(g_MatchID);
     Call_Finish();
   }
 

@@ -193,22 +193,23 @@ public Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dont
     char weapon[32];
     event.GetString("weapon", weapon, sizeof(weapon));
 
-    EventLogger_GrenadeThrown(attacker, weapon);
-
     int roundTime = GetMilliSecondsPassedSince(g_RoundStartedTime);
     int attackerTeam = GetClientTeam(attacker);
     int mapNumber = GetMapNumber();
 
-    LogDebug("Calling Get5_OnGrenadeThrown(client=%d, weapon=%s, mapNumber=%d, roundNumber=%d, roundTime=%d, team=%d)",
-        attacker, weapon, mapNumber, g_RoundNumber, roundTime, attackerTeam);
+    EventLogger_GrenadeThrown(g_RoundNumber, roundTime, attacker, weapon);
+
+    LogDebug("Calling Get5_OnGrenadeThrown(matchId=%s, mapNumber=%d, roundNumber=%d, roundTime=%d, attacker=%d, attackerTeam=%d, weapon=%s)",
+        g_MatchID, mapNumber, g_RoundNumber, roundTime, attacker, attackerTeam, weapon);
 
     Call_StartForward(g_OnGrenadeThrown);
-    Call_PushCell(attacker);
-    Call_PushString(weapon);
+    Call_PushString(g_MatchID);
     Call_PushCell(mapNumber);
     Call_PushCell(g_RoundNumber);
     Call_PushCell(roundTime);
+    Call_PushCell(attacker);
     Call_PushCell(attackerTeam);
+    Call_PushString(weapon);
     Call_Finish();
 
   }
@@ -245,6 +246,7 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
   int attackerTeam = GetClientTeam(attacker);
   int victimTeam = GetClientTeam(victim);
+  bool isSuicide = false;
 
   IncrementPlayerStat(victim, STAT_DEATHS);
   // used for calculating round KAST
@@ -255,10 +257,10 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
     IncrementPlayerStat(victim, (victimTeam == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
   }
 
-  if (validAttacker) {
-
+  if (!validAttacker || attacker == victim) {
+    isSuicide = true;
+  } else {
     if (HelpfulAttack(attacker, victim)) {
-
       if (!g_TeamFirstKillDone[attackerTeam]) {
         g_TeamFirstKillDone[attackerTeam] = true;
         IncrementPlayerStat(attacker, (attackerTeam == CS_TEAM_CT) ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
@@ -290,14 +292,9 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
           weaponId > CSWeapon_MAX_WEAPONS_NO_KNIFES) {
         IncrementPlayerStat(attacker, STAT_KNIFE_KILLS);
       }
-
-    } else if (attacker == victim) {
-      IncrementPlayerStat(attacker, STAT_SUICIDES); // If killed by self; i.e. own grenade.
     } else {
       IncrementPlayerStat(attacker, STAT_TEAMKILLS);
     }
-  } else {
-    IncrementPlayerStat(victim, STAT_SUICIDES); // Fall damage or world.
   }
 
   int assisterTeam = 0;
@@ -348,6 +345,7 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
     roundTime,
     validAttacker ? attacker : 0,
     victim, // we already checked that victim is valid.
+    isSuicide,
     headshot,
     validAssister ? assister : 0,
     assistedFlash,
@@ -360,17 +358,19 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
     attackerBlind
   );
 
-  LogDebug("Calling Get5_OnPlayerDied(weapon=%s, headshot=%d, mapNumber=%d, roundNumber=%d, roundTime=%d, attacker=%d, victim=%d, assister=%d, assistedFlash=%d, penetrated=%d, thruSmoke=%d, noScope=%d, attackerBlind=%d, attackerTeam=%d, assisterTeam=%d, victimTeam=%d)",
-           weapon, headshot, mapNumber, g_RoundNumber, roundTime, attacker, victim, assister, assistedFlash, penetrated, thruSmoke, noScope, attackerBlind, attackerTeam, assisterTeam, victimTeam);
+  LogDebug("Calling Get5_OnPlayerDeath(matchId=%s, mapNumber=%d, roundNumber=%d, roundTime=%d, weapon=%s, headshot=%d, attacker=%d, victim=%d, suicide=%d, assister=%d, assistedFlash=%d, penetrated=%d, thruSmoke=%d, noScope=%d, attackerBlind=%d, attackerTeam=%d, assisterTeam=%d, victimTeam=%d)",
+           g_MatchID, mapNumber, g_RoundNumber, roundTime, weapon, headshot, attacker, victim, isSuicide, assister, assistedFlash, penetrated, thruSmoke, noScope, attackerBlind, attackerTeam, assisterTeam, victimTeam);
 
-  Call_StartForward(g_OnPlayerDied);
-  Call_PushString(weapon);
-  Call_PushCell(headshot);
+  Call_StartForward(g_OnPlayerDeath);
+  Call_PushString(g_MatchID);
   Call_PushCell(mapNumber);
   Call_PushCell(g_RoundNumber);
   Call_PushCell(roundTime);
+  Call_PushString(weapon);
+  Call_PushCell(headshot);
   Call_PushCell(attacker);
   Call_PushCell(victim);
+  Call_PushCell(isSuicide);
   Call_PushCell(assister);
   Call_PushCell(assistedFlash);
   Call_PushCell(penetrated);
@@ -407,6 +407,10 @@ public Action Stats_DamageDealtEvent(Event event, const char[] name, bool dontBr
 
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
   int victim = GetClientOfUserId(event.GetInt("userid"));
+
+  if (!IsValidClient(attacker) || !IsValidClient(victim)) {
+    return Plugin_Continue;
+  }
 
   if (HelpfulAttack(attacker, victim)) {
     int preDamageHealth = GetClientHealth(victim);
@@ -451,20 +455,22 @@ public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBr
   int site = event.GetInt("site");
   if (IsValidClient(client)) {
     IncrementPlayerStat(client, STAT_BOMBPLANTS);
-    EventLogger_BombPlanted(client, site);
 
     int mapNumber = GetMapNumber();
     int roundTime = GetMilliSecondsPassedSince(g_RoundStartedTime);
 
-    LogDebug("Calling Get5_OnBombPlanted(client=%d, site=%d, mapNumber=%d, roundNumber=%d, roundTime=%d)",
-               client, site, mapNumber, g_RoundNumber, roundTime);
+    EventLogger_BombPlanted(client, g_RoundNumber, roundTime, site);
+
+    LogDebug("Calling Get5_OnBombPlanted(matchId=%s, mapNumber=%d, roundNumber=%d, roundTime=%d, client=%d, site=%d)",
+               g_MatchID, mapNumber, g_RoundNumber, roundTime, client, site);
 
     Call_StartForward(g_OnBombPlanted);
-    Call_PushCell(client);
-    Call_PushCell(site);
+    Call_PushString(g_MatchID);
     Call_PushCell(mapNumber);
     Call_PushCell(g_RoundNumber);
     Call_PushCell(roundTime);
+    Call_PushCell(client);
+    Call_PushCell(site);
     Call_Finish();
 
   }
@@ -483,20 +489,25 @@ public Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBr
     IncrementPlayerStat(client, STAT_BOMBDEFUSES);
 
     int timeRemaining = (GetCvarIntSafe("mp_c4timer") * 1000) - GetMilliSecondsPassedSince(g_BombPlantedTime);
+    if (timeRemaining < 0) {
+      timeRemaining = 0; // fail-safe in case of race conditions between events or if the timer value is changed after plant.
+    }
+
     int mapNumber = GetMapNumber();
     int roundTime = GetMilliSecondsPassedSince(g_RoundStartedTime);
 
-    EventLogger_BombDefused(client, site, timeRemaining);
+    EventLogger_BombDefused(client, g_RoundNumber, roundTime, site, timeRemaining);
 
-    LogDebug("Calling Get5_OnBombDefused(client=%d, site=%d, mapNumber=%d, roundNumber=%d, roundTime=%d, timeRemaining=%d)",
-                   client, site, mapNumber, g_RoundNumber, roundTime, timeRemaining);
+    LogDebug("Calling Get5_OnBombDefused(matchId=%s, mapNumber=%d, roundNumber=%d, roundTime=%d, client=%d, site=%d, timeRemaining=%d)",
+                   g_MatchID, mapNumber, g_RoundNumber, roundTime, client, site, timeRemaining);
 
     Call_StartForward(g_OnBombDefused);
-    Call_PushCell(client);
-    Call_PushCell(site);
+    Call_PushString(g_MatchID);
     Call_PushCell(mapNumber);
     Call_PushCell(g_RoundNumber);
     Call_PushCell(roundTime);
+    Call_PushCell(client);
+    Call_PushCell(site);
     Call_PushCell(timeRemaining);
     Call_Finish();
 
@@ -511,9 +522,8 @@ public Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontB
   }
 
   int client = GetClientOfUserId(event.GetInt("userid"));
-  int site = event.GetInt("site");
   if (IsValidClient(client)) {
-    EventLogger_BombExploded(client, site);
+    EventLogger_BombExploded(client, g_RoundNumber, GetMilliSecondsPassedSince(g_RoundStartedTime), event.GetInt("site"));
   }
 
   return Plugin_Continue;
@@ -567,15 +577,16 @@ public Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroad
     int mapNumber = GetMapNumber();
     int clientTeam = GetClientTeam(client);
 
-    EventLogger_MVP(client, reason);
+    EventLogger_MVP(client, g_RoundNumber, reason);
 
-    LogDebug("Calling Get5_OnPlayerBecameMVP(client=%d, mapNumber=%d, roundNumber=%d, clientTeam=%d, reason=%d)",
-               client, mapNumber, g_RoundNumber, clientTeam, reason);
+    LogDebug("Calling Get5_OnPlayerBecameMVP(matchId=%s, mapNumber=%d, roundNumber=%d, client=%d, clientTeam=%d, reason=%d)",
+               g_MatchID, mapNumber, g_RoundNumber, client, clientTeam, reason);
 
     Call_StartForward(g_OnPlayerBecameMVP);
-    Call_PushCell(client);
+    Call_PushString(g_MatchID);
     Call_PushCell(mapNumber);
     Call_PushCell(g_RoundNumber);
+    Call_PushCell(client);
     Call_PushCell(clientTeam);
     Call_PushCell(reason);
     Call_Finish();

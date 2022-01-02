@@ -243,10 +243,6 @@ stock int CountPlayersOnMatchTeam(MatchTeam team, int exclude = -1) {
   return count;
 }
 
-public Action Event_OnPlayerTeam(Event event, const char[] name, bool dontBroadcast) {
-  return Plugin_Continue;
-}
-
 // Returns the match team a client is the captain of, or MatchTeam_None.
 public MatchTeam GetCaptainTeam(int client) {
   if (client == GetTeamCaptain(MatchTeam_Team1)) {

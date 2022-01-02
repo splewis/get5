@@ -155,8 +155,9 @@ stock bool Record(const char[] demoName) {
 
 stock void StopRecording() {
   ServerCommand("tv_stoprecord");
-  LogDebug("Calling Get5_OnDemoFinished(file=%s)", g_DemoFileName);
+  LogDebug("Calling Get5_OnDemoFinished(matchId=%s, file=%s)", g_MatchID, g_DemoFileName);
   Call_StartForward(g_OnDemoFinished);
+  Call_PushString(g_MatchID);
   Call_PushString(g_DemoFileName);
   Call_Finish();
 }
@@ -665,12 +666,8 @@ stock bool ConvertAuthToSteam64(const char[] inputId, char outputId[AUTH_LENGTH]
 }
 
 stock bool HelpfulAttack(int attacker, int victim) {
-  if (!IsValidClient(attacker) || !IsValidClient(victim)) {
-    return false;
-  }
-  int attackerTeam = GetClientTeam(attacker);
-  int victimTeam = GetClientTeam(victim);
-  return attackerTeam != victimTeam && attacker != victim;
+  // Assumes both attacker and victim are valid clients; check this before calling this function.
+  return attacker != victim && GetClientTeam(attacker) != GetClientTeam(victim);
 }
 
 stock SideChoice SideTypeFromString(const char[] input) {
@@ -735,4 +732,8 @@ public bool IsJSONPath(const char[] path) {
   } else {
     return false;
   }
+}
+
+public int GetMilliSecondsPassedSince(float timestamp) {
+  return RoundToFloor((GetEngineTime() - timestamp) * 1000);
 }

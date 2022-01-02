@@ -34,7 +34,7 @@ enum MatchSideType {
 
 enum SideChoice {
   SideChoice_Team1CT,     // Team 1 will start on CT
-  SideChoice_Team1T,      // Team 2 will start on T
+  SideChoice_Team1T,      // Team 1 will start on T
   SideChoice_KnifeRound,  // There will be a knife round to choose sides
 };
 
@@ -47,26 +47,30 @@ enum PauseType {
 forward void Get5_OnEvent(const char[] eventJson);
 
 // Called when a series is first setup.
-// Note: do not rely on the state of any cvars at this point.
-forward void Get5_OnSeriesInit();
+// Note: Do not rely on the state of any cvars at this point.
+// Also: matchId is an empty string at this stage if not defined in the match config.
+forward void Get5_OnSeriesInit(const char[] matchId);
 
 // Called each time in a match when a map is going live.
 // The mapNumber parameter starts at 0.
-forward void Get5_OnGoingLive(int mapNumber);
+forward void Get5_OnGoingLive(const char[] matchId, int mapNumber);
 
 // Called whenever the gamestate phase is changed.
 forward void Get5_OnGameStateChanged(Get5State oldState, Get5State newState);
 
+forward void Get5_OnGrenadeThrown(const char[] matchId, int mapNumber, int roundNumber, int roundTime, int attacker,
+  int attackerTeam, const char[] weapon);
+
 // Called when the stats for the last round have been updated.
-forward void Get5_OnRoundStatsUpdated();
+forward void Get5_OnRoundStatsUpdated(const char[] matchId);
 
 // Called at the end of a map in a series.
-forward void Get5_OnMapResult(const char[] map, MatchTeam mapWinner, int team1Score, int team2Score,
+forward void Get5_OnMapResult(const char[] matchId, const char[] map, MatchTeam mapWinner, int team1Score, int team2Score,
                               int mapNumber);
 
 // Called at the end of a full match.
 // Note: both Get5_OnMapResult and Get5_OnSeriesResult are called on the last map of a series.
-forward void Get5_OnSeriesResult(MatchTeam seriesWinner, int team1MapScore, int team2MapScore);
+forward void Get5_OnSeriesResult(const char[] matchId, MatchTeam seriesWinner, int team1MapScore, int team2MapScore);
 
 forward void Get5_OnPreLoadMatchConfig(const char[] filePath);
 
@@ -74,44 +78,44 @@ forward void Get5_OnPreLoadMatchConfig(const char[] filePath);
 forward void Get5_OnLoadMatchConfigFailed(const char[] reason);
 
 // Called when a team vetoes a map.
-forward void Get5_OnMapVetoed(MatchTeam team, const char[] map);
+forward void Get5_OnMapVetoed(const char[] matchId, MatchTeam team, const char[] map);
 
 // Called when a team selects a map.
 // The team parameter will be MatchTeam_TeamNone if the map was selected as the last remaining map
 // and not by one of the teams specifically.
-forward void Get5_OnMapPicked(MatchTeam team, const char[] map);
+forward void Get5_OnMapPicked(const char[] matchId, MatchTeam team, const char[] map);
 
 // Called when a player is elected the MVP of the round.
-forward void Get5_OnPlayerBecameMVP(int mapNumber, int roundNumber, int client, int clientSide, int reason);
+forward void Get5_OnPlayerBecameMVP(const char[] matchId, int mapNumber, int roundNumber, int client, int clientSide, int reason);
 
-// Called when a player is killed in a live match. Used by MySQL stats. roundTime is milliseconds.
-forward void Get5_OnPlayerDied(char[] weapon, bool headshot, int mapNumber, int roundNumber, int roundTime,
-    int attacker, int victim, int assister, bool flashAssist, int penetratedObjects, bool thruSmoke, bool noScope,
-    bool attackerBlind, int attackerSide, int assisterSide, int victimSide);
+// Called when a player dies in a match, including from suicide and team kills. roundTime is milliseconds.
+forward void Get5_OnPlayerDeath(const char[] matchId, int mapNumber, int roundNumber, int roundTime, const char[] weapon,
+  bool headshot, int attacker, int victim, bool suicide, int assister, bool flashAssist, int penetratedObjects, bool thruSmoke,
+  bool noScope, bool attackerBlind, int attackerSide, int assisterSide, int victimSide);
 
-// Called when a round starts. Used by MySQL stats.
-forward void Get5_OnRoundStart(int mapNumber, int roundNumber);
+// Called when a round starts.
+forward void Get5_OnRoundStart(const char[] matchId, int mapNumber, int roundNumber);
 
-// Called when the round ends. Used by MySQL stats. roundLength is milliseconds.
-forward void Get5_OnRoundEnd(int winnerSide, char[] winningTeam, int mapNumber, int roundNumber, int roundLength, int reason);
+// Called when the round ends. roundTime is milliseconds.
+forward void Get5_OnRoundEnd(const char[] matchId, int mapNumber, int roundNumber, int roundTime, int winnerSide, char[] winningTeam, int reason);
 
-// Called when the bomb is defused. Used by MySQL stats. roundTime is milliseconds.
-forward void Get5_OnBombDefused(int client, int site, int mapNumber, int roundNumber, int roundTime, int milliSecondsRemaining);
+// Called when the bomb is defused. roundTime is milliseconds.
+forward void Get5_OnBombDefused(const char[] matchId, int mapNumber, int roundNumber, int roundTime, int client, int site, int milliSecondsRemaining);
 
-// Called when the bomb is planted. Used by MySQL stats. roundTime is milliseconds.
-forward void Get5_OnBombPlanted(int client, int site, int mapNumber, int roundNumber, int roundTime);
+// Called when the bomb is planted. roundTime is milliseconds.
+forward void Get5_OnBombPlanted(const char[] matchId, int mapNumber, int roundNumber, int roundTime, int client, int site);
 
 // Called when a team selects a side.
-forward void Get5_OnSidePicked(MatchTeam team, const char[] map, int side);
+forward void Get5_OnSidePicked(const char[] matchId, MatchTeam team, const char[] map, int side);
 
 // Called when a demo finishes recording.
-forward void Get5_OnDemoFinished(const char[] filename);
+forward void Get5_OnDemoFinished(const char[] matchId, const char[] filename);
 
 // Called when a match is paused.
-forward void Get5_OnMatchPaused(MatchTeam team, PauseType pauseReason);
+forward void Get5_OnMatchPaused(const char[] matchId, MatchTeam team, PauseType pauseReason);
 
 // Called when a match is unpaused.
-forward void Get5_OnMatchUnpaused(MatchTeam team);
+forward void Get5_OnMatchUnpaused(const char[] matchId, MatchTeam team);
 
 // Called when a match backup is restored.
 forward void Get5_OnBackupRestore();

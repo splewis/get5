@@ -23,9 +23,12 @@ public Action StartGoingLive(Handle timer) {
 
   EventLogger_GoingLive();
 
-  LogDebug("Calling Get5_OnGoingLive(mapnum=%d)", GetMapNumber());
+  int mapNumber = GetMapNumber();
+
+  LogDebug("Calling Get5_OnGoingLive(matchId=%s, mapnum=%d)", g_MatchID, mapNumber);
   Call_StartForward(g_OnGoingLive);
-  Call_PushCell(GetMapNumber());
+  Call_PushString(g_MatchID);
+  Call_PushCell(mapNumber);
   Call_Finish();
 
   return Plugin_Handled;

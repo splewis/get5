@@ -3,6 +3,7 @@ get5
 
 [![Build status](http://ci.splewis.net/job/get5/badge/icon)](http://ci.splewis.net/job/get5/)
 [![GitHub Downloads](https://img.shields.io/github/downloads/splewis/get5/total.svg?style=flat-square&label=Downloads)](https://github.com/splewis/get5/releases/latest)
+[![Discord Chat](https://img.shields.io/discord/926309849673895966.svg)](https://discord.gg/)  
 
 **Status: Supported, actively developed.**
 
@@ -223,6 +224,10 @@ The following is the `get_status` response's schema.
   - Value: The name of the map (taken from the match config).
 
 ## Other things
+
+### Discord Chat
+
+A [Discord](https://discord.gg/zmqEa4keCk) channel is available for general discussion.
 
 ### Reporting bugs
 

@@ -3,7 +3,7 @@ get5
 
 [![Build status](http://ci.splewis.net/job/get5/badge/icon)](http://ci.splewis.net/job/get5/)
 [![GitHub Downloads](https://img.shields.io/github/downloads/splewis/get5/total.svg?style=flat-square&label=Downloads)](https://github.com/splewis/get5/releases/latest)
-[![Discord Chat](https://img.shields.io/discord/926309849673895966.svg)](https://discord.gg/)  
+[![Discord Chat](https://img.shields.io/discord/926309849673895966.svg)](https://discord.gg/zmqEa4keCk)  
 
 **Status: Supported, actively developed.**
 

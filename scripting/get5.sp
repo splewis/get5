@@ -60,7 +60,7 @@ ConVar g_DemoNameFormatCvar;
 ConVar g_DisplayGotvVeto;
 ConVar g_EndMatchOnEmptyServerCvar;
 ConVar g_EventLogFormatCvar;
-ConVar g_FreezePlayersVetoCvar;
+ConVar g_g_PauseOnVetoCvar;
 ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunity;
 ConVar g_KickClientsWithNoMatchCvar;
@@ -284,7 +284,7 @@ public void OnPluginStart() {
   g_EventLogFormatCvar =
       CreateConVar("get5_event_log_format", "",
                    "Path to use when writing match event logs, use \"\" to disable");
-  g_FreezePlayersVetoCvar =
+  g_PauseOnVetoCvar =
       CreateConVar("get5_freeze_players_on_veto", "0",
                    "Set 1 to freezes all Players during Veto");
   g_FixedPauseTimeCvar =

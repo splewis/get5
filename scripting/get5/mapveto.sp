@@ -14,8 +14,9 @@ public void CreateVeto() {
   g_VetoCaptains[MatchTeam_Team1] = GetTeamCaptain(MatchTeam_Team1);
   g_VetoCaptains[MatchTeam_Team2] = GetTeamCaptain(MatchTeam_Team2);
   ResetReadyStatus();
-  if (g_FreezePlayersVetoCvar.BoolValue) {
-    Pause(); }
+  if (g_PauseOnVetoCvar.BoolValue) {
+    Pause(); 
+  }
   CreateTimer(1.0, Timer_VetoCountdown, _, TIMER_REPEAT);
 }
 
@@ -44,8 +45,9 @@ public void VetoFinished() {
   ChangeState(Get5State_Warmup);
   Get5_MessageToAll("%t", "MapDecidedInfoMessage");
 
-  if (g_FreezePlayersVetoCvar.BoolValue) {
-    Unpause(); }
+  if (g_PauseOnVetoCvar.BoolValue) {
+    Unpause(); 
+  }
   // Use total series score as starting point, to not print skipped maps
   int seriesScore = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
   for (int i = seriesScore; i < g_MapsToPlay.Length; i++) {

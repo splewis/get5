@@ -84,6 +84,7 @@ ConVar g_TimeFormatCvar;
 ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
 ConVar g_WarmupCfgCvar;
+ConVar g_AutoReadyAfterVetoCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -352,7 +353,9 @@ public void OnPluginStart() {
       CreateConVar("get5_veto_countdown", "5",
                    "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
   g_WarmupCfgCvar =
-      CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
+      CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");  
+  g_AutoReadyAfterVetoCvar = CreateConVar("get5_autoready_after_veto", "0",
+                                            "Auto ready after map veto");
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");

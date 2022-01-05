@@ -41,6 +41,10 @@ static void AbortVeto() {
 public void VetoFinished() {
   ChangeState(Get5State_Warmup);
   Get5_MessageToAll("%t", "MapDecidedInfoMessage");
+  
+  if (g_AutoReadyAfterVetoCvar.BoolValue) { 
+      SetAllClientsReady(true);
+  }
 
   // Use total series score as starting point, to not print skipped maps
   int seriesScore = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];

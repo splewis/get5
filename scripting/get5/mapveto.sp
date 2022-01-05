@@ -13,7 +13,11 @@ public void CreateVeto() {
 
   g_VetoCaptains[MatchTeam_Team1] = GetTeamCaptain(MatchTeam_Team1);
   g_VetoCaptains[MatchTeam_Team2] = GetTeamCaptain(MatchTeam_Team2);
-  ResetReadyStatus();
+
+  if (g_ResetReadyStateOnMapVetoCvar.BoolValue) { 
+    ResetReadyStatus();
+  }
+  
   CreateTimer(1.0, Timer_VetoCountdown, _, TIMER_REPEAT);
 }
 

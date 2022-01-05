@@ -285,8 +285,8 @@ public void OnPluginStart() {
       CreateConVar("get5_event_log_format", "",
                    "Path to use when writing match event logs, use \"\" to disable");
   g_PauseOnVetoCvar =
-      CreateConVar("get5_freeze_players_on_veto", "0",
-                   "Set 1 to freezes all Players during Veto");
+      CreateConVar("get5_pause_on_veto", "0",
+                   "Set 1 to Pause during Veto time}");
   g_FixedPauseTimeCvar =
       CreateConVar("get5_fixed_pause_time", "0",
                    "If set to non-zero, this will be the fixed length of any pause");

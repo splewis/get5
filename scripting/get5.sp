@@ -60,7 +60,7 @@ ConVar g_DemoNameFormatCvar;
 ConVar g_DisplayGotvVeto;
 ConVar g_EndMatchOnEmptyServerCvar;
 ConVar g_EventLogFormatCvar;
-ConVar g_g_PauseOnVetoCvar;
+ConVar g_PauseOnVetoCvar;
 ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunity;
 ConVar g_KickClientsWithNoMatchCvar;

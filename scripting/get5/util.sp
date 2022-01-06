@@ -138,6 +138,16 @@ stock int GetTvDelay() {
   return 0;
 }
 
+stock void EmptyArrayList(const ArrayList array) {
+  LogDebug("Emptying victim array of length %d", array.Length);
+  while (array.Length > 0) {
+    Handle obj = array.Get(0);
+    array.Erase(0);
+    delete obj;
+  }
+  delete array;
+}
+
 stock bool Record(const char[] demoName) {
   char szDemoName[256];
   strcopy(szDemoName, sizeof(szDemoName), demoName);

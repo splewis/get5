@@ -24,6 +24,7 @@
 #include <cstrike>
 #include <json>  // github.com/clugg/sm-json
 #include <sdktools>
+#include <sdkhooks>
 #include <sourcemod>
 #include <testing>
 
@@ -138,6 +139,12 @@ bool g_SavedValveBackup = false;
 bool g_DoingBackupRestoreNow = false;
 
 // Stats values
+StringMap g_FlashbangContainer; // Stores info about which flashbang entities flashed which players.
+StringMap g_HEAndDecoyGrenadeContainer; // Stores info about which HE grenades and decoys hit which players, as they share damage type.
+StringMap g_MolotovContainer; // Stores info about which players were damaged by which molotov grenades.
+StringMap g_SmokeGrenadeContainer; // Stores info about which players threw which smokes and if the extinguished molotovs.
+int g_LatestUserIdToDetonateMolotov = 0; // Molotov detonate and start-burning/extinguish are two separate events always fired right after each other. We need this to bind them together.
+int g_LatestSmokeGrenadeToDetonateOnMolotov = 0; // Used to attribute extinguish booleans to smoke grenades.
 bool g_SetTeamClutching[4];
 int g_RoundKills[MAXPLAYERS + 1];  // kills per round each client has gotten
 int g_RoundClutchingEnemyCount[MAXPLAYERS +
@@ -207,6 +214,11 @@ Handle g_OnBombDefused = INVALID_HANDLE;
 Handle g_OnBombPlanted = INVALID_HANDLE;
 Handle g_OnDemoFinished = INVALID_HANDLE;
 Handle g_OnEvent = INVALID_HANDLE;
+Handle g_OnFlashbangDetonated = INVALID_HANDLE;
+Handle g_OnHEGrenadeDetonated = INVALID_HANDLE;
+Handle g_OnSmokeGrenadeDetonated = INVALID_HANDLE;
+Handle g_OnDecoyEnded = INVALID_HANDLE;
+Handle g_OnMolotovEnded = INVALID_HANDLE;
 Handle g_OnGameStateChanged = INVALID_HANDLE;
 Handle g_OnGoingLive = INVALID_HANDLE;
 Handle g_OnGrenadeThrown = INVALID_HANDLE;
@@ -484,11 +496,25 @@ public void OnPluginStart() {
     g_TeamAuths[i] = new ArrayList(AUTH_LENGTH);
   }
   g_PlayerNames = new StringMap();
+  g_FlashbangContainer = new StringMap();
+  g_HEAndDecoyGrenadeContainer = new StringMap();
+  g_MolotovContainer = new StringMap();
+  g_SmokeGrenadeContainer = new StringMap();
 
   /** Create forwards **/
   g_OnBackupRestore = CreateGlobalForward("Get5_OnBackupRestore", ET_Ignore);
   g_OnDemoFinished = CreateGlobalForward("Get5_OnDemoFinished", ET_Ignore, Param_String, Param_String);
   g_OnEvent = CreateGlobalForward("Get5_OnEvent", ET_Ignore, Param_String);
+  g_OnFlashbangDetonated = CreateGlobalForward("Get5_OnFlashbangDetonated", ET_Ignore, Param_String, Param_Cell,
+    Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
+  g_OnHEGrenadeDetonated = CreateGlobalForward("Get5_OnHEGrenadeDetonated", ET_Ignore, Param_String, Param_Cell,
+    Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
+  g_OnDecoyEnded = CreateGlobalForward("Get5_OnDecoyEnded", ET_Ignore, Param_String, Param_Cell,
+    Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
+  g_OnSmokeGrenadeDetonated = CreateGlobalForward("Get5_OnSmokeGrenadeDetonated", ET_Ignore, Param_String, Param_Cell,
+    Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
+  g_OnMolotovEnded = CreateGlobalForward("Get5_OnMolotovEnded", ET_Ignore, Param_String, Param_Cell,
+    Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
   g_OnGameStateChanged =
       CreateGlobalForward("Get5_OnGameStateChanged", ET_Ignore, Param_Cell, Param_Cell);
   g_OnGoingLive = CreateGlobalForward("Get5_OnGoingLive", ET_Ignore, Param_String, Param_Cell);
@@ -617,6 +643,7 @@ public void OnClientPutInServer(int client) {
   }
 
   Stats_ResetClientRoundValues(client);
+  Stats_HookDamageForClient(client);
 }
 
 public void OnClientPostAdminCheck(int client) {
@@ -1001,6 +1028,10 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       winningTeam = MatchTeam_Team2;
     }
 
+    // If the round ends because the match is over, we clear the grenade container immediately as there will be no
+    // RoundStart event to do it, and the sideSwap check in RoundEnd will not trigger it either.
+    Stats_ResetGrenadeContainers();
+
     // Write backup before series score increments
     WriteBackup();
 
@@ -1217,6 +1248,11 @@ public void WriteBackup() {
 public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundStart");
   if (g_GameState == Get5State_Live) {
+
+    // Just to make sure nothing carries over between rounds to mess with this, we clear out these on each round start.
+    // must be done *before* setting round number as this potentially sends events for grenades from previous round.
+    Stats_ResetGrenadeContainers();
+
     g_RoundNumber = GameRules_GetProp("m_totalRoundsPlayed");
     int mapNumber = GetMapNumber();
 
@@ -1322,6 +1358,12 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
           g_PendingSideSwap = true;
         }
       }
+    }
+
+    if (g_PendingSideSwap) {
+      // Normally we would do this in RoundStart, but since there is a significant delay between round *actual end* and
+      // and RoundStart when swapping sides, we do it here instead.
+      Stats_ResetGrenadeContainers();
     }
 
     char winnerString[16];

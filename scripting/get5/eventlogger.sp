@@ -9,8 +9,8 @@ static void EventLogger_LogEvent(const char[] eventName, JSON_Object params) {
   json.SetString("matchid", g_MatchID);
   json.SetObject("params", params);
 
-  const int kMaxCharacters = 1000;
-  char buffer[2048];
+  const int kMaxCharacters = 4096;
+  char buffer[8192];
 
   json.Encode(buffer, sizeof(buffer), g_PrettyPrintJsonCvar.BoolValue);
   if (strlen(buffer) > kMaxCharacters) {
@@ -139,6 +139,160 @@ public void EventLogger_GoingLive() {
   EventLogger_StartEvent();
   AddMapData(params);
   EventLogger_EndEvent("going_live");
+}
+
+public void EventLogger_SmokeGrenadeDetonated(int roundNumber, int roundTime, bool extinguishedMolotov, int attacker) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddPlayer(params, "attacker", attacker);
+  params.SetInt("round_number", roundNumber);
+  params.SetInt("round_time", roundTime);
+  params.SetBool("extinguished_molotov", extinguishedMolotov);
+  EventLogger_EndEvent("smokegrenade_detonated");
+}
+
+public void EventLogger_FlashbangDetonated(int roundNumber, int roundTime, int attacker, const ArrayList victims) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddPlayer(params, "attacker", attacker);
+  params.SetInt("round_number", roundNumber);
+  params.SetInt("round_time", roundTime);
+
+  JSON_Array victimsArray = new JSON_Array();
+
+  for(int i = 0; i < victims.Length; i++)
+  {
+      StringMap victim = victims.Get(i);
+
+      JSON_Object victimJson = new JSON_Object();
+
+      int victimId;
+      victim.GetValue("victim", victimId);
+      AddPlayer(victimJson, "victim", victimId);
+
+      float blindDuration;
+      victim.GetValue("blind_duration", blindDuration);
+      victimJson.SetFloat("blind_duration", blindDuration);
+
+      bool friendlyFire;
+      victim.GetValue("friendly_fire", friendlyFire);
+      victimJson.SetBool("friendly_fire", friendlyFire);
+
+      victimsArray.PushObject(victimJson);
+  }
+
+  params.SetObject("victims", victimsArray);
+  
+  EventLogger_EndEvent("flashbang_detonated");
+}
+
+public void EventLogger_DecoyEnded(int roundNumber, int roundTime, int attacker, const ArrayList victims) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddPlayer(params, "attacker", attacker);
+  params.SetInt("round_number", roundNumber);
+  params.SetInt("round_time", roundTime);
+
+  JSON_Array victimsArray = new JSON_Array();
+
+  for(int i = 0; i < victims.Length; i++)
+  {
+      StringMap victim = victims.Get(i);
+
+      JSON_Object victimJson = new JSON_Object();
+
+      int victimId;
+      victim.GetValue("victim", victimId);
+      AddPlayer(victimJson, "victim", victimId);
+
+      int damage;
+      victim.GetValue("damage", damage);
+      victimJson.SetInt("damage", damage);
+
+      bool friendlyFire;
+      victim.GetValue("friendly_fire", friendlyFire);
+      victimJson.SetBool("friendly_fire", friendlyFire);
+
+      victimsArray.PushObject(victimJson);
+
+  }
+
+  params.SetObject("victims", victimsArray);
+
+  EventLogger_EndEvent("decoy_ended");
+}
+
+public void EventLogger_MolotovGrenadeEnded(int roundNumber, int roundTime, int extinguishedTime, int attacker, const ArrayList victims) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddPlayer(params, "attacker", attacker);
+  params.SetInt("round_number", roundNumber);
+  params.SetInt("round_time", roundTime);
+  params.SetInt("extinguished_time", extinguishedTime);
+
+  JSON_Array victimsArray = new JSON_Array();
+
+  for(int i = 0; i < victims.Length; i++)
+  {
+      StringMap victim = victims.Get(i);
+
+      JSON_Object victimJson = new JSON_Object();
+
+      int victimId;
+      victim.GetValue("victim", victimId);
+      AddPlayer(victimJson, "victim", victimId);
+
+      int damage;
+      victim.GetValue("damage", damage);
+      victimJson.SetInt("damage", damage);
+
+      bool friendlyFire;
+      victim.GetValue("friendly_fire", friendlyFire);
+      victimJson.SetBool("friendly_fire", friendlyFire);
+
+      victimsArray.PushObject(victimJson);
+
+  }
+
+  params.SetObject("victims", victimsArray);
+  
+  EventLogger_EndEvent("molotov_ended");
+}
+
+public void EventLogger_HEGrenadeDetonated(int roundNumber, int roundTime, int attacker, const ArrayList victims) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddPlayer(params, "attacker", attacker);
+  params.SetInt("round_number", roundNumber);
+  params.SetInt("round_time", roundTime);
+
+  JSON_Array victimsArray = new JSON_Array();
+
+  for(int i = 0; i < victims.Length; i++)
+  {
+      StringMap victim = victims.Get(i);
+
+      JSON_Object victimJson = new JSON_Object();
+
+      int victimId;
+      victim.GetValue("victim", victimId);
+      AddPlayer(victimJson, "victim", victimId);
+
+      int damage;
+      victim.GetValue("damage", damage);
+      victimJson.SetInt("damage", damage);
+
+      bool friendlyFire;
+      victim.GetValue("friendly_fire", friendlyFire);
+      victimJson.SetBool("friendly_fire", friendlyFire);
+
+      victimsArray.PushObject(victimJson);
+
+  }
+
+  params.SetObject("victims", victimsArray);
+  
+  EventLogger_EndEvent("hegrenade_detonated");
 }
 
 public void EventLogger_GrenadeThrown(int roundNumber, int roundTime, int attacker, const char[] weapon) {

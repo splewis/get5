@@ -96,6 +96,48 @@ forward void Get5_OnPlayerDeath(const char[] matchId, int mapNumber, int roundNu
 // Called when a round starts.
 forward void Get5_OnRoundStart(const char[] matchId, int mapNumber, int roundNumber);
 
+// Called when a flashbang detonates (after collecting victim info)
+// victims is an array of StringMaps with these properties:
+// - victim - integer with client id
+// - blind_duration - float with duration victim was blinded
+// - friendly_fire - bool indicating if the victim was flashed by a friendly
+forward void Get5_OnFlashBangDetonated(const char[] matchId, int mapNumber, int roundNumber, int roundTime,
+  const ArrayList victims, int attacker, int attackerSide);
+
+// Called when a decoy grenade detonates - or if the round ends (after collecting victim info)
+// victims is an array of StringMaps with these properties:
+// - victim - integer with client id
+// - damage - integer with damage taken (excess damage removed)
+// - friendly_fire - bool indicating if the grenade was thrown by a friendly
+forward void Get5_OnDecoyEnded(const char[] matchId, int mapNumber, int roundNumber, int roundTime,
+  const ArrayList victims, int attacker, int attackerSide);
+
+// Called when an HE grenade goes off (after collecting victim info)
+// victims is an array of StringMaps with these properties:
+// - victim - integer with client id
+// - damage - integer with damage taken (excess damage removed)
+// - friendly_fire - bool indicating if the grenade was thrown by a friendly
+forward void Get5_OnHEGrenadeDetonated(const char[] matchId, int mapNumber, int roundNumber, int roundTime,
+  const ArrayList victims, int attacker, int attackerSide);
+
+// Called when a smoke grenade detonates.
+// extinguishedMolotov becomes true if the smoke extinguishes a molotov grenade on detonation.
+// Throwing a molotov into an active smoke does not cause the boolean for that smoke to be true. The smoke must be
+// thrown at the molotov for this to trigger.
+forward void Get5_OnSmokeGrenadeDetonated(const char[] matchId, int mapNumber, int roundNumber, int roundTime,
+  bool extinguishedMolotov, int attacker, int attackerSide);
+
+// Called when a molotov grenade expires - or if the round ends (after collecting victim info)
+// victims is an array of StringMaps with these properties:
+// - victim - integer with client id
+// - damage - integer with damage taken (excess damage removed)
+// - friendly_fire - bool indicating if the molotov was thrown by a friendly
+// Note that roundTime is the time the molotov exploded; not when it expired. The event does not fire until then, as
+// it would otherwise be impossible to gather victim data.
+// extinguishedTime is roundTime at which the molotov was extinguished by a smoke, if that happened. Otherwise this value is 0.
+forward void Get5_OnMolotovEnded(const char[] matchId, int mapNumber, int roundNumber, int roundTime, int extinguishedTime,
+  const ArrayList victims, int attacker, int attackerSide);
+
 // Called when the round ends. roundTime is milliseconds.
 forward void Get5_OnRoundEnd(const char[] matchId, int mapNumber, int roundNumber, int roundTime, int winnerSide, char[] winningTeam, int reason);
 

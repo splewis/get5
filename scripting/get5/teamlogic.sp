@@ -295,7 +295,7 @@ public bool IsAuthOnTeam(const char[] auth, MatchTeam team) {
 }
 
 public void SetStartingTeams() {
-  int mapNumber = GetMapNumber();
+  int mapNumber = Get5_GetMapNumber();
   if (mapNumber >= g_MapSides.Length || g_MapSides.Get(mapNumber) == SideChoice_KnifeRound) {
     g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
     g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
@@ -314,7 +314,7 @@ public void SetStartingTeams() {
 }
 
 public void AddMapScore() {
-  int currentMapNumber = GetMapNumber();
+  int currentMapNumber = Get5_GetMapNumber();
 
   g_TeamScoresPerMap.Set(currentMapNumber, CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
                          view_as<int>(MatchTeam_Team1));
@@ -330,11 +330,6 @@ public int GetMapScore(int mapNumber, MatchTeam team) {
 public bool HasMapScore(int mapNumber) {
   return GetMapScore(mapNumber, MatchTeam_Team1) != 0 ||
          GetMapScore(mapNumber, MatchTeam_Team2) != 0;
-}
-
-public int GetMapNumber() {
-  return g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] +
-         g_TeamSeriesScores[MatchTeam_TeamNone];
 }
 
 public bool AddPlayerToTeam(const char[] auth, MatchTeam team, const char[] name) {

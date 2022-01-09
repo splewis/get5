@@ -82,7 +82,6 @@ public Action Command_Available(int client, int args) {
   JSON_Object json = new JSON_Object();
 
   json.SetInt("gamestate", view_as<int>(Get5_GetGameState()));
-  json.SetInt("avaliable", 1);  // legacy version since I'm bad at spelling
   json.SetInt("available", 1);
   json.SetString("plugin_version", versionString);
 
@@ -148,7 +147,7 @@ public int RequestCallback(Handle request, bool failure, bool requestSuccessful,
   }
 }
 
-public void Get5_OnSeriesInit(const char[] matchId) {
+public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
 
   // Handle new logos.
   if (!DirExists(g_LogoBasePath)) {
@@ -220,11 +219,14 @@ public int LogoCallback(Handle request, bool failure, bool successful, EHTTPStat
   SteamWorks_WriteHTTPResponseBodyToFile(request, logoPath);
 }
 
-public void Get5_OnGoingLive(const char[] matchId, int mapNumber) {
+public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
   char mapName[64];
   GetCurrentMap(mapName, sizeof(mapName));
 
-  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/start", matchId, mapNumber);
+  char matchId[64];
+  event.GetMatchId(matchId, sizeof(matchId));
+
+  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/start", matchId, event.MapNumber);
   if (req != INVALID_HANDLE) {
     AddStringParam(req, "mapname", mapName);
     SteamWorks_SendHTTPRequest(req);
@@ -263,15 +265,18 @@ public void UpdateRoundStats(const char[] matchId, int mapNumber) {
   delete kv;
 }
 
-public void Get5_OnMapResult(const char[] matchId, const char[] map, MatchTeam mapWinner, int team1Score, int team2Score,
-                      int mapNumber) {
-  char winnerString[64];
-  GetTeamString(mapWinner, winnerString, sizeof(winnerString));
+public void Get5_OnMapResult(const Get5MapResultEvent event) {
 
-  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/finish", matchId, mapNumber);
+  char matchId[64];
+  event.GetMatchId(matchId, sizeof(matchId));
+
+  char winnerString[64];
+  GetTeamString(event.Winner, winnerString, sizeof(winnerString));
+
+  Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/finish", matchId, event.MapNumber);
   if (req != INVALID_HANDLE) {
-    AddIntParam(req, "team1score", team1Score);
-    AddIntParam(req, "team2score", team2Score);
+    AddIntParam(req, "team1score", event.Team1Score);
+    AddIntParam(req, "team2score", event.Team2Score);
     AddStringParam(req, "winner", winnerString);
     SteamWorks_SendHTTPRequest(req);
   }
@@ -284,7 +289,7 @@ static void AddIntStat(Handle req, KeyValues kv, const char[] field) {
 public void UpdatePlayerStats(const char[] matchId, KeyValues kv, MatchTeam team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
-  int mapNumber = MapNumber();
+  int mapNumber = Get5_GetMapNumber();
 
   if (kv.GotoFirstSubKey()) {
     do {
@@ -348,9 +353,13 @@ static void AddIntParam(Handle request, const char[] key, int value) {
   AddStringParam(request, key, buffer);
 }
 
-public void Get5_OnSeriesResult(const char[] matchId, MatchTeam seriesWinner, int team1MapScore, int team2MapScore) {
+public void Get5_OnSeriesResult(const Get5SeriesResultEvent event) {
+
+  char matchId[64];
+  event.GetMatchId(matchId, sizeof(matchId));
+
   char winnerString[64];
-  GetTeamString(seriesWinner, winnerString, sizeof(winnerString));
+  GetTeamString(event.Winner, winnerString, sizeof(winnerString));
 
   KeyValues kv = new KeyValues("Stats");
   Get5_GetMatchStats(kv);
@@ -367,17 +376,10 @@ public void Get5_OnSeriesResult(const char[] matchId, MatchTeam seriesWinner, in
   g_APIKeyCvar.SetString("");
 }
 
-public void Get5_OnRoundStatsUpdated(const char[] matchId) {
+public void Get5_OnRoundStatsUpdated(const Get5RoundStatsUpdatedEvent event) {
   if (Get5_GetGameState() == Get5State_Live) {
-    UpdateRoundStats(matchId, MapNumber());
+    char matchId[64];
+    event.GetMatchId(matchId, sizeof(matchId));
+    UpdateRoundStats(matchId, Get5_GetMapNumber());
   }
-}
-
-static int MapNumber() {
-  int t1, t2, n;
-  int buf;
-  Get5_GetTeamScores(MatchTeam_Team1, t1, buf);
-  Get5_GetTeamScores(MatchTeam_Team2, t2, buf);
-  Get5_GetTeamScores(MatchTeam_TeamNone, n, buf);
-  return t1 + t2 + n;
 }

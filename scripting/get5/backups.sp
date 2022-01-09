@@ -301,7 +301,7 @@ public bool RestoreFromBackup(const char[] path) {
   GetCurrentMap(currentMap, sizeof(currentMap));
 
   char currentSeriesMap[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(GetMapNumber(), currentSeriesMap, sizeof(currentSeriesMap));
+  g_MapsToPlay.GetString(Get5_GetMapNumber(), currentSeriesMap, sizeof(currentSeriesMap));
 
   if (!StrEqual(currentMap, currentSeriesMap)) {
     ChangeMap(currentSeriesMap, 1.0);
@@ -313,11 +313,15 @@ public bool RestoreFromBackup(const char[] path) {
 
   delete kv;
 
-  LogDebug("Calling Get5_OnBackupRestore");
+  LogDebug("Calling Get5_OnBackupRestore()");
+
+  Get5BackupRestoredEvent backupEvent = new Get5BackupRestoredEvent(g_MatchID, Get5_GetMapNumber());
+
   Call_StartForward(g_OnBackupRestore);
+  Call_PushCell(backupEvent);
   Call_Finish();
 
-  EventLogger_BackupLoaded(path);
+  EventLogger_LogAndDeleteEvent(backupEvent);
 
   return true;
 }

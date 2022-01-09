@@ -165,11 +165,17 @@ stock bool Record(const char[] demoName) {
 
 stock void StopRecording() {
   ServerCommand("tv_stoprecord");
-  LogDebug("Calling Get5_OnDemoFinished(matchId=%s, file=%s)", g_MatchID, g_DemoFileName);
+
+  Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(g_MatchID, Get5_GetMapNumber(), g_DemoFileName);
+
+  LogDebug("Calling Get5_OnDemoFinished()");
+
   Call_StartForward(g_OnDemoFinished);
-  Call_PushString(g_MatchID);
-  Call_PushString(g_DemoFileName);
+  Call_PushCell(event);
   Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(event);
+
 }
 
 stock bool InWarmup() {

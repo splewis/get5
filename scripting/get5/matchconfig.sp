@@ -94,7 +94,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
       }
     }
 
-    g_MapPoolList.GetString(GetMapNumber(), mapName, sizeof(mapName));
+    g_MapPoolList.GetString(Get5_GetMapNumber(), mapName, sizeof(mapName));
     ChangeState(Get5State_Warmup);
 
     char currentMap[PLATFORM_MAX_PATH];
@@ -113,13 +113,18 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     LoadPlayerNames();
     EnsurePausedWarmup();
 
-    EventLogger_SeriesStart();
     Stats_InitSeries();
 
+    Get5SeriesStartedEvent startEvent = new Get5SeriesStartedEvent(g_MatchID, g_TeamNames[MatchTeam_Team1], g_TeamNames[MatchTeam_Team2]);
+
     LogDebug("Calling Get5_OnSeriesInit");
+
     Call_StartForward(g_OnSeriesInit);
-    Call_PushString(g_MatchID);
+    Call_PushCell(startEvent);
     Call_Finish();
+
+    EventLogger_LogAndDeleteEvent(startEvent);
+
   }
 
   for (int i = 1; i <= MaxClients; i++) {
@@ -142,10 +147,16 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 }
 
 public bool LoadMatchFile(const char[] config) {
-  LogDebug("Calling Get5_OnPreLoadMatchConfig(config=%s)", config);
+
+  Get5PreloadMatchConfigEvent event = new Get5PreloadMatchConfigEvent(config);
+
+  LogDebug("Calling Get5_OnPreLoadMatchConfig()");
+
   Call_StartForward(g_OnPreLoadMatchConfig);
-  Call_PushString(config);
+  Call_PushCell(event);
   Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(event);
 
   if (IsJSONPath(config)) {
     char configFile[PLATFORM_MAX_PATH];
@@ -190,12 +201,16 @@ static void MatchConfigFail(const char[] reason, any...) {
   VFormat(buffer, sizeof(buffer), reason, 2);
   LogError("Failed to load match config: %s", buffer);
 
-  EventLogger_MatchConfigFail(buffer);
+  Get5LoadMatchConfigFailedEvent event = new Get5LoadMatchConfigFailedEvent(buffer);
 
-  LogDebug("Calling Get5_OnLoadMatchConfigFailed(reason=%s)", buffer);
+  LogDebug("Calling Get5_OnLoadMatchConfigFailed()");
+
   Call_StartForward(g_OnLoadMatchConfigFailed);
-  Call_PushString(buffer);
+  Call_PushCell(event);
   Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(event);
+
 }
 
 stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
@@ -644,7 +659,7 @@ public void SetMatchTeamCvars() {
     tTeam = MatchTeam_Team1;
   }
 
-  int mapsPlayed = GetMapNumber();
+  int mapsPlayed = Get5_GetMapNumber();
 
   // Get the match configs set by the config file.
   // These might be modified so copies are made here.

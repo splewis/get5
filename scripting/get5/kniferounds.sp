@@ -19,7 +19,6 @@ public Action Timer_AnnounceKnife(Handle timer) {
   }
 
   g_HasKnifeRoundStarted = true;
-  EventLogger_KnifeStart();
   return Plugin_Handled;
 }
 
@@ -54,7 +53,23 @@ static void PerformSideSwap(bool swap) {
 
 public void EndKnifeRound(bool swap) {
   PerformSideSwap(swap);
-  EventLogger_KnifeWon(g_KnifeWinnerTeam, swap);
+
+  Get5KnifeRoundWonEvent knifeEvent = new Get5KnifeRoundWonEvent(
+    g_MatchID,
+    Get5_GetMapNumber(),
+    g_KnifeWinnerTeam,
+    view_as<Side>(g_TeamStartingSide[g_KnifeWinnerTeam]),
+    swap
+  );
+
+  LogDebug("Calling Get5_OnKnifeRoundWon()");
+
+  Call_StartForward(g_OnKnifeRoundWon);
+  Call_PushCell(knifeEvent);
+  Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(knifeEvent);
+
   ChangeState(Get5State_GoingLive);
   CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
 }

@@ -211,6 +211,7 @@ Handle g_MatchConfigChangedCvars = INVALID_HANDLE;
 /** Forwards **/
 Handle g_OnBackupRestore = INVALID_HANDLE;
 Handle g_OnBombDefused = INVALID_HANDLE;
+Handle g_OnBombExploded = INVALID_HANDLE;
 Handle g_OnBombPlanted = INVALID_HANDLE;
 Handle g_OnDemoFinished = INVALID_HANDLE;
 Handle g_OnEvent = INVALID_HANDLE;
@@ -226,10 +227,12 @@ Handle g_OnLoadMatchConfigFailed = INVALID_HANDLE;
 Handle g_OnMapPicked = INVALID_HANDLE;
 Handle g_OnMapResult = INVALID_HANDLE;
 Handle g_OnMapVetoed = INVALID_HANDLE;
+Handle g_OnKnifeRoundWon = INVALID_HANDLE;
 Handle g_OnMatchPaused = INVALID_HANDLE;
 Handle g_OnMatchUnpaused = INVALID_HANDLE;
 Handle g_OnPlayerDeath = INVALID_HANDLE;
 Handle g_OnPlayerBecameMVP = INVALID_HANDLE;
+Handle g_OnPlayerSay = INVALID_HANDLE;
 Handle g_OnRoundEnd = INVALID_HANDLE;
 Handle g_OnRoundStart = INVALID_HANDLE;
 Handle g_OnPreLoadMatchConfig = INVALID_HANDLE;
@@ -502,52 +505,37 @@ public void OnPluginStart() {
   g_SmokeGrenadeContainer = new StringMap();
 
   /** Create forwards **/
-  g_OnBackupRestore = CreateGlobalForward("Get5_OnBackupRestore", ET_Ignore);
-  g_OnDemoFinished = CreateGlobalForward("Get5_OnDemoFinished", ET_Ignore, Param_String, Param_String);
+  g_OnBackupRestore = CreateGlobalForward("Get5_OnBackupRestore", ET_Ignore, Param_Cell);
+  g_OnDemoFinished = CreateGlobalForward("Get5_OnDemoFinished", ET_Ignore, Param_Cell);
   g_OnEvent = CreateGlobalForward("Get5_OnEvent", ET_Ignore, Param_String);
-  g_OnFlashbangDetonated = CreateGlobalForward("Get5_OnFlashbangDetonated", ET_Ignore, Param_String, Param_Cell,
-    Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
-  g_OnHEGrenadeDetonated = CreateGlobalForward("Get5_OnHEGrenadeDetonated", ET_Ignore, Param_String, Param_Cell,
-    Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
-  g_OnDecoyEnded = CreateGlobalForward("Get5_OnDecoyEnded", ET_Ignore, Param_String, Param_Cell,
-    Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
-  g_OnSmokeGrenadeDetonated = CreateGlobalForward("Get5_OnSmokeGrenadeDetonated", ET_Ignore, Param_String, Param_Cell,
-    Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
-  g_OnMolotovEnded = CreateGlobalForward("Get5_OnMolotovEnded", ET_Ignore, Param_String, Param_Cell,
-    Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
-  g_OnGameStateChanged =
-      CreateGlobalForward("Get5_OnGameStateChanged", ET_Ignore, Param_Cell, Param_Cell);
-  g_OnGoingLive = CreateGlobalForward("Get5_OnGoingLive", ET_Ignore, Param_String, Param_Cell);
-  g_OnGrenadeThrown = CreateGlobalForward("Get5_OnGrenadeThrown", ET_Ignore, Param_String, Param_Cell, Param_Cell,
-    Param_Cell, Param_Cell, Param_Cell, Param_String);
-  g_OnMapResult = CreateGlobalForward("Get5_OnMapResult", ET_Ignore, Param_String, Param_String, Param_Cell,
-                                      Param_Cell, Param_Cell, Param_Cell);
-  g_OnPlayerDeath = CreateGlobalForward("Get5_OnPlayerDeath", ET_Ignore, Param_String, Param_Cell, Param_Cell, Param_Cell,
-    Param_String, Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell,
-    Param_Cell, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
-  g_OnPlayerBecameMVP = CreateGlobalForward("Get5_OnPlayerBecameMVP", ET_Ignore, Param_String, Param_Cell, Param_Cell, Param_Cell,
-    Param_Cell, Param_Cell);
-  g_OnBombDefused = CreateGlobalForward("Get5_OnBombDefused", ET_Ignore, Param_String, Param_Cell, Param_Cell, Param_Cell, Param_Cell,
-    Param_Cell, Param_Cell);
-  g_OnBombPlanted = CreateGlobalForward("Get5_OnBombPlanted", ET_Ignore, Param_String, Param_Cell, Param_Cell, Param_Cell,
-    Param_Cell, Param_Cell);
-  g_OnRoundStart = CreateGlobalForward("Get5_OnRoundStart", ET_Ignore, Param_String, Param_Cell, Param_Cell);
-  g_OnRoundEnd = CreateGlobalForward("Get5_OnRoundEnd", ET_Ignore, Param_String, Param_Cell, Param_Cell, Param_Cell,
-    Param_Cell, Param_String, Param_Cell);
-  g_OnLoadMatchConfigFailed =
-      CreateGlobalForward("Get5_OnLoadMatchConfigFailed", ET_Ignore, Param_String);
-  g_OnMapPicked = CreateGlobalForward("Get5_OnMapPicked", ET_Ignore, Param_String, Param_Cell, Param_String);
-  g_OnMapVetoed = CreateGlobalForward("Get5_OnMapVetoed", ET_Ignore, Param_String, Param_Cell, Param_String);
-  g_OnSidePicked =
-      CreateGlobalForward("Get5_OnSidePicked", ET_Ignore, Param_String, Param_Cell, Param_String, Param_Cell);
-  g_OnRoundStatsUpdated = CreateGlobalForward("Get5_OnRoundStatsUpdated", ET_Ignore, Param_String);
-  g_OnPreLoadMatchConfig =
-      CreateGlobalForward("Get5_OnPreLoadMatchConfig", ET_Ignore, Param_String);
-  g_OnSeriesInit = CreateGlobalForward("Get5_OnSeriesInit", ET_Ignore, Param_String);
-  g_OnSeriesResult =
-      CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_String, Param_Cell, Param_Cell, Param_Cell);
-  g_OnMatchPaused = CreateGlobalForward("Get5_OnMatchPaused", ET_Ignore, Param_String, Param_Cell, Param_Cell);
-  g_OnMatchUnpaused = CreateGlobalForward("Get5_OnMatchUnpaused", ET_Ignore, Param_String, Param_Cell);
+  g_OnFlashbangDetonated = CreateGlobalForward("Get5_OnFlashbangDetonated", ET_Ignore, Param_Cell);
+  g_OnHEGrenadeDetonated = CreateGlobalForward("Get5_OnHEGrenadeDetonated", ET_Ignore, Param_Cell);
+  g_OnDecoyEnded = CreateGlobalForward("Get5_OnDecoyEnded", ET_Ignore, Param_Cell);
+  g_OnSmokeGrenadeDetonated = CreateGlobalForward("Get5_OnSmokeGrenadeDetonated", ET_Ignore, Param_Cell);
+  g_OnMolotovEnded = CreateGlobalForward("Get5_OnMolotovEnded", ET_Ignore, Param_Cell);
+  g_OnGameStateChanged = CreateGlobalForward("Get5_OnGameStateChanged", ET_Ignore, Param_Cell);
+  g_OnGoingLive = CreateGlobalForward("Get5_OnGoingLive", ET_Ignore, Param_Cell);
+  g_OnGrenadeThrown = CreateGlobalForward("Get5_OnGrenadeThrown", ET_Ignore, Param_Cell);
+  g_OnMapResult = CreateGlobalForward("Get5_OnMapResult", ET_Ignore, Param_Cell);
+  g_OnPlayerDeath = CreateGlobalForward("Get5_OnPlayerDeath", ET_Ignore, Param_Cell);
+  g_OnPlayerSay = CreateGlobalForward("Get5_OnPlayerSay", ET_Ignore, Param_Cell);
+  g_OnPlayerBecameMVP = CreateGlobalForward("Get5_OnPlayerBecameMVP", ET_Ignore, Param_Cell);
+  g_OnBombDefused = CreateGlobalForward("Get5_OnBombDefused", ET_Ignore, Param_Cell);
+  g_OnBombPlanted = CreateGlobalForward("Get5_OnBombPlanted", ET_Ignore, Param_Cell);
+  g_OnBombExploded = CreateGlobalForward("Get5_OnBombExploded", ET_Ignore, Param_Cell);
+  g_OnRoundStart = CreateGlobalForward("Get5_OnRoundStart", ET_Ignore, Param_Cell);
+  g_OnRoundEnd = CreateGlobalForward("Get5_OnRoundEnd", ET_Ignore, Param_Cell);
+  g_OnLoadMatchConfigFailed = CreateGlobalForward("Get5_OnLoadMatchConfigFailed", ET_Ignore, Param_Cell);
+  g_OnMapPicked = CreateGlobalForward("Get5_OnMapPicked", ET_Ignore, Param_Cell);
+  g_OnMapVetoed = CreateGlobalForward("Get5_OnMapVetoed", ET_Ignore, Param_Cell);
+  g_OnSidePicked = CreateGlobalForward("Get5_OnSidePicked", ET_Ignore, Param_Cell);
+  g_OnKnifeRoundWon = CreateGlobalForward("Get5_OnKnifeRoundWon", ET_Ignore, Param_Cell);
+  g_OnRoundStatsUpdated = CreateGlobalForward("Get5_OnRoundStatsUpdated", ET_Ignore, Param_Cell);
+  g_OnPreLoadMatchConfig = CreateGlobalForward("Get5_OnPreLoadMatchConfig", ET_Ignore, Param_Cell);
+  g_OnSeriesInit = CreateGlobalForward("Get5_OnSeriesInit", ET_Ignore, Param_Cell);
+  g_OnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_Cell);
+  g_OnMatchPaused = CreateGlobalForward("Get5_OnMatchPaused", ET_Ignore, Param_Cell);
+  g_OnMatchUnpaused = CreateGlobalForward("Get5_OnMatchUnpaused", ET_Ignore, Param_Cell);
 
   /** Start any repeating timers **/
   CreateTimer(CHECK_READY_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
@@ -579,7 +567,7 @@ public Action Timer_InfoMessages(Handle timer) {
       Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
                         g_FormattedTeamNames[MatchTeam_TeamSpec]);
     } else {
-      if (g_MapSides.Get(GetMapNumber()) == SideChoice_KnifeRound) {
+      if (g_MapSides.Get(Get5_GetMapNumber()) == SideChoice_KnifeRound) {
         Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage");
       } else {
         Get5_MessageToAll("%t", "ReadyToStartInfoMessage");
@@ -659,7 +647,22 @@ public void OnClientPostAdminCheck(int client) {
 
 public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs) {
   if (StrEqual(command, "say") && g_GameState != Get5State_None) {
-    EventLogger_ClientSay(client, sArgs);
+
+    if (IsValidClient(client)) {
+
+      Get5PlayerSayEvent event = new Get5PlayerSayEvent(g_MatchID, Get5_GetMapNumber(), g_RoundNumber, GetRoundTime(), GetPlayerObject(client), command, sArgs);
+
+      LogDebug("Calling Get5_OnPlayerSay()");
+
+      Call_StartForward(g_OnPlayerSay);
+      Call_PushCell(event);
+      Call_Finish();
+
+      EventLogger_LogAndDeleteEvent(event);
+
+      
+    }
+    
   }
   CheckForChatAlias(client, command, sArgs);
 }
@@ -672,15 +675,16 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
  */
 public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
-  EventLogger_PlayerConnect(client);
   if (client > 0) {
+    EventLogger_LogAndDeleteEvent(new Get5PlayerConnectedEvent(GetPlayerObject(client)));
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
   }
 }
 
 public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
-  EventLogger_PlayerDisconnect(client);
+
+  EventLogger_LogAndDeleteEvent(new Get5PlayerDisconnectedEvent(GetPlayerObject(client)));
 
   // TODO: consider adding a forfeit if a full team disconnects.
   if (g_EndMatchOnEmptyServerCvar.BoolValue && g_GameState >= Get5State_Warmup &&
@@ -763,7 +767,7 @@ public Action Timer_CheckReady(Handle timer) {
     // Wait for both players and spectators before going live
     if (IsTeamsReady() && IsSpectatorsReady()) {
       LogDebug("Timer_CheckReady: all teams ready to start");
-      if (g_MapSides.Get(GetMapNumber()) == SideChoice_KnifeRound) {
+      if (g_MapSides.Get(Get5_GetMapNumber()) == SideChoice_KnifeRound) {
         LogDebug("Timer_CheckReady: starting with a knife round");
         StartGame(true);
       } else {
@@ -850,28 +854,37 @@ public Action Command_EndMatch(int client, int args) {
   GetCleanMapName(mapName, sizeof(mapName));
   int team1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
   int team2score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
-  LogDebug("Calling Get5_OnMapResult(matchId=%s, map=%s, winner=%d, team1score=%d, team2score=%d, mapnum=%d)",
-           g_MatchID, mapName, MatchTeam_TeamNone, team1score, team2score, GetMapNumber() - 1);
+
+  Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
+    g_MatchID,
+    Get5_GetMapNumber() - 1,
+    mapName,
+    MatchTeam_TeamNone,
+    team1score,
+    team2score
+  );
+
+  LogDebug("Calling Get5_OnMapResult()");
+
   Call_StartForward(g_OnMapResult);
-  Call_PushString(g_MatchID);
-  Call_PushString(mapName);
-  Call_PushCell(MatchTeam_TeamNone);
-  Call_PushCell(team1score);
-  Call_PushCell(team2score);
-  Call_PushCell(GetMapNumber() - 1);
+  Call_PushCell(mapResultEvent);
   Call_Finish();
 
-  EventLogger_SeriesCancel(g_TeamSeriesScores[MatchTeam_Team1],
-                           g_TeamSeriesScores[MatchTeam_Team2]);
-  LogDebug("Calling Get5_OnSeriesResult(matchId=%s, winner=%d, team1_series_score=%d, team2_series_score=%d)",
-           g_MatchID, MatchTeam_TeamNone, g_TeamSeriesScores[MatchTeam_Team1],
-           g_TeamSeriesScores[MatchTeam_Team2]);
+  EventLogger_LogAndDeleteEvent(mapResultEvent);
+
+  Get5SeriesResultEvent resultEvent = new Get5SeriesResultEvent(
+    g_MatchID,
+    MatchTeam_TeamNone,
+    g_TeamSeriesScores[MatchTeam_Team1],
+    g_TeamSeriesScores[MatchTeam_Team2]
+  );
+
+  LogDebug("Calling Get5_OnSeriesResult()");
   Call_StartForward(g_OnSeriesResult);
-  Call_PushString(g_MatchID);
-  Call_PushCell(MatchTeam_TeamNone);
-  Call_PushCell(g_TeamSeriesScores[MatchTeam_Team1]);
-  Call_PushCell(g_TeamSeriesScores[MatchTeam_Team2]);
+  Call_PushCell(resultEvent);
   Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(resultEvent);
 
   ChangeState(Get5State_None);
   UpdateClanTags();
@@ -1042,23 +1055,27 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
     // Handle map end
 
-    EventLogger_MapEnd(winningTeam);
-
     char mapName[PLATFORM_MAX_PATH];
     GetCleanMapName(mapName, sizeof(mapName));
     int team1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
     int team2score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
 
-    LogDebug("Calling Get5_OnMapResult(matchId=%s, map=%s, winner=%d, team1score=%d, team2score=%d, mapnum=%d)",
-             g_MatchID, mapName, winningTeam, team1score, team2score, GetMapNumber() - 1);
+    Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
+      g_MatchID,
+      Get5_GetMapNumber() - 1,
+      mapName,
+      winningTeam,
+      team1score,
+      team2score
+    );
+
+    LogDebug("Calling Get5_OnMapResult()");
+
     Call_StartForward(g_OnMapResult);
-    Call_PushString(g_MatchID);
-    Call_PushString(mapName);
-    Call_PushCell(winningTeam);
-    Call_PushCell(team1score);
-    Call_PushCell(team2score);
-    Call_PushCell(GetMapNumber() - 1);
+    Call_PushCell(mapResultEvent);
     Call_Finish();
+
+    EventLogger_LogAndDeleteEvent(mapResultEvent);
 
     int t1maps = g_TeamSeriesScores[MatchTeam_Team1];
     int t2maps = g_TeamSeriesScores[MatchTeam_Team2];
@@ -1081,7 +1098,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       SeriesEndMessage(MatchTeam_TeamNone);
       DelayFunction(minDelay, EndSeries);
 
-    } else if (g_BO2Match && GetMapNumber() == 2) {
+    } else if (g_BO2Match && Get5_GetMapNumber() == 2) {
       // It was a bo2, and none of the teams got to 2
       SeriesEndMessage(MatchTeam_TeamNone);
       DelayFunction(minDelay, EndSeries);
@@ -1099,7 +1116,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
         Get5_MessageToAll("%t", "SeriesTiedInfoMessage", t1maps, t2maps);
       }
 
-      int index = GetMapNumber();
+      int index = Get5_GetMapNumber();
       char nextMap[PLATFORM_MAX_PATH];
       g_MapsToPlay.GetString(index, nextMap, sizeof(nextMap));
 
@@ -1139,7 +1156,7 @@ public Action Timer_NextMatchMap(Handle timer) {
   if (g_GameState >= Get5State_Live)
     StopRecording();
 
-  int index = GetMapNumber();
+  int index = Get5_GetMapNumber();
   char map[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(index, map, sizeof(map));
 
@@ -1182,16 +1199,16 @@ public void EndSeries() {
   }
 
   Stats_SeriesEnd(winningTeam);
-  EventLogger_SeriesEnd(winningTeam, t1maps, t2maps);
 
-  LogDebug("Calling Get5_OnSeriesResult(matchId=%s, winner=%d, t1maps=%d, t2maps=%d)", g_MatchID, winningTeam, t1maps,
-           t2maps);
+  Get5SeriesResultEvent event = new Get5SeriesResultEvent(g_MatchID, winningTeam, t1maps, t2maps);
+
+  LogDebug("Calling Get5_OnSeriesResult()");
+
   Call_StartForward(g_OnSeriesResult);
-  Call_PushString(g_MatchID);
-  Call_PushCell(winningTeam);
-  Call_PushCell(t1maps);
-  Call_PushCell(t2maps);
+  Call_PushCell(event);
   Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(event);
 
   RestoreCvars(g_MatchConfigChangedCvars);
   ChangeState(Get5State_None);
@@ -1217,9 +1234,9 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
 
 public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_FreezeEnd");
+  g_RoundStartedTime = GetEngineTime(); // We always want this to be correct, regardless of game state.
   if (g_GameState == Get5State_Live) {
     Stats_RoundStart();
-    g_RoundStartedTime = GetEngineTime();
   }
 }
 
@@ -1230,12 +1247,12 @@ public void WriteBackup() {
 
   char path[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
-    Format(path, sizeof(path), "get5_backup_match%s_map%d_round%d.cfg", g_MatchID,
+    Format(path, sizeof(path), "get5_backup_match%s_map%s_round%d.cfg", g_MatchID,
            GetMapStatsNumber(), GameRules_GetProp("m_totalRoundsPlayed"));
   } else {
-    Format(path, sizeof(path), "get5_backup_match%s_map%d_prelive.cfg", g_MatchID,
-           GetMapStatsNumber());
+    Format(path, sizeof(path), "get5_backup_match%s_map%s_prelive.cfg", g_MatchID);
   }
+
   LogDebug("created path %s", path);
 
   if (!g_DoingBackupRestoreNow) {
@@ -1247,27 +1264,35 @@ public void WriteBackup() {
 
 public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundStart");
+
   if (g_GameState == Get5State_Live) {
 
     // Just to make sure nothing carries over between rounds to mess with this, we clear out these on each round start.
-    // must be done *before* setting round number as this potentially sends events for grenades from previous round.
+    // must be done *before* setting round number as this otherwise could send events for grenades from the previous round.
     Stats_ResetGrenadeContainers();
 
     g_RoundNumber = GameRules_GetProp("m_totalRoundsPlayed");
-    int mapNumber = GetMapNumber();
 
-    EventLogger_RoundStart(g_RoundNumber);
+    Get5RoundStartedEvent startEvent = new Get5RoundStartedEvent(g_MatchID, Get5_GetMapNumber(), g_RoundNumber);
 
-    LogDebug("Calling Get5_OnRoundStart(matchId=%s, mapNumber=%d, roundNumber=%d)", g_MatchID, mapNumber, g_RoundNumber);
+    LogDebug("Calling Get5_OnRoundStart()");
+
     Call_StartForward(g_OnRoundStart);
-    Call_PushString(g_MatchID);
-    Call_PushCell(mapNumber);
-    Call_PushCell(g_RoundNumber);
+    Call_PushCell(startEvent);
     Call_Finish();
+
+    EventLogger_LogAndDeleteEvent(startEvent);
+
   } else {
     LogDebug("Setting g_RoundNumber to -1 as started round was not live.");
     g_RoundNumber = -1;
   }
+
+  // Always reset these on round start, regardless of game state.
+  // This ensures that the functions that rely on these don't get messed up.
+  g_RoundStartedTime = 0.0;
+  g_BombPlantedTime = 0.0;
+
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
@@ -1315,10 +1340,6 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
   if (g_GameState == Get5State_Live) {
     int csTeamWinner = event.GetInt("winner");
-    // Reason is incorrect in CSGO compared to the enumerations defined here:
-    // https://github.com/alliedmodders/sourcemod/blob/master/plugins/include/cstrike.inc#L53-L77
-    // - which is why we subtract one.
-    int csReason = event.GetInt("reason") - 1;
 
     Get5_MessageToAll("%t", "CurrentScoreInfoMessage", g_TeamNames[MatchTeam_Team1],
                       CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
@@ -1327,10 +1348,15 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
     Stats_RoundEnd(csTeamWinner);
 
-    LogDebug("Calling Get5_OnRoundStatsUpdated(matchId=%s)", g_MatchID);
+    Get5RoundStatsUpdatedEvent statsEvent = new Get5RoundStatsUpdatedEvent(g_MatchID);
+
+    LogDebug("Calling Get5_OnRoundStatsUpdated()");
+
     Call_StartForward(g_OnRoundStatsUpdated);
-    Call_PushString(g_MatchID);
+    Call_PushCell(statsEvent);
     Call_Finish();
+
+    EventLogger_LogAndDeleteEvent(statsEvent);
 
     int roundsPlayed = GameRules_GetProp("m_totalRoundsPlayed");
     LogDebug("m_totalRoundsPlayed = %d", roundsPlayed);
@@ -1365,34 +1391,39 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       // and RoundStart when swapping sides, we do it here instead.
       Stats_ResetGrenadeContainers();
     }
+    // TODO: add clinch logic to reset grenades also on map end
 
     char winnerString[16];
     GetTeamString(CSTeamToMatchTeam(csTeamWinner), winnerString, sizeof(winnerString));
 
-    int mapNumber = GetMapNumber();
-    int roundTime = GetMilliSecondsPassedSince(g_RoundStartedTime);
+    // CSRoundEndReason is incorrect in CSGO compared to the enumerations defined here:
+    // https://github.com/alliedmodders/sourcemod/blob/master/plugins/include/cstrike.inc#L53-L77
+    // - which is why we subtract one.
+    Get5RoundEndedEvent roundEndEvent = new Get5RoundEndedEvent(
+      g_MatchID,
+      Get5_GetMapNumber(),
+      g_RoundNumber,
+      GetRoundTime(),
+      view_as<CSRoundEndReason>(event.GetInt("reason") - 1),
+      view_as<Side>(csTeamWinner),
+      CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
+      CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2))
+    );
 
-    EventLogger_RoundEnd(g_RoundNumber, csTeamWinner, csReason, roundTime);
-
-    LogDebug("Calling Get5_OnRoundEnd(matchId=%s, mapNumber=%d, roundNumber=%d, roundTime=%d, winnerSide=%d, winnerTeam=%s, winReason=%d)",
-         g_MatchID, mapNumber, g_RoundNumber, roundTime, csTeamWinner, winnerString, csReason);
+    LogDebug("Calling Get5_OnRoundEnd()");
 
     Call_StartForward(g_OnRoundEnd);
-    Call_PushString(g_MatchID);
-    Call_PushCell(mapNumber);
-    Call_PushCell(g_RoundNumber);
-    Call_PushCell(roundTime);
-    Call_PushCell(csTeamWinner);
-    Call_PushString(winnerString);
-    Call_PushCell(csReason);
+    Call_PushCell(roundEndEvent);
     Call_Finish();
+
+    EventLogger_LogAndDeleteEvent(roundEndEvent);
 
   }
 }
 
 public void SwapSides() {
   LogDebug("SwapSides");
-  EventLogger_SideSwap(g_TeamSide[MatchTeam_Team1], g_TeamSide[MatchTeam_Team2]);
+  //EventLogger_SideSwap(g_TeamSide[MatchTeam_Team1], g_TeamSide[MatchTeam_Team2]);
 
   int tmp = g_TeamSide[MatchTeam_Team1];
   g_TeamSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team2];
@@ -1472,13 +1503,21 @@ public Action StopDemo(Handle timer) {
 }
 
 public void ChangeState(Get5State state) {
+
   g_GameStateCvar.IntValue = view_as<int>(state);
-  LogDebug("Get5_OnGameStateChanged(from=%d, to=%d)", g_GameState, state);
+
+  Get5GameStateChangedEvent event = new Get5GameStateChangedEvent(g_GameState, state);
+
+  LogDebug("Calling Get5_OnGameStateChanged()");
+
   Call_StartForward(g_OnGameStateChanged);
-  Call_PushCell(g_GameState);
-  Call_PushCell(state);
+  Call_PushCell(event);
   Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(event);
+
   g_GameState = state;
+
 }
 
 public Action Command_Status(int client, int args) {
@@ -1500,9 +1539,9 @@ public Action Command_Status(int client, int args) {
   if (g_GameState != Get5State_None) {
     json.SetString("matchid", g_MatchID);
     json.SetString("loaded_config_file", g_LoadedConfigFile);
-    json.SetInt("map_number", GetMapNumber());
+    json.SetInt("map_number", Get5_GetMapNumber());
     json.SetInt("round_number", g_RoundNumber);
-    json.SetInt("round_time", GetMilliSecondsPassedSince(g_RoundStartedTime));
+    json.SetInt("round_time", GetRoundTime());
 
     JSON_Object team1 = new JSON_Object();
     AddTeamInfo(team1, MatchTeam_Team1);
@@ -1590,4 +1629,15 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
 // token in it.
 public void GetTempFilePath(char[] path, int len, const char[] pattern) {
   Format(path, len, pattern, g_ServerIdCvar.IntValue);
+}
+
+public int GetRoundTime() {
+
+  int roundStartTime = GetMilliSecondsPassedSince(g_RoundStartedTime);
+
+  if (roundStartTime < 0) {
+    return 0;
+  }
+  return roundStartTime;
+
 }

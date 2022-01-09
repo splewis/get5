@@ -21,15 +21,15 @@ public Action StartGoingLive(Handle timer) {
   float delay = float(5 + g_LiveCountdownTimeCvar.IntValue);
   CreateTimer(delay, MatchLive);
 
-  EventLogger_GoingLive();
+  Get5GoingLiveEvent liveEvent = new Get5GoingLiveEvent(g_MatchID, Get5_GetMapNumber());
 
-  int mapNumber = GetMapNumber();
+  LogDebug("Calling Get5_OnGoingLive()");
 
-  LogDebug("Calling Get5_OnGoingLive(matchId=%s, mapnum=%d)", g_MatchID, mapNumber);
   Call_StartForward(g_OnGoingLive);
-  Call_PushString(g_MatchID);
-  Call_PushCell(mapNumber);
+  Call_PushCell(liveEvent);
   Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(liveEvent);
 
   return Plugin_Handled;
 }

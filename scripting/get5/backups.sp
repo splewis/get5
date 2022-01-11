@@ -315,7 +315,7 @@ public bool RestoreFromBackup(const char[] path) {
 
   LogDebug("Calling Get5_OnBackupRestore()");
 
-  Get5BackupRestoredEvent backupEvent = new Get5BackupRestoredEvent(g_MatchID, Get5_GetMapNumber());
+  Get5BackupRestoredEvent backupEvent = new Get5BackupRestoredEvent(g_MatchID, Get5_GetMapNumber(), path);
 
   Call_StartForward(g_OnBackupRestore);
   Call_PushCell(backupEvent);

@@ -56,7 +56,7 @@ ConVar g_AutoReadyActivePlayersCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
 ConVar g_DamagePrintCvar;
-ConVar g_DamagePrintFormat;
+ConVar g_DamagePrintFormatCvar;
 ConVar g_DemoNameFormatCvar;
 ConVar g_DisplayGotvVetoCvar;
 ConVar g_EndMatchOnEmptyServerCvar;
@@ -297,7 +297,7 @@ public void OnPluginStart() {
       CreateConVar("get5_backup_system_enabled", "1", "Whether the get5 backup system is enabled");
   g_DamagePrintCvar =
       CreateConVar("get5_print_damage", "0", "Whether damage reports are printed on round end.");
-  g_DamagePrintFormat = CreateConVar(
+  g_DamagePrintFormatCvar = CreateConVar(
       "get5_damageprint_format",
       "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)",
       "Format of the damage output string. Available tags are in the default, color tags such as {LIGHT_RED} and {GREEN} also work. {KILL_TO} and {KILL_FROM} indicate kills, assists and flash assists as booleans, all of which are mutually exclusive.");

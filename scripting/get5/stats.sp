@@ -1270,7 +1270,7 @@ static void PrintDamageInfo(int client) {
       char name[64];
       GetClientName(i, name, sizeof(name));
 
-      g_DamagePrintFormat.GetString(message, sizeof(message));
+      g_DamagePrintFormatCvar.GetString(message, sizeof(message));
       ReplaceStringWithInt(message, sizeof(message), "{DMG_TO}", g_DamageDone[client][i], false);
       ReplaceStringWithInt(message, sizeof(message), "{HITS_TO}", g_DamageDoneHits[client][i], false);
 

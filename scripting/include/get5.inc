@@ -619,11 +619,21 @@ methodmap Get5SeriesStartedEvent < Get5MatchEvent {
 
 methodmap Get5BackupRestoredEvent < Get5MapEvent {
 
-  public Get5BackupRestoredEvent(const char[] matchId, const int mapNumber) {
+    public bool SetFileName(const char[] file)
+    {
+        return this.SetString("file", file);
+    }
+
+    public bool GetFileName(char[] buffer, const int maxSize) {
+        return this.GetString("file", buffer, maxSize);
+    }
+
+  public Get5BackupRestoredEvent(const char[] matchId, const int mapNumber, const char[] file) {
         Get5BackupRestoredEvent self = view_as<Get5BackupRestoredEvent>(new JSON_Object());
         self.SetEvent("backup_loaded");
         self.SetMatchId(matchId);
         self.MapNumber = mapNumber;
+        self.SetFileName(file);
         return self;
     }
 }

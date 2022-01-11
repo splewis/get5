@@ -1391,10 +1391,6 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       // and RoundStart when swapping sides, we do it here instead.
       Stats_ResetGrenadeContainers();
     }
-    // TODO: add clinch logic to reset grenades also on map end
-
-    char winnerString[16];
-    GetTeamString(CSTeamToMatchTeam(csTeamWinner), winnerString, sizeof(winnerString));
 
     // CSRoundEndReason is incorrect in CSGO compared to the enumerations defined here:
     // https://github.com/alliedmodders/sourcemod/blob/master/plugins/include/cstrike.inc#L53-L77
@@ -1406,6 +1402,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       GetRoundTime(),
       view_as<CSRoundEndReason>(event.GetInt("reason") - 1),
       view_as<Side>(csTeamWinner),
+      CSTeamToMatchTeam(csTeamWinner),
       CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
       CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2))
     );

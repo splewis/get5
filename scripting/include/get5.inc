@@ -665,15 +665,26 @@ methodmap Get5RoundEndedEvent < Get5TimedRoundEvent {
       }
   }
 
-  property Side Winner {
+  property MatchTeam Winner {
       public get() {
-        return view_as<Side>(this.GetInt("winner"));
+        return view_as<MatchTeam>(this.GetInt("winner"));
       }
 
-      public set(Side winner) {
+      public set(MatchTeam winner) {
         this.SetInt("winner", view_as<int>(winner));
       }
   }
+
+  property Side WinnerSide {
+      public get() {
+        return view_as<Side>(this.GetInt("winner_side"));
+      }
+
+      public set(Side side) {
+        this.SetInt("winner_side", view_as<int>(side));
+      }
+  }
+
 
   property int Team1Score {
       public get() {
@@ -695,7 +706,7 @@ methodmap Get5RoundEndedEvent < Get5TimedRoundEvent {
       }
   }
 
-  public Get5RoundEndedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const CSRoundEndReason reason, const Side winner, const int team1Score, const int team2Score) {
+  public Get5RoundEndedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const CSRoundEndReason reason, const Side winnerSide, const MatchTeam winnerTeam, const int team1Score, const int team2Score) {
         Get5RoundEndedEvent self = view_as<Get5RoundEndedEvent>(new JSON_Object());
         self.SetEvent("round_end");
         self.SetMatchId(matchId);
@@ -703,7 +714,8 @@ methodmap Get5RoundEndedEvent < Get5TimedRoundEvent {
         self.RoundNumber = roundNumber;
         self.RoundTime = roundTime;
         self.Reason = reason;
-        self.Winner = winner
+        self.Winner = winnerTeam;
+        self.WinnerSide = winnerSide;
         self.Team1Score = team1Score;
         self.Team2Score = team2Score;
         return self;

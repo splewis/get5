@@ -1,14 +1,15 @@
 public Action Command_JoinGame(int client, const char[] command, int argc) {
-  if (g_GameState == Get5State_None) {
+  if (g_GameState == Get5State_None || !IsPlayer(client)) {
     return Plugin_Continue;
   }
 
-  // TODO: if we want to bypass the teammenu, this is probably the best
-  // place to put the player onto a team.
-  // if (IsPlayer(client)) {
-  //     FakeClientCommand(client, "jointeam 2");
-  // }
-
+  if (g_CheckAuthsCvar.IntValue > 0 && !g_PendingSideSwap) {
+    int clientTeam = MatchTeamToCSTeam(GetClientMatchTeam(client));
+    if (clientTeam == 0 || clientTeam == 1) { // Don't allow spec or none.
+      return Plugin_Continue;
+    }
+    ChangeClientTeam(client, clientTeam);
+  }
   return Plugin_Continue;
 }
 

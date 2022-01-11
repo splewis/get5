@@ -52,17 +52,17 @@
 /** ConVar handles **/
 ConVar g_AllowTechPauseCvar;
 ConVar g_AutoLoadConfigCvar;
-ConVar g_AutoReadyActivePlayers;
+ConVar g_AutoReadyActivePlayersCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
 ConVar g_DamagePrintCvar;
 ConVar g_DamagePrintFormat;
 ConVar g_DemoNameFormatCvar;
-ConVar g_DisplayGotvVeto;
+ConVar g_DisplayGotvVetoCvar;
 ConVar g_EndMatchOnEmptyServerCvar;
 ConVar g_EventLogFormatCvar;
 ConVar g_FixedPauseTimeCvar;
-ConVar g_KickClientImmunity;
+ConVar g_KickClientImmunityCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
@@ -290,7 +290,7 @@ public void OnPluginStart() {
   g_AutoLoadConfigCvar =
       CreateConVar("get5_autoload_config", "",
                    "Name of a match config file to automatically load when the server loads");
-  g_AutoReadyActivePlayers = CreateConVar(
+  g_AutoReadyActivePlayersCvar = CreateConVar(
       "get5_auto_ready_active_players", "0",
       "Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase.");
   g_BackupSystemEnabledCvar =
@@ -306,7 +306,7 @@ public void OnPluginStart() {
                    "If set to 0, get5 will not force players to the correct team based on steamid");
   g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
                                       "Format for demo file names, use \"\" to disable");
-  g_DisplayGotvVeto =
+  g_DisplayGotvVetoCvar =
       CreateConVar("get5_display_gotv_veto", "0",
                    "Whether to wait for map vetos to be printed to GOTV before changing map");
   g_EndMatchOnEmptyServerCvar = CreateConVar(
@@ -318,7 +318,7 @@ public void OnPluginStart() {
   g_FixedPauseTimeCvar =
       CreateConVar("get5_fixed_pause_time", "0",
                    "If set to non-zero, this will be the fixed length of any pause");
-  g_KickClientImmunity = CreateConVar(
+  g_KickClientImmunityCvar = CreateConVar(
       "get5_kick_immunity", "1",
       "Whether or not admins with the changemap flag will be immune to kicks from \"get5_kick_when_no_match_loaded\". Set to \"0\" to disable");
   g_KickClientsWithNoMatchCvar =
@@ -574,7 +574,7 @@ public Action Timer_InfoMessages(Handle timer) {
       }
     }
     MissingPlayerInfoMessage();
-  } else if (g_DisplayGotvVeto.BoolValue && g_GameState == Get5State_Warmup && g_MapChangePending) {
+  } else if (g_DisplayGotvVetoCvar.BoolValue && g_GameState == Get5State_Warmup && g_MapChangePending) {
     Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
   }
 
@@ -637,7 +637,7 @@ public void OnClientPutInServer(int client) {
 public void OnClientPostAdminCheck(int client) {
   if (IsPlayer(client)) {
     if (g_GameState == Get5State_None && g_KickClientsWithNoMatchCvar.BoolValue) {
-      if (!g_KickClientImmunity.BoolValue ||
+      if (!g_KickClientImmunityCvar.BoolValue ||
           !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
         KickClient(client, "%t", "NoMatchSetupInfoMessage");
       }
@@ -646,7 +646,7 @@ public void OnClientPostAdminCheck(int client) {
 }
 
 public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs) {
-  if (StrEqual(command, "say") && g_GameState != Get5State_None) {
+  if (g_GameState != Get5State_None && (StrEqual(command, "say") || StrEqual(command, "say_team"))) {
 
     if (IsValidClient(client)) {
 
@@ -1160,7 +1160,7 @@ public Action Timer_NextMatchMap(Handle timer) {
   char map[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(index, map, sizeof(map));
 
-  if (!g_SkipVeto && g_DisplayGotvVeto.BoolValue && index == 0) {
+  if (!g_SkipVeto && g_DisplayGotvVetoCvar.BoolValue && index == 0) {
     float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
     ChangeMap(map, minDelay);
   } else {
@@ -1171,7 +1171,7 @@ public Action Timer_NextMatchMap(Handle timer) {
 public void KickClientsOnEnd() {
   if (g_KickClientsWithNoMatchCvar.BoolValue) {
     for (int i = 1; i <= MaxClients; i++) {
-      if (IsPlayer(i) && !(g_KickClientImmunity.BoolValue &&
+      if (IsPlayer(i) && !(g_KickClientImmunityCvar.BoolValue &&
                            CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
         KickClient(i, "%t", "MatchFinishedInfoMessage");
       }
@@ -1630,11 +1630,10 @@ public void GetTempFilePath(char[] path, int len, const char[] pattern) {
 
 public int GetRoundTime() {
 
-  int roundStartTime = GetMilliSecondsPassedSince(g_RoundStartedTime);
-
-  if (roundStartTime < 0) {
+  int time = GetMilliSecondsPassedSince(g_RoundStartedTime);
+  if (time < 0) {
     return 0;
   }
-  return roundStartTime;
+  return time;
 
 }

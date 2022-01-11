@@ -5,7 +5,7 @@ public Action Command_JoinGame(int client, const char[] command, int argc) {
 
   if (g_CheckAuthsCvar.IntValue > 0 && !g_PendingSideSwap) {
     int clientTeam = MatchTeamToCSTeam(GetClientMatchTeam(client));
-    if (clientTeam == 0 || clientTeam == 1) { // Don't allow spec or none.
+    if (clientTeam == CS_TEAM_NONE || clientTeam == CS_TEAM_SPECTATOR) {
       return Plugin_Continue;
     }
     ChangeClientTeam(client, clientTeam);

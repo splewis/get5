@@ -51,7 +51,7 @@ public void VetoFinished() {
   Get5_MessageToAll("%t", "MapDecidedInfoMessage");
   
   if (IsPaused()) {  
-    ServerCommand("mp_pause_match");
+    ServerCommand("mp_unpause_match");
   }
   
   // Use total series score as starting point, to not print skipped maps

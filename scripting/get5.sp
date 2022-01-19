@@ -313,7 +313,7 @@ public void OnPluginStart() {
                    "Whether pause limits will be reset each halftime period");
   g_PauseOnVetoCvar =
       CreateConVar("get5_pause_on_veto", "0",
-                   "Set 1 to Pause Match during Veto time}");
+                   "Set 1 to Pause Match during Veto time");
   g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
   g_PrettyPrintJsonCvar = CreateConVar("get5_pretty_print_json", "1",
                                        "Whether all JSON output is in pretty-print format.");

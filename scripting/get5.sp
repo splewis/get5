@@ -69,6 +69,7 @@ ConVar g_MaxBackupAgeCvar;
 ConVar g_MaxPausesCvar;
 ConVar g_MaxPauseTimeCvar;
 ConVar g_MessagePrefixCvar;
+ConVar g_PauseOnVetoCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_PrettyPrintJsonCvar;
 ConVar g_ReadyTeamTagCvar;
@@ -316,6 +317,9 @@ public void OnPluginStart() {
   g_ResetPausesEachHalfCvar =
       CreateConVar("get5_reset_pauses_each_half", "1",
                    "Whether pause limits will be reset each halftime period");
+  g_PauseOnVetoCvar =
+      CreateConVar("get5_pause_on_veto", "0",
+                   "Set 1 to Pause Match during Veto time");
   g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
   g_PrettyPrintJsonCvar = CreateConVar("get5_pretty_print_json", "1",
                                        "Whether all JSON output is in pretty-print format.");
@@ -691,6 +695,7 @@ public Action Timer_CheckReady(Handle timer) {
       // We don't wait for spectators when initiating veto
       LogDebug("Timer_CheckReady: starting veto");
       ChangeState(Get5State_Veto);
+      ServerCommand("mp_restartgame 1");
       CreateVeto();
     } else {
       CheckReadyWaitingTimes();

@@ -24,6 +24,9 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     g_TeamGivenStopCommand[team] = false;
     g_TeamPauseTimeUsed[team] = 0;
     g_TeamPausesUsed[team] = 0;
+    g_TeamTechPausesUsed[team] = 0;
+    g_TechPausedTimeOverride[team] = 0;
+    g_TeamGivenTechPauseCommand[team] = false;
     ClearArray(GetTeamAuths(team));
   }
 

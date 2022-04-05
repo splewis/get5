@@ -50,6 +50,8 @@
 
 /** ConVar handles **/
 ConVar g_AllowTechPauseCvar;
+ConVar g_MaxTechPauseTime;
+ConVar g_MaxTechPauseCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_AutoReadyActivePlayers;
 ConVar g_BackupSystemEnabledCvar;
@@ -166,6 +168,9 @@ bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
 bool g_InExtendedPause;
 int g_TeamPauseTimeUsed[MATCHTEAM_COUNT];
 int g_TeamPausesUsed[MATCHTEAM_COUNT];
+int g_TeamTechPausesUsed[MATCHTEAM_COUNT];
+int g_TechPausedTimeOverride[MATCHTEAM_COUNT];
+int g_TeamGivenTechPauseCommand[MATCHTEAM_COUNT];
 int g_PauseTimeUsed = 0;
 int g_ReadyTimeWaitingUsed = 0;
 char g_DefaultTeamColors[][] = {
@@ -262,6 +267,10 @@ public void OnPluginStart() {
   /** ConVars **/
   g_AllowTechPauseCvar = CreateConVar("get5_allow_technical_pause", "1",
                                       "Whether or not technical pauses are allowed");
+  g_MaxTechPauseTime = CreateConVar("get5_tech_pause_time", "0",
+                                    "Number of seconds before anyone can call unpause on a technical timeout, 0=unlimited");
+  g_MaxTechPauseCvar = CreateConVar("get5_max_tech_pauses", "0",
+                                    "Number of technical pauses a team is allowed to have, 0=unlimited");
   g_AutoLoadConfigCvar =
       CreateConVar("get5_autoload_config", "",
                    "Name of a match config file to automatically load when the server loads");
@@ -653,6 +662,9 @@ public void OnMapStart() {
     g_TeamPauseTimeUsed[team] = 0;
     g_TeamPausesUsed[team] = 0;
     g_ReadyTimeWaitingUsed = 0;
+    g_TeamTechPausesUsed[team] = 0;
+    g_TechPausedTimeOverride[team] = 0;
+    g_TeamGivenTechPauseCommand[team] = false;
   }
 
   if (g_WaitingForRoundBackup) {

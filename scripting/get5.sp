@@ -684,6 +684,12 @@ public Action Timer_CheckReady(Handle timer) {
   if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
+  
+  if (g_DoingBackupRestoreNow) {
+    LogDebug("Timer_CheckReady: Waiting for restore");
+    return Plugin_Continue;
+  }
+
 
   CheckTeamNameStatus(MatchTeam_Team1);
   CheckTeamNameStatus(MatchTeam_Team2);

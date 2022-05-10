@@ -133,7 +133,7 @@
     "TechPauseTimeRemainingMinutes"
     {
         "#format"       "{1:d}"
-        "en"            "{1} minutes remaining of tech pause time before anyone can resume."
+        "en"            "{1} minute(s) remaining of tech pause time before anyone can resume."
     }
     "TechPauseNoTimeRemaining"
     {

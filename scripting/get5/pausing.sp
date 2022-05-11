@@ -173,6 +173,12 @@ public Action Timer_TechPauseOverrideCheck(Handle timer, int data) {
     return Plugin_Stop;
   }
 
+  // This condition will only be hit when we resume from a pause.
+  if (!g_TeamGivenTechPauseCommand[team]) {
+    g_TechPausedTimeOverride[team] = 0;
+    return Plugin_Stop;
+  }
+
   int timeLeft = g_MaxTechPauseTime.IntValue - g_TechPausedTimeOverride[team];
 
   if (InFreezeTime() && g_TeamGivenTechPauseCommand[team] && g_InExtendedPause && !g_TeamReadyForUnpause[team]) {
@@ -332,8 +338,10 @@ public Action Command_Unpause(int client, int args) {
     Call_StartForward(g_OnMatchUnpaused);
     Call_PushCell(team);
     Call_Finish();
+    g_InExtendedPause = false;
     if (pausedTeam != MatchTeam_TeamNone) {
         g_TeamGivenTechPauseCommand[pausedTeam] = false;
+        g_TechPausedTimeOverride[pausedTeam] = 0;
     }
     if (IsPlayer(client)) {
       Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", client);

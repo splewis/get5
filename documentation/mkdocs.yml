@@ -1,0 +1,10 @@
+site_name: Get5
+site_url: https://splewis.github.io/get5
+repo_url: https://github.com/splewis/get5
+repo_name: get5
+theme:
+  name: readthedocs
+
+nav:
+  - Home: index.md
+  - Installation: installation.md

@@ -1,22 +1,23 @@
 name: Publish MKDocs to GH Pages
 on:
   push:
-    branches:
-      - create-docs
+    branches: [ create-docs ]
+
 jobs:
   build:
-    name: Deploy docs to GitHub Pages
+    name: Deploy docs
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 
+      - name: Checkout main
         uses: actions/checkout@v2
-      - name: Build
-        uses: Tiryoh/actions-mkdocs@v0
+
+      - uses: actions/setup-python@v2
         with:
-          mkdocs_version: 'latest' # option
-          configfile: 'documentation/mkdocs.yml' # option
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./documentation
+          python-version: 'pypy-3.6'
+
+      - name: Deploy docs
+        uses: afritzler/mkdocs-gh-pages-action@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG_FILE: ./docs/mkdocs.yml
+          #GITHUB_DOMAIN: github.myenterprise.com

@@ -5,6 +5,7 @@ Some client commands are available also for admin usage. For example, `sm_pause`
 
 ## Client Commands 
 Please note that these can be typed by *all players* in chat.
+
 - `!ready`: Marks a client's team as ready to begin.
 - `!unready`: Marks a client's team as not-ready.
 - `!pause`: Requests a freeze time pause. Pauses can be modified in the Get5 config.
@@ -20,6 +21,7 @@ Please note that these can be typed by *all players* in chat.
 
 ## Server/Admin Commands 
 Please note that these are meant to be used by *admins* in console.
+
 - `get5_loadmatch <filename>`: Loads a match config file (JSON or KeyValue) relative from the `csgo` directory.
 - `get5_loadbackup <file>`: Loads a get5 backup file relative from the `csgo` directory.
 - `get5_loadteam <team1|team2|spec> <filename>`: Loads a team section from a file into a team relative from the `csgo` directory.

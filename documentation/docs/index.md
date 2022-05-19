@@ -1,17 +1,3 @@
-# Welcome to MkDocs
+# Welcome to Get5 Documentation
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
-
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+The aim for this documentation is to provide a full overview of what is included in the Get5 plugin. Originally based off of [pugsetup](https://github.com/splewis/csgo-pug-setup) and inspired by [eBot](https://github.com/deStrO/eBot-CSGO), it intends to be as non-invasive and builds most of its functionality on top of the CS:GO server operations. It is meant to be an easy-to-use solution for tournament and LANs. Use the sidebar to navigate around the documentation. If you are installing this on your game server, head over to the [Installation](./installation.md) instructions.

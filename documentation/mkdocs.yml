@@ -1,4 +1,4 @@
-site_name: Get5
+site_name: Get5 Documentation
 site_url: https://splewis.github.io/get5
 repo_url: https://github.com/splewis/get5
 repo_name: get5
@@ -7,4 +7,11 @@ theme:
 
 nav:
   - Home: index.md
+  - Commands: commands.md
+  - Developer API: developer_api.md
+  - Event Logs: event_logs.md
+  - Get5 Configuration: get5_configuration.md
   - Installation: installation.md
+  - Match Configuration: match_configuration.md
+  - Match Schema: match_schema.md
+  - Player Stats System: stats_system.md

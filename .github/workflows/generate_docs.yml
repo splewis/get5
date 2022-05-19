@@ -2,7 +2,7 @@ name: Publish MKDocs to GH Pages
 on:
   push:
     branches:
-      - create-docs
+      - master
 
 jobs:
   build:

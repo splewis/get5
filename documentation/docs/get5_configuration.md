@@ -31,6 +31,22 @@ Valid substitutions into the above file name formatting cvars (when surrounded b
 - `TEAM2`
 - `MATCHTITLE`
 
+#### Colour Substitution Variables
+This project also includes substitution variables for colour in text chat (when surrounded by {}):
+
+- `{NORMAL}`
+- `{DARK_RED}`
+- `{PINK}`
+- `{GREEN}`
+- `{YELLOW}`
+- `{LIGHT_GREEN}`
+- `{LIGHT_RED}`
+- `{GRAY}`
+- `{ORANGE}`
+- `{LIGHT_BLUE}`
+- `{DARK_BLUE}`
+- `{PURPLE}`
+
 ## Match Management Timers
 - `get5_time_to_start`: Time (in seconds) teams have to ready up before forfeiting the match, 0=unlimited.
 - `get5_time_to_make_knife_decision`: Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited.

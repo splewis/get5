@@ -910,6 +910,7 @@ public Action Command_RemoveKickedPlayer(int client, int args) {
 }
 
 public Action Command_CreateMatch(int client, int args) {
+  kv.SetString("side_type", "never_knife");
   if (g_GameState != Get5State_None) {
     ReplyToCommand(client, "Cannot create a match when a match is already loaded");
     return Plugin_Handled;

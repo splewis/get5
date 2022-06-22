@@ -37,7 +37,7 @@ Get5 also aims to make it easy to build automation for it. Commands are added so
 You must have sourcemod installed on the game server. You can download it at http://www.sourcemod.net/downloads.php. Note that sourcemod also requires MetaMod:Source to be on the server. You can download it at http://www.metamodsource.net/downloads.php. You must have a 1.9+ build of sourcemod.
 
 #### Download
-Download a release package from the [releases section](https://github.com/splewis/get5/releases) or [the latest development build](https://github.com/splewis/get5/actions/workflows/build.yml/) (click the latest successful build and download the artifact called `build`).
+Download a release package from the [releases section](https://github.com/splewis/get5/releases) or [the latest development build](https://github.com/splewis/get5/actions/workflows/build.yml?query=branch%3Amaster++) (click the latest successful build from `branch:master` and download the artifact called `build`).
 
 Release and development builds are currently compiled against sourcemod 1.10 and should work on sourcemod 1.10 or later.
 

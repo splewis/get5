@@ -1,7 +1,7 @@
 get5
 ===========================
 
-[![Build status](http://ci.splewis.net/job/get5/badge/icon)](http://ci.splewis.net/job/get5/)
+[![Build Status](https://github.com/splewis/get5/actions/workflows/build.yml/badge.svg)](https://github.com/splewis/get5/actions/workflows/build.yml)
 [![GitHub Downloads](https://img.shields.io/github/downloads/splewis/get5/total.svg?style=flat-square&label=Downloads)](https://github.com/splewis/get5/releases/latest)
 [![Discord Chat](https://img.shields.io/discord/926309849673895966.svg)](https://discord.gg/zmqEa4keCk)  
 
@@ -37,7 +37,7 @@ Get5 also aims to make it easy to build automation for it. Commands are added so
 You must have sourcemod installed on the game server. You can download it at http://www.sourcemod.net/downloads.php. Note that sourcemod also requires MetaMod:Source to be on the server. You can download it at http://www.metamodsource.net/downloads.php. You must have a 1.9+ build of sourcemod.
 
 #### Download
-Download a release package from the [releases section](https://github.com/splewis/get5/releases) or a [the latest development build](http://ci.splewis.net/job/get5/lastSuccessfulBuild/).
+Download a release package from the [releases section](https://github.com/splewis/get5/releases) or [the latest development build](https://github.com/splewis/get5/actions/workflows/build.yml/) (click the latest successful build and download the artifact called `build`).
 
 Release and development builds are currently compiled against sourcemod 1.10 and should work on sourcemod 1.10 or later.
 
@@ -166,7 +166,7 @@ Note: cvars set in the ``cvars`` section will override other settings (standard 
 
 Get5 can be interacted with in several ways. At a glance:
 
-1. You can write another sourcemod plugin that uses the [get5 natives and forwards](scripting/include/get5.inc). This is exactly what the [get5_apistats](scripting/get5_apistats.sp) and [get5_mysqlstats](get5_mysqlstats.sp) plugins do. Considering starting from those plugin and making any changes you want (forking the get5 plugin itself is strongly discouraged; but just making another plugin using the get5 plugin api like get5_apistats does is encouraged).
+1. You can write another SourceMod plugin that uses the [get5 natives and forwards](scripting/include/get5.inc). This is exactly what the [get5_apistats](scripting/get5_apistats.sp) and [get5_mysqlstats](scripting/get5_mysqlstats.sp) plugins do. Consider starting from those plugins and making any changes you want (forking the get5 plugin itself is strongly discouraged; but just making another plugin using the get5 plugin api like get5_apistats does is encouraged).
 
 1. You can read [event logs](https://github.com/splewis/get5/wiki/Event-logs) from a file on disk (set by ``get5_event_log_format``), through a RCON
 connection to the server console since they are output there, or through another sourcemod plugin (see #1).
@@ -239,7 +239,7 @@ Pull requests are welcome. Please follow the general coding formatting style as 
 
 ### Building
 
-You can use Docker to Build get5. At first you need to build the container image locally. Therefore go to the repository folder and run:
+You can use Docker to Build get5. First you need to build the container image locally: Go to the repository folder and run:
 
 	docker build . -t get5build:latest
 

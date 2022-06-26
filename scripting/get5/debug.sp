@@ -133,7 +133,10 @@ static void AddGlobalStateInfo(File f) {
     f.WriteLine("g_TeamReadyOverride = %d", g_TeamReadyOverride[team]);
     f.WriteLine("g_TeamStartingSide = %d", g_TeamStartingSide[team]);
     f.WriteLine("g_TeamPauseTimeUsed = %d", g_TeamPauseTimeUsed[team]);
+    f.WriteLine("g_TechPausedTimeOverride = %d", g_TechPausedTimeOverride[team]);
     f.WriteLine("g_TeamPausesUsed = %d", g_TeamPausesUsed[team]);
+    f.WriteLine("g_TeamTechPausesUsed = %d", g_TeamTechPausesUsed[team]);
+    f.WriteLine("g_TeamGivenTechPauseCommand = %d", g_TeamGivenTechPauseCommand[team]);
   }
 }
 

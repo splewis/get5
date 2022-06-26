@@ -23,6 +23,37 @@ public Action Command_TechPause(int client, int args) {
   }
 
   MatchTeam team = GetClientMatchTeam(client);
+  int maxTechPauses = g_MaxTechPauseCvar.IntValue;  
+
+  g_TeamReadyForUnpause[MatchTeam_Team1] = false;
+  g_TeamReadyForUnpause[MatchTeam_Team2] = false;
+
+  // Only set these if we are a non-zero value.
+  if (maxTechPauses > 0 || g_MaxTechPauseTime.IntValue > 0) {
+    int timeLeft = g_MaxTechPauseTime.IntValue - g_TechPausedTimeOverride[team];
+    // Don't allow more than one tech pause per time.
+    if (g_TeamGivenTechPauseCommand[MatchTeam_Team1] || g_TeamGivenTechPauseCommand[MatchTeam_Team2]) {
+      return Plugin_Handled;
+    }
+    if (maxTechPauses > 0 && g_TeamTechPausesUsed[team] >= maxTechPauses) {
+      Get5_MessageToAll("%t", "TechPauseNoTimeRemaining", g_FormattedTeamNames[team]);
+      return Plugin_Handled;
+    } else if (g_MaxTechPauseTime.IntValue > 0 && timeLeft <= 0) {
+      Get5_MessageToAll("%t", "TechPauseNoTimeRemaining", g_FormattedTeamNames[team]);
+      return Plugin_Handled;
+    } else {
+      g_TeamGivenTechPauseCommand[team] = true;
+      // Only create a new timer when the old one expires.
+      if (g_TechPausedTimeOverride[team] == 0) {
+        CreateTimer(1.0, Timer_TechPauseOverrideCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
+      }
+      // Once we run out of time, subtract a tech pause used and reset the timer.
+      g_TeamTechPausesUsed[team]++;
+      int pausesLeft = maxTechPauses - g_TeamTechPausesUsed[team];
+      Get5_MessageToAll("%t", "TechPausePausesRemaining", g_FormattedTeamNames[team], pausesLeft);
+    }
+  }
+  
   Pause();
   EventLogger_PauseCommand(team, PauseType_Tech);
   LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", team, PauseType_Tech);
@@ -128,6 +159,53 @@ public Action Command_Pause(int client, int args) {
   return Plugin_Handled;
 }
 
+public Action Timer_TechPauseOverrideCheck(Handle timer, int data) {
+  MatchTeam team = view_as<MatchTeam>(data);
+  if (!Pauseable()) {
+    g_TechPausedTimeOverride[team] = 0;
+    g_TeamGivenTechPauseCommand[team] = false;
+    return Plugin_Stop;
+  }
+
+  // Unlimited Tech Pause so no one can unpause unless both teams agree.
+  if (g_MaxTechPauseTime.IntValue <= 0) {
+    g_TechPausedTimeOverride[team] = 0;
+    return Plugin_Stop;
+  }
+
+  // This condition will only be hit when we resume from a pause.
+  if (!g_TeamGivenTechPauseCommand[team]) {
+    g_TechPausedTimeOverride[team] = 0;
+    return Plugin_Stop;
+  }
+
+  int timeLeft = g_MaxTechPauseTime.IntValue - g_TechPausedTimeOverride[team];
+
+  if (InFreezeTime() && g_TeamGivenTechPauseCommand[team] && g_InExtendedPause && !g_TeamReadyForUnpause[team]) {
+    LogDebug("Adding tech time used. Current time = %d", g_TechPausedTimeOverride[team]);
+    g_TechPausedTimeOverride[team]++;
+
+    // Every 30 seconds output a message with the time remaining before unpause.
+    if (timeLeft != 0) {
+      if (timeLeft >= 60 && timeLeft % 60 == 0) {
+        timeLeft = timeLeft / 60;
+        Get5_MessageToAll("%t", "TechPauseTimeRemainingMinutes", timeLeft);
+      } else if (timeLeft <= 30 && (timeLeft % 30 == 0 || timeLeft == 10)) {
+       Get5_MessageToAll("%t", "TechPauseTimeRemaining", timeLeft);
+      }
+    }
+
+    if (timeLeft <= 0) {
+      Get5_MessageToAll("%t", "TechPauseRunoutInfoMessage");
+      return Plugin_Stop;
+    }
+  }
+
+  // Someone can call pause during a round and will set this timer.
+  // Keep running timer until we are paused.
+  return Plugin_Continue;
+}
+
 public Action Timer_UnpauseEventCheck(Handle timer, int data) {
   if (!Pauseable()) {
     g_PauseTimeUsed = 0;
@@ -225,6 +303,34 @@ public Action Command_Unpause(int client, int args) {
   MatchTeam team = GetClientMatchTeam(client);
   g_TeamReadyForUnpause[team] = true;
 
+  // Get which team is currently tech paused.
+  MatchTeam pausedTeam = MatchTeam_TeamNone;
+  if (g_TeamGivenTechPauseCommand[MatchTeam_Team1]) {
+    pausedTeam = MatchTeam_Team1;
+  } else if (g_TeamGivenTechPauseCommand[MatchTeam_Team2]) {
+    pausedTeam = MatchTeam_Team2;
+  }
+  
+  if (g_InExtendedPause && g_MaxTechPauseTime.IntValue > 0) {
+    if (g_TechPausedTimeOverride[pausedTeam] >= g_MaxTechPauseTime.IntValue) {
+      Unpause();
+      EventLogger_UnpauseCommand(team);
+      LogDebug("Calling Get5_OnMatchUnpaused(team=%d)", team);
+      Call_StartForward(g_OnMatchUnpaused);
+      Call_PushCell(team);
+      Call_Finish();
+      if (IsPlayer(client)) {
+        Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", client);
+      }
+      if (pausedTeam != MatchTeam_TeamNone) {
+        g_TeamGivenTechPauseCommand[pausedTeam] = false;
+        g_TechPausedTimeOverride[pausedTeam] = 0;
+      }
+      g_InExtendedPause = false;
+      return Plugin_Handled;
+    }
+  }
+
   if (g_TeamReadyForUnpause[MatchTeam_Team1] && g_TeamReadyForUnpause[MatchTeam_Team2]) {
     Unpause();
     EventLogger_UnpauseCommand(team);
@@ -232,6 +338,11 @@ public Action Command_Unpause(int client, int args) {
     Call_StartForward(g_OnMatchUnpaused);
     Call_PushCell(team);
     Call_Finish();
+    g_InExtendedPause = false;
+    if (pausedTeam != MatchTeam_TeamNone) {
+        g_TeamGivenTechPauseCommand[pausedTeam] = false;
+        g_TechPausedTimeOverride[pausedTeam] = 0;
+    }
     if (IsPlayer(client)) {
       Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", client);
     }

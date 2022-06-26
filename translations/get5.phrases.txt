@@ -121,6 +121,30 @@
         "#format"       "{1:s}"
         "en"            "{1} has run out of pause time, unpausing the match."
     }
+    "TechPauseRunoutInfoMessage"
+    {
+        "en"            "Grace period has expired for the technical pause, anyone may unpause now."
+    }
+    "TechPauseTimeRemaining"
+    {
+        "#format"       "{1:d}"
+        "en"            "{1} seconds remaining of tech pause time before anyone can resume."
+    }
+    "TechPauseTimeRemainingMinutes"
+    {
+        "#format"       "{1:d}"
+        "en"            "{1} minute(s) remaining of tech pause time before anyone can resume."
+    }
+    "TechPauseNoTimeRemaining"
+    {
+        "#format"       "{1:s}"
+        "en"            "Sorry, team {1} has no more tech pause time. Please use tactical pauses."
+    }
+    "TechPausePausesRemaining"
+    {
+        "#format"       "{1:s},{2:d}"
+        "en"            "Team {1} has {2} technical pause(s) remaining."
+    }
     "MatchUnpauseInfoMessage"
     {
         "#format"       "{1:N}"

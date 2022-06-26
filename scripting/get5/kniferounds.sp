@@ -42,6 +42,13 @@ static void PerformSideSwap(bool swap) {
         }
       }
     }
+    // Make sure g_MapSides has the correct values as well,
+    // that way set starting teams won't swap on round 0,
+    // since a temp valve backup does not exist.
+    if (g_TeamSide[MatchTeam_Team1] == CS_TEAM_CT)
+      g_MapSides.Set(GetMapNumber(), SideChoice_Team1CT);
+    else
+      g_MapSides.Set(GetMapNumber(), SideChoice_Team1T);
   } else {
     g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
     g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;

@@ -476,7 +476,9 @@ stock bool IsPlayerTeam(MatchTeam team) {
 }
 
 public MatchTeam VetoFirstFromString(const char[] str) {
-  if (StrEqual(str, "team2", false)) {
+  if (StrEqual(str, "random", false)) {
+    return view_as<MatchTeam>(GetRandomInt(0, 1));
+  } else if (StrEqual(str, "team2", false)) {
     return MatchTeam_Team2;
   } else {
     return MatchTeam_Team1;

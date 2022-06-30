@@ -17,7 +17,7 @@ There are quite a few values that are also optional within the team schema, but 
 - `num_maps`: Number of maps in the series. This must be an odd number or 2.
 - `maplist`: List of the maps in use (an array of strings in JSON, mapnames as keys for KeyValues), you should always use an odd-sized maplist
 - `skip_veto`: Whether the veto will be skipped and the maps will come from the maplist (in the order given).
-- `veto_first`: Either "team1", or "team2". If not set, or set to any other value, "team1" will veto first.
+- `veto_first`: Either "random", "team1", or "team2". If not set, or set to any other value, "team1" will veto first.
 - `side_type`: Either "standard", "never_knife", or "always_knife"; "standard" means the team that doesn't pick a map gets the side choice, "never_knife" means "team1" is always on CT first, and "always_knife" means there is always a knife round.
 - `players_per_team`: Maximum players per team (doesn't include a coach spot, default: 5).
 - `min_players_to_ready`: Minimum players a team needs to be able to ready up (default: 1).

@@ -106,6 +106,10 @@
     {
         "en"            "An admin has called for a technical pause."
     }
+    "UserCannotUnpauseAdmin"
+    {
+        "en"            "An admin has called for this pause, it must be unpaused by an admin."
+    }
     "PauseTimeExpiration10SecInfoMessage"
     {
         "#format"       "{1:s}"

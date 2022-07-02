@@ -29,9 +29,9 @@ jobs:
         cp -R get5/scripting $OUTPUT_SM_PATH
         cp get5/README.md $OUTPUT_PATH
         cp get5/LICENSE $OUTPUT_PATH
-        spcomp get5/scripting/get5.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/get5.smx
-        spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_apistats.smx
-        spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx
+        spcomp get5/scripting/get5.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/get5.smx -E
+        spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_apistats.smx -E
+        spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx -E
 
         mkdir -p artifacts
         tar -zcvf artifacts/get5.tar.gz $OUTPUT_PATH/

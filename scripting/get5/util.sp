@@ -229,6 +229,7 @@ stock bool Pause(int pauseTime = 0, int csTeam = CS_TEAM_NONE, int pausesLeft = 
 }
 
 stock void Unpause() {
+  g_PausedByAdmin = false;
   ServerCommand("mp_unpause_match");
 }
 

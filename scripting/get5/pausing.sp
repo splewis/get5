@@ -28,8 +28,8 @@ public Action Command_TechPause(int client, int args) {
 
   g_TeamReadyForUnpause[MatchTeam_Team1] = false;
   g_TeamReadyForUnpause[MatchTeam_Team2] = false;
-  // Ensure we are not admin pausing anymore if we are unpaused.
   g_PausedByAdmin = false;
+  
   // Only set these if we are a non-zero value.
   if (maxTechPauses > 0 || g_MaxTechPauseTime.IntValue > 0) {
     int timeLeft = g_MaxTechPauseTime.IntValue - g_TechPausedTimeOverride[team];
@@ -92,6 +92,7 @@ public Action Command_Pause(int client, int args) {
 
   MatchTeam team = GetClientMatchTeam(client);
   int maxPauses = g_MaxPausesCvar.IntValue;
+  g_PausedByAdmin = false;
   char pausePeriodString[32];
   if (g_ResetPausesEachHalfCvar.BoolValue) {
     Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
@@ -110,7 +111,6 @@ public Action Command_Pause(int client, int args) {
 
   g_TeamReadyForUnpause[MatchTeam_Team1] = false;
   g_TeamReadyForUnpause[MatchTeam_Team2] = false;
-  g_PausedByAdmin = false;
 
   int pausesLeft = 1;
   if (g_MaxPausesCvar.IntValue > 0 && IsPlayerTeam(team)) {
@@ -301,7 +301,6 @@ public Action Command_Unpause(int client, int args) {
     Call_PushCell(MatchTeam_TeamNone);
     Call_Finish();
     Get5_MessageToAll("%t", "AdminForceUnPauseInfoMessage");
-    g_PausedByAdmin = false;
     return Plugin_Handled;
   }
 
@@ -348,7 +347,6 @@ public Action Command_Unpause(int client, int args) {
     Call_PushCell(team);
     Call_Finish();
     g_InExtendedPause = false;
-    g_PausedByAdmin = false;
     if (pausedTeam != MatchTeam_TeamNone) {
         g_TeamGivenTechPauseCommand[pausedTeam] = false;
         g_TechPausedTimeOverride[pausedTeam] = 0;

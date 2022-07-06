@@ -1592,66 +1592,54 @@ public void ChangeState(Get5State state) {
 }
 
 public Action Command_Status(int client, int args) {
-  JSON_Object json = new JSON_Object();
 
-  json.SetString("plugin_version", PLUGIN_VERSION);
-
-#if defined COMMIT_STRING
-  json.SetString("commit", COMMIT_STRING);
-#endif
-
-  ConvertGameStateToStringInJson(json, "gamestate", g_GameState);
-  json.SetBool("paused", IsPaused());
+  Get5Status status = new Get5Status(PLUGIN_VERSION, g_GameState, IsPaused());
 
   if (g_GameState != Get5State_None) {
-    json.SetString("matchid", g_MatchID);
-    json.SetString("loaded_config_file", g_LoadedConfigFile);
-    json.SetInt("map_number", Get5_GetMapNumber());
-    json.SetInt("round_number", g_RoundNumber);
-    json.SetInt("round_time", GetRoundTime());
 
-    JSON_Object team1 = new JSON_Object();
-    AddTeamInfo(team1, MatchTeam_Team1);
-    json.SetObject("team1", team1);
+    status.SetMatchId(g_MatchID);
+    status.SetConfigFile(g_LoadedConfigFile);
+    status.MapNumber = g_MapNumber;
+    status.RoundNumber = g_RoundNumber;
+    status.RoundTime = GetRoundTime();
 
-    JSON_Object team2 = new JSON_Object();
-    AddTeamInfo(team2, MatchTeam_Team2);
-    json.SetObject("team2", team2);
+    status.Team1 = GetTeamInfo(MatchTeam_Team1);
+    status.Team2 = GetTeamInfo(MatchTeam_Team2);
   }
 
   if (g_GameState > Get5State_Veto) {
-    JSON_Object maps = new JSON_Object();
-
     for (int i = 0; i < g_MapsToPlay.Length; i++) {
-      char mapKey[64];
-      Format(mapKey, sizeof(mapKey), "map%d", i);
 
       char mapName[PLATFORM_MAX_PATH];
       g_MapsToPlay.GetString(i, mapName, sizeof(mapName));
 
-      maps.SetString(mapKey, mapName);
+      status.AddMap(mapName);
     }
-    json.SetObject("maps", maps);
   }
 
-  char buffer[4096];
-  json.Encode(buffer, sizeof(buffer), g_PrettyPrintJsonCvar.BoolValue);
+  int options = g_PrettyPrintJsonCvar.BoolValue ? JSON_ENCODE_PRETTY : 0;
+  int bufferSize = status.EncodeSize(options);
+
+  char[] buffer = new char[bufferSize];
+  status.Encode(buffer, bufferSize, options);
+
   ReplyToCommand(client, buffer);
 
-  json_cleanup_and_delete(json);
+  json_cleanup_and_delete(status);
   return Plugin_Handled;
 }
 
-static void AddTeamInfo(JSON_Object json, MatchTeam matchTeam) {
-  int team = MatchTeamToCSTeam(matchTeam);
-  char side[4];
-  CSTeamString(team, side, sizeof(side));
-  json.SetString("name", g_TeamNames[matchTeam]);
-  json.SetInt("series_score", g_TeamSeriesScores[matchTeam]);
-  json.SetBool("ready", IsTeamReady(matchTeam));
-  json.SetString("side", side);
-  json.SetInt("connected_clients", GetNumHumansOnTeam(team));
-  json.SetInt("current_map_score", CS_GetTeamScore(team));
+static Get5StatusTeam GetTeamInfo(MatchTeam team) {
+
+  int side = MatchTeamToCSTeam(team);
+  return new Get5StatusTeam(
+    g_TeamNames[team],
+    g_TeamSeriesScores[team],
+    CS_GetTeamScore(side),
+    IsTeamReady(team),
+    view_as<Get5Side>(side),
+    GetNumHumansOnTeam(side)
+  );
 }
 
 public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {

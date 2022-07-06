@@ -4,6 +4,17 @@ info:
   title: ""
   version: ""
 paths:
+  "/get5_status":
+    get:
+      tags:
+        - Get5 Status
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Get5Status"
   "/Get_OnEvent":
     put:
       tags:
@@ -812,6 +823,83 @@ paths:
       responses: { }
 components:
   schemas:
+    Get5Status:
+      type: object
+      properties:
+        plugin_version:
+          type: string
+          description: The version of Get5. This is required when submitting a bug-report.
+          example: 0.8.1-8ef7ffa3
+        gamestate:
+          "$ref": "#/components/schemas/Get5State"
+        paused:
+          type: boolean
+          description: Indicates if the game is currently paused.
+        loaded_config_file:
+          type: string
+          description: |
+            The path to the loaded config file. If you used `get5_loadmatch <file>`, it's this file's name.
+            If you used `get5_loadmatch_url`, the pattern of the file is `remote_config%d.json`, where `%d` is the server's id,
+            which you can set with `get5_server_id`.
+          example: addons/sourcemod/configs/get5/match_config.json
+        matchid:
+          type: string
+          description: The match ID of the game. Only defined if a match config was loaded.
+          example: 1743
+        map_number:
+          type: integer
+          description: The map number of the current match, starting at 0. Only defined if a match config was loaded.
+          minimum: 0
+        round_number:
+          type: integer
+          description: The round number of the current match, starting at 0. -1 if not live. Only defined if a match config was loaded.
+          minimum: -1
+        round_time:
+          type: integer
+          description: The number of milliseconds elapsed since the round started. Only defined if a match config was loaded.
+          minimum: 0
+        team1:
+          $ref: "#/components/schemas/Get5StatusTeam"
+        team2:
+          $ref: "#/components/schemas/Get5StatusTeam"
+        maps:
+          type: array
+          minItems: 1
+          items:
+            - type: string
+              example: de_dust2
+          description: The maps of the series, in the order they are played. Only defined if maps have been decided.
+          example:
+            - de_dust2
+            - de_nuke
+    Get5StatusTeam:
+      type: object
+      description: Describes a team of a match. Only defined if a match config was loaded.
+      properties:
+        name:
+          type: string
+          description: The name of the team.
+          example: NaVi
+        series_score:
+          type: integer
+          minimum: 0
+          description: The current series score of the team.
+          example: 1
+        current_map_score:
+          type: integer
+          minimum: 0
+          description: The current map score of the team (i.e. the number of rounds won the current map).
+          example: 14
+        connected_clients:
+          type: integer
+          minimum: 0
+          description: The number of connected players of the team.
+          example: 5
+        ready:
+          type: boolean
+          description: Indicates if the team has been marked as ready or not.
+        side:
+          $ref: "#/components/schemas/Get5Side"
     Get5State:
       type: string
       enum:
@@ -1068,7 +1156,10 @@ components:
       description: The site at which the bomb was planted/defused or exploded. `Site` in SourceMod.
 
 tags:
+  - name: Get5 Status
+    description: The response structure of the `get5_status` console command.
   - name: All Events
+    description: Forward fired for all events.
   - name: Series Flow
     description: Events the occur in relation to setting up a match or series.
   - name: Map Flow

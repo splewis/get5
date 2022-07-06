@@ -48,13 +48,12 @@ Please note that these are meant to be used by *admins* in console.
 - `get5_forceready`: Marks all teams as ready.
 - `get5_forcestart`: Same as `get5_forceready`.
 - `get5_dumpstats`: Dumps current match stats to a file.
-- `get5_status`: Replies with JSON formatted match state (available to all clients).
+- `get5_status`: Replies with JSON formatted match state (available to all clients). The response structure is documented under [Event Logs](./event_logs.md).
 - `get5_listbackups <matchid>`: Lists backup files for the current matchid or a given matchid if not provided.
 - `get5_ringer <player>`: Adds/removes a ringer to/from the home scrim team.
 - `sm_ringer <player>`: Same as `get5_ringer`.
 - `get5_debuginfo <file>`: Dumps debug info to a file (addons/sourcemod/logs/get5_debuginfo.txt by default, if no file provided).
 - `get5_test`: Runs get5 tests. **This should not be used on a live match server since it will reload a match config to test**.
-
   
 ### Pause Commands
 

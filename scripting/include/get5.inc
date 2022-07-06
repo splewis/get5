@@ -49,6 +49,137 @@ enum Get5PauseType {
   Get5PauseType_Backup     // Special type for match pausing during backups.
 };
 
+methodmap Get5StatusTeam < JSON_Object {
+
+    public bool SetTeamName(const char[] event)
+    {
+        return this.SetString("name", event);
+    }
+
+    property int SeriesScore {
+        public set(int score) {
+            this.SetInt("series_score", score);
+        }
+    }
+
+    property int MapScore {
+        public set(int score) {
+            this.SetInt("current_map_score", score);
+        }
+    }
+
+    property int ConnectedClients {
+        public set(int clients) {
+            this.SetInt("connected_clients", clients);
+        }
+    }
+
+    property bool Ready {
+        public set(bool ready) {
+            this.SetBool("ready", ready);
+        }
+    }
+
+    property Get5Side Side {
+        public set(Get5Side side) {
+            this.SetInt("side_int", view_as<int>(side));
+            this.SetHidden("side_int", true);
+            ConvertGet5SideToStringInJson(this, "side", side);
+        }
+    }
+
+    public Get5StatusTeam(const char[] teamName,
+        const int seriesScore, const int mapScore, const bool ready, const Get5Side side, const int connectedClients) {
+        Get5StatusTeam self = view_as<Get5StatusTeam>(new JSON_Object());
+        self.SetTeamName(teamName);
+        self.SeriesScore = seriesScore;
+        self.MapScore = mapScore;
+        self.Ready = ready;
+        self.Side = side;
+        self.ConnectedClients = connectedClients;
+        return self;
+    }
+
+}
+
+methodmap Get5Status < JSON_Object {
+
+    public bool SetPluginVersion(const char[] event)
+    {
+        return this.SetString("plugin_version", event);
+    }
+
+    property Get5State GameState {
+        public set(Get5State state) {
+            ConvertGameStateToStringInJson(this, "gamestate", state);
+        }
+    }
+
+    property bool IsPaused {
+        public set(bool paused) {
+            this.SetBool("paused", paused);
+        }
+    }
+
+    public bool SetConfigFile(const char[] file)
+    {
+        return this.SetString("loaded_config_file", file);
+    }
+
+    public bool SetMatchId(const char[] matchId)
+    {
+        return this.SetString("matchid", matchId);
+    }
+
+    property int MapNumber {
+        public set(int mapNumber) {
+            this.SetInt("map_number", mapNumber);
+        }
+    }
+
+    property int RoundNumber {
+        public set(int roundNumber) {
+            this.SetInt("round_number", roundNumber);
+        }
+    }
+
+    property int RoundTime {
+        public set(int roundTime) {
+            this.SetInt("round_time", roundTime);
+        }
+    }
+
+    property Get5StatusTeam Team1 {
+        public set(Get5StatusTeam team) {
+            this.SetObject("team1", team);
+        }
+    }
+
+    property Get5StatusTeam Team2 {
+        public set(Get5StatusTeam team) {
+            this.SetObject("team2", team);
+        }
+    }
+
+    public bool AddMap(const char[] map)
+    {
+        if (!this.HasKey("maps")) {
+            this.SetObject("maps", new JSON_Array());
+        }
+        JSON_Array maps = view_as<JSON_Array>(this.GetObject("maps"));
+        maps.PushString(map);
+    }
+
+    public Get5Status(const char[] pluginVersion, const Get5State gamestate, const bool isPaused) {
+        Get5Status self = view_as<Get5Status>(new JSON_Object());
+        self.SetPluginVersion(pluginVersion);
+        self.GameState = gamestate;
+        self.IsPaused = isPaused;
+        return self;
+    }
+
+}
+
 methodmap Get5Weapon < JSON_Object {
 
     public bool SetWeaponName(const char[] value) {

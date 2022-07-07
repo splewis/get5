@@ -9,12 +9,12 @@ public Action Command_TechPause(int client, int args) {
 
   if (client == 0) {
     Pause(PauseType_Admin);
-    EventLogger_PauseCommand(MatchTeam_TeamNone, PauseType_Tech);
+    EventLogger_PauseCommand(MatchTeam_TeamNone, PauseType_Admin);
     LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", MatchTeam_TeamNone,
-             PauseType_Tech);
+             PauseType_Admin);
     Call_StartForward(g_OnMatchPaused);
     Call_PushCell(MatchTeam_TeamNone);
-    Call_PushCell(PauseType_Tech);
+    Call_PushCell(PauseType_Admin);
     Call_Finish();
     Get5_MessageToAll("%t", "AdminForceTechPauseInfoMessage");
     return Plugin_Handled;
@@ -73,12 +73,12 @@ public Action Command_Pause(int client, int args) {
 
   if (client == 0) {
     Pause(PauseType_Admin);
-    EventLogger_PauseCommand(MatchTeam_TeamNone, PauseType_Tactical);
+    EventLogger_PauseCommand(MatchTeam_TeamNone, PauseType_Admin);
     LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", MatchTeam_TeamNone,
-             PauseType_Tactical);
+             PauseType_Admin);
     Call_StartForward(g_OnMatchPaused);
     Call_PushCell(MatchTeam_TeamNone);
-    Call_PushCell(PauseType_Tactical);
+    Call_PushCell(PauseType_Admin);
     Call_Finish();
     Get5_MessageToAll("%t", "AdminForcePauseInfoMessage");
     return Plugin_Handled;

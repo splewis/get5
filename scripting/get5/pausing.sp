@@ -291,6 +291,16 @@ public Action Command_Unpause(int client, int args) {
   // Let console force unpause
   if (client == 0) {
     Unpause();
+    // Remove any techpause conditions if an admin unpauses.
+    if (g_PauseType == PauseType_Tech) {
+      LOOP_TEAMS(team) {
+      if (team != MatchTeam_TeamNone) {
+          g_TeamGivenTechPauseCommand[team] = false;
+          g_TechPausedTimeOverride[team] = 0;
+        }
+      }
+    }
+    
     EventLogger_UnpauseCommand(MatchTeam_TeamNone);
     LogDebug("Calling Get5_OnMatchUnpaused(team=%d)", MatchTeam_TeamNone);
     Call_StartForward(g_OnMatchUnpaused);

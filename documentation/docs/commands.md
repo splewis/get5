@@ -42,3 +42,6 @@ Please note that these are meant to be used by *admins* in console.
 - `sm_ringer <player>`: Same as `get5_ringer`.
 - `get5_debuginfo <file>`: Dumps debug info to a file (addons/sourcemod/logs/get5_debuginfo.txt by default, if no file provided).
 - `get5_test`: Runs get5 tests. **This should not be used on a live match server since it will reload a match config to test**.
+
+### Pause Commands
+A small note on pause commands. As a server admin, you should not be calling pauses using `mp_pause_match` is **not** recommended. This is due to the way Get5 handles pausing in game. It is recommended you either use `!pause` in chat as a player, or `sm_pause` in the console, since this will track all details and configurations related to pausing in the system. There is currently no hook into `mp_pause_match`, so it must be hooked using an `sm` call.

@@ -7,7 +7,7 @@ public Action Command_TechPause(int client, int args) {
     return Plugin_Handled;
   }
 
-  g_InExtendedPause = true;
+  g_PauseType = PauseType_Tech;
 
   if (client == 0) {
     Pause();
@@ -19,7 +19,7 @@ public Action Command_TechPause(int client, int args) {
     Call_PushCell(PauseType_Tech);
     Call_Finish();
     Get5_MessageToAll("%t", "AdminForceTechPauseInfoMessage");
-    g_PausedByAdmin = true;
+    g_PauseType = PauseType_Admin;
     return Plugin_Handled;
   }
 
@@ -29,7 +29,6 @@ public Action Command_TechPause(int client, int args) {
 
   g_TeamReadyForUnpause[MatchTeam_Team1] = false;
   g_TeamReadyForUnpause[MatchTeam_Team2] = false;
-  g_PausedByAdmin = false;
   
   // Only set these if we are a non-zero value.
   if (maxTechPauses > 0 || maxTechPauseTime > 0) {
@@ -74,11 +73,10 @@ public Action Command_Pause(int client, int args) {
     return Plugin_Handled;
   }
 
-  g_InExtendedPause = false;
+  g_PauseType = PauseType_Tactical;
 
   if (client == 0) {
-    g_InExtendedPause = true;
-    g_PausedByAdmin = true;
+    g_PauseType = PauseType_Admin;
     Pause();
     EventLogger_PauseCommand(MatchTeam_TeamNone, PauseType_Tactical);
     LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", MatchTeam_TeamNone,
@@ -93,7 +91,6 @@ public Action Command_Pause(int client, int args) {
 
   MatchTeam team = GetClientMatchTeam(client);
   int maxPauses = g_MaxPausesCvar.IntValue;
-  g_PausedByAdmin = false;
   char pausePeriodString[32];
   if (g_ResetPausesEachHalfCvar.BoolValue) {
     Format(pausePeriodString, sizeof(pausePeriodString), " %t", "PausePeriodSuffix");
@@ -186,7 +183,9 @@ public Action Timer_TechPauseOverrideCheck(Handle timer, int data) {
 
   int timeLeft = maxTechPauseTime - g_TechPausedTimeOverride[team];
 
-  if (InFreezeTime() && g_TeamGivenTechPauseCommand[team] && g_InExtendedPause && !g_TeamReadyForUnpause[team]) {
+  // Only count down if we're still frozen, fit the right pause type
+  // and the team who paused has not given the go ahead.
+  if (InFreezeTime() && g_TeamGivenTechPauseCommand[team] && g_PauseType == PauseType_Tech && !g_TeamReadyForUnpause[team]) {
     LogDebug("Adding tech time used. Current time = %d", g_TechPausedTimeOverride[team]);
     g_TechPausedTimeOverride[team]++;
 
@@ -251,9 +250,9 @@ public Action Timer_PauseTimeCheck(Handle timer, int data) {
   if (!Pauseable() || !IsPaused() || g_FixedPauseTimeCvar.BoolValue) {
     return Plugin_Stop;
   }
-
+  int maxPauseTime = g_MaxPauseTimeCvar.IntValue;
   // Unlimited pause time.
-  if (g_MaxPauseTimeCvar.IntValue <= 0) {
+  if (maxPauseTime <= 0) {
     return Plugin_Stop;
   }
 
@@ -263,7 +262,7 @@ public Action Timer_PauseTimeCheck(Handle timer, int data) {
   }
 
   MatchTeam team = view_as<MatchTeam>(data);
-  int timeLeft = g_MaxPauseTimeCvar.IntValue - g_TeamPauseTimeUsed[team];
+  int timeLeft = maxPauseTime - g_TeamPauseTimeUsed[team];
   // Only count against the team's pause time if we're actually in the freezetime
   // pause and they haven't requested an unpause yet.
   if (InFreezeTime() && !g_TeamReadyForUnpause[team]) {
@@ -289,7 +288,7 @@ public Action Command_Unpause(int client, int args) {
   if (!IsPaused())
     return Plugin_Handled;
 
-  if (g_PausedByAdmin && client != 0) {
+  if (g_PauseType == PauseType_Admin && client != 0) {
     Get5_MessageToAll("%t", "UserCannotUnpauseAdmin");
     return Plugin_Handled;
   }
@@ -306,7 +305,7 @@ public Action Command_Unpause(int client, int args) {
     return Plugin_Handled;
   }
 
-  if (g_FixedPauseTimeCvar.BoolValue && !g_InExtendedPause) {
+  if (g_FixedPauseTimeCvar.BoolValue && g_PauseType != PauseType_Tech) {
     return Plugin_Handled;
   }
 
@@ -323,7 +322,7 @@ public Action Command_Unpause(int client, int args) {
     pausedTeam = MatchTeam_Team2;
   }
   
-  if (g_InExtendedPause && maxTechPauseTime > 0) {
+  if (g_PauseType == PauseType_Tech && maxTechPauseTime > 0) {
     if (g_TechPausedTimeOverride[pausedTeam] >= maxTechPauseTime) {
       Unpause();
       EventLogger_UnpauseCommand(team);
@@ -338,7 +337,6 @@ public Action Command_Unpause(int client, int args) {
         g_TeamGivenTechPauseCommand[pausedTeam] = false;
         g_TechPausedTimeOverride[pausedTeam] = 0;
       }
-      g_InExtendedPause = false;
       return Plugin_Handled;
     }
   }
@@ -350,7 +348,6 @@ public Action Command_Unpause(int client, int args) {
     Call_StartForward(g_OnMatchUnpaused);
     Call_PushCell(team);
     Call_Finish();
-    g_InExtendedPause = false;
     if (pausedTeam != MatchTeam_TeamNone) {
         g_TeamGivenTechPauseCommand[pausedTeam] = false;
         g_TechPausedTimeOverride[pausedTeam] = 0;

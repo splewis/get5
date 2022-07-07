@@ -165,7 +165,7 @@ int g_TeamSide[MATCHTEAM_COUNT];            // Current CS_TEAM_* side for the te
 int g_TeamStartingSide[MATCHTEAM_COUNT];
 bool g_TeamReadyForUnpause[MATCHTEAM_COUNT];
 bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
-bool g_InExtendedPause;
+PauseType g_PauseType = PauseType_None;
 int g_TeamPauseTimeUsed[MATCHTEAM_COUNT];
 int g_TeamPausesUsed[MATCHTEAM_COUNT];
 int g_TeamTechPausesUsed[MATCHTEAM_COUNT];
@@ -199,7 +199,6 @@ char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
 bool g_MovingClientToCoach[MAXPLAYERS + 1];
 bool g_PendingSideSwap = false;
-bool g_PausedByAdmin = false;
 
 Handle g_KnifeChangedCvars = INVALID_HANDLE;
 Handle g_MatchConfigChangedCvars = INVALID_HANDLE;

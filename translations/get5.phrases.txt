@@ -108,7 +108,7 @@
     }
     "UserCannotUnpauseAdmin"
     {
-        "en"            "An admin has called for this pause, it must be unpaused by an admin."
+        "en"            "As an admin has called for this pause, it must also be unpaused by an admin."
     }
     "PauseTimeExpiration10SecInfoMessage"
     {

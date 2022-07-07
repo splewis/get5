@@ -54,10 +54,7 @@ Please note that these are meant to be used by *admins* in console.
 - `sm_ringer <player>`: Same as `get5_ringer`.
 - `get5_debuginfo <file>`: Dumps debug info to a file (addons/sourcemod/logs/get5_debuginfo.txt by default, if no file provided).
 - `get5_test`: Runs get5 tests. **This should not be used on a live match server since it will reload a match config to test**.
-- `get5_debuginfo <file>`: Dumps debug info to a file (`addons/sourcemod/logs/get5_debuginfo.txt` by default, if no file
-  provided).
-- `get5_test`: Runs get5 tests. **This should not be used on a live match server since it will reload a match config to
-  test**.
+
   
 ### Pause Commands
 

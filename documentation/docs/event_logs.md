@@ -1,25 +1,36 @@
 # Event Logs
-Get5 contains an event-logging system that logs many client actions and what is happening in the game. These supplement the logs CS:GO does on its own, but adds additional information about the ongoing match.
+
+Get5 contains an event-logging system that logs many client actions and what is happening in the game. These supplement
+the logs CS:GO does on its own, but adds additional information about the ongoing match.
 
 An `event` is a json object that looks something like this:
+
 ```json
 {
-    "matchid": "1",
-    "event": "series_start",
-    "params": {
-        "team1_name": "EnvyUs",
-        "team2_name": "Fnatic"
-    }
+  "matchid": "1",
+  "event": "series_start",
+  "params": {
+    "team1_name": "EnvyUs",
+    "team2_name": "Fnatic"
+  }
 }
 ```
 
-Events will have variable parameters depending on what type of event it is. In the example, we see the event name is "series_start". All events include the "matchid" field and have a name under `event`.
+Events will have variable parameters depending on what type of event it is. In the example, we see the event name is "
+series_start". All events include the "matchid" field and have a name under `event`.
 
 ## Interfacing With Events
-From a plugin, you can use the `void Get5_OnEvent(const char[] eventJson)` forward to do anything you like with Get5 events.  
-You can also use the builtin server `logaddress_add` command to add a server `ip:port` that is listening to the game server log and reading events (it could also read plain CS:GO server log lines - this is what [eBot](https://github.com/deStrO/eBot-CSGO) does).
 
-Finally, event can be logged to a file by settting the [`get5_event_log_format`](./get5_configuration.md#file-name-formatting) cvar. The file will look something like this:
+From a plugin, you can use the `void Get5_OnEvent(const char[] eventJson)` forward to do anything you like with Get5
+events.  
+You can also use the builtin server `logaddress_add` command to add a server `ip:port` that is listening to the game
+server log and reading events (it could also read plain CS:GO server log lines - this is
+what [eBot](https://github.com/deStrO/eBot-CSGO) does).
+
+Finally, event can be logged to a file by settting
+the [`get5_event_log_format`](./get5_configuration.md#file-name-formatting) cvar. The file will look something like
+this:
+
 ```log
 L 11/26/2016 - 02:58:39: {
     "matchid": "example_match",
@@ -30,19 +41,23 @@ L 11/26/2016 - 02:58:39: {
     }
 }
 ```
-You'd have to do some processing to handle parsing the logging timestamp before each json event, but it isn't very hard (a simple regex replacement would be fine).
+
+You'd have to do some processing to handle parsing the logging timestamp before each json event, but it isn't very
+hard (a simple regex replacement would be fine).
 
 ## List of Events and Their Params
+
 Some rules are followed in these settings:
 
 1. `Winner` is a match team, i.e. `team1` or `team2`
 2. `team` is a match team, i.e. `team1` or `team2`
 3. `side` is a CS team, i.e. `CT` or `T`
 4. `map_number` is 0-indexed
-5. `client` fields (`client`, `attacker`, `victim`, etc.) will use `%L` sourcemod formatting
+5. `client` fields (`client`, `attacker`, `victim`, etc.) will use `%L` SourceMod formatting
 6. `site` is `"A"` or `"B"`
 
 ### Series Flow
+
 *The events listed below are rather self-documenting in a sense as to when they will be called.*.
 
 - `series_start`:
@@ -88,7 +103,8 @@ Some rules are followed in these settings:
     - `winner`: Either `"team1"`, `"team2"`.
     - `team1_score`: The current score for `team1`.
     - `team2_score`: The current score for `team2`.
-    - `reason`: The number that represents the [CSRoundEndReason](https://sm.alliedmods.net/new-api/cstrike/CSRoundEndReason)
+    - `reason`: The number that represents
+      the [CSRoundEndReason](https://sm.alliedmods.net/new-api/cstrike/CSRoundEndReason)
 - `side_swap`:
     - `map_name`: The name of the map being vetoed.
     - `map_number`: The current map number.
@@ -113,6 +129,7 @@ Some rules are followed in these settings:
     - `map_number`: The current map number.
 
 ### Client Actions
+
 - `player_death`:
     - `map_name`: The name of the map being vetoed.
     - `map_number`: The current map number.
@@ -157,7 +174,7 @@ Some rules are followed in these settings:
 - `match_config_load_fail`:
     - `reason`: Reason as to why the match configuration failed to load.
 - `backup_loaded`:
-    `file`: Location of the backup.
+  `file`: Location of the backup.
 - `team_ready`
     - `team`: Either `"team1"`, `"team2"`, or `"spec"` if spectators are required to ready.
     - `stage`: one of `"veto"`, `"backup_restore"`, `"knife"`, or `"start"`

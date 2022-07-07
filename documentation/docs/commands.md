@@ -1,9 +1,14 @@
 # Commands
-Generally admin commands will have a `get5_` prefix and must be used in console. Commands intended for general player usage are created with `sm_` prefixes, which means sourcemod automtically registers a `!` chat version of the command. (For example: sm_ready in console is equivalent to !ready in chat)
 
-Some client commands are available also for admin usage. For example, `sm_pause` and `sm_unpause` will force pauses if executed by the server (e.g., through `rcon`).
+Generally admin commands will have a `get5_` prefix and must be used in console. Commands intended for general player
+usage are created with `sm_` prefixes, which means SourceMod automatically registers a `!` chat version of the
+command. (For example: `sm_ready` in console is equivalent to `!ready` in chat).
 
-## Client Commands 
+Some client commands are available also for admin usage. For example, `sm_pause` and `sm_unpause` will force pauses if
+executed by the server (e.g., through `rcon`).
+
+## Client Commands
+
 Please note that these can be typed by *all players* in chat.
 
 - `!ready`: Marks a client's team as ready to begin.
@@ -17,18 +22,25 @@ Please note that these can be typed by *all players* in chat.
 - `!switch`: Same as `!swap`.
 - `!stop`: Asks to reload the last match backup file, requires other team to confirm.
 - `!forceready`: Force readies your team, letting your team start regardless of player numbers/whether they are ready.
-- `!get5`: Opens a menu that wraps some common commands. It's mostly intended for people using scrim settings, and has menu buttons for starting a scrim, force-starting, force-ending, adding a ringer, and loading the most recent backup file.
+- `!get5`: Opens a menu that wraps some common commands. It's mostly intended for people using scrim settings, and has
+  menu buttons for starting a scrim, force-starting, force-ending, adding a ringer, and loading the most recent backup
+  file.
 
-## Server/Admin Commands 
+## Server/Admin Commands
+
 Please note that these are meant to be used by *admins* in console.
 
 - `get5_loadmatch <filename>`: Loads a match config file (JSON or KeyValue) relative from the `csgo` directory.
 - `get5_loadbackup <file>`: Loads a get5 backup file relative from the `csgo` directory.
-- `get5_loadteam <team1|team2|spec> <filename>`: Loads a team section from a file into a team relative from the `csgo` directory.
-- `get5_loadmatch_url <url>`: Loads a remote (JSON formatted) match config by sending a HTTP(S) GET to the given url, this requires the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) extension. When specifying an URL with http:// or https:// in front, you have to put it in quotation (`""`) marks.
+- `get5_loadteam <team1|team2|spec> <filename>`: Loads a team section from a file into a team relative from the `csgo`
+  directory.
+- `get5_loadmatch_url <url>`: Loads a remote (JSON formatted) match config by sending a HTTP(S) GET to the given url,
+  this requires the [Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) extension. When specifying an
+  URL with http:// or https:// in front, you have to put it in quotation (`""`) marks.
 - `get5_endmatch`: Force ends the current match.
 - `get5_creatematch`: Creates a BO1 match with the current players on the server on the current map.
-- `get5_scrim`: Creates a BO1 match with the using settings from `addons/sourcemod/configs/get5/scrim_template.cfg`, relative from the `csgo` directory.
+- `get5_scrim`: Creates a BO1 match with the using settings from `addons/sourcemod/configs/get5/scrim_template.cfg`,
+  relative from the `csgo` directory.
 - `get5_addplayer <auth> <team1|team2|spec> [name]`: Adds a Steam ID to a team (can be any format for the Steam ID).
 - `get5_removeplayer <auth>`: Removes a steamid from all teams (can be any format for the Steam ID).
 - `get5_addkickedplayer <team1|team2|spec> [name]`: Adds the last kicked Steam ID to a team
@@ -42,6 +54,14 @@ Please note that these are meant to be used by *admins* in console.
 - `sm_ringer <player>`: Same as `get5_ringer`.
 - `get5_debuginfo <file>`: Dumps debug info to a file (addons/sourcemod/logs/get5_debuginfo.txt by default, if no file provided).
 - `get5_test`: Runs get5 tests. **This should not be used on a live match server since it will reload a match config to test**.
-
+- `get5_debuginfo <file>`: Dumps debug info to a file (`addons/sourcemod/logs/get5_debuginfo.txt` by default, if no file
+  provided).
+- `get5_test`: Runs get5 tests. **This should not be used on a live match server since it will reload a match config to
+  test**.
+  
 ### Pause Commands
-A small note on pause commands. As a server admin, you should not be calling pauses using `mp_pause_match` is **not** recommended. This is due to the way Get5 handles pausing in game. It is recommended you either use `!pause` in chat as a player, or `sm_pause` in the console, since this will track all details and configurations related to pausing in the system. There is currently no hook into `mp_pause_match`, so it must be hooked using an `sm` call.
+
+A small note on pause commands. As a server admin, you should not be calling pauses using `mp_pause_match` is **not** recommended. 
+This is due to the way Get5 handles pausing in game. It is recommended you either use `!pause` in chat as a player, or `sm_pause` 
+in the console, since this will track all details and configurations related to pausing in the system. There is currently no hook 
+into `mp_pause_match`, so it must be hooked using an `sm` call.

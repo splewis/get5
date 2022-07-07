@@ -7,10 +7,8 @@ public Action Command_TechPause(int client, int args) {
     return Plugin_Handled;
   }
 
-  g_PauseType = PauseType_Tech;
-
   if (client == 0) {
-    Pause();
+    Pause(PauseType_Admin);
     EventLogger_PauseCommand(MatchTeam_TeamNone, PauseType_Tech);
     LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", MatchTeam_TeamNone,
              PauseType_Tech);
@@ -19,7 +17,6 @@ public Action Command_TechPause(int client, int args) {
     Call_PushCell(PauseType_Tech);
     Call_Finish();
     Get5_MessageToAll("%t", "AdminForceTechPauseInfoMessage");
-    g_PauseType = PauseType_Admin;
     return Plugin_Handled;
   }
 
@@ -56,7 +53,7 @@ public Action Command_TechPause(int client, int args) {
     }
   }
   
-  Pause();
+  Pause(PauseType_Tech);
   EventLogger_PauseCommand(team, PauseType_Tech);
   LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", team, PauseType_Tech);
   Call_StartForward(g_OnMatchPaused);
@@ -73,11 +70,9 @@ public Action Command_Pause(int client, int args) {
     return Plugin_Handled;
   }
 
-  g_PauseType = PauseType_Tactical;
 
   if (client == 0) {
-    g_PauseType = PauseType_Admin;
-    Pause();
+    Pause(PauseType_Admin);
     EventLogger_PauseCommand(MatchTeam_TeamNone, PauseType_Tactical);
     LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", MatchTeam_TeamNone,
              PauseType_Tactical);
@@ -118,7 +113,7 @@ public Action Command_Pause(int client, int args) {
   }
 
   // If the pause will need explicit resuming, we will create a timer to poll the pause status.
-  bool need_resume = Pause(g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team));
+  bool need_resume = Pause(PauseType_Tactical, g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team));
   EventLogger_PauseCommand(team, PauseType_Tactical);
   LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", team, PauseType_Tactical);
   Call_StartForward(g_OnMatchPaused);

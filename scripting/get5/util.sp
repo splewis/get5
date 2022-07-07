@@ -209,7 +209,14 @@ stock bool IsPaused() {
 }
 
 // Pauses and returns if the match will automatically unpause after the duration ends.
-stock bool Pause(int pauseTime = 0, int csTeam = CS_TEAM_NONE, int pausesLeft = 1) {
+stock bool Pause(PauseType pauseType = PauseType_Tactical, int pauseTime = 0, int csTeam = CS_TEAM_NONE, int pausesLeft = 1) {
+  if (pauseType == PauseType_None) {
+    LogMessage("Pause() called with PauseType_None. Please call Unpause() instead.");
+    Unpause();
+    return false;
+  }
+  
+  g_PauseType = pauseType;
   if (pauseTime == 0 || csTeam == CS_TEAM_SPECTATOR || csTeam == CS_TEAM_NONE) {
     ServerCommand("mp_pause_match");
     return false;

@@ -16,7 +16,7 @@ public void CreateVeto() {
   ResetReadyStatus();
   if (g_PauseOnVetoCvar.BoolValue) {
     if (g_PausingEnabledCvar.BoolValue){
-      Pause(); 
+      Pause(PauseType_Admin); 
     }
     else {
       ServerCommand("mp_pause_match");

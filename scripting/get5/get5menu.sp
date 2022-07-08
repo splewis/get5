@@ -45,11 +45,7 @@ public int AdminMenuHandler(Menu menu, MenuAction action, int param1, int param2
     } else if (StrEqual(infoString, "ringer")) {
       GiveRingerMenu(client);
     } else if (StrEqual(infoString, "backup")) {
-      if (!RestoreLastRound()) {
-        Get5_Message(
-            client,
-            "Failed to restore backup file. Try manually using get5_listbackups and get5_loadbackup.");
-      }
+      RestoreLastRound(client);
     }
   } else if (action == MenuAction_End) {
     delete menu;

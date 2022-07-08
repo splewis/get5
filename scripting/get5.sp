@@ -952,7 +952,7 @@ public Action Command_Stop(int client, int args) {
   return Plugin_Handled;
 }
 
-public bool RestoreLastRound(int client) {
+public void RestoreLastRound(int client) {
   LOOP_TEAMS(x) {
     g_TeamGivenStopCommand[x] = false;
   }
@@ -961,12 +961,11 @@ public bool RestoreLastRound(int client) {
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
   if (RestoreFromBackup(lastBackup)) {
     Get5_MessageToAll("%t", "BackupLoadedInfoMessage", lastBackup);
+    // Fix the last backup cvar since it gets reset.
+    g_LastGet5BackupCvar.SetString(lastBackup);
   } else {
     ReplyToCommand(client, "Failed to load backup %s - check error logs", lastBackup);
   }
-    // Fix the last backup cvar since it gets reset.
-  g_LastGet5BackupCvar.SetString(lastBackup);
-  return false;
 }
 
 /**

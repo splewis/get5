@@ -129,8 +129,7 @@ public Action Command_Pause(int client, int args) {
     if (need_resume) {
       g_PauseTimeUsed = g_PauseTimeUsed + g_FixedPauseTimeCvar.IntValue - 1;
       CreateTimer(1.0, Timer_PauseTimeCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
-      // Keep track of timer, since we don't want several timers created for one pause checking
-      // instance.
+      // This timer is used to only fire off the Unpause event.
       CreateTimer(1.0, Timer_UnpauseEventCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
     }
 

@@ -350,7 +350,7 @@ public void RestoreGet5Backup() {
       EndWarmup();
       EndWarmup();
       ServerCommand("mp_restartgame 5");
-      Pause(PauseType_Tactical);
+      Pause(PauseType_Backup);
     } else {
       EnsurePausedWarmup();
     }
@@ -360,7 +360,7 @@ public void RestoreGet5Backup() {
 }
 
 public Action Time_StartRestore(Handle timer) {
-  Pause(PauseType_Tactical);
+  Pause(PauseType_Backup);
 
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);

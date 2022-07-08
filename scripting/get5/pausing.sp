@@ -310,7 +310,7 @@ public Action Command_Unpause(int client, int args) {
     return Plugin_Handled;
   }
 
-  if (g_FixedPauseTimeCvar.BoolValue && g_PauseType != PauseType_Tech) {
+  if (g_FixedPauseTimeCvar.BoolValue && g_PauseType == PauseType_Tactical) {
     return Plugin_Handled;
   }
 

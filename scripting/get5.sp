@@ -933,7 +933,7 @@ public Action Command_Stop(int client, int args) {
 
   // Let the server/rcon always force restore.
   if (client == 0) {
-    RestoreLastRound();
+    RestoreLastRound(client);
   }
 
   MatchTeam team = GetClientMatchTeam(client);
@@ -946,23 +946,26 @@ public Action Command_Stop(int client, int args) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
                       g_FormattedTeamNames[MatchTeam_Team2], g_FormattedTeamNames[MatchTeam_Team1]);
   } else if (g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
-    RestoreLastRound();
+    RestoreLastRound(client);
   }
 
   return Plugin_Handled;
 }
 
-public bool RestoreLastRound() {
+public bool RestoreLastRound(int client) {
   LOOP_TEAMS(x) {
     g_TeamGivenStopCommand[x] = false;
   }
 
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
-  if (!StrEqual(lastBackup, "")) {
-    ServerCommand("get5_loadbackup \"%s\"", lastBackup);
-    return true;
+  if (RestoreFromBackup(lastBackup)) {
+    Get5_MessageToAll("%t", "BackupLoadedInfoMessage", lastBackup);
+  } else {
+    ReplyToCommand(client, "Failed to load backup %s - check error logs", lastBackup);
   }
+    // Fix the last backup cvar since it gets reset.
+  g_LastGet5BackupCvar.SetString(lastBackup);
   return false;
 }
 

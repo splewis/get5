@@ -309,6 +309,8 @@ public Action Command_Unpause(int client, int args) {
     return Plugin_Handled;
   }
 
+  // Check to see if we have a timeout that is timed. Otherwise, we need to
+  // continue for unpausing. New pause type to avoid match restores failing.
   if (g_FixedPauseTimeCvar.BoolValue && g_PauseType == PauseType_Tactical) {
     return Plugin_Handled;
   }

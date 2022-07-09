@@ -102,6 +102,7 @@ static void AddGlobalStateInfo(File f) {
 
   f.WriteLine("g_MatchTitle = %s", g_MatchTitle);
   f.WriteLine("g_PlayersPerTeam = %d", g_PlayersPerTeam);
+  f.WriteLine("g_CoachesPerTeam = %d", g_CoachesPerTeam);
   f.WriteLine("g_MinPlayersToReady = %d", g_MinPlayersToReady);
   f.WriteLine("g_MinSpectatorsToReady = %d", g_MinSpectatorsToReady);
   f.WriteLine("g_SkipVeto = %d", g_SkipVeto);
@@ -137,6 +138,8 @@ static void AddGlobalStateInfo(File f) {
     f.WriteLine("g_TeamPausesUsed = %d", g_TeamPausesUsed[team]);
     f.WriteLine("g_TeamTechPausesUsed = %d", g_TeamTechPausesUsed[team]);
     f.WriteLine("g_TeamGivenTechPauseCommand = %d", g_TeamGivenTechPauseCommand[team]);
+    f.WriteLine("g_TeamGivenStopCommand = %d", g_TeamGivenStopCommand[team]);
+    WriteArrayList(f, "g_TeamCoaches", g_TeamCoaches[team]);
   }
 }
 
@@ -155,6 +158,7 @@ static void AddInterestingCvars(File f) {
   WriteCvarString(f, "get5_pausing_enabled");
   WriteCvarString(f, "get5_reset_pauses_each_half");
   WriteCvarString(f, "get5_web_api_url");
+  WriteCvarString(f, "get5_last_backup_file");
   WriteCvarString(f, "mp_freezetime");
   WriteCvarString(f, "mp_halftime");
   WriteCvarString(f, "mp_halftime_duration");

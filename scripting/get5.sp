@@ -102,6 +102,7 @@ bool g_BO2Match = false;
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MATCHTEAM_COUNT];
+ArrayList g_TeamCoaches[MATCHTEAM_COUNT];
 StringMap g_PlayerNames;
 char g_TeamNames[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
 char g_TeamTags[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
@@ -113,6 +114,7 @@ char g_MatchTitle[MAX_CVAR_LENGTH];
 int g_FavoredTeamPercentage = 0;
 char g_FavoredTeamText[MAX_CVAR_LENGTH];
 int g_PlayersPerTeam = 5;
+int g_CoachesPerTeam = 2;
 int g_MinPlayersToReady = 1;
 int g_MinSpectatorsToReady = 0;
 bool g_SkipVeto = false;
@@ -414,6 +416,8 @@ public void OnPluginStart() {
   RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP, "Force ends the current match");
   RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP,
               "Adds a steamid to a match team");
+  RegAdminCmd("get5_addcoach", Command_AddCoach, ADMFLAG_CHANGEMAP,
+              "Adds a steamid to a match teams coach slot");
   RegAdminCmd("get5_removeplayer", Command_RemovePlayer, ADMFLAG_CHANGEMAP,
               "Removes a steamid from a match team");
   RegAdminCmd("get5_addkickedplayer", Command_AddKickedPlayer, ADMFLAG_CHANGEMAP,
@@ -483,6 +487,8 @@ public void OnPluginStart() {
 
   for (int i = 0; i < sizeof(g_TeamAuths); i++) {
     g_TeamAuths[i] = new ArrayList(AUTH_LENGTH);
+    // Same length.
+    g_TeamCoaches[i] = new ArrayList(AUTH_LENGTH);
   }
   g_PlayerNames = new StringMap();
 
@@ -959,12 +965,17 @@ public void RestoreLastRound(int client) {
 
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
-  if (RestoreFromBackup(lastBackup)) {
-    Get5_MessageToAll("%t", "BackupLoadedInfoMessage", lastBackup);
-    // Fix the last backup cvar since it gets reset.
-    g_LastGet5BackupCvar.SetString(lastBackup);
+  if (!StrEqual(lastBackup, "")) {
+    if (RestoreFromBackup(lastBackup)) {
+      Get5_MessageToAll("%t", "BackupLoadedInfoMessage", lastBackup);
+      // Fix the last backup cvar since it gets reset.
+      g_LastGet5BackupCvar.SetString(lastBackup);
+    } else {
+      ReplyToCommand(client, "Failed to load backup %s - check error logs", lastBackup);
+    }
+    //ServerCommand("get5_loadbackup \"%s\"", lastBackup);
   } else {
-    ReplyToCommand(client, "Failed to load backup %s - check error logs", lastBackup);
+    ReplyToCommand(client, "Failed to load backup, as previous round backup does not exist.");
   }
 }
 

@@ -4,6 +4,7 @@
 #define CONFIG_MATCHID_DEFAULT "matchid"
 #define CONFIG_MATCHTITLE_DEFAULT "Map {MAPNUMBER} of {MAXMAPS}"
 #define CONFIG_PLAYERSPERTEAM_DEFAULT 5
+#define CONFIG_COACHESPERTEAM_DEFAULT 2
 #define CONFIG_MINPLAYERSTOREADY_DEFAULT 0
 #define CONFIG_MINSPECTATORSTOREADY_DEFAULT 0
 #define CONFIG_SPECTATORSNAME_DEFAULT "casters"
@@ -32,6 +33,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     }
     g_TechPausedTimeOverride[team] = 0;
     g_TeamGivenTechPauseCommand[team] = false;
+    ClearArray(GetTeamCoaches(team));
     ClearArray(GetTeamAuths(team));
   }
 
@@ -274,6 +276,7 @@ public void WriteMatchToKv(KeyValues kv) {
   kv.SetNum("bo2_series", g_BO2Match);
   kv.SetNum("skip_veto", g_SkipVeto);
   kv.SetNum("players_per_team", g_PlayersPerTeam);
+  kv.SetNum("coaches_per_team", g_CoachesPerTeam);
   kv.SetNum("min_players_to_ready", g_MinPlayersToReady);
   kv.SetNum("min_spectators_to_ready", g_MinSpectatorsToReady);
   kv.SetString("match_title", g_MatchTitle);
@@ -335,6 +338,15 @@ static void AddTeamBackupData(KeyValues kv, MatchTeam team) {
     kv.SetString("flag", g_TeamFlags[team]);
     kv.SetString("logo", g_TeamLogos[team]);
     kv.SetString("matchtext", g_TeamMatchTexts[team]);
+    kv.JumpToKey("coaches", true);
+    for (int i = 0; i < GetTeamCoaches(team).Length; i++) {
+      GetTeamCoaches(team).GetString(i, auth, sizeof(auth));
+      if (!g_PlayerNames.GetString(auth, name, sizeof(name))) {
+        strcopy(name, sizeof(name), KEYVALUE_STRING_PLACEHOLDER);
+      }
+      kv.SetString(auth, KEYVALUE_STRING_PLACEHOLDER);
+    }
+    kv.GoBack();
   }
 }
 
@@ -343,6 +355,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
   g_InScrimMode = kv.GetNum("scrim") != 0;
   kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
   g_PlayersPerTeam = kv.GetNum("players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
+  g_CoachesPerTeam = kv.GetNum("coaches_per_team", CONFIG_COACHESPERTEAM_DEFAULT);
   g_MinPlayersToReady = kv.GetNum("min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
   g_MinSpectatorsToReady =
       kv.GetNum("min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
@@ -454,6 +467,8 @@ static bool LoadMatchFromJson(JSON_Object json) {
 
   g_PlayersPerTeam =
       json_object_get_int_safe(json, "players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
+  g_CoachesPerTeam =
+      json_object_get_int_safe(json, "coaches_per_team", CONFIG_COACHESPERTEAM_DEFAULT);
   g_MinPlayersToReady =
       json_object_get_int_safe(json, "min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
   g_MinSpectatorsToReady = json_object_get_int_safe(json, "min_spectators_to_ready",
@@ -574,7 +589,11 @@ static void LoadTeamDataJson(JSON_Object json, MatchTeam matchTeam) {
   if (StrEqual(fromfile, "")) {
     // TODO: this needs to support both an array and a dictionary
     // For now, it only supports an array
+    JSON_Object coaches = json.GetObject("coaches");
     AddJsonAuthsToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
+    if (coaches != null) {
+      AddJsonAuthsToList(json, "coaches", GetTeamCoaches(matchTeam), AUTH_LENGTH);
+    }
     json_object_get_string_safe(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
@@ -603,6 +622,10 @@ static void LoadTeamData(KeyValues kv, MatchTeam matchTeam) {
 
   if (StrEqual(fromfile, "")) {
     AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
+    if (kv.JumpToKey("coaches")) {
+      AddSubsectionAuthsToList(kv, "coaches", GetTeamCoaches(matchTeam), AUTH_LENGTH);
+      kv.GoBack();
+    }
     kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
@@ -811,6 +834,55 @@ public Action Command_AddPlayer(int client, int args) {
 
   } else {
     ReplyToCommand(client, "Usage: get5_addplayer <auth> <team1|team2|spec> [name]");
+  }
+  return Plugin_Handled;
+}
+
+public Action Command_AddCoach(int client, int args) {
+  if (g_GameState == Get5State_None) {
+    ReplyToCommand(client, "Cannot change coach targets when there is no match to modify");
+    return Plugin_Handled;
+  } else if (!g_CoachingEnabledCvar.BoolValue) {
+    ReplyToCommand(client, "Cannot change coach targets if coaching is disabled.");
+    return Plugin_Handled;
+  }
+
+  char auth[AUTH_LENGTH];
+  char steam64[AUTH_LENGTH];
+  char teamString[32];
+  char name[MAX_NAME_LENGTH];
+  if (args >= 2 && GetCmdArg(1, auth, sizeof(auth)) &&
+      GetCmdArg(2, teamString, sizeof(teamString))) {
+    if (args >= 3) {
+      GetCmdArg(3, name, sizeof(name));
+    }
+
+    MatchTeam team = MatchTeam_TeamNone;
+    if (StrEqual(teamString, "team1")) {
+      team = MatchTeam_Team1;
+    } else if (StrEqual(teamString, "team2")) {
+      team = MatchTeam_Team2;
+    } else {
+      ReplyToCommand(client, "Unknown team: must be one of team1 or team2");
+      return Plugin_Handled;
+    }
+
+    if (GetTeamCoaches(team).Length == g_CoachesPerTeam) {
+      ReplyToCommand(client, "Coach Spots are full for team %s", teamString);
+      return Plugin_Handled;
+    }
+
+    if(!ConvertAuthToSteam64(auth, steam64)) {
+      return Plugin_Handled;
+    }
+
+    if (AddCoachToTeam(auth, team, name)) {
+      ReplyToCommand(client, "Successfully added player %s to coach team %s", auth, teamString);
+    } else {
+      ReplyToCommand(client, "Player %s is already in a coaching position on a team.", auth);
+    }
+  } else {
+    ReplyToCommand(client, "Usage: get5_addcoach <auth> <team1|team2> [name]");
   }
   return Plugin_Handled;
 }

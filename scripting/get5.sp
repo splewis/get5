@@ -1524,13 +1524,14 @@ public void StartGame(bool knifeRound) {
   LogDebug("StartGame");
   if (!IsTVEnabled()) {
     LogMessage("GOTV demo could not be recorded since tv_enable is not set to 1");
+    g_DemoFileName = "";
   } else {
     char demoName[PLATFORM_MAX_PATH + 1];
     if (FormatCvarString(g_DemoNameFormatCvar, demoName, sizeof(demoName)) && Record(demoName)) {
       Format(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);
       LogMessage("Recording to %s", g_DemoFileName);
     } else {
-      Format(g_DemoFileName, sizeof(g_DemoFileName), "");
+      g_DemoFileName = "";
     }
   }
 

@@ -973,7 +973,6 @@ public void RestoreLastRound(int client) {
     } else {
       ReplyToCommand(client, "Failed to load backup %s - check error logs", lastBackup);
     }
-    //ServerCommand("get5_loadbackup \"%s\"", lastBackup);
   } else {
     ReplyToCommand(client, "Failed to load backup, as previous round backup does not exist.");
   }

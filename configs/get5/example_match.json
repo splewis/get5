@@ -1,7 +1,7 @@
 {
 	"matchid": "example_match",
 	"num_maps": 3,
-	"players_per_team": 1,
+	"players_per_team": 5,
 	"coaches_per_team": 2,
 	"min_players_to_ready": 1,
 	"min_spectators_to_ready": 0,

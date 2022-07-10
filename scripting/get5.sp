@@ -1569,7 +1569,7 @@ public void ChangeState(Get5State state) {
 
   g_GameStateCvar.IntValue = view_as<int>(state);
 
-  Get5GameStateChangedEvent event = new Get5GameStateChangedEvent(g_GameState, state);
+  Get5GameStateChangedEvent event = new Get5GameStateChangedEvent(state, g_GameState);
 
   LogDebug("Calling Get5_OnGameStateChanged()");
 

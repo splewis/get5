@@ -491,7 +491,7 @@ paths:
       tags:
         - Series Flow
       description: |
-        Fired when the GOTV recording has ended.
+        Fired when the GOTV recording has ended. This event does not fire if no demo was recorded.
       requestBody:
         content:
           application/json:

@@ -214,7 +214,12 @@ stock bool Record(const char[] demoName) {
 stock void StopRecording() {
   ServerCommand("tv_stoprecord");
 
-  Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(g_MatchID, Get5_GetMapNumber(), g_DemoFileName);
+  if (StrEqual("", g_DemoFileName, true)) {
+    // Demo not recorded; don't fire demo finish event.
+    return;
+  }
+
+  Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(g_MatchID, g_MapNumber, g_DemoFileName);
 
   LogDebug("Calling Get5_OnDemoFinished()");
 

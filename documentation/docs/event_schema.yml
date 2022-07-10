@@ -810,6 +810,10 @@ components:
     Get5Event:
       type: object
       properties:
+        event_number:
+          type: integer
+          minimum: 1
+          description: The sequential order of the event within a match, used to identify its order in a stream of events. This variable is only reset when a match is loaded.
         event:
           type: string
           description: The name of the event `GetEvent()` and `SetEvent()` in SourceMod.

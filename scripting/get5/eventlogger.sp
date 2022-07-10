@@ -4,6 +4,8 @@ public void EventLogger_LogAndDeleteEvent(Get5Event event) {
 
   char buffer[8192];
 
+  g_LastEventNumber += 1;
+  event.SetInt("event_number", g_LastEventNumber);
   event.Encode(buffer, sizeof(buffer), g_PrettyPrintJsonCvar.BoolValue);
 
   if (strlen(buffer) > kMaxCharacters) {

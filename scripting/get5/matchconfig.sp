@@ -127,6 +127,8 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
     Get5SeriesStartedEvent startEvent = new Get5SeriesStartedEvent(g_MatchID, g_TeamNames[MatchTeam_Team1], g_TeamNames[MatchTeam_Team2]);
 
+    g_LastEventNumber = 0;
+
     LogDebug("Calling Get5_OnSeriesInit");
 
     Call_StartForward(g_OnSeriesInit);

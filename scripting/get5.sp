@@ -105,6 +105,7 @@ int g_RoundNumber = -1; // The round number, 0-indexed. -1 if the match is not l
 // The active map number, used by stats. Required as the calculated round number changes immediately as a map ends, but
 // before the map changes to the next.
 int g_MapNumber = 0;
+int g_LastEventNumber = 0; // Used to identify event sequence within a match so async processing can order them correctly.
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MATCHTEAM_COUNT];

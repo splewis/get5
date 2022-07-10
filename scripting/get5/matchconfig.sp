@@ -22,11 +22,11 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     g_TeamSeriesScores[team] = 0;
     g_TeamReadyForUnpause[team] = false;
     g_TeamGivenStopCommand[team] = false;
-    g_TeamPauseTimeUsed[team] = 0;
     // We only reset these on a new game.
     // During restore we want to keep our 
     // current pauses used.
     if (!restoreBackup) {
+      g_TeamPauseTimeUsed[team] = 0;
       g_TeamPausesUsed[team] = 0;
       g_TeamTechPausesUsed[team] = 0;
     }

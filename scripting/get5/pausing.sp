@@ -113,7 +113,7 @@ public Action Command_Pause(int client, int args) {
   }
 
   // If the pause will need explicit resuming, we will create a timer to poll the pause status.
-  bool need_resume = Pause(PauseType_Tactical, g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team));
+  bool need_resume = Pause(PauseType_Tactical, g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team), pausesLeft);
   EventLogger_PauseCommand(team, PauseType_Tactical);
   LogDebug("Calling Get5_OnMatchPaused(team=%d, pauseReason=%d)", team, PauseType_Tactical);
   Call_StartForward(g_OnMatchPaused);

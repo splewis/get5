@@ -30,7 +30,7 @@ stock bool json_has_key(JSON_Object json, const char[] key, JSONCellType expecte
     return false;
   } else {
     // Perform type-checking.
-    JSONCellType actualType = json.GetKeyType(key);
+    JSONCellType actualType = json.GetType(key);
     if (actualType != expectedType) {
       char expectedTypeStr[16];
       char actualTypeStr[16];
@@ -121,26 +121,22 @@ stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list,
       }
 
     } else {
-      StringMapSnapshot snap = data.Snapshot();
-      char[] buffer = new char[maxValueLength];
+      int length = data.Iterate();
+      int key_length = 0;
       char name[MAX_NAME_LENGTH];
-      for (int i = 0; i < snap.Length; i++) {
-        snap.GetKey(i, buffer, maxValueLength);
+      for (int i = 0; i < length; i++) {
+        key_length = data.GetKeySize(i);
+        char[] k = new char[key_length];
+        data.GetKey(i, k, key_length);
 
-        // Skip json meta keys.
-        if (json_is_meta_key(buffer)) {
-          continue;
-        }
-
-        data.GetString(buffer, name, sizeof(name));
+        data.GetString(k, name, sizeof(name));
         char steam64[AUTH_LENGTH];
-        if (ConvertAuthToSteam64(buffer, steam64)) {
+        if (ConvertAuthToSteam64(k, steam64)) {
           Get5_SetPlayerName(steam64, name);
           list.PushString(steam64);
           count++;
         }
       }
-      delete snap;
     }
   }
   return count;

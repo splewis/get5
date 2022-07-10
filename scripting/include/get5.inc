@@ -80,7 +80,7 @@ methodmap Get5Winner < JSON_Object {
 
         public set(Get5Side side) {
             this.SetInt("side_int", view_as<int>(side));
-            this.SetKeyHidden("side_int", true);
+            this.SetHidden("side_int", true);
             ConvertGet5SideToStringInJson(this, "side", side);
         }
     }
@@ -92,7 +92,7 @@ methodmap Get5Winner < JSON_Object {
 
         public set(MatchTeam team) {
             this.SetInt("team_int", view_as<int>(team));
-            this.SetKeyHidden("team_int", true);
+            this.SetHidden("team_int", true);
             ConvertGet5TeamToStringInJson(this, "team", team);
         }
     }
@@ -114,7 +114,7 @@ methodmap Get5Player < JSON_Object {
 
         public set(Get5Side side) {
           this.SetInt("side_int", view_as<int>(side));
-          this.SetKeyHidden("side_int", true);
+          this.SetHidden("side_int", true);
           ConvertGet5SideToStringInJson(this, "side", side);
         }
     }
@@ -138,7 +138,7 @@ methodmap Get5Player < JSON_Object {
       }
       public set(bool valid) {
         this.SetBool("valid_player", valid);
-        this.SetKeyHidden("valid_player", true);
+        this.SetHidden("valid_player", true);
       }
     }
 
@@ -227,7 +227,7 @@ methodmap Get5MatchTeamEvent < Get5MatchEvent {
 
     public set(MatchTeam team) {
       this.SetInt("team_int", view_as<int>(team));
-      this.SetKeyHidden("team_int", true);
+      this.SetHidden("team_int", true);
       ConvertGet5TeamToStringInJson(this, "team", team);
     }
   }
@@ -263,7 +263,7 @@ methodmap Get5MapTeamEvent < Get5MapEvent {
 
     public set(MatchTeam team) {
       this.SetInt("team_int", view_as<int>(team));
-      this.SetKeyHidden("team_int", true);
+      this.SetHidden("team_int", true);
       ConvertGet5TeamToStringInJson(this, "team", team);
     }
   }
@@ -439,7 +439,7 @@ methodmap Get5TeamReadyStatusChangedEvent < Get5MatchTeamEvent {
 
       public set(Get5State state) {
         this.SetInt("game_state_int", view_as<int>(state));
-        this.SetKeyHidden("game_state_int", true);
+        this.SetHidden("game_state_int", true);
         ConvertGameStateToStringInJson(this, "game_state", state);
       }
   }
@@ -520,7 +520,7 @@ methodmap Get5SidePickedEvent < Get5MapSelectionEvent {
       }
       public set(Get5Side side) {
         this.SetInt("side_int", view_as<int>(side));
-        this.SetKeyHidden("side_int", true);
+        this.SetHidden("side_int", true);
         ConvertGet5SideToStringInJson(this, "side", side);
       }
   }
@@ -592,7 +592,7 @@ methodmap Get5GameStateChangedEvent < Get5Event {
 
       public set(Get5State state) {
         this.SetInt("new_state_int", view_as<int>(state));
-        this.SetKeyHidden("new_state_int", true);
+        this.SetHidden("new_state_int", true);
         ConvertGameStateToStringInJson(this, "new_state", state);
       }
   }
@@ -604,7 +604,7 @@ methodmap Get5GameStateChangedEvent < Get5Event {
 
       public set(Get5State state) {
         this.SetInt("old_state_int", view_as<int>(state));
-        this.SetKeyHidden("old_state_int", true);
+        this.SetHidden("old_state_int", true);
         ConvertGameStateToStringInJson(this, "old_state", state);
       }
   }
@@ -677,7 +677,7 @@ methodmap Get5KnifeRoundWonEvent < Get5MapTeamEvent {
 
       public set(Get5Side side) {
         this.SetInt("side_int", view_as<int>(side));
-        this.SetKeyHidden("side_int", true);
+        this.SetHidden("side_int", true);
         ConvertGet5SideToStringInJson(this, "side", side);
       }
     }
@@ -715,7 +715,7 @@ methodmap Get5MatchPausedEvent < Get5MapTeamEvent {
 
       public set(Get5PauseType type) {
         this.SetInt("pause_type_int", view_as<int>(type));
-        this.SetKeyHidden("pause_type_int", true);
+        this.SetHidden("pause_type_int", true);
         ConvertGet5PauseTypeToStringInJson(this, "pause_type", type);
       }
   }

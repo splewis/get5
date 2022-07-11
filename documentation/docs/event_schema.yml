@@ -4,6 +4,21 @@ info:
   title: ""
   version: ""
 paths:
+  "/Get_OnEvent":
+    put:
+      tags:
+        - All Events
+      description: |
+        Called when **any event** is fired. This forward takes two parameters (while all others take only one); the
+        event object itself *and* a string representing the encoded JSON object. If you use this forward, you should
+        fetch the event name and switch on it, casting the object to its correct subclass using
+        `view_as<TheEventSubclass>(event)`.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Get5Event"
+      responses: { }
   "/Get5_OnGameStateChanged":
     post:
       tags:
@@ -810,10 +825,6 @@ components:
     Get5Event:
       type: object
       properties:
-        event_number:
-          type: integer
-          minimum: 1
-          description: The sequential order of the event within a match, used to identify its order in a stream of events. This variable is only reset when a match is loaded.
         event:
           type: string
           description: The name of the event `GetEvent()` and `SetEvent()` in SourceMod.
@@ -1052,6 +1063,7 @@ components:
         for each map and might change when the maps are updated. `Site` in SourceMod.
 
 tags:
+  - name: All Events
   - name: Series Flow
     description: Events the occur in relation to setting up a match or series.
   - name: Map Flow

@@ -1,40 +1,29 @@
-const int kMaxCharacters = 4096;
-
 public void EventLogger_LogAndDeleteEvent(Get5Event event) {
 
-  char buffer[8192];
+  int options = g_PrettyPrintJsonCvar.BoolValue ? JSON_ENCODE_PRETTY : 0;
+  int bufferSize = event.EncodeSize(options);
 
-  g_LastEventNumber += 1;
-  event.SetInt("event_number", g_LastEventNumber);
-  event.Encode(buffer, sizeof(buffer), g_PrettyPrintJsonCvar.BoolValue);
+  char[] buffer = new char[bufferSize];
+  event.Encode(buffer, bufferSize, options);
 
-  if (strlen(buffer) > kMaxCharacters) {
+  char logPath[PLATFORM_MAX_PATH];
+  if (FormatCvarString(g_EventLogFormatCvar, logPath, sizeof(logPath))) {
+    File hLogFile = OpenFile(logPath, "a+");
 
-    char eventName[64];
-    event.GetEvent(eventName, sizeof(eventName));
-    LogError("Event JSON too long (%d characters, %d max): %s", eventName, strlen(buffer), kMaxCharacters);
-
-  } else {
-
-    char logPath[PLATFORM_MAX_PATH];
-    if (FormatCvarString(g_EventLogFormatCvar, logPath, sizeof(logPath))) {
-      File hLogFile = OpenFile(logPath, "a+");
-
-      if (hLogFile) {
-        LogToOpenFileEx(hLogFile, buffer);
-        CloseHandle(hLogFile);
-      } else {
-        LogError("Could not open file \"%s\"", logPath);
-      }
+    if (hLogFile) {
+      LogToOpenFileEx(hLogFile, buffer);
+      CloseHandle(hLogFile);
+    } else {
+      LogError("Could not open file \"%s\"", logPath);
     }
-
-    LogDebug("Calling Get5_OnEvent(data=%s)", buffer);
-
-    Call_StartForward(g_OnEvent);
-    Call_PushString(buffer);
-    Call_Finish();
-
   }
+
+  LogDebug("Calling Get5_OnEvent(data=%s)", buffer);
+
+  Call_StartForward(g_OnEvent);
+  Call_PushCell(event);
+  Call_PushString(buffer);
+  Call_Finish();
 
   json_cleanup_and_delete(event);
 

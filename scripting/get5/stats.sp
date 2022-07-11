@@ -198,52 +198,44 @@ public void Stats_ResetClientRoundValues(int client) {
   }
 }
 
-public void CleanGrenadeContainer(const StringMap container) {
-
-  StringMapSnapshot snap = container.Snapshot();
-  for (int i = 0; i < snap.Length; i++) {
-
-    int keySize = snap.KeyBufferSize(i);
-    char[] key = new char[keySize];
-    snap.GetKey(i, key, keySize);
-
-    StringMap event;
-    if (container.GetValue(key, event)) {
-      ArrayList victims;
-      if (event.GetValue("victims", victims)) {
-        LogDebug("Emptying victim array of length %d", victims.Length);
-        while (victims.Length > 0) {
-          Handle obj = victims.Get(0);
-          victims.Erase(0);
-          delete obj;
-        }
-        event.Remove("victims");
-        delete victims;
-      }
-      container.Remove(key);
-      delete event;
-    }
-  }
-  delete snap;
-
-}
-
 public void Stats_ResetGrenadeContainers() {
 
-  // If any molotovs were active on the previous round when it ended, we need to fetch those and end the events.
+  // If any molotovs were active on the previous round when it ended (or on halftime/game end), we need to fetch those
+  // and end the events, as their extinguish event will never fire. They are not on a timer like flashes and HEs.
   StringMapSnapshot molotovSnap = g_MolotovContainer.Snapshot();
   for (int i = 0; i < molotovSnap.Length; i++) {
     int keySize = molotovSnap.KeyBufferSize(i);
     char[] key = new char[keySize];
     molotovSnap.GetKey(i, key, keySize);
-    LogDebug("Ending molotov entity %s due to round end.", key);
-    EndMolotovEvent(key); // this function cleans the molotov container after firing the events.
+    LogDebug("Ending molotov grenade entity %s due to round end.", key);
+    EndMolotovEvent(key);
   }
   delete molotovSnap;
 
-  // The other containers only need to be emptied (all handles closed etc).
-  CleanGrenadeContainer(g_FlashbangContainer);
-  CleanGrenadeContainer(g_HEGrenadeContainer);
+  // Due to timer race-conditions (SourceMod minimum timer is 100ms), we might have grenades that blinded or damaged
+  // enemies after a round ended, so we loop these containers and make sure that all events in them are fired and removed.
+  // These are only here to ensure that grenade events don't actually fire in the wrong round. In the vast majority of
+  // cases, these snapshots will be empty at this stage.
+
+  StringMapSnapshot heSnap = g_HEGrenadeContainer.Snapshot();
+  for (int i = 0; i < heSnap.Length; i++) {
+    int keySize = heSnap.KeyBufferSize(i);
+    char[] key = new char[keySize];
+    heSnap.GetKey(i, key, keySize);
+    LogDebug("Ending HE grenade entity %s due to round end.", key);
+    EndHEEvent(key);
+  }
+  delete heSnap;
+
+  StringMapSnapshot flashSnap = g_FlashbangContainer.Snapshot();
+  for (int i = 0; i < flashSnap.Length; i++) {
+    int keySize = flashSnap.KeyBufferSize(i);
+    char[] key = new char[keySize];
+    flashSnap.GetKey(i, key, keySize);
+    LogDebug("Ending flashbang grenade entity %s due to round end.", key);
+    EndFlashbangEvent(key);
+  }
+  delete flashSnap;
 
   g_LatestUserIdToDetonateMolotov = 0;
   g_LatestMolotovToExtinguishBySmoke = 0;
@@ -391,6 +383,41 @@ public void EndMolotovEvent(const char[] molotovKey) {
     EventLogger_LogAndDeleteEvent(molotovObject);
 
     g_MolotovContainer.Remove(molotovKey);
+
+  }
+}
+
+public void EndHEEvent(const char[] grenadeKey) {
+
+  Get5HEDetonatedEvent heObject;
+  if (g_HEGrenadeContainer.GetValue(grenadeKey, heObject)) {
+    LogDebug("Calling Get5_OnHEGrenadeDetonated()");
+
+    Call_StartForward(g_OnHEGrenadeDetonated);
+    Call_PushCell(heObject);
+    Call_Finish();
+
+    EventLogger_LogAndDeleteEvent(heObject);
+
+    g_HEGrenadeContainer.Remove(grenadeKey);
+
+  }
+}
+
+public void EndFlashbangEvent(const char[] flashKey) {
+
+  Get5FlashbangDetonatedEvent flashEvent;
+  if (g_FlashbangContainer.GetValue(flashKey, flashEvent)) {
+
+    LogDebug("Calling Get5_OnFlashbangDetonated()");
+
+    Call_StartForward(g_OnFlashbangDetonated);
+    Call_PushCell(flashEvent);
+    Call_Finish();
+
+    EventLogger_LogAndDeleteEvent(flashEvent);
+
+    g_FlashbangContainer.Remove(flashKey);
 
   }
 }
@@ -582,22 +609,9 @@ public Action Timer_HandleFlashbang(Handle timer, int entityId) {
   char flashKey[16];
   IntToString(entityId, flashKey, sizeof(flashKey));
 
-  Get5FlashbangDetonatedEvent flashEvent;
-  if (g_FlashbangContainer.GetValue(flashKey, flashEvent)) {
+  EndFlashbangEvent(flashKey);
 
-    LogDebug("Calling Get5_OnFlashbangDetonated()");
-
-    Call_StartForward(g_OnFlashbangDetonated);
-    Call_PushCell(flashEvent);
-    Call_Finish();
-
-    EventLogger_LogAndDeleteEvent(flashEvent);
-
-    g_FlashbangContainer.Remove(flashKey);
-
-  }
-
-  return Plugin_Continue;
+  return Plugin_Handled;
 
 }
 
@@ -637,20 +651,7 @@ public Action Timer_HandleHEGrenade(Handle timer, int entityId) {
   char grenadeKey[16];
   IntToString(entityId, grenadeKey, sizeof(grenadeKey));
 
-  Get5HEDetonatedEvent heObject;
-  if (g_HEGrenadeContainer.GetValue(grenadeKey, heObject)) {
-
-    LogDebug("Calling Get5_OnHEGrenadeDetonated()");
-
-    Call_StartForward(g_OnHEGrenadeDetonated);
-    Call_PushCell(heObject);
-    Call_Finish();
-
-    EventLogger_LogAndDeleteEvent(heObject);
-
-    g_HEGrenadeContainer.Remove(grenadeKey);
-
-  }
+  EndHEEvent(grenadeKey);
 
   return Plugin_Handled;
 

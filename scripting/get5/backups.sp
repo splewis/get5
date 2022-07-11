@@ -217,7 +217,7 @@ public void WriteBackStructure(const char[] path) {
 public bool RestoreFromBackup(const char[] path) {
   KeyValues kv = new KeyValues("Backup");
   if (!kv.ImportFromFile(path)) {
-    LogError("Failed to find read backup file \"%s\"", path);
+    LogError("Failed to read backup file \"%s\"", path);
     delete kv;
     return false;
   }

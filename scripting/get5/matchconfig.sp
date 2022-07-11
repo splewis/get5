@@ -127,8 +127,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
     Get5SeriesStartedEvent startEvent = new Get5SeriesStartedEvent(g_MatchID, g_TeamNames[MatchTeam_Team1], g_TeamNames[MatchTeam_Team2]);
 
-    g_LastEventNumber = 0;
-
     LogDebug("Calling Get5_OnSeriesInit");
 
     Call_StartForward(g_OnSeriesInit);
@@ -155,6 +153,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   LoadPlayerNames();
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
 
+  Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
   return true;
 }
 
@@ -170,38 +169,40 @@ public bool LoadMatchFile(const char[] config) {
 
   EventLogger_LogAndDeleteEvent(event);
 
+  if (!FileExists(config)) {
+    MatchConfigFail("Match config file doesn't exist: \"%s\"", config);
+    return false;
+  }
+
   if (IsJSONPath(config)) {
-    char configFile[PLATFORM_MAX_PATH];
-    strcopy(configFile, sizeof(configFile), config);
-    if (!FileExists(configFile)) {
-      MatchConfigFail("Match json file doesn't exist: \"%s\"", configFile);
+
+    JSON_Object json = json_read_from_file(config);
+    if (json == null) {
+      MatchConfigFail("Failed to read match config as JSON.");
       return false;
     }
 
-    JSON_Object json = json_read_from_file(configFile);
-    if (json != null && LoadMatchFromJson(json)) {
+    if (!LoadMatchFromJson(json)) { // This prints its own error
       json_cleanup_and_delete(json);
-      Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
-    } else {
-      MatchConfigFail("invalid match json");
       return false;
     }
+    json_cleanup_and_delete(json);
 
   } else {
-    // Assume its a keyvalues file.
+
+    // Assume its a key-values file.
     KeyValues kv = new KeyValues("Match");
-    if (!FileExists(config)) {
+    if (!kv.ImportFromFile(config)) {
       delete kv;
-      MatchConfigFail("Match kv file doesn't exist: \"%s\"", config);
-      return false;
-    } else if (kv.ImportFromFile(config) && LoadMatchFromKv(kv)) {
-      delete kv;
-      Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
-    } else {
-      delete kv;
-      MatchConfigFail("invalid match kv");
+      MatchConfigFail("Failed to read match config as KV.");
       return false;
     }
+
+    if (!LoadMatchFromKv(kv)) { // This prints its own error
+      delete kv;
+      return false;
+    }
+    delete kv;
   }
 
   return true;

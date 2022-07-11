@@ -1473,7 +1473,7 @@ enum SideChoice {
 };
 
 // Called each get5-event with JSON formatted event text.
-forward void Get5_OnEvent(const char[] eventJson);
+forward void Get5_OnEvent(const Get5Event, const char[] eventJson);
 
 // Called when a series is first setup.
 // Note: Do not rely on the state of any cvars at this point.

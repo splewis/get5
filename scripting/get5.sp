@@ -105,7 +105,6 @@ int g_RoundNumber = -1; // The round number, 0-indexed. -1 if the match is not l
 // The active map number, used by stats. Required as the calculated round number changes immediately as a map ends, but
 // before the map changes to the next.
 int g_MapNumber = 0;
-int g_LastEventNumber = 0; // Used to identify event sequence within a match so async processing can order them correctly.
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MATCHTEAM_COUNT];
@@ -536,7 +535,7 @@ public void OnPluginStart() {
   /** Create forwards **/
   g_OnBackupRestore = CreateGlobalForward("Get5_OnBackupRestore", ET_Ignore, Param_Cell);
   g_OnDemoFinished = CreateGlobalForward("Get5_OnDemoFinished", ET_Ignore, Param_Cell);
-  g_OnEvent = CreateGlobalForward("Get5_OnEvent", ET_Ignore, Param_String);
+  g_OnEvent = CreateGlobalForward("Get5_OnEvent", ET_Ignore, Param_Cell, Param_String);
   g_OnFlashbangDetonated = CreateGlobalForward("Get5_OnFlashbangDetonated", ET_Ignore, Param_Cell);
   g_OnHEGrenadeDetonated = CreateGlobalForward("Get5_OnHEGrenadeDetonated", ET_Ignore, Param_Cell);
   g_OnDecoyStarted = CreateGlobalForward("Get5_OnDecoyStarted", ET_Ignore, Param_Cell);
@@ -1334,16 +1333,12 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   // map has been decided, but before the game actually stops, which could lead to events having the wrong map number.
   g_MapNumber = Get5_GetMapNumber();
 
-  // Always reset these on round start, regardless of game state.
-  // This ensures that the functions that rely on these don't get messed up.
-  g_RoundStartedTime = 0.0;
-  g_BombPlantedTime = 0.0;
-
   if (g_GameState == Get5State_Live) {
 
     // Just to make sure nothing carries over between rounds to mess with this, we clear out these on each round start.
     Stats_ResetGrenadeContainers();
 
+    // The same logic for tracking after-round-end events apply to g_RoundNumber, so that's set here as well.
     g_RoundNumber = GetRoundsPlayed();
 
     Get5RoundStartedEvent startEvent = new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
@@ -1359,6 +1354,13 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   } else {
     g_RoundNumber = -1; // Round number always -1 if not yet live.
   }
+
+  // Always reset these on round start, regardless of game state.
+  // This ensures that the functions that rely on these don't get messed up.
+  // These go *after* Stats_ResetGrenadeContainers to ensure molotov burn durations
+  // don't become incorrect.
+  g_RoundStartedTime = 0.0;
+  g_BombPlantedTime = 0.0;
 
 }
 

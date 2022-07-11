@@ -91,7 +91,6 @@ static void AddGlobalStateInfo(File f) {
   GameStateString(g_GameState, buffer, sizeof(buffer));
   f.WriteLine("g_GameState = %d (%s)", g_GameState, buffer);
 
-  f.WriteLine("g_LastEventNumber = %d", g_LastEventNumber);
   f.WriteLine("g_MatchID = %s", g_MatchID);
   f.WriteLine("g_RoundNumber = %d", g_RoundNumber);
   f.WriteLine("g_MapsToWin = %d", g_MapsToWin);

@@ -7,7 +7,7 @@ You should hook onto these forwards if creating extensions to Get5, such as a pl
 implement something similar to the `get5_apistats` plugin, which sends the data
 somewhere via HTTP or logs the events to a file.
 
-All events are presented here as `HTTP POST`, but that's only because an HTTP method is required for the OpenAPI swagger
-documentation tool.
+The HTTP method displayed here is required for the OpenAPI swagger documentation tool and has no particular meaning.
+All forwards, except for `Get5_OnEvent`, take a single argument; the event object.
 
 <swagger-ui src="event_schema.yml"/>

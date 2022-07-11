@@ -351,6 +351,9 @@ public void RestoreGet5Backup() {
       EndWarmup();
       ServerCommand("mp_restartgame 5");
       Pause(PauseType_Backup);
+      if (g_CoachingEnabledCvar.BoolValue) {
+        CreateTimer(6.0, Timer_SwapCoaches);
+      }
     } else {
       EnsurePausedWarmup();
     }
@@ -359,7 +362,25 @@ public void RestoreGet5Backup() {
   }
 }
 
+public Action Timer_SwapCoaches(Handle timer) {
+  for (int i = 1; i <= MaxClients; i++) {
+    if (IsAuthedPlayer(i)) {
+      CheckIfClientCoaching(i, MatchTeam_Team1);
+      CheckIfClientCoaching(i, MatchTeam_Team2);
+    }
+      
+  }
+}
+
 public Action Time_StartRestore(Handle timer) {
+  // If we are coaching, we need to ensure we are in a warmup
+  // per Valve's conditionals set on coaching.
+  // This is only to remove the error message 
+  // You can only change coaching position during warmup.
+  // In the console. We can remove this if we do not care about it?
+  if (g_CoachingEnabledCvar.BoolValue) {
+    EnsurePausedWarmup();
+  }
   Pause(PauseType_Backup);
 
   char tempValveBackup[PLATFORM_MAX_PATH];
@@ -369,6 +390,10 @@ public Action Time_StartRestore(Handle timer) {
 }
 
 public Action Timer_FinishBackup(Handle timer) {
+  if (g_CoachingEnabledCvar.BoolValue) {
+    EndWarmup();
+    EndWarmup();
+  }
   g_DoingBackupRestoreNow = false;
 }
 

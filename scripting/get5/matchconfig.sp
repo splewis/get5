@@ -622,10 +622,7 @@ static void LoadTeamData(KeyValues kv, MatchTeam matchTeam) {
 
   if (StrEqual(fromfile, "")) {
     AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
-    if (kv.JumpToKey("coaches")) {
-      AddSubsectionAuthsToList(kv, "coaches", GetTeamCoaches(matchTeam), AUTH_LENGTH);
-      kv.GoBack();
-    }
+    AddSubsectionAuthsToList(kv, "coaches", GetTeamCoaches(matchTeam), AUTH_LENGTH);
     kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");

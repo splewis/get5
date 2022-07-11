@@ -178,10 +178,9 @@ public bool LoadMatchFile(const char[] config) {
       return false;
     }
 
-    JSON_Object json = json_load_file(configFile);
+    JSON_Object json = json_read_from_file(configFile);
     if (json != null && LoadMatchFromJson(json)) {
-      json.Cleanup();
-      delete json;
+      json_cleanup_and_delete(json);
       Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
     } else {
       MatchConfigFail("invalid match json");
@@ -616,7 +615,7 @@ static void LoadTeamDataJson(JSON_Object json, MatchTeam matchTeam) {
     json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
     json_object_get_string_safe(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
   } else {
-    JSON_Object fromfileJson = json_load_file(fromfile);
+    JSON_Object fromfileJson = json_read_from_file(fromfile);
     if (fromfileJson == null) {
       LogError("Cannot load team config from file \"%s\", fromfile");
     } else {

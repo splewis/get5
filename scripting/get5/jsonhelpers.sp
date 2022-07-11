@@ -1,11 +1,3 @@
-stock JSON_Object json_load_file(const char[] path) {
-  File f = OpenFile(path, "r");
-  char contents[8192];
-  f.ReadString(contents, sizeof(contents));
-  delete f;
-  return json_decode(contents);
-}
-
 stock void json_string_type(JSONCellType type, char[] output, int maxlength) {
   switch (type) {
     case JSON_Type_Invalid:

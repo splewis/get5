@@ -87,7 +87,6 @@ stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, Array
       list.PushString(buffer);
       count++;
     }
-    array.Cleanup();
   }
   return count;
 }

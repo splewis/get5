@@ -180,7 +180,7 @@ public bool LoadMatchFile(const char[] config) {
 
     JSON_Object json = json_read_from_file(configFile);
     if (json != null && LoadMatchFromJson(json)) {
-      //json_cleanup_and_delete(json);
+      json_cleanup_and_delete(json);
       Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
     } else {
       MatchConfigFail("invalid match json");

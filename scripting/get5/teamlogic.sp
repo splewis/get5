@@ -218,7 +218,11 @@ public MatchTeam GetClientMatchTeam(int client) {
   } else {
     char auth[AUTH_LENGTH];
     if (GetAuth(client, auth, sizeof(auth))) {
-      return GetAuthMatchTeam(auth);
+      MatchTeam playerTeam = GetAuthMatchTeam(auth);
+      if (playerTeam == MatchTeam_TeamNone) {
+        playerTeam = GetAuthMatchTeamCoach(auth);
+      }
+      return playerTeam;
     } else {
       return MatchTeam_TeamNone;
     }
@@ -425,13 +429,14 @@ public bool AddPlayerToTeam(const char[] auth, MatchTeam team, const char[] name
 }
 
 public bool AddCoachToTeam(const char[] auth, MatchTeam team, const char[] name) {
-  char steam64[AUTH_LENGTH];
-  ConvertAuthToSteam64(auth, steam64);
-
   if (team == MatchTeam_TeamSpec) {
     LogDebug("Not allowed to coach a spectator team.");
     return false;
   }
+
+  char steam64[AUTH_LENGTH];
+  ConvertAuthToSteam64(auth, steam64);
+
   if (GetAuthMatchTeamCoach(steam64) == MatchTeam_TeamNone) {
     GetTeamCoaches(team).PushString(steam64);
     Get5_SetPlayerName(auth, name);
@@ -467,10 +472,21 @@ public void LoadPlayerNames() {
     char id[AUTH_LENGTH + 1];
     char name[MAX_NAME_LENGTH + 1];
     ArrayList ids = GetTeamAuths(team);
+    ArrayList coachIds = GetTeamCoaches(team);
     for (int i = 0; i < ids.Length; i++) {
       ids.GetString(i, id, sizeof(id));
       if (g_PlayerNames.GetString(id, name, sizeof(name)) && !StrEqual(name, "") &&
           !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
+        namesKv.SetString(id, name);
+        numNames++;
+      }
+    }
+    for (int i = 0; i < coachIds.Length; i++) {
+      // There's a way to push an array of cells into the end, however, it 
+      // becomes a single element, rather than pushing individually.
+    coachIds.GetString(i, id, sizeof(id));
+    if (g_PlayerNames.GetString(id, name, sizeof(name)) && !StrEqual(name, "") &&
+        !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
         namesKv.SetString(id, name);
         numNames++;
       }

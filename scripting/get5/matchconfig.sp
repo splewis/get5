@@ -874,6 +874,11 @@ public Action Command_AddCoach(int client, int args) {
     }
 
     if (AddCoachToTeam(auth, team, name)) {
+      // Check if we are in the playerlist already and remove.
+      int index = GetTeamAuths(team).FindString(auth);
+      if (index >= 0) {
+        GetTeamAuths(team).Erase(index);
+      }
       ReplyToCommand(client, "Successfully added player %s to coach team %s", auth, teamString);
     } else {
       ReplyToCommand(client, "Player %s is already in a coaching position on a team.", auth);

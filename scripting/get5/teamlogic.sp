@@ -144,6 +144,12 @@ public void MoveClientToCoach(int client) {
   GetAuth(client, clientAuth, AUTH_LENGTH);
   if (!IsAuthOnTeamCoach(clientAuth, matchTeam)) {
     AddCoachToTeam(clientAuth, matchTeam, "");
+    // If we're already on the team, make sure we remove ourselves
+    // to ensure data is correct in the backups.
+    int index = GetTeamAuths(matchTeam).FindString(clientAuth);
+    if (index >= 0) {
+      GetTeamAuths(matchTeam).Erase(index);
+    }
   }
   
   // If we're in warmup we use the in-game

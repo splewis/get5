@@ -378,9 +378,9 @@ public Action Time_StartRestore(Handle timer) {
   // This is only to remove the error message 
   // You can only change coaching position during warmup.
   // In the console. We can remove this if we do not care about it?
-  if (g_CoachingEnabledCvar.BoolValue) {
-    EnsurePausedWarmup();
-  }
+  // if (g_CoachingEnabledCvar.BoolValue) {
+  //   EnsurePausedWarmup();
+  // }
   Pause(PauseType_Backup);
 
   char tempValveBackup[PLATFORM_MAX_PATH];
@@ -391,8 +391,10 @@ public Action Time_StartRestore(Handle timer) {
 
 public Action Timer_FinishBackup(Handle timer) {
   if (g_CoachingEnabledCvar.BoolValue) {
-    EndWarmup();
-    EndWarmup();
+    // EndWarmup();
+    // EndWarmup();
+    // Do we really need to force this? Will continue testing.
+    CreateTimer(0.5, Timer_SwapCoaches);
   }
   g_DoingBackupRestoreNow = false;
 }

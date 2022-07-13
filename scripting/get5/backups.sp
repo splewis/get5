@@ -373,14 +373,6 @@ public Action Timer_SwapCoaches(Handle timer) {
 }
 
 public Action Time_StartRestore(Handle timer) {
-  // If we are coaching, we need to ensure we are in a warmup
-  // per Valve's conditionals set on coaching.
-  // This is only to remove the error message 
-  // You can only change coaching position during warmup.
-  // In the console. We can remove this if we do not care about it?
-  // if (g_CoachingEnabledCvar.BoolValue) {
-  //   EnsurePausedWarmup();
-  // }
   Pause(PauseType_Backup);
 
   char tempValveBackup[PLATFORM_MAX_PATH];
@@ -391,9 +383,12 @@ public Action Time_StartRestore(Handle timer) {
 
 public Action Timer_FinishBackup(Handle timer) {
   if (g_CoachingEnabledCvar.BoolValue) {
-    // EndWarmup();
-    // EndWarmup();
-    // Do we really need to force this? Will continue testing.
+    // If we are coaching we want to ensure our
+    // coaches get moved back onto the team.
+    // We cannot trust Valve's system as a disconnected
+    // player will count as a "player" and not be placed
+    // in the coach slot. So, we cannot enable warmup during
+    // the round restore process if using a Valve backup.
     CreateTimer(0.5, Timer_SwapCoaches);
   }
   g_DoingBackupRestoreNow = false;

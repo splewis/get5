@@ -879,6 +879,9 @@ public Action Command_AddCoach(int client, int args) {
       if (index >= 0) {
         GetTeamAuths(team).Erase(index);
       }
+      // Update the backup structure as well for round restores, covers edge
+      // case of users joining, coaching, stopping, and getting 16k cash as player.
+      WriteBackup();
       ReplyToCommand(client, "Successfully added player %s to coach team %s", auth, teamString);
     } else {
       ReplyToCommand(client, "Player %s is already in a coaching position on a team.", auth);

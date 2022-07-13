@@ -188,6 +188,9 @@ public Action Command_SmCoach(int client, int args) {
   }
 
   MoveClientToCoach(client);
+  // Update the backup structure as well for round restores, covers edge
+  // case of users joining, coaching, stopping, and getting 16k cash as player.
+  WriteBackup();
   return Plugin_Handled;
 }
 
@@ -215,6 +218,9 @@ public Action Command_Coach(int client, const char[] command, int argc) {
   }
 
   MoveClientToCoach(client);
+  // Update the backup structure as well for round restores, covers edge
+  // case of users joining, coaching, stopping, and getting 16k cash as player.
+  WriteBackup();
   return Plugin_Stop;
 }
 

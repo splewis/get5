@@ -107,15 +107,18 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
 }
 
 public bool CheckIfClientCoaching(int client, MatchTeam team) {
-    // Force user to join the coach if specified by config or reconnect.
-    char clientAuth64[AUTH_LENGTH];
-    GetAuth(client, clientAuth64, AUTH_LENGTH);
-    if (g_CoachingEnabledCvar.BoolValue && IsAuthOnTeamCoach(clientAuth64, team)) {
-        LogDebug("Forcing player %N to coach as they were previously.", client);
-        MoveClientToCoach(client);
-        return true;
-    }
+  if (!g_CoachingEnabledCvar.BoolValue) {
     return false;
+  }
+  // Force user to join the coach if specified by config or reconnect.
+  char clientAuth64[AUTH_LENGTH];
+  GetAuth(client, clientAuth64, AUTH_LENGTH);
+  if (IsAuthOnTeamCoach(clientAuth64, team)) {
+      LogDebug("Forcing player %N to coach as they were previously.", client);
+      MoveClientToCoach(client);
+      return true;
+  }
+  return false;
 }
 
 public void MoveClientToCoach(int client) {

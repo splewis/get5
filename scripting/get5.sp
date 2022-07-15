@@ -707,9 +707,12 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
  */
 public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
-  if (client > 0) {
+  if (IsValidClient(client)) {
 
-    Get5PlayerConnectedEvent connectEvent = new Get5PlayerConnectedEvent(GetPlayerObject(client));
+    char ipAddress[32];
+    GetClientIP(client, ipAddress, sizeof(ipAddress));
+
+    Get5PlayerConnectedEvent connectEvent = new Get5PlayerConnectedEvent(GetPlayerObject(client), ipAddress);
 
     LogDebug("Calling Get5_OnPlayerConnected()");
 

@@ -187,10 +187,20 @@ methodmap Get5PlayerConnectedEvent < Get5Event {
     }
   }
 
-  public Get5PlayerConnectedEvent(const Get5Player player) {
+  public bool SetIPAddress(const char[] address)
+  {
+      return this.SetString("ip_address", address);
+  }
+
+  public bool GetIPAddress(char[] buffer, const int maxSize) {
+      return this.GetString("ip_address", buffer, maxSize);
+  }
+
+  public Get5PlayerConnectedEvent(const Get5Player player, const char[] ipAddress) {
     Get5PlayerConnectedEvent self = view_as<Get5PlayerConnectedEvent>(new JSON_Object());
     self.SetEvent("player_connect");
     self.Player = player;
+    self.SetIPAddress(ipAddress);
     return self;
   }
 }

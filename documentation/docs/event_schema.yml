@@ -66,6 +66,10 @@ paths:
                     - player_connect
                 player:
                   $ref: "#/components/schemas/Get5Player"
+                ip_address:
+                  type: string
+                  example: '34.132.182.66'
+                  description: The IP address of the connecting client. `GetIPAddress()` and `SetIPAddress()` in SourceMod.
       responses: { }
   "/Get5_OnPlayerDisconnected":
     post:

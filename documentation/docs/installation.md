@@ -12,11 +12,10 @@ SourceMod) can be found on their website.
 
 ## Download Get5
 
-Releases of Get5 can be found in the [Tags](https://github.com/splewis/get5/tags) section of the repo. These versions
-are known to be stable, but may be lacking features that are currently in development. If you would like to test new
-features, or be on the "bleeding edge", you can also download through the Jenkins instance
-found [here](https://ci.splewis.net/job/get5/), or the build artifacts found under each run in GitHub
-actions [here](https://github.com/splewis/get5/actions).
+Releases of Get5 can be found in the [Releases](https://github.com/splewis/get5/releases) section of the repo. Anything *not*
+marked as "Nightly" in the title are known to be stable, but may be lacking features that are currently in development. 
+If you would like to test new features, or be on the "bleeding edge", you can also download any of the latest 
+pre-releases found at the same link above that are marked in the title with "Nightly".
 
 ## Installation
 

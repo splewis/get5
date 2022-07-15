@@ -26,6 +26,8 @@ match.
   backup method, defaults to `0`.
 - `matchtext`: Wraps `mp_teammatchstat_1`, you probably don't want to set this, in BoX series `mp_teamscore` cvars are
   automatically set and take the place of the `mp_teammatchstat` cvars.
+- `coaches`: Identical to the `players` tag, it's an optional list of Steam ID's for users who wish to coach a team.
+  You may also force player names here. This field is optional.
 
 ## Optional Values
 
@@ -39,6 +41,7 @@ match.
   gets the side choice, "never_knife" means "team1" is always on CT first, and "always_knife" means there is always a
   knife round.
 - `players_per_team`: Maximum players per team (doesn't include a coach spot, default: 5).
+- `coaches_per_team`: Maximum coaches per team (default: 2).
 - `min_players_to_ready`: Minimum players a team needs to be able to ready up (default: 1).
 - `favored_percentage_team1`: Wrapper for the servers `mp_teamprediction_pct`.
 - `favored_percentage_text` Wrapper for the servers `mp_teamprediction_txt`.

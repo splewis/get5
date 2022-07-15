@@ -42,7 +42,7 @@ enum PauseType {
   PauseType_None,
   PauseType_Tech,      // Technical pause
   PauseType_Tactical,  // Tactical Pause
-  PauseType_Admin,      // Admin/RCON Pause
+  PauseType_Admin,     // Admin/RCON Pause
   PauseType_Backup     // Special type for match pausing during backups.
 };
 

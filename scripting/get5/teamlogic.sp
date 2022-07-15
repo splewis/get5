@@ -14,12 +14,19 @@ public Action Command_JoinGame(int client, const char[] command, int argc) {
 
 public void CheckClientTeam(int client) {
   MatchTeam correctTeam = GetClientMatchTeam(client);
+  char auth[AUTH_LENGTH];
   int csTeam = MatchTeamToCSTeam(correctTeam);
   int currentTeam = GetClientTeam(client);
 
   if (csTeam != currentTeam) {
     if (IsClientCoaching(client)) {
       UpdateCoachTarget(client, csTeam);
+    } else if (GetAuth(client, auth, sizeof(auth))) {
+      char steam64[AUTH_LENGTH];
+      ConvertAuthToSteam64(auth, steam64);
+      if (IsAuthOnTeamCoach(steam64, correctTeam)) {
+        UpdateCoachTarget(client, csTeam);
+      }
     }
 
     SwitchPlayerTeam(client, csTeam);
@@ -63,7 +70,11 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
   }
 
   if (csTeam == team_to) {
-    return Plugin_Continue;
+    if(CheckIfClientCoaching(client, correctTeam)) {
+      return Plugin_Stop;
+    } else {
+      return Plugin_Continue;
+    }
   }
 
   if (csTeam != GetClientTeam(client)) {
@@ -74,19 +85,40 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
       if (!g_CoachingEnabledCvar.BoolValue) {
         KickClient(client, "%t", "TeamIsFullInfoMessage");
       } else {
-        LogDebug("Forcing player %N to coach", client);
-        MoveClientToCoach(client);
-        Get5_Message(client, "%t", "MoveToCoachInfoMessage");
+        // Only attempt to move to coach if we are not full on coaches already.
+        if (GetTeamCoaches(correctTeam).Length <= g_CoachesPerTeam) {
+          LogDebug("Forcing player %N to coach", client);
+          MoveClientToCoach(client);
+          Get5_Message(client, "%t", "MoveToCoachInfoMessage");
+        } else {
+          KickClient(client, "%t", "TeamIsFullInfoMessage");
+        }
       }
     } else {
       LogDebug("Forcing player %N onto %d", client, csTeam);
       FakeClientCommand(client, "jointeam %d", csTeam);
     }
-
+    
+    CheckIfClientCoaching(client, correctTeam);
     return Plugin_Stop;
   }
 
   return Plugin_Stop;
+}
+
+public bool CheckIfClientCoaching(int client, MatchTeam team) {
+  if (!g_CoachingEnabledCvar.BoolValue) {
+    return false;
+  }
+  // Force user to join the coach if specified by config or reconnect.
+  char clientAuth64[AUTH_LENGTH];
+  GetAuth(client, clientAuth64, AUTH_LENGTH);
+  if (IsAuthOnTeamCoach(clientAuth64, team)) {
+      LogDebug("Forcing player %N to coach as they were previously.", client);
+      MoveClientToCoach(client);
+      return true;
+  }
+  return false;
 }
 
 public void MoveClientToCoach(int client) {
@@ -110,12 +142,24 @@ public void MoveClientToCoach(int client) {
   }
 
   char teamString[4];
+  char clientAuth[64];
   CSTeamString(csTeam, teamString, sizeof(teamString));
-
-  // If we're in warmup or a freezetime we use the in-game
+  GetAuth(client, clientAuth, AUTH_LENGTH);
+  if (!IsAuthOnTeamCoach(clientAuth, matchTeam)) {
+    AddCoachToTeam(clientAuth, matchTeam, "");
+    // If we're already on the team, make sure we remove ourselves
+    // to ensure data is correct in the backups.
+    int index = GetTeamAuths(matchTeam).FindString(clientAuth);
+    if (index >= 0) {
+      GetTeamAuths(matchTeam).Erase(index);
+    }
+  }
+  
+  // If we're in warmup we use the in-game
   // coaching command. Otherwise we manually move them to spec
   // and set the coaching target.
-  if (!InWarmup() && !InFreezeTime()) {
+  // If in freeze time, we have to manually move as well.
+  if (!InWarmup() && InFreezeTime()) {
     // TODO: this needs to be tested more thoroughly,
     // it might need to be done in reverse order (?)
     LogDebug("Moving %L directly to coach slot", client);
@@ -130,6 +174,7 @@ public void MoveClientToCoach(int client) {
 }
 
 public Action Command_SmCoach(int client, int args) {
+  char auth[AUTH_LENGTH];
   if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
@@ -138,11 +183,22 @@ public Action Command_SmCoach(int client, int args) {
     return Plugin_Handled;
   }
 
+  GetAuth(client, auth, sizeof(auth));
+  MatchTeam matchTeam = GetClientMatchTeam(client);
+  // Don't allow a new coach if spots are full.
+  if (GetTeamCoaches(matchTeam).Length > g_CoachesPerTeam) {
+    return Plugin_Stop;
+  }
+
   MoveClientToCoach(client);
+  // Update the backup structure as well for round restores, covers edge
+  // case of users joining, coaching, stopping, and getting 16k cash as player.
+  WriteBackup();
   return Plugin_Handled;
 }
 
 public Action Command_Coach(int client, const char[] command, int argc) {
+
   if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
@@ -165,6 +221,9 @@ public Action Command_Coach(int client, const char[] command, int argc) {
   }
 
   MoveClientToCoach(client);
+  // Update the backup structure as well for round restores, covers edge
+  // case of users joining, coaching, stopping, and getting 16k cash as player.
+  WriteBackup();
   return Plugin_Stop;
 }
 
@@ -174,7 +233,11 @@ public MatchTeam GetClientMatchTeam(int client) {
   } else {
     char auth[AUTH_LENGTH];
     if (GetAuth(client, auth, sizeof(auth))) {
-      return GetAuthMatchTeam(auth);
+      MatchTeam playerTeam = GetAuthMatchTeam(auth);
+      if (playerTeam == MatchTeam_TeamNone) {
+        playerTeam = GetAuthMatchTeamCoach(auth);
+      }
+      return playerTeam;
     } else {
       return MatchTeam_TeamNone;
     }
@@ -217,6 +280,24 @@ public MatchTeam GetAuthMatchTeam(const char[] steam64) {
   for (int i = 0; i < MATCHTEAM_COUNT; i++) {
     MatchTeam team = view_as<MatchTeam>(i);
     if (IsAuthOnTeam(steam64, team)) {
+      return team;
+    }
+  }
+  return MatchTeam_TeamNone;
+}
+
+public MatchTeam GetAuthMatchTeamCoach(const char[] steam64) {
+  if (g_GameState == Get5State_None) {
+    return MatchTeam_TeamNone;
+  }
+
+  if (g_InScrimMode) {
+    return IsAuthOnTeamCoach(steam64, MatchTeam_Team1) ? MatchTeam_Team1 : MatchTeam_Team2;
+  }
+
+  for (int i = 0; i < MATCHTEAM_COUNT; i++) {
+    MatchTeam team = view_as<MatchTeam>(i);
+    if (IsAuthOnTeamCoach(steam64, team)) {
       return team;
     }
   }
@@ -294,8 +375,16 @@ public ArrayList GetTeamAuths(MatchTeam team) {
   return g_TeamAuths[team];
 }
 
+public ArrayList GetTeamCoaches(MatchTeam team) {
+  return g_TeamCoaches[team];
+}
+
 public bool IsAuthOnTeam(const char[] auth, MatchTeam team) {
   return GetTeamAuths(team).FindString(auth) >= 0;
+}
+
+public bool IsAuthOnTeamCoach(const char[] auth, MatchTeam team) {
+  return GetTeamCoaches(team).FindString(auth) >= 0;
 }
 
 public void SetStartingTeams() {
@@ -354,6 +443,24 @@ public bool AddPlayerToTeam(const char[] auth, MatchTeam team, const char[] name
   }
 }
 
+public bool AddCoachToTeam(const char[] auth, MatchTeam team, const char[] name) {
+  if (team == MatchTeam_TeamSpec) {
+    LogDebug("Not allowed to coach a spectator team.");
+    return false;
+  }
+
+  char steam64[AUTH_LENGTH];
+  ConvertAuthToSteam64(auth, steam64);
+
+  if (GetAuthMatchTeamCoach(steam64) == MatchTeam_TeamNone) {
+    GetTeamCoaches(team).PushString(steam64);
+    Get5_SetPlayerName(auth, name);
+    return true;
+  } else {
+    return false;
+  }
+}
+
 public bool RemovePlayerFromTeams(const char[] auth) {
   char steam64[AUTH_LENGTH];
   ConvertAuthToSteam64(auth, steam64);
@@ -380,10 +487,21 @@ public void LoadPlayerNames() {
     char id[AUTH_LENGTH + 1];
     char name[MAX_NAME_LENGTH + 1];
     ArrayList ids = GetTeamAuths(team);
+    ArrayList coachIds = GetTeamCoaches(team);
     for (int i = 0; i < ids.Length; i++) {
       ids.GetString(i, id, sizeof(id));
       if (g_PlayerNames.GetString(id, name, sizeof(name)) && !StrEqual(name, "") &&
           !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
+        namesKv.SetString(id, name);
+        numNames++;
+      }
+    }
+    for (int i = 0; i < coachIds.Length; i++) {
+      // There's a way to push an array of cells into the end, however, it 
+      // becomes a single element, rather than pushing individually.
+    coachIds.GetString(i, id, sizeof(id));
+    if (g_PlayerNames.GetString(id, name, sizeof(name)) && !StrEqual(name, "") &&
+        !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
         namesKv.SetString(id, name);
         numNames++;
       }

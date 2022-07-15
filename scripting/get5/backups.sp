@@ -351,11 +351,24 @@ public void RestoreGet5Backup() {
       EndWarmup();
       ServerCommand("mp_restartgame 5");
       Pause(PauseType_Backup);
+      if (g_CoachingEnabledCvar.BoolValue) {
+        CreateTimer(6.0, Timer_SwapCoaches);
+      }
     } else {
       EnsurePausedWarmup();
     }
 
     g_DoingBackupRestoreNow = false;
+  }
+}
+
+public Action Timer_SwapCoaches(Handle timer) {
+  for (int i = 1; i <= MaxClients; i++) {
+    if (IsAuthedPlayer(i)) {
+      CheckIfClientCoaching(i, MatchTeam_Team1);
+      CheckIfClientCoaching(i, MatchTeam_Team2);
+    }
+      
   }
 }
 
@@ -369,6 +382,15 @@ public Action Time_StartRestore(Handle timer) {
 }
 
 public Action Timer_FinishBackup(Handle timer) {
+  if (g_CoachingEnabledCvar.BoolValue) {
+    // If we are coaching we want to ensure our
+    // coaches get moved back onto the team.
+    // We cannot trust Valve's system as a disconnected
+    // player will count as a "player" and not be placed
+    // in the coach slot. So, we cannot enable warmup during
+    // the round restore process if using a Valve backup.
+    CreateTimer(0.5, Timer_SwapCoaches);
+  }
   g_DoingBackupRestoreNow = false;
 }
 

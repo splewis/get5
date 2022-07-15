@@ -52,6 +52,12 @@ static void AddTeam(JSON_Object params, const char[] key, MatchTeam team) {
   params.SetString(key, value);
 }
 
+static void AddPause(JSON_Object params, const char[] key, PauseType pause) {
+  char value[16];
+  GetPauseType(pause, value, sizeof(value));
+  params.SetString(key, value);
+}
+
 static void AddCSTeam(JSON_Object params, const char[] key, int team) {
   char value[16];
   CSTeamString(team, value, sizeof(value));
@@ -133,8 +139,8 @@ public void EventLogger_GoingLive() {
   EventLogger_EndEvent("going_live");
 }
 
-public void EventLogger_PlayerDeath(int killer, int victim, bool headshot, int assister,
-                             int flash_assister, const char[] weapon) {
+public void EventLogger_PlayerDeath(int killer, int victim, bool headshot, int assister, bool flash_assist,
+                             const char[] weapon) {
   EventLogger_StartEvent();
   AddMapData(params);
   AddPlayer(params, "attacker", killer);
@@ -142,10 +148,10 @@ public void EventLogger_PlayerDeath(int killer, int victim, bool headshot, int a
   params.SetInt("headshot", headshot);
   params.SetString("weapon", weapon);
 
-  if (assister > 0)
+  if (assister > 0) {
     AddPlayer(params, "assister", assister);
-  if (flash_assister > 0)
-    AddPlayer(params, "flash_assister", flash_assister);
+    params.SetBool("flash_assist", flash_assist);
+  }
 
   EventLogger_EndEvent("player_death");
 }
@@ -269,4 +275,19 @@ public void EventLogger_TeamUnready(MatchTeam team) {
   AddTeam(params, "team", team);
 
   EventLogger_EndEvent("team_unready");
+}
+
+public void EventLogger_PauseCommand(MatchTeam team, PauseType pauseReason) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddTeam(params, "request_team", team);
+  AddPause(params, "pause_reason", pauseReason);
+  EventLogger_EndEvent("pause_command");
+}
+
+public void EventLogger_UnpauseCommand(MatchTeam team) {
+  EventLogger_StartEvent();
+  AddMapData(params);
+  AddTeam(params, "request_team", team);
+  EventLogger_EndEvent("unpause_command");
 }

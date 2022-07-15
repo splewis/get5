@@ -1,4 +1,4 @@
-FROM debian:10
+FROM debian:11
 MAINTAINER Alexander Volz (Alexander@volzit.de)
 
 ENV SMVERSION 1.10
@@ -9,7 +9,9 @@ ENV _apt_clean="eval apt-get clean && $_clean"
 # Install support pkgs
 RUN apt-get update -qqy && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     curl wget nano net-tools gnupg2 git lib32stdc++6 python \
-    python-pip tar bash  && $_apt_clean
+    tar bash  && $_apt_clean
+# Install pip2
+RUN wget https://bootstrap.pypa.io/pip/2.7/get-pip.py && python2 get-pip.py
 
 RUN mkdir /get5
 RUN mkdir /runscripts

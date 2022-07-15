@@ -44,9 +44,9 @@ public Action MatchLive(Handle timer) {
   SetMatchTeamCvars();
   ExecuteMatchConfigCvars();
 
-
-  //If there is a set amount of timeouts available update the built-in convar and game rule properties to show the correct amount of timeouts remaining in gsi and in-game
-  if (g_MaxPausesCvar.IntValue > 0){
+  // If there is a set amount of timeouts available update the built-in convar and game rule
+  // properties to show the correct amount of timeouts remaining in gsi and in-game
+  if (g_MaxPausesCvar.IntValue > 0) {
     ServerCommand("mp_team_timeout_max %d", g_MaxPausesCvar.IntValue);
     GameRules_SetProp("m_nTerroristTimeOuts", g_MaxPausesCvar.IntValue);
     GameRules_SetProp("m_nCTTimeOuts", g_MaxPausesCvar.IntValue);
@@ -54,8 +54,7 @@ public Action MatchLive(Handle timer) {
 
   // We force the match end-delay to extend for the duration of the GOTV broadcast here.
   g_PendingSideSwap = false;
-  ConVar mp_match_restart_delay = FindConVar("mp_match_restart_delay");
-  SetConVarInt(mp_match_restart_delay, GetTvDelay() + MATCH_END_DELAY_AFTER_TV + 5);
+  SetMatchRestartDelay();
 
   for (int i = 0; i < 5; i++) {
     Get5_MessageToAll("%t", "MatchIsLiveInfoMessage");
@@ -65,4 +64,10 @@ public Action MatchLive(Handle timer) {
   ServerCommand("exec message.cfg");
 
   return Plugin_Handled;
+}
+
+public void SetMatchRestartDelay() {
+  ConVar mp_match_restart_delay = FindConVar("mp_match_restart_delay");
+  int delay = GetTvDelay() + MATCH_END_DELAY_AFTER_TV + 5;
+  SetConVarInt(mp_match_restart_delay, delay);
 }

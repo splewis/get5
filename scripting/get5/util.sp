@@ -209,12 +209,18 @@ stock bool IsPaused() {
 }
 
 // Pauses and returns if the match will automatically unpause after the duration ends.
-stock bool Pause(int pauseTime = 0, int csTeam = CS_TEAM_NONE, int pausesLeft = 1) {
+stock bool Pause(PauseType pauseType, int pauseTime = 0, int csTeam = CS_TEAM_NONE, int pausesLeft = 1) {
+  if (pauseType == PauseType_None) {
+    LogMessage("Pause() called with PauseType_None. Please call Unpause() instead.");
+    Unpause();
+    return false;
+  }
+
+  g_PauseType = pauseType;
+  ServerCommand("mp_pause_match");
   if (pauseTime == 0 || csTeam == CS_TEAM_SPECTATOR || csTeam == CS_TEAM_NONE) {
-    ServerCommand("mp_pause_match");
     return false;
   } else {
-    ServerCommand("mp_pause_match");
     if (csTeam == CS_TEAM_T) {
       GameRules_SetProp("m_bTerroristTimeOutActive", true);
       GameRules_SetPropFloat("m_flTerroristTimeOutRemaining", float(pauseTime));
@@ -229,6 +235,7 @@ stock bool Pause(int pauseTime = 0, int csTeam = CS_TEAM_NONE, int pausesLeft = 
 }
 
 stock void Unpause() {
+  g_PauseType = PauseType_None;
   ServerCommand("mp_unpause_match");
 }
 
@@ -476,7 +483,9 @@ stock bool IsPlayerTeam(MatchTeam team) {
 }
 
 public MatchTeam VetoFirstFromString(const char[] str) {
-  if (StrEqual(str, "team2", false)) {
+  if (StrEqual(str, "random", false)) {
+    return view_as<MatchTeam>(GetRandomInt(0, 1));
+  } else if (StrEqual(str, "team2", false)) {
     return MatchTeam_Team2;
   } else {
     return MatchTeam_Team1;
@@ -717,4 +726,22 @@ public bool DeleteFileIfExists(const char[] path) {
   }
 
   return true;
+}
+
+stock void GetPauseType(PauseType pause, char[] buffer, int len) {
+  if (pause == PauseType_Tech) {
+    Format(buffer, len, "technical");
+  } else if (pause == PauseType_Tactical) {
+    Format(buffer, len, "tactical");
+  } else {
+    Format(buffer, len, "unknown");
+  }
+}
+public bool IsJSONPath(const char[] path) {
+  int length = strlen(path);
+  if (length >= 5) {
+    return strcmp(path[length - 5], ".json", false) == 0;
+  } else {
+    return false;
+  }
 }

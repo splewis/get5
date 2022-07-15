@@ -38,6 +38,14 @@ enum SideChoice {
   SideChoice_KnifeRound,  // There will be a knife round to choose sides
 };
 
+enum PauseType {
+  PauseType_None,
+  PauseType_Tech,      // Technical pause
+  PauseType_Tactical,  // Tactical Pause
+  PauseType_Admin,     // Admin/RCON Pause
+  PauseType_Backup     // Special type for match pausing during backups.
+};
+
 // Called each get5-event with JSON formatted event text.
 forward void Get5_OnEvent(const char[] eventJson);
 
@@ -81,6 +89,12 @@ forward void Get5_OnSidePicked(MatchTeam team, const char[] map, int side);
 
 // Called when a demo finishes recording.
 forward void Get5_OnDemoFinished(const char[] filename);
+
+// Called when a match is paused.
+forward void Get5_OnMatchPaused(MatchTeam team, PauseType pauseReason);
+
+// Called when a match is unpaused.
+forward void Get5_OnMatchUnpaused(MatchTeam team);
 
 // Called when a match backup is restored.
 forward void Get5_OnBackupRestore();
@@ -177,6 +191,10 @@ native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount
 #define STAT_TEAMKILLS "teamkills"
 #define STAT_SUICIDES "suicides"
 #define STAT_DAMAGE "damage"
+#define STAT_UTILITY_DAMAGE "util_damage"
+#define STAT_ENEMIES_FLASHED "enemies_flashed"
+#define STAT_FRIENDLIES_FLASHED "friendlies_flashed"
+#define STAT_KNIFE_KILLS "knife_kills"
 #define STAT_HEADSHOT_KILLS "headshot_kills"
 #define STAT_ROUNDSPLAYED "roundsplayed"
 #define STAT_BOMBDEFUSES "bomb_defuses"

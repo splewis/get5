@@ -20,22 +20,22 @@ jobs:
       with:
         version: '1.10.x'
 
-    - run: wget $STEAMWORKS_URL -P steamworks
+    - run: | 
+        wget $STEAMWORKS_URL -P steamworks
+        mkdir -p $OUTPUT_SM_PATH/plugins/disabled
+        cp -R get5/cfg $OUTPUT_PATH
+        cp -R get5/translations $OUTPUT_SM_PATH
+        cp -R get5/configs $OUTPUT_SM_PATH
+        cp -R get5/scripting $OUTPUT_SM_PATH
+        cp get5/README.md $OUTPUT_PATH
+        cp get5/LICENSE $OUTPUT_PATH
+        spcomp get5/scripting/get5.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/get5.smx -E
+        spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_apistats.smx -E
+        spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx -E
 
-    - run: mkdir -p $OUTPUT_SM_PATH/plugins/disabled
-    - run: cp -R get5/cfg $OUTPUT_PATH
-    - run: cp -R get5/translations $OUTPUT_SM_PATH
-    - run: cp -R get5/configs $OUTPUT_SM_PATH
-    - run: cp -R get5/scripting $OUTPUT_SM_PATH
-    - run: cp get5/README.md $OUTPUT_PATH
-    - run: cp get5/LICENSE $OUTPUT_PATH
-    - run: spcomp get5/scripting/get5.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/get5.smx
-    - run: spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_apistats.smx
-    - run: spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx
-
-    - run: mkdir -p artifacts
-    - run: tar -zcvf artifacts/get5.tar.gz $OUTPUT_PATH/
-    - run: zip -r artifacts/get5.zip $OUTPUT_PATH/
+        mkdir -p artifacts
+        tar -zcvf artifacts/get5.tar.gz $OUTPUT_PATH/
+        zip -r artifacts/get5.zip $OUTPUT_PATH/
 
     - uses: actions/upload-artifact@v2
       with:

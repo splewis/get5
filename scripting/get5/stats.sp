@@ -6,7 +6,6 @@ public void Stats_PluginStart() {
   HookEvent("bomb_planted", Stats_BombPlantedEvent);
   HookEvent("bomb_defused", Stats_BombDefusedEvent);
   HookEvent("bomb_exploded", Stats_BombExplodedEvent);
-  HookEvent("flashbang_detonate", Stats_FlashbangDetonateEvent, EventHookMode_Pre);
   HookEvent("player_blind", Stats_PlayerBlindEvent);
   HookEvent("round_mvp", Stats_RoundMVPEvent);
 }
@@ -44,7 +43,6 @@ public void Stats_ResetRoundValues() {
 public void Stats_ResetClientRoundValues(int client) {
   g_RoundKills[client] = 0;
   g_RoundClutchingEnemyCount[client] = 0;
-  g_RoundFlashedBy[client] = 0;
   g_PlayerKilledBy[client] = -1;
   g_PlayerKilledByTime[client] = 0.0;
   g_PlayerRoundKillOrAssistOrTradedDeath[client] = false;
@@ -53,6 +51,9 @@ public void Stats_ResetClientRoundValues(int client) {
   for (int i = 1; i <= MaxClients; i++) {
     g_DamageDone[client][i] = 0;
     g_DamageDoneHits[client][i] = 0;
+    g_DamageDoneKill[client][i] = false;
+    g_DamageDoneAssist[client][i] = false;
+    g_DamageDoneFlashAssist[client][i] = false;
   }
 }
 
@@ -193,6 +194,7 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   int victim = GetClientOfUserId(event.GetInt("userid"));
   int assister = GetClientOfUserId(event.GetInt("assister"));
   bool headshot = event.GetBool("headshot");
+  bool assistedFlash = event.GetBool("assistedflash");
 
   char weapon[32];
   event.GetString("weapon", weapon, sizeof(weapon));
@@ -227,26 +229,48 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
       g_PlayerKilledBy[victim] = attacker;
       g_PlayerKilledByTime[victim] = GetGameTime();
+      g_DamageDoneKill[attacker][victim] = true;
       UpdateTradeStat(attacker, victim);
 
       IncrementPlayerStat(attacker, STAT_KILLS);
       g_PlayerRoundKillOrAssistOrTradedDeath[attacker] = true;
 
-      if (headshot)
+      if (headshot) {
         IncrementPlayerStat(attacker, STAT_HEADSHOT_KILLS);
-
-      if (IsValidClient(assister)) {
-        IncrementPlayerStat(assister, STAT_ASSISTS);
-        g_PlayerRoundKillOrAssistOrTradedDeath[assister] = true;
       }
 
-      int flasher = g_RoundFlashedBy[victim];
-      if (IsValidClient(flasher) && flasher != attacker)
-        IncrementPlayerStat(flasher, STAT_FLASHBANG_ASSISTS);
-      else
-        flasher = 0;
+      // We need the weapon ID to reliably translate to a knife. The regular "bayonet" - as the only
+      // knife -  is not prefixed with "knife" for whatever reason, so searching weapon name strings
+      // is unsafe.
+      CSWeaponID weaponId = CS_AliasToWeaponID(weapon);
 
-      EventLogger_PlayerDeath(attacker, victim, headshot, assister, flasher, weapon);
+      // Other than these constants, all knives can be found after CSWeapon_MAX_WEAPONS_NO_KNIFES.
+      // See https://sourcemod.dev/#/cstrike/enumeration.CSWeaponID
+      if (weaponId == CSWeapon_KNIFE || weaponId == CSWeapon_KNIFE_GG ||
+          weaponId == CSWeapon_KNIFE_T || weaponId == CSWeapon_KNIFE_GHOST ||
+          weaponId > CSWeapon_MAX_WEAPONS_NO_KNIFES) {
+        IncrementPlayerStat(attacker, STAT_KNIFE_KILLS);
+      }
+
+      // Assists should only count towards opposite team
+      if (HelpfulAttack(assister, victim)) {
+        // You cannot flash-assist and regular-assist for the same kill.
+        if (assistedFlash) {
+          IncrementPlayerStat(assister, STAT_FLASHBANG_ASSISTS);
+          g_DamageDoneFlashAssist[assister][victim] = true;
+        } else {
+          IncrementPlayerStat(assister, STAT_ASSISTS);
+          g_PlayerRoundKillOrAssistOrTradedDeath[assister] = true;
+          g_DamageDoneAssist[assister][victim] = true;
+        }
+
+      } else {
+        // Don't count friendly-fire assist at all.
+        assister = 0;
+        assistedFlash = false;
+      }
+
+      EventLogger_PlayerDeath(attacker, victim, headshot, assister, assistedFlash, weapon);
 
     } else {
       if (attacker == victim)
@@ -297,10 +321,8 @@ public Action Stats_DamageDealtEvent(Event event, const char[] name, bool dontBr
 
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
   int victim = GetClientOfUserId(event.GetInt("userid"));
-  bool validAttacker = IsValidClient(attacker);
-  bool validVictim = IsValidClient(victim);
 
-  if (validAttacker && validVictim) {
+  if (HelpfulAttack(attacker, victim)) {
     int preDamageHealth = GetClientHealth(victim);
     int damage = event.GetInt("dmg_health");
     int postDamageHealth = event.GetInt("health");
@@ -314,7 +336,19 @@ public Action Stats_DamageDealtEvent(Event event, const char[] name, bool dontBr
 
     g_DamageDone[attacker][victim] += damage;
     g_DamageDoneHits[attacker][victim]++;
+
     AddToPlayerStat(attacker, STAT_DAMAGE, damage);
+
+    // Damage can be dealt by throwing grenades "at" people, physically, but the regular score board
+    // does not count this as utility damage, so neither do we. Hence no 'smokegrenade' or
+    // 'flashbang' here.
+
+    char weapon[32];
+    event.GetString("weapon", weapon, sizeof(weapon));
+
+    if (StrEqual(weapon, "hegrenade") || StrEqual(weapon, "inferno")) {
+      AddToPlayerStat(attacker, STAT_UTILITY_DAMAGE, damage);
+    }
   }
 
   return Plugin_Continue;
@@ -364,36 +398,36 @@ public Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontB
   return Plugin_Continue;
 }
 
-public Action Stats_FlashbangDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
-    return Plugin_Continue;
-  }
-
-  int userid = event.GetInt("userid");
-  int client = GetClientOfUserId(userid);
-
-  if (IsValidClient(client)) {
-    g_LastFlashBangThrower = client;
-  }
-
-  return Plugin_Continue;
-}
-
-public Action Timer_ResetFlashStatus(Handle timer, int serial) {
-  int client = GetClientFromSerial(serial);
-  if (IsValidClient(client)) {
-    g_RoundFlashedBy[client] = -1;
-  }
-}
-
 public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live) {
     return Plugin_Continue;
   }
 
-  int userid = event.GetInt("userid");
-  int client = GetClientOfUserId(userid);
-  RequestFrame(GetFlashInfo, GetClientSerial(client));
+  float duration = event.GetFloat("blind_duration");
+
+  if (duration < 2.5) {
+    // 2.5 is an arbitrary value that closely matches the "enemies flashed" column of the in-game
+    // scoreboard.
+    return Plugin_Continue;
+  }
+
+  int victim = GetClientOfUserId(event.GetInt("userid"));
+  int attacker = GetClientOfUserId(event.GetInt("attacker"));
+
+  if (attacker == victim || !IsValidClient(attacker) || !IsValidClient(victim)) {
+    return Plugin_Continue;
+  }
+
+  int victimTeam = GetClientTeam(victim);
+  if (victimTeam == CS_TEAM_SPECTATOR || victimTeam == CS_TEAM_NONE) {
+    return Plugin_Continue;
+  }
+
+  if (GetClientTeam(attacker) != victimTeam) {
+    IncrementPlayerStat(attacker, STAT_ENEMIES_FLASHED);
+  } else {
+    IncrementPlayerStat(attacker, STAT_FRIENDLIES_FLASHED);
+  }
 
   return Plugin_Continue;
 }
@@ -411,18 +445,6 @@ public Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroad
   }
 
   return Plugin_Continue;
-}
-
-public void GetFlashInfo(int serial) {
-  int client = GetClientFromSerial(serial);
-  if (IsValidClient(client)) {
-    float flashDuration =
-        GetEntDataFloat(client, FindSendPropInfo("CCSPlayer", "m_flFlashDuration"));
-    if (flashDuration >= 2.5) {
-      g_RoundFlashedBy[client] = g_LastFlashBangThrower;
-    }
-    CreateTimer(flashDuration, Timer_ResetFlashStatus, serial);
-  }
 }
 
 static int GetPlayerStat(int client, const char[] field) {
@@ -517,8 +539,70 @@ static int GetClutchingClient(int csTeam) {
 public void DumpToFile() {
   char path[PLATFORM_MAX_PATH + 1];
   if (FormatCvarString(g_StatsPathFormatCvar, path, sizeof(path))) {
-    g_StatsKv.ExportToFile(path);
+    DumpToFilePath(path);
   }
+}
+
+public bool DumpToFilePath(const char[] path) {
+  return IsJSONPath(path) ? DumpToJSONFile(path) : g_StatsKv.ExportToFile(path);
+}
+
+public bool DumpToJSONFile(const char[] path) {
+  g_StatsKv.Rewind();
+  g_StatsKv.GotoFirstSubKey(false);
+  JSON_Object stats = EncodeKeyValue(g_StatsKv);
+  g_StatsKv.Rewind();
+
+  File stats_file = OpenFile(path, "w");
+  if (stats_file == null) {
+    LogError("Failed to open stats file");
+    return false;
+  }
+
+  // Mark the JSON buffer static to avoid running into limited haep/stack space, see
+  // https://forums.alliedmods.net/showpost.php?p=2620835&postcount=6
+  static char jsonBuffer[65536];  // 64 KiB
+  stats.Encode(jsonBuffer, sizeof(jsonBuffer));
+  json_cleanup_and_delete(stats);
+  stats_file.WriteString(jsonBuffer, false);
+
+  stats_file.Flush();
+  stats_file.Close();
+
+  return true;
+}
+
+JSON_Object EncodeKeyValue(KeyValues kv) {
+  char keyBuffer[256];
+  char valBuffer[256];
+  char sectionName[256];
+  JSON_Object json_kv = new JSON_Object();
+
+  do {
+    if (kv.GotoFirstSubKey(false)) {
+      // Current key is a section. Browse it recursively.
+      JSON_Object obj = EncodeKeyValue(kv);
+      kv.GoBack();
+      kv.GetSectionName(sectionName, sizeof(sectionName));
+      json_kv.SetObject(sectionName, obj);
+    } else {
+      // Current key is a regular key, or an empty section.
+      KvDataTypes keyType = kv.GetDataType(NULL_STRING);
+      kv.GetSectionName(keyBuffer, sizeof(keyBuffer));
+      if (keyType == KvData_String) {
+        kv.GetString(NULL_STRING, valBuffer, sizeof(valBuffer));
+        json_kv.SetString(keyBuffer, valBuffer);
+      } else if (keyType == KvData_Int) {
+        json_kv.SetInt(keyBuffer, kv.GetNum(NULL_STRING));
+      } else if (keyType == KvData_Float) {
+        json_kv.SetFloat(keyBuffer, kv.GetFloat(NULL_STRING));
+      } else {
+        LogDebug("Can't JSON encode key '%s' with type %d", keyBuffer, keyType);
+      }
+    }
+  } while (kv.GotoNextKey(false));
+
+  return json_kv;
 }
 
 static void PrintDamageInfo(int client) {
@@ -540,11 +624,31 @@ static void PrintDamageInfo(int client) {
 
       g_DamagePrintFormat.GetString(message, sizeof(message));
       ReplaceStringWithInt(message, sizeof(message), "{DMG_TO}", g_DamageDone[client][i], false);
-      ReplaceStringWithInt(message, sizeof(message), "{HITS_TO}", g_DamageDoneHits[client][i],
-                           false);
+      ReplaceStringWithInt(message, sizeof(message), "{HITS_TO}", g_DamageDoneHits[client][i], false);
+
+      if (g_DamageDoneKill[client][i]) {
+          ReplaceString(message, sizeof(message), "{KILL_TO}", "{GREEN}X{NORMAL}", false);
+      } else if (g_DamageDoneAssist[client][i]) {
+          ReplaceString(message, sizeof(message), "{KILL_TO}", "{YELLOW}A{NORMAL}", false);
+      } else if (g_DamageDoneFlashAssist[client][i]) {
+          ReplaceString(message, sizeof(message), "{KILL_TO}", "{YELLOW}F{NORMAL}", false);
+      } else {
+          ReplaceString(message, sizeof(message), "{KILL_TO}", "–", false);
+      }
+
       ReplaceStringWithInt(message, sizeof(message), "{DMG_FROM}", g_DamageDone[i][client], false);
-      ReplaceStringWithInt(message, sizeof(message), "{HITS_FROM}", g_DamageDoneHits[i][client],
-                           false);
+      ReplaceStringWithInt(message, sizeof(message), "{HITS_FROM}", g_DamageDoneHits[i][client], false);
+
+      if (g_DamageDoneKill[i][client]) {
+          ReplaceString(message, sizeof(message), "{KILL_FROM}", "{DARK_RED}X{NORMAL}", false);
+      } else if (g_DamageDoneAssist[i][client]) {
+          ReplaceString(message, sizeof(message), "{KILL_FROM}", "{YELLOW}A{NORMAL}", false);
+      } else if (g_DamageDoneFlashAssist[i][client]) {
+          ReplaceString(message, sizeof(message), "{KILL_FROM}", "{YELLOW}F{NORMAL}", false);
+      } else {
+          ReplaceString(message, sizeof(message), "{KILL_FROM}", "–", false);
+      }
+
       ReplaceString(message, sizeof(message), "{NAME}", name, false);
       ReplaceStringWithInt(message, sizeof(message), "{HEALTH}", health, false);
 

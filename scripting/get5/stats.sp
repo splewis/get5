@@ -199,6 +199,7 @@ public void Stats_ResetClientRoundValues(int client) {
 }
 
 public void Stats_ResetGrenadeContainers() {
+  LogDebug("Clearing out any lingering events in grenade StringMaps...");
 
   // If any molotovs were active on the previous round when it ended (or on halftime/game end), we need to fetch those
   // and end the events, as their extinguish event will never fire. They are not on a timer like flashes and HEs.
@@ -207,7 +208,7 @@ public void Stats_ResetGrenadeContainers() {
     int keySize = molotovSnap.KeyBufferSize(i);
     char[] key = new char[keySize];
     molotovSnap.GetKey(i, key, keySize);
-    LogDebug("Ending molotov grenade entity %s due to round end.", key);
+    LogDebug("Ending molotov grenade entity %s.", key);
     EndMolotovEvent(key);
   }
   delete molotovSnap;
@@ -222,7 +223,7 @@ public void Stats_ResetGrenadeContainers() {
     int keySize = heSnap.KeyBufferSize(i);
     char[] key = new char[keySize];
     heSnap.GetKey(i, key, keySize);
-    LogDebug("Ending HE grenade entity %s due to round end.", key);
+    LogDebug("Ending HE grenade entity %s.", key);
     EndHEEvent(key);
   }
   delete heSnap;
@@ -232,7 +233,7 @@ public void Stats_ResetGrenadeContainers() {
     int keySize = flashSnap.KeyBufferSize(i);
     char[] key = new char[keySize];
     flashSnap.GetKey(i, key, keySize);
-    LogDebug("Ending flashbang grenade entity %s due to round end.", key);
+    LogDebug("Ending flashbang grenade entity %s.", key);
     EndFlashbangEvent(key);
   }
   delete flashSnap;

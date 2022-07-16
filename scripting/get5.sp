@@ -1282,6 +1282,12 @@ public void EndSeries() {
 
 public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundPreStart");
+
+  if (g_GameState == Get5State_Live) {
+    // End lingering grenade trackers from previous round.
+    Stats_ResetGrenadeContainers();
+  }
+
   if (g_PendingSideSwap) {
     g_PendingSideSwap = false;
     SwapSides();
@@ -1337,36 +1343,29 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   // map has been decided, but before the game actually stops, which could lead to events having the wrong map number.
   g_MapNumber = Get5_GetMapNumber();
 
-  if (g_GameState == Get5State_Live) {
-
-    // Just to make sure nothing carries over between rounds to mess with this, we clear out these on each round start.
-    Stats_ResetGrenadeContainers();
-
-    // The same logic for tracking after-round-end events apply to g_RoundNumber, so that's set here as well.
-    g_RoundNumber = GetRoundsPlayed();
-
-    Get5RoundStartedEvent startEvent = new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
-
-    LogDebug("Calling Get5_OnRoundStart()");
-
-    Call_StartForward(g_OnRoundStart);
-    Call_PushCell(startEvent);
-    Call_Finish();
-
-    EventLogger_LogAndDeleteEvent(startEvent);
-
-  } else {
-    g_RoundNumber = -1; // Round number always -1 if not yet live.
-  }
-
   // Always reset these on round start, regardless of game state.
   // This ensures that the functions that rely on these don't get messed up.
-  // These go *after* Stats_ResetGrenadeContainers to ensure molotov burn durations
-  // don't become incorrect.
   g_RoundStartedTime = 0.0;
   g_BombPlantedTime = 0.0;
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
+  if (g_GameState != Get5State_Live) {
+    g_RoundNumber = -1; // Round number always -1 if not yet live.
+    return;
+  }
+
+  // The same logic for tracking after-round-end events apply to g_RoundNumber, so that's set here as well.
+  g_RoundNumber = GetRoundsPlayed();
+
+  Get5RoundStartedEvent startEvent = new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
+
+  LogDebug("Calling Get5_OnRoundStart()");
+
+  Call_StartForward(g_OnRoundStart);
+  Call_PushCell(startEvent);
+  Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(startEvent);
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {

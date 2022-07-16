@@ -125,6 +125,7 @@ int g_MinPlayersToReady = 1;
 int g_MinSpectatorsToReady = 0;
 float g_RoundStartedTime = 0.0;
 float g_BombPlantedTime = 0.0;
+Get5BombSite g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
 bool g_SkipVeto = false;
 float g_VetoMenuTime = 0.0;
@@ -1364,6 +1365,7 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   // don't become incorrect.
   g_RoundStartedTime = 0.0;
   g_BombPlantedTime = 0.0;
+  g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
 }
 

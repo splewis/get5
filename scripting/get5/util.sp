@@ -142,6 +142,19 @@ stock void ConvertGet5PauseTypeToStringInJson(const JSON_Object obj, const char[
 }
 
 /**
+ * Used to consistently convert Get5BombSite to 'a', 'b' or null.
+ */
+stock void ConvertBombSiteToStringInJson(const JSON_Object obj, const char[] key, const Get5BombSite site) {
+  if (site == Get5BombSite_A) {
+    obj.SetString(key, "a");
+  } else if (site == Get5BombSite_B) {
+    obj.SetString(key, "b");
+  } else {
+    obj.SetObject(key, null);
+  }
+}
+
+/**
  * Used to consistently set string keys on JSON objects that receive a Get5State parameter.
  */
 stock void ConvertGameStateToStringInJson(const JSON_Object obj, const char[] key, const Get5State state) {
@@ -809,4 +822,31 @@ public int GetMilliSecondsPassedSince(float timestamp) {
 
 public int GetRoundsPlayed() {
   return GameRules_GetProp("m_totalRoundsPlayed");
+}
+
+// Not entirely sure how this works, but it does work.
+// Also tested on Nuke with bombsites right on top of each other.
+stock Get5BombSite GetNearestBombsite(int client)
+{
+	int playerResource = GetPlayerResourceEntity();
+
+	if (playerResource == INVALID_ENT_REFERENCE)
+	{
+		return Get5BombSite_Unknown;
+	}
+
+	float pos[3];
+	GetClientAbsOrigin(client, pos);
+
+	float aCenter[3], bCenter[3];
+	GetEntPropVector(playerResource, Prop_Send, "m_bombsiteCenterA", aCenter);
+	GetEntPropVector(playerResource, Prop_Send, "m_bombsiteCenterB", bCenter);
+
+	float aDist = GetVectorDistance(aCenter, pos, true);
+	float bDist = GetVectorDistance(bCenter, pos, true);
+
+	LogDebug("Bomb planted, distance to A: %d", aDist);
+	LogDebug("Bomb planted, distance to B: %d", bDist);
+
+	return (aDist < bDist) ? Get5BombSite_A : Get5BombSite_B;
 }

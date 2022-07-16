@@ -1061,10 +1061,11 @@ components:
             the grenade. `BlindDuration` in SourceMod.
       description: Describes a victim of a flash bang.
     Get5Site:
-      type: integer
-      example: 342
-      description: The site index at which the bomb was planted on. This varies
-        for each map and might change when the maps are updated. `Site` in SourceMod.
+      type: string
+      enum:
+        - a
+        - b
+      description: The site at which the bomb was planted/defused or exploded. `Site` in SourceMod.
 
 tags:
   - name: All Events

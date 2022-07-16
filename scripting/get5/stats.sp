@@ -869,6 +869,8 @@ public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBr
   int client = GetClientOfUserId(event.GetInt("userid"));
   
   if (IsValidClient(client)) {
+
+    g_BombSiteLastPlanted = GetNearestBombsite(client);
     IncrementPlayerStat(client, STAT_BOMBPLANTS);
 
     Get5BombPlantedEvent bombEvent = new Get5BombPlantedEvent(
@@ -877,7 +879,7 @@ public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBr
       g_RoundNumber,
       GetRoundTime(),
       GetPlayerObject(client),
-      event.GetInt("site")
+      g_BombSiteLastPlanted
     );
 
     LogDebug("Calling Get5_OnBombPlanted()");
@@ -914,7 +916,7 @@ public Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBr
       g_RoundNumber,
       GetRoundTime(),
       GetPlayerObject(client),
-      event.GetInt("site"),
+      g_BombSiteLastPlanted,
       timeRemaining
     );
 
@@ -941,7 +943,7 @@ public Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontB
     g_MapNumber,
     g_RoundNumber,
     GetRoundTime(),
-    event.GetInt("site")
+    g_BombSiteLastPlanted
   );
 
   LogDebug("Calling Get5_OnBombExploded()");

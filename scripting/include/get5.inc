@@ -13,6 +13,12 @@ enum Get5Side {
   Get5Side_CT = CS_TEAM_CT
 };
 
+enum Get5BombSite {
+  Get5BombSite_Unknown = 0,
+  Get5BombSite_A = 1,
+  Get5BombSite_B = 2
+};
+
 #define MATCHTEAM_COUNT 4
 
 enum MatchTeam {
@@ -1388,13 +1394,15 @@ methodmap Get5BlindedGrenadeVictim < Get5GrenadeVictim {
 
 methodmap Get5BombEvent < Get5TimedRoundEvent {
 
-    property int Site {
+    property Get5BombSite Site {
         public get() {
-          return this.GetInt("site");
+          return view_as<Get5BombSite>(this.GetInt("site_int"));
         }
 
-        public set(int site) {
-          this.SetInt("site", site);
+        public set(Get5BombSite site) {
+          this.SetInt("site_int", view_as<int>(site));
+          this.SetHidden("site_int", true);
+          ConvertBombSiteToStringInJson(this, "site", site);
         }
     }
 
@@ -1402,13 +1410,15 @@ methodmap Get5BombEvent < Get5TimedRoundEvent {
 
 methodmap Get5PlayerBombEvent < Get5PlayerTimedRoundEvent {
 
-    property int Site {
+    property Get5BombSite Site {
         public get() {
-          return this.GetInt("site");
+          return view_as<Get5BombSite>(this.GetInt("site_int"));
         }
 
-        public set(int site) {
-          this.SetInt("site", site);
+        public set(Get5BombSite site) {
+          this.SetInt("site_int", view_as<int>(site));
+          this.SetHidden("site_int", true);
+          ConvertBombSiteToStringInJson(this, "site", site);
         }
     }
 
@@ -1416,7 +1426,7 @@ methodmap Get5PlayerBombEvent < Get5PlayerTimedRoundEvent {
 
 methodmap Get5BombPlantedEvent < Get5PlayerBombEvent {
 
-    public Get5BombPlantedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, const int site) {
+    public Get5BombPlantedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, const Get5BombSite site) {
         Get5BombPlantedEvent self = view_as<Get5BombPlantedEvent>(new JSON_Object());
         self.SetEvent("bomb_planted");
         self.SetMatchId(matchId);
@@ -1431,7 +1441,7 @@ methodmap Get5BombPlantedEvent < Get5PlayerBombEvent {
 
 methodmap Get5BombExplodedEvent < Get5BombEvent {
 
-    public Get5BombExplodedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const int site) {
+    public Get5BombExplodedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5BombSite site) {
         Get5BombExplodedEvent self = view_as<Get5BombExplodedEvent>(new JSON_Object());
         self.SetEvent("bomb_exploded");
         self.SetMatchId(matchId);
@@ -1455,7 +1465,7 @@ methodmap Get5BombDefusedEvent < Get5PlayerBombEvent {
         }
     }
 
-    public Get5BombDefusedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, const int site, const int timeRemaining) {
+    public Get5BombDefusedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, const Get5BombSite site, const int timeRemaining) {
         Get5BombDefusedEvent self = view_as<Get5BombDefusedEvent>(new JSON_Object());
         self.SetEvent("bomb_defused");
         self.SetMatchId(matchId);

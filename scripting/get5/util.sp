@@ -845,8 +845,7 @@ stock Get5BombSite GetNearestBombsite(int client)
 	float aDist = GetVectorDistance(aCenter, pos, true);
 	float bDist = GetVectorDistance(bCenter, pos, true);
 
-	LogDebug("Bomb planted, distance to A: %d", aDist);
-	LogDebug("Bomb planted, distance to B: %d", bDist);
+	LogDebug("Bomb planted. Distance to A: %d. Distance to B: %d.", aDist, bDist);
 
 	return (aDist < bDist) ? Get5BombSite_A : Get5BombSite_B;
 }

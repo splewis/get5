@@ -583,7 +583,7 @@ paths:
       tags:
         - Client Actions
       description: |
-        Fired when a player dies. Note that `attacker` is `null` if the player was not killed by a player (i.e. suicide from falling).
+        Fired when a player dies.
       requestBody:
         content:
           application/json:
@@ -1043,16 +1043,22 @@ components:
         - backup
     Get5Player:
       type: object
-      nullable: true
       properties:
         steamid:
           type: string
           example: '76561198279375306'
           description: The SteamID64 of the player. `GetSteamId()` and `SetSteamId()`
-            in SourceMod.
+            in SourceMod. This will be `BOT-%d` if the player is a bot, where `%d` is the client index. This is required to be able to distinguish bots from each other. The string will be empty for Console and GOTV (although we *should* never see this in practice).
         side:
           $ref: "#/components/schemas/Get5Side"
-      description: Describes a player. `Player` in SourceMod (or `Attacker` on `Get5PlayerDeathEvent` - use `HasAttacker()` on that object to ensure that it is not `null`.).
+        name:
+          type: string
+          description: The in-game name of the player. If the player is a bot, this will be "BOT Gary" etc. `GetName()` and `SetName()` in SourceMod.
+          example: s1mple
+        is_bot:
+          type: boolean
+          description: Indicates if the player is a bot. `IsBot` in SourceMod.
+      description: Describes a player. `Player` in SourceMod (or `Attacker` on `Get5PlayerDeathEvent`).
     Get5Weapon:
       type: object
       properties:

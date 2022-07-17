@@ -136,12 +136,27 @@ public Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, floa
 
 public Get5Player GetPlayerObject(int client) {
 
-  if (client > 0 && IsAuthedPlayer(client)) {
+  if (client == 0) {
+    return new Get5Player("", view_as<Get5Side>(CS_TEAM_NONE), "Console", false);
+  }
+
+  if (IsClientSourceTV(client)) {
+    return new Get5Player("", view_as<Get5Side>(CS_TEAM_NONE), "GOTV", false);
+  }
+
+  Get5Side side = view_as<Get5Side>(GetClientTeam(client));
+
+  char name[MAX_NAME_LENGTH];
+  GetClientName(client, name, sizeof(name));
+
+  if (IsAuthedPlayer(client)) {
     char auth[20];
     GetAuth(client, auth, sizeof(auth));
-    return new Get5Player(auth, view_as<Get5Side>(GetClientTeam(client)), true);
+    return new Get5Player(auth, side, name, false);
   } else {
-    return new Get5Player("", view_as<Get5Side>(CS_TEAM_NONE), false);
+    char botId[8];
+    Format(botId, sizeof(botId), "BOT-%d", client);
+    return new Get5Player(botId, side, name, true);
   }
 
 }

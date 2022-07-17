@@ -265,25 +265,30 @@ methodmap Get5Player < JSON_Object {
         return this.GetString("steamid", buffer, maxSize);
     }
 
-    // Used to determine if we should print null in JSON output.
-    // A player object may be null on a death event if the "attacker" is world (suicide).
-    // You can also use this in SourceMod to determine if the Get5Player object represents a real player or
-    // a placeholder with no team or steam ID.
-    property bool IsValid {
+    public bool SetName(const char[] value)
+    {
+        return this.SetString("name", value);
+    }
+
+    public bool GetName(char[] buffer, const int maxSize) {
+        return this.GetString("name", buffer, maxSize);
+    }
+
+    property bool IsBot {
       public get() {
-        return this.GetBool("valid_player");
+        return this.GetBool("is_bot");
       }
-      public set(bool valid) {
-        this.SetBool("valid_player", valid);
-        this.SetHidden("valid_player", true);
+      public set(bool bot) {
+        this.SetBool("is_bot", bot);
       }
     }
 
-    public Get5Player(const char[] steamId, Get5Side side, bool valid) {
+    public Get5Player(const char[] steamId, const Get5Side side, const char[] name, const bool isBot) {
         Get5Player self = view_as<Get5Player>(new JSON_Object());
         self.SetSteamId(steamId);
         self.Side = side;
-        self.IsValid = valid;
+        self.SetName(name);
+        self.IsBot = isBot;
         return self;
     }
 

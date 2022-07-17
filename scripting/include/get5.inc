@@ -1239,13 +1239,9 @@ methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
       }
   }
 
-  // Use these before accessing "nullable" objects, as their getters will raise an exception if null.
+  // Use before accessing "Assist", as its getter will raise an exception if null.
   public bool HasAssist() {
     return this.GetObject("assist") != null;
-  }
-
-  public bool HasAttacker() {
-    return this.GetObject("attacker") != null;
   }
 
   public Get5PlayerDeathEvent(
@@ -1257,6 +1253,7 @@ methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
     const Get5Player victim,
     const bool headshot,
     const bool friendlyFire,
+    const Get5Player attacker,
     const bool thruSmoke,
     const bool noScope,
     const bool attackerBlind,
@@ -1274,15 +1271,15 @@ methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
         self.Player = victim;
         self.Headshot = headshot;
         self.FriendlyFire = friendlyFire;
+        self.Attacker = attacker;
         self.ThruSmoke = thruSmoke;
         self.NoScope = noScope;
         self.AttackerBlind = attackerBlind;
         self.Suicide = suicide;
         self.Penetrated = penetrated;
 
-        // set nullables to null initially
+        // set assist to null initially
         self.SetObject("assist", null);
-        self.SetObject("attacker", null);
         return self;
 
     }

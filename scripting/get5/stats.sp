@@ -811,17 +811,13 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
     GetPlayerObject(victim),
     headshot,
     validAttacker ? attackerTeam == victimTeam : false,
+    GetPlayerObject(attacker),
     event.GetBool("thrusmoke"),
     event.GetBool("noscope"),
     event.GetBool("attackerblind"),
     isSuicide,
     event.GetInt("penetrated")
   );
-
-  if (validAttacker) {
-    // Initially null to allow the JSON output to be null for invalid attacker (world etc.)
-    playerDeathEvent.Attacker = GetPlayerObject(attacker);
-  }
 
   if (validAssister) {
 

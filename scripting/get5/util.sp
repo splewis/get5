@@ -15,7 +15,7 @@ static char _colorCodes[][] = {"\x01", "\x02", "\x03", "\x04", "\x05", "\x06",
                                "\x07", "\x08", "\x09", "\x0B", "\x0C", "\x0E"};
 
 // Convenience macros.
-#define LOOP_TEAMS(%1) for (MatchTeam %1 = MatchTeam_Team1; %1 < MatchTeam_Count; %1 ++)
+#define LOOP_TEAMS(%1) for (Get5Team %1 = Get5Team_1; %1 < Get5Team_Count; %1 ++)
 #define LOOP_CLIENTS(%1) for (int %1 = 0; %1 <= MaxClients; %1 ++)
 
 // These match CS:GO's m_gamePhase values.
@@ -109,15 +109,15 @@ stock void ConvertGet5SideToStringInJson(const JSON_Object obj, const char[] key
 }
 
 /**
- * Used to consistently set string keys on JSON objects that receive a MatchTeam parameter, which
+ * Used to consistently set string keys on JSON objects that receive a Get5Team parameter, which
  * should be output as team1, team2, spec or null in JSON.
  */
-stock void ConvertGet5TeamToStringInJson(const JSON_Object obj, const char[] key, MatchTeam team) {
-  if (team == MatchTeam_Team1) {
+stock void ConvertGet5TeamToStringInJson(const JSON_Object obj, const char[] key, Get5Team team) {
+  if (team == Get5Team_1) {
     obj.SetString(key, "team1");
-  } else if (team == MatchTeam_Team2) {
+  } else if (team == Get5Team_2) {
     obj.SetString(key, "team2");
-  } else if (team == MatchTeam_TeamSpec) {
+  } else if (team == Get5Team_Spec) {
     obj.SetString(key, "spec");
   } else {
     obj.SetObject(key, null);
@@ -355,7 +355,7 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
   if (g_ReadyTeamTagCvar.BoolValue) {
     if ((g_GameState == Get5State_Warmup || g_GameState == Get5State_PreVeto) &&
         !g_DoingBackupRestoreNow) {
-      MatchTeam matchTeam = CSTeamToMatchTeam(csTeam);
+      Get5Team matchTeam = CSTeamToMatchTeam(csTeam);
       if (IsTeamReady(matchTeam)) {
         Format(taggedName, sizeof(taggedName), "%T %s", "ReadyTag", LANG_SERVER, name);
       } else {
@@ -551,27 +551,27 @@ stock int OtherCSTeam(int team) {
   }
 }
 
-stock MatchTeam OtherMatchTeam(MatchTeam team) {
-  if (team == MatchTeam_Team1) {
-    return MatchTeam_Team2;
-  } else if (team == MatchTeam_Team2) {
-    return MatchTeam_Team1;
+stock Get5Team OtherMatchTeam(Get5Team team) {
+  if (team == Get5Team_1) {
+    return Get5Team_2;
+  } else if (team == Get5Team_2) {
+    return Get5Team_1;
   } else {
     return team;
   }
 }
 
-stock bool IsPlayerTeam(MatchTeam team) {
-  return team == MatchTeam_Team1 || team == MatchTeam_Team2;
+stock bool IsPlayerTeam(Get5Team team) {
+  return team == Get5Team_1 || team == Get5Team_2;
 }
 
-public MatchTeam VetoFirstFromString(const char[] str) {
+public Get5Team VetoFirstFromString(const char[] str) {
   if (StrEqual(str, "random", false)) {
-    return view_as<MatchTeam>(GetRandomInt(0, 1));
+    return view_as<Get5Team>(GetRandomInt(0, 1));
   } else if (StrEqual(str, "team2", false)) {
-    return MatchTeam_Team2;
+    return Get5Team_2;
   } else {
-    return MatchTeam_Team1;
+    return Get5Team_1;
   }
 }
 
@@ -617,12 +617,12 @@ stock void CSTeamString(int csTeam, char[] buffer, int len) {
   }
 }
 
-stock void GetTeamString(MatchTeam team, char[] buffer, int len) {
-  if (team == MatchTeam_Team1) {
+stock void GetTeamString(Get5Team team, char[] buffer, int len) {
+  if (team == Get5Team_1) {
     Format(buffer, len, "team1");
-  } else if (team == MatchTeam_Team2) {
+  } else if (team == Get5Team_2) {
     Format(buffer, len, "team2");
-  } else if (team == MatchTeam_TeamSpec) {
+  } else if (team == Get5Team_Spec) {
     Format(buffer, len, "spec");
   } else {
     Format(buffer, len, "none");

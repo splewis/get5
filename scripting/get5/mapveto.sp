@@ -11,12 +11,12 @@ public void CreateVeto() {
         g_MapPoolList.Length);
   }
 
-  g_VetoCaptains[MatchTeam_Team1] = GetTeamCaptain(MatchTeam_Team1);
-  g_VetoCaptains[MatchTeam_Team2] = GetTeamCaptain(MatchTeam_Team2);
+  g_VetoCaptains[Get5Team_1] = GetTeamCaptain(Get5Team_1);
+  g_VetoCaptains[Get5Team_2] = GetTeamCaptain(Get5Team_2);
   ResetReadyStatus();
   if (g_PauseOnVetoCvar.BoolValue) {
     if (g_PausingEnabledCvar.BoolValue){
-      PauseGame(MatchTeam_TeamNone, Get5PauseType_Admin, 1);
+      PauseGame(Get5Team_None, Get5PauseType_Admin, 1);
     }
     else {
       ServerCommand("mp_pause_match");
@@ -29,7 +29,7 @@ public Action Timer_VetoCountdown(Handle timer) {
   static int warningsPrinted = 0;
   if (warningsPrinted >= g_VetoCountdownCvar.IntValue) {
     warningsPrinted = 0;
-    MatchTeam startingTeam = OtherMatchTeam(g_LastVetoTeam);
+    Get5Team startingTeam = OtherMatchTeam(g_LastVetoTeam);
     VetoController(g_VetoCaptains[startingTeam]);
     return Plugin_Stop;
   } else {
@@ -55,7 +55,7 @@ public void VetoFinished() {
   }
   
   // Use total series score as starting point, to not print skipped maps
-  int seriesScore = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
+  int seriesScore = g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2];
   for (int i = seriesScore; i < g_MapsToPlay.Length; i++) {
     char map[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(i, map, sizeof(map));
@@ -69,7 +69,7 @@ public void VetoFinished() {
 // Main Veto Controller
 
 public void VetoController(int client) {
-  if (!IsPlayer(client) || GetClientMatchTeam(client) == MatchTeam_TeamSpec) {
+  if (!IsPlayer(client) || GetClientMatchTeam(client) == Get5Team_Spec) {
     AbortVeto();
   }
 
@@ -79,7 +79,7 @@ public void VetoController(int client) {
   int mapsPicked = g_MapsToPlay.Length;
   int sidesSet = g_MapSides.Length;
 
-  int seriesScore = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2];
+  int seriesScore = g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2];
 
   // This is a dirty hack to get ban/ban/pick/pick/ban/ban
   // instead of straight vetoing until the maplist is the length
@@ -168,7 +168,7 @@ public void VetoController(int client) {
       g_MapSides.Push(SideChoice_Team1CT);
     }
 
-    Get5MapPickedEvent event = new Get5MapPickedEvent(g_MatchID, MatchTeam_TeamNone, mapName, g_MapsToPlay.Length - 1);
+    Get5MapPickedEvent event = new Get5MapPickedEvent(g_MatchID, Get5Team_None, mapName, g_MapsToPlay.Length - 1);
 
     LogDebug("Calling Get5_OnMapPicked()");
 
@@ -269,7 +269,7 @@ public void GiveMapVetoMenu(int client) {
 public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     int client = param1;
-    MatchTeam team = GetClientMatchTeam(client);
+    Get5Team team = GetClientMatchTeam(client);
     char mapName[PLATFORM_MAX_PATH];
     menu.GetItem(param2, mapName, sizeof(mapName));
 
@@ -335,7 +335,7 @@ public void GiveMapPickMenu(int client) {
 public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     int client = param1;
-    MatchTeam team = GetClientMatchTeam(client);
+    Get5Team team = GetClientMatchTeam(client);
     char mapName[PLATFORM_MAX_PATH];
     menu.GetItem(param2, mapName, sizeof(mapName));
 
@@ -397,7 +397,7 @@ public void GiveSidePickMenu(int client) {
 public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     int client = param1;
-    MatchTeam team = GetClientMatchTeam(client);
+    Get5Team team = GetClientMatchTeam(client);
     char choice[PLATFORM_MAX_PATH];
     menu.GetItem(param2, choice, sizeof(choice));
 
@@ -415,13 +415,13 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
     int selectedSide;
     if (StrEqual(choice, "CT")) {
       selectedSide = CS_TEAM_CT;
-      if (team == MatchTeam_Team1)
+      if (team == Get5Team_1)
         g_MapSides.Push(SideChoice_Team1CT);
       else
         g_MapSides.Push(SideChoice_Team1T);
     } else {
       selectedSide = CS_TEAM_T;
-      if (team == MatchTeam_Team1)
+      if (team == Get5Team_1)
         g_MapSides.Push(SideChoice_Team1T);
       else
         g_MapSides.Push(SideChoice_Team1CT);

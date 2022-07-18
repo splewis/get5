@@ -237,8 +237,8 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
 }
 
 public void UpdateRoundStats(const char[] matchId, int mapNumber) {
-  int t1score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(MatchTeam_Team1));
-  int t2score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(MatchTeam_Team2));
+  int t1score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(Get5Team_1));
+  int t2score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(Get5Team_2));
 
   Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/update", matchId, mapNumber);
   if (req != INVALID_HANDLE) {
@@ -253,11 +253,11 @@ public void UpdateRoundStats(const char[] matchId, int mapNumber) {
   Format(mapKey, sizeof(mapKey), "map%d", mapNumber);
   if (kv.JumpToKey(mapKey)) {
     if (kv.JumpToKey("team1")) {
-      UpdatePlayerStats(matchId, kv, MatchTeam_Team1);
+      UpdatePlayerStats(matchId, kv, Get5Team_1);
       kv.GoBack();
     }
     if (kv.JumpToKey("team2")) {
-      UpdatePlayerStats(matchId, kv, MatchTeam_Team2);
+      UpdatePlayerStats(matchId, kv, Get5Team_2);
       kv.GoBack();
     }
     kv.GoBack();
@@ -286,7 +286,7 @@ static void AddIntStat(Handle req, KeyValues kv, const char[] field) {
   AddIntParam(req, field, kv.GetNum(field));
 }
 
-public void UpdatePlayerStats(const char[] matchId, KeyValues kv, MatchTeam team) {
+public void UpdatePlayerStats(const char[] matchId, KeyValues kv, Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
   int mapNumber = Get5_GetMapNumber();

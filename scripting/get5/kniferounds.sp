@@ -37,9 +37,9 @@ public Action Timer_AnnounceKnife(Handle timer) {
 
 static void PerformSideSwap(bool swap) {
   if (swap) {
-    int tmp = g_TeamSide[MatchTeam_Team2];
-    g_TeamSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team1];
-    g_TeamSide[MatchTeam_Team1] = tmp;
+    int tmp = g_TeamSide[Get5Team_2];
+    g_TeamSide[Get5Team_2] = g_TeamSide[Get5Team_1];
+    g_TeamSide[Get5Team_1] = tmp;
 
     for (int i = 1; i <= MaxClients; i++) {
       if (IsValidClient(i)) {
@@ -57,17 +57,17 @@ static void PerformSideSwap(bool swap) {
     // Make sure g_MapSides has the correct values as well,
     // that way set starting teams won't swap on round 0,
     // since a temp valve backup does not exist.
-    if (g_TeamSide[MatchTeam_Team1] == CS_TEAM_CT)
+    if (g_TeamSide[Get5Team_1] == CS_TEAM_CT)
       g_MapSides.Set(Get5_GetMapNumber(), SideChoice_Team1CT);
     else
       g_MapSides.Set(Get5_GetMapNumber(), SideChoice_Team1T);
   } else {
-    g_TeamSide[MatchTeam_Team1] = TEAM1_STARTING_SIDE;
-    g_TeamSide[MatchTeam_Team2] = TEAM2_STARTING_SIDE;
+    g_TeamSide[Get5Team_1] = TEAM1_STARTING_SIDE;
+    g_TeamSide[Get5Team_2] = TEAM2_STARTING_SIDE;
   }
 
-  g_TeamStartingSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team1];
-  g_TeamStartingSide[MatchTeam_Team2] = g_TeamSide[MatchTeam_Team2];
+  g_TeamStartingSide[Get5Team_1] = g_TeamSide[Get5Team_1];
+  g_TeamStartingSide[Get5Team_2] = g_TeamSide[Get5Team_2];
   SetMatchTeamCvars();
 }
 
@@ -116,7 +116,7 @@ public Action Command_Swap(int client, int args) {
     Get5_MessageToAll("%t", "TeamDecidedToSwapInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
   } else if (g_GameState == Get5State_Warmup && g_InScrimMode &&
-             GetClientMatchTeam(client) == MatchTeam_Team1) {
+             GetClientMatchTeam(client) == Get5Team_1) {
     PerformSideSwap(true);
   }
   return Plugin_Handled;

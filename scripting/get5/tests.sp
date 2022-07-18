@@ -75,11 +75,11 @@ static void KV_Test() {
   AssertEq("players_per_team", g_PlayersPerTeam, 1);
   AssertEq("favored_percentage_team1", g_FavoredTeamPercentage, 65);
 
-  AssertTrue("team1.name", StrEqual(g_TeamNames[MatchTeam_Team1], "EnvyUs", false));
-  AssertTrue("team1.flag", StrEqual(g_TeamFlags[MatchTeam_Team1], "FR", false));
-  AssertTrue("team1.logo", StrEqual(g_TeamLogos[MatchTeam_Team1], "nv", false));
+  AssertTrue("team1.name", StrEqual(g_TeamNames[Get5Team_1], "EnvyUs", false));
+  AssertTrue("team1.flag", StrEqual(g_TeamFlags[Get5Team_1], "FR", false));
+  AssertTrue("team1.logo", StrEqual(g_TeamLogos[Get5Team_1], "nv", false));
 
-  AssertTrue("team2.name", StrEqual(g_TeamNames[MatchTeam_Team2], "fnatic", false));
-  AssertTrue("team2.flag", StrEqual(g_TeamFlags[MatchTeam_Team2], "SE", false));
-  AssertTrue("team2.logo", StrEqual(g_TeamLogos[MatchTeam_Team2], "fntc", false));
+  AssertTrue("team2.name", StrEqual(g_TeamNames[Get5Team_2], "fnatic", false));
+  AssertTrue("team2.flag", StrEqual(g_TeamFlags[Get5Team_2], "SE", false));
+  AssertTrue("team2.logo", StrEqual(g_TeamLogos[Get5Team_2], "fntc", false));
 }

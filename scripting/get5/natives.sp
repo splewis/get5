@@ -58,7 +58,7 @@ public int Native_Message(Handle plugin, int numParams) {
 }
 
 public int Native_MessageToTeam(Handle plugin, int numParams) {
-  MatchTeam team = view_as<MatchTeam>(GetNativeCell(1));
+  Get5Team team = view_as<Get5Team>(GetNativeCell(1));
   char prefix[64];
   g_MessagePrefixCvar.GetString(prefix, sizeof(prefix));
 
@@ -130,7 +130,7 @@ public int Native_LoadMatchConfigFromURL(Handle plugin, int numParams) {
 public int Native_AddPlayerToTeam(Handle plugin, int numParams) {
   char auth[AUTH_LENGTH];
   GetNativeString(1, auth, sizeof(auth));
-  MatchTeam team = view_as<MatchTeam>(GetNativeCell(2));
+  Get5Team team = view_as<Get5Team>(GetNativeCell(2));
   char name[MAX_NAME_LENGTH];
   if (numParams >= 3) {
     GetNativeString(3, name, sizeof(name));
@@ -165,7 +165,7 @@ public int Native_GetPlayerTeam(Handle plugin, int numParams) {
   if (ConvertAuthToSteam64(auth, steam64Auth, false)) {
     return view_as<int>(GetAuthMatchTeam(steam64Auth));
   } else {
-    return view_as<int>(MatchTeam_TeamNone);
+    return view_as<int>(Get5Team_None);
   }
 }
 
@@ -178,8 +178,8 @@ public int Native_MatchTeamToCSTeam(Handle plugin, int numParams) {
 }
 
 public int Native_GetTeamScores(Handle plugin, int numParams) {
-  MatchTeam team = GetNativeCell(1);
-  if (team == MatchTeam_Team1 || team == MatchTeam_Team2) {
+  Get5Team team = GetNativeCell(1);
+  if (team == Get5Team_1 || team == Get5Team_2) {
     SetNativeCellRef(2, g_TeamSeriesScores[team]);
     SetNativeCellRef(3, CS_GetTeamScore(MatchTeamToCSTeam(team)));
   }
@@ -200,8 +200,8 @@ public int Native_GetServerID(Handle plugin, int numParams) {
 }
 
 public int Native_GetMapNumber(Handle plugin, int numParams) {
-  return g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] +
-         g_TeamSeriesScores[MatchTeam_TeamNone];
+  return g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2] +
+         g_TeamSeriesScores[Get5Team_None];
 }
 
 public int Native_AddLiveCvar(Handle plugin, int numParams) {

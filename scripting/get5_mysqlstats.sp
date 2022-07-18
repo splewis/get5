@@ -156,8 +156,8 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
 
 public void UpdateRoundStats(const char[] matchId, int mapNumber) {
   // Update team scores
-  int t1score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(MatchTeam_Team1));
-  int t2score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(MatchTeam_Team2));
+  int t1score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(Get5Team_1));
+  int t2score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(Get5Team_2));
 
   char matchIdSz[64];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
@@ -175,11 +175,11 @@ public void UpdateRoundStats(const char[] matchId, int mapNumber) {
   Format(mapKey, sizeof(mapKey), "map%d", mapNumber);
   if (kv.JumpToKey(mapKey)) {
     if (kv.JumpToKey("team1")) {
-      AddPlayerStats(matchId, kv, MatchTeam_Team1);
+      AddPlayerStats(matchId, kv, Get5Team_1);
       kv.GoBack();
     }
     if (kv.JumpToKey("team2")) {
-      AddPlayerStats(matchId, kv, MatchTeam_Team2);
+      AddPlayerStats(matchId, kv, Get5Team_2);
       kv.GoBack();
     }
     kv.GoBack();
@@ -210,8 +210,8 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
 
   // Update the series scores
   int t1_seriesscore, t2_seriesscore, tmp;
-  Get5_GetTeamScores(MatchTeam_Team1, t1_seriesscore, tmp);
-  Get5_GetTeamScores(MatchTeam_Team2, t2_seriesscore, tmp);
+  Get5_GetTeamScores(Get5Team_1, t1_seriesscore, tmp);
+  Get5_GetTeamScores(Get5Team_2, t2_seriesscore, tmp);
 
   Format(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_matches` \
         SET team1_score = %d, team2_score = %d WHERE matchid = '%s'",
@@ -220,7 +220,7 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-public void AddPlayerStats(const char[] matchId, KeyValues kv, MatchTeam team) {
+public void AddPlayerStats(const char[] matchId, KeyValues kv, Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
   char nameSz[MAX_NAME_LENGTH * 2 + 1];

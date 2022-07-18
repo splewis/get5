@@ -39,9 +39,9 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
   g_ReadyTimeWaitingUsed = 0;
   g_ForceWinnerSignal = false;
-  g_ForcedWinner = MatchTeam_TeamNone;
+  g_ForcedWinner = Get5Team_None;
 
-  g_LastVetoTeam = MatchTeam_Team2;
+  g_LastVetoTeam = Get5Team_2;
   g_MapPoolList.Clear();
   g_MapsLeftInVetoPool.Clear();
   g_MapsToPlay.Clear();
@@ -61,7 +61,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   }
 
   if (!g_CheckAuthsCvar.BoolValue &&
-      (GetTeamAuths(MatchTeam_Team1).Length != 0 || GetTeamAuths(MatchTeam_Team2).Length != 0)) {
+      (GetTeamAuths(Get5Team_1).Length != 0 || GetTeamAuths(Get5Team_2).Length != 0)) {
     LogError(
         "Setting player auths in the \"players\" section has no impact with get5_check_auths 0");
   }
@@ -125,7 +125,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
     Stats_InitSeries();
 
-    Get5SeriesStartedEvent startEvent = new Get5SeriesStartedEvent(g_MatchID, g_TeamNames[MatchTeam_Team1], g_TeamNames[MatchTeam_Team2]);
+    Get5SeriesStartedEvent startEvent = new Get5SeriesStartedEvent(g_MatchID, g_TeamNames[Get5Team_1], g_TeamNames[Get5Team_2]);
 
     LogDebug("Calling Get5_OnSeriesInit");
 
@@ -139,7 +139,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
   for (int i = 1; i <= MaxClients; i++) {
     if (IsAuthedPlayer(i)) {
-      if (GetClientMatchTeam(i) == MatchTeam_TeamNone) {
+      if (GetClientMatchTeam(i) == Get5Team_None) {
         RememberAndKickClient(i, "%t", "YourAreNotAPlayerInfoMessage");
       } else {
         CheckClientTeam(i);
@@ -315,15 +315,15 @@ public void WriteMatchToKv(KeyValues kv) {
   kv.GoBack();
 
   kv.JumpToKey("team1", true);
-  AddTeamBackupData(kv, MatchTeam_Team1);
+  AddTeamBackupData(kv, Get5Team_1);
   kv.GoBack();
 
   kv.JumpToKey("team2", true);
-  AddTeamBackupData(kv, MatchTeam_Team2);
+  AddTeamBackupData(kv, Get5Team_2);
   kv.GoBack();
 
   kv.JumpToKey("spectators", true);
-  AddTeamBackupData(kv, MatchTeam_TeamSpec);
+  AddTeamBackupData(kv, Get5Team_Spec);
   kv.GoBack();
 
   kv.JumpToKey("cvars", true);
@@ -337,7 +337,7 @@ public void WriteMatchToKv(KeyValues kv) {
   kv.GoBack();
 }
 
-static void AddTeamBackupData(KeyValues kv, MatchTeam team) {
+static void AddTeamBackupData(KeyValues kv, Get5Team team) {
   kv.JumpToKey("players", true);
   char auth[AUTH_LENGTH];
   char name[MAX_NAME_LENGTH];
@@ -351,7 +351,7 @@ static void AddTeamBackupData(KeyValues kv, MatchTeam team) {
   kv.GoBack();
 
   kv.SetString("name", g_TeamNames[team]);
-  if (team != MatchTeam_TeamSpec) {
+  if (team != Get5Team_Spec) {
     kv.SetString("tag", g_TeamTags[team]);
     kv.SetString("flag", g_TeamFlags[team]);
     kv.SetString("logo", g_TeamLogos[team]);
@@ -412,19 +412,19 @@ static bool LoadMatchFromKv(KeyValues kv) {
   g_FavoredTeamPercentage = kv.GetNum("favored_percentage_team1", 0);
   kv.GetString("favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText));
 
-  GetTeamAuths(MatchTeam_TeamSpec).Clear();
+  GetTeamAuths(Get5Team_Spec).Clear();
   if (kv.JumpToKey("spectators")) {
-    AddSubsectionAuthsToList(kv, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
-    kv.GetString("name", g_TeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH,
+    AddSubsectionAuthsToList(kv, "players", GetTeamAuths(Get5Team_Spec), AUTH_LENGTH);
+    kv.GetString("name", g_TeamNames[Get5Team_Spec], MAX_CVAR_LENGTH,
                  CONFIG_SPECTATORSNAME_DEFAULT);
     kv.GoBack();
 
-    Format(g_FormattedTeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
-           g_DefaultTeamColors[MatchTeam_TeamSpec], g_TeamNames[MatchTeam_TeamSpec]);
+    Format(g_FormattedTeamNames[Get5Team_Spec], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
+           g_DefaultTeamColors[Get5Team_Spec], g_TeamNames[Get5Team_Spec]);
   }
 
   if (kv.JumpToKey("team1")) {
-    LoadTeamData(kv, MatchTeam_Team1);
+    LoadTeamData(kv, Get5Team_1);
     kv.GoBack();
   } else {
     MatchConfigFail("Missing \"team1\" section in match kv");
@@ -432,7 +432,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
   }
 
   if (kv.JumpToKey("team2")) {
-    LoadTeamData(kv, MatchTeam_Team2);
+    LoadTeamData(kv, Get5Team_2);
     kv.GoBack();
   } else {
     MatchConfigFail("Missing \"team2\" section in match kv");
@@ -532,17 +532,17 @@ static bool LoadMatchFromJson(JSON_Object json) {
 
   JSON_Object spec = json.GetObject("spectators");
   if (spec != null) {
-    json_object_get_string_safe(spec, "name", g_TeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH,
+    json_object_get_string_safe(spec, "name", g_TeamNames[Get5Team_Spec], MAX_CVAR_LENGTH,
                                 CONFIG_SPECTATORSNAME_DEFAULT);
-    AddJsonAuthsToList(spec, "players", GetTeamAuths(MatchTeam_TeamSpec), AUTH_LENGTH);
+    AddJsonAuthsToList(spec, "players", GetTeamAuths(Get5Team_Spec), AUTH_LENGTH);
 
-    Format(g_FormattedTeamNames[MatchTeam_TeamSpec], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
-           g_DefaultTeamColors[MatchTeam_TeamSpec], g_TeamNames[MatchTeam_TeamSpec]);
+    Format(g_FormattedTeamNames[Get5Team_Spec], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
+           g_DefaultTeamColors[Get5Team_Spec], g_TeamNames[Get5Team_Spec]);
   }
 
   JSON_Object team1 = json.GetObject("team1");
   if (team1 != null) {
-    LoadTeamDataJson(team1, MatchTeam_Team1);
+    LoadTeamDataJson(team1, Get5Team_1);
   } else {
     MatchConfigFail("Missing \"team1\" section in match json");
     return false;
@@ -550,7 +550,7 @@ static bool LoadMatchFromJson(JSON_Object json) {
 
   JSON_Object team2 = json.GetObject("team2");
   if (team2 != null) {
-    LoadTeamDataJson(team2, MatchTeam_Team2);
+    LoadTeamDataJson(team2, Get5Team_2);
   } else {
     MatchConfigFail("Missing \"team2\" section in match json");
     return false;
@@ -596,7 +596,7 @@ static bool LoadMatchFromJson(JSON_Object json) {
   return true;
 }
 
-static void LoadTeamDataJson(JSON_Object json, MatchTeam matchTeam) {
+static void LoadTeamDataJson(JSON_Object json, Get5Team matchTeam) {
   GetTeamAuths(matchTeam).Clear();
 
   char fromfile[PLATFORM_MAX_PATH];
@@ -631,7 +631,7 @@ static void LoadTeamDataJson(JSON_Object json, MatchTeam matchTeam) {
          g_DefaultTeamColors[matchTeam], g_TeamNames[matchTeam]);
 }
 
-static void LoadTeamData(KeyValues kv, MatchTeam matchTeam) {
+static void LoadTeamData(KeyValues kv, Get5Team matchTeam) {
   GetTeamAuths(matchTeam).Clear();
   char fromfile[PLATFORM_MAX_PATH];
   kv.GetString("fromfile", fromfile, sizeof(fromfile));
@@ -680,11 +680,11 @@ static void LoadDefaultMapList(ArrayList list) {
 }
 
 public void SetMatchTeamCvars() {
-  MatchTeam ctTeam = MatchTeam_Team1;
-  MatchTeam tTeam = MatchTeam_Team2;
-  if (g_TeamStartingSide[MatchTeam_Team1] == CS_TEAM_T) {
-    ctTeam = MatchTeam_Team2;
-    tTeam = MatchTeam_Team1;
+  Get5Team ctTeam = Get5Team_1;
+  Get5Team tTeam = Get5Team_2;
+  if (g_TeamStartingSide[Get5Team_1] == CS_TEAM_T) {
+    ctTeam = Get5Team_2;
+    tTeam = Get5Team_1;
   }
 
   int mapsPlayed = Get5_GetMapNumber();
@@ -706,8 +706,8 @@ public void SetMatchTeamCvars() {
   if (g_MapsToWin >= 3) {
     char team1Text[MAX_CVAR_LENGTH];
     char team2Text[MAX_CVAR_LENGTH];
-    IntToString(g_TeamSeriesScores[MatchTeam_Team1], team1Text, sizeof(team1Text));
-    IntToString(g_TeamSeriesScores[MatchTeam_Team2], team2Text, sizeof(team2Text));
+    IntToString(g_TeamSeriesScores[Get5Team_1], team1Text, sizeof(team1Text));
+    IntToString(g_TeamSeriesScores[Get5Team_2], team2Text, sizeof(team2Text));
 
     MatchTeamStringsToCSTeam(team1Text, team2Text, ctMatchText, sizeof(ctMatchText), tMatchText,
                              sizeof(tMatchText));
@@ -721,7 +721,7 @@ public void SetMatchTeamCvars() {
 
   // Set prediction cvars.
   SetConVarStringSafe("mp_teamprediction_txt", g_FavoredTeamText);
-  if (g_TeamSide[MatchTeam_Team1] == CS_TEAM_CT) {
+  if (g_TeamSide[Get5Team_1] == CS_TEAM_CT) {
     SetConVarIntSafe("mp_teamprediction_pct", g_FavoredTeamPercentage);
   } else {
     SetConVarIntSafe("mp_teamprediction_pct", 100 - g_FavoredTeamPercentage);
@@ -738,13 +738,13 @@ public void SetMatchTeamCvars() {
   }
 }
 
-public MatchTeam GetMapWinner(int mapNumber) {
-  int team1score = GetMapScore(mapNumber, MatchTeam_Team1);
-  int team2score = GetMapScore(mapNumber, MatchTeam_Team2);
+public Get5Team GetMapWinner(int mapNumber) {
+  int team1score = GetMapScore(mapNumber, Get5Team_1);
+  int team2score = GetMapScore(mapNumber, Get5Team_2);
   if (team1score > team2score) {
-    return MatchTeam_Team1;
+    return Get5Team_1;
   } else {
-    return MatchTeam_Team2;
+    return Get5Team_2;
   }
 }
 
@@ -777,13 +777,13 @@ public Action Command_LoadTeam(int client, int args) {
   char arg1[PLATFORM_MAX_PATH];
   char arg2[PLATFORM_MAX_PATH];
   if (args >= 2 && GetCmdArg(1, arg1, sizeof(arg1)) && GetCmdArg(2, arg2, sizeof(arg2))) {
-    MatchTeam team = MatchTeam_TeamNone;
+    Get5Team team = Get5Team_None;
     if (StrEqual(arg1, "team1")) {
-      team = MatchTeam_Team1;
+      team = Get5Team_1;
     } else if (StrEqual(arg1, "team2")) {
-      team = MatchTeam_Team2;
+      team = Get5Team_2;
     } else if (StrEqual(arg1, "spec")) {
-      team = MatchTeam_TeamSpec;
+      team = Get5Team_Spec;
     } else {
       ReplyToCommand(client, "Unknown team: must be one of team1, team2, spec");
       return Plugin_Handled;
@@ -827,13 +827,13 @@ public Action Command_AddPlayer(int client, int args) {
       GetCmdArg(3, name, sizeof(name));
     }
 
-    MatchTeam team = MatchTeam_TeamNone;
+    Get5Team team = Get5Team_None;
     if (StrEqual(teamString, "team1")) {
-      team = MatchTeam_Team1;
+      team = Get5Team_1;
     } else if (StrEqual(teamString, "team2")) {
-      team = MatchTeam_Team2;
+      team = Get5Team_2;
     } else if (StrEqual(teamString, "spec")) {
-      team = MatchTeam_TeamSpec;
+      team = Get5Team_Spec;
     } else {
       ReplyToCommand(client, "Unknown team: must be one of team1, team2, spec");
       return Plugin_Handled;
@@ -870,11 +870,11 @@ public Action Command_AddCoach(int client, int args) {
       GetCmdArg(3, name, sizeof(name));
     }
 
-    MatchTeam team = MatchTeam_TeamNone;
+    Get5Team team = Get5Team_None;
     if (StrEqual(teamString, "team1")) {
-      team = MatchTeam_Team1;
+      team = Get5Team_1;
     } else if (StrEqual(teamString, "team2")) {
-      team = MatchTeam_Team2;
+      team = Get5Team_2;
     } else {
       ReplyToCommand(client, "Unknown team: must be one of team1 or team2");
       return Plugin_Handled;
@@ -933,13 +933,13 @@ public Action Command_AddKickedPlayer(int client, int args) {
       GetCmdArg(2, name, sizeof(name));
     }
 
-    MatchTeam team = MatchTeam_TeamNone;
+    Get5Team team = Get5Team_None;
     if (StrEqual(teamString, "team1")) {
-      team = MatchTeam_Team1;
+      team = Get5Team_1;
     } else if (StrEqual(teamString, "team2")) {
-      team = MatchTeam_Team2;
+      team = Get5Team_2;
     } else if (StrEqual(teamString, "spec")) {
-      team = MatchTeam_TeamSpec;
+      team = Get5Team_Spec;
     } else {
       ReplyToCommand(client, "Unknown team: must be one of team1, team2, spec");
       return Plugin_Handled;
@@ -1048,19 +1048,19 @@ public Action Command_CreateMatch(int client, int args) {
   char teamName[MAX_CVAR_LENGTH];
 
   kv.JumpToKey("team1", true);
-  int count = AddPlayersToAuthKv(kv, MatchTeam_Team1, teamName);
+  int count = AddPlayersToAuthKv(kv, Get5Team_1, teamName);
   if (count > 0)
     kv.SetString("name", teamName);
   kv.GoBack();
 
   kv.JumpToKey("team2", true);
-  count = AddPlayersToAuthKv(kv, MatchTeam_Team2, teamName);
+  count = AddPlayersToAuthKv(kv, Get5Team_2, teamName);
   if (count > 0)
     kv.SetString("name", teamName);
   kv.GoBack();
 
   kv.JumpToKey("spectators", true);
-  AddPlayersToAuthKv(kv, MatchTeam_TeamSpec, teamName);
+  AddPlayersToAuthKv(kv, Get5Team_Spec, teamName);
   kv.GoBack();
 
   if (!kv.ExportToFile(path)) {
@@ -1179,7 +1179,7 @@ public Action Command_Ringer(int client, int args) {
   return Plugin_Handled;
 }
 
-static int AddPlayersToAuthKv(KeyValues kv, MatchTeam team, char teamName[MAX_CVAR_LENGTH]) {
+static int AddPlayersToAuthKv(KeyValues kv, Get5Team team, char teamName[MAX_CVAR_LENGTH]) {
   int count = 0;
   kv.JumpToKey("players", true);
   bool gotClientName = false;
@@ -1187,13 +1187,13 @@ static int AddPlayersToAuthKv(KeyValues kv, MatchTeam team, char teamName[MAX_CV
   for (int i = 1; i <= MaxClients; i++) {
     if (IsAuthedPlayer(i)) {
       int csTeam = GetClientTeam(i);
-      MatchTeam t = MatchTeam_TeamNone;
+      Get5Team t = Get5Team_None;
       if (csTeam == TEAM1_STARTING_SIDE) {
-        t = MatchTeam_Team1;
+        t = Get5Team_1;
       } else if (csTeam == TEAM2_STARTING_SIDE) {
-        t = MatchTeam_Team2;
+        t = Get5Team_2;
       } else if (csTeam == CS_TEAM_SPECTATOR) {
-        t = MatchTeam_TeamSpec;
+        t = Get5Team_Spec;
       }
 
       if (t == team) {
@@ -1217,7 +1217,7 @@ static int AddPlayersToAuthKv(KeyValues kv, MatchTeam team, char teamName[MAX_CV
 
 static void MatchTeamStringsToCSTeam(const char[] team1Str, const char[] team2Str, char[] ctStr,
                                      int ctLen, char[] tStr, int tLen) {
-  if (MatchTeamToCSTeam(MatchTeam_Team1) == CS_TEAM_CT) {
+  if (MatchTeamToCSTeam(Get5Team_1) == CS_TEAM_CT) {
     strcopy(ctStr, ctLen, team1Str);
     strcopy(tStr, tLen, team2Str);
   } else {
@@ -1228,8 +1228,8 @@ static void MatchTeamStringsToCSTeam(const char[] team1Str, const char[] team2St
 
 // Adds the team logos to the download table.
 static void AddTeamLogosToDownloadTable() {
-  AddTeamLogoToDownloadTable(g_TeamLogos[MatchTeam_Team1]);
-  AddTeamLogoToDownloadTable(g_TeamLogos[MatchTeam_Team2]);
+  AddTeamLogoToDownloadTable(g_TeamLogos[Get5Team_1]);
+  AddTeamLogoToDownloadTable(g_TeamLogos[Get5Team_2]);
 }
 
 static void AddTeamLogoToDownloadTable(const char[] logoName) {
@@ -1243,8 +1243,8 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
   AddFileToDownloadsTable(logoPath);
 }
 
-public void CheckTeamNameStatus(MatchTeam team) {
-  if (StrEqual(g_TeamNames[team], "") && team != MatchTeam_TeamSpec) {
+public void CheckTeamNameStatus(Get5Team team) {
+  if (StrEqual(g_TeamNames[team], "") && team != Get5Team_Spec) {
     for (int i = 1; i <= MaxClients; i++) {
       if (IsAuthedPlayer(i)) {
         if (GetClientMatchTeam(i) == team) {
@@ -1257,7 +1257,7 @@ public void CheckTeamNameStatus(MatchTeam team) {
     }
 
     char colorTag[32] = TEAM1_COLOR;
-    if (team == MatchTeam_Team2)
+    if (team == Get5Team_2)
       colorTag = TEAM2_COLOR;
 
     Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag,

@@ -21,12 +21,12 @@ enum Get5BombSite {
 
 #define MATCHTEAM_COUNT 4
 
-enum MatchTeam {
-  MatchTeam_Team1,
-  MatchTeam_Team2,
-  MatchTeam_TeamSpec,
-  MatchTeam_TeamNone,
-  MatchTeam_Count,
+enum Get5Team {
+  Get5Team_1,
+  Get5Team_2,
+  Get5Team_Spec,
+  Get5Team_None,
+  Get5Team_Count
 };
 
 enum Get5State {
@@ -68,7 +68,7 @@ native Get5State Get5_GetGameState();
 native void Get5_Message(int client, const char[] format, any:...);
 
 // Prints a plugin-formatted message to a team.
-native void Get5_MessageToTeam(MatchTeam team, const char[] format, any:...);
+native void Get5_MessageToTeam(Get5Team team, const char[] format, any:...);
 
 // Prints a plugin-formatted message to all clients.
 native void Get5_MessageToAll(const char[] format, any:...);
@@ -84,7 +84,7 @@ native bool Get5_LoadMatchConfigFromURL(const char[] url, ArrayList paramNames =
 
 // Adds a player to a match team. You can optionally force set a player name here as well.
 // Returns if they were successfully added.
-native bool Get5_AddPlayerToTeam(const char[] steamId, MatchTeam team,
+native bool Get5_AddPlayerToTeam(const char[] steamId, Get5Team team,
                                  const char[] playerName = "");
 
 // Force sets a steam64 to map to a specified playername
@@ -95,16 +95,16 @@ native bool Get5_SetPlayerName(const char[] steamId, const char[] playerName);
 native bool Get5_RemovePlayerFromTeam(const char[] steamId);
 
 // Returns the current match team a auth is mapped to.
-native MatchTeam Get5_GetPlayerTeam(const char[] steamId);
+native Get5Team Get5_GetPlayerTeam(const char[] steamId);
 
 // Translates a CS team (CS_TEAM_T, etc.) to a Match team.
-native MatchTeam Get5_CSTeamToMatchTeam(int csTeam);
+native Get5Team Get5_CSTeamToMatchTeam(int csTeam);
 
-// Translates a MatchTeam to a CS team.
-native int Get5_MatchTeamToCSTeam(MatchTeam team);
+// Translates a Get5Team to a CS team.
+native int Get5_MatchTeamToCSTeam(Get5Team team);
 
 // Gets the scores for a match team.
-native void Get5_GetTeamScores(MatchTeam team, int& seriesScore, int& currentMapScore);
+native void Get5_GetTeamScores(Get5Team team, int& seriesScore, int& currentMapScore);
 
 // Gets the current matchid.
 native void Get5_GetMatchID(char[] id, int length);
@@ -298,18 +298,18 @@ methodmap Get5Winner < JSON_Object {
       }
     }
 
-    property MatchTeam Team {
+    property Get5Team Team {
       public get() {
-        return view_as<MatchTeam>(this.GetInt("team_int"));
+        return view_as<Get5Team>(this.GetInt("team_int"));
       }
-      public set(MatchTeam team) {
+      public set(Get5Team team) {
         this.SetInt("team_int", view_as<int>(team));
         this.SetHidden("team_int", true);
         ConvertGet5TeamToStringInJson(this, "team", team);
       }
     }
 
-    public Get5Winner(MatchTeam team, Get5Side side) {
+    public Get5Winner(Get5Team team, Get5Side side) {
         Get5Winner self = view_as<Get5Winner>(new JSON_Object());
         self.Team = team;
         self.Side = side;
@@ -441,12 +441,12 @@ methodmap Get5MatchEvent < Get5Event {
 
 methodmap Get5MatchTeamEvent < Get5MatchEvent {
 
-  property MatchTeam Team {
+  property Get5Team Team {
     public get() {
-      return view_as<MatchTeam>(this.GetInt("team_int"));
+      return view_as<Get5Team>(this.GetInt("team_int"));
     }
 
-    public set(MatchTeam team) {
+    public set(Get5Team team) {
       this.SetInt("team_int", view_as<int>(team));
       this.SetHidden("team_int", true);
       ConvertGet5TeamToStringInJson(this, "team", team);
@@ -477,12 +477,12 @@ methodmap Get5MapEvent < Get5MatchEvent {
 
 methodmap Get5MapTeamEvent < Get5MapEvent {
 
-  property MatchTeam Team {
+  property Get5Team Team {
     public get() {
-      return view_as<MatchTeam>(this.GetInt("team_int"));
+      return view_as<Get5Team>(this.GetInt("team_int"));
     }
 
-    public set(MatchTeam team) {
+    public set(Get5Team team) {
       this.SetInt("team_int", view_as<int>(team));
       this.SetHidden("team_int", true);
       ConvertGet5TeamToStringInJson(this, "team", team);
@@ -656,7 +656,7 @@ methodmap Get5TeamReadyStatusChangedEvent < Get5MatchTeamEvent {
     }
   }
 
-  public Get5TeamReadyStatusChangedEvent(const char[] matchId, const MatchTeam team, const bool ready, const Get5State gamestate) {
+  public Get5TeamReadyStatusChangedEvent(const char[] matchId, const Get5Team team, const bool ready, const Get5State gamestate) {
     Get5TeamReadyStatusChangedEvent self = view_as<Get5TeamReadyStatusChangedEvent>(new JSON_Object());
     self.SetEvent("team_ready_status_changed");
     self.SetMatchId(matchId);
@@ -689,7 +689,7 @@ methodmap Get5MapPickedEvent < Get5MapSelectionEvent {
     }
   }
 
-  public Get5MapPickedEvent(const char[] matchId, const MatchTeam team, const char[] map, const int mapNumber) {
+  public Get5MapPickedEvent(const char[] matchId, const Get5Team team, const char[] map, const int mapNumber) {
     Get5MapPickedEvent self = view_as<Get5MapPickedEvent>(new JSON_Object());
     self.SetEvent("map_picked");
     self.SetMatchId(matchId);
@@ -702,7 +702,7 @@ methodmap Get5MapPickedEvent < Get5MapSelectionEvent {
 
 methodmap Get5MapVetoedEvent < Get5MapSelectionEvent {
 
-  public Get5MapVetoedEvent(const char[] matchId, const MatchTeam team, const char[] map) {
+  public Get5MapVetoedEvent(const char[] matchId, const Get5Team team, const char[] map) {
     Get5MapVetoedEvent self = view_as<Get5MapVetoedEvent>(new JSON_Object());
     self.SetEvent("map_vetoed");
     self.SetMatchId(matchId);
@@ -734,7 +734,7 @@ methodmap Get5SidePickedEvent < Get5MapSelectionEvent {
     }
   }
 
-  public Get5SidePickedEvent(const char[] matchId, const int mapNumber, const char[] mapName, const MatchTeam team, const Get5Side side) {
+  public Get5SidePickedEvent(const char[] matchId, const int mapNumber, const char[] mapName, const Get5Team team, const Get5Side side) {
     Get5SidePickedEvent self = view_as<Get5SidePickedEvent>(new JSON_Object());
     self.SetEvent("side_picked");
     self.SetMatchId(matchId);
@@ -893,7 +893,7 @@ methodmap Get5KnifeRoundWonEvent < Get5MapTeamEvent {
       }
     }
 
-    public Get5KnifeRoundWonEvent(const char[] matchId, int mapNumber, const MatchTeam winner, const Get5Side side, const bool swapped) {
+    public Get5KnifeRoundWonEvent(const char[] matchId, int mapNumber, const Get5Team winner, const Get5Side side, const bool swapped) {
       Get5KnifeRoundWonEvent self = view_as<Get5KnifeRoundWonEvent>(new JSON_Object());
       self.SetEvent("knife_won");
       self.SetMatchId(matchId);
@@ -921,7 +921,7 @@ methodmap Get5MatchPausedEvent < Get5MapTeamEvent {
       }
   }
 
-  public Get5MatchPausedEvent(const char[] matchId, const int mapNumber, const MatchTeam team, const Get5PauseType pauseType) {
+  public Get5MatchPausedEvent(const char[] matchId, const int mapNumber, const Get5Team team, const Get5PauseType pauseType) {
     Get5MatchPausedEvent self = view_as<Get5MatchPausedEvent>(new JSON_Object());
     self.SetEvent("game_paused");
     self.SetMatchId(matchId);
@@ -935,7 +935,7 @@ methodmap Get5MatchPausedEvent < Get5MapTeamEvent {
 
 methodmap Get5MatchUnpausedEvent < Get5MapTeamEvent {
 
-  public Get5MatchUnpausedEvent(const char[] matchId, const int mapNumber, const MatchTeam team) {
+  public Get5MatchUnpausedEvent(const char[] matchId, const int mapNumber, const Get5Team team) {
     Get5MatchUnpausedEvent self = view_as<Get5MatchUnpausedEvent>(new JSON_Object());
     self.SetEvent("game_unpaused");
     self.SetMatchId(matchId);
@@ -1700,7 +1700,7 @@ forward void Get5_OnKnifeRoundStarted(const Get5KnifeRoundStartedEvent event);
 forward void Get5_OnKnifeRoundWon(const Get5KnifeRoundWonEvent event);
 
 // Called when a team selects a map.
-// The team parameter will be MatchTeam_TeamNone if the map was selected as the last remaining map
+// The team parameter will be Get5Team_None if the map was selected as the last remaining map
 // and not by one of the teams specifically.
 forward void Get5_OnMapPicked(const Get5MapPickedEvent event);
 

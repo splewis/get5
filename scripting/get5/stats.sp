@@ -178,8 +178,8 @@ public void Stats_InitSeries() {
   char seriesType[32];
   Format(seriesType, sizeof(seriesType), "bo%d", MaxMapsToPlay(g_MapsToWin));
   g_StatsKv.SetString(STAT_SERIESTYPE, seriesType);
-  g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamNames[MatchTeam_Team1]);
-  g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[MatchTeam_Team2]);
+  g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamNames[Get5Team_1]);
+  g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[Get5Team_2]);
   DumpToFile();
 }
 
@@ -261,8 +261,8 @@ public void Stats_ResetGrenadeContainers() {
 public void Stats_RoundStart() {
   for (int i = 1; i <= MaxClients; i++) {
     if (IsPlayer(i)) {
-      MatchTeam team = GetClientMatchTeam(i);
-      if (team == MatchTeam_Team1 || team == MatchTeam_Team2) {
+      Get5Team team = GetClientMatchTeam(i);
+      if (team == Get5Team_1 || team == Get5Team_2) {
         IncrementPlayerStat(i, STAT_ROUNDSPLAYED);
 
         GoToPlayer(i);
@@ -283,19 +283,19 @@ public void Stats_RoundEnd(int csTeamWinner) {
   g_StatsKv.SetString(STAT_MAPNAME, mapName);
   GoBackFromMap();
 
-  GoToTeam(MatchTeam_Team1);
-  g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)));
+  GoToTeam(Get5Team_1);
+  g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1)));
   GoBackFromTeam();
 
-  GoToTeam(MatchTeam_Team2);
-  g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)));
+  GoToTeam(Get5Team_2);
+  g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2)));
   GoBackFromTeam();
 
   // Update player 1vx, x-kill, and KAST values.
   for (int i = 1; i <= MaxClients; i++) {
     if (IsPlayer(i)) {
-      MatchTeam team = GetClientMatchTeam(i);
-      if (team == MatchTeam_Team1 || team == MatchTeam_Team2) {
+      Get5Team team = GetClientMatchTeam(i);
+      if (team == Get5Team_1 || team == Get5Team_2) {
         switch (g_RoundKills[i]) {
           case 1:
             IncrementPlayerStat(i, STAT_1K);
@@ -349,7 +349,7 @@ public void Stats_RoundEnd(int csTeamWinner) {
   }
 }
 
-public void Stats_UpdateMapScore(MatchTeam winner) {
+public void Stats_UpdateMapScore(Get5Team winner) {
   GoToMap();
 
   char winnerString[16];
@@ -363,18 +363,18 @@ public void Stats_UpdateMapScore(MatchTeam winner) {
   DumpToFile();
 }
 
-public void Stats_Forfeit(MatchTeam team) {
+public void Stats_Forfeit(Get5Team team) {
   g_StatsKv.SetNum(STAT_SERIES_FORFEIT, 1);
-  if (team == MatchTeam_Team1) {
-    Stats_SeriesEnd(MatchTeam_Team2);
-  } else if (team == MatchTeam_Team2) {
-    Stats_SeriesEnd(MatchTeam_Team1);
+  if (team == Get5Team_1) {
+    Stats_SeriesEnd(Get5Team_2);
+  } else if (team == Get5Team_2) {
+    Stats_SeriesEnd(Get5Team_1);
   } else {
-    Stats_SeriesEnd(MatchTeam_TeamNone);
+    Stats_SeriesEnd(Get5Team_None);
   }
 }
 
-public void Stats_SeriesEnd(MatchTeam winner) {
+public void Stats_SeriesEnd(Get5Team winner) {
   char winnerString[16];
   GetTeamString(winner, winnerString, sizeof(winnerString));
   g_StatsKv.SetString(STAT_SERIESWINNER, winnerString);
@@ -1080,10 +1080,10 @@ static void GoBackFromMap() {
   g_StatsKv.GoBack();
 }
 
-static void GoToTeam(MatchTeam team) {
+static void GoToTeam(Get5Team team) {
   GoToMap();
 
-  if (team == MatchTeam_Team1)
+  if (team == Get5Team_1)
     g_StatsKv.JumpToKey("team1", true);
   else
     g_StatsKv.JumpToKey("team2", true);
@@ -1095,7 +1095,7 @@ static void GoBackFromTeam() {
 }
 
 static void GoToPlayer(int client) {
-  MatchTeam team = GetClientMatchTeam(client);
+  Get5Team team = GetClientMatchTeam(client);
   GoToTeam(team);
 
   char auth[AUTH_LENGTH];

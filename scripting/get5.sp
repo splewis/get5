@@ -140,7 +140,7 @@ Get5State g_GameState = Get5State_None;
 ArrayList g_MapsToPlay = null;
 ArrayList g_MapSides = null;
 ArrayList g_MapsLeftInVetoPool = null;
-MatchTeam g_LastVetoTeam;
+Get5Team g_LastVetoTeam;
 Menu g_ActiveVetoMenu = null;
 
 /** Backup data **/
@@ -200,7 +200,7 @@ char g_DefaultTeamColors[][] = {
 char g_LastKickedPlayerAuth[64];
 
 bool g_ForceWinnerSignal = false;
-MatchTeam g_ForcedWinner = MatchTeam_TeamNone;
+Get5Team g_ForcedWinner = Get5Team_None;
 
 /** Chat aliases loaded **/
 #define ALIAS_LENGTH 64
@@ -209,7 +209,7 @@ ArrayList g_ChatAliases;
 ArrayList g_ChatAliasesCommands;
 
 /** Map game-state **/
-MatchTeam g_KnifeWinnerTeam = MatchTeam_TeamNone;
+Get5Team g_KnifeWinnerTeam = Get5Team_None;
 
 /** Map-game state not related to the actual gameplay. **/
 char g_DemoFileName[PLATFORM_MAX_PATH];
@@ -579,7 +579,7 @@ public Action Timer_InfoMessages(Handle timer) {
   if (g_GameState == Get5State_PreVeto) {
     if (IsTeamsReady() && !IsSpectatorsReady()) {
       Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
-                        g_FormattedTeamNames[MatchTeam_TeamSpec]);
+                        g_FormattedTeamNames[Get5Team_Spec]);
     } else {
       Get5_MessageToAll("%t", "ReadyToVetoInfoMessage");
     }
@@ -597,7 +597,7 @@ public Action Timer_InfoMessages(Handle timer) {
     // Find out what we're waiting for
     if (IsTeamsReady() && !IsSpectatorsReady()) {
       Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
-                        g_FormattedTeamNames[MatchTeam_TeamSpec]);
+                        g_FormattedTeamNames[Get5Team_Spec]);
     } else {
       if (g_MapSides.Get(Get5_GetMapNumber()) == SideChoice_KnifeRound) {
         Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage");
@@ -632,8 +632,8 @@ public void OnClientAuthorized(int client, const char[] auth) {
   }
 
   if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue) {
-    MatchTeam team = GetClientMatchTeam(client);
-    if (team == MatchTeam_TeamNone) {
+    Get5Team team = GetClientMatchTeam(client);
+    if (team == Get5Team_None) {
       RememberAndKickClient(client, "%t", "YourAreNotAPlayerInfoMessage");
     } else {
       int teamCount = CountPlayersOnMatchTeam(team, client);
@@ -745,8 +745,8 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
   // TODO: consider adding a forfeit if a full team disconnects.
   if (g_EndMatchOnEmptyServerCvar.BoolValue && g_GameState >= Get5State_Warmup &&
       g_GameState < Get5State_PostGame && GetRealClientCount() == 0 && !g_MapChangePending) {
-    g_TeamSeriesScores[MatchTeam_Team1] = 0;
-    g_TeamSeriesScores[MatchTeam_Team2] = 0;
+    g_TeamSeriesScores[Get5Team_1] = 0;
+    g_TeamSeriesScores[Get5Team_2] = 0;
     EndSeries();
   }
 }
@@ -803,8 +803,8 @@ public Action Timer_CheckReady(Handle timer) {
   }
 
 
-  CheckTeamNameStatus(MatchTeam_Team1);
-  CheckTeamNameStatus(MatchTeam_Team2);
+  CheckTeamNameStatus(Get5Team_1);
+  CheckTeamNameStatus(Get5Team_2);
   UpdateClanTags();
 
   // Handle ready checks for pre-veto state
@@ -852,18 +852,18 @@ static void CheckReadyWaitingTimes() {
   if (g_TeamTimeToStartCvar.IntValue > 0) {
     g_ReadyTimeWaitingUsed++;
 
-    bool team1Forfeited = CheckReadyWaitingTime(MatchTeam_Team1);
-    bool team2Forfeited = CheckReadyWaitingTime(MatchTeam_Team2);
+    bool team1Forfeited = CheckReadyWaitingTime(Get5Team_1);
+    bool team2Forfeited = CheckReadyWaitingTime(Get5Team_2);
 
     if (team1Forfeited && team2Forfeited) {
-      g_ForcedWinner = MatchTeam_TeamNone;
-      Stats_Forfeit(MatchTeam_TeamNone);
+      g_ForcedWinner = Get5Team_None;
+      Stats_Forfeit(Get5Team_None);
     } else if (team1Forfeited) {
-      g_ForcedWinner = MatchTeam_Team2;
-      Stats_Forfeit(MatchTeam_Team1);
+      g_ForcedWinner = Get5Team_2;
+      Stats_Forfeit(Get5Team_1);
     } else if (team2Forfeited) {
-      g_ForcedWinner = MatchTeam_Team1;
-      Stats_Forfeit(MatchTeam_Team2);
+      g_ForcedWinner = Get5Team_1;
+      Stats_Forfeit(Get5Team_2);
     }
 
     if (team1Forfeited || team2Forfeited) {
@@ -874,7 +874,7 @@ static void CheckReadyWaitingTimes() {
   }
 }
 
-static bool CheckReadyWaitingTime(MatchTeam team) {
+static bool CheckReadyWaitingTime(Get5Team team) {
   if (!IsTeamReady(team) && g_GameState != Get5State_None) {
     int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed;
 
@@ -916,13 +916,13 @@ public Action Command_EndMatch(int client, int args) {
 
   // Call game-ending forwards.
   g_MapChangePending = false;
-  int team1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
-  int team2score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
+  int team1score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1));
+  int team2score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2));
 
   Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
     g_MatchID,
     g_MapNumber,
-    new Get5Winner(MatchTeam_TeamNone, Get5Side_None),
+    new Get5Winner(Get5Team_None, Get5Side_None),
     team1score,
     team2score
   );
@@ -937,9 +937,9 @@ public Action Command_EndMatch(int client, int args) {
 
   Get5SeriesResultEvent resultEvent = new Get5SeriesResultEvent(
     g_MatchID,
-    new Get5Winner(MatchTeam_TeamNone, Get5Side_None),
-    g_TeamSeriesScores[MatchTeam_Team1],
-    g_TeamSeriesScores[MatchTeam_Team2]
+    new Get5Winner(Get5Team_None, Get5Side_None),
+    g_TeamSeriesScores[Get5Team_1],
+    g_TeamSeriesScores[Get5Team_2]
   );
 
   LogDebug("Calling Get5_OnSeriesResult()");
@@ -1044,16 +1044,16 @@ public Action Command_Stop(int client, int args) {
     RestoreLastRound(client);
   }
 
-  MatchTeam team = GetClientMatchTeam(client);
+  Get5Team team = GetClientMatchTeam(client);
   g_TeamGivenStopCommand[team] = true;
 
-  if (g_TeamGivenStopCommand[MatchTeam_Team1] && !g_TeamGivenStopCommand[MatchTeam_Team2]) {
+  if (g_TeamGivenStopCommand[Get5Team_1] && !g_TeamGivenStopCommand[Get5Team_2]) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_FormattedTeamNames[MatchTeam_Team1], g_FormattedTeamNames[MatchTeam_Team2]);
-  } else if (!g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
+                      g_FormattedTeamNames[Get5Team_1], g_FormattedTeamNames[Get5Team_2]);
+  } else if (!g_TeamGivenStopCommand[Get5Team_1] && g_TeamGivenStopCommand[Get5Team_2]) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_FormattedTeamNames[MatchTeam_Team2], g_FormattedTeamNames[MatchTeam_Team1]);
-  } else if (g_TeamGivenStopCommand[MatchTeam_Team1] && g_TeamGivenStopCommand[MatchTeam_Team2]) {
+                      g_FormattedTeamNames[Get5Team_2], g_FormattedTeamNames[Get5Team_1]);
+  } else if (g_TeamGivenStopCommand[Get5Team_1] && g_TeamGivenStopCommand[Get5Team_2]) {
     RestoreLastRound(client);
   }
 
@@ -1101,13 +1101,13 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
   LogDebug("Event_MatchOver");
   if (g_GameState == Get5State_Live) {
     // Figure out who won
-    int t1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
-    int t2score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
-    MatchTeam winningTeam = MatchTeam_TeamNone;
+    int t1score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1));
+    int t2score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2));
+    Get5Team winningTeam = Get5Team_None;
     if (t1score > t2score) {
-      winningTeam = MatchTeam_Team1;
+      winningTeam = Get5Team_1;
     } else if (t2score > t1score) {
-      winningTeam = MatchTeam_Team2;
+      winningTeam = Get5Team_2;
     }
 
     // If the round ends because the match is over, we clear the grenade container immediately as there will be no
@@ -1123,8 +1123,8 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     g_TeamSeriesScores[winningTeam]++;
 
     // Handle map end
-    int team1score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1));
-    int team2score = CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2));
+    int team1score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1));
+    int team2score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2));
 
     Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
       g_MatchID,
@@ -1142,40 +1142,40 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
     EventLogger_LogAndDeleteEvent(mapResultEvent);
 
-    int t1maps = g_TeamSeriesScores[MatchTeam_Team1];
-    int t2maps = g_TeamSeriesScores[MatchTeam_Team2];
-    int tiedMaps = g_TeamSeriesScores[MatchTeam_TeamNone];
+    int t1maps = g_TeamSeriesScores[Get5Team_1];
+    int t2maps = g_TeamSeriesScores[Get5Team_2];
+    int tiedMaps = g_TeamSeriesScores[Get5Team_None];
 
     float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
 
     if (t1maps == g_MapsToWin) {
       // Team 1 won
-      SeriesEndMessage(MatchTeam_Team1);
+      SeriesEndMessage(Get5Team_1);
       DelayFunction(minDelay, EndSeries);
 
     } else if (t2maps == g_MapsToWin) {
       // Team 2 won
-      SeriesEndMessage(MatchTeam_Team2);
+      SeriesEndMessage(Get5Team_2);
       DelayFunction(minDelay, EndSeries);
 
     } else if (t1maps == t2maps && t1maps + tiedMaps == g_MapsToWin) {
       // The whole series was a tie
-      SeriesEndMessage(MatchTeam_TeamNone);
+      SeriesEndMessage(Get5Team_None);
       DelayFunction(minDelay, EndSeries);
 
     } else if (g_BO2Match && Get5_GetMapNumber() == 2) {
       // It was a bo2, and none of the teams got to 2
-      SeriesEndMessage(MatchTeam_TeamNone);
+      SeriesEndMessage(Get5Team_None);
       DelayFunction(minDelay, EndSeries);
 
     } else {
       if (t1maps > t2maps) {
         Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage",
-                          g_FormattedTeamNames[MatchTeam_Team1], t1maps, t2maps);
+                          g_FormattedTeamNames[Get5Team_1], t1maps, t2maps);
 
       } else if (t2maps > t1maps) {
         Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage",
-                          g_FormattedTeamNames[MatchTeam_Team2], t2maps, t1maps);
+                          g_FormattedTeamNames[Get5Team_2], t2maps, t1maps);
 
       } else {
         Get5_MessageToAll("%t", "SeriesTiedInfoMessage", t1maps, t2maps);
@@ -1195,20 +1195,20 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
   return Plugin_Continue;
 }
 
-static void SeriesEndMessage(MatchTeam team) {
+static void SeriesEndMessage(Get5Team team) {
   if (g_MapsToWin == 1) {
-    if (team == MatchTeam_TeamNone) {
-      Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[MatchTeam_Team1],
-                        g_FormattedTeamNames[MatchTeam_Team2]);
+    if (team == Get5Team_None) {
+      Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[Get5Team_1],
+                        g_FormattedTeamNames[Get5Team_2]);
     } else {
       Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[team]);
     }
   } else {
-    if (team == MatchTeam_TeamNone) {
+    if (team == Get5Team_None) {
       // BO2 split.
       Get5_MessageToAll("%t", "TeamsSplitSeriesBO2InfoMessage",
-                        g_FormattedTeamNames[MatchTeam_Team1],
-                        g_FormattedTeamNames[MatchTeam_Team2]);
+                        g_FormattedTeamNames[Get5Team_1],
+                        g_FormattedTeamNames[Get5Team_2]);
 
     } else {
       Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_FormattedTeamNames[team],
@@ -1249,14 +1249,14 @@ public void EndSeries() {
   StopRecording();
 
   // Figure out who won
-  int t1maps = g_TeamSeriesScores[MatchTeam_Team1];
-  int t2maps = g_TeamSeriesScores[MatchTeam_Team2];
+  int t1maps = g_TeamSeriesScores[Get5Team_1];
+  int t2maps = g_TeamSeriesScores[Get5Team_2];
 
-  MatchTeam winningTeam = MatchTeam_TeamNone;
+  Get5Team winningTeam = Get5Team_None;
   if (t1maps > t2maps) {
-    winningTeam = MatchTeam_Team1;
+    winningTeam = Get5Team_1;
   } else if (t2maps > t1maps) {
-    winningTeam = MatchTeam_Team2;
+    winningTeam = Get5Team_2;
   }
 
   if (g_ForceWinnerSignal) {
@@ -1413,10 +1413,10 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
   if (g_GameState == Get5State_Live) {
     int csTeamWinner = event.GetInt("winner");
 
-    Get5_MessageToAll("%t", "CurrentScoreInfoMessage", g_TeamNames[MatchTeam_Team1],
-                      CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
-                      CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2)),
-                      g_TeamNames[MatchTeam_Team2]);
+    Get5_MessageToAll("%t", "CurrentScoreInfoMessage", g_TeamNames[Get5Team_1],
+                      CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1)),
+                      CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2)),
+                      g_TeamNames[Get5Team_2]);
 
     Stats_RoundEnd(csTeamWinner);
 
@@ -1474,8 +1474,8 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       GetRoundTime(),
       view_as<CSRoundEndReason>(event.GetInt("reason") - 1),
       new Get5Winner(CSTeamToMatchTeam(csTeamWinner), view_as<Get5Side>(csTeamWinner)),
-      CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team1)),
-      CS_GetTeamScore(MatchTeamToCSTeam(MatchTeam_Team2))
+      CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1)),
+      CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2))
     );
 
     LogDebug("Calling Get5_OnRoundEnd()");
@@ -1491,11 +1491,11 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
 public void SwapSides() {
   LogDebug("SwapSides");
-  //EventLogger_SideSwap(g_TeamSide[MatchTeam_Team1], g_TeamSide[MatchTeam_Team2]);
+  //EventLogger_SideSwap(g_TeamSide[Get5Team_1], g_TeamSide[Get5Team_2]);
 
-  int tmp = g_TeamSide[MatchTeam_Team1];
-  g_TeamSide[MatchTeam_Team1] = g_TeamSide[MatchTeam_Team2];
-  g_TeamSide[MatchTeam_Team2] = tmp;
+  int tmp = g_TeamSide[Get5Team_1];
+  g_TeamSide[Get5Team_1] = g_TeamSide[Get5Team_2];
+  g_TeamSide[Get5Team_2] = tmp;
 
   if (g_ResetPausesEachHalfCvar.BoolValue) {
     LOOP_TEAMS(team) {
@@ -1601,8 +1601,8 @@ public Action Command_Status(int client, int args) {
     status.RoundNumber = g_RoundNumber;
     status.RoundTime = GetRoundTime();
 
-    status.Team1 = GetTeamInfo(MatchTeam_Team1);
-    status.Team2 = GetTeamInfo(MatchTeam_Team2);
+    status.Team1 = GetTeamInfo(Get5Team_1);
+    status.Team2 = GetTeamInfo(Get5Team_2);
   }
 
   if (g_GameState > Get5State_Veto) {
@@ -1627,7 +1627,7 @@ public Action Command_Status(int client, int args) {
   return Plugin_Handled;
 }
 
-static Get5StatusTeam GetTeamInfo(MatchTeam team) {
+static Get5StatusTeam GetTeamInfo(Get5Team team) {
 
   int side = MatchTeamToCSTeam(team);
   return new Get5StatusTeam(
@@ -1658,14 +1658,14 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
 
   // Get team names with spaces removed.
   char team1Str[MAX_CVAR_LENGTH];
-  strcopy(team1Str, sizeof(team1Str), g_TeamNames[MatchTeam_Team1]);
+  strcopy(team1Str, sizeof(team1Str), g_TeamNames[Get5Team_1]);
   ReplaceString(team1Str, sizeof(team1Str), " ", "_");
 
   char team2Str[MAX_CVAR_LENGTH];
-  strcopy(team2Str, sizeof(team2Str), g_TeamNames[MatchTeam_Team2]);
+  strcopy(team2Str, sizeof(team2Str), g_TeamNames[Get5Team_2]);
   ReplaceString(team2Str, sizeof(team2Str), " ", "_");
 
-  int mapNumber = g_TeamSeriesScores[MatchTeam_Team1] + g_TeamSeriesScores[MatchTeam_Team2] + 1;
+  int mapNumber = g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2] + 1;
   ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", mapNumber, false);
   ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle, false);
   ReplaceString(buffer, len, "{MATCHID}", g_MatchID, false);

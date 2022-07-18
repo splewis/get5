@@ -11,10 +11,8 @@ simple menu that you can call this command by using `!get5` in the game chat.
 
 If you are using get5 for scrims, please follow these steps.
 
-While get5 is intended for matches (league matches, lan matches, cups, etc.), it can be used for everyday
+While get5 is intended for matches (league matches, LAN-matches, cups, etc.), it can be used for everyday
 scrims/gathers/whatever as well. If that is your use case, you should do a few things differently.
-
-*Note*: these features are new to the 0.5.0+ versions.
 
 ### Cvars
 

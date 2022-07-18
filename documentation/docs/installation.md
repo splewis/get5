@@ -6,6 +6,10 @@ You must have [SourceMod](https://www.sourcemod.net/) downloaded and installed o
 requires SourceMod version 1.10 or higher. Instructions of how to install SourceMod and MetaMod (requirement of
 SourceMod) can be found on their website.
 
+[Download MetaMod](https://www.sourcemm.net/downloads.php?branch=stable){ .md-button .md-button--primary } [Download SourceMod](https://www.sourcemod.net/downloads.php?branch=stable){ .md-button .md-button--primary }
+
+**Remember to select the correct OS type (Windows/Linux/Mac) for both plugins. This should be the OS of the server.**
+
 ## Download Get5
 
 Releases of Get5 can be found in the [Tags](https://github.com/splewis/get5/tags) section of the repo. These versions

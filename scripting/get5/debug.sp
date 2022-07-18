@@ -155,7 +155,6 @@ static void AddInterestingCvars(File f) {
   WriteCvarString(f, "get5_live_cfg");
   WriteCvarString(f, "get5_max_pause_time");
   WriteCvarString(f, "get5_max_pauses");
-  WriteCvarString(f, "get5_mysql_force_matchid");
   WriteCvarString(f, "get5_pause_on_veto");
   WriteCvarString(f, "get5_pausing_enabled");
   WriteCvarString(f, "get5_print_damage");

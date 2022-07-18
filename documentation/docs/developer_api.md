@@ -17,5 +17,6 @@ Get5 can be interacted with in several ways. At a glance:
    by [`get5_stats_path_format`](./get5_configuration.md#file-name-formatting)), or through another SourceMod plugin (
    see #1).
 
-4) You can execute the `get5_loadmatch` command or `get5_loadmatch_url` commands via another plugin or via a RCON
+4) You can execute the [`get5_loadmatch`](../commands/#get5_loadmatch-filename) command
+   or [`get5_loadmatch_url`](../commands/#get5_loadmatch_url-url) commands via another plugin or via a RCON
    connection to begin matches. Of course, you could execute any get5 command you want as well.

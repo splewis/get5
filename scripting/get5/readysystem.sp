@@ -287,7 +287,7 @@ public void MissingPlayerInfoMessageTeam(MatchTeam team) {
 
 public void UpdateClanTags() {
   if (!g_SetClientClanTagCvar.BoolValue) {
-    LogDebug("Not setting client clang tags because get5_set_client_clan_tags is 0");
+    LogDebug("Not setting client clan tags because get5_set_client_clan_tags is 0");
     return;
   }
 

@@ -135,7 +135,8 @@ scripts:
 
 1. SourceMod error logs can be found in here. This directory is empty by default.
 2. This is the core Get5 plugin.
-3. This is the MySQL extension for collecting stats. If you want to use this extension, please see the [guide](../stats_system/#mysql-statistics).
+3. This is the MySQL extension for collecting stats. If you want to use this extension, please see
+   the [guide](../stats_system/#mysql-statistics).
 4. This is proof-of-concept integration called [get5 web panel](https://github.com/splewis/get5-web) that can be used to
    manage matches. **This is not supported and is probably very buggy. You should not use it.**
 5. This folder contains all the language files and translations for all the plugins.
@@ -147,7 +148,8 @@ scripts:
 9. SourceMod binaries.
 10. This a JSON-example of a [match configuration]. You should use this as a template for your own match configuration.
     All JSON match configurations **must** end with `.json`.
-11. Example of a scrim template match configuration.
+11. The server's default scrim match configuration. This is loaded when using
+    the [`get5_scrim`](../commands/#get5_scrim) command.
 12. Match configurations can be created in both JSON and
     SourceMod's [KeyValue](https://wiki.alliedmods.net/KeyValues_(SourceMod_Scripting)) format. We recommend JSON for
     all new users, but Get5 will continue to support reading `.cfg` files as well.

@@ -29,6 +29,10 @@ server.**
 ####`get5_kick_when_no_match_loaded`
 :   Whether to kick all clients if no match is loaded. **`Default: 0`**
 
+####`get5_end_match_on_empty_server`
+:   Whether the match is ended with no winner if all players leave (note: this will happen even if all players
+disconnect  even in warmup with the intention to reconnect!). **`Default: 0`**
+
 ####`get5_display_gotv_veto`
 :   Whether to wait for map vetoes to be printed to GOTV before changing map. **`Default: 0`**
 
@@ -52,11 +56,25 @@ users if they are not in the auth list. **`Default: 1`**
 ####`get5_set_client_clan_tags`
 :   Whether to set client clan tags to player ready status. **`Default: 1`**
 
+####`get5_time_to_start`
+:   Time (in seconds) teams have to ready up before forfeiting the match, 0 = unlimited. **`Default: 0`**
+
+####`get5_time_to_make_knife_decision`
+:   Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0 =
+unlimited. **`Default: 60`**
+
+####`get5_veto_countdown`
+:   Time (in seconds) to countdown before veto process commences. **`Default: 5`**
+
+####`get5_veto_confirmation_time`
+:   Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be
+required. 0 to disable. **`Default: 2.0`**
+
 ####`get5_print_damage`
 :   Whether to print damage reports on round ends. **`Default: 0`**
 
 ####`get5_print_damage_excess`
-:   Whether to discard damage that exceeds the remaining health of a player in the chat
+:   Whether to include damage that exceeds the remaining health of a player in the chat
 report. If enabled, you can inflict more than 100 damage to a player in the damage report. Ignored if
 [get5_print_damage](../get5_configuration#get5_print_damage) is disabled. **`Default: 0`**
 
@@ -133,27 +151,6 @@ the in-game timeout counter, and the [`!unpause`](../commands/#unpause) command 
 ####`get5_stats_path_format`
 :   Path where stats are output at each map end if it is set. Set to empty string to
 disable. **`Default: get5_matchstats_{MATCHID}.cfg`**
-
-## Match Management Timers
-
-####`get5_time_to_start`
-:   Time (in seconds) teams have to ready up before forfeiting the match, 0 = unlimited. **`Default: 0`**
-
-####`get5_time_to_make_knife_decision`
-:   Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0 =
-unlimited. **`Default: 60`**
-
-####`get5_veto_countdown`
-:   Time (in seconds) to countdown before veto process commences. **`Default: 5`**
-
-####`get5_end_match_on_empty_server`
-:   Whether the match is ended with no winner if all players leave (note: this will happen even if all players
-disconnect
-even in warmup with the intention to reconnect!). **`Default: 0`**
-
-####`get5_veto_confirmation_time`
-:   Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be
-required. 0 to disable. **`Default: 2.0`**
 
 ## Backup System
 

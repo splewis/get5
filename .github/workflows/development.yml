@@ -8,7 +8,19 @@ on:
       - reopened
 
 jobs:
+  linter-check:
+    name: Code Lint To Ensure Standardization
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run clang-format style check for C/C++/Protobuf programs.
+      uses: jidicula/clang-format-action@v4.6.2
+      with:
+        clang-format-version: '14'
+        check-path: 'scripting'
+
   testbuild:
+    needs: [linter-check]
     name: Test Compile On Pull Request
     runs-on: ubuntu-22.04
     env:

@@ -92,6 +92,7 @@ static void AddGlobalStateInfo(File f) {
   f.WriteLine("g_GameState = %d (%s)", g_GameState, buffer);
 
   f.WriteLine("g_MatchID = %s", g_MatchID);
+  f.WriteLine("g_RoundNumber = %d", g_RoundNumber);
   f.WriteLine("g_MapsToWin = %d", g_MapsToWin);
   f.WriteLine("g_BO2Match = %d", g_BO2Match);
   f.WriteLine("g_LastVetoTeam = %d", g_LastVetoTeam);
@@ -147,15 +148,18 @@ static void AddInterestingCvars(File f) {
   f.WriteLine("Interesting cvars:");
   WriteCvarString(f, "get5_allow_technical_pause");
   WriteCvarString(f, "get5_autoload_config");
+  WriteCvarString(f, "get5_auto_ready_active_players");
   WriteCvarString(f, "get5_check_auths");
   WriteCvarString(f, "get5_fixed_pause_time");
   WriteCvarString(f, "get5_kick_when_no_match_loaded");
   WriteCvarString(f, "get5_live_cfg");
   WriteCvarString(f, "get5_max_pause_time");
   WriteCvarString(f, "get5_max_pauses");
-  WriteCvarString(f, "get5_mysql_force_matchid");
   WriteCvarString(f, "get5_pause_on_veto");
   WriteCvarString(f, "get5_pausing_enabled");
+  WriteCvarString(f, "get5_print_damage");
+  WriteCvarString(f, "get5_print_damage_excess");
+  WriteCvarString(f, "get5_damageprint_format");
   WriteCvarString(f, "get5_reset_pauses_each_half");
   WriteCvarString(f, "get5_web_api_url");
   WriteCvarString(f, "get5_last_backup_file");

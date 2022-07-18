@@ -48,7 +48,7 @@
     }
     "NoMatchSetupInfoMessage"
     {
-        "en"			"There is no match setup"
+        "en"            "No match was set up"
     }
     "YourAreNotAPlayerInfoMessage"
     {
@@ -56,7 +56,7 @@
     }
     "TeamIsFullInfoMessage"
     {
-        "en"            "Your team is full"
+        "en"            "Your team is full."
     }
     "TeamForfeitInfoMessage"
     {
@@ -207,7 +207,7 @@
     "TeammateForceReadied"
     {
         "#format"       "{1:N}"
-        "en"            "Your team was force-readied by {GREEN}{1}"
+        "en"            "Your team was force-readied by {GREEN}{1}{NORMAL}."
     }
     "AdminForceReadyInfoMessage"
     {
@@ -233,17 +233,17 @@
     "TeamWinningSeriesInfoMessage"
     {
         "#format"       "{1:s},{2:d},{3:d}"
-        "en"            "{1}{NORMAL} is winning the series {2}-{3}"
+        "en"            "{1}{NORMAL} is winning the series {2}-{3}."
     }
     "SeriesTiedInfoMessage"
     {
         "#format"       "{1:d},{2:d}"
-        "en"            "The series is tied at {1}-{2}"
+        "en"            "The series is tied at {1}-{2}."
     }
     "NextSeriesMapInfoMessage"
     {
         "#format"       "{1:s}"
-        "en"            "The next map in the series is {GREEN}{1}"
+        "en"            "The next map in the series is {GREEN}{1}{NORMAL}."
     }
     "TeamWonMatchInfoMessage"
     {
@@ -267,7 +267,7 @@
     }
     "MatchFinishedInfoMessage"
     {
-        "en"            "The match has been finished"
+        "en"            "The match is over"
     }
     "CurrentScoreInfoMessage"
     {
@@ -277,7 +277,7 @@
     "BackupLoadedInfoMessage"
     {
         "#format"       "{1:s}"
-        "en"            "Successfully loaded backup {1}"
+        "en"            "Successfully loaded backup {1}."
     }
     "MatchBeginInSecondsInfoMessage"
     {
@@ -323,22 +323,22 @@
     "MapIsInfoMessage"
     {
         "#format"       "{1:d},{2:s}"
-        "en"            "Map {1}: {GREEN}{2}"
+        "en"            "Map {1}: {GREEN}{2}{NORMAL}."
     }
     "TeamPickedMapInfoMessage"
     {
         "#format"       "{1:s},{2:s},{3:d}"
-        "en"            "{1} picked {GREEN}{2} {NORMAL}as map {3}"
+        "en"            "{1} picked {GREEN}{2} {NORMAL}as map {3}."
     }
     "TeamSelectSideInfoMessage"
     {
         "#format"       "{1:s},{2:s},{3:s}"
-        "en"            "{1} has selected to start on {GREEN}{2} {NORMAL}on {3}"
+        "en"            "{1} has selected to start on {GREEN}{2} {NORMAL}on {3}."
     }
     "TeamVetoedMapInfoMessage"
     {
         "#format"       "{1:s},{2:s}"
-        "en"            "{1} vetoed {LIGHT_RED}{2}"
+        "en"            "{1} vetoed {LIGHT_RED}{2}{NORMAL}."
     }
     "CaptainLeftOnVetoInfoMessage"
     {
@@ -354,7 +354,7 @@
     }
     "MoveToCoachInfoMessage"
     {
-        "en"            "Because your team is full, you were moved to the coach position."
+        "en"            "You were moved to the coach position because your team is full."
     }
     "ReadyTag"
     {
@@ -389,7 +389,7 @@
     "MapVetoSidePickMenuText"
     {
         "#format"       "{1:s}"
-        "en"        "Select a side for {1}"
+        "en"        "Select a side for {1}:"
     }
     "MapVetoSidePickConfirmMenuText"
     {

@@ -1,17 +1,34 @@
 site_name: Get5 Documentation
 site_url: https://splewis.github.io/get5
 repo_url: https://github.com/splewis/get5
-repo_name: get5
+repo_name: splewis/get5
+edit_uri: https://github.com/splewis/get5/blob/master/documentation/docs
 theme:
-  name: readthedocs
-
+  name: material
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+plugins:
+  - swagger-ui-tag
 nav:
   - Home: index.md
+  - Installation: installation.md
+  - Get5 Configuration: get5_configuration.md
   - Commands: commands.md
   - Developer API: developer_api.md
   - Event Logs: event_logs.md
-  - Get5 Configuration: get5_configuration.md
-  - Installation: installation.md
   - Match Configuration: match_configuration.md
   - Match Schema: match_schema.md
   - Player Stats System: stats_system.md
+markdown_extensions:
+  - meta
+  - attr_list
+  - def_list

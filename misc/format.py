@@ -17,7 +17,9 @@ def main():
     files = []
     for (dirpath, dirnames, filenames) in os.walk(scripting_path):
         for f in filenames:
-            if '.inc' in f or '.sp' in f:
+            # Don't format get5.inc since clang-format insists on a blank line after 'public'
+            # methods inside methodmaps, making it look quite confusing
+            if ('.inc' in f or '.sp' in f) and ('get5.inc' not in f):
                 files.append(os.path.join(dirpath, f))
 
     for filename in files:

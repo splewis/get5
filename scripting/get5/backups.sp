@@ -155,14 +155,14 @@ public void WriteBackStructure(const char[] path) {
     kv.SetNum("gamestate", view_as<int>(Get5State_Live));
   }
 
-  kv.SetNum("team1_side", g_TeamSide[MatchTeam_Team1]);
-  kv.SetNum("team2_side", g_TeamSide[MatchTeam_Team2]);
+  kv.SetNum("team1_side", g_TeamSide[Get5Team_1]);
+  kv.SetNum("team2_side", g_TeamSide[Get5Team_2]);
 
-  kv.SetNum("team1_start_side", g_TeamStartingSide[MatchTeam_Team1]);
-  kv.SetNum("team2_start_side", g_TeamStartingSide[MatchTeam_Team2]);
+  kv.SetNum("team1_start_side", g_TeamStartingSide[Get5Team_1]);
+  kv.SetNum("team2_start_side", g_TeamStartingSide[Get5Team_2]);
 
-  kv.SetNum("team1_series_score", g_TeamSeriesScores[MatchTeam_Team1]);
-  kv.SetNum("team2_series_score", g_TeamSeriesScores[MatchTeam_Team2]);
+  kv.SetNum("team1_series_score", g_TeamSeriesScores[Get5Team_1]);
+  kv.SetNum("team2_series_score", g_TeamSeriesScores[Get5Team_2]);
 
   // Write original maplist.
   kv.JumpToKey("maps", true);
@@ -180,8 +180,8 @@ public void WriteBackStructure(const char[] path) {
 
     kv.JumpToKey(key, true);
 
-    kv.SetNum("team1", GetMapScore(i, MatchTeam_Team1));
-    kv.SetNum("team2", GetMapScore(i, MatchTeam_Team2));
+    kv.SetNum("team1", GetMapScore(i, Get5Team_1));
+    kv.SetNum("team2", GetMapScore(i, Get5Team_2));
     kv.GoBack();
   }
   kv.GoBack();
@@ -217,7 +217,7 @@ public void WriteBackStructure(const char[] path) {
 public bool RestoreFromBackup(const char[] path) {
   KeyValues kv = new KeyValues("Backup");
   if (!kv.ImportFromFile(path)) {
-    LogError("Failed to find read backup file \"%s\"", path);
+    LogError("Failed to read backup file \"%s\"", path);
     delete kv;
     return false;
   }
@@ -237,14 +237,14 @@ public bool RestoreFromBackup(const char[] path) {
   kv.GetString("matchid", g_MatchID, sizeof(g_MatchID));
   g_GameState = view_as<Get5State>(kv.GetNum("gamestate"));
 
-  g_TeamSide[MatchTeam_Team1] = kv.GetNum("team1_side");
-  g_TeamSide[MatchTeam_Team2] = kv.GetNum("team2_side");
+  g_TeamSide[Get5Team_1] = kv.GetNum("team1_side");
+  g_TeamSide[Get5Team_2] = kv.GetNum("team2_side");
 
-  g_TeamStartingSide[MatchTeam_Team1] = kv.GetNum("team1_start_side");
-  g_TeamStartingSide[MatchTeam_Team2] = kv.GetNum("team2_start_side");
+  g_TeamStartingSide[Get5Team_1] = kv.GetNum("team1_start_side");
+  g_TeamStartingSide[Get5Team_2] = kv.GetNum("team2_start_side");
 
-  g_TeamSeriesScores[MatchTeam_Team1] = kv.GetNum("team1_series_score");
-  g_TeamSeriesScores[MatchTeam_Team2] = kv.GetNum("team2_series_score");
+  g_TeamSeriesScores[Get5Team_1] = kv.GetNum("team1_series_score");
+  g_TeamSeriesScores[Get5Team_2] = kv.GetNum("team2_series_score");
 
   char mapName[PLATFORM_MAX_PATH];
   if (g_GameState > Get5State_Veto) {
@@ -272,8 +272,8 @@ public bool RestoreFromBackup(const char[] path) {
 
           int t1 = kv.GetNum("team1");
           int t2 = kv.GetNum("team2");
-          g_TeamScoresPerMap.Set(map, t1, view_as<int>(MatchTeam_Team1));
-          g_TeamScoresPerMap.Set(map, t2, view_as<int>(MatchTeam_Team2));
+          g_TeamScoresPerMap.Set(map, t1, view_as<int>(Get5Team_1));
+          g_TeamScoresPerMap.Set(map, t2, view_as<int>(Get5Team_2));
         } while (kv.GotoNextKey());
         kv.GoBack();
       }
@@ -301,7 +301,7 @@ public bool RestoreFromBackup(const char[] path) {
   GetCurrentMap(currentMap, sizeof(currentMap));
 
   char currentSeriesMap[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(GetMapNumber(), currentSeriesMap, sizeof(currentSeriesMap));
+  g_MapsToPlay.GetString(Get5_GetMapNumber(), currentSeriesMap, sizeof(currentSeriesMap));
 
   if (!StrEqual(currentMap, currentSeriesMap)) {
     ChangeMap(currentSeriesMap, 1.0);
@@ -313,11 +313,16 @@ public bool RestoreFromBackup(const char[] path) {
 
   delete kv;
 
-  LogDebug("Calling Get5_OnBackupRestore");
+  LogDebug("Calling Get5_OnBackupRestore()");
+
+  Get5BackupRestoredEvent backupEvent =
+      new Get5BackupRestoredEvent(g_MatchID, Get5_GetMapNumber(), path);
+
   Call_StartForward(g_OnBackupRestore);
+  Call_PushCell(backupEvent);
   Call_Finish();
 
-  EventLogger_BackupLoaded(path);
+  EventLogger_LogAndDeleteEvent(backupEvent);
 
   return true;
 }
@@ -334,9 +339,9 @@ public void RestoreGet5Backup() {
     ExecuteMatchConfigCvars();
     SetMatchRestartDelay();
 
-    // There are some timing issues leading to incorrect score when restoring matches in second half.
-    // Doing the restore on a timer    
-    CreateTimer(1.0, Time_StartRestore);   
+    // There are some timing issues leading to incorrect score when restoring matches in second
+    // half. Doing the restore on a timer
+    CreateTimer(1.0, Time_StartRestore);
   } else {
     SetStartingTeams();
     SetMatchTeamCvars();
@@ -350,7 +355,7 @@ public void RestoreGet5Backup() {
       EndWarmup();
       EndWarmup();
       ServerCommand("mp_restartgame 5");
-      Pause(PauseType_Backup);
+      PauseGame(Get5Team_None, Get5PauseType_Backup, 1);
       if (g_CoachingEnabledCvar.BoolValue) {
         CreateTimer(6.0, Timer_SwapCoaches);
       }
@@ -365,15 +370,14 @@ public void RestoreGet5Backup() {
 public Action Timer_SwapCoaches(Handle timer) {
   for (int i = 1; i <= MaxClients; i++) {
     if (IsAuthedPlayer(i)) {
-      CheckIfClientCoaching(i, MatchTeam_Team1);
-      CheckIfClientCoaching(i, MatchTeam_Team2);
+      CheckIfClientCoaching(i, Get5Team_1);
+      CheckIfClientCoaching(i, Get5Team_2);
     }
-      
   }
 }
 
 public Action Time_StartRestore(Handle timer) {
-  Pause(PauseType_Backup);
+  PauseGame(Get5Team_None, Get5PauseType_Backup, 1);
 
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);

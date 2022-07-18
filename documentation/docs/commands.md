@@ -48,7 +48,8 @@ the [`sv_coaching_enabled`](https://totalcsgo.com/command/svcoachingenabled) var
 ####`!stop`
 
 :   Asks to reload the last match backup file. The opposing team must confirm. Only works if
-the [backup system is enabled](../get5_configuration/#get5_backup_system_enabled).
+the [backup system is enabled](../get5_configuration/#get5_backup_system_enabled) and
+the [get5_stop_command_enabled](../get5_configuration/#get5_stop_command_enabled) is set to `1`.
 
 ####`!forceready`
 
@@ -69,7 +70,8 @@ Please note that these are meant to be used by *admins* in console.
 :   Loads a match config file (JSON or KeyValue) relative from the `csgo` directory.
 
 ####`get5_loadbackup <filename>`
-:   Loads a match config file (JSON or KeyValue) relative from the `csgo` directory.
+:   Loads a match config file (JSON or KeyValue) relative from the `csgo`
+directory. Only works if the [backup system is enabled](../get5_configuration/#get5_backup_system_enabled).
 
 ####`get5_loadteam <team1|team2|spec> <filename>`
 :   Loads a team section from a file into a team relative from the `csgo`

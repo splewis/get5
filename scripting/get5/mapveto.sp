@@ -15,10 +15,9 @@ public void CreateVeto() {
   g_VetoCaptains[Get5Team_2] = GetTeamCaptain(Get5Team_2);
   ResetReadyStatus();
   if (g_PauseOnVetoCvar.BoolValue) {
-    if (g_PausingEnabledCvar.BoolValue){
+    if (g_PausingEnabledCvar.BoolValue) {
       PauseGame(Get5Team_None, Get5PauseType_Admin, 1);
-    }
-    else {
+    } else {
       ServerCommand("mp_pause_match");
     }
   }
@@ -49,11 +48,11 @@ static void AbortVeto() {
 public void VetoFinished() {
   ChangeState(Get5State_Warmup);
   Get5_MessageToAll("%t", "MapDecidedInfoMessage");
-  
-  if (IsPaused()) {  
+
+  if (IsPaused()) {
     ServerCommand("mp_unpause_match");
   }
-  
+
   // Use total series score as starting point, to not print skipped maps
   int seriesScore = g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2];
   for (int i = seriesScore; i < g_MapsToPlay.Length; i++) {
@@ -168,7 +167,8 @@ public void VetoController(int client) {
       g_MapSides.Push(SideChoice_Team1CT);
     }
 
-    Get5MapPickedEvent event = new Get5MapPickedEvent(g_MatchID, Get5Team_None, mapName, g_MapsToPlay.Length - 1);
+    Get5MapPickedEvent event =
+        new Get5MapPickedEvent(g_MatchID, Get5Team_None, mapName, g_MapsToPlay.Length - 1);
 
     LogDebug("Calling Get5_OnMapPicked()");
 
@@ -357,7 +357,8 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
                       g_MapsToPlay.Length);
     g_LastVetoTeam = team;
 
-    Get5MapPickedEvent event = new Get5MapPickedEvent(g_MatchID, team, mapName, g_MapsToPlay.Length - 1);
+    Get5MapPickedEvent event =
+        new Get5MapPickedEvent(g_MatchID, team, mapName, g_MapsToPlay.Length - 1);
 
     LogDebug("Calling Get5_OnMapPicked()");
 
@@ -426,15 +427,17 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
       else
         g_MapSides.Push(SideChoice_Team1CT);
     }
-     
+
     int mapNumber = g_MapsToPlay.Length - 1;
 
     char mapName[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(mapNumber, mapName, sizeof(mapName));
 
-    Get5_MessageToAll("%t", "TeamSelectSideInfoMessage", g_FormattedTeamNames[team], choice, mapName);
+    Get5_MessageToAll("%t", "TeamSelectSideInfoMessage", g_FormattedTeamNames[team], choice,
+                      mapName);
 
-    Get5SidePickedEvent event = new Get5SidePickedEvent(g_MatchID, mapNumber, mapName, team, view_as<Get5Side>(selectedSide));
+    Get5SidePickedEvent event = new Get5SidePickedEvent(g_MatchID, mapNumber, mapName, team,
+                                                        view_as<Get5Side>(selectedSide));
 
     LogDebug("Calling Get5_OnSidePicked()");
 

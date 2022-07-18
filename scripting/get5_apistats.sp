@@ -148,7 +148,6 @@ public int RequestCallback(Handle request, bool failure, bool requestSuccessful,
 }
 
 public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
-
   // Handle new logos.
   if (!DirExists(g_LogoBasePath)) {
     if (!CreateDirectory(g_LogoBasePath, 755)) {
@@ -266,7 +265,6 @@ public void UpdateRoundStats(const char[] matchId, int mapNumber) {
 }
 
 public void Get5_OnMapResult(const Get5MapResultEvent event) {
-
   char matchId[64];
   event.GetMatchId(matchId, sizeof(matchId));
 
@@ -354,7 +352,6 @@ static void AddIntParam(Handle request, const char[] key, int value) {
 }
 
 public void Get5_OnSeriesResult(const Get5SeriesResultEvent event) {
-
   char matchId[64];
   event.GetMatchId(matchId, sizeof(matchId));
 

@@ -65,7 +65,8 @@ public Action Command_TechPause(int client, int args) {
       g_TeamGivenTechPauseCommand[team] = true;
       // Only create a new timer when the old one expires.
       if (g_TechPausedTimeOverride[team] == 0) {
-        CreateTimer(1.0, Timer_TechPauseOverrideCheck, team, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
+        CreateTimer(1.0, Timer_TechPauseOverrideCheck, team,
+                    TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
       }
       // Once we run out of time, subtract a tech pause used and reset the timer.
       g_TeamTechPausesUsed[team]++;
@@ -180,7 +181,8 @@ public Action Timer_TechPauseOverrideCheck(Handle timer, int data) {
 
   // Only count down if we're still frozen, fit the right pause type
   // and the team who paused has not given the go ahead.
-  if (InFreezeTime() && g_TeamGivenTechPauseCommand[team] && g_PauseType == Get5PauseType_Tech && !g_TeamReadyForUnpause[team]) {
+  if (InFreezeTime() && g_TeamGivenTechPauseCommand[team] && g_PauseType == Get5PauseType_Tech &&
+      !g_TeamReadyForUnpause[team]) {
     LogDebug("Adding tech time used. Current time = %d", g_TechPausedTimeOverride[team]);
     g_TechPausedTimeOverride[team]++;
 
@@ -190,7 +192,7 @@ public Action Timer_TechPauseOverrideCheck(Handle timer, int data) {
         timeLeft = timeLeft / 60;
         Get5_MessageToAll("%t", "TechPauseTimeRemainingMinutes", timeLeft);
       } else if (timeLeft <= 30 && (timeLeft % 30 == 0 || timeLeft == 10)) {
-       Get5_MessageToAll("%t", "TechPauseTimeRemaining", timeLeft);
+        Get5_MessageToAll("%t", "TechPauseTimeRemaining", timeLeft);
       }
     }
 
@@ -289,7 +291,7 @@ public Action Command_Unpause(int client, int args) {
     // Remove any techpause conditions if an admin unpauses.
     if (g_PauseType == Get5PauseType_Tech) {
       LOOP_TEAMS(team) {
-      if (team != Get5Team_None) {
+        if (team != Get5Team_None) {
           g_TeamGivenTechPauseCommand[team] = false;
           g_TechPausedTimeOverride[team] = 0;
         }
@@ -336,8 +338,8 @@ public Action Command_Unpause(int client, int args) {
   if (g_TeamReadyForUnpause[Get5Team_1] && g_TeamReadyForUnpause[Get5Team_2]) {
     UnpauseGame(team);
     if (pausedTeam != Get5Team_None) {
-        g_TeamGivenTechPauseCommand[pausedTeam] = false;
-        g_TechPausedTimeOverride[pausedTeam] = 0;
+      g_TeamGivenTechPauseCommand[pausedTeam] = false;
+      g_TechPausedTimeOverride[pausedTeam] = 0;
     }
     if (IsPlayer(client)) {
       Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", client);

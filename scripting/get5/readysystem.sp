@@ -180,13 +180,8 @@ public Action Command_NotReady(int client, int args) {
   SetClientReady(client, false);
   SetTeamForcedReady(team, false);
   if (teamWasReady) {
-
-    Get5TeamReadyStatusChangedEvent readyEvent = new Get5TeamReadyStatusChangedEvent(
-      g_MatchID,
-      team,
-      false,
-      Get5_GetGameState()
-    );
+    Get5TeamReadyStatusChangedEvent readyEvent =
+        new Get5TeamReadyStatusChangedEvent(g_MatchID, team, false, Get5_GetGameState());
 
     LogDebug("Calling Get5_OnTeamReadyStatusChanged()");
 
@@ -233,12 +228,8 @@ public Action Command_ForceReadyClient(int client, int args) {
 static void HandleReadyMessage(Get5Team team) {
   CheckTeamNameStatus(team);
 
-  Get5TeamReadyStatusChangedEvent readyEvent = new Get5TeamReadyStatusChangedEvent(
-    g_MatchID,
-    team,
-    true,
-    Get5_GetGameState()
-  );
+  Get5TeamReadyStatusChangedEvent readyEvent =
+      new Get5TeamReadyStatusChangedEvent(g_MatchID, team, true, Get5_GetGameState());
 
   LogDebug("Calling Get5_OnTeamReadyStatusChanged()");
 

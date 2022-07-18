@@ -18,10 +18,7 @@ public Action Timer_AnnounceKnife(Handle timer) {
     Get5_MessageToAll("%t", "KnifeInfoMessage");
   }
 
-  Get5KnifeRoundStartedEvent knifeEvent = new Get5KnifeRoundStartedEvent(
-    g_MatchID,
-    g_MapNumber
-  );
+  Get5KnifeRoundStartedEvent knifeEvent = new Get5KnifeRoundStartedEvent(g_MatchID, g_MapNumber);
 
   LogDebug("Calling Get5_OnKnifeRoundStarted()");
 
@@ -74,13 +71,9 @@ static void PerformSideSwap(bool swap) {
 public void EndKnifeRound(bool swap) {
   PerformSideSwap(swap);
 
-  Get5KnifeRoundWonEvent knifeEvent = new Get5KnifeRoundWonEvent(
-    g_MatchID,
-    g_MapNumber,
-    g_KnifeWinnerTeam,
-    view_as<Get5Side>(g_TeamStartingSide[g_KnifeWinnerTeam]),
-    swap
-  );
+  Get5KnifeRoundWonEvent knifeEvent =
+      new Get5KnifeRoundWonEvent(g_MatchID, g_MapNumber, g_KnifeWinnerTeam,
+                                 view_as<Get5Side>(g_TeamStartingSide[g_KnifeWinnerTeam]), swap);
 
   LogDebug("Calling Get5_OnKnifeRoundWon()");
 

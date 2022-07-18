@@ -315,7 +315,8 @@ public bool RestoreFromBackup(const char[] path) {
 
   LogDebug("Calling Get5_OnBackupRestore()");
 
-  Get5BackupRestoredEvent backupEvent = new Get5BackupRestoredEvent(g_MatchID, Get5_GetMapNumber(), path);
+  Get5BackupRestoredEvent backupEvent =
+      new Get5BackupRestoredEvent(g_MatchID, Get5_GetMapNumber(), path);
 
   Call_StartForward(g_OnBackupRestore);
   Call_PushCell(backupEvent);
@@ -338,9 +339,9 @@ public void RestoreGet5Backup() {
     ExecuteMatchConfigCvars();
     SetMatchRestartDelay();
 
-    // There are some timing issues leading to incorrect score when restoring matches in second half.
-    // Doing the restore on a timer    
-    CreateTimer(1.0, Time_StartRestore);   
+    // There are some timing issues leading to incorrect score when restoring matches in second
+    // half. Doing the restore on a timer
+    CreateTimer(1.0, Time_StartRestore);
   } else {
     SetStartingTeams();
     SetMatchTeamCvars();
@@ -372,7 +373,6 @@ public Action Timer_SwapCoaches(Handle timer) {
       CheckIfClientCoaching(i, Get5Team_1);
       CheckIfClientCoaching(i, Get5Team_2);
     }
-
   }
 }
 

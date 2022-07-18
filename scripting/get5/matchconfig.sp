@@ -1,7 +1,7 @@
 #include <string>
 
 #define REMOTE_CONFIG_PATTERN "remote_config%d.json"
-#define CONFIG_MATCHID_DEFAULT "" // empty string if no match ID defined in config.
+#define CONFIG_MATCHID_DEFAULT ""  // empty string if no match ID defined in config.
 #define CONFIG_MATCHTITLE_DEFAULT "Map {MAPNUMBER} of {MAXMAPS}"
 #define CONFIG_PLAYERSPERTEAM_DEFAULT 5
 #define CONFIG_COACHESPERTEAM_DEFAULT 2
@@ -24,7 +24,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     g_TeamReadyForUnpause[team] = false;
     g_TeamGivenStopCommand[team] = false;
     // We only reset these on a new game.
-    // During restore we want to keep our 
+    // During restore we want to keep our
     // current pauses used.
     if (!restoreBackup) {
       g_TeamPauseTimeUsed[team] = 0;
@@ -125,7 +125,8 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
     Stats_InitSeries();
 
-    Get5SeriesStartedEvent startEvent = new Get5SeriesStartedEvent(g_MatchID, g_TeamNames[Get5Team_1], g_TeamNames[Get5Team_2]);
+    Get5SeriesStartedEvent startEvent =
+        new Get5SeriesStartedEvent(g_MatchID, g_TeamNames[Get5Team_1], g_TeamNames[Get5Team_2]);
 
     LogDebug("Calling Get5_OnSeriesInit");
 
@@ -134,7 +135,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     Call_Finish();
 
     EventLogger_LogAndDeleteEvent(startEvent);
-
   }
 
   for (int i = 1; i <= MaxClients; i++) {
@@ -158,7 +158,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 }
 
 public bool LoadMatchFile(const char[] config) {
-
   Get5PreloadMatchConfigEvent event = new Get5PreloadMatchConfigEvent(config);
 
   LogDebug("Calling Get5_OnPreLoadMatchConfig()");
@@ -175,21 +174,19 @@ public bool LoadMatchFile(const char[] config) {
   }
 
   if (IsJSONPath(config)) {
-
     JSON_Object json = json_read_from_file(config);
     if (json == null) {
       MatchConfigFail("Failed to read match config as JSON.");
       return false;
     }
 
-    if (!LoadMatchFromJson(json)) { // This prints its own error
+    if (!LoadMatchFromJson(json)) {  // This prints its own error
       json_cleanup_and_delete(json);
       return false;
     }
     json_cleanup_and_delete(json);
 
   } else {
-
     // Assume its a key-values file.
     KeyValues kv = new KeyValues("Match");
     if (!kv.ImportFromFile(config)) {
@@ -198,7 +195,7 @@ public bool LoadMatchFile(const char[] config) {
       return false;
     }
 
-    if (!LoadMatchFromKv(kv)) { // This prints its own error
+    if (!LoadMatchFromKv(kv)) {  // This prints its own error
       delete kv;
       return false;
     }
@@ -222,7 +219,6 @@ static void MatchConfigFail(const char[] reason, any...) {
   Call_Finish();
 
   EventLogger_LogAndDeleteEvent(event);
-
 }
 
 stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
@@ -885,7 +881,7 @@ public Action Command_AddCoach(int client, int args) {
       return Plugin_Handled;
     }
 
-    if(!ConvertAuthToSteam64(auth, steam64)) {
+    if (!ConvertAuthToSteam64(auth, steam64)) {
       return Plugin_Handled;
     }
 

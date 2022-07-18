@@ -92,7 +92,6 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
 
   // Match ID defaults to an empty string, so if it's empty we use auto-increment from MySQL.
   if (strlen(matchId) > 0) {
-
     char matchIdSz[64];
     db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
@@ -118,7 +117,8 @@ public void MatchInitCallback(Database dbObj, DBResultSet results, const char[] 
     LogError("Failed to get Match ID from match init query: %s.", error);
     g_DisableStats = true;
   } else if (results.InsertId < 1) {
-    LogError("Match ID init query succeeded but did not return a match ID integer. Perhaps the column does not have AUTO_INCREMENT?");
+    LogError(
+        "Match ID init query succeeded but did not return a match ID integer. Perhaps the column does not have AUTO_INCREMENT?");
     g_DisableStats = true;
   } else {
     char matchId[64];

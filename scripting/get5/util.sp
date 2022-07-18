@@ -127,7 +127,8 @@ stock void ConvertGet5TeamToStringInJson(const JSON_Object obj, const char[] key
 /**
  * Used to consistently map a Get5PauseType to string in JSON.
  */
-stock void ConvertGet5PauseTypeToStringInJson(const JSON_Object obj, const char[] key, Get5PauseType pauseType) {
+stock void ConvertGet5PauseTypeToStringInJson(const JSON_Object obj, const char[] key,
+                                              Get5PauseType pauseType) {
   if (pauseType == Get5PauseType_Admin) {
     obj.SetString(key, "admin");
   } else if (pauseType == Get5PauseType_Tech) {
@@ -144,7 +145,8 @@ stock void ConvertGet5PauseTypeToStringInJson(const JSON_Object obj, const char[
 /**
  * Used to consistently convert Get5BombSite to 'a', 'b' or null.
  */
-stock void ConvertBombSiteToStringInJson(const JSON_Object obj, const char[] key, const Get5BombSite site) {
+stock void ConvertBombSiteToStringInJson(const JSON_Object obj, const char[] key,
+                                         const Get5BombSite site) {
   if (site == Get5BombSite_A) {
     obj.SetString(key, "a");
   } else if (site == Get5BombSite_B) {
@@ -157,7 +159,8 @@ stock void ConvertBombSiteToStringInJson(const JSON_Object obj, const char[] key
 /**
  * Used to consistently set string keys on JSON objects that receive a Get5State parameter.
  */
-stock void ConvertGameStateToStringInJson(const JSON_Object obj, const char[] key, const Get5State state) {
+stock void ConvertGameStateToStringInJson(const JSON_Object obj, const char[] key,
+                                          const Get5State state) {
   char gameStateString[64];
   GameStateString(state, gameStateString, sizeof(gameStateString));
   obj.SetString(key, gameStateString);
@@ -241,7 +244,6 @@ stock void StopRecording() {
   Call_Finish();
 
   EventLogger_LogAndDeleteEvent(event);
-
 }
 
 stock bool InWarmup() {
@@ -301,7 +303,8 @@ stock bool Pause(Get5PauseType pauseType, int pauseTime, int csTeam, int pausesL
 
   g_PauseType = pauseType;
   ServerCommand("mp_pause_match");
-  if (pauseType == Get5PauseType_Tech || pauseTime == 0 || csTeam == CS_TEAM_SPECTATOR || csTeam == CS_TEAM_NONE) {
+  if (pauseType == Get5PauseType_Tech || pauseTime == 0 || csTeam == CS_TEAM_SPECTATOR ||
+      csTeam == CS_TEAM_NONE) {
     return false;
   } else {
     if (csTeam == CS_TEAM_T) {

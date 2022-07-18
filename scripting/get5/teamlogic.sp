@@ -71,7 +71,7 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
   }
 
   if (csTeam == team_to) {
-    if(CheckIfClientCoaching(client, correctTeam)) {
+    if (CheckIfClientCoaching(client, correctTeam)) {
       return Plugin_Stop;
     } else {
       return Plugin_Continue;
@@ -99,7 +99,7 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
       LogDebug("Forcing player %N onto %d", client, csTeam);
       FakeClientCommand(client, "jointeam %d", csTeam);
     }
-    
+
     CheckIfClientCoaching(client, correctTeam);
     return Plugin_Stop;
   }
@@ -115,9 +115,9 @@ public bool CheckIfClientCoaching(int client, Get5Team team) {
   char clientAuth64[AUTH_LENGTH];
   GetAuth(client, clientAuth64, AUTH_LENGTH);
   if (IsAuthOnTeamCoach(clientAuth64, team)) {
-      LogDebug("Forcing player %N to coach as they were previously.", client);
-      MoveClientToCoach(client);
-      return true;
+    LogDebug("Forcing player %N to coach as they were previously.", client);
+    MoveClientToCoach(client);
+    return true;
   }
   return false;
 }
@@ -155,7 +155,7 @@ public void MoveClientToCoach(int client) {
       GetTeamAuths(matchTeam).Erase(index);
     }
   }
-  
+
   // If we're in warmup we use the in-game
   // coaching command. Otherwise we manually move them to spec
   // and set the coaching target.
@@ -199,7 +199,6 @@ public Action Command_SmCoach(int client, int args) {
 }
 
 public Action Command_Coach(int client, const char[] command, int argc) {
-
   if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
@@ -418,8 +417,7 @@ public int GetMapScore(int mapNumber, Get5Team team) {
 }
 
 public bool HasMapScore(int mapNumber) {
-  return GetMapScore(mapNumber, Get5Team_1) != 0 ||
-         GetMapScore(mapNumber, Get5Team_2) != 0;
+  return GetMapScore(mapNumber, Get5Team_1) != 0 || GetMapScore(mapNumber, Get5Team_2) != 0;
 }
 
 public bool AddPlayerToTeam(const char[] auth, Get5Team team, const char[] name) {
@@ -489,11 +487,11 @@ public void LoadPlayerNames() {
       }
     }
     for (int i = 0; i < coachIds.Length; i++) {
-      // There's a way to push an array of cells into the end, however, it 
+      // There's a way to push an array of cells into the end, however, it
       // becomes a single element, rather than pushing individually.
-    coachIds.GetString(i, id, sizeof(id));
-    if (g_PlayerNames.GetString(id, name, sizeof(name)) && !StrEqual(name, "") &&
-        !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
+      coachIds.GetString(i, id, sizeof(id));
+      if (g_PlayerNames.GetString(id, name, sizeof(name)) && !StrEqual(name, "") &&
+          !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
         namesKv.SetString(id, name);
         numNames++;
       }

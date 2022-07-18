@@ -1,4 +1,4 @@
-# API for developers
+# Developer API
 
 Get5 can be interacted with in several ways. At a glance:
 
@@ -10,11 +10,11 @@ Get5 can be interacted with in several ways. At a glance:
    template and create a new repository for your plugin!
 
 2) You can read [event logs](./event_logs.md) from a file on disk (set
-   by [`get5_event_log_format`](./get5_configuration.md#file-name-formatting)), through a RCON connection to the server
+   by [`get5_event_log_format`](./configuration.md#file-name-formatting)), through a RCON connection to the server
    console since they are output there, or through another SourceMod plugin (see #1).
 
 3) You can read the [stats](./stats_system.md) get5 collects from a file on disk (set
-   by [`get5_stats_path_format`](./get5_configuration.md#file-name-formatting)), or through another SourceMod plugin (
+   by [`get5_stats_path_format`](./configuration.md#file-name-formatting)), or through another SourceMod plugin (
    see #1).
 
 4) You can execute the [`get5_loadmatch`](../commands/#get5_loadmatch-filename) command

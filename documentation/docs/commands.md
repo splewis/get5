@@ -18,19 +18,19 @@ Please note that these can be typed by *all players* in chat.
 
 ####`!pause`
 
-:   Requests a freeze time pause. Pauses can be modified in the [Get5 config](../get5_configuration#pausing).
+:   Requests a freeze time pause. Pauses can be modified in the [Get5 config](../configuration#pausing).
 
 ####`!unpause`
 
 :   Requests an unpause. The other team must also call `!unpause`
-if [get5_max_pause_time](../get5_configuration/#get5_max_pause_time)
-is set to `0`. If [get5_fixed_pause_time](../get5_configuration/#get5_fixed_pause_time) is set to a non-zero value, this
+if [get5_max_pause_time](../configuration/#get5_max_pause_time)
+is set to `0`. If [get5_fixed_pause_time](../configuration/#get5_fixed_pause_time) is set to a non-zero value, this
 command cannot be used. Pauses [`initiated by administrators`](../commands/#pause-commands) cannot be unpaused by
 players.
 
 ####`!tech`
 
-:   Requests a technical pause. These can be modified in the [Get5 config](../get5_configuration#pausing).
+:   Requests a technical pause. These can be modified in the [Get5 config](../configuration#pausing).
 
 ####`!coach`
 
@@ -48,12 +48,16 @@ the [`sv_coaching_enabled`](https://totalcsgo.com/command/svcoachingenabled) var
 ####`!stop`
 
 :   Asks to reload the last match backup file. The opposing team must confirm. Only works if
-the [backup system is enabled](../get5_configuration/#get5_backup_system_enabled) and
-the [get5_stop_command_enabled](../get5_configuration/#get5_stop_command_enabled) is set to `1`.
+the [backup system is enabled](../configuration/#get5_backup_system_enabled) and
+the [get5_stop_command_enabled](../configuration/#get5_stop_command_enabled) is set to `1`.
 
 ####`!forceready`
 
 :   Force-readies your team, marking all players on your team as ready.
+
+####`!ringer`
+
+:   Adds/removes a ringer to/from the home scrim team.
 
 ####`!get5`
 
@@ -71,7 +75,7 @@ Please note that these are meant to be used by *admins* in console.
 
 ####`get5_loadbackup <filename>`
 :   Loads a match config file (JSON or KeyValue) relative from the `csgo`
-directory. Only works if the [backup system is enabled](../get5_configuration/#get5_backup_system_enabled).
+directory. Only works if the [backup system is enabled](../configuration/#get5_backup_system_enabled).
 
 ####`get5_loadteam <team1|team2|spec> <filename>`
 :   Loads a team section from a file into a team relative from the `csgo`
@@ -79,7 +83,7 @@ directory.
 
 ####`get5_loadmatch_url <url>`
 :   Loads a remote (JSON-formatted) match config by sending an HTTP(S) GET to the given URL. This requires the
-[Steamworks](https://forums.alliedmods.net/showthread.php?t=229556) extension. When specifying a URL with http:// or
+[Steamworks](../installation/#installing-steamworks-optional) extension. When specifying a URL with http:// or
 https:// in front, you have to put it in quotation (`""`) marks.
 
 ####`get5_endmatch`
@@ -119,13 +123,17 @@ under [Event Logs](./event_logs.md).
 :   Lists backup files for the current match or a given match ID if provided.
 
 ####`get5_ringer <player>`
-:   Adds/removes a ringer to/from the home scrim team. `player` is the name of the player.
+:   Adds/removes a ringer to/from the home scrim team. `player` is the name of the player. Similar
+to [`!ringer`](../commands/#ringer)
 
 ####`get5_debuginfo [file]`
 :   Dumps debug info to a file (addons/sourcemod/logs/get5_debuginfo.txt if no file parameter provided).
 
 ####`get5_test`
 :   Runs get5 tests. **This should not be used on a live match server since it will reload a match config to test**.
+
+####`get5_web_available`
+:   Indicates if the Get5 web panel has been installed.
 
 ## Pause Commands
 

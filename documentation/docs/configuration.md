@@ -1,15 +1,35 @@
-# Get5 Configuration
+# Configuration
 
-The config file is auto-generated on **first plugin run**, then auto-executed on each plugin start. The file is located
+This is a list of all the configuration parameters you can set that change how Get5 behaves. The config file is
+auto-generated on **first plugin run**, then auto-executed on each plugin start. The file is located
 here:
 
-```
+```yaml
 cfg/sourcemod/get5.cfg
 ```
 
-You can either set these in that file, or in the `cvars` section of a match config. As mentioned in
+You can either set the below parameters in that file, or in the `cvars` section of a match config. As mentioned in
 the [match schema](../match_schema#optional-values), that section will override all other
-settings. This section will be broken up into various sub-sections which explains each configuration value.
+settings.
+
+### Phase Configuration Files
+
+You should also have three config files. These can be edited, but we recommend not
+blindly pasting another config in (e.g. ESL, CEVO). Configs that execute warmup commands (`mp_warmup_end`, for
+example) **will** cause problems. These must only include commands you would run in the console (such
+as `mp_friendly_fire 1`) and should determine the rules for those three stage of your match. You can
+also [point to other files](../configuration/#config-files) by editing
+the main config file.
+
+```yaml
+cfg/get5/warmup.cfg # (1)
+cfg/get5/knife.cfg # (2)
+cfg/get5/live.cfg # (3)
+```
+
+1. Executed when the warmup/veto phase begins.
+2. Executed when the knife-round starts.
+3. Executed when the game goes live.
 
 ## Server Setup
 
@@ -21,7 +41,7 @@ server.**
 
 ####`get5_kick_immunity`
 :   Whether admins with the changemap flag will be immune to kicks from
-[get5_kick_when_no_match_loaded](../get5_configuration#get5_kick_when_no_match_loaded). **`Default: 1`**
+[get5_kick_when_no_match_loaded](../configuration#get5_kick_when_no_match_loaded). **`Default: 1`**
 
 ####`get5_stop_command_enabled`
 :   Whether the [`!stop`](../commands/#stop) command is enabled. **`Default: 1`**
@@ -31,7 +51,7 @@ server.**
 
 ####`get5_end_match_on_empty_server`
 :   Whether the match is ended with no winner if all players leave (note: this will happen even if all players
-disconnect  even in warmup with the intention to reconnect!). **`Default: 0`**
+disconnect even in warmup with the intention to reconnect!). **`Default: 0`**
 
 ####`get5_display_gotv_veto`
 :   Whether to wait for map vetoes to be printed to GOTV before changing map. **`Default: 0`**
@@ -76,18 +96,19 @@ required. 0 to disable. **`Default: 2.0`**
 ####`get5_print_damage_excess`
 :   Whether to include damage that exceeds the remaining health of a player in the chat
 report. If enabled, you can inflict more than 100 damage to a player in the damage report. Ignored if
-[get5_print_damage](../get5_configuration#get5_print_damage) is disabled. **`Default: 0`**
+[get5_print_damage](../configuration#get5_print_damage) is disabled. **`Default: 0`**
 
 ####`get5_damageprint_format`
 :   Formatting of damage reports in chat on round end. Ignored
-if [get5_print_damage](../get5_configuration#get5_print_damage) is disabled.
+if [get5_print_damage](../configuration#get5_print_damage) is disabled.
 **`Default: - [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)`**
 
     The default example above prints the following to chat on round end and includes information about assists and flash
     assists.
 
     `{KILL_TO}` becomes a green `X` for a kill or a yellow `A` or `F` for assist or flash assist, respectively.
-    `{KILL_FROM}` is similar to `{KILL_TO}`, but the `X` value is red (indicating a player killed you).
+    `{KILL_FROM}` is similar to `{KILL_TO}`, but the `X` value is red (indicating a player killed you). No attribution
+    becomes a white dash.
 
 ```
 [Get5] Team A 1 - 0 Team B

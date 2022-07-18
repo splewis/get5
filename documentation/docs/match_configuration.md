@@ -1,4 +1,4 @@
-# Configuration
+# Match Configuration
 
 ## Quick Start
 

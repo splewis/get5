@@ -65,11 +65,11 @@ report. If enabled, you can inflict more than 100 damage to a player in the dama
 if [get5_print_damage](../get5_configuration#get5_print_damage) is disabled.
 **`Default: - [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)`**
 
-The default example above prints the following to chat on round end and includes information about assists and flash
-assists.
+    The default example above prints the following to chat on round end and includes information about assists and flash
+    assists.
 
-`{KILL_TO}` becomes a green `X` for a kill or a yellow `A` or `F` for assist or flash assist, respectively.
-`{KILL_FROM}` is similar to `{KILL_TO}`, but the `X` value is red (indicating a player killed you).
+    `{KILL_TO}` becomes a green `X` for a kill or a yellow `A` or `F` for assist or flash assist, respectively.
+    `{KILL_FROM}` is similar to `{KILL_TO}`, but the `X` value is red (indicating a player killed you).
 
 ```
 [Get5] Team A 1 - 0 Team B

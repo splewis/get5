@@ -97,11 +97,11 @@ native bool Get5_RemovePlayerFromTeam(const char[] steamId);
 // Returns the current match team a auth is mapped to.
 native Get5Team Get5_GetPlayerTeam(const char[] steamId);
 
-// Translates a CS team (CS_TEAM_T, etc.) to a Match team.
-native Get5Team Get5_CSTeamToMatchTeam(int csTeam);
+// Translates a CS team (CS_TEAM_T, etc.) to a Get5Team.
+native Get5Team Get5_CSTeamToGet5Team(int csTeam);
 
 // Translates a Get5Team to a CS team.
-native int Get5_MatchTeamToCSTeam(Get5Team team);
+native int Get5_Get5TeamToCSTeam(Get5Team team);
 
 // Gets the scores for a match team.
 native void Get5_GetTeamScores(Get5Team team, int& seriesScore, int& currentMapScore);
@@ -1838,8 +1838,8 @@ public __pl_get5_SetNTVOptional() {
   MarkNativeAsOptional("Get5_SetPlayerName");
   MarkNativeAsOptional("Get5_RemovePlayerFromTeam");
   MarkNativeAsOptional("Get5_GetPlayerTeam");
-  MarkNativeAsOptional("Get5_CSTeamToMatchTeam");
-  MarkNativeAsOptional("Get5_MatchTeamToCSTeam");
+  MarkNativeAsOptional("Get5_CSTeamToGet5Team");
+  MarkNativeAsOptional("Get5_Get5TeamToCSTeam");
   MarkNativeAsOptional("Get5_GetTeamScores");
   MarkNativeAsOptional("Get5_GetMatchID");
   MarkNativeAsOptional("Get5_SetMatchID");

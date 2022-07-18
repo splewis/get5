@@ -355,7 +355,7 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
   if (g_ReadyTeamTagCvar.BoolValue) {
     if ((g_GameState == Get5State_Warmup || g_GameState == Get5State_PreVeto) &&
         !g_DoingBackupRestoreNow) {
-      Get5Team matchTeam = CSTeamToMatchTeam(csTeam);
+      Get5Team matchTeam = CSTeamToGet5Team(csTeam);
       if (IsTeamReady(matchTeam)) {
         Format(taggedName, sizeof(taggedName), "%T %s", "ReadyTag", LANG_SERVER, name);
       } else {

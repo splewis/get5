@@ -916,8 +916,8 @@ public Action Command_EndMatch(int client, int args) {
 
   // Call game-ending forwards.
   g_MapChangePending = false;
-  int team1score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1));
-  int team2score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2));
+  int team1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
+  int team2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
 
   Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
     g_MatchID,
@@ -1101,8 +1101,8 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
   LogDebug("Event_MatchOver");
   if (g_GameState == Get5State_Live) {
     // Figure out who won
-    int t1score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1));
-    int t2score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2));
+    int t1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
+    int t2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
     Get5Team winningTeam = Get5Team_None;
     if (t1score > t2score) {
       winningTeam = Get5Team_1;
@@ -1123,13 +1123,13 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     g_TeamSeriesScores[winningTeam]++;
 
     // Handle map end
-    int team1score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1));
-    int team2score = CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2));
+    int team1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
+    int team2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
 
     Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
       g_MatchID,
       g_MapNumber,
-      new Get5Winner(winningTeam, view_as<Get5Side>(MatchTeamToCSTeam(winningTeam))),
+      new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
       team1score,
       team2score
     );
@@ -1265,7 +1265,7 @@ public void EndSeries() {
 
   Stats_SeriesEnd(winningTeam);
 
-  Get5SeriesResultEvent event = new Get5SeriesResultEvent(g_MatchID, new Get5Winner(winningTeam, view_as<Get5Side>(MatchTeamToCSTeam(winningTeam))), t1maps, t2maps);
+  Get5SeriesResultEvent event = new Get5SeriesResultEvent(g_MatchID, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), t1maps, t2maps);
 
   LogDebug("Calling Get5_OnSeriesResult()");
 
@@ -1402,7 +1402,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       }
     }
 
-    g_KnifeWinnerTeam = CSTeamToMatchTeam(winningCSTeam);
+    g_KnifeWinnerTeam = CSTeamToGet5Team(winningCSTeam);
     Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
 
@@ -1414,8 +1414,8 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     int csTeamWinner = event.GetInt("winner");
 
     Get5_MessageToAll("%t", "CurrentScoreInfoMessage", g_TeamNames[Get5Team_1],
-                      CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1)),
-                      CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2)),
+                      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
+                      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)),
                       g_TeamNames[Get5Team_2]);
 
     Stats_RoundEnd(csTeamWinner);
@@ -1473,9 +1473,9 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       g_RoundNumber,
       GetRoundTime(),
       view_as<CSRoundEndReason>(event.GetInt("reason") - 1),
-      new Get5Winner(CSTeamToMatchTeam(csTeamWinner), view_as<Get5Side>(csTeamWinner)),
-      CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1)),
-      CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2))
+      new Get5Winner(CSTeamToGet5Team(csTeamWinner), view_as<Get5Side>(csTeamWinner)),
+      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
+      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2))
     );
 
     LogDebug("Calling Get5_OnRoundEnd()");
@@ -1629,7 +1629,7 @@ public Action Command_Status(int client, int args) {
 
 static Get5StatusTeam GetTeamInfo(Get5Team team) {
 
-  int side = MatchTeamToCSTeam(team);
+  int side = Get5TeamToCSTeam(team);
   return new Get5StatusTeam(
     g_TeamNames[team],
     g_TeamSeriesScores[team],

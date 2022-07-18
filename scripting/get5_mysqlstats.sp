@@ -156,8 +156,8 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
 
 public void UpdateRoundStats(const char[] matchId, int mapNumber) {
   // Update team scores
-  int t1score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(Get5Team_1));
-  int t2score = CS_GetTeamScore(Get5_MatchTeamToCSTeam(Get5Team_2));
+  int t1score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_1));
+  int t2score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_2));
 
   char matchIdSz[64];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));

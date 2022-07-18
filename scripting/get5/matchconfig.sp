@@ -1217,7 +1217,7 @@ static int AddPlayersToAuthKv(KeyValues kv, Get5Team team, char teamName[MAX_CVA
 
 static void MatchTeamStringsToCSTeam(const char[] team1Str, const char[] team2Str, char[] ctStr,
                                      int ctLen, char[] tStr, int tLen) {
-  if (MatchTeamToCSTeam(Get5Team_1) == CS_TEAM_CT) {
+  if (Get5TeamToCSTeam(Get5Team_1) == CS_TEAM_CT) {
     strcopy(ctStr, ctLen, team1Str);
     strcopy(tStr, tLen, team2Str);
   } else {

@@ -284,11 +284,11 @@ public void Stats_RoundEnd(int csTeamWinner) {
   GoBackFromMap();
 
   GoToTeam(Get5Team_1);
-  g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1)));
+  g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)));
   GoBackFromTeam();
 
   GoToTeam(Get5Team_2);
-  g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2)));
+  g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)));
   GoBackFromTeam();
 
   // Update player 1vx, x-kill, and KAST values.

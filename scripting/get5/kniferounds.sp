@@ -49,7 +49,7 @@ static void PerformSideSwap(bool swap) {
         } else if (team == CS_TEAM_CT) {
           SwitchPlayerTeam(i, CS_TEAM_T);
         } else if (IsClientCoaching(i)) {
-          int correctTeam = MatchTeamToCSTeam(GetClientMatchTeam(i));
+          int correctTeam = Get5TeamToCSTeam(GetClientMatchTeam(i));
           UpdateCoachTarget(i, correctTeam);
         }
       }

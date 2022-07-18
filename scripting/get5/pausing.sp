@@ -13,7 +13,7 @@ public bool PauseGame(Get5Team team, Get5PauseType type, int pausesLeft) {
 
   EventLogger_LogAndDeleteEvent(event);
 
-  return Pause(type, g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team), pausesLeft);
+  return Pause(type, g_FixedPauseTimeCvar.IntValue, Get5TeamToCSTeam(team), pausesLeft);
 }
 
 public void UnpauseGame(Get5Team team) {

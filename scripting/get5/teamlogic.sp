@@ -4,7 +4,7 @@ public Action Command_JoinGame(int client, const char[] command, int argc) {
   }
 
   if (g_CheckAuthsCvar.IntValue > 0 && !g_PendingSideSwap) {
-    int clientTeam = MatchTeamToCSTeam(GetClientMatchTeam(client));
+    int clientTeam = Get5TeamToCSTeam(GetClientMatchTeam(client));
     if (clientTeam == CS_TEAM_NONE || clientTeam == CS_TEAM_SPECTATOR) {
       return Plugin_Continue;
     }
@@ -16,7 +16,7 @@ public Action Command_JoinGame(int client, const char[] command, int argc) {
 public void CheckClientTeam(int client) {
   Get5Team correctTeam = GetClientMatchTeam(client);
   char auth[AUTH_LENGTH];
-  int csTeam = MatchTeamToCSTeam(correctTeam);
+  int csTeam = Get5TeamToCSTeam(correctTeam);
   int currentTeam = GetClientTeam(client);
 
   if (csTeam != currentTeam) {
@@ -60,7 +60,7 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
   }
 
   Get5Team correctTeam = GetClientMatchTeam(client);
-  int csTeam = MatchTeamToCSTeam(correctTeam);
+  int csTeam = Get5TeamToCSTeam(correctTeam);
 
   LogDebug("jointeam, gamephase = %d", GetGamePhase());
 
@@ -133,7 +133,7 @@ public void MoveClientToCoach(int client) {
     return;
   }
 
-  int csTeam = MatchTeamToCSTeam(matchTeam);
+  int csTeam = Get5TeamToCSTeam(matchTeam);
 
   if (g_PendingSideSwap) {
     LogDebug("Blocking coach move due to pending swap");
@@ -230,7 +230,7 @@ public Action Command_Coach(int client, const char[] command, int argc) {
 
 public Get5Team GetClientMatchTeam(int client) {
   if (!g_CheckAuthsCvar.BoolValue) {
-    return CSTeamToMatchTeam(GetClientTeam(client));
+    return CSTeamToGet5Team(GetClientTeam(client));
   } else {
     char auth[AUTH_LENGTH];
     if (GetAuth(client, auth, sizeof(auth))) {
@@ -245,7 +245,7 @@ public Get5Team GetClientMatchTeam(int client) {
   }
 }
 
-public int MatchTeamToCSTeam(Get5Team t) {
+public int Get5TeamToCSTeam(Get5Team t) {
   if (t == Get5Team_1) {
     return g_TeamSide[Get5Team_1];
   } else if (t == Get5Team_2) {
@@ -257,7 +257,7 @@ public int MatchTeamToCSTeam(Get5Team t) {
   }
 }
 
-public Get5Team CSTeamToMatchTeam(int csTeam) {
+public Get5Team CSTeamToGet5Team(int csTeam) {
   if (csTeam == g_TeamSide[Get5Team_1]) {
     return Get5Team_1;
   } else if (csTeam == g_TeamSide[Get5Team_2]) {
@@ -406,10 +406,10 @@ public void SetStartingTeams() {
 public void AddMapScore() {
   int currentMapNumber = Get5_GetMapNumber();
 
-  g_TeamScoresPerMap.Set(currentMapNumber, CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_1)),
+  g_TeamScoresPerMap.Set(currentMapNumber, CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
                          view_as<int>(Get5Team_1));
 
-  g_TeamScoresPerMap.Set(currentMapNumber, CS_GetTeamScore(MatchTeamToCSTeam(Get5Team_2)),
+  g_TeamScoresPerMap.Set(currentMapNumber, CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)),
                          view_as<int>(Get5Team_2));
 }
 

@@ -263,7 +263,6 @@ Handle g_OnSidePicked = INVALID_HANDLE;
 #include "get5/backups.sp"
 #include "get5/chatcommands.sp"
 #include "get5/debug.sp"
-#include "get5/eventlogger.sp"
 #include "get5/get5menu.sp"
 #include "get5/goinglive.sp"
 #include "get5/jsonhelpers.sp"
@@ -1693,4 +1692,33 @@ public int GetRoundTime() {
   }
   return time;
 
+}
+
+public void EventLogger_LogAndDeleteEvent(Get5Event event) {
+  int options = g_PrettyPrintJsonCvar.BoolValue ? JSON_ENCODE_PRETTY : 0;
+  int bufferSize = event.EncodeSize(options);
+
+  char[] buffer = new char[bufferSize];
+  event.Encode(buffer, bufferSize, options);
+
+  char logPath[PLATFORM_MAX_PATH];
+  if (FormatCvarString(g_EventLogFormatCvar, logPath, sizeof(logPath))) {
+    File logFile = OpenFile(logPath, "a+");
+
+    if (logFile) {
+      LogToOpenFileEx(logFile, buffer);
+      CloseHandle(logFile);
+    } else {
+      LogError("Could not open file \"%s\"", logPath);
+    }
+  }
+
+  LogDebug("Calling Get5_OnEvent(data=%s)", buffer);
+
+  Call_StartForward(g_OnEvent);
+  Call_PushCell(event);
+  Call_PushString(buffer);
+  Call_Finish();
+
+  json_cleanup_and_delete(event);
 }

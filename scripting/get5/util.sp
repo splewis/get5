@@ -826,26 +826,23 @@ public int GetRoundsPlayed() {
 
 // Not entirely sure how this works, but it does work.
 // Also tested on Nuke with bombsites right on top of each other.
-stock Get5BombSite GetNearestBombsite(int client)
-{
-	int playerResource = GetPlayerResourceEntity();
+stock Get5BombSite GetNearestBombsite(int client) {
+  int playerResource = GetPlayerResourceEntity();
+  if (playerResource == INVALID_ENT_REFERENCE) {
+    return Get5BombSite_Unknown;
+  }
 
-	if (playerResource == INVALID_ENT_REFERENCE)
-	{
-		return Get5BombSite_Unknown;
-	}
+  float pos[3];
+  GetClientAbsOrigin(client, pos);
 
-	float pos[3];
-	GetClientAbsOrigin(client, pos);
+  float aCenter[3], bCenter[3];
+  GetEntPropVector(playerResource, Prop_Send, "m_bombsiteCenterA", aCenter);
+  GetEntPropVector(playerResource, Prop_Send, "m_bombsiteCenterB", bCenter);
 
-	float aCenter[3], bCenter[3];
-	GetEntPropVector(playerResource, Prop_Send, "m_bombsiteCenterA", aCenter);
-	GetEntPropVector(playerResource, Prop_Send, "m_bombsiteCenterB", bCenter);
+  float aDist = GetVectorDistance(aCenter, pos, true);
+  float bDist = GetVectorDistance(bCenter, pos, true);
 
-	float aDist = GetVectorDistance(aCenter, pos, true);
-	float bDist = GetVectorDistance(bCenter, pos, true);
+  LogDebug("Bomb planted. Distance to A: %d. Distance to B: %d.", aDist, bDist);
 
-	LogDebug("Bomb planted. Distance to A: %d. Distance to B: %d.", aDist, bDist);
-
-	return (aDist < bDist) ? Get5BombSite_A : Get5BombSite_B;
+  return (aDist < bDist) ? Get5BombSite_A : Get5BombSite_B;
 }

@@ -3,34 +3,31 @@ public bool Pauseable() {
 }
 
 public bool PauseGame(MatchTeam team, Get5PauseType type, int pausesLeft) {
+  Get5MatchPausedEvent event = new Get5MatchPausedEvent(g_MatchID, g_MapNumber, team, type);
 
-    Get5MatchPausedEvent event = new Get5MatchPausedEvent(g_MatchID, g_MapNumber, team, type);
+  LogDebug("Calling Get5_OnMatchPaused()");
 
-    LogDebug("Calling Get5_OnMatchPaused()");
+  Call_StartForward(g_OnMatchPaused);
+  Call_PushCell(event);
+  Call_Finish();
 
-    Call_StartForward(g_OnMatchPaused);
-    Call_PushCell(event);
-    Call_Finish();
+  EventLogger_LogAndDeleteEvent(event);
 
-    EventLogger_LogAndDeleteEvent(event);
-
-    return Pause(type, g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team), pausesLeft);
+  return Pause(type, g_FixedPauseTimeCvar.IntValue, MatchTeamToCSTeam(team), pausesLeft);
 }
 
 public void UnpauseGame(MatchTeam team) {
+  Get5MatchUnpausedEvent event = new Get5MatchUnpausedEvent(g_MatchID, g_MapNumber, team);
 
-    Get5MatchUnpausedEvent event = new Get5MatchUnpausedEvent(g_MatchID, g_MapNumber, team);
+  LogDebug("Calling Get5_OnMatchUnpaused()");
 
-    LogDebug("Calling Get5_OnMatchUnpaused()");
+  Call_StartForward(g_OnMatchUnpaused);
+  Call_PushCell(event);
+  Call_Finish();
 
-    Call_StartForward(g_OnMatchUnpaused);
-    Call_PushCell(event);
-    Call_Finish();
+  EventLogger_LogAndDeleteEvent(event);
 
-    EventLogger_LogAndDeleteEvent(event);
-
-    Unpause();
-
+  Unpause();
 }
 
 public Action Command_TechPause(int client, int args) {

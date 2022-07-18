@@ -49,43 +49,126 @@ enum Get5PauseType {
   Get5PauseType_Backup     // Special type for match pausing during backups.
 };
 
+enum MatchSideType {
+  MatchSideType_Standard,     // Team that doesn't pick map gets side choice, leftovers go to knife rounds
+  MatchSideType_AlwaysKnife,  // All maps use a knife round to pick sides
+  MatchSideType_NeverKnife,   // Team 1 always starts CT
+};
+
+enum SideChoice {
+  SideChoice_Team1CT,     // Team 1 will start on CT
+  SideChoice_Team1T,      // Team 1 will start on T
+  SideChoice_KnifeRound,  // There will be a knife round to choose sides
+};
+
+// Returns the current pug gamestate.
+native Get5State Get5_GetGameState();
+
+// Prints a plugin-formatted message to a client.
+native void Get5_Message(int client, const char[] format, any:...);
+
+// Prints a plugin-formatted message to a team.
+native void Get5_MessageToTeam(MatchTeam team, const char[] format, any:...);
+
+// Prints a plugin-formatted message to all clients.
+native void Get5_MessageToAll(const char[] format, any:...);
+
+// Loads a match config (keyvalues or JSON) from a local file.
+// Returns true if the config was successfully loaded.
+native bool Get5_LoadMatchConfig(const char[] filename);
+
+// Loads a match config by downloading a remote config via a HTTP GET request.
+// Request parameters should be left out of the url and put into the optional ArrayLists parameters.
+native bool Get5_LoadMatchConfigFromURL(const char[] url, ArrayList paramNames = null,
+                                        ArrayList paramValues = null);
+
+// Adds a player to a match team. You can optionally force set a player name here as well.
+// Returns if they were successfully added.
+native bool Get5_AddPlayerToTeam(const char[] steamId, MatchTeam team,
+                                 const char[] playerName = "");
+
+// Force sets a steam64 to map to a specified playername
+native bool Get5_SetPlayerName(const char[] steamId, const char[] playerName);
+
+// Removes a player from all match teams.
+// Returns if they were successfully removed (false if not round).
+native bool Get5_RemovePlayerFromTeam(const char[] steamId);
+
+// Returns the current match team a auth is mapped to.
+native MatchTeam Get5_GetPlayerTeam(const char[] steamId);
+
+// Translates a CS team (CS_TEAM_T, etc.) to a Match team.
+native MatchTeam Get5_CSTeamToMatchTeam(int csTeam);
+
+// Translates a MatchTeam to a CS team.
+native int Get5_MatchTeamToCSTeam(MatchTeam team);
+
+// Gets the scores for a match team.
+native void Get5_GetTeamScores(MatchTeam team, int& seriesScore, int& currentMapScore);
+
+// Gets the current matchid.
+native void Get5_GetMatchID(char[] id, int length);
+
+// Sets the current matchid.
+native void Get5_SetMatchID(const char[] id);
+
+// Returns the server ID as defined by get5_server_id.
+native int Get5_GetServerID();
+
+// Returns the current map number, 0 being the first in the series.
+native int Get5_GetMapNumber();
+
+// Adds a cvar to be set when going live. If the cvar is already in the cvars for the match, the new
+// value will replace the old value if the override parameter is true.
+// Note: this should only be used when a match config loaded.
+native void Get5_AddLiveCvar(const char[] name, const char[] value, bool override = true);
+
+// Copies the current series stats into the passed KeyValues structure.
+// Below are the keys used for stats in the kv copied.
+// The caller is responsible for creating and deleting a KeyValues
+// object if using this method.
+native bool Get5_GetMatchStats(KeyValues kv);
+
+// Increases an (integer-typed) player statistic in the plugin's stats keyvalue structure.
+native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount = 1);
+
+
 methodmap Get5StatusTeam < JSON_Object {
 
-    public bool SetTeamName(const char[] event)
-    {
-        return this.SetString("name", event);
+    public bool SetTeamName(const char[] event) {
+      return this.SetString("name", event);
     }
 
     property int SeriesScore {
-        public set(int score) {
-            this.SetInt("series_score", score);
-        }
+      public set(int score) {
+        this.SetInt("series_score", score);
+      }
     }
 
     property int MapScore {
-        public set(int score) {
-            this.SetInt("current_map_score", score);
-        }
+      public set(int score) {
+        this.SetInt("current_map_score", score);
+      }
     }
 
     property int ConnectedClients {
-        public set(int clients) {
-            this.SetInt("connected_clients", clients);
-        }
+      public set(int clients) {
+        this.SetInt("connected_clients", clients);
+      }
     }
 
     property bool Ready {
-        public set(bool ready) {
-            this.SetBool("ready", ready);
-        }
+      public set(bool ready) {
+        this.SetBool("ready", ready);
+      }
     }
 
     property Get5Side Side {
-        public set(Get5Side side) {
-            this.SetInt("side_int", view_as<int>(side));
-            this.SetHidden("side_int", true);
-            ConvertGet5SideToStringInJson(this, "side", side);
-        }
+      public set(Get5Side side) {
+        this.SetInt("side_int", view_as<int>(side));
+        this.SetHidden("side_int", true);
+        ConvertGet5SideToStringInJson(this, "side", side);
+      }
     }
 
     public Get5StatusTeam(const char[] teamName,
@@ -104,70 +187,66 @@ methodmap Get5StatusTeam < JSON_Object {
 
 methodmap Get5Status < JSON_Object {
 
-    public bool SetPluginVersion(const char[] event)
-    {
-        return this.SetString("plugin_version", event);
+    public bool SetPluginVersion(const char[] event) {
+      return this.SetString("plugin_version", event);
     }
 
     property Get5State GameState {
-        public set(Get5State state) {
-            ConvertGameStateToStringInJson(this, "gamestate", state);
-        }
+      public set(Get5State state) {
+        ConvertGameStateToStringInJson(this, "gamestate", state);
+      }
     }
 
     property bool IsPaused {
-        public set(bool paused) {
-            this.SetBool("paused", paused);
-        }
+      public set(bool paused) {
+        this.SetBool("paused", paused);
+      }
     }
 
-    public bool SetConfigFile(const char[] file)
-    {
-        return this.SetString("loaded_config_file", file);
+    public bool SetConfigFile(const char[] file) {
+      return this.SetString("loaded_config_file", file);
     }
 
-    public bool SetMatchId(const char[] matchId)
-    {
-        return this.SetString("matchid", matchId);
+    public bool SetMatchId(const char[] matchId) {
+      return this.SetString("matchid", matchId);
     }
 
     property int MapNumber {
-        public set(int mapNumber) {
-            this.SetInt("map_number", mapNumber);
-        }
+      public set(int mapNumber) {
+        this.SetInt("map_number", mapNumber);
+      }
     }
 
     property int RoundNumber {
-        public set(int roundNumber) {
-            this.SetInt("round_number", roundNumber);
-        }
+      public set(int roundNumber) {
+        this.SetInt("round_number", roundNumber);
+      }
     }
 
     property int RoundTime {
-        public set(int roundTime) {
-            this.SetInt("round_time", roundTime);
-        }
+      public set(int roundTime) {
+        this.SetInt("round_time", roundTime);
+      }
     }
 
     property Get5StatusTeam Team1 {
-        public set(Get5StatusTeam team) {
-            this.SetObject("team1", team);
-        }
+      public set(Get5StatusTeam team) {
+        this.SetObject("team1", team);
+      }
     }
 
     property Get5StatusTeam Team2 {
-        public set(Get5StatusTeam team) {
-            this.SetObject("team2", team);
-        }
+      public set(Get5StatusTeam team) {
+        this.SetObject("team2", team);
+      }
     }
 
-    public bool AddMap(const char[] map)
-    {
-        if (!this.HasKey("maps")) {
-            this.SetObject("maps", new JSON_Array());
-        }
-        JSON_Array maps = view_as<JSON_Array>(this.GetObject("maps"));
-        maps.PushString(map);
+    public bool AddMap(const char[] map) {
+      if (!this.HasKey("maps")) {
+        this.SetObject("maps", new JSON_Array());
+      }
+      JSON_Array maps = view_as<JSON_Array>(this.GetObject("maps"));
+      maps.PushString(map);
     }
 
     public Get5Status(const char[] pluginVersion, const Get5State gamestate, const bool isPaused) {
@@ -177,26 +256,25 @@ methodmap Get5Status < JSON_Object {
         self.IsPaused = isPaused;
         return self;
     }
-
 }
 
 methodmap Get5Weapon < JSON_Object {
 
     public bool SetWeaponName(const char[] value) {
-        return this.SetString("name", value);
+      return this.SetString("name", value);
     }
 
     public bool GetWeaponName(char[] buffer, const int maxSize) {
-        return this.GetString("name", buffer, maxSize);
+      return this.GetString("name", buffer, maxSize);
     }
 
     property CSWeaponID Id {
-        public get() {
-            return view_as<CSWeaponID>(this.GetInt("id"));
-        }
-        public set(CSWeaponID id) {
-            this.SetInt("id", view_as<int>(id));
-        }
+      public get() {
+        return view_as<CSWeaponID>(this.GetInt("id"));
+      }
+      public set(CSWeaponID id) {
+        this.SetInt("id", view_as<int>(id));
+      }
     }
 
     public Get5Weapon(const char[] weapon, CSWeaponID weaponId) {
@@ -205,33 +283,30 @@ methodmap Get5Weapon < JSON_Object {
         self.Id = weaponId;
         return self;
     }
-
 }
 
 methodmap Get5Winner < JSON_Object {
 
     property Get5Side Side {
-        public get() {
-            return view_as<Get5Side>(this.GetInt("side_int"));
-        }
-
-        public set(Get5Side side) {
-            this.SetInt("side_int", view_as<int>(side));
-            this.SetHidden("side_int", true);
-            ConvertGet5SideToStringInJson(this, "side", side);
-        }
+      public get() {
+        return view_as<Get5Side>(this.GetInt("side_int"));
+      }
+      public set(Get5Side side) {
+        this.SetInt("side_int", view_as<int>(side));
+        this.SetHidden("side_int", true);
+        ConvertGet5SideToStringInJson(this, "side", side);
+      }
     }
 
     property MatchTeam Team {
-        public get() {
-            return view_as<MatchTeam>(this.GetInt("team_int"));
-        }
-
-        public set(MatchTeam team) {
-            this.SetInt("team_int", view_as<int>(team));
-            this.SetHidden("team_int", true);
-            ConvertGet5TeamToStringInJson(this, "team", team);
-        }
+      public get() {
+        return view_as<MatchTeam>(this.GetInt("team_int"));
+      }
+      public set(MatchTeam team) {
+        this.SetInt("team_int", view_as<int>(team));
+        this.SetHidden("team_int", true);
+        ConvertGet5TeamToStringInJson(this, "team", team);
+      }
     }
 
     public Get5Winner(MatchTeam team, Get5Side side) {
@@ -245,33 +320,30 @@ methodmap Get5Winner < JSON_Object {
 methodmap Get5Player < JSON_Object {
 
     property Get5Side Side {
-        public get() {
-          return view_as<Get5Side>(this.GetInt("side_int"));
-        }
-
-        public set(Get5Side side) {
-          this.SetInt("side_int", view_as<int>(side));
-          this.SetHidden("side_int", true);
-          ConvertGet5SideToStringInJson(this, "side", side);
-        }
+      public get() {
+        return view_as<Get5Side>(this.GetInt("side_int"));
+      }
+      public set(Get5Side side) {
+        this.SetInt("side_int", view_as<int>(side));
+        this.SetHidden("side_int", true);
+        ConvertGet5SideToStringInJson(this, "side", side);
+      }
     }
 
-    public bool SetSteamId(const char[] value)
-    {
-        return this.SetString("steamid", value);
+    public bool SetSteamId(const char[] value) {
+      return this.SetString("steamid", value);
     }
 
     public bool GetSteamId(char[] buffer, const int maxSize) {
-        return this.GetString("steamid", buffer, maxSize);
+      return this.GetString("steamid", buffer, maxSize);
     }
 
-    public bool SetName(const char[] value)
-    {
-        return this.SetString("name", value);
+    public bool SetName(const char[] value) {
+      return this.SetString("name", value);
     }
 
     public bool GetName(char[] buffer, const int maxSize) {
-        return this.GetString("name", buffer, maxSize);
+      return this.GetString("name", buffer, maxSize);
     }
 
     property bool IsBot {
@@ -283,6 +355,18 @@ methodmap Get5Player < JSON_Object {
       }
     }
 
+    public bool IsEqualToPlayerId(const char[] id) {
+      char ownId[64];
+      this.GetSteamId(ownId, sizeof(ownId));
+      return StrEqual(ownId, id);
+    }
+
+    public bool IsEqualToPlayer(const Get5Player player) {
+      char playerId[64];
+      player.GetSteamId(playerId, sizeof(playerId));
+      return this.IsEqualToPlayerId(playerId);
+    }
+
     public Get5Player(const char[] steamId, const Get5Side side, const char[] name, const bool isBot) {
         Get5Player self = view_as<Get5Player>(new JSON_Object());
         self.SetSteamId(steamId);
@@ -291,29 +375,15 @@ methodmap Get5Player < JSON_Object {
         self.IsBot = isBot;
         return self;
     }
-
-    public bool IsEqualToPlayerId(const char[] id) {
-        char ownId[64];
-        this.GetSteamId(ownId, sizeof(ownId));
-        return StrEqual(ownId, id);
-    }
-
-    public bool IsEqualToPlayer(const Get5Player player) {
-        char playerId[64];
-        player.GetSteamId(playerId, sizeof(playerId));
-        return this.IsEqualToPlayerId(playerId);
-    }
 }
 
 methodmap Get5Event < JSON_Object {
 
-    public bool SetEvent(const char[] event)
-    {
-        return this.SetString("event", event);
+    public bool SetEvent(const char[] event) {
+      return this.SetString("event", event);
     }
-
     public bool GetEvent(char[] buffer, const int maxSize) {
-        return this.GetString("event", buffer, maxSize);
+      return this.GetString("event", buffer, maxSize);
     }
 }
 
@@ -329,13 +399,12 @@ methodmap Get5PlayerConnectedEvent < Get5Event {
     }
   }
 
-  public bool SetIPAddress(const char[] address)
-  {
-      return this.SetString("ip_address", address);
+  public bool SetIPAddress(const char[] address) {
+    return this.SetString("ip_address", address);
   }
 
   public bool GetIPAddress(char[] buffer, const int maxSize) {
-      return this.GetString("ip_address", buffer, maxSize);
+    return this.GetString("ip_address", buffer, maxSize);
   }
 
   public Get5PlayerConnectedEvent(const Get5Player player, const char[] ipAddress) {
@@ -529,18 +598,15 @@ methodmap Get5SeriesResultEvent < Get5MatchEvent {
     self.Team2SeriesScore = team2Score;
     return self;
   }
-
 }
 
 methodmap Get5PreloadMatchConfigEvent < Get5Event {
 
-  public bool SetFileName(const char[] filePath)
-  {
-     return this.SetString("filename", filePath);
+  public bool SetFileName(const char[] filePath) {
+    return this.SetString("filename", filePath);
   }
-
   public bool GetFileName(char[] buffer, const int maxSize) {
-     return this.GetString("filename", buffer, maxSize);
+    return this.GetString("filename", buffer, maxSize);
   }
 
   public Get5PreloadMatchConfigEvent(const char[] filePath) {
@@ -549,18 +615,15 @@ methodmap Get5PreloadMatchConfigEvent < Get5Event {
     self.SetFileName(filePath);
     return self;
   }
-
 }
 
 methodmap Get5LoadMatchConfigFailedEvent < Get5Event {
 
-  public bool SetReason(const char[] reason)
-  {
-     return this.SetString("reason", reason);
+  public bool SetReason(const char[] reason) {
+    return this.SetString("reason", reason);
   }
-
   public bool GetReason(char[] buffer, const int maxSize) {
-     return this.GetString("reason", buffer, maxSize);
+    return this.GetString("reason", buffer, maxSize);
   }
 
   public Get5LoadMatchConfigFailedEvent(const char[] reason) {
@@ -569,31 +632,28 @@ methodmap Get5LoadMatchConfigFailedEvent < Get5Event {
     self.SetReason(reason);
     return self;
   }
-
 }
 
 methodmap Get5TeamReadyStatusChangedEvent < Get5MatchTeamEvent {
 
   property bool Ready {
-      public get() {
-        return this.GetBool("ready");
-      }
-
-      public set(bool ready) {
-        this.SetBool("ready", ready);
-      }
+    public get() {
+      return this.GetBool("ready");
+    }
+    public set(bool ready) {
+      this.SetBool("ready", ready);
+    }
   }
 
   property Get5State GameState {
-      public get() {
-        return view_as<Get5State>(this.GetInt("game_state_int"));
-      }
-
-      public set(Get5State state) {
-        this.SetInt("game_state_int", view_as<int>(state));
-        this.SetHidden("game_state_int", true);
-        ConvertGameStateToStringInJson(this, "game_state", state);
-      }
+    public get() {
+      return view_as<Get5State>(this.GetInt("game_state_int"));
+    }
+    public set(Get5State state) {
+      this.SetInt("game_state_int", view_as<int>(state));
+      this.SetHidden("game_state_int", true);
+      ConvertGameStateToStringInJson(this, "game_state", state);
+    }
   }
 
   public Get5TeamReadyStatusChangedEvent(const char[] matchId, const MatchTeam team, const bool ready, const Get5State gamestate) {
@@ -611,26 +671,23 @@ methodmap Get5MapSelectionEvent < Get5MatchTeamEvent {
 
     public bool SetMapName(const char[] map)
     {
-        return this.SetString("map_name", map);
+      return this.SetString("map_name", map);
     }
-
     public bool GetMapName(char[] buffer, const int maxSize) {
-        return this.GetString("map_name", buffer, maxSize);
+      return this.GetString("map_name", buffer, maxSize);
     }
-
 }
 
 methodmap Get5MapPickedEvent < Get5MapSelectionEvent {
 
-    property int MapNumber {
-        public get() {
-          return this.GetInt("map_number");
-        }
-
-        public set(int mapNumber) {
-          this.SetInt("map_number", mapNumber);
-        }
+  property int MapNumber {
+    public get() {
+      return this.GetInt("map_number");
     }
+    public set(int mapNumber) {
+      this.SetInt("map_number", mapNumber);
+    }
+  }
 
   public Get5MapPickedEvent(const char[] matchId, const MatchTeam team, const char[] map, const int mapNumber) {
     Get5MapPickedEvent self = view_as<Get5MapPickedEvent>(new JSON_Object());
@@ -658,23 +715,23 @@ methodmap Get5MapVetoedEvent < Get5MapSelectionEvent {
 methodmap Get5SidePickedEvent < Get5MapSelectionEvent {
 
   property int MapNumber {
-      public get() {
-        return this.GetInt("map_number");
-      }
-      public set(int mapNumber) {
-       this.SetInt("map_number", mapNumber);
-      }
+    public get() {
+      return this.GetInt("map_number");
+    }
+    public set(int mapNumber) {
+     this.SetInt("map_number", mapNumber);
+    }
   }
 
   property Get5Side Side {
-      public get() {
-        return view_as<Get5Side>(this.GetInt("side_int"));
-      }
-      public set(Get5Side side) {
-        this.SetInt("side_int", view_as<int>(side));
-        this.SetHidden("side_int", true);
-        ConvertGet5SideToStringInJson(this, "side", side);
-      }
+    public get() {
+      return view_as<Get5Side>(this.GetInt("side_int"));
+    }
+    public set(Get5Side side) {
+      this.SetInt("side_int", view_as<int>(side));
+      this.SetHidden("side_int", true);
+      ConvertGet5SideToStringInJson(this, "side", side);
+    }
   }
 
   public Get5SidePickedEvent(const char[] matchId, const int mapNumber, const char[] mapName, const MatchTeam team, const Get5Side side) {
@@ -696,30 +753,27 @@ methodmap Get5MapResultEvent < Get5MapEvent {
     public get() {
       return view_as<Get5Winner>(this.GetObject("winner"));
     }
-
     public set(Get5Winner winner) {
       this.SetObject("winner", winner);
     }
   }
 
   property int Team1Score {
-      public get() {
-        return this.GetInt("team1_score");
-      }
-
-      public set(int score) {
-        this.SetInt("team1_score", score);
-      }
+    public get() {
+      return this.GetInt("team1_score");
+    }
+    public set(int score) {
+      this.SetInt("team1_score", score);
+    }
   }
 
   property int Team2Score {
-      public get() {
-        return this.GetInt("team2_score");
-      }
-
-      public set(int score) {
-        this.SetInt("team2_score", score);
-      }
+    public get() {
+      return this.GetInt("team2_score");
+    }
+    public set(int score) {
+      this.SetInt("team2_score", score);
+    }
   }
 
   public Get5MapResultEvent(const char[] matchId, const int mapNumber, const Get5Winner winner, int team1Score, int team2Score) {
@@ -732,33 +786,30 @@ methodmap Get5MapResultEvent < Get5MapEvent {
     self.Team2Score = team2Score;
     return self;
   }
-
 }
 
 methodmap Get5GameStateChangedEvent < Get5Event {
 
   property Get5State NewState {
-      public get() {
-        return view_as<Get5State>(this.GetInt("new_state_int"));
-      }
-
-      public set(Get5State state) {
-        this.SetInt("new_state_int", view_as<int>(state));
-        this.SetHidden("new_state_int", true);
-        ConvertGameStateToStringInJson(this, "new_state", state);
-      }
+    public get() {
+      return view_as<Get5State>(this.GetInt("new_state_int"));
+    }
+    public set(Get5State state) {
+      this.SetInt("new_state_int", view_as<int>(state));
+      this.SetHidden("new_state_int", true);
+      ConvertGameStateToStringInJson(this, "new_state", state);
+    }
   }
 
   property Get5State OldState {
-      public get() {
-        return view_as<Get5State>(this.GetInt("old_state_int"));
-      }
-
-      public set(Get5State state) {
-        this.SetInt("old_state_int", view_as<int>(state));
-        this.SetHidden("old_state_int", true);
-        ConvertGameStateToStringInJson(this, "old_state", state);
-      }
+    public get() {
+      return view_as<Get5State>(this.GetInt("old_state_int"));
+    }
+    public set(Get5State state) {
+      this.SetInt("old_state_int", view_as<int>(state));
+      this.SetHidden("old_state_int", true);
+      ConvertGameStateToStringInJson(this, "old_state", state);
+    }
   }
 
   public Get5GameStateChangedEvent(const Get5State newState, const Get5State oldState) {
@@ -768,7 +819,6 @@ methodmap Get5GameStateChangedEvent < Get5Event {
     self.OldState = oldState;
     return self;
   }
-
 }
 
 methodmap Get5RoundStatsUpdatedEvent < Get5RoundEvent {
@@ -781,7 +831,6 @@ methodmap Get5RoundStatsUpdatedEvent < Get5RoundEvent {
     self.RoundNumber = roundNumber;
     return self;
   }
-
 }
 
 methodmap Get5DemoFinishedEvent < Get5MapEvent {
@@ -1527,34 +1576,30 @@ methodmap Get5BlindedGrenadeVictim < Get5GrenadeVictim {
 
 methodmap Get5BombEvent < Get5TimedRoundEvent {
 
-    property Get5BombSite Site {
-        public get() {
-          return view_as<Get5BombSite>(this.GetInt("site_int"));
-        }
-
-        public set(Get5BombSite site) {
-          this.SetInt("site_int", view_as<int>(site));
-          this.SetHidden("site_int", true);
-          ConvertBombSiteToStringInJson(this, "site", site);
-        }
+  property Get5BombSite Site {
+    public get() {
+      return view_as<Get5BombSite>(this.GetInt("site_int"));
     }
-
+    public set(Get5BombSite site) {
+      this.SetInt("site_int", view_as<int>(site));
+      this.SetHidden("site_int", true);
+      ConvertBombSiteToStringInJson(this, "site", site);
+    }
+  }
 }
 
 methodmap Get5PlayerBombEvent < Get5PlayerTimedRoundEvent {
 
     property Get5BombSite Site {
-        public get() {
-          return view_as<Get5BombSite>(this.GetInt("site_int"));
-        }
-
-        public set(Get5BombSite site) {
-          this.SetInt("site_int", view_as<int>(site));
-          this.SetHidden("site_int", true);
-          ConvertBombSiteToStringInJson(this, "site", site);
-        }
+      public get() {
+        return view_as<Get5BombSite>(this.GetInt("site_int"));
+      }
+      public set(Get5BombSite site) {
+        this.SetInt("site_int", view_as<int>(site));
+        this.SetHidden("site_int", true);
+        ConvertBombSiteToStringInJson(this, "site", site);
+      }
     }
-
 }
 
 methodmap Get5BombPlantedEvent < Get5PlayerBombEvent {
@@ -1589,41 +1634,28 @@ methodmap Get5BombExplodedEvent < Get5BombEvent {
 methodmap Get5BombDefusedEvent < Get5PlayerBombEvent {
 
     property int TimeRemaining {
-        public get() {
-          return this.GetInt("bomb_time_remaining");
-        }
-
-        public set(int time) {
-          this.SetInt("bomb_time_remaining", time);
-        }
+      public get() {
+        return this.GetInt("bomb_time_remaining");
+      }
+      public set(int time) {
+        this.SetInt("bomb_time_remaining", time);
+      }
     }
 
-    public Get5BombDefusedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, const Get5BombSite site, const int timeRemaining) {
-        Get5BombDefusedEvent self = view_as<Get5BombDefusedEvent>(new JSON_Object());
-        self.SetEvent("bomb_defused");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.Player = player;
-        self.Site = site;
-        self.TimeRemaining = timeRemaining;
-        return self;
+    public Get5BombDefusedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime,
+      const Get5Player player, const Get5BombSite site, const int timeRemaining) {
+      Get5BombDefusedEvent self = view_as<Get5BombDefusedEvent>(new JSON_Object());
+      self.SetEvent("bomb_defused");
+      self.SetMatchId(matchId);
+      self.MapNumber = mapNumber;
+      self.RoundNumber = roundNumber;
+      self.RoundTime = roundTime;
+      self.Player = player;
+      self.Site = site;
+      self.TimeRemaining = timeRemaining;
+      return self;
     }
 }
-
-enum MatchSideType {
-  MatchSideType_Standard,     // Team that doesn't pick map gets side choice, leftovers go to knife
-                              // rounds
-  MatchSideType_AlwaysKnife,  // All maps use a knife round to pick sides
-  MatchSideType_NeverKnife,   // Team 1 always starts CT
-};
-
-enum SideChoice {
-  SideChoice_Team1CT,     // Team 1 will start on CT
-  SideChoice_Team1T,      // Team 1 will start on T
-  SideChoice_KnifeRound,  // There will be a knife round to choose sides
-};
 
 // Called each get5-event with JSON formatted event text.
 forward void Get5_OnEvent(const Get5Event, const char[] eventJson);
@@ -1732,77 +1764,6 @@ forward void Get5_OnMatchUnpaused(const Get5MatchUnpausedEvent event);
 // Called when a match backup is restored.
 // Note that the match ID and map number is the one being restored *to*, not the current game state and the time the backup is loaded.
 forward void Get5_OnBackupRestore(const Get5BackupRestoredEvent event);
-
-// Returns the current pug gamestate.
-native Get5State Get5_GetGameState();
-
-// Prints a plugin-formatted message to a client.
-native void Get5_Message(int client, const char[] format, any:...);
-
-// Prints a plugin-formatted message to a team.
-native void Get5_MessageToTeam(MatchTeam team, const char[] format, any:...);
-
-// Prints a plugin-formatted message to all clients.
-native void Get5_MessageToAll(const char[] format, any:...);
-
-// Loads a match config (keyvalues or JSON) from a local file.
-// Returns true if the config was successfully loaded.
-native bool Get5_LoadMatchConfig(const char[] filename);
-
-// Loads a match config by downloading a remote config via a HTTP GET request.
-// Request parameters should be left out of the url and put into the optional ArrayLists parameters.
-native bool Get5_LoadMatchConfigFromURL(const char[] url, ArrayList paramNames = null,
-                                        ArrayList paramValues = null);
-
-// Adds a player to a match team. You can optionally force set a player name here as well.
-// Returns if they were successfully added.
-native bool Get5_AddPlayerToTeam(const char[] steamId, MatchTeam team,
-                                 const char[] playerName = "");
-
-// Force sets a steam64 to map to a specified playername
-native bool Get5_SetPlayerName(const char[] steamId, const char[] playerName);
-
-// Removes a player from all match teams.
-// Returns if they were successfully removed (false if not round).
-native bool Get5_RemovePlayerFromTeam(const char[] steamId);
-
-// Returns the current match team a auth is mapped to.
-native MatchTeam Get5_GetPlayerTeam(const char[] steamId);
-
-// Translates a CS team (CS_TEAM_T, etc.) to a Match team.
-native MatchTeam Get5_CSTeamToMatchTeam(int csTeam);
-
-// Translates a MatchTeam to a CS team.
-native int Get5_MatchTeamToCSTeam(MatchTeam team);
-
-// Gets the scores for a match team.
-native void Get5_GetTeamScores(MatchTeam team, int& seriesScore, int& currentMapScore);
-
-// Gets the current matchid.
-native void Get5_GetMatchID(char[] id, int length);
-
-// Sets the current matchid.
-native void Get5_SetMatchID(const char[] id);
-
-// Returns the server ID as defined by get5_server_id.
-native int Get5_GetServerID();
-
-// Returns the current map number, 0 being the first in the series.
-native int Get5_GetMapNumber();
-
-// Adds a cvar to be set when going live. If the cvar is already in the cvars for the match, the new
-// value will replace the old value if the override parameter is true.
-// Note: this should only be used when a match config loaded.
-native void Get5_AddLiveCvar(const char[] name, const char[] value, bool override = true);
-
-// Copies the current series stats into the passed KeyValues structure.
-// Below are the keys used for stats in the kv copied.
-// The caller is responsible for creating and deleting a KeyValues
-// object if using this method.
-native bool Get5_GetMatchStats(KeyValues kv);
-
-// Increases an (integer-typed) player statistic in the plugin's stats keyvalue structure.
-native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount = 1);
 
 // Series stats (root section)
 #define STAT_SERIESWINNER "winner"

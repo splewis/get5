@@ -3,3 +3,5 @@
 *.tar.gz
 builds
 .vscode/
+.idea
+documentation/site

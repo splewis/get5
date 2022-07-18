@@ -8,6 +8,11 @@ the [`get5_dumpstats`](./commands.md#serveradmin-commands) command.
 Note: the stats collection is not going to be reliable if
 using [`get5_check_auths 0`](./get5_configuration.md#server-setup).
 
+## SourceMod Forwards
+
+If you're writing your own plugin, you can collect stats from the game using the
+[forwards](./event_logs.md) provided by Get5.
+
 ## Stats KeyValues structure
 
 The root level of the KV contains data for the full series: the series winner (if one exists yet) and the series type (
@@ -52,7 +57,7 @@ Partial Example:
 
 ## What Stats Are Collected
 
-See the [get5 include](https://github.com/splewis/get5/blob/master/scripting/include/get5.inc#L168) for what stats will
+See the [get5 include](https://github.com/splewis/get5/blob/master/scripting/include/get5.inc#L171) for what stats will
 be recorded and what their key in the keyvalues structure is.
 
 ## MySQL Statistics
@@ -62,14 +67,13 @@ database. To use this:
 
 - Create the tables using this [schema](https://github.com/splewis/get5/blob/master/misc/import_stats.sql), raw text
   link can be found [here](https://raw.githubusercontent.com/splewis/get5/master/misc/import_stats.sql).
-- Configure a `"get5"` database section in `addons/sourcemod/configs/databases.cfg `.
+- Configure a `"get5"` database section in `addons/sourcemod/configs/databases.cfg`.
 - Make sure the `get5_mysqlstats` plugin is enabled (moved up a directory from `addons/sourcemod/plugins/disabled`
-  directory) and reload with `sm plugins reload get5_mysqlstats`.
+  directory).
 
-**Note** that if you use this module, you can force the matchid used by the stats system by setting
-the `get5_mysql_force_matchid` convar in your matchconfig (the [cvars](./match_configuration.md#cvars) section). If you
-don't do this, then the get5 matchid will be set to the next matchid returned by inserting into the `get5_stats_matches`
-table.
+**Note**: If you use this module, you can force the match ID used by setting it in your match config
+(the [Match Schema](./match_schema/#optional-values) section). If you don't do this, the match ID will be set to the
+auto-incrementing integer (cast to a string) returned by inserting into the `get5_stats_matches` table.
 
 If you are using an external web panel, **this plugin is not needed** as most external applications record to their own
 match tables.

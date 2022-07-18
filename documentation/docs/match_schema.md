@@ -5,7 +5,7 @@ format can be found [here](https://github.com/splewis/get5/blob/master/configs/g
 format can be found [here](https://github.com/splewis/get5/blob/master/configs/get5/example_match.json). In this
 documentation, we'll go through what each value means, but do note that **only the values** `team1` and `team2` are
 required to start a match, which can be seen in the next section. Reasonable defaults are used for entries (bo3 series,
-5v5, empty strings for team names, etc.).
+5v5, empty strings for team names, etc.). We recommend using the JSON format whenever possible.
 
 ## Required Values (The Team Schema)
 

@@ -4,7 +4,7 @@
 #define MAX_FLOAT_STRING_LENGTH 32
 #define AUTH_LENGTH 64
 
-// Dummy value for when we need to write a keyvalue string, but we don't care about he value.
+// Dummy value for when we need to write a keyvalue string, but we don't care about the value.
 // Trying to write an empty string often results in the keyvalue not being written, so we use this.
 #define KEYVALUE_STRING_PLACEHOLDER "__placeholder"
 
@@ -15,7 +15,7 @@ static char _colorCodes[][] = {"\x01", "\x02", "\x03", "\x04", "\x05", "\x06",
                                "\x07", "\x08", "\x09", "\x0B", "\x0C", "\x0E"};
 
 // Convenience macros.
-#define LOOP_TEAMS(%1) for (MatchTeam %1 = MatchTeam_Team1; %1 < MatchTeam_Count; %1 ++)
+#define LOOP_TEAMS(%1) for (Get5Team %1 = Get5Team_1; %1 < Get5Team_Count; %1 ++)
 #define LOOP_CLIENTS(%1) for (int %1 = 0; %1 <= MaxClients; %1 ++)
 
 // These match CS:GO's m_gamePhase values.
@@ -93,6 +93,77 @@ stock bool IsAuthedPlayer(int client) {
 }
 
 /**
+ * Used to consistently set string keys on JSON objects that receive a Get5Side parameter, which
+ * should be output as ct, t, spec or null in JSON.
+ */
+stock void ConvertGet5SideToStringInJson(const JSON_Object obj, const char[] key, Get5Side side) {
+  if (side == Get5Side_T) {
+    obj.SetString(key, "t");
+  } else if (side == Get5Side_CT) {
+    obj.SetString(key, "ct");
+  } else if (side == Get5Side_Spec) {
+    obj.SetString(key, "spec");
+  } else {
+    obj.SetObject(key, null);
+  }
+}
+
+/**
+ * Used to consistently set string keys on JSON objects that receive a Get5Team parameter, which
+ * should be output as team1, team2, spec or null in JSON.
+ */
+stock void ConvertGet5TeamToStringInJson(const JSON_Object obj, const char[] key, Get5Team team) {
+  if (team == Get5Team_1) {
+    obj.SetString(key, "team1");
+  } else if (team == Get5Team_2) {
+    obj.SetString(key, "team2");
+  } else if (team == Get5Team_Spec) {
+    obj.SetString(key, "spec");
+  } else {
+    obj.SetObject(key, null);
+  }
+}
+
+/**
+ * Used to consistently map a Get5PauseType to string in JSON.
+ */
+stock void ConvertGet5PauseTypeToStringInJson(const JSON_Object obj, const char[] key, Get5PauseType pauseType) {
+  if (pauseType == Get5PauseType_Admin) {
+    obj.SetString(key, "admin");
+  } else if (pauseType == Get5PauseType_Tech) {
+    obj.SetString(key, "technical");
+  } else if (pauseType == Get5PauseType_Tactical) {
+    obj.SetString(key, "tactical");
+  } else if (pauseType == Get5PauseType_Backup) {
+    obj.SetString(key, "backup");
+  } else {
+    obj.SetObject(key, null);
+  }
+}
+
+/**
+ * Used to consistently convert Get5BombSite to 'a', 'b' or null.
+ */
+stock void ConvertBombSiteToStringInJson(const JSON_Object obj, const char[] key, const Get5BombSite site) {
+  if (site == Get5BombSite_A) {
+    obj.SetString(key, "a");
+  } else if (site == Get5BombSite_B) {
+    obj.SetString(key, "b");
+  } else {
+    obj.SetObject(key, null);
+  }
+}
+
+/**
+ * Used to consistently set string keys on JSON objects that receive a Get5State parameter.
+ */
+stock void ConvertGameStateToStringInJson(const JSON_Object obj, const char[] key, const Get5State state) {
+  char gameStateString[64];
+  GameStateString(state, gameStateString, sizeof(gameStateString));
+  obj.SetString(key, gameStateString);
+}
+
+/**
  * Returns the number of clients that are actual players in the game.
  */
 stock int GetRealClientCount() {
@@ -155,10 +226,22 @@ stock bool Record(const char[] demoName) {
 
 stock void StopRecording() {
   ServerCommand("tv_stoprecord");
-  LogDebug("Calling Get5_OnDemoFinished(file=%s)", g_DemoFileName);
+
+  if (StrEqual("", g_DemoFileName, true)) {
+    // Demo not recorded; don't fire demo finish event.
+    return;
+  }
+
+  Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(g_MatchID, g_MapNumber, g_DemoFileName);
+
+  LogDebug("Calling Get5_OnDemoFinished()");
+
   Call_StartForward(g_OnDemoFinished);
-  Call_PushString(g_DemoFileName);
+  Call_PushCell(event);
   Call_Finish();
+
+  EventLogger_LogAndDeleteEvent(event);
+
 }
 
 stock bool InWarmup() {
@@ -209,16 +292,16 @@ stock bool IsPaused() {
 }
 
 // Pauses and returns if the match will automatically unpause after the duration ends.
-stock bool Pause(PauseType pauseType, int pauseTime = 0, int csTeam = CS_TEAM_NONE, int pausesLeft = 1) {
-  if (pauseType == PauseType_None) {
-    LogMessage("Pause() called with PauseType_None. Please call Unpause() instead.");
+stock bool Pause(Get5PauseType pauseType, int pauseTime, int csTeam, int pausesLeft) {
+  if (pauseType == Get5PauseType_None) {
+    LogMessage("Pause() called with Get5PauseType_None. Please call Unpause() instead.");
     Unpause();
     return false;
   }
 
   g_PauseType = pauseType;
   ServerCommand("mp_pause_match");
-  if (pauseTime == 0 || csTeam == CS_TEAM_SPECTATOR || csTeam == CS_TEAM_NONE) {
+  if (pauseType == Get5PauseType_Tech || pauseTime == 0 || csTeam == CS_TEAM_SPECTATOR || csTeam == CS_TEAM_NONE) {
     return false;
   } else {
     if (csTeam == CS_TEAM_T) {
@@ -235,7 +318,7 @@ stock bool Pause(PauseType pauseType, int pauseTime = 0, int csTeam = CS_TEAM_NO
 }
 
 stock void Unpause() {
-  g_PauseType = PauseType_None;
+  g_PauseType = Get5PauseType_None;
   ServerCommand("mp_unpause_match");
 }
 
@@ -272,7 +355,7 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
   if (g_ReadyTeamTagCvar.BoolValue) {
     if ((g_GameState == Get5State_Warmup || g_GameState == Get5State_PreVeto) &&
         !g_DoingBackupRestoreNow) {
-      MatchTeam matchTeam = CSTeamToMatchTeam(csTeam);
+      Get5Team matchTeam = CSTeamToGet5Team(csTeam);
       if (IsTeamReady(matchTeam)) {
         Format(taggedName, sizeof(taggedName), "%T %s", "ReadyTag", LANG_SERVER, name);
       } else {
@@ -468,27 +551,27 @@ stock int OtherCSTeam(int team) {
   }
 }
 
-stock MatchTeam OtherMatchTeam(MatchTeam team) {
-  if (team == MatchTeam_Team1) {
-    return MatchTeam_Team2;
-  } else if (team == MatchTeam_Team2) {
-    return MatchTeam_Team1;
+stock Get5Team OtherMatchTeam(Get5Team team) {
+  if (team == Get5Team_1) {
+    return Get5Team_2;
+  } else if (team == Get5Team_2) {
+    return Get5Team_1;
   } else {
     return team;
   }
 }
 
-stock bool IsPlayerTeam(MatchTeam team) {
-  return team == MatchTeam_Team1 || team == MatchTeam_Team2;
+stock bool IsPlayerTeam(Get5Team team) {
+  return team == Get5Team_1 || team == Get5Team_2;
 }
 
-public MatchTeam VetoFirstFromString(const char[] str) {
+public Get5Team VetoFirstFromString(const char[] str) {
   if (StrEqual(str, "random", false)) {
-    return view_as<MatchTeam>(GetRandomInt(0, 1));
+    return view_as<Get5Team>(GetRandomInt(0, 1));
   } else if (StrEqual(str, "team2", false)) {
-    return MatchTeam_Team2;
+    return Get5Team_2;
   } else {
-    return MatchTeam_Team1;
+    return Get5Team_1;
   }
 }
 
@@ -534,12 +617,12 @@ stock void CSTeamString(int csTeam, char[] buffer, int len) {
   }
 }
 
-stock void GetTeamString(MatchTeam team, char[] buffer, int len) {
-  if (team == MatchTeam_Team1) {
+stock void GetTeamString(Get5Team team, char[] buffer, int len) {
+  if (team == Get5Team_1) {
     Format(buffer, len, "team1");
-  } else if (team == MatchTeam_Team2) {
+  } else if (team == Get5Team_2) {
     Format(buffer, len, "team2");
-  } else if (team == MatchTeam_TeamSpec) {
+  } else if (team == Get5Team_Spec) {
     Format(buffer, len, "spec");
   } else {
     Format(buffer, len, "none");
@@ -551,21 +634,21 @@ stock void GameStateString(Get5State state, char[] buffer, int length) {
     case Get5State_None:
       Format(buffer, length, "none");
     case Get5State_PreVeto:
-      Format(buffer, length, "waiting for map veto");
+      Format(buffer, length, "pre_veto");
     case Get5State_Veto:
-      Format(buffer, length, "map veto");
+      Format(buffer, length, "veto");
     case Get5State_Warmup:
       Format(buffer, length, "warmup");
     case Get5State_KnifeRound:
-      Format(buffer, length, "knife round");
+      Format(buffer, length, "knife");
     case Get5State_WaitingForKnifeRoundDecision:
-      Format(buffer, length, "waiting for knife round decision");
+      Format(buffer, length, "waiting_for_knife_decision");
     case Get5State_GoingLive:
-      Format(buffer, length, "going live");
+      Format(buffer, length, "going_live");
     case Get5State_Live:
       Format(buffer, length, "live");
     case Get5State_PostGame:
-      Format(buffer, length, "postgame");
+      Format(buffer, length, "post_game");
   }
 }
 
@@ -674,12 +757,8 @@ stock bool ConvertAuthToSteam64(const char[] inputId, char outputId[AUTH_LENGTH]
 }
 
 stock bool HelpfulAttack(int attacker, int victim) {
-  if (!IsValidClient(attacker) || !IsValidClient(victim)) {
-    return false;
-  }
-  int attackerTeam = GetClientTeam(attacker);
-  int victimTeam = GetClientTeam(victim);
-  return attackerTeam != victimTeam && attacker != victim;
+  // Assumes both attacker and victim are valid clients; check this before calling this function.
+  return attacker != victim && GetClientTeam(attacker) != GetClientTeam(victim);
 }
 
 stock SideChoice SideTypeFromString(const char[] input) {
@@ -728,15 +807,6 @@ public bool DeleteFileIfExists(const char[] path) {
   return true;
 }
 
-stock void GetPauseType(PauseType pause, char[] buffer, int len) {
-  if (pause == PauseType_Tech) {
-    Format(buffer, len, "technical");
-  } else if (pause == PauseType_Tactical) {
-    Format(buffer, len, "tactical");
-  } else {
-    Format(buffer, len, "unknown");
-  }
-}
 public bool IsJSONPath(const char[] path) {
   int length = strlen(path);
   if (length >= 5) {
@@ -744,4 +814,35 @@ public bool IsJSONPath(const char[] path) {
   } else {
     return false;
   }
+}
+
+public int GetMilliSecondsPassedSince(float timestamp) {
+  return RoundToFloor((GetEngineTime() - timestamp) * 1000);
+}
+
+public int GetRoundsPlayed() {
+  return GameRules_GetProp("m_totalRoundsPlayed");
+}
+
+// Not entirely sure how this works, but it does work.
+// Also tested on Nuke with bombsites right on top of each other.
+stock Get5BombSite GetNearestBombsite(int client) {
+  int playerResource = GetPlayerResourceEntity();
+  if (playerResource == INVALID_ENT_REFERENCE) {
+    return Get5BombSite_Unknown;
+  }
+
+  float pos[3];
+  GetClientAbsOrigin(client, pos);
+
+  float aCenter[3], bCenter[3];
+  GetEntPropVector(playerResource, Prop_Send, "m_bombsiteCenterA", aCenter);
+  GetEntPropVector(playerResource, Prop_Send, "m_bombsiteCenterB", bCenter);
+
+  float aDist = GetVectorDistance(aCenter, pos, true);
+  float bDist = GetVectorDistance(bCenter, pos, true);
+
+  LogDebug("Bomb planted. Distance to A: %d. Distance to B: %d.", aDist, bDist);
+
+  return (aDist < bDist) ? Get5BombSite_A : Get5BombSite_B;
 }

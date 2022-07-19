@@ -355,18 +355,18 @@ methodmap Get5Player < JSON_Object {
       }
     }
 
-    property int Id {
+    property int UserId {
       public get() {
-        return this.GetInt("id");
+        return this.GetInt("user_id");
       }
       public set(int id) {
-        this.SetInt("id", id);
+        this.SetInt("user_id", id);
       }
     }
 
-    public Get5Player(const int id, const char[] steamId, const Get5Side side, const char[] name, const bool isBot) {
+    public Get5Player(const int userId, const char[] steamId, const Get5Side side, const char[] name, const bool isBot) {
         Get5Player self = view_as<Get5Player>(new JSON_Object());
-        self.Id = id;
+        self.UserId = userId;
         self.SetSteamId(steamId);
         self.Side = side;
         self.SetName(name);

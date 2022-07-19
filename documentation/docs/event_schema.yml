@@ -248,7 +248,8 @@ paths:
       tags:
         - Series Flow
       description: |
-        Fired when a series is over. `winner` indicates team and side 0 if there was no winner in cases of a draw or if the series was forcefully canceled.
+        Fired when a series is over. `winner` indicates team and side 0 if there was no winner in cases of a draw or
+        if the series was forcefully canceled.
       requestBody:
         content:
           application/json:
@@ -403,7 +404,9 @@ paths:
                   type: boolean
                   description: Indicates if the team was marked as ready or not (unready).
                 game_state:
-                  description: The game state the ready change was announced during. `GameState` in SourceMod and represented as an integer enum.
+                  description: |
+                    The game state the ready change was announced during. `GameState` in SourceMod and represented as
+                    an integer enum.
                   allOf:
                     - "$ref": "#/components/schemas/Get5State"
       responses: { }
@@ -536,7 +539,9 @@ paths:
                 filename:
                   type: string
                   example: "1324_map_0_de_nuke.dem"
-                  description: The name of the file containing the GOTV recording of the map. The format is determined by the `get5_demo_name_format` parameter.
+                  description: |
+                    The name of the file containing the GOTV recording of the map. The format is determined by the
+                    `get5_demo_name_format` parameter.
       responses: { }
   "/Get5_OnPlayerBecameMVP":
     post:
@@ -657,7 +662,9 @@ paths:
                   type: string
                   minLength: 1
                   example: gg have fun
-                  description: The arguments passed to the command; the message written. `GetMessage()` and `SetMessage()` in SourceMod.
+                  description: |
+                    The arguments passed to the command; the message written. `GetMessage()` and `SetMessage()` in
+                    SourceMod.
       responses: { }
   "/Get5_OnHEGrenadeDetonated":
     post:
@@ -839,8 +846,8 @@ components:
           type: string
           description: |
             The path to the loaded config file. If you used `get5_loadmatch <file>`, it's this file's name.
-            If you used `get5_loadmatch_url`, the pattern of the file is `remote_config%d.json`, where `%d` is the server's id,
-            which you can set with `get5_server_id`.
+            If you used `get5_loadmatch_url`, the pattern of the file is `remote_config%d.json`, where `%d` is the
+            server's ID, which you can set with `get5_server_id`.
           example: addons/sourcemod/configs/get5/match_config.json
         matchid:
           type: string
@@ -852,11 +859,14 @@ components:
           minimum: 0
         round_number:
           type: integer
-          description: The round number of the current match, starting at 0. -1 if not live. Only defined if a match config was loaded.
+          description: |
+            The round number of the current match, starting at 0. -1 if not live. Only defined if a match config was
+            loaded.
           minimum: -1
         round_time:
           type: integer
-          description: The number of milliseconds elapsed since the round started. Only defined if a match config was loaded.
+          description: |
+            The number of milliseconds elapsed since the round started. Only defined if a match config was loaded.
           minimum: 0
         team1:
           $ref: "#/components/schemas/Get5StatusTeam"
@@ -1035,7 +1045,9 @@ components:
         - spec
     Get5PauseType:
       type: string
-      description: Describes a pause type. `PauseType` in SourceMod and represented as an integer enum where 0 means no pause. The `backup` pause is a special pause type fired when the game is paused due to a round backup restore.
+      description: |
+        Describes a pause type. `PauseType` in SourceMod and represented as an integer enum where 0 means no
+        pause. The `backup` pause is a special pause type fired when the game is paused due to a round backup restore.
       enum:
         - tactical
         - technical
@@ -1044,7 +1056,7 @@ components:
     Get5Player:
       type: object
       properties:
-        id:
+        user_id:
           type: integer
           minimum: 0
           description: |
@@ -1055,17 +1067,22 @@ components:
         steamid:
           type: string
           example: '76561198279375306'
-          description: The SteamID64 of the player. `GetSteamId()` and `SetSteamId()`
-            in SourceMod. This will be `BOT-%d` if the player is a bot, where `%d` is the user ID (`id`). The string will be empty for Console and GOTV (although we *should* never see this in practice).
+          description: |
+            The SteamID64 of the player. `GetSteamId()` and `SetSteamId()`
+            in SourceMod. This will be `BOT-%d` if the player is a bot, where `%d` is the user ID (`user_id`).
+            The string will be empty for Console and GOTV (although we *should* never see this in practice).
         side:
           $ref: "#/components/schemas/Get5Side"
         name:
           type: string
-          description: The in-game name of the player. If the player is a bot, this will be "BOT Gary" etc. `GetName()` and `SetName()` in SourceMod.
+          description: |
+            The in-game name of the player. If the player is a bot, this will be "BOT Gary" etc. `GetName()` and
+            `SetName()` in SourceMod.
           example: s1mple
         is_bot:
           type: boolean
           description: Indicates if the player is a bot. `IsBot` in SourceMod.
+          example: false
       description: Describes a player. `Player` in SourceMod (or `Attacker` on `Get5PlayerDeathEvent`).
     Get5Weapon:
       type: object

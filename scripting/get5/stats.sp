@@ -109,7 +109,7 @@ public Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, floa
         Get5DamageGrenadeVictim victimObject =
             view_as<Get5DamageGrenadeVictim>(molotovObject.Victims.GetObject(i));
 
-        if (victimObject.Player.Id == victimUserId) {
+        if (victimObject.Player.UserId == victimUserId) {
           victimObject.Damage = victimObject.Damage + damageAsIntCapped;
           victimObject.Killed = victimKilled;
           return Plugin_Continue;

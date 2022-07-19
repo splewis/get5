@@ -37,11 +37,13 @@ cfg/get5/live.cfg # (3)
 server.**
 
 ####`get5_server_id`
-:   Integer that identifies your server. This is used in temp files to prevent collisions. **`Default: 0`**
+:   Integer that identifies your server. This is used in temp files to prevent collisions. Defines the
+[`{SERVERID}`](../configuration/#matchstate-substitutes) substitution and the return value
+of the `Get5_GetServerID` native. **`Default: 0`**
 
 ####`get5_kick_immunity`
 :   Whether admins with the changemap flag will be immune to kicks from
-[get5_kick_when_no_match_loaded](../configuration#get5_kick_when_no_match_loaded). **`Default: 1`**
+[`get5_kick_when_no_match_loaded`](../configuration#get5_kick_when_no_match_loaded). **`Default: 1`**
 
 ####`get5_stop_command_enabled`
 :   Whether the [`!stop`](../commands/#stop) command is enabled. **`Default: 1`**
@@ -80,8 +82,8 @@ users if they are not in the auth list. **`Default: 1`**
 :   Time (in seconds) teams have to ready up before forfeiting the match, 0 = unlimited. **`Default: 0`**
 
 ####`get5_time_to_make_knife_decision`
-:   Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0 =
-unlimited. **`Default: 60`**
+:   Time (in seconds) a team has to make a [`!stay`](../commands/#stay) or [`!swap`](../commands/#swap-or-switch)
+decision after winning knife round, 0 = unlimited. **`Default: 60`**
 
 ####`get5_veto_countdown`
 :   Time (in seconds) to countdown before veto process commences. **`Default: 5`**
@@ -96,11 +98,11 @@ required. 0 to disable. **`Default: 2.0`**
 ####`get5_print_damage_excess`
 :   Whether to include damage that exceeds the remaining health of a player in the chat
 report. If enabled, you can inflict more than 100 damage to a player in the damage report. Ignored if
-[get5_print_damage](../configuration#get5_print_damage) is disabled. **`Default: 0`**
+[`get5_print_damage`](../configuration#get5_print_damage) is disabled. **`Default: 0`**
 
 ####`get5_damageprint_format`
 :   Formatting of damage reports in chat on round end. Ignored
-if [get5_print_damage](../configuration#get5_print_damage) is disabled.
+if [`get5_print_damage`](../configuration#get5_print_damage) is disabled.
 **`Default: - [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)`**
 
     The default example above prints the following to chat on round end and includes information about assists and flash
@@ -212,10 +214,14 @@ Valid substitutions into the above file name formatting cvars:
 - `{TEAM1}`
 - `{TEAM2}`
 - `{MATCHTITLE}`
+- `{SERVERID}` - the value provided to the [`get5_server_id`](../configuration#get5_server_id) parameter.
 
 ### Chat Colour Substitutes
 
-This project also includes substitution variables for colour in chat text.
+This project also includes substitution variables for colour in chat text. You must return to `{NORMAL}` (white)
+after using a color variable.
+
+Example: `This text becomes {DARK_RED}red{NORMAL}, while {YELLOW}all of this will be yellow`.
 
 - `{NORMAL}`
 - `{DARK_RED}`

@@ -135,7 +135,10 @@ public Get5Player GetPlayerObject(int client) {
     return new Get5Player("", view_as<Get5Side>(CS_TEAM_NONE), "GOTV", false);
   }
 
-  Get5Side side = view_as<Get5Side>(GetClientTeam(client));
+  // In cases where users disconnect (Get5PlayerDisconnectedEvent) without being on a team, they might error out
+  // on GetClientTeam(), so we check that they're in-game before we attempt to determine their team.
+  // Avoids "Client x is not in game" exception.
+  Get5Side side = view_as<Get5Side>(IsClientInGame(client) ? GetClientTeam(client) : CS_TEAM_NONE);
 
   char name[MAX_NAME_LENGTH];
   GetClientName(client, name, sizeof(name));

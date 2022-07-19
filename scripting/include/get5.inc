@@ -355,20 +355,18 @@ methodmap Get5Player < JSON_Object {
       }
     }
 
-    public bool IsEqualToPlayerId(const char[] id) {
-      char ownId[64];
-      this.GetSteamId(ownId, sizeof(ownId));
-      return StrEqual(ownId, id);
+    property int Id {
+      public get() {
+        return this.GetInt("id");
+      }
+      public set(int id) {
+        this.SetInt("id", id);
+      }
     }
 
-    public bool IsEqualToPlayer(const Get5Player player) {
-      char playerId[64];
-      player.GetSteamId(playerId, sizeof(playerId));
-      return this.IsEqualToPlayerId(playerId);
-    }
-
-    public Get5Player(const char[] steamId, const Get5Side side, const char[] name, const bool isBot) {
+    public Get5Player(const int id, const char[] steamId, const Get5Side side, const char[] name, const bool isBot) {
         Get5Player self = view_as<Get5Player>(new JSON_Object());
+        self.Id = id;
         self.SetSteamId(steamId);
         self.Side = side;
         self.SetName(name);

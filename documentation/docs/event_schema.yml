@@ -1044,11 +1044,19 @@ components:
     Get5Player:
       type: object
       properties:
+        id:
+          type: integer
+          minimum: 0
+          description: |
+            The in-game user ID of the player. This uniquely identifies the player within a server and is
+            auto-incremented for each connecting player. 0 for GOTV/Console but >0 for all players or bots. If the same
+            player reconnects, they will be given a new ID. `steamid` uniquely identifies the player outside the server.
+          example: 4
         steamid:
           type: string
           example: '76561198279375306'
           description: The SteamID64 of the player. `GetSteamId()` and `SetSteamId()`
-            in SourceMod. This will be `BOT-%d` if the player is a bot, where `%d` is the client index. This is required to be able to distinguish bots from each other. The string will be empty for Console and GOTV (although we *should* never see this in practice).
+            in SourceMod. This will be `BOT-%d` if the player is a bot, where `%d` is the user ID (`id`). The string will be empty for Console and GOTV (although we *should* never see this in practice).
         side:
           $ref: "#/components/schemas/Get5Side"
         name:

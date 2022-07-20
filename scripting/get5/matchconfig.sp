@@ -836,9 +836,9 @@ public Action Command_AddPlayer(int client, int args) {
     }
 
     if (AddPlayerToTeam(auth, team, name)) {
-      ReplyToCommand(client, "Successfully added player %s to team %s", auth, teamString);
+      ReplyToCommand(client, "Successfully added player %s to %s.", auth, teamString);
     } else {
-      ReplyToCommand(client, "Player %s is already on a match team.", auth);
+      ReplyToCommand(client, "Failed to add player %s to team %. They may already be on a team or you provided an invalid Steam ID.", auth, teamString);
     }
 
   } else {
@@ -857,7 +857,6 @@ public Action Command_AddCoach(int client, int args) {
   }
 
   char auth[AUTH_LENGTH];
-  char steam64[AUTH_LENGTH];
   char teamString[32];
   char name[MAX_NAME_LENGTH];
   if (args >= 2 && GetCmdArg(1, auth, sizeof(auth)) &&
@@ -877,11 +876,7 @@ public Action Command_AddCoach(int client, int args) {
     }
 
     if (GetTeamCoaches(team).Length == g_CoachesPerTeam) {
-      ReplyToCommand(client, "Coach Spots are full for team %s", teamString);
-      return Plugin_Handled;
-    }
-
-    if (!ConvertAuthToSteam64(auth, steam64)) {
+      ReplyToCommand(client, "Coach Spots are full for %s.", teamString);
       return Plugin_Handled;
     }
 
@@ -894,9 +889,9 @@ public Action Command_AddCoach(int client, int args) {
       // Update the backup structure as well for round restores, covers edge
       // case of users joining, coaching, stopping, and getting 16k cash as player.
       WriteBackup();
-      ReplyToCommand(client, "Successfully added player %s to coach team %s", auth, teamString);
+      ReplyToCommand(client, "Successfully added player %s as coach for %s.", auth, teamString);
     } else {
-      ReplyToCommand(client, "Player %s is already in a coaching position on a team.", auth);
+      ReplyToCommand(client, "Failed to add player %s as coach for %s. They may already be coaching or you provided an invalid Steam ID.", auth, teamString);
     }
   } else {
     ReplyToCommand(client, "Usage: get5_addcoach <auth> <team1|team2> [name]");
@@ -942,10 +937,10 @@ public Action Command_AddKickedPlayer(int client, int args) {
     }
 
     if (AddPlayerToTeam(g_LastKickedPlayerAuth, team, name)) {
-      ReplyToCommand(client, "Successfully added kicked player %s to team %s",
+      ReplyToCommand(client, "Successfully added kicked player %s to %s.",
                      g_LastKickedPlayerAuth, teamString);
     } else {
-      ReplyToCommand(client, "Player %s is already on a match team.", g_LastKickedPlayerAuth);
+      ReplyToCommand(client, "Failed to add player %s to %s. They may already be on a team or you provided an invalid Steam ID.", g_LastKickedPlayerAuth, teamString);
     }
 
   } else {
@@ -963,16 +958,16 @@ public Action Command_RemovePlayer(int client, int args) {
   if (g_InScrimMode) {
     ReplyToCommand(
         client,
-        "Cannot use get5_removeplayer in scrim mode. Use get5_ringer to swap a players team.");
+        "Cannot use get5_removeplayer in scrim mode. Use get5_ringer to swap a player's team.");
     return Plugin_Handled;
   }
 
   char auth[AUTH_LENGTH];
   if (args >= 1 && GetCmdArg(1, auth, sizeof(auth))) {
     if (RemovePlayerFromTeams(auth)) {
-      ReplyToCommand(client, "Successfully removed player %s", auth);
+      ReplyToCommand(client, "Successfully removed player %s.", auth);
     } else {
-      ReplyToCommand(client, "Player %s not found in auth lists.", auth);
+      ReplyToCommand(client, "Player %s not found in auth lists or the Steam ID was invalid.", auth);
     }
   } else {
     ReplyToCommand(client, "Usage: get5_removeplayer <auth>");
@@ -982,7 +977,7 @@ public Action Command_RemovePlayer(int client, int args) {
 
 public Action Command_RemoveKickedPlayer(int client, int args) {
   if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
+    ReplyToCommand(client, "Cannot change player lists when there is no match to modify.");
     return Plugin_Handled;
   }
 
@@ -999,9 +994,9 @@ public Action Command_RemoveKickedPlayer(int client, int args) {
   }
 
   if (RemovePlayerFromTeams(g_LastKickedPlayerAuth)) {
-    ReplyToCommand(client, "Successfully removed kicked player %s", g_LastKickedPlayerAuth);
+    ReplyToCommand(client, "Successfully removed kicked player %s.", g_LastKickedPlayerAuth);
   } else {
-    ReplyToCommand(client, "Player %s not found in auth lists.", g_LastKickedPlayerAuth);
+    ReplyToCommand(client, "Player %s not found in auth lists or the Steam ID was invalid.", g_LastKickedPlayerAuth);
   }
   return Plugin_Handled;
 }

@@ -47,11 +47,9 @@ Once you've done this, all that has to happen is teams to ready up to start the 
 
 #### Extra Commands
 
-- You can use `get5_ringer` in console with a steamid to add a player to the "home" team as of 0.6.0, or `!ringer` in
-  chat.
+- You can use `get5_ringer` in console with a Steam ID to add a player to the "home" team, or `!ringer` in chat.
 - You can do `!swap` in chat to swap sides during the warmup phase if you want to start on a different side.
-- If you forget commands, use `!get5` in chat, and you will get a user friendly menu to do all the above (new in 0.6.0+)
-  .
+- If you forget commands, use `!get5` in chat, and you will get a user-friendly menu to do all the above.
 - If you have [practicemode](https://github.com/splewis/csgo-practice-mode) on your server as well, you may wish to
   add `sm_practicemode_can_be_started 0` in
   your [live config](https://github.com/splewis/get5/blob/master/cfg/get5/live.cfg) at `cfg/get5/live.cfg`.

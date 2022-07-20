@@ -1,4 +1,4 @@
-# Configuration
+# :material-cog: Configuration
 
 This is a list of all the configuration parameters you can set that change how Get5 behaves. The config file is
 auto-generated on **first plugin run**, then auto-executed on each plugin start. The file is located
@@ -9,8 +9,7 @@ cfg/sourcemod/get5.cfg
 ```
 
 You can either set the below parameters in that file, or in the `cvars` section of a match config. As mentioned in
-the [match schema](../match_schema#optional-values), that section will override all other
-settings.
+the explanation of the [match schema](../match_schema), that section will override all other settings.
 
 ### Phase Configuration Files
 
@@ -82,7 +81,7 @@ users if they are not in the auth list. **`Default: 1`**
 :   Time (in seconds) teams have to ready up before forfeiting the match, 0 = unlimited. **`Default: 0`**
 
 ####`get5_time_to_make_knife_decision`
-:   Time (in seconds) a team has to make a [`!stay`](../commands/#stay) or [`!swap`](../commands/#swap-or-switch)
+:   Time (in seconds) a team has to make a [`!stay`](../commands/#stay) or [`!swap`](../commands/#swap)
 decision after winning knife round, 0 = unlimited. **`Default: 60`**
 
 ####`get5_veto_countdown`
@@ -112,13 +111,13 @@ if [`get5_print_damage`](../configuration#get5_print_damage) is disabled.
     `{KILL_FROM}` is similar to `{KILL_TO}`, but the `X` value is red (indicating a player killed you). No attribution
     becomes a white dash.
 
-```
+```log
 [Get5] Team A 1 - 0 Team B
-- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP)  - killed this player, they assisted in killing you
-- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)  - killed by this player, flash assisted in killing them
-- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)  - no interaction, this player survived
-- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)  - assisted in killing this player
-- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)  - dealt damage to this player, not enough for assist
+- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - killed this player, they assisted in killing you
+- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - killed by this player, flash assisted in killing them
+- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - no interaction, this player survived
+- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - assisted in killing this player
+- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - dealt damage to this player, not enough for assist
 ```
 
 ####`get5_message_prefix`
@@ -127,36 +126,40 @@ goes live. **`Default: Get5`**
 
 ## Pausing
 
+####`get5_pausing_enabled`
+:   Whether [pauses](../pausing) are available to clients or not. **`Default: 1`**
+
 ####`get5_max_pauses`
-:   Maximum number of tactical pauses a team can use, 0 = unlimited. **`Default: 0`**
+:   Number of [`tactical pauses`](../pausing/#tactical) a team can use. 0 = unlimited. **`Default: 0`**
 
 ####`get5_max_pause_time`
-:   Maximum number of seconds the game can spend paused by a team, 0 = unlimited. When pauses are unlimited, both teams
-must call [`!unpause`](../commands/#unpause) to continue the match. If this is set to a non-zero value, the
-[`!unpause`](../commands/#unpause) does not work for tactical pauses. **`Default: 300 (5 minutes)`**
-
-####`get5_reset_pauses_each_half`
-:   Whether pause limits are reset each halftime period. **`Default: 1`**
+:   Maximum number of seconds the game can spend under tactical pause for a team. 0 = unlimited. When pauses are
+unlimited and when [get5_fixed_pause_time](../configuration/#get5_fixed_pause_time) is zero, both teams
+must call [`!unpause`](../commands/#unpause) to continue the match. This parameter is ignored
+if [get5_fixed_pause_time](../configuration/#get5_fixed_pause_time) is set to a non-zero
+value. **`Default: 300 (5 minutes)`**
 
 ####`get5_fixed_pause_time`
-:   If non-zero, the fixed length in seconds all pauses will be. Adjusting this to non-zero will use
-the in-game timeout counter, and the [`!unpause`](../commands/#unpause) command cannot be used. **`Default: 0`**
-
-####`get5_pausing_enabled`
-:   Whether the [`!pause`](../commands/#pause) command is available to clients or not. **`Default: 1`**
+:   If non-zero, the fixed length in seconds all [`tactical`](../pausing/#tactical) pauses will be. Adjusting this to
+non-zero will use the in-game timeout counter, and the [`!unpause`](../commands/#unpause) command cannot be
+used and the [get5_max_pause_time](../configuration/#get5_max_pause_time) parameter is ignored. **`Default: 0`**
 
 ####`get5_allow_technical_pause`
-:   Whether the [`!tech`](../commands/#tech) command is available to clients or not. **`Default: 1`**
+:   Whether [`technical pauses`](../pausing/#technical) are available to clients or not. **`Default: 1`**
 
 ####`get5_max_tech_pauses`
-:   Number of [`technical pauses`](../commands/#tech) a team is allowed to have, 0=unlimited. **`Default: 0`**
+:   Number of [`technical pauses`](../pausing/#technical) a team is allowed to have, 0=unlimited. **`Default: 0`**
 
 ####`get5_tech_pause_time`
-:   If non-zero, number of seconds before any team can call [`!unpause`](../commands/#unpause) without confirmation.
-0 = unlimited and both teams must confirm. **`Default: 0`**
+:   If non-zero, number of seconds before any team can call [`!unpause`](../commands/#unpause) to end
+a [`technical pause`](../pausing/#technical) without confirmation from the pausing team. 0 = unlimited and both teams
+must confirm. **`Default: 0`**
 
 ####`get5_pause_on_veto`
 :   Whether to freeze players during the map-veto phase. **`Default: 0`**
+
+####`get5_reset_pauses_each_half`
+:   Whether pause limits are reset each halftime period. **`Default: 1`**
 
 ## File Name Formatting
 
@@ -179,11 +182,7 @@ disable. **`Default: get5_matchstats_{MATCHID}.cfg`**
 
 ####`get5_backup_system_enabled`
 :   Whether the Get5 backup system is enabled. This is required for the use of the [`!stop`](../commands/#stop) command
-as well as the [`get5_loadbackup`](../commands/#get5_loadbackup-filename) command. **`Default: 1`**
-
-####`get5_last_backup_file`
-:   Last match backup file Get5 wrote in the current series, this is automatically updated by Get5 each time a backup
-file is written. **`Default: ""`**
+as well as the [`get5_loadbackup`](../commands/#get5_loadbackup) command. **`Default: 1`**
 
 ####`get5_max_backup_age`
 :   Number of seconds before a Get5 backup file is automatically deleted. 0 to disable. **`Default: 160000`**

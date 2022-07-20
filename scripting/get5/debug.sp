@@ -120,7 +120,7 @@ static void AddGlobalStateInfo(File f) {
 
   LOOP_TEAMS(team) {
     GetTeamString(team, buffer, sizeof(buffer));
-    f.WriteLine("Team info for team %s (%d):", buffer, team);
+    f.WriteLine("Team info for %s (%d):", buffer, team);
     f.WriteLine("g_TeamNames = %s", g_TeamNames[team]);
     WriteArrayList(f, "g_TeamAuths", g_TeamAuths[team]);
     f.WriteLine("g_TeamTags = %s", g_TeamTags[team]);

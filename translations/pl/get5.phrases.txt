@@ -32,7 +32,7 @@
     {
         "pl"			"Brak ustawień meczu"
     }
-    "YourAreNotAPlayerInfoMessage"
+    "YouAreNotAPlayerInfoMessage"
     {
         "pl"            "Nie jesteś graczem w tym meczu"
     }

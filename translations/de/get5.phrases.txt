@@ -32,7 +32,7 @@
     {
         "de"			"Es ist kein Match aufgesetzt"
     }
-    "YourAreNotAPlayerInfoMessage"
+    "YouAreNotAPlayerInfoMessage"
     {
         "de"            "Du bist kein Spieler von diesem Match"
     }

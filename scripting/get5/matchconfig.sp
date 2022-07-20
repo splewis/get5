@@ -140,7 +140,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   for (int i = 1; i <= MaxClients; i++) {
     if (IsAuthedPlayer(i)) {
       if (GetClientMatchTeam(i) == Get5Team_None) {
-        RememberAndKickClient(i, "%t", "YourAreNotAPlayerInfoMessage");
+        RememberAndKickClient(i, "%t", "YouAreNotAPlayerInfoMessage");
       } else {
         CheckClientTeam(i);
       }

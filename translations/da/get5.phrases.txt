@@ -48,7 +48,7 @@
     {
         "da"			"Der er ingen match setup."
     }
-    "YourAreNotAPlayerInfoMessage"
+    "YouAreNotAPlayerInfoMessage"
     {
         "da"            "Du er ikke en spiller i denne kamp"
     }

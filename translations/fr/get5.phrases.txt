@@ -44,7 +44,7 @@
     {
         "fr"			"Aucune configuration n'est chargée"
     }
-    "YourAreNotAPlayerInfoMessage"
+    "YouAreNotAPlayerInfoMessage"
     {
         "fr"            "Vous n'êtes pas un joueur dans ce match"
     }

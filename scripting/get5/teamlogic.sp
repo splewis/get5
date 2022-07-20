@@ -476,7 +476,7 @@ bool RemovePlayerFromTeams(const char[] auth) {
     if (index >= 0) {
       int target = AuthToClient(steam64);
       if (IsAuthedPlayer(target) && !g_InScrimMode) {
-        RememberAndKickClient(target, "%t", "YourAreNotAPlayerInfoMessage");
+        RememberAndKickClient(target, "%t", "YouAreNotAPlayerInfoMessage");
       }
       return true;
     }

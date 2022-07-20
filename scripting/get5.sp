@@ -641,7 +641,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
   if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue) {
     Get5Team team = GetClientMatchTeam(client);
     if (team == Get5Team_None) {
-      RememberAndKickClient(client, "%t", "YourAreNotAPlayerInfoMessage");
+      RememberAndKickClient(client, "%t", "YouAreNotAPlayerInfoMessage");
     } else {
       int teamCount = CountPlayersOnMatchTeam(team, client);
       if (teamCount >= g_PlayersPerTeam && !g_CoachingEnabledCvar.BoolValue) {

@@ -11,7 +11,7 @@ using [`get5_check_auths 0`](./configuration.md#server-setup).
 ## SourceMod Forwards
 
 If you're writing your own plugin, you can collect stats from the game using the
-[forwards](./event_logs.md) provided by Get5.
+[forwards](./events_and_forwards.md) provided by Get5.
 
 ## Stats KeyValues structure
 

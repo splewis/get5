@@ -420,9 +420,11 @@ public bool HasMapScore(int mapNumber) {
   return GetMapScore(mapNumber, Get5Team_1) != 0 || GetMapScore(mapNumber, Get5Team_2) != 0;
 }
 
-public bool AddPlayerToTeam(const char[] auth, Get5Team team, const char[] name) {
+bool AddPlayerToTeam(const char[] auth, Get5Team team, const char[] name) {
   char steam64[AUTH_LENGTH];
-  ConvertAuthToSteam64(auth, steam64);
+  if (!ConvertAuthToSteam64(auth, steam64)) {
+    return false;
+  }
 
   if (GetAuthMatchTeam(steam64) == Get5Team_None) {
     GetTeamAuths(team).PushString(steam64);
@@ -433,14 +435,16 @@ public bool AddPlayerToTeam(const char[] auth, Get5Team team, const char[] name)
   }
 }
 
-public bool AddCoachToTeam(const char[] auth, Get5Team team, const char[] name) {
+bool AddCoachToTeam(const char[] auth, Get5Team team, const char[] name) {
   if (team == Get5Team_Spec) {
     LogDebug("Not allowed to coach a spectator team.");
     return false;
   }
 
   char steam64[AUTH_LENGTH];
-  ConvertAuthToSteam64(auth, steam64);
+  if (!ConvertAuthToSteam64(auth, steam64)) {
+    return false;
+  }
 
   if (GetAuthMatchTeamCoach(steam64) == Get5Team_None) {
     GetTeamCoaches(team).PushString(steam64);
@@ -451,15 +455,24 @@ public bool AddCoachToTeam(const char[] auth, Get5Team team, const char[] name) 
   }
 }
 
-public bool RemovePlayerFromTeams(const char[] auth) {
+bool RemovePlayerFromTeams(const char[] auth) {
   char steam64[AUTH_LENGTH];
-  ConvertAuthToSteam64(auth, steam64);
+  if (!ConvertAuthToSteam64(auth, steam64)) {
+    return false;
+  }
 
   for (int i = 0; i < MATCHTEAM_COUNT; i++) {
     Get5Team team = view_as<Get5Team>(i);
     int index = GetTeamAuths(team).FindString(steam64);
     if (index >= 0) {
       GetTeamAuths(team).Erase(index);
+    } else {
+      index = GetTeamCoaches(team).FindString(steam64);
+      if (index >= 0) {
+        GetTeamCoaches(team).Erase(index);
+      }
+    }
+    if (index >= 0) {
       int target = AuthToClient(steam64);
       if (IsAuthedPlayer(target) && !g_InScrimMode) {
         RememberAndKickClient(target, "%t", "YourAreNotAPlayerInfoMessage");

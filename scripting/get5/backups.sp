@@ -370,8 +370,8 @@ public void RestoreGet5Backup() {
 public Action Timer_SwapCoaches(Handle timer) {
   for (int i = 1; i <= MaxClients; i++) {
     if (IsAuthedPlayer(i)) {
-      CheckIfClientCoaching(i, Get5Team_1);
-      CheckIfClientCoaching(i, Get5Team_2);
+      CheckIfClientCoachingAndMoveToCoach(i, Get5Team_1);
+      CheckIfClientCoachingAndMoveToCoach(i, Get5Team_2);
     }
   }
 }

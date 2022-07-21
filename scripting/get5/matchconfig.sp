@@ -27,12 +27,10 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     // During restore we want to keep our
     // current pauses used.
     if (!restoreBackup) {
-      g_TeamPauseTimeUsed[team] = 0;
-      g_TeamPausesUsed[team] = 0;
-      g_TeamTechPausesUsed[team] = 0;
+      g_TacticalPauseTimeUsed[team] = 0;
+      g_TacticalPausesUsed[team] = 0;
+      g_TechnicalPausesUsed[team] = 0;
     }
-    g_TechPausedTimeOverride[team] = 0;
-    g_TeamGivenTechPauseCommand[team] = false;
     ClearArray(GetTeamCoaches(team));
     ClearArray(GetTeamAuths(team));
   }
@@ -122,6 +120,10 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     ExecuteMatchConfigCvars();
     LoadPlayerNames();
     EnsureIndefiniteWarmup();
+    if (IsPaused()) {
+      LogDebug("Match was paused when loading match config. Unpausing.");
+      UnpauseGame(Get5Team_None);
+    }
 
     Stats_InitSeries();
 

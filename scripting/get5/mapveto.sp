@@ -15,11 +15,7 @@ public void CreateVeto() {
   g_VetoCaptains[Get5Team_2] = GetTeamCaptain(Get5Team_2);
   ResetReadyStatus();
   if (g_PauseOnVetoCvar.BoolValue) {
-    if (g_PausingEnabledCvar.BoolValue) {
-      PauseGame(Get5Team_None, Get5PauseType_Admin, 1);
-    } else {
-      ServerCommand("mp_pause_match");
-    }
+    PauseGame(Get5Team_None, Get5PauseType_Admin);
   }
   CreateTimer(1.0, Timer_VetoCountdown, _, TIMER_REPEAT);
 }
@@ -50,7 +46,7 @@ public void VetoFinished() {
   Get5_MessageToAll("%t", "MapDecidedInfoMessage");
 
   if (IsPaused()) {
-    ServerCommand("mp_unpause_match");
+    UnpauseGame(Get5Team_None);
   }
 
   // Use total series score as starting point, to not print skipped maps

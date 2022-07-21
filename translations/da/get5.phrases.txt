@@ -72,45 +72,89 @@
     {
         "da"            "{1} har 10 sekunder til at gøre sig klar før de opgiver kampen."
     }
-    "PausePeriodSuffix"
-    {
-        "da"            "til denne halvleg"
-    }
     "MaxPausesUsedInfoMessage"
     {
-        "da"            "Dit hold har allerede brugt max {1} pauser{2}."
+        "da"            "{2} har brugt alle deres taktiske pauser ({1})."
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "da"            "Dit hold har allerede brugt max {1} sekunder af pause tid{2}."
+        "da"            "{2} har brugt al deres taktiske pausetid ({1})."
     }
     "MatchPausedByTeamMessage"
     {
-        "da"            "{1} satte kampen på pause."
+        "da"            "{1} har bedt om taktisk pause."
     }
     "MatchTechPausedByTeamMessage"
     {
         "da"            "{1} har bedt om teknisk pause."
     }
-    "AdminForceTechPauseInfoMessage"
+    "TechPausesNotEnabled"
     {
-        "da"            "En admin har bedt om teknisk pause."
+        "da"            "Tekniske pauser er ikke aktiveret."
     }
-    "PauseTimeExpiration10SecInfoMessage"
+    "TechnicalPauseMidSentence"
     {
-        "da"            "{1}s pause udløber om 10 sekunder."
+        "da"            "teknisk pause"
     }
-    "PauseTimeExpirationInfoMessage"
+    "TacticalPauseMidSentence"
     {
-        "da"            "{1} har {2} sekunder pausetid tilbage {3}."
+        "da"            "taktisk pause"
+    }
+    "TimeRemainingBeforeAnyoneCanUnpausePrefix"
+    {
+        "da"            "Resterende tid, før alle kan unpause"
+    }
+    "PauseTimeRemainingPrefix"
+    {
+        "da"            "Tilbageværende pausetid"
+    }
+    "AwaitingUnpause"
+    {
+        "da"            "Afventer unpause"
+    }
+    "PausedByAdministrator"
+    {
+        "da"            "En administrator har sat kampen på pause."
+    }
+    "PausedForBackup"
+    {
+        "da"            "Kampen er blevet gendannet fra en backup. Begge hold skal unpause for at fortsætte."
+    }
+    "PauseNotAvailable"
+    {
+        "da"            "Der kan ikke anmodes om pause, før kampen er igang, og kun hvis pausesystemet er slået til."
+    }
+    "UserCannotUnpauseAdmin"
+    {
+        "da"            "Pauser startet af administratorer kan kun afbrydes af administratorer."
+    }
+    "PausingTeamCannotUnpauseUntilFreezeTime"
+    {
+        "da"            "Du kan ikke afbryde din pause, før den er startet. Pauseanmodninger kan ikke annulleres."
     }
     "PauseRunoutInfoMessage"
     {
         "da"            "{1} er løbet tør for pausetid. Kampen fortsættes."
     }
+    "TechPauseRunoutInfoMessage"
+    {
+        "da"            "Maksimal teknisk pauselængde er nået, og alle kan nu stoppe pausen."
+    }
+    "TechPauseNoTimeRemaining"
+    {
+        "da"            "{1} har ikke mere teknisk pausetid. Brug taktisk pause i stedet."
+    }
+    "TechPauseNoPausesRemaining"
+    {
+        "da"            "{1} har ikke flere tekniske pauser. Brug taktisk pause i stedet."
+    }
+    "TechPausePausesRemaining"
+    {
+        "da"            "Tekniske pauser tilbage for {1}: {2}"
+    }
     "MatchUnpauseInfoMessage"
     {
-        "da"            "{1:N} fortsatte kampen."
+        "da"            "{1} fortsatte kampen."
     }
     "WaitingForUnpauseInfoMessage"
     {
@@ -118,11 +162,7 @@
     }
     "PausesLeftInfoMessage"
     {
-        "da"            "{1} har {2} pauser tilbage{3}."
-    }
-    "OnePauseLeftInfoMessage"
-    {
-        "da"            "{1} har {2} pause tilbage{3}."
+        "da"            "Taktiske pauser tilbage for {1}: {2}"
     }
     "TeamFailToReadyMinPlayerCheck"
     {
@@ -134,11 +174,11 @@
     }
     "TeamReadyToRestoreBackupInfoMessage"
     {
-        "da"            "{1} er klar til at genoprette match backup."
+        "da"            "{1} er klar til at genoprette match fra backup."
     }
     "TeamReadyToKnifeInfoMessage"
     {
-        "da"            "{1} er klar til at knife om sider."
+        "da"            "{1} er klar til at knife om side."
     }
     "TeamReadyToBeginInfoMessage"
     {
@@ -206,11 +246,15 @@
     }
     "MatchFinishedInfoMessage"
     {
-        "da"            "Kampen er afgjort."
+        "da"            "Kampen er afsluttet"
     }
     "CurrentScoreInfoMessage"
     {
         "da"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
+    }
+    "StopCommandNotEnabled"
+    {
+        "da"            "Stop-kommandoen er ikke aktiveret."
     }
     "BackupLoadedInfoMessage"
     {
@@ -238,7 +282,7 @@
     }
     "TeamDecidedToSwapInfoMessage"
     {
-        "da"            "{1} har besluttet at skifte."
+        "da"            "{1} har besluttet at skifte side."
     }
     "TeamLostTimeToDecideInfoMessage"
     {
@@ -302,7 +346,7 @@
     }
     "MapVetoPickConfirmMenuText"
     {
-        "da"        "Bekræft at du vil spille {1}:"
+        "da"        "Bekræft, at du vil spille {1}:"
     }
     "MapVetoBanMenuText"
     {

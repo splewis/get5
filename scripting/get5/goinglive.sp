@@ -47,14 +47,6 @@ public Action MatchLive(Handle timer) {
   SetMatchTeamCvars();
   ExecuteMatchConfigCvars();
 
-  // If there is a set amount of timeouts available update the built-in convar and game rule
-  // properties to show the correct amount of timeouts remaining in gsi and in-game
-  if (g_MaxPausesCvar.IntValue > 0) {
-    ServerCommand("mp_team_timeout_max %d", g_MaxPausesCvar.IntValue);
-    GameRules_SetProp("m_nTerroristTimeOuts", g_MaxPausesCvar.IntValue);
-    GameRules_SetProp("m_nCTTimeOuts", g_MaxPausesCvar.IntValue);
-  }
-
   // We force the match end-delay to extend for the duration of the GOTV broadcast here.
   g_PendingSideSwap = false;
   SetMatchRestartDelay();

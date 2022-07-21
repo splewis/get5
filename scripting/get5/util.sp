@@ -293,38 +293,6 @@ stock bool IsPaused() {
   return GameRules_GetProp("m_bMatchWaitingForResume") != 0;
 }
 
-// Pauses and returns if the match will automatically unpause after the duration ends.
-stock bool Pause(Get5PauseType pauseType, int pauseTime, int csTeam, int pausesLeft) {
-  if (pauseType == Get5PauseType_None) {
-    LogMessage("Pause() called with Get5PauseType_None. Please call Unpause() instead.");
-    Unpause();
-    return false;
-  }
-
-  g_PauseType = pauseType;
-  ServerCommand("mp_pause_match");
-  if (pauseType == Get5PauseType_Tech || pauseTime == 0 || csTeam == CS_TEAM_SPECTATOR ||
-      csTeam == CS_TEAM_NONE) {
-    return false;
-  } else {
-    if (csTeam == CS_TEAM_T) {
-      GameRules_SetProp("m_bTerroristTimeOutActive", true);
-      GameRules_SetPropFloat("m_flTerroristTimeOutRemaining", float(pauseTime));
-      GameRules_SetProp("m_nTerroristTimeOuts", pausesLeft);
-    } else if (csTeam == CS_TEAM_CT) {
-      GameRules_SetProp("m_bCTTimeOutActive", true);
-      GameRules_SetPropFloat("m_flCTTimeOutRemaining", float(pauseTime));
-      GameRules_SetProp("m_nCTTimeOuts", pausesLeft);
-    }
-    return true;
-  }
-}
-
-stock void Unpause() {
-  g_PauseType = Get5PauseType_None;
-  ServerCommand("mp_unpause_match");
-}
-
 stock void RestartGame(int delay) {
   ServerCommand("mp_restartgame %d", delay);
 }
@@ -848,4 +816,14 @@ stock Get5BombSite GetNearestBombsite(int client) {
   LogDebug("Bomb planted. Distance to A: %d. Distance to B: %d.", aDist, bDist);
 
   return (aDist < bDist) ? Get5BombSite_A : Get5BombSite_B;
+}
+
+stock void convertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer, const int bufferSize) {
+  int minutes = 0;
+  int seconds = timeAsSeconds;
+  if (timeAsSeconds >= 60) {
+    minutes = timeAsSeconds / 60;
+    seconds = timeAsSeconds % 60;
+  }
+  Format(buffer, bufferSize, seconds < 10 ? "%d:0%d" : "%d:%d", minutes, seconds);
 }

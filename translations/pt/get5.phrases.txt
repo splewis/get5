@@ -64,29 +64,17 @@
     {
         "pt"            "{1} tem 10 segundos para fica prontos ou se render."
     }
-    "PausePeriodSuffix"
-    {
-        "pt"            "para essa metade do jogo."
-    }
     "MaxPausesUsedInfoMessage"
     {
-        "pt"            "Seu time já utilizou o máximo de {1} pausas{2}."
+        "pt"            "Seu time já utilizou o máximo de {1} pausas."
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "pt"            "Seu time já usou o máximo de {1} segundos do tempo de pausa{2}."
+        "pt"            "Seu time já usou o máximo de {1} pausa."
     }
     "MatchPausedByTeamMessage"
     {
         "pt"            "{1} pausou a partida."
-    }
-    "PauseTimeExpiration10SecInfoMessage"
-    {
-        "pt"            "{1} está quase no fim do tempo de pausa, resumindo a partida em 10 segundos."
-    }
-    "PauseTimeExpirationInfoMessage"
-    {
-        "pt"            "{1} tem {2} segundos faltando para resumir a partida{3}."
     }
     "PauseRunoutInfoMessage"
     {
@@ -102,11 +90,7 @@
     }
     "PausesLeftInfoMessage"
     {
-        "pt"            "{1} tem {2} pauses sobrando{3}."
-    }
-    "OnePauseLeftInfoMessage"
-    {
-        "pt"            "{1} tem {2} pause sobrando{3}."
+        "pt"            "{1} tem {2} pauses sobrando."
     }
     "TeamFailToReadyMinPlayerCheck"
     {

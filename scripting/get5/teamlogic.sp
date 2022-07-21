@@ -203,28 +203,7 @@ public Action Command_Coach(int client, const char[] command, int argc) {
   if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
-
-  if (!g_CoachingEnabledCvar.BoolValue) {
-    return Plugin_Handled;
-  }
-
-  if (!IsAuthedPlayer(client)) {
-    return Plugin_Stop;
-  }
-
-  if (InHalftimePhase()) {
-    return Plugin_Stop;
-  }
-
-  if (g_MovingClientToCoach[client] || !g_CheckAuthsCvar.BoolValue) {
-    LogDebug("Command_Coach: %L, letting pass-through", client);
-    return Plugin_Continue;
-  }
-
-  MoveClientToCoach(client);
-  // Update the backup structure as well for round restores, covers edge
-  // case of users joining, coaching, stopping, and getting 16k cash as player.
-  WriteBackup();
+  // Don't allow regular "coach" console command. Always force people to use .coach/sm_coach for consistency.
   return Plugin_Stop;
 }
 

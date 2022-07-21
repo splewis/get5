@@ -360,7 +360,7 @@ public void RestoreGet5Backup() {
         CreateTimer(6.0, Timer_SwapCoaches);
       }
     } else {
-      EnsurePausedWarmup();
+      EnsureIndefiniteWarmup();
     }
 
     g_DoingBackupRestoreNow = false;

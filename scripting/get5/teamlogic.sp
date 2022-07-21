@@ -176,15 +176,16 @@ public void MoveClientToCoach(int client) {
 }
 
 public Action Command_SmCoach(int client, int args) {
-  char auth[AUTH_LENGTH];
   if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
 
   if (!g_CoachingEnabledCvar.BoolValue) {
-    return Plugin_Handled;
+    ReplyToCommand(client, "Cannot set coaches when sv_coaching_enabled is false.");
+    return Plugin_Stop;
   }
 
+  char auth[AUTH_LENGTH];
   GetAuth(client, auth, sizeof(auth));
   Get5Team matchTeam = GetClientMatchTeam(client);
   // Don't allow a new coach if spots are full.
@@ -204,6 +205,7 @@ public Action Command_Coach(int client, const char[] command, int argc) {
     return Plugin_Continue;
   }
   // Don't allow regular "coach" console command. Always force people to use .coach/sm_coach for consistency.
+  Command_SmCoach(client, 0);
   return Plugin_Stop;
 }
 

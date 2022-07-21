@@ -40,7 +40,7 @@
     {
         "chi"			"没有设置比赛配置"
     }
-    "YourAreNotAPlayerInfoMessage"
+    "YouAreNotAPlayerInfoMessage"
     {
         "chi"            "您并不是这场比赛的玩家"
     }

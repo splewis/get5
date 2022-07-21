@@ -430,7 +430,8 @@ public void OnPluginStart() {
   AddAliasedCommand("notready", Command_NotReady, "Marks the client as not ready");
   AddAliasedCommand("forceready", Command_ForceReadyClient, "Force marks clients team as ready");
   AddAliasedCommand("tech", Command_TechPause, "Calls for a tech pause");
-  AddAliasedCommand("pause", Command_Pause, "Pauses the game");
+  AddAliasedCommand("pause", Command_Pause, "Calls for a tactical pause");
+  AddAliasedCommand("tac", Command_Pause, "Alias of pause");
   AddAliasedCommand("unpause", Command_Unpause, "Unpauses the game");
   AddAliasedCommand("coach", Command_SmCoach, "Marks a client as a coach for their team");
   AddAliasedCommand("stay", Command_Stay,
@@ -641,7 +642,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
   if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue) {
     Get5Team team = GetClientMatchTeam(client);
     if (team == Get5Team_None) {
-      RememberAndKickClient(client, "%t", "YourAreNotAPlayerInfoMessage");
+      RememberAndKickClient(client, "%t", "YouAreNotAPlayerInfoMessage");
     } else {
       int teamCount = CountPlayersOnMatchTeam(team, client);
       if (teamCount >= g_PlayersPerTeam && !g_CoachingEnabledCvar.BoolValue) {
@@ -665,7 +666,7 @@ public void OnClientPutInServer(int client) {
   if (g_GameState <= Get5State_Warmup && g_GameState != Get5State_None) {
     if (GetRealClientCount() <= 1) {
       ExecCfg(g_WarmupCfgCvar);
-      EnsurePausedWarmup();
+      EnsureIndefiniteWarmup();
     }
   }
 
@@ -777,7 +778,7 @@ public void OnMapStart() {
     ExecCfg(g_LiveCfgCvar);
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
-    EnsurePausedWarmup();
+    EnsureIndefiniteWarmup();
   }
 }
 
@@ -793,7 +794,7 @@ public void OnConfigsExecuted() {
     ExecCfg(g_WarmupCfgCvar);
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
-    EnsurePausedWarmup();
+    EnsureIndefiniteWarmup();
   }
 }
 
@@ -1557,7 +1558,7 @@ public Action Timer_PostKnife(Handle timer) {
   }
 
   ExecCfg(g_WarmupCfgCvar);
-  EnsurePausedWarmup();
+  EnsureIndefiniteWarmup();
 }
 
 public Action StopDemo(Handle timer) {

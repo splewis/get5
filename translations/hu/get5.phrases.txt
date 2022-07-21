@@ -104,7 +104,11 @@
     }
     "AdminForceTechPauseInfoMessage"
     {
-        "hu"            "Egy admin technikai időkérést kért."
+        "hu"            "Egy admin, technikai időkérést kért."
+    }
+	"UserCannotUnpauseAdmin"
+    {
+        "hu"            "Egy admin hívta ezt az időkérést, ő is fogja tudni folytatni."
     }
     "PauseTimeExpiration10SecInfoMessage"
     {
@@ -120,6 +124,9 @@
     {
         "#format"       "{1:s}"
         "hu"            "{1} csapatnak elfogyott a szüneteltetési ideje, folytatódik a meccs."
+    "TechPauseRunoutInfoMessage"
+    {
+        "hu"            "A technikai szünetre szánt idő elfogyott, bárki tudja folytatni a mérkőést."
     }
     "MatchUnpauseInfoMessage"
     {

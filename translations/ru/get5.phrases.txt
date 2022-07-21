@@ -32,7 +32,7 @@
     {
         "ru"            "На этом сервере нет матча."
     }
-    "YourAreNotAPlayerInfoMessage"
+    "YouAreNotAPlayerInfoMessage"
     {
         "ru"            "Ты не являешься участником текущего матча"
     }

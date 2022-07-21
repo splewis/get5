@@ -102,24 +102,22 @@ public Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, floa
         molotovObject.DamageFriendlies = molotovObject.DamageFriendlies + damageAsIntCapped;
       }
 
-      Get5Player potentiallyNewVictim = GetPlayerObject(victim);
+      int victimUserId = GetClientUserId(victim);
 
       int length = molotovObject.Victims.Length;
       for (int i = 0; i < length; i++) {
         Get5DamageGrenadeVictim victimObject =
             view_as<Get5DamageGrenadeVictim>(molotovObject.Victims.GetObject(i));
 
-        if (potentiallyNewVictim.IsEqualToPlayer(victimObject.Player)) {
+        if (victimObject.Player.UserId == victimUserId) {
           victimObject.Damage = victimObject.Damage + damageAsIntCapped;
           victimObject.Killed = victimKilled;
-          json_cleanup_and_delete(
-              potentiallyNewVictim);  // We don't need this object if user already was damaged.
           return Plugin_Continue;
         }
       }
 
       molotovObject.Victims.PushObject(new Get5DamageGrenadeVictim(
-          potentiallyNewVictim, !helpful, victimKilled, damageAsIntCapped));
+          GetPlayerObject(victim), !helpful, victimKilled, damageAsIntCapped));
     }
   }
 
@@ -128,26 +126,31 @@ public Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, floa
 
 public Get5Player GetPlayerObject(int client) {
   if (client == 0) {
-    return new Get5Player("", view_as<Get5Side>(CS_TEAM_NONE), "Console", false);
+    return new Get5Player(0, "", view_as<Get5Side>(CS_TEAM_NONE), "Console", false);
   }
 
   if (IsClientSourceTV(client)) {
-    return new Get5Player("", view_as<Get5Side>(CS_TEAM_NONE), "GOTV", false);
+    return new Get5Player(0, "", view_as<Get5Side>(CS_TEAM_NONE), "GOTV", false);
   }
 
-  Get5Side side = view_as<Get5Side>(GetClientTeam(client));
+  // In cases where users disconnect (Get5PlayerDisconnectedEvent) without being on a team, they might error out
+  // on GetClientTeam(), so we check that they're in-game before we attempt to determine their team.
+  // Avoids "Client x is not in game" exception.
+  Get5Side side = view_as<Get5Side>(IsClientInGame(client) ? GetClientTeam(client) : CS_TEAM_NONE);
 
   char name[MAX_NAME_LENGTH];
   GetClientName(client, name, sizeof(name));
 
+  int userId = GetClientUserId(client);
+
   if (IsAuthedPlayer(client)) {
     char auth[20];
     GetAuth(client, auth, sizeof(auth));
-    return new Get5Player(auth, side, name, false);
+    return new Get5Player(userId, auth, side, name, false);
   } else {
     char botId[8];
-    Format(botId, sizeof(botId), "BOT-%d", client);
-    return new Get5Player(botId, side, name, true);
+    Format(botId, sizeof(botId), "BOT-%d", userId);
+    return new Get5Player(userId, botId, side, name, true);
   }
 }
 

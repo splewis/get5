@@ -50,7 +50,7 @@
     {
         "en"            "No match was set up"
     }
-    "YourAreNotAPlayerInfoMessage"
+    "YouAreNotAPlayerInfoMessage"
     {
         "en"            "You are not a player in this match"
     }

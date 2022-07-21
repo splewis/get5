@@ -40,7 +40,7 @@
     {
         "pt"			"Não existe configuração de partida."
     }
-    "YourAreNotAPlayerInfoMessage"
+    "YouAreNotAPlayerInfoMessage"
     {
         "pt"            "Você não é um jogador dessa partida."
     }

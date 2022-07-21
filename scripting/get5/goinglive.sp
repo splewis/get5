@@ -63,8 +63,11 @@ public Action MatchLive(Handle timer) {
     Get5_MessageToAll("%t", "MatchIsLiveInfoMessage");
   }
 
-  //Exec message.cfg - Console text message before match start
-  ServerCommand("exec message.cfg");
+  char tag[64];
+  g_MessagePrefixCvar.GetString(tag, sizeof(tag));
+  if (!StrEqual(tag, DEFAULT_TAG)) {
+    Get5_MessageToAll("%t", "MatchPoweredBy");
+  }
 
   return Plugin_Handled;
 }

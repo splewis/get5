@@ -2,57 +2,57 @@
 {
     "ReadyToVetoInfoMessage"
     {
-        "hu"            "Írd be a {GREEN}!ready {NORMAL} parancsot ha a csapatod készen áll a vétóra."
+        "hu"            "Írd be a {GREEN}!ready{NORMAL} parancsot, ha a csapatod készen áll a vétóra."
     }
     "WaitingForCastersReadyInfoMessage"
     {
         "#format"       "{1:s}"
-        "hu"            "A {1}-re várunk, hogy beírják a {GREEN}!ready {NORMAL} parancsot."
+        "hu"            "A {1} várunk, hogy beírja a {GREEN}!ready{NORMAL} parancsot."
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "hu"            "Írd be a {GREEN}!ready {NORMAL} parancsot ha a készen állsz a match visszatöltéshez."
+        "hu"            "Írd be a {GREEN}!ready{NORMAL} parancsot, ha a készen állsz a mérkőzés visszatöltésre."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "hu"            "Írd be a {GREEN}!ready {NORMAL} parancsot ha készen állsz a kés körre."
+        "hu"            "Írd be a {GREEN}!ready{NORMAL} parancsot, ha készen állsz a kés körre."
     }
     "ReadyToStartInfoMessage"
     {
-        "hu"            "Írd be a {GREEN}!ready {NORMAL} parancsot ha készenállsz."
+        "hu"            "Írd be a {GREEN}!ready{NORMAL} parancsot, ha készenállsz."
     }
     "YouAreReady"
     {
-        "hu"            "Készen állsz a meccs megkezdésére."
+        "hu"            "Készen állsz a mérkőzés megkezdésére."
     }
     "YouAreReadyAuto"
     {
-        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által. Írd be, hogy !unready ha nem állsz készen."
+        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által. Írd be, hogy {GREEN}!unready{NORMAL} ha nem állsz még készen."
     }
     "YouAreNotReady"
     {
-        "hu"            "Nem állsz készen a meccs megkezdésére."
+        "hu"            "Nem állsz készen a mérkőzés megkezdésére."
     }
     "WaitingForEnemySwapInfoMessage"
     {
         "#format"       "{1:s}"
-        "hu"            "{1} nyerte meg a késkört. Várakozunk, hogy kiválasszák a megfelelő oldalt. !stay vagy !swap."
+        "hu"            "{1} nyerte meg a kés kört. Várakozunk, hogy kiválasszák a megfelelő oldalt. {GREEN}!stay{NORMAL} vagy {GREEN}!swap{NORMAL}."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
-        "hu"            "A pálya akkor fog váltani ha a GOTV adás befejeződött."
+        "hu"            "A pálya akkor fog , ha a GOTV adás befejeződött."
     }
     "WaitingForGOTVVetoInfoMessage"
     {
-        "hu"            "A pálya akkor fog váltani ha a GOTV adás megjelenítette a pálya vétókat."
+        "hu"            "A pálya akkor fog váltani, ha a GOTV adás, megjelenítette a pálya vétókat."
     }
     "NoMatchSetupInfoMessage"
     {
-        "hu"		"Nincs meccs előkészítve"
+        "hu"			"Nincs mérkőzés előkészítve"
     }
     "YourAreNotAPlayerInfoMessage"
     {
-        "hu"            "Nem vagy játékos ezen a meccsen"
+        "hu"            "Nem vagy játékos ezen a mérkőzésen"
     }
     "TeamIsFullInfoMessage"
     {
@@ -61,22 +61,22 @@
     "TeamForfeitInfoMessage"
     {
         "#format"       "{1:s}"
-        "hu"            "{1} nem sikerült időben felkészülni ezért vesztettek"
+        "hu"            "{1} nem sikerült időben felkészülni, ezért vesztettetek."
     }
     "MinutesToForfeitMessage"
     {
         "#format"       "{1:s},{2:d}"
-        "hu"            "{1} van {2} perc maradt, hogy felkészüljenek vagy elveszítik a meccset."
+        "hu"            "{1} {2} perc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
     }
     "SecondsToForfeitInfoMessage"
     {
         "#format"       "{1:s},{2:d}"
-        "hu"            "{1} has {2} másodperc maradt, hogy felkészüljenek vagy elveszítik a meccset."
+        "hu"            "{1} {2} másodperc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
     }
     "10SecondsToForfeitInfoMessage"
     {
         "#format"       "{1:s}"
-        "hu"            "{1} has 10 másodperc maradt, hogy felkészüljenek vagy elveszítik a meccset."
+        "hu"            "{1} 10 másodperc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
     }
     "PausePeriodSuffix"
     {
@@ -95,7 +95,7 @@
     "MatchPausedByTeamMessage"
     {
         "#format"       "{1:N}"
-        "hu"            "{1} szüneteltette a meccset."
+        "hu"            "{1} szüneteltette a mérkőzést."
     }
     "MatchTechPausedByTeamMessage"
     {
@@ -113,7 +113,7 @@
     "PauseTimeExpiration10SecInfoMessage"
     {
         "#format"       "{1:s}"
-        "hu"            "{1} majdnem elfogyott a szünetkérés ideje, folytatás 10 másodperc múlva."
+        "hu"            "{1} majdnem elfogyott a szünetkérés ideje. Folytatás 10 másodperc múlva."
     }
     "PauseTimeExpirationInfoMessage"
     {
@@ -123,20 +123,20 @@
     "PauseRunoutInfoMessage"
     {
         "#format"       "{1:s}"
-        "hu"            "{1} csapatnak elfogyott a szüneteltetési ideje, folytatódik a meccs."
+        "hu"            "{1} csapatnak elfogyott a szüneteltetési ideje. Folytatódik a mérkőzés."
     "TechPauseRunoutInfoMessage"
     {
-        "hu"            "A technikai szünetre szánt idő elfogyott, bárki tudja folytatni a mérkőést."
+        "hu"            "A technikai szünetre szánt idő elfogyott. Bárki tudja folytatni a mérkőést."
     }
     "MatchUnpauseInfoMessage"
     {
         "#format"       "{1:N}"
-        "hu"            "{1:N} elindította a meccset."
+        "hu"            "{1:N} elindította a mérkőzést."
     }
     "WaitingForUnpauseInfoMessage"
     {
         "#format"       "{1:s},{2:s}"
-        "hu"            "{1} szeretné folytatni, {2}-ra várunk, hogy beírják a !unpause parancsot."
+        "hu"            "{1} szeretné folytatni. {2} várunk, hogy beírják a {GREEN}!unpause{NORMAL} parancsot."
     }
     "PausesLeftInfoMessage"
     {
@@ -161,7 +161,7 @@
     "TeamReadyToRestoreBackupInfoMessage"
     {
         "#format"       "{1:s}"
-        "hu"            "{1} készen áll a meccs visszaállítására."
+        "hu"            "{1} készen áll a mérkőzés visszaállítására."
     }
     "TeamReadyToKnifeInfoMessage"
     {
@@ -171,7 +171,7 @@
     "TeamReadyToBeginInfoMessage"
     {
         "#format"       "{1:s}"
-        "hu"            "{1} készen áll a meccs megkezdésére."
+        "hu"            "{1} készen áll a mérkőzés megkezdésére."
     }
     "TeamNotReadyInfoMessage"
     {
@@ -181,7 +181,7 @@
     "ForceReadyInfoMessage"
     {
         "#format"       "{1:d}"
-        "hu"            "Beírhatod a {GREEN}!forceready {NORMAL}parancsot, ha felkészültre szeretnéd álltani a csapatod, ha legfeljebb {GREEN}{1}{NORMAL} játékosod van."
+        "hu"            "Beírhatod a {GREEN}!forceready{NORMAL} parancsot, ha felkészültre szeretnéd álltani a csapatod, ha legfeljebb {GREEN}{1}{NORMAL} játékosod van."
     }
     "TeammateForceReadied"
     {
@@ -191,24 +191,24 @@
     }
     "AdminForceReadyInfoMessage"
     {
-        "hu"            "Egy admin minden csapatot kényszer felkészített a meccsre."
+        "hu"            "Egy admin, minden csapatot kényszer felkészített a mérkőzésre."
     }
     "AdminForceEndInfoMessage"
     {
-        "hu"            "Egy admin végetvetett a meccsnek."
+        "hu"            "Egy admin, véget vetett a mérkőzésnek."
     }
     "AdminForcePauseInfoMessage"
     {
-        "hu"            "Egy admin szüneteli a meccset."
+        "hu"            "Egy admin, szüneteli a mérkőzést."
     }
     "AdminForceUnPauseInfoMessage"
     {
-        "hu"            "Egy admin a meccs folytatását hajtotta végre."
+        "hu"            "Egy admin, a mérkőzés folytatását hajtotta végre."
     }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
         "#format"       "{1:s},{2:s}"
-        "hu"            "{1} szeretne megállni és visszatölteni az előző kört, {2}-nek el kell fogadja a !stop paranccsal."
+        "hu"            "{1} szeretne megállni és visszatölteni az előző kört. {2} el kell fogadni a {GREEN}!stop{NORMAL} paranccsal."
     }
     "TeamWinningSeriesInfoMessage"
     {
@@ -228,7 +228,7 @@
     "TeamWonMatchInfoMessage"
     {
         "#format"       "{1:s}"
-        "hu"            "{1} megnyerte a meccset."
+        "hu"            "{1} megnyerte a mérkőzést."
     }
     "TeamTiedMatchInfoMessage"
     {
@@ -247,7 +247,7 @@
     }
     "MatchFinishedInfoMessage"
     {
-        "hu"            "A meccse befejeződött"
+        "hu"            "A mérkőzés befejeződött"
     }
     "CurrentScoreInfoMessage"
     {
@@ -257,20 +257,20 @@
     "BackupLoadedInfoMessage"
     {
         "#format"       "{1:s}"
-        "hu"            "Sikeresen visszatöltött a visszaállítás {1}"
+        "hu"            "Sikeresen visszatöltődött a körmentés {1}"
     }
     "MatchBeginInSecondsInfoMessage"
     {
         "#format"       "{1:d}"
-        "hu"            "A meccs {1} másodperc múlva kezdődik."
+        "hu"            "A mérkőzés {1} másodperc múlva kezdődik."
     }
     "MatchIsLiveInfoMessage"
     {
-        "hu"            "A Meccs {GREEN}ÉLES"
+        "hu"            "A mérkőzés {GREEN}ÉLES"
     }
     "KnifeIn5SecInfoMessage"
     {
-        "hu"            "A késkör 5 másodperc múlva kezdődik."
+        "hu"            "A kés kör 5 másodperc múlva kezdődik."
     }
     "KnifeInfoMessage"
     {
@@ -289,7 +289,7 @@
     "TeamLostTimeToDecideInfoMessage"
     {
         "#format"       "{1:s}"
-        "hu"            "{1} maradnak, mivel idő letelte előtt nem választottak."
+        "hu"            "{1} maradnak, mivel idő letelte előtt, nem választottak."
     }
     "ChangingMapInfoMessage"
     {
@@ -322,15 +322,15 @@
     }
     "CaptainLeftOnVetoInfoMessage"
     {
-        "hu"            "A csapatkapitány kilépett a vétó során a vétó szünetel."
+        "hu"            "A csapatkapitány kilépett a vétó során, a vétó szünetel."
     }
     "ReadyToResumeVetoInfoMessage"
     {
-        "hu"            "Írd be a {GREEN}!ready {NORMAL}parancsot ha készenállsz a vétó folytatására."
+        "hu"            "Írd be a {GREEN}!ready{NORMAL} parancsot ha készenállsz a vétó folytatására."
     }
     "MatchConfigLoadedInfoMessage"
     {
-        "hu"            "Meccs beállítás betöltött."
+        "hu"            "Mérkőzés beállítás betöltödött."
     }
     "MoveToCoachInfoMessage"
     {
@@ -346,11 +346,11 @@
     }
     "MatchPoweredBy"
     {
-        "hu"        "{YELLOW}Get5{NORMAL} által megvalósított"
+        "hu"        "{YELLOW}Get5{NORMAL} által megvalósítva"
     }
     "MapVetoPickMenuText"
     {
-        "hu"        "Válassz pályát, hogy Játsz:"
+        "hu"        "Válassz pályát, hogy amin játszanál:"
     }
     "MapVetoPickConfirmMenuText"
     {
@@ -359,12 +359,12 @@
     }
     "MapVetoBanMenuText"
     {
-        "hu"        "Válassz egy pályát, hogy VÉTÓZZ:"
+        "hu"        "Válassz egy pályát, hogy VÉTÓZ:"
     }
     "MapVetoBanConfirmMenuText"
     {
         "#format"       "{1:s}"
-        "hu"        "Erősítse meg, hogy VÉTÓ-T szeretne {1}:"
+        "hu"        "Erősítse meg, hogy VÉTÓT szeretne {1}:"
     }
     "MapVetoSidePickMenuText"
     {
@@ -387,6 +387,6 @@
     "VetoCountdown"
     {
         "#format"	"{1:i}"
-        "hu"		"Kezdődik a vétózás {GREEN}{1} {NORMAL}másodperc múlva."
+        "hu"		"Kezdődik a vétózás {GREEN}{1}{NORMAL} másodperc múlva."
     }
 }

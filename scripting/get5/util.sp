@@ -258,14 +258,14 @@ stock bool InFreezeTime() {
   return GameRules_GetProp("m_bFreezePeriod") != 0;
 }
 
-stock void EnsurePausedWarmup() {
+stock void EnsureIndefiniteWarmup() {
   if (!InWarmup()) {
     StartWarmup();
+  } else {
+    ServerCommand("mp_warmup_pausetimer 1");
+    ServerCommand("mp_do_warmup_period 1");
+    ServerCommand("mp_warmup_pausetimer 1");
   }
-
-  ServerCommand("mp_warmup_pausetimer 1");
-  ServerCommand("mp_do_warmup_period 1");
-  ServerCommand("mp_warmup_pausetimer 1");
 }
 
 stock void StartWarmup(bool indefiniteWarmup = true, int warmupTime = 60) {

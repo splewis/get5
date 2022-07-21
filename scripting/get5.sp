@@ -665,7 +665,7 @@ public void OnClientPutInServer(int client) {
   if (g_GameState <= Get5State_Warmup && g_GameState != Get5State_None) {
     if (GetRealClientCount() <= 1) {
       ExecCfg(g_WarmupCfgCvar);
-      EnsurePausedWarmup();
+      EnsureIndefiniteWarmup();
     }
   }
 
@@ -777,7 +777,7 @@ public void OnMapStart() {
     ExecCfg(g_LiveCfgCvar);
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
-    EnsurePausedWarmup();
+    EnsureIndefiniteWarmup();
   }
 }
 
@@ -793,7 +793,7 @@ public void OnConfigsExecuted() {
     ExecCfg(g_WarmupCfgCvar);
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
-    EnsurePausedWarmup();
+    EnsureIndefiniteWarmup();
   }
 }
 
@@ -1557,7 +1557,7 @@ public Action Timer_PostKnife(Handle timer) {
   }
 
   ExecCfg(g_WarmupCfgCvar);
-  EnsurePausedWarmup();
+  EnsureIndefiniteWarmup();
 }
 
 public Action StopDemo(Handle timer) {

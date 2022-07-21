@@ -258,7 +258,7 @@ stock bool InFreezeTime() {
   return GameRules_GetProp("m_bFreezePeriod") != 0;
 }
 
-stock void EnsurePausedWarmup() {
+stock void EnsureIndefiniteWarmup() {
   if (!InWarmup()) {
     StartWarmup();
   } else {

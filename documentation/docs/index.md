@@ -15,7 +15,7 @@ Highlights of Get5 include:
 - Automatically setting team names/logos/match text values for spectator/GOTV clients
 - In-game map-veto support from the match's list of maps
 - Support for multi-map series (Bo1, Bo2, Bo3, Bo5, etc.)
-- Warmup and [`!ready`](../commands/#ready)-system for each team
+- Warmup and [`!ready`](commands/#ready)-system for each team
 - Automatic GOTV demo recording
 - Advanced backup system built on top of Valve's backup system
 - Knifing for sides
@@ -23,7 +23,6 @@ Highlights of Get5 include:
 - Coaching support
 - Lightweight usage for scrims
 - Event logging and SourceMod forwards you can interface with, allowing for collection of stats etc.
-- [Commands](../commands/#serveradmin-commands) allow remote management of the plugin
-
+- [Commands](commands/#serveradmin-commands) allow remote management of the plugin
 
 If you are installing this on your game server, head over to the [Installation](./installation.md) instructions.

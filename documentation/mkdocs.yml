@@ -1,4 +1,4 @@
-site_name: Get5 Documentation
+site_name: Get5
 site_url: https://splewis.github.io/get5
 repo_url: https://github.com/splewis/get5
 repo_name: splewis/get5
@@ -7,6 +7,7 @@ theme:
   features:
     - content.code.annotate
     - navigation.tracking
+    - navigation.sections
   name: material
   palette:
     # Palette toggle for light mode
@@ -23,16 +24,25 @@ plugins:
   - swagger-ui-tag
 nav:
   - Home: index.md
-  - Installation: installation.md
-  - Configuration: configuration.md
-  - Commands: commands.md
-  - Pausing: pausing.md
-  - Developer API: developer_api.md
-  - Events & Forwards: events_and_forwards.md
-  - Match Configuration: match_configuration.md
-  - Match Schema: match_schema.md
-  - Player Stats System: stats_system.md
+  - Setup:
+      - Installation: installation.md
+      - Configuration: configuration.md
+  - Basics:
+      - Getting Started: getting_started.md
+      - Commands: commands.md
+      - Pausing: pausing.md
+      - Backup System: backup.md
+      - Match Schema: match_schema.md
+  - Advanced:
+      - Developer API: developer_api.md
+      - Events & Forwards: events_and_forwards.md
+      - Player Stats System: stats_system.md
+      - Translations: translations.md
+  - Social:
+      - Community & Support: community.md
 markdown_extensions:
+  - abbr
+  - tables
   - meta
   - admonition
   - attr_list
@@ -46,3 +56,6 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+extra_javascript:
+  - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
+  - javascripts/tablesort.js

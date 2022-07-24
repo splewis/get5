@@ -658,6 +658,9 @@ public void RememberAndKickClient(int client, const char[] format, const char[] 
 }
 
 public void OnClientPutInServer(int client) {
+  if (!IsClientSourceTV(client)) {
+    Stats_HookDamageForClient(client);
+  }
   if (IsFakeClient(client)) {
     return;
   }
@@ -671,7 +674,6 @@ public void OnClientPutInServer(int client) {
   }
 
   Stats_ResetClientRoundValues(client);
-  Stats_HookDamageForClient(client);
 }
 
 public void OnClientPostAdminCheck(int client) {

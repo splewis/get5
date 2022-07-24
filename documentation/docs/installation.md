@@ -3,7 +3,8 @@
 ## SourceMod & MetaMod
 
 You must have [SourceMod](https://www.sourcemod.net/) installed on your server. Please note that Get5
-requires **SourceMod version 1.10** or higher. You can get the latest versions here:
+requires **SourceMod version 1.10** or higher. SourceMod requires MetaMod, so you must install both plugins.
+You can get the latest versions here:
 
 [:material-download: Download MetaMod](https://www.sourcemm.net/downloads.php?branch=stable){ .md-button .md-button--primary } [:material-download: Download SourceMod](https://www.sourcemod.net/downloads.php?branch=stable){ .md-button .md-button--primary }
 
@@ -23,12 +24,18 @@ pre-releases found at the same link above that are marked in the title with "Nig
 
     Get5 itself is OS-agnostic, meaning the same file works on any OS.
 
-## Download SteamWorks (Optional)
+## Download SteamWorks (Recommended) {: #steamworks }
 
 SteamWorks is not required for Get5 to work on your game server, however it is required if you wish to [load match
-configs remotely](../commands#get5_loadmatch_url). You can download the latest binaries for
-SteamWorks [here](https://github.com/KyleSanderson/SteamWorks/releases/). If you require a Windows build of the
-extension, that can also be found [here](https://github.com/hexa-core-eu/SteamWorks/releases) instead.
+configs remotely](../commands#get5_loadmatch_url) or if you want Get5 to [automatically
+check for updates](../configuration#get5_print_update_notice).
+
+[:material-steam: Download SteamWorks](https://github.com/KyleSanderson/SteamWorks/releases/){ .md-button .md-button--primary }
+
+!!! tip "SteamWorks for Windows"
+
+    Similarly to SourceMod and MetaMod, SteamWorks is OS-specific. If you run Windows, you can get a Windows-version of
+    SteamWorks [here](https://github.com/hexa-core-eu/SteamWorks/releases).
 
 ## Putting it all together
 
@@ -41,7 +48,7 @@ is just to indicate what the correct structure looks like.
 
     If you already have Get5 installed and wish to upgrade to a newer version, simply copying the entire `get5.zip` folder
     structure will override your configuration files, so when updating, you should only add `get5.smx` (and
-    optionally `get5_mysqlstats.smx`) to `addons/sourcemod/plugins` as well as merge the entire `translations` folder with
+    optionally `get5_mysqlstats.smx`) to `addons/sourcemod/plugins` and merge the entire `translations` folder with
     `addons/sourcemod/translations`. In updated versions we might add or remove translation strings, and Get5 will error if
     it cannot find the strings it expects in these folders. The folder only contains Get5's translations, so it won't
     override translations for any other plugins.

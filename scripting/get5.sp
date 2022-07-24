@@ -27,6 +27,7 @@
 #include <sdktools>
 #include <sourcemod>
 #include <testing>
+#include <regex>
 
 #undef REQUIRE_EXTENSIONS
 #include <SteamWorks>
@@ -45,6 +46,14 @@
 #define TEAM2_STARTING_SIDE CS_TEAM_T
 #define KNIFE_CONFIG "get5/knife.cfg"
 #define DEFAULT_TAG "[{YELLOW}Get5{NORMAL}]"
+
+#if !defined LATEST_VERSION_URL
+#define LATEST_VERSION_URL "https://raw.githubusercontent.com/splewis/get5/master/scripting/get5/version.sp"
+#endif
+
+#if !defined GET5_GITHUB_PAGE
+#define GET5_GITHUB_PAGE "splewis.github.io/get5"
+#endif
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -89,6 +98,7 @@ ConVar g_TimeFormatCvar;
 ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
 ConVar g_WarmupCfgCvar;
+ConVar g_PrintUpdateNoticeCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -220,6 +230,10 @@ char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
 bool g_MovingClientToCoach[MAXPLAYERS + 1];
 bool g_PendingSideSwap = false;
+
+// version check state
+bool g_RunningPrereleaseVersion = false;
+bool g_NewerVersionAvailable = false;
 
 Handle g_KnifeChangedCvars = INVALID_HANDLE;
 Handle g_MatchConfigChangedCvars = INVALID_HANDLE;
@@ -417,6 +431,7 @@ public void OnPluginStart() {
                    "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
+  g_PrintUpdateNoticeCvar = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
@@ -591,6 +606,8 @@ public void OnPluginStart() {
   /** Start any repeating timers **/
   CreateTimer(CHECK_READY_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
   CreateTimer(INFO_MESSAGE_TIMER_INTERVAL, Timer_InfoMessages, _, TIMER_REPEAT);
+
+  CheckForLatestVersion();
 }
 
 public Action Timer_InfoMessages(Handle timer) {
@@ -1721,4 +1738,77 @@ public void EventLogger_LogAndDeleteEvent(Get5Event event) {
   Call_Finish();
 
   json_cleanup_and_delete(event);
+}
+
+stock void CheckForLatestVersion() {
+
+  // both x.y.z-dev and x.y.z-abcdef contain a single dash, so we can look for that.
+  g_RunningPrereleaseVersion = StrContains(PLUGIN_VERSION, "-", true) > -1;
+  if (g_RunningPrereleaseVersion) {
+    LogMessage("Non-official Get5 version detected. Skipping update check. You may see this if you compiled Get5 \
+yourself or if you downloaded a pre-release for testing. If you are done testing, please download an official \
+release version to remove this message.");
+    return;
+  }
+
+  if (!LibraryExists("SteamWorks")) {
+    LogMessage("SteamWorks not installed. Cannot perform Get5 version check.");
+    return;
+  }
+
+  Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, LATEST_VERSION_URL);
+  SteamWorks_SetHTTPCallbacks(req, VersionCheckRequestCallback);
+  SteamWorks_SendHTTPRequest(req);
+
+}
+
+stock int VersionCheckRequestCallback(Handle request, bool failure, bool requestSuccessful,
+                                               EHTTPStatusCode statusCode) {
+
+  if (failure || !requestSuccessful) {
+    LogError("Failed to check for Get5 update. HTTP error code: %d.", statusCode);
+    delete request;
+    return;
+  }
+
+  int responseSize;
+  SteamWorks_GetHTTPResponseBodySize(request, responseSize);
+  char[] response = new char[responseSize];
+  SteamWorks_GetHTTPResponseBodyData(request, response, responseSize);
+  delete request;
+
+  // Since we're comparing against master, which always contains a -dev tag, we extract the version substring
+  // *before* that -dev tag (or whatever it might be). This *should* have been removed by the CI flow, so that official
+  // releases don't contain the -dev tag.
+  Regex versionRegex = new Regex("#define PLUGIN_VERSION \"(.+)-.+\"");
+
+  RegexError rError;
+  versionRegex.MatchAll(response, rError);
+
+  if (rError != REGEX_ERROR_NONE) {
+    LogError("Get5 update regex error: %d", rError);
+    delete versionRegex;
+    return;
+  }
+
+  // Capture count is 2 because the first count is the entire match, the second is the substring.
+  if (versionRegex.CaptureCount() != 2) {
+    LogError("Get5 update check failed to match against version.sp file.");
+    delete versionRegex;
+    return;
+  }
+
+  char newestVersionFound[64];
+  if (versionRegex.GetSubString(1, newestVersionFound, sizeof(newestVersionFound), 0)) {
+    LogDebug("Newest Get5 version from GitHub is: %s", newestVersionFound);
+    g_NewerVersionAvailable = !StrEqual(PLUGIN_VERSION, newestVersionFound);
+    if (g_NewerVersionAvailable) {
+      LogMessage("A newer version of Get5 is available. You are running %s while the latest version is %s.", PLUGIN_VERSION, newestVersionFound);
+    } else {
+      LogMessage("Update check successful. Get5 is up-to-date (%s).", PLUGIN_VERSION);
+    }
+  }
+
+  delete versionRegex;
+
 }

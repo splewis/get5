@@ -181,6 +181,16 @@
         "#format"       "{1:s},{2:d}"
         "en"            "Tactical pauses remaining for {1}: {2}"
     }
+    "PrereleaseVersionWarning"
+    {
+        "#format"       "{1:s},{2:s}"
+        "en"            "You are running an unofficial version of Get5 ({1}) intended for development and testing only. This message can be disabled with {2}."
+    }
+    "NewVersionAvailable"
+    {
+        "#format"       "{1:s}"
+        "en"            "A newer version of Get5 is available. Please visit {1} to update."
+    }
     "TeamFailToReadyMinPlayerCheck"
     {
         "#format"       "{1:d}"

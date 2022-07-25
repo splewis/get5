@@ -26,7 +26,7 @@ public Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, floa
     return Plugin_Continue;
   }
 
-  if (attacker == victim || !IsValidClient(attacker) || !IsValidClient(victim)) {
+  if (!IsValidClient(attacker) || !IsValidClient(victim)) {
     return Plugin_Continue;
   }
 
@@ -673,7 +673,7 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
   bool validAttacker = IsValidClient(attacker);
   bool validVictim = IsValidClient(victim);
-  bool validAssister = assister > 0 && IsValidClient(assister);
+  bool validAssister = IsValidClient(assister);
 
   if (!validVictim) {
     return Plugin_Continue;  // Not sure how this would happen, but it's not something we care
@@ -701,9 +701,18 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   char weapon[32];
   event.GetString("weapon", weapon, sizeof(weapon));
 
-  int attackerTeam = 0;  // 0 until we know attacker is valid.
+  CSWeaponID weaponId = CS_AliasToWeaponID(weapon);
+
+  int attackerTeam = validAttacker ? GetClientTeam(attacker) : 0;
   int victimTeam = GetClientTeam(victim);
-  bool isSuicide = false;
+
+  // suicide (kill console) is attacker == victim, weapon id 0, weapon "world"
+  // fall damage is weapon id 0, attacker 0, weapon "worldspawn"
+  // falling from vertigo is attacker 0, weapon id 0, weapon "trigger_hurt"
+  // c4 is attacker 0, weapon id 0, weapon planted_c4
+  // with those in mind, we can determine suicide from this:
+  bool killedByBomb = StrEqual("planted_c4", weapon, true);
+  bool isSuicide = attacker == victim || (view_as<int>(weaponId) == 0 && !killedByBomb);
 
   IncrementPlayerStat(victim, STAT_DEATHS);
   // used for calculating round KAST
@@ -715,12 +724,7 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
                         (victimTeam == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
   }
 
-  CSWeaponID weaponId = CS_AliasToWeaponID(weapon);
-
-  if (!validAttacker || attacker == victim) {
-    isSuicide = true;
-  } else {
-    attackerTeam = GetClientTeam(attacker);
+  if (!isSuicide) {
     if (attackerTeam != victimTeam) {
       if (!g_TeamFirstKillDone[attackerTeam]) {
         g_TeamFirstKillDone[attackerTeam] = true;
@@ -755,10 +759,18 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   }
 
   Get5PlayerDeathEvent playerDeathEvent = new Get5PlayerDeathEvent(
-      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), new Get5Weapon(weapon, weaponId),
+      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
       GetPlayerObject(victim), headshot, validAttacker ? attackerTeam == victimTeam : false,
-      GetPlayerObject(attacker), event.GetBool("thrusmoke"), event.GetBool("noscope"),
-      event.GetBool("attackerblind"), isSuicide, event.GetInt("penetrated"));
+      event.GetBool("thrusmoke"), event.GetBool("noscope"), event.GetBool("attackerblind"),
+      isSuicide, event.GetInt("penetrated"), killedByBomb);
+
+  if (validAttacker) {
+    playerDeathEvent.Attacker = GetPlayerObject(attacker);
+  }
+
+  if (view_as<int>(weaponId) > 0) {
+    playerDeathEvent.Weapon = new Get5Weapon(weapon, weaponId);
+  }
 
   if (validAssister) {
     bool assistedFlash = event.GetBool("assistedflash");
@@ -897,7 +909,7 @@ public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBr
   int victim = GetClientOfUserId(event.GetInt("userid"));
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
 
-  if (attacker == victim || !IsValidClient(attacker) || !IsValidClient(victim)) {
+  if (!IsValidClient(attacker) || !IsValidClient(victim)) {
     return Plugin_Continue;
   }
 

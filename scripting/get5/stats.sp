@@ -712,7 +712,7 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   // c4 is attacker 0, weapon id 0, weapon planted_c4
   // with those in mind, we can determine suicide from this:
   bool killedByBomb = StrEqual("planted_c4", weapon, true);
-  bool isSuicide = attacker == victim || (view_as<int>(weaponId) == 0 && !killedByBomb);
+  bool isSuicide = !killedByBomb && (attacker == victim || view_as<int>(weaponId) == 0);
 
   IncrementPlayerStat(victim, STAT_DEATHS);
   // used for calculating round KAST
@@ -724,8 +724,12 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
                         (victimTeam == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
   }
 
-  if (!isSuicide) {
-    if (attackerTeam != victimTeam) {
+  if (isSuicide) {
+    IncrementPlayerStat(victim, STAT_SUICIDES);
+  } else if (!killedByBomb && validAttacker) {
+    if (attackerTeam == victimTeam) {
+      IncrementPlayerStat(attacker, STAT_TEAMKILLS);
+    } else {
       if (!g_TeamFirstKillDone[attackerTeam]) {
         g_TeamFirstKillDone[attackerTeam] = true;
         IncrementPlayerStat(attacker,
@@ -753,8 +757,6 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
           weaponId > CSWeapon_MAX_WEAPONS_NO_KNIFES) {
         IncrementPlayerStat(attacker, STAT_KNIFE_KILLS);
       }
-    } else {
-      IncrementPlayerStat(attacker, STAT_TEAMKILLS);
     }
   }
 

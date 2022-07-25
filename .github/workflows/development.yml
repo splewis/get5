@@ -8,19 +8,7 @@ on:
       - reopened
 
 jobs:
-  linter-check:
-    name: Code Lint To Ensure Standardization
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run clang-format style check for C/C++/Protobuf programs.
-      uses: jidicula/clang-format-action@v4.6.2
-      with:
-        clang-format-version: '14'
-        check-path: 'scripting'
-
   testbuild:
-    needs: [linter-check]
     name: Test Compile On Pull Request
     runs-on: ubuntu-22.04
     env:
@@ -42,19 +30,18 @@ jobs:
       id: vars
       run: |
         echo "::set-output name=sha_short::$(echo ${{ github.sha }} | cut -c1-6)"
-        echo "::set-output name=get5_version::$GET5_VERSION"
+        echo "::set-output name=get5_version::$(cat get5/scripting/get5/version.sp | grep -Eo '#define PLUGIN_VERSION "[0-9]+\.[0-9]+\.[0-9]+' | sed 's/#define PLUGIN_VERSION "//')"
 
     - run: | 
         wget $STEAMWORKS_URL -P steamworks
         mkdir -p $OUTPUT_SM_PATH/plugins/disabled
+        sed -i -r "s#\#define PLUGIN_VERSION \"[0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+#\#define PLUGIN_VERSION \"${{ steps.vars.outputs.get5_version }}-${{ steps.vars.outputs.sha_short }}#g" get5/scripting/get5/version.sp
         cp -R get5/cfg $OUTPUT_PATH
         cp -R get5/translations $OUTPUT_SM_PATH
         cp -R get5/configs $OUTPUT_SM_PATH
         cp -R get5/scripting $OUTPUT_SM_PATH
         cp get5/README.md $OUTPUT_PATH
         cp get5/LICENSE $OUTPUT_PATH
-        sed -i "s#<COMMIT_HASH>#${{ steps.vars.outputs.sha_short }}#g" get5/scripting/get5/version.sp
-        sed -i "s#<VERSION>#${{ steps.vars.outputs.get5_version }}#g" get5/scripting/get5/version.sp
         spcomp get5/scripting/get5.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/get5.smx -E
         spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_apistats.smx -E
         spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx -E

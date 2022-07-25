@@ -1196,6 +1196,16 @@ methodmap Get5PlayerWeaponEvent < Get5PlayerTimedRoundEvent {
 
 methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
 
+  property bool Bomb {
+      public get() {
+        return this.GetBool("bomb");
+      }
+
+      public set(bool bomb) {
+        this.SetBool("bomb", bomb);
+      }
+  }
+
   property bool Headshot {
       public get() {
         return this.GetBool("headshot");
@@ -1291,21 +1301,30 @@ methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
     return this.GetObject("assist") != null;
   }
 
+  // Use before accessing "Attacker", as its getter will raise an exception if null.
+  public bool HasAttacker() {
+    return this.GetObject("attacker") != null;
+  }
+
+  // Use before accessing "Weapon", as its getter will raise an exception if null.
+  public bool HasWeapon() {
+    return this.GetObject("weapon") != null;
+  }
+
   public Get5PlayerDeathEvent(
     const char[] matchId,
     const int mapNumber,
     const int roundNumber,
     const int roundTime,
-    const Get5Weapon weapon,
     const Get5Player victim,
     const bool headshot,
     const bool friendlyFire,
-    const Get5Player attacker,
     const bool thruSmoke,
     const bool noScope,
     const bool attackerBlind,
     const bool suicide,
-    const int penetrated
+    const int penetrated,
+    const bool bomb
     ) {
 
         Get5PlayerDeathEvent self = view_as<Get5PlayerDeathEvent>(new JSON_Object());
@@ -1314,19 +1333,20 @@ methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
         self.MapNumber = mapNumber;
         self.RoundNumber = roundNumber;
         self.RoundTime = roundTime;
-        self.Weapon = weapon;
         self.Player = victim;
         self.Headshot = headshot;
         self.FriendlyFire = friendlyFire;
-        self.Attacker = attacker;
         self.ThruSmoke = thruSmoke;
         self.NoScope = noScope;
         self.AttackerBlind = attackerBlind;
         self.Suicide = suicide;
         self.Penetrated = penetrated;
+        self.Bomb = bomb;
 
-        // set assist to null initially
+        // set nullables to null initially
         self.SetObject("assist", null);
+        self.SetObject("attacker", null);
+        self.SetObject("weapon", null);
         return self;
 
     }

@@ -589,6 +589,9 @@ paths:
                 event:
                   enum:
                     - player_death
+                bomb:
+                  type: boolean
+                  description: Indicates if the player died from the bomb explosion. `Bomb` in SourceMod.
                 headshot:
                   type: boolean
                   description: Indicates if the player died from a headshot. `Headshot`
@@ -619,7 +622,11 @@ paths:
                   description: Indicates if the player died from friendly fire. `FriendlyFire`
                     in SourceMod.
                 attacker:
-                  "$ref": "#/components/schemas/Get5Player"
+                  allOf:
+                    - type: object
+                      nullable: true
+                      title: Get5Player
+                    - "$ref": "#/components/schemas/Get5Player"
                 assist:
                   "$ref": "#/components/schemas/Get5AssisterObject"
       responses: { }
@@ -995,6 +1002,7 @@ components:
       description: Describes a player. `Player` in SourceMod (or `Attacker` on `Get5PlayerDeathEvent`).
     Get5Weapon:
       type: object
+      nullable: true
       properties:
         name:
           type: string
@@ -1007,7 +1015,7 @@ components:
           example: 27
           description: The weapon ID used. See https://sm.alliedmods.net/new-api/cstrike/CSWeaponID
             `Id` in SourceMod.
-      description: Describes a weapon. `Weapon` in SourceMod.
+      description: Describes a weapon. `Weapon` in SourceMod. Use `HasWeapon()` to determine if `null` on `Get5PlayerDeathEvent`.
     Get5AssisterObject:
       type: object
       nullable: true
@@ -1022,9 +1030,10 @@ components:
           type: boolean
           description: Indicates if the assist was a flash assist. `FlashAssist` in
             SourceMod.
-      description: 'Describes an assist to a kill. `null` if no assister. `Assist`
-        in SourceMod. **Note: Use `HasAssist()` in SourceMod to determine if the property
-        exists before accessing it.**'
+      description: |
+        Describes an assist to a kill. `null` if no assister. `Assist`
+        in SourceMod. Use `HasAssist()` in SourceMod to determine if the property
+        exists before accessing it.
     Get5GrenadeVictim:
       type: object
       properties:

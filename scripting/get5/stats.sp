@@ -20,12 +20,11 @@ public void Stats_PluginStart() {
 
 public Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, float &damage,
                           int &damagetype) {
-  LogDebug("HandlePlayerDamage(victim=%d, attacker=%d, inflictor=%d, damage=%f, damageType=%d)",
-           victim, attacker, inflictor, damage, damagetype);
   if (g_GameState != Get5State_Live) {
     return Plugin_Continue;
   }
-
+  LogDebug("HandlePlayerDamage(victim=%d, attacker=%d, inflictor=%d, damage=%f, damageType=%d)",
+           victim, attacker, inflictor, damage, damagetype);
   if (!IsValidClient(attacker) || !IsValidClient(victim)) {
     return Plugin_Continue;
   }
@@ -986,6 +985,9 @@ static int SetPlayerStat(int client, const char[] field, int newValue) {
 }
 
 public int AddToPlayerStat(int client, const char[] field, int delta) {
+  if (IsFakeClient(client)) {
+    return 0;
+  }
   int value = GetPlayerStat(client, field);
   return SetPlayerStat(client, field, value + delta);
 }
@@ -1137,47 +1139,52 @@ static void PrintDamageInfo(int client) {
     return;
 
   char message[256];
+  int msgSize = sizeof(message);
 
   int otherTeam = (team == CS_TEAM_T) ? CS_TEAM_CT : CS_TEAM_T;
   for (int i = 1; i <= MaxClients; i++) {
-    if (IsPlayer(i) && GetClientTeam(i) == otherTeam) {
+    if (IsValidClient(i) && IsClientInGame(i) && GetClientTeam(i) == otherTeam) {
       int health = IsPlayerAlive(i) ? GetClientHealth(i) : 0;
       char name[64];
       GetClientName(i, name, sizeof(name));
 
-      g_DamagePrintFormatCvar.GetString(message, sizeof(message));
-      ReplaceStringWithInt(message, sizeof(message), "{DMG_TO}", g_DamageDone[client][i], false);
-      ReplaceStringWithInt(message, sizeof(message), "{HITS_TO}", g_DamageDoneHits[client][i],
+      g_DamagePrintFormatCvar.GetString(message, msgSize);
+      ReplaceStringWithInt(message, msgSize, "{DMG_TO}", g_DamageDone[client][i], false);
+      ReplaceStringWithInt(message, msgSize, "{HITS_TO}", g_DamageDoneHits[client][i],
                            false);
 
       if (g_DamageDoneKill[client][i]) {
-        ReplaceString(message, sizeof(message), "{KILL_TO}", "{GREEN}X{NORMAL}", false);
+        ReplaceString(message, msgSize, "{KILL_TO}", "{GREEN}X{NORMAL}", false);
       } else if (g_DamageDoneAssist[client][i]) {
-        ReplaceString(message, sizeof(message), "{KILL_TO}", "{YELLOW}A{NORMAL}", false);
+        ReplaceString(message, msgSize, "{KILL_TO}", "{YELLOW}A{NORMAL}", false);
       } else if (g_DamageDoneFlashAssist[client][i]) {
-        ReplaceString(message, sizeof(message), "{KILL_TO}", "{YELLOW}F{NORMAL}", false);
+        ReplaceString(message, msgSize, "{KILL_TO}", "{YELLOW}F{NORMAL}", false);
       } else {
-        ReplaceString(message, sizeof(message), "{KILL_TO}", "–", false);
+        ReplaceString(message, msgSize, "{KILL_TO}", "–", false);
       }
 
-      ReplaceStringWithInt(message, sizeof(message), "{DMG_FROM}", g_DamageDone[i][client], false);
-      ReplaceStringWithInt(message, sizeof(message), "{HITS_FROM}", g_DamageDoneHits[i][client],
+      ReplaceStringWithInt(message, msgSize, "{DMG_FROM}", g_DamageDone[i][client], false);
+      ReplaceStringWithInt(message, msgSize, "{HITS_FROM}", g_DamageDoneHits[i][client],
                            false);
 
       if (g_DamageDoneKill[i][client]) {
-        ReplaceString(message, sizeof(message), "{KILL_FROM}", "{DARK_RED}X{NORMAL}", false);
+        ReplaceString(message, msgSize, "{KILL_FROM}", "{DARK_RED}X{NORMAL}", false);
       } else if (g_DamageDoneAssist[i][client]) {
-        ReplaceString(message, sizeof(message), "{KILL_FROM}", "{YELLOW}A{NORMAL}", false);
+        ReplaceString(message, msgSize, "{KILL_FROM}", "{YELLOW}A{NORMAL}", false);
       } else if (g_DamageDoneFlashAssist[i][client]) {
-        ReplaceString(message, sizeof(message), "{KILL_FROM}", "{YELLOW}F{NORMAL}", false);
+        ReplaceString(message, msgSize, "{KILL_FROM}", "{YELLOW}F{NORMAL}", false);
       } else {
-        ReplaceString(message, sizeof(message), "{KILL_FROM}", "–", false);
+        ReplaceString(message, msgSize, "{KILL_FROM}", "–", false);
       }
 
-      ReplaceString(message, sizeof(message), "{NAME}", name, false);
-      ReplaceStringWithInt(message, sizeof(message), "{HEALTH}", health, false);
+      if (IsFakeClient(i)) {
+        ReplaceString(message, msgSize, "{NAME}", "BOT {NAME}", false);
+      }
 
-      Colorize(message, sizeof(message));
+      ReplaceString(message, msgSize, "{NAME}", name, false);
+      ReplaceStringWithInt(message, msgSize, "{HEALTH}", health, false);
+
+      Colorize(message, msgSize);
       PrintToChat(client, message);
     }
   }

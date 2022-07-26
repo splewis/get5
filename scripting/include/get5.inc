@@ -904,8 +904,7 @@ methodmap Get5KnifeRoundWonEvent < Get5MapTeamEvent {
 
 }
 
-
-methodmap Get5MatchPausedEvent < Get5MapTeamEvent {
+methodmap Get5MatchPauseEvent < Get5MapTeamEvent {
 
   property Get5PauseType PauseType {
       public get() {
@@ -918,6 +917,9 @@ methodmap Get5MatchPausedEvent < Get5MapTeamEvent {
         ConvertGet5PauseTypeToStringInJson(this, "pause_type", type);
       }
   }
+}
+
+methodmap Get5MatchPausedEvent < Get5MatchPauseEvent {
 
   public Get5MatchPausedEvent(const char[] matchId, const int mapNumber, const Get5Team team, const Get5PauseType pauseType) {
     Get5MatchPausedEvent self = view_as<Get5MatchPausedEvent>(new JSON_Object());
@@ -931,14 +933,15 @@ methodmap Get5MatchPausedEvent < Get5MapTeamEvent {
 
 }
 
-methodmap Get5MatchUnpausedEvent < Get5MapTeamEvent {
+methodmap Get5MatchUnpausedEvent < Get5MatchPauseEvent {
 
-  public Get5MatchUnpausedEvent(const char[] matchId, const int mapNumber, const Get5Team team) {
+  public Get5MatchUnpausedEvent(const char[] matchId, const int mapNumber, const Get5Team team, const Get5PauseType pauseType) {
     Get5MatchUnpausedEvent self = view_as<Get5MatchUnpausedEvent>(new JSON_Object());
     self.SetEvent("game_unpaused");
     self.SetMatchId(matchId);
     self.MapNumber = mapNumber;
     self.Team = team;
+    self.PauseType = pauseType;
     return self;
   }
 

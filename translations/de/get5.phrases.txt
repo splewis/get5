@@ -56,29 +56,17 @@
     {
         "de"            "{1} hat 10 Sekunden fertig zu werden oder sie geben auf."
     }
-    "PausePeriodSuffix"
-    {
-        "de"            "für diese Hälfte"
-    }
     "MaxPausesUsedInfoMessage"
     {
-        "de"            "Dein Team hatte bereits die maximal zulässigen {1} Pausen{2}."
+        "de"            "Dein Team hatte bereits die maximal zulässigen ({1}) Pausen."
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "de"            "Dein Team hat bereits die maximalen {1} Sekunden der Pausezeit genutzt{2}."
+        "de"            "Dein Team hat bereits die maximalen ({1}) der Pausezeit genutzt."
     }
     "MatchPausedByTeamMessage"
     {
         "de"            "{1} hat das Match pausiert."
-    }
-    "PauseTimeExpiration10SecInfoMessage"
-    {
-        "de"            "{1} hat fast keine Pausenzeit mehr, es wird in 10 Sekunden fortgefahren."
-    }
-    "PauseTimeExpirationInfoMessage"
-    {
-        "de"            "{1} hat {2} Sekunden der Pausenzeit übrig{3}."
     }
     "PauseRunoutInfoMessage"
     {

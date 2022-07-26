@@ -78,81 +78,98 @@
         "#format"       "{1:s}"
         "en"            "{1} has 10 seconds to ready up or forfeit the match."
     }
-    "PausePeriodSuffix"
-    {
-        "en"            "for this half"
-    }
     "MaxPausesUsedInfoMessage"
     {
         "#format"       "{1:d},{2:s}"
-        "en"            "Your team has already used the max {1} pauses{2}."
+        "en"            "{2} has used all their tactical pauses ({1})."
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "#format"       "{1:d},{2:s}"
-        "en"            "Your team has already used the max {1} seconds of pause time{2}."
+        "#format"       "{1:s},{2:s}"
+        "en"            "{2} has used all their tactical pause time ({1})."
     }
     "MatchPausedByTeamMessage"
     {
         "#format"       "{1:N}"
-        "en"            "{1} paused the match."
+        "en"            "{1} has called for a tactical pause."
     }
     "MatchTechPausedByTeamMessage"
     {
         "#format"       "{1:N}"
         "en"            "{1} has called for a technical pause."
     }
-    "AdminForceTechPauseInfoMessage"
+    "PausesNotEnabled"
     {
-        "en"            "An admin has called for a technical pause."
+        "en"            "Pauses are not enabled."
+    }
+    "TechPausesNotEnabled"
+    {
+        "en"            "Technical pauses are not enabled."
+    }
+    "TechnicalPauseMidSentence"
+    {
+        "en"            "technical pause"
+    }
+    "TacticalPauseMidSentence"
+    {
+        "en"            "tactical pause"
+    }
+    "TimeRemainingBeforeAnyoneCanUnpausePrefix"
+    {
+        "en"            "Time remaining before anyone can unpause"
+    }
+    "PauseTimeRemainingPrefix"
+    {
+        "en"            "Remaining pause time"
+    }
+    "AwaitingUnpause"
+    {
+        "en"            "Awaiting unpause"
+    }
+    "PausedByAdministrator"
+    {
+        "en"            "An administrator has paused the match."
+    }
+    "PausedForBackup"
+    {
+        "en"            "The game was restored from a backup. Both teams must unpause to continue."
     }
     "UserCannotUnpauseAdmin"
     {
         "en"            "As an admin has called for this pause, it must also be unpaused by an admin."
     }
-    "PauseTimeExpiration10SecInfoMessage"
+    "PausingTeamCannotUnpauseUntilFreezeTime"
     {
-        "#format"       "{1:s}"
-        "en"            "{1} is almost out of pause time, unpausing in 10 seconds."
-    }
-    "PauseTimeExpirationInfoMessage"
-    {
-        "#format"       "{1:s},{2:d},{3:s}"
-        "en"            "{1} has {2} seconds of pause time left{3}."
+        "en"            "You cannot unpause before your pause has started. Pause requests cannot be canceled."
     }
     "PauseRunoutInfoMessage"
     {
         "#format"       "{1:s}"
-        "en"            "{1} has run out of pause time, unpausing the match."
+        "en"            "{1} has run out of pause time. Unpausing the match."
     }
     "TechPauseRunoutInfoMessage"
     {
-        "en"            "Grace period has expired for the technical pause, anyone may unpause now."
-    }
-    "TechPauseTimeRemaining"
-    {
-        "#format"       "{1:d}"
-        "en"            "{1} seconds remaining of tech pause time before anyone can resume."
-    }
-    "TechPauseTimeRemainingMinutes"
-    {
-        "#format"       "{1:d}"
-        "en"            "{1} minute(s) remaining of tech pause time before anyone can resume."
+        "en"            "Maximum technical pause length has been reached. Anyone may unpause now."
     }
     "TechPauseNoTimeRemaining"
     {
         "#format"       "{1:s}"
-        "en"            "Sorry, team {1} has no more tech pause time. Please use tactical pauses."
+        "en"            "{1} has no more tech pause time. Please use tactical pauses."
+    }
+    "TechPauseNoPausesRemaining"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} has no more tech pauses. Please use tactical pauses."
     }
     "TechPausePausesRemaining"
     {
         "#format"       "{1:s},{2:d}"
-        "en"            "Team {1} has {2} technical pause(s) remaining."
+        "en"            "Technical pauses remaining for {1}: {2}"
     }
     "MatchUnpauseInfoMessage"
     {
         "#format"       "{1:N}"
-        "en"            "{1:N} unpaused the match."
+        "en"            "{1} unpaused the match."
     }
     "WaitingForUnpauseInfoMessage"
     {
@@ -161,13 +178,8 @@
     }
     "PausesLeftInfoMessage"
     {
-        "#format"       "{1:s},{2:d},{3:s}"
-        "en"            "{1} has {2} pauses left{3}."
-    }
-    "OnePauseLeftInfoMessage"
-    {
-        "#format"       "{1:s},{2:d},{3:s}"
-        "en"            "{1} has {2} pause left{3}."
+        "#format"       "{1:s},{2:d}"
+        "en"            "Tactical pauses remaining for {1}: {2}"
     }
     "TeamFailToReadyMinPlayerCheck"
     {
@@ -273,6 +285,10 @@
     {
         "#format"       "{1:s},{2:d},{3:d},{4:s}"
         "en"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
+    }
+    "StopCommandNotEnabled"
+    {
+        "en"            "The stop command is not enabled."
     }
     "BackupLoadedInfoMessage"
     {

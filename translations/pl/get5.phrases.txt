@@ -56,29 +56,17 @@
     {
         "pl"            "{1} ma 10 sekund aby być gotowym do meczu albo mecz zostanie oddany na korzyść drużyny przeciwnej."
     }
-    "PausePeriodSuffix"
-    {
-        "pl"            "na tę połowę"
-    }
     "MaxPausesUsedInfoMessage"
     {
-        "pl"            "Twoja drużyna użyła już maksymalnie {1} pauzy{2}."
+        "pl"            "Twoja drużyna użyła już maksymalnie {1} pauzy."
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "pl"            "Twoja drużyna użyła już maksymalnie {1} sekund czasu pauzy{2}."
+        "pl"            "Twoja drużyna użyła już maksymalnie {1} pauzy."
     }
     "MatchPausedByTeamMessage"
     {
         "pl"            "{1} zatrzymało mecz."
-    }
-    "PauseTimeExpiration10SecInfoMessage"
-    {
-        "pl"            "{1} kończy się czas pauzy, wznowienie rozgrywki nastąpi za 10 sekund."
-    }
-    "PauseTimeExpirationInfoMessage"
-    {
-        "pl"            "{1} zostało {2} sekund pauzy{3}."
     }
     "PauseRunoutInfoMessage"
     {
@@ -94,11 +82,7 @@
     }
     "PausesLeftInfoMessage"
     {
-        "pl"            "{1} pozostały {2} pauzy{3}."
-    }
-    "OnePauseLeftInfoMessage"
-    {
-        "pl"            "{1} pozostała {2} pauza{3}."
+        "pl"            "{1} pozostały {2} pauzy."
     }
     "TeamFailToReadyMinPlayerCheck"
     {

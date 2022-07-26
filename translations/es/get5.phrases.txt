@@ -68,17 +68,13 @@
     {
         "es"            "{1} tiene 10 segundos para manifestarse listo, de lo contrario sera descalificado.."
     }
-    "PausePeriodSuffix"
-    {
-        "es"            "para este corta-tiempo"
-    }
     "MaxPausesUsedInfoMessage"
     {
-        "es"            "Su equipo ya utilizó su maximo de {1} pausas {2}."
+        "es"            "Su equipo ya utilizó su maximo de {1} pausa(s)."
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "es"            "Su equipo ya utilizó su maximo de {1} segundos de pausa {2}."
+        "es"            "Su equipo ya utilizó su maximo de {1} pausa."
     }
     "MatchPausedByTeamMessage"
     {
@@ -87,18 +83,6 @@
     "MatchTechPausedByTeamMessage"
     {
         "es"            "{1} pidió una pausa tecnica."
-    }
-    "AdminForceTechPauseInfoMessage"
-    {
-        "es"            "Un administrador ha pedido una pausa tecnica."
-    }
-    "PauseTimeExpiration10SecInfoMessage"
-    {
-        "es"            "{1} pronto se termina la pausa, termino en 10 segundos."
-    }
-    "PauseTimeExpirationInfoMessage"
-    {
-        "es"            "{1} aún dispone de {2} segundos de pausa{3}."
     }
     "PauseRunoutInfoMessage"
     {
@@ -114,11 +98,7 @@
     }
     "PausesLeftInfoMessage"
     {
-        "es"            "{1} aún dispone de {2} pausa{3}."
-    }
-    "OnePauseLeftInfoMessage"
-    {
-        "es"            "{1} aún dispone de {2} pausa{3}."
+        "es"            "{1} aún dispone de {2} pausa."
     }
     "TeamFailToReadyMinPlayerCheck"
     {

@@ -632,6 +632,16 @@ public Action Timer_InfoMessages(Handle timer) {
   return Plugin_Continue;
 }
 
+public void OnEntityCreated(int entity, const char[] name) {
+  // As this function is called *a lot*, we filter to <= MAXPLAYERS to not perform too many string compare operations,
+  // which is a lot more expensive. Player/bot entities always start from 1, as their entity is their client index.
+  // It is necessary to do this, as OnClientPutInServer() cannot figure out how to reliably hook this event to bots.
+  // We also cannot filter to IsPlayer() here, as it returns false for bots at this stage.
+  if (entity > 0 && entity <= MAXPLAYERS && (StrEqual("player", name) || StrEqual("cs_bot", name))) {
+    Stats_HookDamageForClient(entity);
+  }
+}
+
 public void OnClientAuthorized(int client, const char[] auth) {
   SetClientReady(client, false);
   g_MovingClientToCoach[client] = false;
@@ -658,9 +668,6 @@ public void RememberAndKickClient(int client, const char[] format, const char[] 
 }
 
 public void OnClientPutInServer(int client) {
-  if (!IsClientSourceTV(client)) {
-    Stats_HookDamageForClient(client);
-  }
   if (IsFakeClient(client)) {
     return;
   }

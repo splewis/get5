@@ -712,7 +712,9 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   // c4 is attacker 0, weapon id 0, weapon planted_c4
   // with those in mind, we can determine suicide from this:
   bool killedByBomb = StrEqual("planted_c4", weapon, true);
-  bool isSuicide = !killedByBomb && (attacker == victim || view_as<int>(weaponId) == 0);
+  // Unfortunately molotovs are also weapon id 0, so we have to *not* consider that a suicide unless attacker == victim.
+  bool killedByMolotov = StrEqual("inferno", weapon, true);
+  bool isSuicide = !killedByBomb && (attacker == victim || (view_as<int>(weaponId) == 0 && !killedByMolotov));
 
   IncrementPlayerStat(victim, STAT_DEATHS);
   // used for calculating round KAST

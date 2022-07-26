@@ -51,8 +51,8 @@
 
 /** ConVar handles **/
 ConVar g_AllowTechPauseCvar;
-ConVar g_MaxTechPauseTime;
-ConVar g_MaxTechPauseCvar;
+ConVar g_MaxTechPauseDurationCvar;
+ConVar g_MaxTechPausesCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_AutoReadyActivePlayersCvar;
 ConVar g_BackupSystemEnabledCvar;
@@ -70,7 +70,7 @@ ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
 ConVar g_MaxBackupAgeCvar;
-ConVar g_MaxPausesCvar;
+ConVar g_MaxTacticalPausesCvar;
 ConVar g_MaxPauseTimeCvar;
 ConVar g_MessagePrefixCvar;
 ConVar g_PauseOnVetoCvar;
@@ -135,6 +135,17 @@ ArrayList g_CvarValues = null;
 bool g_InScrimMode = false;
 bool g_HasKnifeRoundStarted = false;
 
+/** Pausing **/
+bool g_IsChangingPauseState = false; // Used to prevent mp_pause_match and mp_unpause_match from being called directly.
+Get5Team g_PausingTeam = Get5Team_None; // The team that last called for a pause.
+Get5PauseType g_PauseType = Get5PauseType_None; // The type of pause last initiated.
+int g_LatestPauseDuration = 0;
+bool g_TeamReadyForUnpause[MATCHTEAM_COUNT];
+bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
+int g_TacticalPauseTimeUsed[MATCHTEAM_COUNT];
+int g_TacticalPausesUsed[MATCHTEAM_COUNT];
+int g_TechnicalPausesUsed[MATCHTEAM_COUNT];
+
 /** Other state **/
 Get5State g_GameState = Get5State_None;
 ArrayList g_MapsToPlay = null;
@@ -182,15 +193,6 @@ bool g_TeamReadyOverride[MATCHTEAM_COUNT];  // Whether a team has been voluntari
 bool g_ClientReady[MAXPLAYERS + 1];         // Whether clients are marked ready.
 int g_TeamSide[MATCHTEAM_COUNT];            // Current CS_TEAM_* side for the team.
 int g_TeamStartingSide[MATCHTEAM_COUNT];
-bool g_TeamReadyForUnpause[MATCHTEAM_COUNT];
-bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
-Get5PauseType g_PauseType = Get5PauseType_None;
-int g_TeamPauseTimeUsed[MATCHTEAM_COUNT];
-int g_TeamPausesUsed[MATCHTEAM_COUNT];
-int g_TeamTechPausesUsed[MATCHTEAM_COUNT];
-int g_TechPausedTimeOverride[MATCHTEAM_COUNT];
-int g_TeamGivenTechPauseCommand[MATCHTEAM_COUNT];
-int g_PauseTimeUsed = 0;
 int g_ReadyTimeWaitingUsed = 0;
 char g_DefaultTeamColors[][] = {
     TEAM1_COLOR,
@@ -312,10 +314,10 @@ public void OnPluginStart() {
   /** ConVars **/
   g_AllowTechPauseCvar = CreateConVar("get5_allow_technical_pause", "1",
                                       "Whether or not technical pauses are allowed");
-  g_MaxTechPauseTime = CreateConVar(
+  g_MaxTechPauseDurationCvar = CreateConVar(
       "get5_tech_pause_time", "0",
       "Number of seconds before anyone can call unpause on a technical timeout, 0=unlimited");
-  g_MaxTechPauseCvar =
+  g_MaxTechPausesCvar =
       CreateConVar("get5_max_tech_pauses", "0",
                    "Number of technical pauses a team is allowed to have, 0=unlimited");
   g_AutoLoadConfigCvar =
@@ -366,7 +368,7 @@ public void OnPluginStart() {
   g_MaxBackupAgeCvar =
       CreateConVar("get5_max_backup_age", "160000",
                    "Number of seconds before a backup file is automatically deleted, 0 to disable");
-  g_MaxPausesCvar =
+  g_MaxTacticalPausesCvar =
       CreateConVar("get5_max_pauses", "0", "Maximum number of pauses a team can use, 0=unlimited");
   g_MaxPauseTimeCvar =
       CreateConVar("get5_max_pause_time", "300",
@@ -524,6 +526,8 @@ public void OnPluginStart() {
   AddCommandListener(Command_Coach, "coach");
   AddCommandListener(Command_JoinTeam, "jointeam");
   AddCommandListener(Command_JoinGame, "joingame");
+  AddCommandListener(Command_PauseOrUnpauseMatch, "mp_pause_match");
+  AddCommandListener(Command_PauseOrUnpauseMatch, "mp_unpause_match");
 
   /** Setup data structures **/
   g_MapPoolList = new ArrayList(PLATFORM_MAX_PATH);
@@ -773,12 +777,10 @@ public void OnMapStart() {
   LOOP_TEAMS(team) {
     g_TeamGivenStopCommand[team] = false;
     g_TeamReadyForUnpause[team] = false;
-    g_TeamPauseTimeUsed[team] = 0;
-    g_TeamPausesUsed[team] = 0;
+    g_TacticalPauseTimeUsed[team] = 0;
+    g_TacticalPausesUsed[team] = 0;
     g_ReadyTimeWaitingUsed = 0;
-    g_TeamTechPausesUsed[team] = 0;
-    g_TechPausedTimeOverride[team] = 0;
-    g_TeamGivenTechPauseCommand[team] = false;
+    g_TechnicalPausesUsed[team] = 0;
   }
 
   if (g_WaitingForRoundBackup) {
@@ -1037,6 +1039,7 @@ public Action Command_DumpStats(int client, int args) {
 
 public Action Command_Stop(int client, int args) {
   if (!g_StopCommandEnabledCvar.BoolValue) {
+    Get5_MessageToAll("%t", "StopCommandNotEnabled");
     return Plugin_Handled;
   }
 
@@ -1047,6 +1050,12 @@ public Action Command_Stop(int client, int args) {
   // Let the server/rcon always force restore.
   if (client == 0) {
     RestoreLastRound(client);
+    return Plugin_Handled;
+  }
+
+  if (g_PauseType == Get5PauseType_Admin) {
+    // Don't let teams restore backups while an admin has paused the game.
+    return Plugin_Handled;
   }
 
   Get5Team team = GetClientMatchTeam(client);
@@ -1309,6 +1318,13 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
 
 public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_FreezeEnd");
+
+  // If someone changes the map while in a pause, we have to make sure we reset this state, as the UnpauseGame function
+  // will not be called to do it. FreezeTimeEnd is always called when the map initially loads.
+  g_LatestPauseDuration = 0;
+  g_PauseType = Get5PauseType_None;
+  g_PausingTeam = Get5Team_None;
+
   // We always want this to be correct, regardless of game state.
   g_RoundStartedTime = GetEngineTime();
   if (g_GameState == Get5State_Live) {
@@ -1502,13 +1518,8 @@ public void SwapSides() {
 
   if (g_ResetPausesEachHalfCvar.BoolValue) {
     LOOP_TEAMS(team) {
-      g_TeamPauseTimeUsed[team] = 0;
-      g_TeamPausesUsed[team] = 0;
-    }
-    // Reset the built-in timeout counter of the game
-    if (g_MaxPausesCvar.IntValue > 0) {
-      GameRules_SetProp("m_nTerroristTimeOuts", g_MaxPausesCvar.IntValue);
-      GameRules_SetProp("m_nCTTimeOuts", g_MaxPausesCvar.IntValue);
+      g_TacticalPauseTimeUsed[team] = 0;
+      g_TacticalPausesUsed[team] = 0;
     }
   }
 }

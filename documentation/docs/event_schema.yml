@@ -176,13 +176,11 @@ paths:
             schema:
               title: Get5MatchPausedEvent
               allOf:
-                - "$ref": "#/components/schemas/Get5MapTeamEvent"
+                - "$ref": "#/components/schemas/Get5MatchPauseEvent"
               properties:
                 event:
                   enum:
                     - game_paused
-                pause_type:
-                  $ref: "#/components/schemas/Get5PauseType"
       responses: { }
   "/Get5_OnMatchUnpaused":
     post:
@@ -196,7 +194,7 @@ paths:
             schema:
               title: Get5MatchUnpausedEvent
               allOf:
-                - "$ref": "#/components/schemas/Get5MapTeamEvent"
+                - "$ref": "#/components/schemas/Get5MatchPauseEvent"
               properties:
                 event:
                   enum:
@@ -969,6 +967,13 @@ components:
         - technical
         - admin
         - backup
+    Get5MatchPauseEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5MapTeamEvent"
+        - type: object
+          properties:
+            pause_type:
+              $ref: "#/components/schemas/Get5PauseType"
     Get5Player:
       type: object
       properties:

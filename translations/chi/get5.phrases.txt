@@ -64,17 +64,13 @@
     {
         "chi"            "{1}有10秒的时间来准备就绪，否则将被视为放弃比赛。"
     }
-    "PausePeriodSuffix"
-    {
-        "chi"            "于这个半场"
-    }
     "MaxPausesUsedInfoMessage"
     {
-        "chi"            "您的队伍已经使用了最大为{1}次的暂停次数{2}。"
+        "chi"            "您的队伍已经使用了最大为{1}次的暂停次数。"
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "chi"            "您的队伍已经使用了最大为{1}秒的暂停时间{2}。"
+        "chi"            "您的队伍已经使用了最大为{1}秒的暂停时间。"
     }
     "MatchPausedByTeamMessage"
     {
@@ -83,18 +79,6 @@
     "MatchTechPausedByTeamMessage"
     {
         "chi"            "{1}要求发起一个技术暂停。"
-    }
-    "AdminForceTechPauseInfoMessage"
-    {
-        "chi"            "一位管理员发起了技术暂停。"
-    }
-    "PauseTimeExpiration10SecInfoMessage"
-    {
-        "chi"            "{1}的暂停时间即将耗尽，将在10秒后解除暂停。"
-    }
-    "PauseTimeExpirationInfoMessage"
-    {
-        "chi"            "{1}剩余{2}秒的暂停时间{3}。"
     }
     "PauseRunoutInfoMessage"
     {
@@ -110,11 +94,7 @@
     }
     "PausesLeftInfoMessage"
     {
-        "chi"            "{1}剩余{2}次pauses暂停次数{3}。"
-    }
-    "OnePauseLeftInfoMessage"
-    {
-        "chi"            "{1}剩余{2}次pauses暂停次数{3}。"
+        "chi"            "{1}剩余{2}次pauses暂停次数。"
     }
     "TeamFailToReadyMinPlayerCheck"
     {

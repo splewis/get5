@@ -2,8 +2,7 @@ get5
 ===========================
 
 [![Build Status](https://github.com/splewis/get5/actions/workflows/build.yml/badge.svg)](https://github.com/splewis/get5/actions/workflows/build.yml)
-[![Stable Downloads](https://img.shields.io/github/downloads/splewis/get5/latest/total.svg?&label=Stable&sort=semver)](https://github.com/splewis/get5/releases/latest)
-[![Nightly Downloads](https://img.shields.io/github/downloads/splewis/get5/total.svg?&label=Nightlies)](https://github.com/splewis/get5/releases)
+[![Downloads](https://img.shields.io/github/downloads/splewis/get5/total.svg?&label=Downloads)](https://github.com/splewis/get5/releases/latest)
 [![Discord Chat](https://img.shields.io/discord/926309849673895966.svg)](https://discord.gg/zmqEa4keCk)  
 
 **Status: Supported, actively developed.**

@@ -157,7 +157,8 @@ name.
     2. The current state of the game. The definition lists them in the order they occur.
     3. Whether the game is currently paused.
     4. The match configuration file currently loaded. `Example: "addons/sourcemod/configs/get5/match_config.json"`.
-    5. The current match ID. Empty string if not defined.
+    5. The current match ID. Empty string if not defined or `scrim` or `manual` if using
+       [`get5_scrim`](../commands/#get5_scrim) or [`get5_creatematch`](../commands/#get5_creatematch).
     6. The current map number, starting at `0`. You can use this to determine the current map by looking at the `maps`
        array.
     7. The current round number, starting at `0`. `-1` if `gamestate` is not `live`.

@@ -1007,7 +1007,6 @@ components:
       description: Describes a player. `Player` in SourceMod (or `Attacker` on `Get5PlayerDeathEvent`).
     Get5Weapon:
       type: object
-      nullable: true
       properties:
         name:
           type: string
@@ -1019,8 +1018,8 @@ components:
           minimum: 0
           example: 27
           description: The weapon ID used. See https://sm.alliedmods.net/new-api/cstrike/CSWeaponID
-            `Id` in SourceMod.
-      description: Describes a weapon. `Weapon` in SourceMod. Use `HasWeapon()` to determine if `null` on `Get5PlayerDeathEvent`.
+            `Id` in SourceMod. Some weapons are ID 0, such as the C4 bomb explosion or molotov/incendiary fire.
+      description: Describes a weapon. `Weapon` in SourceMod.
     Get5AssisterObject:
       type: object
       nullable: true

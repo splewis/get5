@@ -1309,17 +1309,13 @@ methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
     return this.GetObject("attacker") != null;
   }
 
-  // Use before accessing "Weapon", as its getter will raise an exception if null.
-  public bool HasWeapon() {
-    return this.GetObject("weapon") != null;
-  }
-
   public Get5PlayerDeathEvent(
     const char[] matchId,
     const int mapNumber,
     const int roundNumber,
     const int roundTime,
     const Get5Player victim,
+    const Get5Weapon weapon,
     const bool headshot,
     const bool friendlyFire,
     const bool thruSmoke,
@@ -1337,6 +1333,7 @@ methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
         self.RoundNumber = roundNumber;
         self.RoundTime = roundTime;
         self.Player = victim;
+        self.Weapon = weapon;
         self.Headshot = headshot;
         self.FriendlyFire = friendlyFire;
         self.ThruSmoke = thruSmoke;
@@ -1349,7 +1346,6 @@ methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
         // set nullables to null initially
         self.SetObject("assist", null);
         self.SetObject("attacker", null);
-        self.SetObject("weapon", null);
         return self;
 
     }

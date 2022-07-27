@@ -63,16 +63,17 @@ jobs:
     if: github.ref == 'refs/heads/development'
     runs-on: ubuntu-22.04
     steps:
+    - uses: actions/checkout@v2
     - uses: actions/download-artifact@v3
       with:
         name: compiled-files
         path: artifacts
 
-    - name: "Generate release changelog"
-      uses: Bullrich/generate-release-changelog@master
-      id: Changelog
-      env:
-        REPO: ${{ github.repository }}
+    - name: Generate changelog
+      id: changelog
+      uses: metcalfc/changelog-generator@v3.0.0
+      with:
+        myToken: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Tag And Attach Nightly Build
       uses: ncipollo/release-action@v1.8.3
@@ -84,7 +85,12 @@ jobs:
         tag: "v${{ needs.build.outputs.get5-version }}-${{ needs.build.outputs.sha-short }}"
         name: "Nightly ${{ needs.build.outputs.get5-version }}-${{ needs.build.outputs.sha-short }}"
         body: |
-          ${{ steps.Changelog.outputs.changelog }}
+          Please note while these are compiled nightly builds, bugs may still exist in the software.
+          When reporting an issue, please include the debug log by calling `get5_debuginfo` and attach
+          the file located at addons/sourcemod/logs/get5_debuginfo.txt.  
+          This will help speed up the process of tracking down bugs based
+          on that specific version.  
+          ${{ steps.changelog.outputs.changelog }}
 
   deploy-stable:
     needs: [build]
@@ -94,11 +100,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: "Generate release changelog"
-      uses: Bullrich/generate-release-changelog@master
-      id: Changelog
-      env:
-        REPO: ${{ github.repository }}
+    - name: Generate changelog
+      id: changelog
+      uses: metcalfc/changelog-generator@v3.0.0
+      with:
+        myToken: ${{ secrets.GITHUB_TOKEN }}
 
     - uses: actions/download-artifact@v3
       with:
@@ -115,4 +121,4 @@ jobs:
         tag: "v${{ needs.build.outputs.get5-version }}"
         name: "Version ${{ needs.build.outputs.get5-version }}"
         body: |
-          ${{ steps.Changelog.outputs.changelog }}
+          ${{ steps.changelog.outputs.changelog }}

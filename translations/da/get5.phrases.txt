@@ -88,6 +88,10 @@
     {
         "da"            "{1} har bedt om teknisk pause."
     }
+    "PausesNotEnabled"
+    {
+        "da"            "Pauser er ikke aktiveret."
+    }
     "TechPausesNotEnabled"
     {
         "da"            "Tekniske pauser er ikke aktiveret."
@@ -119,10 +123,6 @@
     "PausedForBackup"
     {
         "da"            "Kampen er blevet gendannet fra en backup. Begge hold skal unpause for at fortsætte."
-    }
-    "PauseNotAvailable"
-    {
-        "da"            "Der kan ikke anmodes om pause, før kampen er igang, og kun hvis pausesystemet er slået til."
     }
     "UserCannotUnpauseAdmin"
     {

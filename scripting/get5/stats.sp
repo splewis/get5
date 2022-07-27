@@ -763,16 +763,12 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
   Get5PlayerDeathEvent playerDeathEvent = new Get5PlayerDeathEvent(
       g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
-      GetPlayerObject(victim), headshot, validAttacker ? attackerTeam == victimTeam : false,
+      GetPlayerObject(victim), new Get5Weapon(weapon, weaponId), headshot, validAttacker ? attackerTeam == victimTeam : false,
       event.GetBool("thrusmoke"), event.GetBool("noscope"), event.GetBool("attackerblind"),
       isSuicide, event.GetInt("penetrated"), killedByBomb);
 
   if (validAttacker) {
     playerDeathEvent.Attacker = GetPlayerObject(attacker);
-  }
-
-  if (view_as<int>(weaponId) > 0) {
-    playerDeathEvent.Weapon = new Get5Weapon(weapon, weaponId);
   }
 
   if (validAssister) {

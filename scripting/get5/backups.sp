@@ -34,20 +34,25 @@ public Action Command_ListBackups(int client, int args) {
     strcopy(matchID, sizeof(matchID), g_MatchID);
   }
 
-  char pattern[PLATFORM_MAX_PATH];
-  Format(pattern, sizeof(pattern), "get5_backup_match%s", matchID);
+  char path[PLATFORM_MAX_PATH];
+  g_RoundBackupPathCvar.GetString(path, sizeof(path));
+  ReplaceString(path, sizeof(path), "{MATCHID}", matchID);
 
-  DirectoryListing files = OpenDirectory(".");
+  DirectoryListing files = OpenDirectory(strlen(path) > 0 ? path : ".");
   if (files != null) {
-    char path[PLATFORM_MAX_PATH];
-    char backupInfo[256];
 
-    while (files.GetNext(path, sizeof(path))) {
-      if (StrContains(path, pattern) == 0) {
-        if (GetBackupInfo(path, backupInfo, sizeof(backupInfo))) {
+    char backupInfo[256];
+    char pattern[PLATFORM_MAX_PATH];
+    Format(pattern, sizeof(pattern), "get5_backup_match%s", matchID);
+
+    char filename[PLATFORM_MAX_PATH];
+    while (files.GetNext(filename, sizeof(filename))) {
+      if (StrContains(filename, pattern) == 0) {
+        Format(filename, sizeof(filename), "%s%s", path, filename);
+        if (GetBackupInfo(filename, backupInfo, sizeof(backupInfo))) {
           ReplyToCommand(client, backupInfo);
         } else {
-          ReplyToCommand(client, path);
+          ReplyToCommand(client, filename);
         }
       }
     }
@@ -401,18 +406,34 @@ public Action Timer_FinishBackup(Handle timer) {
 public void DeleteOldBackups() {
   int maxTimeDifference = g_MaxBackupAgeCvar.IntValue;
   if (maxTimeDifference <= 0) {
+    LogDebug("Backups are not being deleted as get5_max_backup_age is 0.");
     return;
   }
 
-  DirectoryListing files = OpenDirectory(".");
+  char path[PLATFORM_MAX_PATH];
+  g_RoundBackupPathCvar.GetString(path, sizeof(path));
+
+  if (StrContains(path, "{MATCHID}") != -1) {
+    LogError("Automatic backup deletion cannot be performed when get5_backup_path contains the {MATCHID} variable.");
+    return;
+  }
+
+  DirectoryListing files = OpenDirectory(strlen(path) > 0 ? path : ".");
   if (files != null) {
-    char path[PLATFORM_MAX_PATH];
-    while (files.GetNext(path, sizeof(path))) {
-      if (StrContains(path, "get5_backup_") == 0 &&
-          GetTime() - GetFileTime(path, FileTime_LastChange) >= maxTimeDifference) {
-        DeleteFile(path);
+    LogDebug("Searching '%s' for expired backups...", path);
+    char filename[PLATFORM_MAX_PATH];
+    while (files.GetNext(filename, sizeof(filename))) {
+      if (StrContains(filename, "get5_backup_") == 0) {
+        Format(filename, sizeof(filename), "%s%s", path, filename);
+        if (GetTime() - GetFileTime(filename, FileTime_LastChange) >= maxTimeDifference) {
+          if (DeleteFileIfExists(filename)) {
+            LogDebug("Deleted '%s' as it was older than %d seconds.", filename, maxTimeDifference);
+          }
+        }
       }
     }
     delete files;
+  } else {
+    LogError("Failed to list contents of directory '%s' for backup deletion.", path);
   }
 }

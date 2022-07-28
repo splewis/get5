@@ -200,7 +200,27 @@ disable. **`Default: get5_matchstats_{MATCHID}.cfg`**
 command as well as the [`get5_loadbackup`](../commands/#get5_loadbackup) command. **`Default: 1`**
 
 ####`get5_max_backup_age`
-:   Number of seconds before a Get5 backup file is automatically deleted. 0 to disable. **`Default: 160000`**
+:   Number of seconds before a Get5 backup file is automatically deleted. 0 to disable. If you define
+[`get5_backup_path`](#get5_backup_path), only files in that path will be deleted. **`Default: 160000`**
+
+####`get5_backup_path`
+:   The folder of saved [backup files](../commands/#get5_loadbackup), relative to the `csgo` directory. You **can** use
+the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`. **`Default: ""`**
+
+!!! warning "Slash, slash, hundred yard dash :material-slash-forward:"
+ 
+    It is very important that your backup path does **not** start with a slash but instead **ends with a slash**. If
+    not, the last part of the path will be considered a prefix of the filename and things will not work correctly. Also
+    note that if you use the [`{MATCHID}`](#tag-matchid) variable, [automatic deletion of backups](#get5_max_backup_age)
+    does not work.
+
+    :white_check_mark: `backups/`
+
+    :white_check_mark: `backups/{MATCHID}/`
+
+    :no_entry: `/backups/`
+
+    :no_entry: `/backups/{MATCHID}`
 
 ## Config Files
 

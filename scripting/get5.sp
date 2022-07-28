@@ -1396,6 +1396,14 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   // as well.
   g_RoundNumber = GetRoundsPlayed();
 
+  // Ensure that all stat values are initialized to zero.
+  // We do this on all rounds just to make sure the any ringers or replacements in a match are also set.
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i) && !IsClientCoaching(i)) {
+      InitPlayerStats(i);
+    }
+  }
+
   Get5RoundStartedEvent startEvent =
       new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
 

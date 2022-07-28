@@ -980,6 +980,66 @@ static int SetPlayerStat(int client, const char[] field, int newValue) {
   return newValue;
 }
 
+public void InitPlayerStats(int client) {
+  if (!GoToPlayer(client)) {
+    return;
+  }
+
+  // If the player already had their stats set, do nothing.
+  if (g_StatsKv.GetNum("stat_init", 0) > 0) {
+    GoBackFromPlayer();
+    return;
+  }
+
+  char keys[][] = {
+    STAT_KILLS,
+    STAT_DEATHS,
+    STAT_ASSISTS,
+    STAT_FLASHBANG_ASSISTS,
+    STAT_TEAMKILLS,
+    STAT_SUICIDES,
+    STAT_DAMAGE,
+    STAT_UTILITY_DAMAGE,
+    STAT_ENEMIES_FLASHED,
+    STAT_FRIENDLIES_FLASHED,
+    STAT_KNIFE_KILLS,
+    STAT_HEADSHOT_KILLS,
+    STAT_ROUNDSPLAYED,
+    STAT_BOMBDEFUSES,
+    STAT_BOMBPLANTS,
+    STAT_1K,
+    STAT_2K,
+    STAT_3K,
+    STAT_4K,
+    STAT_5K,
+    STAT_V1,
+    STAT_V2,
+    STAT_V3,
+    STAT_V4,
+    STAT_V5,
+    STAT_FIRSTKILL_T,
+    STAT_FIRSTKILL_CT,
+    STAT_FIRSTDEATH_T,
+    STAT_FIRSTDEATH_CT,
+    STAT_TRADEKILL,
+    STAT_KAST,
+    STAT_CONTRIBUTION_SCORE,
+    STAT_MVP
+  };
+
+  int length = sizeof(keys);
+  for (int i = 0; i < length; i++)
+  {
+    if (g_StatsKv.GetNum(keys[i], -1) == -1) {
+      g_StatsKv.SetNum(keys[i], 0);
+    }
+  }
+
+  g_StatsKv.SetNum("stat_init", 1);
+
+  GoBackFromPlayer();
+}
+
 public int AddToPlayerStat(int client, const char[] field, int delta) {
   if (IsFakeClient(client)) {
     return 0;
@@ -1003,13 +1063,17 @@ static void GoBackFromMap() {
   g_StatsKv.GoBack();
 }
 
-static void GoToTeam(Get5Team team) {
+static bool GoToTeam(Get5Team team) {
   GoToMap();
 
-  if (team == Get5Team_1)
+  if (team == Get5Team_1) {
     g_StatsKv.JumpToKey("team1", true);
-  else
+    return true;
+  } else if (team == Get5Team_2) {
     g_StatsKv.JumpToKey("team2", true);
+    return true;
+  }
+  return false;
 }
 
 static void GoBackFromTeam() {
@@ -1017,14 +1081,18 @@ static void GoBackFromTeam() {
   g_StatsKv.GoBack();
 }
 
-static void GoToPlayer(int client) {
+static bool GoToPlayer(int client) {
   Get5Team team = GetClientMatchTeam(client);
-  GoToTeam(team);
+  if (!GoToTeam(team)) {
+    return false;
+  }
 
   char auth[AUTH_LENGTH];
   if (GetAuth(client, auth, sizeof(auth))) {
     g_StatsKv.JumpToKey(auth, true);
+    return true;
   }
+  return false;
 }
 
 static void GoBackFromPlayer() {

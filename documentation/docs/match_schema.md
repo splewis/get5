@@ -58,8 +58,10 @@ interface Get5Match {
 }
 ```
 
-1. _Optional_ - The ID of the match. This determines the `matchid` parameter in all the forwards and events.
-   **`Default: ""`**
+1. _Optional_ - The ID of the match. This determines the `matchid` parameter in all the forwards and events. If you use
+the [MySQL extension](../stats_system/#mysql), you should leave this field blank (or omit it), as match IDs will be
+assigned automatically. If you do want to assign match IDs from another source, they **must** be integers (in a string)
+and must increment between matches. **`Default: ""`**
 2. _Optional_ - The number of maps to play in the series. **`Default: 3`**
 3. _Optional_ - The number of players per team. **`Default: 5`**
 4. _Optional_ - The maximum number of coaches per team. **`Default: 2`**

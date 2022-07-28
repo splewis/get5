@@ -91,7 +91,10 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
   delete tmpStats;
 
   // Match ID defaults to an empty string, so if it's empty we use auto-increment from MySQL.
-  if (strlen(matchId) > 0) {
+  // We also consider "scrim" and "manual" candidates for auto-increment, as those are the fixed
+  // strings used for get5_scrim and get5_creatematch, so without that condition, those would break
+  // the default mysql as only integers are accepted.
+  if (strlen(matchId) > 0 && !StrEqual(matchId, "scrim") && !StrEqual(matchId, "manual")) {
     char matchIdSz[64];
     db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 

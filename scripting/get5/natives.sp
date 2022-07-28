@@ -192,6 +192,7 @@ public int Native_GetMatchID(Handle plugin, int numParams) {
 
 public int Native_SetMatchID(Handle plugin, int numParams) {
   GetNativeString(1, g_MatchID, sizeof(g_MatchID));
+  WriteBackup();
   return 0;
 }
 

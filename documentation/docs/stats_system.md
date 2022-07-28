@@ -57,10 +57,10 @@ Partial Example:
 
 ## What Stats Are Collected
 
-See the [get5 include](https://github.com/splewis/get5/blob/master/scripting/include/get5.inc#L171) for what stats will
-be recorded and what their key in the keyvalues structure is.
+See the [get5 include](https://github.com/splewis/get5/blob/master/scripting/include/get5.inc#L1769) for what stats will
+be recorded and what their key in the KeyValue structure is.
 
-## MySQL Statistics
+## MySQL Statistics {: #mysql }
 
 Get5 ships with a (disabled by default) plugin called `get5_mysqlstats` that will save many of the stats to a MySQL
 database. To use this:
@@ -72,8 +72,9 @@ database. To use this:
   directory).
 
 **Note**: If you use this module, you can force the match ID used by setting it in your match config
-(the [Match Schema](./match_schema/#optional-values) section). If you don't do this, the match ID will be set to the
-auto-incrementing integer (cast to a string) returned by inserting into the `get5_stats_matches` table.
+(the [Match Schema](../match_schema/#optional-values) section). If you don't do this, the match ID will be set to the
+auto-incrementing integer (cast to a string) returned by inserting into the `get5_stats_matches` table. It is strongly
+recommended that you always leave the `matchid` blank, as MySQL will then manage the IDs for you.
 
 If you are using an external web panel, **this plugin is not needed** as most external applications record to their own
 match tables.

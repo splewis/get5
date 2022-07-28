@@ -228,7 +228,8 @@ to [`!ringer`](../commands/#ringer)
 :   Dumps debug info to a file (`addons/sourcemod/logs/get5_debuginfo.txt` if no file parameter is provided).
 
 ####`get5_dumpstats [file]` {: #get5_dumpstats }
-:   Dumps [player stats](../stats_system) to a file (`addons/sourcemod/get5_matchstats.cfg` if no file parameter is provided).
+:   Dumps [player stats](../stats_system/#keyvalue) to a file (`addons/sourcemod/get5_matchstats.cfg` if no file
+parameter is provided).
 
 ####`get5_test`
 :   Runs get5 tests. **This should not be used on a live match server since it will reload a match config to test**.

@@ -1,5 +1,3 @@
-const float kTimeGivenToTrade = 1.5;
-
 public void Stats_PluginStart() {
   HookEvent("bomb_defused", Stats_BombDefusedEvent);
   HookEvent("bomb_exploded", Stats_BombExplodedEvent);
@@ -147,7 +145,7 @@ public Get5Player GetPlayerObject(int client) {
     GetAuth(client, auth, sizeof(auth));
     return new Get5Player(userId, auth, side, name, false);
   } else {
-    char botId[8];
+    char botId[10];
     Format(botId, sizeof(botId), "BOT-%d", userId);
     return new Get5Player(userId, botId, side, name, true);
   }
@@ -183,7 +181,7 @@ public void Stats_ResetRoundValues() {
   g_TeamFirstDeathDone[CS_TEAM_CT] = false;
   g_TeamFirstDeathDone[CS_TEAM_T] = false;
 
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     Stats_ResetClientRoundValues(i);
   }
 }
@@ -196,7 +194,7 @@ public void Stats_ResetClientRoundValues(int client) {
   g_PlayerRoundKillOrAssistOrTradedDeath[client] = false;
   g_PlayerSurvived[client] = true;
 
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     g_DamageDone[client][i] = 0;
     g_DamageDoneHits[client][i] = 0;
     g_DamageDoneKill[client][i] = false;
@@ -252,17 +250,14 @@ public void Stats_ResetGrenadeContainers() {
 }
 
 public void Stats_RoundStart() {
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsPlayer(i)) {
       Get5Team team = GetClientMatchTeam(i);
       if (team == Get5Team_1 || team == Get5Team_2) {
+        // Ensures that each player has zero-filled stats on freeze-time end.
+        // Since joining the game after freeze-time will render you dead, you cannot obtain stats until next round.
+        InitPlayerStats(i);
         IncrementPlayerStat(i, STAT_ROUNDSPLAYED);
-
-        GoToPlayer(i);
-        char name[MAX_NAME_LENGTH];
-        GetClientName(i, name, sizeof(name));
-        g_StatsKv.SetString(STAT_NAME, name);
-        GoBackFromPlayer();
       }
     }
   }
@@ -285,7 +280,7 @@ public void Stats_RoundEnd(int csTeamWinner) {
   GoBackFromTeam();
 
   // Update player 1vx, x-kill, and KAST values.
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsPlayer(i)) {
       Get5Team team = GetClientMatchTeam(i);
       if (team == Get5Team_1 || team == Get5Team_2) {
@@ -329,14 +324,6 @@ public void Stats_RoundEnd(int csTeamWinner) {
         g_StatsKv.SetNum(STAT_CONTRIBUTION_SCORE, CS_GetClientContributionScore(i));
 
         GoBackFromPlayer();
-      }
-    }
-  }
-
-  if (g_DamagePrintCvar.BoolValue) {
-    for (int i = 1; i <= MaxClients; i++) {
-      if (IsValidClient(i)) {
-        PrintDamageInfo(i);
       }
     }
   }
@@ -804,12 +791,12 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 }
 
 static void UpdateTradeStat(int attacker, int victim) {
+  int attackerTeam = GetClientTeam(attacker);
   // Look to see if victim killed any of attacker's teammates recently.
-  for (int i = 1; i <= MaxClients; i++) {
-    if (IsPlayer(i) && g_PlayerKilledBy[i] == victim &&
-        GetClientTeam(i) == GetClientTeam(attacker)) {
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i) && g_PlayerKilledBy[i] == victim && GetClientTeam(i) == attackerTeam) {
       float dt = GetGameTime() - g_PlayerKilledByTime[i];
-      if (dt < kTimeGivenToTrade) {
+      if (dt < 1.5) { // "Time to trade" window fixed to 1.5 seconds.
         IncrementPlayerStat(attacker, STAT_TRADEKILL);
         // teammate (i) was traded
         g_PlayerRoundKillOrAssistOrTradedDeath[i] = true;
@@ -980,16 +967,79 @@ static int SetPlayerStat(int client, const char[] field, int newValue) {
   return newValue;
 }
 
+static void InitPlayerStats(int client) {
+  if (!GoToPlayer(client)) {
+    return;
+  }
+
+  // Always update the name.
+  char name[MAX_NAME_LENGTH];
+  GetClientName(client, name, sizeof(name));
+  g_StatsKv.SetString(STAT_NAME, name);
+
+  // If the player already had their stats set, don't override them.
+  if (g_StatsKv.GetNum(STAT_INIT, 0) > 0) {
+    GoBackFromPlayer();
+    return;
+  }
+
+  char keys[][] = {
+    STAT_KILLS,
+    STAT_DEATHS,
+    STAT_ASSISTS,
+    STAT_FLASHBANG_ASSISTS,
+    STAT_TEAMKILLS,
+    STAT_SUICIDES,
+    STAT_DAMAGE,
+    STAT_UTILITY_DAMAGE,
+    STAT_ENEMIES_FLASHED,
+    STAT_FRIENDLIES_FLASHED,
+    STAT_KNIFE_KILLS,
+    STAT_HEADSHOT_KILLS,
+    STAT_ROUNDSPLAYED,
+    STAT_BOMBDEFUSES,
+    STAT_BOMBPLANTS,
+    STAT_1K,
+    STAT_2K,
+    STAT_3K,
+    STAT_4K,
+    STAT_5K,
+    STAT_V1,
+    STAT_V2,
+    STAT_V3,
+    STAT_V4,
+    STAT_V5,
+    STAT_FIRSTKILL_T,
+    STAT_FIRSTKILL_CT,
+    STAT_FIRSTDEATH_T,
+    STAT_FIRSTDEATH_CT,
+    STAT_TRADEKILL,
+    STAT_KAST,
+    STAT_CONTRIBUTION_SCORE,
+    STAT_MVP
+  };
+
+  int length = sizeof(keys);
+  for (int i = 0; i < length; i++)
+  {
+    g_StatsKv.SetNum(keys[i], 0);
+  }
+
+  g_StatsKv.SetNum(STAT_INIT, 1);
+
+  GoBackFromPlayer();
+}
+
 public int AddToPlayerStat(int client, const char[] field, int delta) {
   if (IsFakeClient(client)) {
     return 0;
   }
+  LogDebug("Updating player stat %s for %L", field, client);
   int value = GetPlayerStat(client, field);
   return SetPlayerStat(client, field, value + delta);
 }
 
 static int IncrementPlayerStat(int client, const char[] field) {
-  LogDebug("Incrementing player stat %s for %L", field, client);
   return AddToPlayerStat(client, field, 1);
 }
 
@@ -1003,13 +1053,17 @@ static void GoBackFromMap() {
   g_StatsKv.GoBack();
 }
 
-static void GoToTeam(Get5Team team) {
+static bool GoToTeam(Get5Team team) {
   GoToMap();
 
-  if (team == Get5Team_1)
+  if (team == Get5Team_1) {
     g_StatsKv.JumpToKey("team1", true);
-  else
+    return true;
+  } else if (team == Get5Team_2) {
     g_StatsKv.JumpToKey("team2", true);
+    return true;
+  }
+  return false;
 }
 
 static void GoBackFromTeam() {
@@ -1017,14 +1071,18 @@ static void GoBackFromTeam() {
   g_StatsKv.GoBack();
 }
 
-static void GoToPlayer(int client) {
+static bool GoToPlayer(int client) {
   Get5Team team = GetClientMatchTeam(client);
-  GoToTeam(team);
+  if (!GoToTeam(team)) {
+    return false;
+  }
 
   char auth[AUTH_LENGTH];
   if (GetAuth(client, auth, sizeof(auth))) {
     g_StatsKv.JumpToKey(auth, true);
+    return true;
   }
+  return false;
 }
 
 static void GoBackFromPlayer() {
@@ -1043,7 +1101,7 @@ public int GetMapStatsNumber() {
 static int GetClutchingClient(int csTeam) {
   int client = -1;
   int count = 0;
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == csTeam) {
       client = i;
       count++;
@@ -1126,19 +1184,22 @@ JSON_Object EncodeKeyValue(KeyValues kv) {
   return json_kv;
 }
 
-static void PrintDamageInfo(int client) {
-  if (!IsPlayer(client))
+public void PrintDamageInfo(int client) {
+  if (!IsPlayer(client)) {
     return;
+  }
 
   int team = GetClientTeam(client);
-  if (team != CS_TEAM_T && team != CS_TEAM_CT)
+  if (team != CS_TEAM_T && team != CS_TEAM_CT) {
     return;
+  }
 
   char message[256];
   int msgSize = sizeof(message);
 
   int otherTeam = (team == CS_TEAM_T) ? CS_TEAM_CT : CS_TEAM_T;
-  for (int i = 1; i <= MaxClients; i++) {
+
+  LOOP_CLIENTS(i) {
     if (IsValidClient(i) && IsClientInGame(i) && GetClientTeam(i) == otherTeam) {
       int health = IsPlayerAlive(i) ? GetClientHealth(i) : 0;
       char name[64];

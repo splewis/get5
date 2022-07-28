@@ -1460,6 +1460,12 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
     Stats_RoundEnd(csTeamWinner);
 
+    if (g_DamagePrintCvar.BoolValue) {
+      LOOP_CLIENTS(i) {
+        PrintDamageInfo(i); // Checks valid client etc. on its own.
+      }
+    }
+
     Get5RoundStatsUpdatedEvent statsEvent =
         new Get5RoundStatsUpdatedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
 

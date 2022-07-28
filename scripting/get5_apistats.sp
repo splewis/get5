@@ -300,7 +300,7 @@ public void UpdatePlayerStats(const char[] matchId, KeyValues kv, Get5Team team)
                                  mapNumber, auth);
       if (req != INVALID_HANDLE) {
         AddStringParam(req, "team", teamString);
-        AddStringParam(req, "name", name);
+        AddStringParam(req, STAT_NAME, name);
         AddIntStat(req, kv, STAT_KILLS);
         AddIntStat(req, kv, STAT_DEATHS);
         AddIntStat(req, kv, STAT_ASSISTS);
@@ -308,6 +308,10 @@ public void UpdatePlayerStats(const char[] matchId, KeyValues kv, Get5Team team)
         AddIntStat(req, kv, STAT_TEAMKILLS);
         AddIntStat(req, kv, STAT_SUICIDES);
         AddIntStat(req, kv, STAT_DAMAGE);
+        AddIntStat(req, kv, STAT_UTILITY_DAMAGE);
+        AddIntStat(req, kv, STAT_ENEMIES_FLASHED);
+        AddIntStat(req, kv, STAT_FRIENDLIES_FLASHED);
+        AddIntStat(req, kv, STAT_KNIFE_KILLS);
         AddIntStat(req, kv, STAT_HEADSHOT_KILLS);
         AddIntStat(req, kv, STAT_ROUNDSPLAYED);
         AddIntStat(req, kv, STAT_BOMBPLANTS);
@@ -329,6 +333,7 @@ public void UpdatePlayerStats(const char[] matchId, KeyValues kv, Get5Team team)
         AddIntStat(req, kv, STAT_TRADEKILL);
         AddIntStat(req, kv, STAT_KAST);
         AddIntStat(req, kv, STAT_CONTRIBUTION_SCORE);
+        AddIntStat(req, kv, STAT_MVP);
         SteamWorks_SendHTTPRequest(req);
       }
 

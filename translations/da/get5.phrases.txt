@@ -46,7 +46,7 @@
     }
     "NoMatchSetupInfoMessage"
     {
-        "da"			"Der er ingen match setup."
+        "da"			"Der er ikke konfigureret en kamp"
     }
     "YouAreNotAPlayerInfoMessage"
     {
@@ -54,7 +54,7 @@
     }
     "TeamIsFullInfoMessage"
     {
-        "da"            "Dit hold er fuldt"
+        "da"            "Dit hold er fyldt"
     }
     "TeamForfeitInfoMessage"
     {
@@ -138,7 +138,7 @@
     }
     "TechPauseRunoutInfoMessage"
     {
-        "da"            "Maksimal teknisk pauselængde er nået, og alle kan nu stoppe pausen."
+        "da"            "Maksimal teknisk pauselængde er nået, og alle kan nu !unpause."
     }
     "TechPauseNoTimeRemaining"
     {
@@ -182,7 +182,7 @@
     }
     "TeamReadyToBeginInfoMessage"
     {
-        "da"            "{1} er klar til at begynde kmapen."
+        "da"            "{1} er klar til at begynde kampen."
     }
     "TeamNotReadyInfoMessage"
     {
@@ -354,7 +354,7 @@
     }
     "MapVetoBanConfirmMenuText"
     {
-        "da"        "Bekræft at du vil VETO {1}:"
+        "da"        "Bekræft, at du vil VETO {1}:"
     }
     "MapVetoSidePickMenuText"
     {
@@ -362,7 +362,7 @@
     }
     "MapVetoSidePickConfirmMenuText"
     {
-        "da"        "Bekræft at du vil starte {1}:"
+        "da"        "Bekræft, at du vil starte {1}:"
     }
     "ConfirmPositiveOptionText"
     {

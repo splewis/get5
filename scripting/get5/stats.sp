@@ -709,11 +709,12 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   // fall damage is weapon id 0, attacker 0, weapon "worldspawn"
   // falling from vertigo is attacker 0, weapon id 0, weapon "trigger_hurt"
   // c4 is attacker 0, weapon id 0, weapon planted_c4
-  // with those in mind, we can determine suicide from this:
+  // killing self with weapons is attacker == victim
+  // some weapons, such as unsilenced USP or M4A1S and molotov fire are also weapon 0, so weapon ID is unreliable.
+  // with those in mind, we can determine that suicide must be true if attacker is 0 or attacker == victim and it was **not** the bomb.
   bool killedByBomb = StrEqual("planted_c4", weapon, true);
-  // Unfortunately molotovs are also weapon id 0, so we have to *not* consider that a suicide unless attacker == victim.
-  bool killedByMolotov = StrEqual("inferno", weapon, true);
-  bool isSuicide = !killedByBomb && (attacker == victim || (view_as<int>(weaponId) == 0 && !killedByMolotov));
+  bool killedByOtherPlayer = attacker > 0 && attacker != victim;
+  bool isSuicide = !killedByOtherPlayer && !killedByBomb;
 
   IncrementPlayerStat(victim, STAT_DEATHS);
   // used for calculating round KAST

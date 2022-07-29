@@ -314,7 +314,7 @@
     }
     "TeamSelectSideInfoMessage"
     {
-        "hu"            "{1} választott, hogy kezd {GREEN}{2} {NORMAL} oldalon a {3}. pályán."
+        "hu"            "{1} választott, hogy kezd {GREEN}{2} {NORMAL} oldalon a(z) {3}. pályán."
     }
     "TeamVetoedMapInfoMessage"
     {

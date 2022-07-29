@@ -362,7 +362,7 @@
     }
     "MapVetoBanConfirmMenuText"
     {
-        "hu"            "Erősítse meg, hogy vétózza {1}:"
+        "hu"            "Erősítse meg, hogy vétózza {1} pályát:"
     }
     "MapVetoSidePickMenuText"
     {
@@ -370,7 +370,7 @@
     }
     "MapVetoSidePickConfirmMenuText"
     {
-        "hu"            "Erősítse meg, hogy {1} kezd:"
+        "hu"            "Erősítse meg, hogy {1}-ben kezd:"
     }
     "ConfirmPositiveOptionText"
     {

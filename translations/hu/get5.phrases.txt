@@ -354,7 +354,7 @@
     }
     "MapVetoPickConfirmMenuText"
     {
-        "hu"            "Megerősíti, hogy {1} játszana?:"
+        "hu"            "Erősítse meg, hogy játszana {1}:"
     }
     "MapVetoBanMenuText"
     {
@@ -362,7 +362,7 @@
     }
     "MapVetoBanConfirmMenuText"
     {
-        "hu"            "Megerősíti, hogy {1} vétózza?:"
+        "hu"            "Erősítse meg, hogy vétózza {1}:"
     }
     "MapVetoSidePickMenuText"
     {
@@ -370,7 +370,7 @@
     }
     "MapVetoSidePickConfirmMenuText"
     {
-        "hu"            "Megerősíti, hogy {1} kezdene?:"
+        "hu"            "Erősítse meg, hogy {1} kezd:"
     }
     "ConfirmPositiveOptionText"
     {

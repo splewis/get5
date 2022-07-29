@@ -258,7 +258,7 @@
     }
     "BackupLoadedInfoMessage"
     {
-        "hu"            "Sikeresen visszatöltődött a körmentés {1}"
+        "hu"            "Sikeresen visszatöltődött a körmentés {1}."
     }
     "MatchBeginInSecondsInfoMessage"
     {
@@ -306,7 +306,7 @@
     }
     "TeamSelectSideInfoMessage"
     {
-        "hu"            "{1} választott, hogy kezd {GREEN}{2} {NORMAL} oldalon a {3}. pályán"
+        "hu"            "{1} választott, hogy kezd {GREEN}{2} {NORMAL} oldalon a {3}. pályán."
     }
     "TeamVetoedMapInfoMessage"
     {

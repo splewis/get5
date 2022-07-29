@@ -94,7 +94,7 @@
     }
     "TechPausesNotEnabled"
     {
-        "hu"            "A Technikai időkérések nincsenek engedélyezve."
+        "hu"            "A technikai időkérések nincsenek engedélyezve."
     }
     "TechnicalPauseMidSentence"
     {
@@ -106,7 +106,7 @@
     }
     "TimeRemainingBeforeAnyoneCanUnpausePrefix"
     {
-        "hu"            "Ennyi idő maradt mielőtt bárki elindíthatja a mérkőzést"
+        "hu"            "Ennyi idő maradt, mielőtt bárki elindíthatja a mérkőzést"
     }
     "PauseTimeRemainingPrefix"
     {
@@ -126,19 +126,19 @@
     }
     "UserCannotUnpauseAdmin"
     {
-        "hu"            "Egy admin hívta ezt az időkérést, ő is fogja tudni folytatni."
+        "hu"            "Egy admin kérte ezt az időkérést, ő is fogja tudni folytatni."
     }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {
-        "hu"            "Az időkérést nem lehet visszavonni""
+        "hu"            "Az időkérést, nem lehet visszavonni"
     }
     "PauseRunoutInfoMessage"
     {
-        "hu"            "{1} csapatnak elfogyott a szüneteltetési ideje. Folytatódik a mérkőzés."
+        "hu"            "{1} csapatnak, elfogyott a szüneteltetési ideje. Folytatódik a mérkőzés."
     }
     "TechPauseRunoutInfoMessage"
     {
-        "hu"            "A technikai szünetre szánt idő elfogyott. Bárki tudja folytatni a mérkőést."
+        "hu"            "A technikai szünetre szánt idő, elfogyott. Bárki tudja folytatni a mérkőést."
     }
     "TechPauseNoTimeRemaining"
     {
@@ -166,7 +166,7 @@
     }
 	    "PrereleaseVersionWarning"
     {
-        "hu"            "A Get5 ({1}) változatát futtatod ami kifejezetten fejlesztésre és tesztelésre van. Ez az üzenet kikapcsolható {2}."
+        "hu"            "A Get5 ({1}) változatát futtatod, ami kifejezetten fejlesztésre és tesztelésre van. Ez az üzenet kikapcsolható a {2} parancs segítségével."
     }
     "NewVersionAvailable"
     {

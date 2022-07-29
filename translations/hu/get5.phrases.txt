@@ -164,6 +164,14 @@
     {
         "hu"            "Megmaradt taktikai időkérések a {1} csapatnak: {2}"
     }
+	    "PrereleaseVersionWarning"
+    {
+        "hu"            "A Get5 ({1}) változatát futtatod ami kifejezetten fejlesztésre és tesztelésre van. Ez az üzenet kikapcsolható {2}."
+    }
+    "NewVersionAvailable"
+    {
+        "hu"            "Egy új változat elérhető a Get5-ból. Látogasd meg a {1} a frissítéssel kapcsolatban."
+    }
     "TeamFailToReadyMinPlayerCheck"
     {
         "hu"            "A szerveren legalább {1} játékosnak készen kell állnia a kezdéshez."

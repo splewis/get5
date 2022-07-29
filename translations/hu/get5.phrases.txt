@@ -130,7 +130,7 @@
     }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {
-        "hu"            "Az időkérést, nem lehet visszavonni"
+        "hu"            "Az időkérést, nem lehet visszavonni."
     }
     "PauseRunoutInfoMessage"
     {

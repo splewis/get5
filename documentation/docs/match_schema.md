@@ -128,7 +128,7 @@ and must increment between matches. **`Default: ""`**
 
 #### Example
 
-```typescript title="JSON example with Node.SJ"
+```typescript title="JSON example with Node.js"
 const match_schema: Match = {
     "match_title": "Astralis vs. NaVi",
     "matchid": "3123",

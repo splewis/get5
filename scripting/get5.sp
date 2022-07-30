@@ -407,7 +407,7 @@ public void OnPluginStart() {
                                         "Whether to set client clan tags to player ready status.");
   g_SetHostnameCvar = CreateConVar(
       "get5_hostname_format", "Get5: {TEAM1} vs {TEAM2}",
-      "Template that the server hostname will follow when a match is live. Leave field blank to disable. Valid parameters are: {MAPNUMBER}, {MATCHID}, {SERVERID}, {MAPNAME}, {TIME}, {TEAM1}, {TEAM2}");
+      "Template that the server hostname will follow when a match is live. Leave field blank to disable.");
   g_StatsPathFormatCvar =
       CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg",
                    "Where match stats are saved (updated each map end), set to \"\" to disable");
@@ -1685,8 +1685,10 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   ReplaceString(team2Str, sizeof(team2Str), " ", "_");
 
   int mapNumber = g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2] + 1;
-  ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", mapNumber, false);
+  // MATCHTITLE must go first as it can contain other placeholders
   ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle, false);
+  ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", mapNumber, false);
+  ReplaceStringWithInt(buffer, len, "{MAXMAPS}", MaxMapsToPlay(g_MapsToWin));
   ReplaceString(buffer, len, "{MATCHID}", g_MatchID, false);
   ReplaceString(buffer, len, "{MAPNAME}", mapName, false);
   ReplaceStringWithInt(buffer, len, "{SERVERID}", g_ServerIdCvar.IntValue, false);

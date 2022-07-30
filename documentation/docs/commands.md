@@ -55,6 +55,10 @@ the [get5_stop_command_enabled](../configuration/#get5_stop_command_enabled) is 
 
 :   Adds/removes a ringer to/from the home scrim team.
 
+####`!scrim`
+
+:   Shortcut for [`get5_scrim`](#get5_scrim).
+
 ####`!get5`
 
 :   Opens a menu that wraps some common commands. It's mostly intended for people using scrim settings, and has
@@ -67,24 +71,27 @@ Please note that these are meant to be used by *admins* in console.
 
 ####`get5_loadmatch <filename>` {: #get5_loadmatch }
 
-:   Loads a match config file (JSON or KeyValue) relative from the `csgo` directory.
+:   Loads a [match configuration](../match_schema) file (JSON or KeyValue) relative from the `csgo` directory.
 
 ####`get5_loadbackup <filename>` {: #get5_loadbackup }
-:   Loads a match config file (JSON or KeyValue) relative from the `csgo`
+:   Loads a match backup file (JSON or KeyValue) relative from the `csgo`
 directory. Only works if the [backup system is enabled](../configuration/#get5_backup_system_enabled).
 
 ####`get5_last_backup_file`
 :   Prints the name of the last match backup file Get5 wrote in the current series, this is automatically updated each
-time a backup file is written. **`Default: ""`**
+time a backup file is written. Empty string if no backup was written.
 
 ####`get5_loadteam <team1|team2|spec> <filename>` {: #get5_loadteam }
-:   Loads a team section from a file into a team relative from the `csgo`
-directory.
+:   Loads a [team section of a match configuration](../match_schema) from a file into a team relative from the `csgo`
+directory. The file must contain a `Get5MatchTeam` object.
 
 ####`get5_loadmatch_url <url>` {: #get5_loadmatch_url }
-:   Loads a remote (JSON-formatted) match config by sending an HTTP(S) GET to the given URL. This requires the
-[SteamWorks](../installation/#steamworks) extension. When specifying a URL with http:// or
-https:// in front, you have to put it in quotation (`""`) marks.
+:   Loads a remote (JSON-formatted) [match configuration](../match_schema) by sending an HTTP(S) `GET` to the given URL.
+You should put the `url` argument inside quotation marks (`""`).
+
+!!! warning "SteamWorks required"
+
+    Loading remote matches requires the [SteamWorks](../installation/#steamworks) extension.
 
 ####`get5_endmatch`
 :   Force ends the current match. No winner is set (draw).
@@ -92,9 +99,10 @@ https:// in front, you have to put it in quotation (`""`) marks.
 ####`get5_creatematch`
 :   Creates a BO1 match with the current players on the server on the current map.
 
-####`get5_scrim`
-:   Creates a BO1 match with the using settings from `addons/sourcemod/configs/get5/scrim_template.cfg`. You should
-edit this file to contain your team's names in team 1.
+####`get5_scrim [opposing team name] [map name] [matchid]` {: #get5_scrim }
+:   Creates a [scrim](../getting_started/#scrims) on the current map. For example, if you're
+    playing *fnatic* on `de_dust2` you might run `get5_scrim fnatic de_dust2`. The other team name defaults to "away"
+    and the map defaults to the current map. `matchid` defaults to an empty string.
 
 ####`get5_addplayer <auth> <team1|team2|spec> [name]` {: #get5_addplayer }
 :   Adds a Steam ID to a team (can be any format for the Steam ID). The name parameter optionally locks the player's

@@ -61,6 +61,10 @@ disconnect even in warmup with the intention to reconnect!). **`Default: 0`**
 :   Whether the Steam IDs from a "players" section are used to force players onto teams, and will kick
 users if they are not in the auth list. **`Default: 1`**
 
+####`get5_print_update_notice`
+:   Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if
+    [SteamWorks](../installation/#steamworks) has been installed. **`Default: 1`**
+
 ## Match Setup
 
 **These options will generally be represented by changes to the clients.**

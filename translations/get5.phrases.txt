@@ -44,7 +44,7 @@
     }
     "WaitingForGOTVVetoInfoMessage"
     {
-        "en"            "The map will change once the GOTV broadcast has been displayed the map vetos."
+        "en"            "The map will change once the GOTV broadcast has displayed the map vetos."
     }
     "NoMatchSetupInfoMessage"
     {

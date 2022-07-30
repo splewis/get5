@@ -454,7 +454,7 @@ paths:
                   type: integer
                   minimum: 0
                   description: The reason for the round ending. `Reason` in SourceMod.
-                    See https://sm.alliedmods.net/new-api/cstrike/CSRoundEndReason.
+                    See https://sourcemod.dev/#/cstrike/enumeration.CSRoundEndReason.
                 winner:
                   $ref: "#/components/schemas/Get5Winner"
                 team1_score:

@@ -83,7 +83,7 @@ directory.
 
 ####`get5_loadmatch_url <url>` {: #get5_loadmatch_url }
 :   Loads a remote (JSON-formatted) match config by sending an HTTP(S) GET to the given URL. This requires the
-[Steamworks](../installation/#installing-steamworks-optional) extension. When specifying a URL with http:// or
+[SteamWorks](../installation/#steamworks) extension. When specifying a URL with http:// or
 https:// in front, you have to put it in quotation (`""`) marks.
 
 ####`get5_endmatch`

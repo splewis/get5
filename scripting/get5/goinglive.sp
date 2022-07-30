@@ -61,6 +61,18 @@ public Action MatchLive(Handle timer) {
     Get5_MessageToAll("%t", "MatchPoweredBy");
   }
 
+  if (!g_PrintUpdateNoticeCvar.BoolValue) {
+    return Plugin_Handled;
+  }
+
+  if (g_RunningPrereleaseVersion) {
+    char conVarName[64];
+    g_PrintUpdateNoticeCvar.GetName(conVarName, sizeof(conVarName));
+    Get5_MessageToAll("%t", "PrereleaseVersionWarning", PLUGIN_VERSION, conVarName);
+  } else if (g_NewerVersionAvailable) {
+    Get5_MessageToAll("%t", "NewVersionAvailable", GET5_GITHUB_PAGE);
+  }
+
   return Plugin_Handled;
 }
 

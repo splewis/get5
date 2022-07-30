@@ -167,6 +167,8 @@ public void MoveClientToCoach(int client) {
     LogDebug("Moving %L directly to coach slot", client);
     SwitchPlayerTeam(client, CS_TEAM_SPECTATOR);
     UpdateCoachTarget(client, csTeam);
+    // Need to set to avoid third person view bug.
+    SetEntProp(client, Prop_Send, "m_iObserverMode", 4);
   } else {
     LogDebug("Moving %L indirectly to coach slot via coach cmd", client);
     g_MovingClientToCoach[client] = true;

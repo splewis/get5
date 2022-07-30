@@ -8,7 +8,7 @@ You can get the latest versions here:
 
 [:material-download: Download MetaMod](https://www.sourcemm.net/downloads.php?branch=stable){ .md-button .md-button--primary } [:material-download: Download SourceMod](https://www.sourcemod.net/downloads.php?branch=stable){ .md-button .md-button--primary }
 
-!!! tip
+!!! info "OS is important"
 
     Remember to select the correct OS type (Windows/Linux/Mac) for **both** plugins. This should be the OS of the server.
 

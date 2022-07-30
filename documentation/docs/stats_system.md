@@ -3,10 +3,10 @@
 When a get5 match is live, the plugin will automatically record match stats for each player, across each map in the
 match. These are recorded in an internal KeyValues structure, and are available at any time during the match (including
 the postgame waiting period) via the `Get5_GetMatchStats` native and
-the [`get5_dumpstats`](./commands.md#serveradmin-commands) command.
+the [`get5_dumpstats`](../commands/#get5_dumpstats) command.
 
-Note: the stats collection is not going to be reliable if
-using [`get5_check_auths 0`](./configuration.md#server-setup).
+Note: the stats collection is not going to be reliable if [`get5_check_auths`](../configuration/#get5_check_auths) is 
+set to `0`.
 
 ## SourceMod Forwards
 

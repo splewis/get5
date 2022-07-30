@@ -124,9 +124,6 @@ name.
 ####`get5_forceready`
 :   Marks all teams as ready. `get5_forcestart` does the same thing.
 
-####`get5_dumpstats`
-:   Dumps current match stats to a file.
-
 ####`get5_status`
 :   Replies with JSON formatted match state (available to all clients).
 
@@ -228,6 +225,9 @@ to [`!ringer`](../commands/#ringer)
 
 ####`get5_debuginfo [file]` {: #get5_debuginfo }
 :   Dumps debug info to a file (`addons/sourcemod/logs/get5_debuginfo.txt` if no file parameter is provided).
+
+####`get5_dumpstats [file]` {: #get5_dumpstats }
+:   Dumps [player stats](../stats_system) to a file (`addons/sourcemod/get5_matchstats.cfg` if no file parameter is provided).
 
 ####`get5_test`
 :   Runs get5 tests. **This should not be used on a live match server since it will reload a match config to test**.

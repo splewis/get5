@@ -252,7 +252,7 @@ placeholder strings that will be replaced by meaningful values when printed.
 ### Colour Substitutes {: #color-substitutes }
 
 These variables can be used to color text in the chat. You must return to `{NORMAL}` (white)
-after using a color variable. Note that a color prefix cannot be _followed by a space_.
+after using a color variable.
 
 Example: `This text becomes {DARK_RED}red{NORMAL}, while {YELLOW}all of this will be yellow`.
 

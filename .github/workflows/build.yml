@@ -28,8 +28,16 @@ jobs:
     - name: Get shorthand commit.
       id: vars
       run: |
-        echo "::set-output name=sha_short::$(echo ${{ github.sha }} | cut -c1-6)"
-        echo "::set-output name=get5_version::$(cat get5/scripting/get5/version.sp | grep -Eo '#define PLUGIN_VERSION "[0-9]+\.[0-9]+\.[0-9]+' | sed 's/#define PLUGIN_VERSION "//')"
+        sha_short=$(echo ${{ github.sha }} | cut -c1-7)
+        get5_version=$(cat get5/scripting/get5/version.sp | grep -Eo '#define PLUGIN_VERSION "[0-9]+\.[0-9]+\.[0-9]+' | sed 's/#define PLUGIN_VERSION "//')
+        echo "::set-output name=sha_short::${sha_short}"
+        echo "::set-output name=get5_version::${get5_version}"
+        if [ ${{ github.ref }} == 'refs/heads/master' ]
+        then
+          echo "::set-output name=get5_build_filename::get5-v${get5_version}"
+        else 
+          echo "::set-output name=get5_build_filename::get5-v${get5_version}-${sha_short}"
+        fi
 
     - run: | 
         wget $STEAMWORKS_URL -P steamworks
@@ -45,17 +53,18 @@ jobs:
         spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_apistats.smx -E
         spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx -E
         mkdir -p artifacts
-        cd $OUTPUT_PATH/ && tar -zcvf ../../artifacts/get5.tar.gz . && cd ../../
-        cd $OUTPUT_PATH/ && zip -r ../../artifacts/get5.zip . && cd ../../
+        cd $OUTPUT_PATH/ && tar -zcvf ../../artifacts/${{ steps.vars.outputs.get5_build_filename }}.tar.gz . && cd ../../
+        cd $OUTPUT_PATH/ && zip -r ../../artifacts/${{ steps.vars.outputs.get5_build_filename }}.zip . && cd ../../
 
     - name: Store Artifacts For Tagging Release Or Nightly
       uses: actions/upload-artifact@v3
       with:
-        name: compiled-files
+        name: ${{ steps.vars.outputs.get5_build_filename }}
         path: artifacts
     outputs:
       get5-version: ${{ steps.vars.outputs.get5_version }}
       sha-short: ${{ steps.vars.outputs.sha_short }}
+      filename: ${{ steps.vars.outputs.get5_build_filename }}
 
   deploy-nightly:
     needs: [build]
@@ -66,7 +75,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/download-artifact@v3
       with:
-        name: compiled-files
+        name: ${{ needs.build.outputs.filename }}
         path: artifacts
 
     - name: Generate changelog
@@ -79,7 +88,7 @@ jobs:
       uses: ncipollo/release-action@v1.8.3
       with:
         token: "${{ secrets.GITHUB_TOKEN }}"
-        artifacts: "artifacts/get5.zip,artifacts/get5.tar.gz"
+        artifacts: "artifacts/${{ needs.build.outputs.filename }}.zip,artifacts/${{ needs.build.outputs.filename }}.tar.gz"
         prerelease: true
         commit: "${{ github.sha }}"
         tag: "v${{ needs.build.outputs.get5-version }}-${{ needs.build.outputs.sha-short }}"
@@ -108,14 +117,14 @@ jobs:
 
     - uses: actions/download-artifact@v3
       with:
-        name: compiled-files
+        name: ${{ needs.build.outputs.filename }}
         path: artifacts
     
     - name: Tag And Draft Release
       uses: ncipollo/release-action@v1.8.3
       with:
         token: "${{ secrets.GITHUB_TOKEN }}"
-        artifacts: "artifacts/get5.zip,artifacts/get5.tar.gz"
+        artifacts: "artifacts/${{ needs.build.outputs.filename }}.zip,artifacts/${{ needs.build.outputs.filename }}.tar.gz"
         draft: true
         commit: "${{ github.sha }}"
         tag: "v${{ needs.build.outputs.get5-version }}"

@@ -1,4 +1,4 @@
-name: Test Builds On Merge Creation
+name: Build Get5
 
 on:
   pull_request:
@@ -29,8 +29,11 @@ jobs:
     - name: Get shorthand commit.
       id: vars
       run: |
-        echo "::set-output name=sha_short::$(echo ${{ github.sha }} | cut -c1-6)"
-        echo "::set-output name=get5_version::$(cat get5/scripting/get5/version.sp | grep -Eo '#define PLUGIN_VERSION "[0-9]+\.[0-9]+\.[0-9]+' | sed 's/#define PLUGIN_VERSION "//')"
+        sha_short=$(echo ${{ github.event.pull_request.head.sha }} | cut -c1-7)
+        get5_version=$(cat get5/scripting/get5/version.sp | grep -Eo '#define PLUGIN_VERSION "[0-9]+\.[0-9]+\.[0-9]+' | sed 's/#define PLUGIN_VERSION "//')
+        echo "::set-output name=sha_short::${sha_short}"
+        echo "::set-output name=get5_version::${get5_version}"
+        echo "::set-output name=get5_build_filename::get5-v${get5_version}-${sha_short}"
 
     - run: | 
         wget $STEAMWORKS_URL -P steamworks
@@ -45,3 +48,12 @@ jobs:
         spcomp get5/scripting/get5.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/get5.smx -E
         spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_apistats.smx -E
         spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx -E
+        mkdir -p artifacts
+        cd $OUTPUT_PATH/ && tar -zcvf ../../artifacts/${{ steps.vars.outputs.get5_build_filename }}.tar.gz . && cd ../../
+        cd $OUTPUT_PATH/ && zip -r ../../artifacts/${{ steps.vars.outputs.get5_build_filename }}.zip . && cd ../../
+
+    - name: Upload PR build output
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ steps.vars.outputs.get5_build_filename }}
+        path: artifacts

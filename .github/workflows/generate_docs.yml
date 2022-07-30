@@ -4,6 +4,7 @@ on:
     branches:
       - "master"
       - "development"
+      - "adjust_docs"
 jobs:
   build:
     name: Deploy docs

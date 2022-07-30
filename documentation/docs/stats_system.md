@@ -55,7 +55,7 @@ Partial Example:
 }
 ```
 
-## What Stats Are Collected
+## What Stats Are Collected?
 
 See the [get5 include](https://github.com/splewis/get5/blob/master/scripting/include/get5.inc#L1769) for what stats will
 be recorded and what their key in the KeyValue structure is.
@@ -63,13 +63,53 @@ be recorded and what their key in the KeyValue structure is.
 ## MySQL Statistics {: #mysql }
 
 Get5 ships with a (disabled by default) plugin called `get5_mysqlstats` that will save many of the stats to a MySQL
-database. To use this:
+database. 
 
-- Create the tables using this [schema](https://github.com/splewis/get5/blob/master/misc/import_stats.sql), raw text
-  link can be found [here](https://raw.githubusercontent.com/splewis/get5/master/misc/import_stats.sql).
-- Configure a `"get5"` database section in `addons/sourcemod/configs/databases.cfg`.
-- Make sure the `get5_mysqlstats` plugin is enabled (moved up a directory from `addons/sourcemod/plugins/disabled`
-  directory).
+!!! tip "Advanced users only"
+
+    You should have a basic understanding of MySQL if you wish to use this plugin. It is assumed you know what the
+    commands below do.
+
+1. Make sure the `get5_mysqlstats.smx` plugin is enabled (moved up a directory from `addons/sourcemod/plugins/disabled`
+   directory).
+2. Have a MySQL server reachable from the game server's network. These commands are for MySQL 8 but should also work on
+MySQL 5.7.
+
+3. Create a schema/database for your tables:
+```mysql
+CREATE SCHEMA `get5` DEFAULT CHARACTER SET `utf8mb4` COLLATE `utf8mb4_0900_ai_ci`;
+USE `get5`;
+```
+    :warning: The `utf8mb4` part ensures that your database can handle all kinds of emojis and unicode characters. This is
+    the default in MySQL 8 but must be explicitly defined for MySQL 5.7.
+4. Configure a database user and grant it access to the database:
+```mysql
+CREATE USER 'get5_db_user'@'%' IDENTIFIED WITH mysql_native_password BY 'super_secret_password';
+GRANT ALL ON `get5`.* TO 'get5_db_user'@'%';
+```
+    :warning: You **can** use the `root` database user instead if you wish. `@'%'` means that the user can log in from any
+    network location, and you can replace with this `@'localhost'` if your database is running on the same host as the
+    game server.
+
+5. Create the required tables using [these commands](https://github.com/splewis/get5/blob/master/misc/import_stats.sql).
+Raw text link can be found [here](https://raw.githubusercontent.com/splewis/get5/master/misc/import_stats.sql).
+
+6. Configure a `"get5"` database section in SourceMod and provide the parameters you used to configure your database:
+!!! example ":material-file-cog: `addons/sourcemod/configs/databases.cfg`"
+
+    ```
+    "get5"
+    {
+        "driver"			"mysql"
+        "host"				"127.0.0.1"
+        "database"			"get5"
+        "user"				"get5_db_user"
+        "pass"				"super_secret_password"
+        "port"			    "3306"
+    }
+    ```
+
+
 
 **Note**: If you use this module, you can force the match ID used by setting it in your match config
 (the [Match Schema](../match_schema/#optional-values) section). If you don't do this, the match ID will be set to the

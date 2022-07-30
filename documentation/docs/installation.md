@@ -8,7 +8,7 @@ You can get the latest versions here:
 
 [:material-download: Download MetaMod](https://www.sourcemm.net/downloads.php?branch=stable){ .md-button .md-button--primary } [:material-download: Download SourceMod](https://www.sourcemod.net/downloads.php?branch=stable){ .md-button .md-button--primary }
 
-!!! tip
+!!! info "OS is important"
 
     Remember to select the correct OS type (Windows/Linux/Mac) for **both** plugins. This should be the OS of the server.
 
@@ -160,7 +160,7 @@ is just to indicate what the correct structure looks like.
     1. SourceMod error logs can be found in here. This directory is empty by default.
     2. This is the core Get5 plugin.
     3. This is the MySQL extension for collecting stats. If you want to use this extension, please see
-       the [guide](../stats_system/#mysql-statistics).
+       the [guide](../stats_system/#mysql).
     4. This is proof-of-concept integration called [get5 web panel](https://github.com/splewis/get5-web) that can be used to
        manage matches. **This is not supported and is probably very buggy. You should not use it.**
     5. This folder contains all the language files and translations for all the plugins.

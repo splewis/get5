@@ -9,7 +9,7 @@ the [Discord](../community/#discord) and let us know.
 ## How to translate?
 
 Inside the `translations` folder you will find the base `get5.phrases.txt` file which is the English one and the
-fallback in case a translation string cannot be found in a client's language. This is the "single source of truth" and
+fallback in case a translation string cannot be found in a client's language. This is the _single source of truth_ and
 should be used when translating. Each language has a folder (for instance `fr` for french) within which there is
 another `get5.phrases.txt` file, but in French.
 
@@ -22,7 +22,7 @@ entire language file**.
 "TeamPickedMapInfoMessage"
 {
   "#format"  "{1:s},{2:s},{3:d}" # (1)
-  "en"       "{1} picked {GREEN}{2} {NORMAL}as map {3}." # (2)
+  "en"       "{1} picked {GREEN}{2}{NORMAL} as map {3}." # (2)
 }
 ```
 
@@ -32,7 +32,7 @@ what `{1}`, `{2}` and `{3}` are. In this case, the first and second arguments ar
 2. Use the English strings and the [reference](#reference) below to determine how to translate the string.
 
 As the string implies, this example is used when a team picks a map, and the output is printed to chat and looks like
-this: `Team A picked de_dust as map 2.`
+this: `Team A picked de_dust2 as map 2.` - with `de_dust2` being colored green.
 
 ## Types of strings
 
@@ -131,9 +131,9 @@ this: `Team A picked de_dust as map 2.`
 | `CurrentScoreInfoMessage`                   | _Team A_ _12_ - _Team B_ _8_                                                                                                                                             | Chat       |
 | `BackupLoadedInfoMessage`                   | Successfully loaded backup _backup_file_03.cfg_.                                                                                                                         | Chat       |
 | `MatchBeginInSecondsInfoMessage`            | The match will begin in _3_ seconds.                                                                                                                                     | Chat       |
-| `MatchIsLiveInfoMessage`                    | Match is LIVE                                                                                                                                                            | Chat       |
+| `MatchIsLiveInfoMessage`                    | Match is LIVE<br>Match is LIVE<br>Match is LIVE<br>Match is LIVE<br>Match is LIVE                                                                                        | Chat       |
 | `KnifeIn5SecInfoMessage`                    | The knife round will begin in 5 seconds.                                                                                                                                 | Chat       |
-| `KnifeInfoMessage`                          | Knife!                                                                                                                                                                   | Chat       |
+| `KnifeInfoMessage`                          | Knife!<br>Knife!<br>Knife!<br>Knife!<br>Knife!                                                                                                                           | Chat       |
 | `TeamDecidedToStayInfoMessage`              | _Team A_ has decided to stay.                                                                                                                                            | Chat       |
 | `TeamDecidedToSwapInfoMessage`              | _Team A_ has decided to swap.                                                                                                                                            | Chat       |
 | `TeamLostTimeToDecideInfoMessage`           | _Team A_ will stay since they did not make a decision in time.                                                                                                           | Chat       |

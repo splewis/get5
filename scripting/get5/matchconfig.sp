@@ -1014,14 +1014,15 @@ public Action Command_CreateMatch(int client, int args) {
   GetCleanMapName(matchMap, sizeof(matchMap));
 
   if (args >= 1) {
-    GetCmdArg(1, matchid, sizeof(matchid));
-  }
-  if (args >= 2) {
-    GetCmdArg(2, matchMap, sizeof(matchMap));
+    GetCmdArg(1, matchMap, sizeof(matchMap));
     if (!IsMapValid(matchMap)) {
       ReplyToCommand(client, "Invalid map: %s", matchMap);
       return Plugin_Handled;
     }
+  }
+
+  if (args >= 2) {
+    GetCmdArg(2, matchid, sizeof(matchid));
   }
 
   char path[PLATFORM_MAX_PATH];

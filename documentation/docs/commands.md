@@ -96,13 +96,14 @@ You should put the `url` argument inside quotation marks (`""`).
 ####`get5_endmatch`
 :   Force ends the current match. No winner is set (draw).
 
-####`get5_creatematch`
-:   Creates a BO1 match with the current players on the server on the current map.
+####`get5_creatematch [map name] [matchid]`
+:   Creates a BO1 match with the current players on the server. `map name` defaults to the current map and `matchid`
+    defaults to `manual`. You should **not** provide a match ID if you use the [MySQL extension](../stats_system/#mysql).
 
 ####`get5_scrim [opposing team name] [map name] [matchid]` {: #get5_scrim }
-:   Creates a [scrim](../getting_started/#scrims) on the current map. For example, if you're
-    playing *fnatic* on `de_dust2` you might run `get5_scrim fnatic de_dust2`. The other team name defaults to "away"
-    and the map defaults to the current map. `matchid` defaults to an empty string.
+:   Creates a [scrim](../getting_started/#scrims) on the current map. The opposing team name defaults to `Away`
+    and the map defaults to the current map. `matchid` defaults to `scrim`. You should **not** provide a match ID if
+    you use the [MySQL extension](../stats_system/#mysql).
 
 ####`get5_addplayer <auth> <team1|team2|spec> [name]` {: #get5_addplayer }
 :   Adds a Steam ID to a team (can be any format for the Steam ID). The name parameter optionally locks the player's
@@ -123,9 +124,6 @@ name.
 
 ####`get5_forceready`
 :   Marks all teams as ready. `get5_forcestart` does the same thing.
-
-####`get5_dumpstats`
-:   Dumps current match stats to a file.
 
 ####`get5_status`
 :   Replies with JSON formatted match state (available to all clients).
@@ -228,6 +226,9 @@ to [`!ringer`](../commands/#ringer)
 
 ####`get5_debuginfo [file]` {: #get5_debuginfo }
 :   Dumps debug info to a file (`addons/sourcemod/logs/get5_debuginfo.txt` if no file parameter is provided).
+
+####`get5_dumpstats [file]` {: #get5_dumpstats }
+:   Dumps [player stats](../stats_system) to a file (`addons/sourcemod/get5_matchstats.cfg` if no file parameter is provided).
 
 ####`get5_test`
 :   Runs get5 tests. **This should not be used on a live match server since it will reload a match config to test**.

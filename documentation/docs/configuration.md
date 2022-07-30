@@ -59,8 +59,8 @@ disconnect even in warmup with the intention to reconnect!). **`Default: 0`**
 :   Whether to wait for map vetoes to be printed to GOTV before changing map. **`Default: 0`**
 
 ####`get5_check_auths`
-:   Whether the Steam IDs from a "players" section are used to force players onto teams, and will kick
-users if they are not in the auth list. **`Default: 1`**
+:   Whether the Steam IDs from a `players` of a [match configuration](../match_schema/#schema) section are used to
+force players onto teams, kicking everyone else. **`Default: 1`**
 
 ####`get5_print_update_notice`
 :   Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if
@@ -154,9 +154,8 @@ if [get5_fixed_pause_time](#get5_fixed_pause_time) is set to a non-zero
 value. **`Default: 300 (5 minutes)`**
 
 ####`get5_fixed_pause_time`
-:   If non-zero, the fixed length in seconds all [`tactical`](../pausing/#tactical) pauses will be. Adjusting this to
-non-zero will use the in-game timeout counter, and the [get5_max_pause_time](#get5_max_pause_time)
-parameter is ignored. **`Default: 0`**
+:   If non-zero, the fixed length in seconds of all [`tactical`](../pausing/#tactical) pauses. This takes precedence
+over the [get5_max_pause_time](#get5_max_pause_time) parameter, which will be ignored. **`Default: 0`**
 
 ####`get5_allow_technical_pause`
 :   Whether [technical pauses](../pausing/#technical) are available to clients or not. **`Default: 1`**
@@ -253,7 +252,7 @@ placeholder strings that will be replaced by meaningful values when printed.
 ### Colour Substitutes {: #color-substitutes }
 
 These variables can be used to color text in the chat. You must return to `{NORMAL}` (white)
-after using a color variable. Note that a color prefix cannot be _followed by a space_.
+after using a color variable.
 
 Example: `This text becomes {DARK_RED}red{NORMAL}, while {YELLOW}all of this will be yellow`.
 

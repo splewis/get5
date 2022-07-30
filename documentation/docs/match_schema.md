@@ -13,7 +13,7 @@ required to start a match. Reasonable defaults are used for the other values (Bo
 5v5, empty strings for team names, etc.). We recommend using the JSON format whenever possible, as JSON has way
 better support in various programming languages than Valve's KeyValue format (which essentially has none).
 
-## The schema
+## The schema {: #schema }
 
 ```typescript title="TypeScript interface definition of a match configuration"
 type Get5PlayerSteamID = string; // (8)

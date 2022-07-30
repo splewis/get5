@@ -346,7 +346,7 @@
     }
     "MatchPoweredBy"
     {
-        "hu"            "{YELLOW}Get5 {NORMAL} által megvalósítva"
+        "hu"            "{YELLOW}Get5 {NORMAL}által megvalósítva"
     }
     "MapVetoPickMenuText"
     {

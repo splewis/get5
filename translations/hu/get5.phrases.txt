@@ -26,7 +26,7 @@
     }
     "YouAreReadyAuto"
     {
-        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által. Írd be, hogy {GREEN}!unready{NORMAL} ha nem állsz még készen."
+        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által. Írd be, hogy !unready ha nem állsz még készen."
     }
     "YouAreNotReady"
     {

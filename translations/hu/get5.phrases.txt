@@ -164,7 +164,7 @@
     {
         "hu"            "Megmaradt taktikai időkérések a {1} csapatnak: {2}"
     }
-	    "PrereleaseVersionWarning"
+	"PrereleaseVersionWarning"
     {
         "hu"            "A Get5 ({1}) változatát futtatod, ami kifejezetten fejlesztésre és tesztelésre van. Ez az üzenet kikapcsolható a {2} parancs segítségével."
     }

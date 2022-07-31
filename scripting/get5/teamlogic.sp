@@ -94,9 +94,15 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
       } else {
         // Only attempt to move to coach if we are not full on coaches already.
         if (GetTeamCoaches(correctTeam).Length <= g_CoachesPerTeam) {
+          char auth[AUTH_LENGTH];
           LogDebug("Forcing player %N to coach", client);
+          GetAuth(client, auth, sizeof(auth));
+          // Only output MoveToCoachInfoMessage if we are not
+          // in the coach array already.
+          if (!IsAuthOnTeamCoach(auth, correctTeam)) {
+            Get5_Message(client, "%t", "MoveToCoachInfoMessage");
+          }
           MoveClientToCoach(client);
-          Get5_Message(client, "%t", "MoveToCoachInfoMessage");
         } else {
           KickClient(client, "%t", "TeamIsFullInfoMessage");
         }

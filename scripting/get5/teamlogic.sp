@@ -162,18 +162,19 @@ public void MoveClientToCoach(int client) {
   // If we're in warmup we use the in-game
   // coaching command. Otherwise we manually move them to spec
   // and set the coaching target.
-  // If in freeze time, we have to manually move as well.
-  if (!InWarmup() && InFreezeTime()) {
+  // If in freeze time, or any other state like a live round,
+  // we have to manually move as well.
+  if (InWarmup()) {
+    LogDebug("Moving %L indirectly to coach slot via coach cmd", client);
+    g_MovingClientToCoach[client] = true;
+    FakeClientCommand(client, "coach %s", teamString);
+    g_MovingClientToCoach[client] = false;
+  } else {
     LogDebug("Moving %L directly to coach slot", client);
     SwitchPlayerTeam(client, CS_TEAM_SPECTATOR);
     UpdateCoachTarget(client, csTeam);
     // Need to set to avoid third person view bug.
     SetEntProp(client, Prop_Send, "m_iObserverMode", 4);
-  } else {
-    LogDebug("Moving %L indirectly to coach slot via coach cmd", client);
-    g_MovingClientToCoach[client] = true;
-    FakeClientCommand(client, "coach %s", teamString);
-    g_MovingClientToCoach[client] = false;
   }
 }
 

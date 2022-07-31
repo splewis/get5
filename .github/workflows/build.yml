@@ -92,6 +92,7 @@ jobs:
           token: "${{ secrets.GITHUB_TOKEN }}"
           artifacts: "artifacts/${{ needs.build.outputs.filename }}.zip,artifacts/${{ needs.build.outputs.filename }}.tar.gz"
           prerelease: true
+          draft: true
           commit: "${{ github.sha }}"
           tag: "v${{ needs.build.outputs.get5-version }}-${{ needs.build.outputs.sha-short }}"
           name: "Nightly ${{ needs.build.outputs.get5-version }}-${{ needs.build.outputs.sha-short }}"

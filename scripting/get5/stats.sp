@@ -1053,7 +1053,7 @@ public void InitPlayerStats(int client) {
 
 public int AddToPlayerStat(int client, const char[] field, int delta) {
   if (!g_StatsSystemEnabledCvar.BoolValue) {
-    return;
+    return 0;
   }
   if (IsFakeClient(client)) {
     return 0;
@@ -1063,8 +1063,8 @@ public int AddToPlayerStat(int client, const char[] field, int delta) {
   return SetPlayerStat(client, field, value + delta);
 }
 
-static void IncrementPlayerStat(int client, const char[] field) {
-  AddToPlayerStat(client, field, 1);
+static int IncrementPlayerStat(int client, const char[] field) {
+  return AddToPlayerStat(client, field, 1);
 }
 
 static void GoToMap() {

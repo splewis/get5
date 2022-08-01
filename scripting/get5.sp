@@ -1036,7 +1036,7 @@ public Action Command_LoadMatchUrl(int client, int args) {
 public Action Command_DumpStats(int client, int args) {
   if (!g_StatsSystemEnabledCvar.BoolValue) {
     LogError("You cannot dump players stats when get5_stats_enabled is 0.");
-    return;
+    return Plugin_Handled;
   }
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "Cannot dump match stats with no match existing");

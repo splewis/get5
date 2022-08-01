@@ -16,7 +16,7 @@ static char _colorCodes[][] = {"\x01", "\x02", "\x03", "\x04", "\x05", "\x06",
 
 // Convenience macros.
 #define LOOP_TEAMS(%1) for (Get5Team %1 = Get5Team_1; %1 < Get5Team_Count; %1 ++)
-#define LOOP_CLIENTS(%1) for (int %1 = 0; %1 <= MaxClients; %1 ++)
+#define LOOP_CLIENTS(%1) for (int %1 = 1; %1 <= MaxClients; %1 ++)
 
 // These match CS:GO's m_gamePhase values.
 enum GamePhase {
@@ -31,7 +31,7 @@ enum GamePhase {
  */
 stock int GetNumHumansOnTeam(int team) {
   int count = 0;
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsPlayer(i) && GetClientTeam(i) == team) {
       count++;
     }
@@ -41,7 +41,7 @@ stock int GetNumHumansOnTeam(int team) {
 
 stock int CountAlivePlayersOnTeam(int csTeam) {
   int count = 0;
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == csTeam) {
       count++;
     }
@@ -51,7 +51,7 @@ stock int CountAlivePlayersOnTeam(int csTeam) {
 
 stock int SumHealthOfTeam(int team) {
   int sum = 0;
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == team) {
       sum += GetClientHealth(i);
     }
@@ -560,7 +560,7 @@ stock bool GetAuth(int client, char[] auth, int size) {
 // TODO: might want a auth->client adt-trie to speed this up, maintained during
 // client auth and disconnect forwards.
 stock int AuthToClient(const char[] auth) {
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsAuthedPlayer(i)) {
       char clientAuth[AUTH_LENGTH];
       if (GetAuth(i, clientAuth, sizeof(clientAuth)) && StrEqual(auth, clientAuth)) {

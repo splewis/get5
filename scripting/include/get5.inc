@@ -1798,6 +1798,8 @@ forward void Get5_OnBackupRestore(const Get5BackupRestoredEvent event);
 #define STAT_TEAMSCORE "score"
 
 // Player stats (under map section, then team section, then player's steam64)
+// If adding stuff here, also add to the InitPlayerStats function!
+#define STAT_INIT "init" // used to zero-fill stats only. Not a real stat.
 #define STAT_NAME "name"
 #define STAT_KILLS "kills"
 #define STAT_DEATHS "deaths"

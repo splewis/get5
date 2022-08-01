@@ -1020,7 +1020,6 @@ public Action Command_CreateMatch(int client, int args) {
       return Plugin_Handled;
     }
   }
-
   if (args >= 2) {
     GetCmdArg(2, matchid, sizeof(matchid));
   }

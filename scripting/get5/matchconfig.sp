@@ -1230,10 +1230,20 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
     return;
 
   char logoPath[PLATFORM_MAX_PATH + 1];
-  Format(logoPath, sizeof(logoPath), "resource/flash/econ/tournaments/teams/%s.png", logoName);
-
-  LogDebug("Adding file %s to download table", logoName);
-  AddFileToDownloadsTable(logoPath);
+  Format(logoPath, sizeof(logoPath), "materials/panorama/images/tournaments/teams/%s.svg", logoName);
+  if (FileExists(logoPath)) {
+    LogDebug("Adding file %s to download table", logoName);
+    AddFileToDownloadsTable(logoPath);
+  } else {
+    Format(logoPath, sizeof(logoPath), "resource/flash/econ/tournaments/teams/%s.png", logoName);
+    if (FileExists(logoPath)) {
+      LogDebug("Adding file %s to download table", logoName);
+      AddFileToDownloadsTable(logoPath);
+    } else {
+      LogError("Error in locating file %s. Please ensure the file exists on your game server.", logoPath);
+    }
+  }
+  
 }
 
 public void CheckTeamNameStatus(Get5Team team) {

@@ -1,5 +1,3 @@
-const float kTimeGivenToTrade = 1.5;
-
 public void Stats_PluginStart() {
   HookEvent("bomb_defused", Stats_BombDefusedEvent);
   HookEvent("bomb_exploded", Stats_BombExplodedEvent);
@@ -147,7 +145,7 @@ public Get5Player GetPlayerObject(int client) {
     GetAuth(client, auth, sizeof(auth));
     return new Get5Player(userId, auth, side, name, false);
   } else {
-    char botId[8];
+    char botId[10];
     Format(botId, sizeof(botId), "BOT-%d", userId);
     return new Get5Player(userId, botId, side, name, true);
   }
@@ -166,6 +164,9 @@ public void Stats_Reset() {
 }
 
 public void Stats_InitSeries() {
+  if (!g_StatsSystemEnabledCvar.BoolValue) {
+    return;
+  }
   Stats_Reset();
   char seriesType[32];
   Format(seriesType, sizeof(seriesType), "bo%d", MaxMapsToPlay(g_MapsToWin));
@@ -252,7 +253,10 @@ public void Stats_ResetGrenadeContainers() {
 }
 
 public void Stats_RoundStart() {
-  for (int i = 1; i <= MaxClients; i++) {
+  if (!g_StatsSystemEnabledCvar.BoolValue) {
+    return;
+  }
+  LOOP_CLIENTS(i) {
     if (IsPlayer(i)) {
       Get5Team team = GetClientMatchTeam(i);
       if (team == Get5Team_1 || team == Get5Team_2) {
@@ -269,6 +273,9 @@ public void Stats_RoundStart() {
 }
 
 public void Stats_RoundEnd(int csTeamWinner) {
+  if (!g_StatsSystemEnabledCvar.BoolValue) {
+    return;
+  }
   // Update team scores.
   GoToMap();
   char mapName[PLATFORM_MAX_PATH];
@@ -332,17 +339,12 @@ public void Stats_RoundEnd(int csTeamWinner) {
       }
     }
   }
-
-  if (g_DamagePrintCvar.BoolValue) {
-    for (int i = 1; i <= MaxClients; i++) {
-      if (IsValidClient(i)) {
-        PrintDamageInfo(i);
-      }
-    }
-  }
 }
 
 public void Stats_UpdateMapScore(Get5Team winner) {
+  if (!g_StatsSystemEnabledCvar.BoolValue) {
+    return;
+  }
   GoToMap();
 
   char winnerString[16];
@@ -357,6 +359,9 @@ public void Stats_UpdateMapScore(Get5Team winner) {
 }
 
 public void Stats_Forfeit(Get5Team team) {
+  if (!g_StatsSystemEnabledCvar.BoolValue) {
+    return;
+  }
   g_StatsKv.SetNum(STAT_SERIES_FORFEIT, 1);
   if (team == Get5Team_1) {
     Stats_SeriesEnd(Get5Team_2);
@@ -368,6 +373,9 @@ public void Stats_Forfeit(Get5Team team) {
 }
 
 public void Stats_SeriesEnd(Get5Team winner) {
+  if (!g_StatsSystemEnabledCvar.BoolValue) {
+    return;
+  }
   char winnerString[16];
   GetTeamString(winner, winnerString, sizeof(winnerString));
   g_StatsKv.SetString(STAT_SERIESWINNER, winnerString);
@@ -804,12 +812,15 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 }
 
 static void UpdateTradeStat(int attacker, int victim) {
+  if (!g_StatsSystemEnabledCvar.BoolValue || !IsValidClient(attacker)) {
+    return;
+  }
+  int attackerTeam = GetClientTeam(attacker);
   // Look to see if victim killed any of attacker's teammates recently.
-  for (int i = 1; i <= MaxClients; i++) {
-    if (IsPlayer(i) && g_PlayerKilledBy[i] == victim &&
-        GetClientTeam(i) == GetClientTeam(attacker)) {
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i) && g_PlayerKilledBy[i] == victim && GetClientTeam(i) == attackerTeam) {
       float dt = GetGameTime() - g_PlayerKilledByTime[i];
-      if (dt < kTimeGivenToTrade) {
+      if (dt < 1.5) { // "Time to trade" window fixed to 1.5 seconds.
         IncrementPlayerStat(attacker, STAT_TRADEKILL);
         // teammate (i) was traded
         g_PlayerRoundKillOrAssistOrTradedDeath[i] = true;
@@ -1041,16 +1052,19 @@ public void InitPlayerStats(int client) {
 }
 
 public int AddToPlayerStat(int client, const char[] field, int delta) {
+  if (!g_StatsSystemEnabledCvar.BoolValue) {
+    return;
+  }
   if (IsFakeClient(client)) {
     return 0;
   }
+  LogDebug("Updating player stat %s for %L", field, client);
   int value = GetPlayerStat(client, field);
   return SetPlayerStat(client, field, value + delta);
 }
 
-static int IncrementPlayerStat(int client, const char[] field) {
-  LogDebug("Incrementing player stat %s for %L", field, client);
-  return AddToPlayerStat(client, field, 1);
+static void IncrementPlayerStat(int client, const char[] field) {
+  AddToPlayerStat(client, field, 1);
 }
 
 static void GoToMap() {
@@ -1111,7 +1125,7 @@ public int GetMapStatsNumber() {
 static int GetClutchingClient(int csTeam) {
   int client = -1;
   int count = 0;
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == csTeam) {
       client = i;
       count++;
@@ -1194,19 +1208,22 @@ JSON_Object EncodeKeyValue(KeyValues kv) {
   return json_kv;
 }
 
-static void PrintDamageInfo(int client) {
-  if (!IsPlayer(client))
+public void PrintDamageInfo(int client) {
+  if (!IsPlayer(client)) {
     return;
+  }
 
   int team = GetClientTeam(client);
-  if (team != CS_TEAM_T && team != CS_TEAM_CT)
+  if (team != CS_TEAM_T && team != CS_TEAM_CT) {
     return;
+  }
 
   char message[256];
   int msgSize = sizeof(message);
 
   int otherTeam = (team == CS_TEAM_T) ? CS_TEAM_CT : CS_TEAM_T;
-  for (int i = 1; i <= MaxClients; i++) {
+
+  LOOP_CLIENTS(i) {
     if (IsValidClient(i) && IsClientInGame(i) && GetClientTeam(i) == otherTeam) {
       int health = IsPlayerAlive(i) ? GetClientHealth(i) : 0;
       char name[64];

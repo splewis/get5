@@ -125,7 +125,8 @@ name.
 :   Marks all teams as ready. `get5_forcestart` does the same thing.
 
 ####`get5_dumpstats`
-:   Dumps current match stats to a file.
+:   Dumps current match stats to a file. This does not work if you set
+[`get5_stats_enabled`](../configuration/#get5_stats_enabled) to `0`.
 
 ####`get5_status`
 :   Replies with JSON formatted match state (available to all clients).

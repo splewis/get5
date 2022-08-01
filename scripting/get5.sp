@@ -99,6 +99,7 @@ ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
 ConVar g_WarmupCfgCvar;
 ConVar g_PrintUpdateNoticeCvar;
+ConVar g_StatsSystemEnabledCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -432,6 +433,7 @@ public void OnPluginStart() {
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
   g_PrintUpdateNoticeCvar = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
+  g_StatsSystemEnabledCvar = CreateConVar("get5_stats_enabled", "1", "Whether the implemented player stats system is enabled. This does not affect the damage report or the stats forwards, only the KeyValue-based system.");
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
@@ -1032,6 +1034,10 @@ public Action Command_LoadMatchUrl(int client, int args) {
 }
 
 public Action Command_DumpStats(int client, int args) {
+  if (!g_StatsSystemEnabledCvar.BoolValue) {
+    LogError("You cannot dump players stats when get5_stats_enabled is 0.");
+    return;
+  }
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "Cannot dump match stats with no match existing");
     return Plugin_Handled;
@@ -1398,9 +1404,11 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
 
   // Ensure that all stat values are initialized to zero.
   // We do this on all rounds just to make sure the any ringers or replacements in a match are also set.
-  LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && !IsClientCoaching(i)) {
-      InitPlayerStats(i);
+  if (g_StatsSystemEnabledCvar.BoolValue) {
+    LOOP_CLIENTS(i) {
+      if (IsPlayer(i) && !IsClientCoaching(i)) {
+        InitPlayerStats(i);
+      }
     }
   }
 
@@ -1467,6 +1475,12 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
                       CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)), g_TeamNames[Get5Team_2]);
 
     Stats_RoundEnd(csTeamWinner);
+
+    if (g_DamagePrintCvar.BoolValue) {
+      LOOP_CLIENTS(i) {
+        PrintDamageInfo(i); // Checks valid client etc. on its own.
+      }
+    }
 
     Get5RoundStatsUpdatedEvent statsEvent =
         new Get5RoundStatsUpdatedEvent(g_MatchID, g_MapNumber, g_RoundNumber);

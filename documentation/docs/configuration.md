@@ -75,6 +75,11 @@ users if they are not in the auth list. **`Default: 1`**
 [State substitutes](#state-substitutes) can be used. Leave blank to disable changing the hostname.
 **`Default: Get5: {TEAM1} vs {TEAM2}`**
 
+####`get5_stats_enabled`
+:   Whether the [player stats system](stats_system.md) is enabled. If you don't use the KeyValue based player stats
+files, you can disable this. It does not affect the availability of [forwards and events](events_and_forwards.md) or the
+[chat damage report](#get5_print_damage). **`Default: 1`**
+
 ## Match Setup
 
 **These options will generally be represented by in-game changes to the client.**

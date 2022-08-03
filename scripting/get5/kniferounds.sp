@@ -38,7 +38,7 @@ static void PerformSideSwap(bool swap) {
     g_TeamSide[Get5Team_2] = g_TeamSide[Get5Team_1];
     g_TeamSide[Get5Team_1] = tmp;
 
-    for (int i = 1; i <= MaxClients; i++) {
+    LOOP_CLIENTS(i) {
       if (IsValidClient(i)) {
         int team = GetClientTeam(i);
         if (team == CS_TEAM_T) {

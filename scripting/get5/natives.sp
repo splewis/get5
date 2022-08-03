@@ -65,7 +65,7 @@ public int Native_MessageToTeam(Handle plugin, int numParams) {
   char buffer[1024];
   int bytesWritten = 0;
 
-  for (int i = 0; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (!IsPlayer(i) || GetClientMatchTeam(i) != team) {
       continue;
     }
@@ -90,9 +90,11 @@ public int Native_MessageToAll(Handle plugin, int numParams) {
   char buffer[1024];
   int bytesWritten = 0;
 
+  // Don't use LOOP_CLIENTS(i) because we need client 0 here.
   for (int i = 0; i <= MaxClients; i++) {
-    if (i != 0 && (!IsClientConnected(i) || !IsClientInGame(i)))
+    if (i != 0 && (!IsClientConnected(i) || !IsClientInGame(i))) {
       continue;
+    }
 
     SetGlobalTransTarget(i);
     FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);

@@ -174,10 +174,9 @@ public void Stats_InitSeries() {
 }
 
 public void Stats_ResetRoundValues() {
+  g_FirstKillDone = false;
   g_SetTeamClutching[CS_TEAM_CT] = false;
   g_SetTeamClutching[CS_TEAM_T] = false;
-  g_TeamFirstKillDone[CS_TEAM_CT] = false;
-  g_TeamFirstKillDone[CS_TEAM_T] = false;
   g_TeamFirstDeathDone[CS_TEAM_CT] = false;
   g_TeamFirstDeathDone[CS_TEAM_T] = false;
 
@@ -718,10 +717,9 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
     if (attackerTeam == victimTeam) {
       IncrementPlayerStat(attacker, STAT_TEAMKILLS);
     } else {
-      if (!g_TeamFirstKillDone[attackerTeam]) {
-        g_TeamFirstKillDone[attackerTeam] = true;
-        IncrementPlayerStat(attacker,
-                            (attackerTeam == CS_TEAM_CT) ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
+      if (!g_FirstKillDone) {
+        g_FirstKillDone = true;
+        IncrementPlayerStat(attacker, (attackerTeam == CS_TEAM_CT) ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
       }
 
       g_RoundKills[attacker]++;

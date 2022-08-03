@@ -22,7 +22,7 @@ respectively. A special backup called `get5_backup_match%s_map%d_prelive.cfg` is
 When in a match, you can call [`get5_listbackups`](../commands/#get5_listbackups) to view all backups for the current
 match. Note that all rounds and map numbers start at 0.
 
-They print in the format `filename date team1 team2 map team1_score team2_score`.
+They print in the format `filepath date time team1 team2 map team1_score team2_score`.
 
 ```
 > get5_listbackups
@@ -37,7 +37,7 @@ get5_backup_match1844_map0_round17.cfg 2022-07-26 19:03:39 "Team A" "Team B" de_
 ```
 
 To load at the beginning of round 13 of the first map of match ID 1844, all players should be connected to the server,
-and you can type:
+and you use the [`get5_loadbackup`](../commands/#get5_loadbackup) command:
 
 `get5_loadbackup get5_backup_match1844_map0_round12.cfg`. 
 

@@ -1045,7 +1045,7 @@ static int IncrementPlayerStat(int client, const char[] field) {
 
 static void GoToMap() {
   char mapNumberString[32];
-  Format(mapNumberString, sizeof(mapNumberString), "map%d", GetMapStatsNumber());
+  Format(mapNumberString, sizeof(mapNumberString), "map%d", g_MapNumber);
   g_StatsKv.JumpToKey(mapNumberString, true);
 }
 
@@ -1088,14 +1088,6 @@ static bool GoToPlayer(int client) {
 static void GoBackFromPlayer() {
   GoBackFromTeam();
   g_StatsKv.GoBack();
-}
-
-public int GetMapStatsNumber() {
-  int x = Get5_GetMapNumber();
-  if (g_MapChangePending) {
-    x--;
-  }
-  return x;
 }
 
 static int GetClutchingClient(int csTeam) {

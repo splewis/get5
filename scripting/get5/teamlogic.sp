@@ -301,7 +301,7 @@ public Get5Team GetAuthMatchTeamCoach(const char[] steam64) {
 
 stock int CountPlayersOnCSTeam(int team, int exclude = -1) {
   int count = 0;
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (i != exclude && IsAuthedPlayer(i) && GetClientTeam(i) == team) {
       count++;
     }
@@ -311,7 +311,7 @@ stock int CountPlayersOnCSTeam(int team, int exclude = -1) {
 
 stock int CountPlayersOnMatchTeam(Get5Team team, int exclude = -1) {
   int count = 0;
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (i != exclude && IsAuthedPlayer(i) && GetClientMatchTeam(i) == team) {
       count++;
     }
@@ -333,7 +333,7 @@ public Get5Team GetCaptainTeam(int client) {
 public int GetTeamCaptain(Get5Team team) {
   // If not forcing auths, take the 1st client on the team.
   if (!g_CheckAuthsCvar.BoolValue) {
-    for (int i = 1; i <= MaxClients; i++) {
+    LOOP_CLIENTS(i) {
       if (IsAuthedPlayer(i) && GetClientMatchTeam(i) == team) {
         return i;
       }

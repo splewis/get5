@@ -351,9 +351,10 @@ public void RestoreGet5Backup() {
     SetStartingTeams();
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
-    for (int i = 1; i <= MaxClients; i++) {
-      if (IsPlayer(i))
+    LOOP_CLIENTS(i) {
+      if (IsPlayer(i)) {
         CheckClientTeam(i);
+      }
     }
 
     if (g_GameState == Get5State_Live) {
@@ -373,7 +374,7 @@ public void RestoreGet5Backup() {
 }
 
 public Action Timer_SwapCoaches(Handle timer) {
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsAuthedPlayer(i)) {
       CheckIfClientCoachingAndMoveToCoach(i, Get5Team_1);
       CheckIfClientCoachingAndMoveToCoach(i, Get5Team_2);

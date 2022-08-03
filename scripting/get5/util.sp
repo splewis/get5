@@ -171,7 +171,7 @@ stock void ConvertGameStateToStringInJson(const JSON_Object obj, const char[] ke
  */
 stock int GetRealClientCount() {
   int clients = 0;
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsPlayer(i)) {
       clients++;
     }

@@ -58,7 +58,7 @@ public void GiveRingerMenu(int client) {
   menu.ExitButton = true;
   menu.ExitBackButton = true;
 
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsPlayer(i)) {
       char infoString[64];
       IntToString(GetClientSerial(i), infoString, sizeof(infoString));

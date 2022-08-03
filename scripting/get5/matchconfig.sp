@@ -141,7 +141,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     EventLogger_LogAndDeleteEvent(startEvent);
   }
 
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsAuthedPlayer(i)) {
       if (GetClientMatchTeam(i) == Get5Team_None) {
         RememberAndKickClient(i, "%t", "YouAreNotAPlayerInfoMessage");
@@ -1179,7 +1179,7 @@ static int AddPlayersToAuthKv(KeyValues kv, Get5Team team, char teamName[MAX_CVA
   kv.JumpToKey("players", true);
   bool gotClientName = false;
   char auth[AUTH_LENGTH];
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsAuthedPlayer(i)) {
       int csTeam = GetClientTeam(i);
       Get5Team t = Get5Team_None;
@@ -1250,7 +1250,7 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
 
 public void CheckTeamNameStatus(Get5Team team) {
   if (StrEqual(g_TeamNames[team], "") && team != Get5Team_Spec) {
-    for (int i = 1; i <= MaxClients; i++) {
+    LOOP_CLIENTS(i) {
       if (IsAuthedPlayer(i)) {
         if (GetClientMatchTeam(i) == team) {
           char clientName[MAX_NAME_LENGTH];

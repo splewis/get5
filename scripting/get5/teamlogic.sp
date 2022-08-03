@@ -18,21 +18,10 @@ public Action Timer_PlacePlayerOnJoin(Handle timer, int userId) {
 
 public void CheckClientTeam(int client) {
   Get5Team correctTeam = GetClientMatchTeam(client);
-  char auth[AUTH_LENGTH];
   int csTeam = Get5TeamToCSTeam(correctTeam);
   int currentTeam = GetClientTeam(client);
 
-  if (csTeam != currentTeam) {
-    if (IsClientCoaching(client)) {
-      UpdateCoachTarget(client, csTeam);
-    } else if (GetAuth(client, auth, sizeof(auth))) {
-      char steam64[AUTH_LENGTH];
-      ConvertAuthToSteam64(auth, steam64);
-      if (IsAuthOnTeamCoach(steam64, correctTeam)) {
-        UpdateCoachTarget(client, csTeam);
-      }
-    }
-
+  if (!CheckIfClientCoachingAndMoveToCoach(client, correctTeam) && csTeam != currentTeam) {
     SwitchPlayerTeam(client, csTeam);
   }
 }
@@ -111,8 +100,6 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
       LogDebug("Forcing player %N onto %d", client, csTeam);
       FakeClientCommand(client, "jointeam %d", csTeam);
     }
-
-    return Plugin_Stop;
   }
 
   return Plugin_Stop;
@@ -126,7 +113,6 @@ public bool CheckIfClientCoachingAndMoveToCoach(int client, Get5Team team) {
   char clientAuth64[AUTH_LENGTH];
   GetAuth(client, clientAuth64, AUTH_LENGTH);
   if (IsAuthOnTeamCoach(clientAuth64, team)) {
-    LogDebug("Forcing player %N to coach as they were previously.", client);
     MoveClientToCoach(client);
     return true;
   }
@@ -169,17 +155,17 @@ public void MoveClientToCoach(int client) {
   // coaching command. Otherwise we manually move them to spec
   // and set the coaching target.
   // If in freeze time, we have to manually move as well.
-  if (!InWarmup() && InFreezeTime()) {
+  if (InWarmup()) {
+    LogDebug("Moving %L indirectly to coach slot via coach cmd", client);
+    g_MovingClientToCoach[client] = true;
+    FakeClientCommand(client, "coach %s", teamString);
+    g_MovingClientToCoach[client] = false;
+  } else {
     LogDebug("Moving %L directly to coach slot", client);
     SwitchPlayerTeam(client, CS_TEAM_SPECTATOR);
     UpdateCoachTarget(client, csTeam);
     // Need to set to avoid third person view bug.
     SetEntProp(client, Prop_Send, "m_iObserverMode", 4);
-  } else {
-    LogDebug("Moving %L indirectly to coach slot via coach cmd", client);
-    g_MovingClientToCoach[client] = true;
-    FakeClientCommand(client, "coach %s", teamString);
-    g_MovingClientToCoach[client] = false;
   }
 }
 

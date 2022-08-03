@@ -1,4 +1,4 @@
-# Developer API
+# :material-code-braces: Developer API
 
 Get5 can be interacted with in several ways. At a glance:
 

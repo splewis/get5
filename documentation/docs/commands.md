@@ -74,8 +74,9 @@ Please note that these are meant to be used by *admins* in console.
 :   Loads a [match configuration](../match_schema) file (JSON or KeyValue) relative from the `csgo` directory.
 
 ####`get5_loadbackup <filename>` {: #get5_loadbackup }
-:   Loads a match backup file (JSON or KeyValue) relative from the `csgo`
-directory. Only works if the [backup system is enabled](../configuration/#get5_backup_system_enabled).
+:   Loads a match backup, relative from the `csgo`
+directory. Only works if the [backup system is enabled](../configuration/#get5_backup_system_enabled). If you define
+[`get5_backup_path`](../configuration/#get5_backup_path), you must include the path in the filename.
 
 ####`get5_last_backup_file`
 :   Prints the name of the last match backup file Get5 wrote in the current series, this is automatically updated each
@@ -218,7 +219,8 @@ name.
     ```
 
 ####`get5_listbackups [matchid]` {: #get5_listbackups }
-:   Lists backup files for the current match or a given match ID if provided.
+:   Lists backup files for the current match or a given match ID if provided. If you define
+[`get5_backup_path`](../configuration/#get5_backup_path), it will only list backups found under that prefix.
 
 ####`get5_ringer <player>`
 :   Adds/removes a ringer to/from the home scrim team. `player` is the name of the player. Similar

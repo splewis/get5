@@ -1,4 +1,4 @@
-# Player Stats System
+# :material-chart-bar: Player Stats System
 
 !!! warning
 

@@ -99,6 +99,7 @@ ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
 ConVar g_WarmupCfgCvar;
 ConVar g_PrintUpdateNoticeCvar;
+ConVar g_RoundBackupPathCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -432,6 +433,9 @@ public void OnPluginStart() {
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
   g_PrintUpdateNoticeCvar = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
+  g_RoundBackupPathCvar = CreateConVar(
+      "get5_backup_path", "",
+      "The folder to save backup files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
@@ -1328,6 +1332,15 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
 
   Stats_ResetRoundValues();
 
+  // We need this for events that fire after the map ends, such as grenades detonating (or someone
+  // dying in fire), to be correct. It's sort of an edge-case, but due to how Get5_GetMapNumber
+  // works, it will return +1 if called after a map has been decided, but before the game actually
+  // stops, which could lead to events having the wrong map number, so we set both of these here and not
+  // in round_end
+  g_MapNumber = Get5_GetMapNumber();
+  // Round number always -1 if not live.
+  g_RoundNumber = g_GameState != Get5State_Live ? -1 : GetRoundsPlayed();
+
   if (g_GameState >= Get5State_Warmup && !g_DoingBackupRestoreNow) {
     WriteBackup();
   }
@@ -1349,37 +1362,75 @@ public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
   }
 }
 
+
+static bool CreateDirectoryWithPermissions(const char[] directory) {
+  LogDebug("Creating directory: %s", directory);
+  return CreateDirectory(directory, // sets 777 permissions.
+    FPERM_U_READ | FPERM_U_WRITE | FPERM_U_EXEC |
+    FPERM_G_READ | FPERM_G_WRITE | FPERM_G_EXEC |
+    FPERM_O_READ | FPERM_O_WRITE | FPERM_O_EXEC
+  );
+}
+
+static bool CreateBackupFolderStructure(const char[] path) {
+  if (strlen(path) == 0 || DirExists(path)) {
+    return true;
+  }
+
+  LogDebug("Creating backup directory %s because it does not exist.", path);
+  char folders[16][PLATFORM_MAX_PATH]; // {folder1, folder2, etc}
+  char fullFolderPath[PLATFORM_MAX_PATH] = ""; // initially empty, but we append every time a folder is created/verified
+  char currentFolder[PLATFORM_MAX_PATH]; // shorthand for folders[i]
+
+  ExplodeString(path, "/", folders, sizeof(folders), PLATFORM_MAX_PATH, true);
+  for (int i = 0; i < sizeof(folders); i++) {
+    currentFolder = folders[i];
+    if (strlen(currentFolder) == 0) { // as the loop is a fixed size, we stop when there are no more pieces.
+      break;
+    }
+    // Append the current folder to the full path
+    Format(fullFolderPath, sizeof(fullFolderPath), "%s%s/", fullFolderPath, currentFolder);
+    if (!DirExists(fullFolderPath) && !CreateDirectoryWithPermissions(fullFolderPath)) {
+      LogError("Failed to create or verify existence of directory: %s", fullFolderPath);
+      return false;
+    }
+  }
+  return true;
+}
+
 public void WriteBackup() {
-  if (!g_BackupSystemEnabledCvar.BoolValue) {
+  if (!g_BackupSystemEnabledCvar.BoolValue || g_DoingBackupRestoreNow) {
     return;
+  }
+
+  char folder[PLATFORM_MAX_PATH];
+  g_RoundBackupPathCvar.GetString(folder, sizeof(folder));
+  ReplaceString(folder, sizeof(folder), "{MATCHID}", g_MatchID);
+
+  int backupFolderLength = strlen(folder);
+  if (backupFolderLength > 0 && (folder[0] == '/' || folder[0] == '.' || folder[backupFolderLength-1] != '/' || StrContains(folder, "//") != -1)) {
+    LogError("get5_backup_path must end with a slash and must not start with a slash or dot. It will be reset to an empty string! Current value: %s", folder);
+    folder = "";
+    g_RoundBackupPathCvar.SetString(folder, false, false);
+  } else {
+    CreateBackupFolderStructure(folder);
   }
 
   char path[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
-    Format(path, sizeof(path), "get5_backup_match%s_map%d_round%d.cfg", g_MatchID,
-           GetMapStatsNumber(), GetRoundsPlayed());
+    Format(path, sizeof(path), "%sget5_backup_match%s_map%d_round%d.cfg", folder, g_MatchID,
+           g_MapNumber, g_RoundNumber);
   } else {
-    Format(path, sizeof(path), "get5_backup_match%s_map%d_prelive.cfg", g_MatchID,
-           GetMapStatsNumber());
+  Format(path, sizeof(path), "%sget5_backup_match%s_map%d_prelive.cfg", folder, g_MatchID,
+           g_MapNumber);
   }
-
-  LogDebug("created path %s", path);
-
-  if (!g_DoingBackupRestoreNow) {
-    LogDebug("writing to %s", path);
-    WriteBackStructure(path);
-    g_LastGet5BackupCvar.SetString(path);
-  }
+  LogDebug("Writing backup to %s", path);
+  WriteBackStructure(path);
+  g_LastGet5BackupCvar.SetString(path);
 }
 
 public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundStart");
-
-  // We need this for events that fire after the map ends, such as grenades detonating (or someone
-  // dying in fire), to be correct. It's sort of an edge-case, but due to how Get5_GetMapNumber
-  // works, it will return +1 if called after a map has been decided, but before the game actually
-  // stops, which could lead to events having the wrong map number.
-  g_MapNumber = Get5_GetMapNumber();
 
   // Always reset these on round start, regardless of game state.
   // This ensures that the functions that rely on these don't get messed up.
@@ -1388,13 +1439,8 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
   if (g_GameState != Get5State_Live) {
-    g_RoundNumber = -1;  // Round number always -1 if not yet live.
     return;
   }
-
-  // The same logic for tracking after-round-end events apply to g_RoundNumber, so that's set here
-  // as well.
-  g_RoundNumber = GetRoundsPlayed();
 
   Get5RoundStartedEvent startEvent =
       new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);

@@ -1267,7 +1267,7 @@ public Action Timer_NextMatchMap(Handle timer) {
 
 public void KickClientsOnEnd() {
   if (g_KickClientsWithNoMatchCvar.BoolValue) {
-    for (int i = 1; i <= MaxClients; i++) {
+    LOOP_CLIENTS(i) {
       if (IsPlayer(i) && !(g_KickClientImmunityCvar.BoolValue &&
                            CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
         KickClient(i, "%t", "MatchFinishedInfoMessage");

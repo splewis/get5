@@ -175,10 +175,9 @@ public void Stats_InitSeries() {
 
 public void Stats_ResetRoundValues() {
   g_FirstKillDone = false;
+  g_FirstDeathDone = false;
   g_SetTeamClutching[CS_TEAM_CT] = false;
   g_SetTeamClutching[CS_TEAM_T] = false;
-  g_TeamFirstDeathDone[CS_TEAM_CT] = false;
-  g_TeamFirstDeathDone[CS_TEAM_T] = false;
 
   LOOP_CLIENTS(i) {
     Stats_ResetClientRoundValues(i);
@@ -705,10 +704,9 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   // used for calculating round KAST
   g_PlayerSurvived[victim] = false;
 
-  if (!g_TeamFirstDeathDone[victimTeam]) {
-    g_TeamFirstDeathDone[victimTeam] = true;
-    IncrementPlayerStat(victim,
-                        (victimTeam == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
+  if (!g_FirstDeathDone) {
+    g_FirstDeathDone = true;
+    IncrementPlayerStat(victim, (victimTeam == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
   }
 
   if (isSuicide) {

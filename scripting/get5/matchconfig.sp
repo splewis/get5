@@ -116,6 +116,13 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     ChangeState(Get5State_PreVeto);
   }
 
+
+  // We need to ensure our match team CVARs are set
+  // before calling the event so we can grab values
+  // that are set in the OnSeriesInit event.
+  // Add to download table after setting.
+  SetMatchTeamCvars();
+
   if (!restoreBackup) {
     SetStartingTeams();
     ExecCfg(g_WarmupCfgCvar);
@@ -152,7 +159,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   }
 
   AddTeamLogosToDownloadTable();
-  SetMatchTeamCvars();
   ExecuteMatchConfigCvars();
   LoadPlayerNames();
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);

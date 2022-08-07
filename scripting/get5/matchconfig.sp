@@ -104,18 +104,19 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
       }
     }
 
-    g_MapPoolList.GetString(Get5_GetMapNumber(), mapName, sizeof(mapName));
     ChangeState(Get5State_Warmup);
-
-    char currentMap[PLATFORM_MAX_PATH];
-    GetCurrentMap(currentMap, sizeof(currentMap));
-    if (!StrEqual(mapName, currentMap) && !restoreBackup) {
-      ChangeMap(mapName);
+    if (!restoreBackup) {
+      // When restoring from backup, changelevel is called after loading the match config.
+      g_MapPoolList.GetString(Get5_GetMapNumber(), mapName, sizeof(mapName));
+      char currentMap[PLATFORM_MAX_PATH];
+      GetCurrentMap(currentMap, sizeof(currentMap));
+      if (!StrEqual(mapName, currentMap)) {
+        ChangeMap(mapName);
+      }
     }
   } else {
     ChangeState(Get5State_PreVeto);
   }
-
 
   // We need to ensure our match team CVARs are set
   // before calling the event so we can grab values

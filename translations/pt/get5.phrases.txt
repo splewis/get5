@@ -160,10 +160,6 @@
     {
         "pt"            "{1} é a equipe vencedora da partida."
     }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "pt"            "{1} e {2} empataram a série em 1-1."
-    }
     "TeamWonSeriesInfoMessage"
     {
         "pt"            "{1} é a equipe vencedora da série {2}-{3}."

@@ -277,11 +277,6 @@
         "#format"       "{1:s},{2:s}"
         "en"            "{1} and {2} have tied the match."
     }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "#format"       "{1:s},{2:s}"
-        "en"            "{1} and {2} have split the series 1-1."
-    }
     "TeamWonSeriesInfoMessage"
     {
         "#format"       "{1:s},{2:d},{3:d}"

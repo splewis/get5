@@ -236,10 +236,6 @@
     {
         "da"            "{1} og {2} har spillet uafgjort."
     }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "da"            "{1} og {2} har splittet serien 1-1."
-    }
     "TeamWonSeriesInfoMessage"
     {
         "da"            "{1} har vundet serien {2}-{3}."

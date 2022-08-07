@@ -172,10 +172,6 @@
     {
         "fr"            "{1} et {2} ont fait match nul."
     }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "fr"            "{1} et {2} ont gagné autant de matchs (1-1)."
-    }
     "TeamWonSeriesInfoMessage"
     {
         "fr"            "{1} a remporté la série {2}-{3}."

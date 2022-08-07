@@ -1155,9 +1155,6 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     // trigger it either.
     Stats_ResetGrenadeContainers();
 
-    // Write backup before series score increments
-    WriteBackup();
-
     // Update series scores
     Stats_UpdateMapScore(winningTeam);
     g_TeamSeriesScores[winningTeam]++;
@@ -1187,70 +1184,61 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
     float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
 
-    if (t1maps == g_MapsToWin) {
-      // Team 1 won
-      SeriesEndMessage(Get5Team_1);
-      DelayFunction(minDelay, EndSeries);
+    if (t1maps == t2maps) {
+      // As long as team scores are equal, we play until there are no maps left.
+      if (t1maps + t2maps + tiedMaps == g_MapsToPlay.Length) {
+        SeriesEndMessage(Get5Team_None);
+        DelayFunction(minDelay, EndSeries);
+        return Plugin_Continue;
+      }
+    } else {
+      // This adjusts for ties!
+      int actualMapsToWin = ((g_MapsToPlay.Length - tiedMaps) / 2) + 1;
+      if (t1maps == actualMapsToWin) {
+        // Team 1 won
+        SeriesEndMessage(Get5Team_1);
+        DelayFunction(minDelay, EndSeries);
+        return Plugin_Continue;
+      } else if (t2maps == actualMapsToWin) {
+        // Team 2 won
+        SeriesEndMessage(Get5Team_2);
+        DelayFunction(minDelay, EndSeries);
+        return Plugin_Continue;
+      }
+    }
 
-    } else if (t2maps == g_MapsToWin) {
-      // Team 2 won
-      SeriesEndMessage(Get5Team_2);
-      DelayFunction(minDelay, EndSeries);
+    if (t1maps > t2maps) {
+      Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_1],
+                        t1maps, t2maps);
 
-    } else if (t1maps == t2maps && t1maps + tiedMaps == g_MapsToWin) {
-      // The whole series was a tie
-      SeriesEndMessage(Get5Team_None);
-      DelayFunction(minDelay, EndSeries);
-
-    } else if (g_BO2Match && Get5_GetMapNumber() == 2) {
-      // It was a bo2, and none of the teams got to 2
-      SeriesEndMessage(Get5Team_None);
-      DelayFunction(minDelay, EndSeries);
+    } else if (t2maps > t1maps) {
+      Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_2],
+                        t2maps, t1maps);
 
     } else {
-      if (t1maps > t2maps) {
-        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_1],
-                          t1maps, t2maps);
-
-      } else if (t2maps > t1maps) {
-        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_2],
-                          t2maps, t1maps);
-
-      } else {
-        Get5_MessageToAll("%t", "SeriesTiedInfoMessage", t1maps, t2maps);
-      }
-
-      int index = Get5_GetMapNumber();
-      char nextMap[PLATFORM_MAX_PATH];
-      g_MapsToPlay.GetString(index, nextMap, sizeof(nextMap));
-
-      g_MapChangePending = true;
-      Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap);
-      ChangeState(Get5State_PostGame);
-      CreateTimer(minDelay, Timer_NextMatchMap);
+      Get5_MessageToAll("%t", "SeriesTiedInfoMessage", t1maps, t2maps);
     }
+
+    char nextMap[PLATFORM_MAX_PATH];
+    g_MapsToPlay.GetString(Get5_GetMapNumber(), nextMap, sizeof(nextMap));
+
+    g_MapChangePending = true;
+    Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap);
+    ChangeState(Get5State_PostGame);
+    CreateTimer(minDelay, Timer_NextMatchMap);
   }
 
   return Plugin_Continue;
 }
 
 static void SeriesEndMessage(Get5Team team) {
-  if (g_MapsToWin == 1) {
-    if (team == Get5Team_None) {
-      Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[Get5Team_1],
-                        g_FormattedTeamNames[Get5Team_2]);
-    } else {
-      Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[team]);
-    }
+  if (team == Get5Team_None) {
+    Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[Get5Team_1], g_FormattedTeamNames[Get5Team_2]);
   } else {
-    if (team == Get5Team_None) {
-      // BO2 split.
-      Get5_MessageToAll("%t", "TeamsSplitSeriesBO2InfoMessage", g_FormattedTeamNames[Get5Team_1],
-                        g_FormattedTeamNames[Get5Team_2]);
-
+    if (g_MapsToPlay.Length == 1) {
+      Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[team]);
     } else {
-      Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_FormattedTeamNames[team],
-                        g_TeamSeriesScores[team], g_TeamSeriesScores[OtherMatchTeam(team)]);
+      Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_FormattedTeamNames[team], g_TeamSeriesScores[team], g_TeamSeriesScores[OtherMatchTeam(team)]);
     }
   }
 }

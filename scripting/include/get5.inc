@@ -943,7 +943,7 @@ methodmap Get5SeriesStartedEvent < Get5MatchEvent {
   }
 }
 
-methodmap Get5BackupRestoredEvent < Get5MapEvent {
+methodmap Get5BackupRestoredEvent < Get5RoundEvent {
 
   public bool SetFileName(const char[] file) {
     return this.SetString("filename", file);
@@ -952,11 +952,12 @@ methodmap Get5BackupRestoredEvent < Get5MapEvent {
     return this.GetString("filename", buffer, maxSize);
   }
 
-  public Get5BackupRestoredEvent(const char[] matchId, const int mapNumber, const char[] file) {
+  public Get5BackupRestoredEvent(const char[] matchId, const int mapNumber, const int roundNumber, const char[] file) {
     Get5BackupRestoredEvent self = view_as<Get5BackupRestoredEvent>(new JSON_Object());
     self.SetEvent("backup_loaded");
     self.SetMatchId(matchId);
     self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
     self.SetFileName(file);
     return self;
   }
@@ -1703,7 +1704,8 @@ forward void Get5_OnMatchPaused(const Get5MatchPausedEvent event);
 forward void Get5_OnMatchUnpaused(const Get5MatchUnpausedEvent event);
 
 // Called when a match backup is restored.
-// Note that the match ID and map number is the one being restored *to*, not the current game state and the time the backup is loaded.
+// Note that the match ID, map number and round number is the one being restored *to*, not the current game state at the
+// time the backup is loaded.
 forward void Get5_OnBackupRestore(const Get5BackupRestoredEvent event);
 
 // Series stats (root section)

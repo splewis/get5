@@ -244,10 +244,6 @@
     {
         "hu"            "{1} és a {2} döntetlent játszott."
     }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "hu"            "{1} és a {2} kiegyenlítettek. 1-1-re."
-    }
     "TeamWonSeriesInfoMessage"
     {
         "hu"            "{1} nyerte a szériát. {2}-{3}"

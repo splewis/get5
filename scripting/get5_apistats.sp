@@ -235,7 +235,7 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
   Get5_AddLiveCvar("get5_web_api_url", g_APIURL);
 }
 
-public void UpdateRoundStats(const char[] matchId, int mapNumber) {
+public void UpdateRoundStats(const char[] matchId, const int mapNumber) {
   int t1score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_1));
   int t2score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_2));
 
@@ -252,11 +252,11 @@ public void UpdateRoundStats(const char[] matchId, int mapNumber) {
   Format(mapKey, sizeof(mapKey), "map%d", mapNumber);
   if (kv.JumpToKey(mapKey)) {
     if (kv.JumpToKey("team1")) {
-      UpdatePlayerStats(matchId, kv, Get5Team_1);
+      UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_1);
       kv.GoBack();
     }
     if (kv.JumpToKey("team2")) {
-      UpdatePlayerStats(matchId, kv, Get5Team_2);
+      UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_2);
       kv.GoBack();
     }
     kv.GoBack();
@@ -284,10 +284,9 @@ static void AddIntStat(Handle req, KeyValues kv, const char[] field) {
   AddIntParam(req, field, kv.GetNum(field));
 }
 
-public void UpdatePlayerStats(const char[] matchId, KeyValues kv, Get5Team team) {
+public void UpdatePlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv, const Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
-  int mapNumber = Get5_GetMapNumber();
 
   if (kv.GotoFirstSubKey()) {
     do {
@@ -382,6 +381,6 @@ public void Get5_OnRoundStatsUpdated(const Get5RoundStatsUpdatedEvent event) {
   if (Get5_GetGameState() == Get5State_Live) {
     char matchId[64];
     event.GetMatchId(matchId, sizeof(matchId));
-    UpdateRoundStats(matchId, Get5_GetMapNumber());
+    UpdateRoundStats(matchId, event.MapNumber);
   }
 }

@@ -21,7 +21,7 @@ public Action StartGoingLive(Handle timer) {
   float delay = float(5 + g_LiveCountdownTimeCvar.IntValue);
   CreateTimer(delay, MatchLive);
 
-  Get5GoingLiveEvent liveEvent = new Get5GoingLiveEvent(g_MatchID, Get5_GetMapNumber());
+  Get5GoingLiveEvent liveEvent = new Get5GoingLiveEvent(g_MatchID, g_MapNumber);
 
   LogDebug("Calling Get5_OnGoingLive()");
 

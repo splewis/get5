@@ -172,10 +172,6 @@
     {
         "es"            "{1} y {2} empataron."
     }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "es"            "{1} y {2} han ganado la misma cantidad de partidas (1-1)."
-    }
     "TeamWonSeriesInfoMessage"
     {
         "es"            "{1} ganó la serie {2}-{3}."

@@ -168,10 +168,6 @@
     {
         "chi"            "{1}与{2}打成了平局。"
     }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "chi"            "{1}和{2}在此系列比赛中平局 1-1。"
-    }
     "TeamWonSeriesInfoMessage"
     {
         "chi"            "{1}赢得了此系列比赛 {2}-{3}."

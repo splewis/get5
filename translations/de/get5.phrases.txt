@@ -140,10 +140,6 @@
     {
         "de"            "{1} hat das Match gewonnen."
     }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "de"            "{1} und {2} haben die Serie 1-1 geteilt."
-    }
     "TeamWonSeriesInfoMessage"
     {
         "de"            "{1} hat die Serie gewonnen {2}-{3}."

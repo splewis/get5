@@ -136,10 +136,6 @@
     {
         "ru"            "{1} выиграл матч."
     }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "ru"            "{1} и {2} закончили серию со счетом 1-1."
-    }
     "TeamWonSeriesInfoMessage"
     {
         "ru"            "{1} выиграли серию {2}-{3}."

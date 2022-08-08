@@ -18,7 +18,7 @@ public void Stats_PluginStart() {
 
 public Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, float &damage,
                           int &damagetype) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
   LogDebug("HandlePlayerDamage(victim=%d, attacker=%d, inflictor=%d, damage=%f, damageType=%d)",
@@ -411,7 +411,7 @@ public void EndFlashbangEvent(const char[] flashKey) {
 }
 
 public Action Stats_DecoyStartedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -436,7 +436,7 @@ public Action Stats_DecoyStartedEvent(Event event, const char[] name, bool dontB
 }
 
 public Action Stats_SmokeGrenadeDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -464,7 +464,7 @@ public Action Stats_SmokeGrenadeDetonateEvent(Event event, const char[] name, bo
 }
 
 public Action Stats_MolotovStartBurnEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -492,7 +492,7 @@ public Action Stats_MolotovStartBurnEvent(Event event, const char[] name, bool d
 }
 
 public Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -508,7 +508,7 @@ public Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, boo
 }
 
 public Action Stats_MolotovEndedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -525,7 +525,7 @@ public Action Stats_MolotovEndedEvent(Event event, const char[] name, bool dontB
 }
 
 public Action Stats_MolotovDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -545,7 +545,7 @@ public Action Stats_MolotovDetonateEvent(Event event, const char[] name, bool do
 }
 
 public Action Stats_FlashbangDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -579,7 +579,7 @@ public Action Timer_HandleFlashbang(Handle timer, int entityId) {
 }
 
 public Action Stats_HEGrenadeDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -613,7 +613,7 @@ public Action Timer_HandleHEGrenade(Handle timer, int entityId) {
 }
 
 public Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -644,7 +644,7 @@ public Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dont
 public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBroadcast) {
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
 
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     if (g_AutoReadyActivePlayersCvar.BoolValue && IsAuthedPlayer(attacker)) {
       // HandleReadyCommand checks for game state, so we don't need to do that here as well.
       HandleReadyCommand(attacker, true);
@@ -802,7 +802,7 @@ static void UpdateTradeStat(int attacker, int victim) {
 }
 
 public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -831,7 +831,7 @@ public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBr
 }
 
 public Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -864,7 +864,7 @@ public Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBr
 }
 
 public Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -883,7 +883,7 @@ public Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontB
 }
 
 public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 
@@ -925,7 +925,7 @@ public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBr
 }
 
 public Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return Plugin_Continue;
   }
 

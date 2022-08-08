@@ -1357,7 +1357,7 @@ public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
 
   // We always want this to be correct, regardless of game state.
   g_RoundStartedTime = GetEngineTime();
-  if (g_GameState == Get5State_Live) {
+  if (g_GameState == Get5State_Live && !g_DoingBackupRestoreNow && !g_WaitingForRoundBackup) {
     Stats_RoundStart();
   }
 }
@@ -1456,7 +1456,7 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundEnd");
-  if (g_DoingBackupRestoreNow) {
+  if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return;
   }
 

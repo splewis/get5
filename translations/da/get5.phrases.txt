@@ -10,15 +10,15 @@
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "da"            "Skriv {GREEN}!ready {NORMAL}når du er klar til at genoprette match backup."
+        "da"            "Skriv {GREEN}!ready{NORMAL} når du er klar til at genoprette match backup."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "da"            "Skriv {GREEN}!ready {NORMAL}når du er klar til at knife."
+        "da"            "Skriv {GREEN}!ready{NORMAL} når du er klar til at knife."
     }
     "ReadyToStartInfoMessage"
     {
-        "da"            "Skriv {GREEN}!ready {NORMAL}når du er klar til at spille."
+        "da"            "Skriv {GREEN}!ready{NORMAL} når du er klar til at spille."
     }
     "YouAreReady"
     {
@@ -26,7 +26,7 @@
     }
     "YouAreReadyAuto"
     {
-        "da"            "NOTE: Du er blevet markeret som klar grundet din spilaktivitet. Skriv !unready hvis du ikke er klar."
+        "da"            "NOTE: Du er blevet markeret som klar grundet spilaktivitet. Skriv !unready hvis du ikke er klar."
     }
     "YouAreNotReady"
     {
@@ -218,15 +218,15 @@
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "da"            "{1}{NORMAL} vinder serien {2}-{3}"
+        "da"            "{1}{NORMAL} fører serien {2}-{3}."
     }
     "SeriesTiedInfoMessage"
     {
-        "da"            "Serien er uafgjort {1}-{2}"
+        "da"            "Serien er uafgjort {1}-{2}."
     }
     "NextSeriesMapInfoMessage"
     {
-        "da"            "Det næste map i serien er{GREEN}{1}"
+        "da"            "Det næste map i serien er {GREEN}{1}."
     }
     "TeamWonMatchInfoMessage"
     {
@@ -234,7 +234,7 @@
     }
     "TeamTiedMatchInfoMessage"
     {
-        "da"            "{1} og {2} har spillet kampen uafgjort."
+        "da"            "{1} og {2} har spillet uafgjort."
     }
     "TeamsSplitSeriesBO2InfoMessage"
     {
@@ -302,11 +302,11 @@
     }
     "TeamPickedMapInfoMessage"
     {
-        "da"            "{1} valgte {GREEN}{2} {NORMAL}som deres map {3}"
+        "da"            "{1} valgte {GREEN}{2} {NORMAL}som deres {3}. map."
     }
     "TeamSelectSideInfoMessage"
     {
-        "da"            "{1} har valgt at start som {GREEN}{2} {NORMAL}på {3}"
+        "da"            "{1} har valgt at start som {GREEN}{2} {NORMAL}på {3}."
     }
     "TeamVetoedMapInfoMessage"
     {
@@ -375,5 +375,13 @@
     "VetoCountdown"
     {
         "da"        "Veto begynder om {GREEN}{1} {NORMAL}sekunder."
+    }
+    "NewVersionAvailable"
+    {
+        "da"        "En nyere version af Get5 er tilgængelig. Opdatering kan findes på {1}."
+    }
+    "PrereleaseVersionWarning"
+    {
+        "da"        "Serveren kører en uofficiel version af Get5 ({1}) designet til test og udvikling. Denne besked kan fjernes via {2}."
     }
 }

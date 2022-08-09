@@ -10,6 +10,7 @@
 #define CONFIG_SPECTATORSNAME_DEFAULT "casters"
 #define CONFIG_NUM_MAPSDEFAULT 3
 #define CONFIG_SKIPVETO_DEFAULT false
+#define CONFIG_CLINCH_SERIES_DEFAULT true
 #define CONFIG_VETOFIRST_DEFAULT "team1"
 #define CONFIG_SIDETYPE_DEFAULT "standard"
 
@@ -305,6 +306,7 @@ public void WriteMatchToKv(KeyValues kv) {
   kv.SetNum("min_players_to_ready", g_MinPlayersToReady);
   kv.SetNum("min_spectators_to_ready", g_MinSpectatorsToReady);
   kv.SetString("match_title", g_MatchTitle);
+  kv.SetNum("clinch_series", g_SeriesCanClinch);
 
   kv.SetNum("favored_percentage_team1", g_FavoredTeamPercentage);
   kv.SetString("favored_percentage_text", g_FavoredTeamText);
@@ -380,6 +382,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
   g_InScrimMode = kv.GetNum("scrim") != 0;
   kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
   g_PlayersPerTeam = kv.GetNum("players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
+  g_SeriesCanClinch = kv.GetNum("clinch_series", CONFIG_CLINCH_SERIES_DEFAULT) != 0;
   g_CoachesPerTeam = kv.GetNum("coaches_per_team", CONFIG_COACHESPERTEAM_DEFAULT);
   g_MinPlayersToReady = kv.GetNum("min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
   g_MinSpectatorsToReady =
@@ -487,6 +490,7 @@ static bool LoadMatchFromJson(JSON_Object json) {
   json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID),
                               CONFIG_MATCHID_DEFAULT);
   g_InScrimMode = json_object_get_bool_safe(json, "scrim", false);
+  g_SeriesCanClinch = json_object_get_bool_safe(json, "clinch_series", true);
   json_object_get_string_safe(json, "match_title", g_MatchTitle, sizeof(g_MatchTitle),
                               CONFIG_MATCHTITLE_DEFAULT);
 
@@ -1042,6 +1046,7 @@ public Action Command_CreateMatch(int client, int args) {
   kv.SetNum("maps_to_win", 1);
   kv.SetNum("skip_veto", 1);
   kv.SetNum("players_per_team", 5);
+  kv.SetNum("clinch_series", 1);
 
   kv.JumpToKey("maplist", true);
   kv.SetString(matchMap, KEYVALUE_STRING_PLACEHOLDER);

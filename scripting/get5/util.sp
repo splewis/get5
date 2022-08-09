@@ -733,14 +733,10 @@ stock bool HelpfulAttack(int attacker, int victim) {
 }
 
 stock SideChoice SideTypeFromString(const char[] input) {
-  if (StrEqual(input, "team1_ct", false)) {
+  if (StrEqual(input, "team1_ct", false) || StrEqual(input, "team2_t", false)) {
     return SideChoice_Team1CT;
-  } else if (StrEqual(input, "team1_t", false)) {
+  } else if (StrEqual(input, "team1_t", false) || StrEqual(input, "team2_ct", false)) {
     return SideChoice_Team1T;
-  } else if (StrEqual(input, "team2_ct", false)) {
-    return SideChoice_Team1T;
-  } else if (StrEqual(input, "team2_t", false)) {
-    return SideChoice_Team1CT;
   } else if (StrEqual(input, "knife", false)) {
     return SideChoice_KnifeRound;
   } else {

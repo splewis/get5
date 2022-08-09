@@ -35,7 +35,7 @@ interface Get5MatchTeamFromFile {
 }
 
 interface Get5Match {
-    "match_title": string // (28)
+    "match_title": string // (25)
     "matchid": string, // (1)
     "num_maps": number, // (2)
     "players_per_team": number, // (3)
@@ -45,6 +45,7 @@ interface Get5Match {
     "skip_veto": boolean, // (7),
     "veto_first": "team1" | "team2", // (11)
     "side_type": "standard" | "always_knife" | "never_knife", // (12)
+    "map_sides": ["team1_ct" | "team1_t" | "knife"], // (31)
     "spectators": { // (10)
         "name": string // (29)
         "players": Get5PlayerSet // (30)
@@ -58,65 +59,71 @@ interface Get5Match {
 }
 ```
 
-1. _Optional_ - The ID of the match. This determines the `matchid` parameter in all the forwards and events. If you use
-the [MySQL extension](../stats_system/#mysql), you should leave this field blank (or omit it), as match IDs will be
-assigned automatically. If you do want to assign match IDs from another source, they **must** be integers (in a string)
-and must increment between matches. **`Default: ""`**
-2. _Optional_ - The number of maps to play in the series. **`Default: 3`**
-3. _Optional_ - The number of players per team. **`Default: 5`**
-4. _Optional_ - The maximum number of coaches per team. **`Default: 2`**
-5. _Optional_ - The minimum number of players of each team that must type [`!ready`](../commands/#ready) for the game to
-   begin. **`Default: 1`**
-6. _Optional_ - The minimum number of spectators that must be [`!ready`](../commands/#ready) for the game to begin.
-   **`Default: 0`**
-7. _Optional_ - Whether to skip the veto phase. If set to `true`, `team1` will start on CT. If `false`, sides are
-   determined by `side_type`. **`Default: false`**
+1. _Optional_<br>The ID of the match. This determines the `matchid` parameter in all
+   [forwards and events](events_and_forwards.md). If you use the [MySQL extension](../stats_system/#mysql), you
+   should leave this field blank (or omit it), as match IDs will be assigned automatically. If you do want to assign
+   match IDs from another source, they **must** be integers (in a string) and must increment between
+   matches.<br><br>**`Default: ""`**
+2. _Optional_<br>The number of maps to play in the series.<br><br>**`Default: 3`**
+3. _Optional_<br>The number of players per team.<br><br>**`Default: 5`**
+4. _Optional_<br>The maximum number of coaches per team.<br><br>**`Default: 2`**
+5. _Optional_<br>The minimum number of players of each team that must type [`!ready`](../commands/#ready) for the game
+   to begin.<br><br>**`Default: 1`**
+6. _Optional_<br>The minimum number of spectators that must be [`!ready`](../commands/#ready) for the game to
+   begin.<br><br>**`Default: 0`**
+7. _Optional_<br>Whether to skip the veto phase. When skipping veto, `map_sides` determines sides, and if `map_sides` is
+   not set, sides are determined by `side_type`.<br><br>**`Default: false`**
 8. A player's :material-steam: Steam ID. This can be in any format, but we recommend a string representation of SteamID
    64, i.e. `"76561197987713664"`.
 9. Players are represented each with a mapping of `Get5PlayerSteamID -> PlayerName` as a key-value dictionary. The name
    is optional and should be set to an empty string to let players decide their own name.
-10. _Optional_ - The spectators to allow into the game. If not defined, spectators cannot join the
-    game. **`Default: undefined`**
-11. _Optional_ - The team that vetoes first. **`Default: team1`**
-12. _Optional_ - The method used to determine sides. `standard` means that the team that doesn't pick a map gets the
-    side choice. `always_knife` means that sides are always determined by a knife-round and `never_kninfe` means that
-    `team1` always starts on CT. **`Default: standard`**
-13. _Required_ - The map pool to pick from, as an array of strings (`["de_dust2", "de_nuke"]` etc.), or if `skip_veto`
+10. _Optional_<br>The spectators to allow into the game. If not defined, spectators cannot join the
+    game.<br><br>**`Default: undefined`**
+11. _Optional_<br>The team that vetoes first.<br><br>**`Default: "team1"`**
+12. _Optional_<br>The method used to determine sides when vetoing **or** if veto is disabled and `map_sides` are not
+    set.<br><br>`standard` means that the team that doesn't pick a map gets the side choice (only if `skip_veto`
+    is `false`).<br><br>`always_knife` means that sides are always determined by a knife-round.<br><br>`never_knife`
+    means that `team1` always starts on CT.<br><br>This parameter is ignored if `map_sides` is set for all
+    maps. `standard` and `always_knife` behave similarly when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
+13. _Required_<br>The map pool to pick from, as an array of strings (`["de_dust2", "de_nuke"]` etc.), or if `skip_veto`
     is `true`, the order of maps played (limited by `num_maps`). **This should always be odd-sized if using the in-game
     veto system.**
-14. _Optional_ - Wrapper for the server's `mp_teamprediction_pct`. This determines the chances of `team1`
-    winning. **`Default: 0`**
-15. _Optional_ - Wrapper for the server's `mp_teamprediction_txt`. **`Default: ""`**
-16. _Required_ - The team's name. Sets `mp_teamname_1` or `mp_teamname_2`. Printed frequently in chat.
-17. _Optional_ - A short version of the team name, used in clan tags in-game (
-    if [`get5_set_client_clan_tags`](../configuration#get5_set_client_clan_tags) is disabled). **`Default: ""`**
-18. _Optional_ - The ISO-code to use for the in-game flag of the team. Must be a supported country, i.e. `FR`, `UK`
-    , `SE` etc. **`Default: ""`**
-19. _Optional_ - The team logo (wraps `mp_teamlogo_1` or `mp_teamlogo_2`), which requires to be on a FastDL in order for
-    clients to see. **`Default: ""`**
-20. _Required_ - The data for the first team.
-21. _Required_ - The data for the second team.
-22. _Optional_ - Various commands to execute on the server when loading the match configuration. This can be both
+14. _Optional_<br>Wrapper for the server's `mp_teamprediction_pct`. This determines the chances of `team1`
+    winning.<br><br>**`Default: 0`**
+15. _Optional_<br>Wrapper for the server's `mp_teamprediction_txt`.<br><br>**`Default: ""`**
+16. _Required_<br>The team's name. Sets `mp_teamname_1` or `mp_teamname_2`. Printed frequently in chat.
+17. _Optional_<br>A short version of the team name, used in clan tags in-game (requires
+    that [`get5_set_client_clan_tags`](../configuration#get5_set_client_clan_tags) is disabled).
+    <br><br>**`Default: ""`**
+18. _Optional_<br>The ISO-code to use for the in-game flag of the team. Must be a supported country, i.e. `FR`,`UK`,`SE`
+    etc.<br><br>**`Default: ""`**
+19. _Optional_<br>The team logo (wraps `mp_teamlogo_1` or `mp_teamlogo_2`), which requires to be on a FastDL in order
+    for clients to see.<br><br>**`Default: ""`**
+20. _Required_<br>The data for the first team.
+21. _Required_<br>The data for the second team.
+22. _Optional_<br>Various commands to execute on the server when loading the match configuration. This can be both
     regular server-commands and any [`Get5 configuration parameter`](configuration.md),
-    i.e. `{"hostname": "Match #3123 - Astralis vs. NaVi"}`. **`Default: undefined`**
-23. _Optional_ - Similarly to `players`, this object maps coaches using their Steam ID and
-    name. **`Default: undefined`**
-24. _Required_ - The players on the team.
-25. _Optional_ - Wrapper of the server's `mp_teammatchstat_txt` cvar, but can use `{MAPNUMBER}` and `{MAXMAPS}` as
+    i.e. `{"hostname": "Match #3123 - Astralis vs. NaVi"}`.<br><br>**`Default: undefined`**
+23. _Optional_<br>Similarly to `players`, this object maps coaches using their Steam ID and
+    name.<br><br>**`Default: undefined`**
+24. _Required_<br>The players on the team.
+25. _Optional_<br>Wrapper of the server's `mp_teammatchstat_txt` cvar, but can use `{MAPNUMBER}` and `{MAXMAPS}` as
     variables that get replaced with their integer values. In a BoX series, you probably don't want to set this since
     Get5 automatically sets `mp_teamscore` cvars for the current series score, and take the place of
-    the `mp_teammatchstat` cvars. **`Default: Map {MAPNUMBER} of {MAXMAPS}`**
-26. _Optional_ - The current score in the series, this can be used to give a team a map advantage or used as a manual
-    backup method. **`Default: 0`**
-27. _Optional_ - Wraps `mp_teammatchstat_1` and `mp_teammatchstat_2`. You probably don't want to set this, in BoX
+    the `mp_teammatchstat` cvars.<br><br>**`Default: "Map {MAPNUMBER} of {MAXMAPS}"`**
+26. _Optional_<br>The current score in the series, this can be used to give a team a map advantage or used as a manual
+    backup method.<br><br>**`Default: 0`**
+27. _Optional_<br>Wraps `mp_teammatchstat_1` and `mp_teammatchstat_2`. You probably don't want to set this, in BoX
     series, `mp_teamscore` cvars are automatically set and take the place of the `mp_teammatchstat_x`
-    cvars. **`Default: ""`**
+    cvars.<br><br>**`Default: ""`**
 28. Match teams can also be loaded from a separate file, allowing you to easily re-use a match configuration for
-    different sets of teams.
-    A `fromfile` value could be `"addons/sourcemod/configs/get5/team_nip.json"`, and that file should contain a valid
-    `Get5MatchTeam` object.
-29. _Optional_ - The name of the spectator team. **`Default: casters`**
-30. _Optional_ - The spectator/caster Steam IDs and names.
+    different sets of teams. A `fromfile` value could be `"addons/sourcemod/configs/get5/team_nip.json"`, and that file
+    should contain a valid `Get5MatchTeam` object.
+29. _Optional_<br>The name of the spectator team.<br><br>**`Default: "casters"`**
+30. _Optional_<br>The spectator/caster Steam IDs and names.
+31. _Optional_<br>Determines the starting sides for each map. If this array is shorter than `num_maps`, `side_type` will
+    determine the side-behavior of the remaining maps. Ignored if `skip_veto` is `false`.
+    <br><br>**`Default: undefined`**
 
 !!! warning "SteamID64 in `.cfg` files"
 
@@ -139,7 +146,7 @@ const match_schema: Match = {
     "min_spectators_to_ready": 0,
     "skip_veto": false,
     "veto_first": "team1",
-    "side_type": "always_knife",
+    "side_type": "standard",
     "spectators": {
         "name": "Blast PRO 2021",
         "players": {

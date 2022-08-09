@@ -112,6 +112,7 @@ ConVar g_CoachingEnabledCvar;
 /** Series config game-state **/
 int g_MapsToWin = 1;  // Maps needed to win the series.
 bool g_BO2Match = false;
+bool g_SeriesCanClinch = true;
 int g_RoundNumber = -1;  // The round number, 0-indexed. -1 if the match is not live.
 // The active map number, used by stats. Required as the calculated round number changes immediately
 // as a map ends, but before the map changes to the next.
@@ -1181,17 +1182,18 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     int t1maps = g_TeamSeriesScores[Get5Team_1];
     int t2maps = g_TeamSeriesScores[Get5Team_2];
     int tiedMaps = g_TeamSeriesScores[Get5Team_None];
+    int remainingMaps = g_MapsToPlay.Length - t1maps - t2maps - tiedMaps;
 
     float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
 
     if (t1maps == t2maps) {
-      // As long as team scores are equal, we play until there are no maps left.
-      if (t1maps + t2maps + tiedMaps == g_MapsToPlay.Length) {
+      // As long as team scores are equal, we play until there are no maps left, regardless of clinch config.
+      if (remainingMaps <= 0) {
         SeriesEndMessage(Get5Team_None);
         DelayFunction(minDelay, EndSeries);
         return Plugin_Continue;
       }
-    } else {
+    } else if (g_SeriesCanClinch) {
       // This adjusts for ties!
       int actualMapsToWin = ((g_MapsToPlay.Length - tiedMaps) / 2) + 1;
       if (t1maps == actualMapsToWin) {
@@ -1205,6 +1207,10 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
         DelayFunction(minDelay, EndSeries);
         return Plugin_Continue;
       }
+    } else if (remainingMaps <= 0) {
+      SeriesEndMessage(t1maps > t2maps ? Get5Team_1 : Get5Team_2); // Tie handled in first if-block
+      DelayFunction(minDelay, EndSeries);
+      return Plugin_Continue;
     }
 
     if (t1maps > t2maps) {

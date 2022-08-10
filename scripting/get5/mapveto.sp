@@ -58,7 +58,13 @@ public void VetoFinished() {
   }
 
   g_MapChangePending = true;
-  CreateTimer(10.0, Timer_NextMatchMap);
+  if (!g_SkipVeto && g_DisplayGotvVetoCvar.BoolValue) {
+    float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
+    StopRecording(); // stops recording after GetTvDelay() seconds.
+    CreateTimer(minDelay, Timer_NextMatchMap);
+  } else {
+    CreateTimer(10.0, Timer_NextMatchMap);
+  }
 }
 
 // Main Veto Controller

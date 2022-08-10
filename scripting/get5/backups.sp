@@ -352,7 +352,6 @@ public void RestoreGet5Backup() {
     ChangeState(Get5State_Live);
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
-    SetMatchRestartDelay();
 
     // There are some timing issues leading to incorrect score when restoring matches in second
     // half. Doing the restore on a timer

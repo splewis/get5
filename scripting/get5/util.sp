@@ -196,56 +196,6 @@ stock void ReplaceStringWithInt(char[] buffer, int len, const char[] replace, in
   ReplaceString(buffer, len, replace, intString, caseSensitive);
 }
 
-stock bool IsTVEnabled() {
-  ConVar tvEnabledCvar = FindConVar("tv_enable");
-  if (tvEnabledCvar == null) {
-    LogError("Failed to get tv_enable cvar");
-    return false;
-  }
-  return tvEnabledCvar.BoolValue;
-}
-
-stock int GetTvDelay() {
-  if (IsTVEnabled()) {
-    return GetCvarIntSafe("tv_delay");
-  }
-  return 0;
-}
-
-stock bool Record(const char[] demoName) {
-  char szDemoName[256];
-  strcopy(szDemoName, sizeof(szDemoName), demoName);
-  ReplaceString(szDemoName, sizeof(szDemoName), "\"", "\\\"");
-  ServerCommand("tv_record \"%s\"", szDemoName);
-
-  if (!IsTVEnabled()) {
-    LogError(
-        "Autorecording will not work with current cvar \"tv_enable\"=0. Set \"tv_enable 1\" in server.cfg (or another config file) to fix this.");
-    return false;
-  }
-
-  return true;
-}
-
-stock void StopRecording() {
-  ServerCommand("tv_stoprecord");
-
-  if (StrEqual("", g_DemoFileName, true)) {
-    // Demo not recorded; don't fire demo finish event.
-    return;
-  }
-
-  Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(g_MatchID, g_MapNumber, g_DemoFileName);
-
-  LogDebug("Calling Get5_OnDemoFinished()");
-
-  Call_StartForward(g_OnDemoFinished);
-  Call_PushCell(event);
-  Call_Finish();
-
-  EventLogger_LogAndDeleteEvent(event);
-}
-
 stock bool InWarmup() {
   return GameRules_GetProp("m_bWarmupPeriod") != 0;
 }

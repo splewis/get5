@@ -215,9 +215,6 @@ char g_DefaultTeamColors[][] = {
 
 char g_LastKickedPlayerAuth[64];
 
-bool g_ForceWinnerSignal = false;
-Get5Team g_ForcedWinner = Get5Team_None;
-
 /** Chat aliases loaded **/
 #define ALIAS_LENGTH 64
 #define COMMAND_LENGTH 64
@@ -293,6 +290,7 @@ Handle g_OnSidePicked = INVALID_HANDLE;
 #include "get5/natives.sp"
 #include "get5/pausing.sp"
 #include "get5/readysystem.sp"
+#include "get5/recording.sp"
 #include "get5/stats.sp"
 #include "get5/teamlogic.sp"
 #include "get5/tests.sp"
@@ -625,10 +623,9 @@ public Action Timer_InfoMessages(Handle timer) {
       Get5_MessageToAll("%t", "ReadyToVetoInfoMessage");
     }
     MissingPlayerInfoMessage();
-  }
+  } else if (g_GameState == Get5State_Warmup && !g_MapChangePending) {
 
-  // Handle warmup state, provided we're not waiting for a map change
-  if (g_GameState == Get5State_Warmup && !g_MapChangePending) {
+    // Handle warmup state, provided we're not waiting for a map change
     // Backups take priority
     if (!IsTeamsReady() && g_WaitingForRoundBackup) {
       Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage");
@@ -648,18 +645,13 @@ public Action Timer_InfoMessages(Handle timer) {
     }
     MissingPlayerInfoMessage();
   } else if (g_DisplayGotvVetoCvar.BoolValue && g_GameState == Get5State_Warmup &&
-             g_MapChangePending) {
+             g_MapChangePending && GetTvDelay() > 0) {
     Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
-  }
-
-  // Handle waiting for knife decision
-  if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
-    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam]);
-  }
-
-  // Handle postgame
-  if (g_GameState == Get5State_PostGame) {
+  } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
+    // Handle waiting for knife decision
+    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam]);
+  } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
+    // Handle postgame
     Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
   }
 
@@ -787,12 +779,17 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
       g_GameState < Get5State_PostGame && GetRealClientCount() == 0 && !g_MapChangePending) {
     g_TeamSeriesScores[Get5Team_1] = 0;
     g_TeamSeriesScores[Get5Team_2] = 0;
-    EndSeries();
+    StopRecording(true);
+    EndSeries(Get5Team_None, false);
   }
 }
 
 public void OnMapStart() {
   g_MapChangePending = false;
+  // Recording is always automatically stopped on map change, and
+  // since there are no hooks to detect tv_stoprecord, we reset
+  // our recording var if a map change is performed unexpectedly.
+  g_DemoFileName = "";
   DeleteOldBackups();
 
   ResetReadyStatus();
@@ -801,9 +798,10 @@ public void OnMapStart() {
     g_TeamReadyForUnpause[team] = false;
     g_TacticalPauseTimeUsed[team] = 0;
     g_TacticalPausesUsed[team] = 0;
-    g_ReadyTimeWaitingUsed = 0;
     g_TechnicalPausesUsed[team] = 0;
   }
+
+  g_ReadyTimeWaitingUsed = 0;
 
   if (g_WaitingForRoundBackup) {
     ChangeState(Get5State_Warmup);
@@ -892,21 +890,18 @@ static void CheckReadyWaitingTimes() {
     bool team1Forfeited = CheckReadyWaitingTime(Get5Team_1);
     bool team2Forfeited = CheckReadyWaitingTime(Get5Team_2);
 
-    if (team1Forfeited && team2Forfeited) {
-      g_ForcedWinner = Get5Team_None;
-      Stats_Forfeit(Get5Team_None);
-    } else if (team1Forfeited) {
-      g_ForcedWinner = Get5Team_2;
-      Stats_Forfeit(Get5Team_1);
-    } else if (team2Forfeited) {
-      g_ForcedWinner = Get5Team_1;
-      Stats_Forfeit(Get5Team_2);
+    if (team1Forfeited || team2Forfeited) {
+      Stats_Forfeit();
+      StopRecording(true);
     }
 
-    if (team1Forfeited || team2Forfeited) {
-      g_ForceWinnerSignal = true;
-      ChangeState(Get5State_None);
-      EndSeries();
+    // False for printing in all these cases, as CheckReadyWaitingTime prints forfeit messages.
+    if (team1Forfeited && team2Forfeited) {
+      EndSeries(Get5Team_None, false);
+    } else if (team1Forfeited) {
+      EndSeries(Get5Team_2, false);
+    } else if (team2Forfeited) {
+      EndSeries(Get5Team_1, false);
     }
   }
 }
@@ -958,32 +953,19 @@ public Action Command_EndMatch(int client, int args) {
 
   Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
       g_MatchID, g_MapNumber, new Get5Winner(Get5Team_None, Get5Side_None), team1score, team2score);
-
   LogDebug("Calling Get5_OnMapResult()");
-
   Call_StartForward(g_OnMapResult);
   Call_PushCell(mapResultEvent);
   Call_Finish();
-
   EventLogger_LogAndDeleteEvent(mapResultEvent);
 
-  Get5SeriesResultEvent resultEvent =
-      new Get5SeriesResultEvent(g_MatchID, new Get5Winner(Get5Team_None, Get5Side_None),
-                                g_TeamSeriesScores[Get5Team_1], g_TeamSeriesScores[Get5Team_2]);
+  // Don't print series result here as admin force-end is printed below.
+  StopRecording(true);
+  EndSeries(Get5Team_None, false);
 
-  LogDebug("Calling Get5_OnSeriesResult()");
-  Call_StartForward(g_OnSeriesResult);
-  Call_PushCell(resultEvent);
-  Call_Finish();
-
-  EventLogger_LogAndDeleteEvent(resultEvent);
-
-  ChangeState(Get5State_None);
   UpdateClanTags();
 
   Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
-  RestoreCvars(g_MatchConfigChangedCvars);
-  StopRecording();
 
   if (g_ActiveVetoMenu != null) {
     g_ActiveVetoMenu.Cancel();
@@ -1135,6 +1117,22 @@ public Action Timer_ReplenishMoney(Handle timer, int client) {
 
 public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_MatchOver");
+  if (g_GameState == Get5State_None) {
+    return Plugin_Continue;
+  }
+
+  // This ensures that the mp_match_restart_delay is not shorter
+  // than what is required for the GOTV recording to finish.
+  ConVar mp_match_restart_delay = FindConVar("mp_match_restart_delay");
+  if (mp_match_restart_delay != INVALID_HANDLE) {
+    int requiredDelay = GetTvDelay() + MATCH_END_DELAY_AFTER_TV;
+    if (requiredDelay > mp_match_restart_delay.IntValue) {
+      LogDebug("Extended mp_match_restart_delay from %d to %d to ensure GOTV can finish recording.",
+        mp_match_restart_delay.IntValue, requiredDelay);
+      mp_match_restart_delay.IntValue = requiredDelay;
+    }
+  }
+
   if (g_GameState == Get5State_Live) {
 
     // If someone called for a pause in the last round; cancel it.
@@ -1184,13 +1182,16 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     int tiedMaps = g_TeamSeriesScores[Get5Team_None];
     int remainingMaps = g_MapsToPlay.Length - t1maps - t2maps - tiedMaps;
 
-    float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
+    // Stops recording after GOTV has ended.
+    // mp_match_restart_delay is always of a longer duration than GOTV delay, so the recording
+    // **will** finish before the map changes, regardless if a next map is pending or if the
+    // series ends here.
+    StopRecording();
 
     if (t1maps == t2maps) {
       // As long as team scores are equal, we play until there are no maps left, regardless of clinch config.
       if (remainingMaps <= 0) {
-        SeriesEndMessage(Get5Team_None);
-        DelayFunction(minDelay, EndSeries);
+        EndSeries(Get5Team_None, true);
         return Plugin_Continue;
       }
     } else if (g_SeriesCanClinch) {
@@ -1198,18 +1199,15 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       int actualMapsToWin = ((g_MapsToPlay.Length - tiedMaps) / 2) + 1;
       if (t1maps == actualMapsToWin) {
         // Team 1 won
-        SeriesEndMessage(Get5Team_1);
-        DelayFunction(minDelay, EndSeries);
+        EndSeries(Get5Team_1, true);
         return Plugin_Continue;
       } else if (t2maps == actualMapsToWin) {
         // Team 2 won
-        SeriesEndMessage(Get5Team_2);
-        DelayFunction(minDelay, EndSeries);
+        EndSeries(Get5Team_2, true);
         return Plugin_Continue;
       }
     } else if (remainingMaps <= 0) {
-      SeriesEndMessage(t1maps > t2maps ? Get5Team_1 : Get5Team_2); // Tie handled in first if-block
-      DelayFunction(minDelay, EndSeries);
+      EndSeries(t1maps > t2maps ? Get5Team_1 : Get5Team_2, true); // Tie handled in first if-block
       return Plugin_Continue;
     }
 
@@ -1228,78 +1226,62 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     char nextMap[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(Get5_GetMapNumber(), nextMap, sizeof(nextMap));
 
+    float restartDelay = FindConVar("mp_match_restart_delay").FloatValue;
+
+    char timeToMapChangeFormatted[8];
+    convertSecondsToMinutesAndSeconds(RoundToFloor(restartDelay), timeToMapChangeFormatted, sizeof(timeToMapChangeFormatted));
+
     g_MapChangePending = true;
-    Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap);
+    Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap, timeToMapChangeFormatted);
     ChangeState(Get5State_PostGame);
-    CreateTimer(minDelay, Timer_NextMatchMap);
+    // Subtracting 4 seconds makes the map change 1 second before the timer expires, as there is a 3 second built-in
+    // delay in the ChangeMap function called by Timer_NextMatchMap.
+    CreateTimer(restartDelay - 4, Timer_NextMatchMap);
   }
 
   return Plugin_Continue;
 }
 
-static void SeriesEndMessage(Get5Team team) {
-  if (team == Get5Team_None) {
-    Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[Get5Team_1], g_FormattedTeamNames[Get5Team_2]);
-  } else {
-    if (g_MapsToPlay.Length == 1) {
-      Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[team]);
-    } else {
-      Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_FormattedTeamNames[team], g_TeamSeriesScores[team], g_TeamSeriesScores[OtherMatchTeam(team)]);
-    }
-  }
-}
-
 public Action Timer_NextMatchMap(Handle timer) {
-  if (g_GameState >= Get5State_Live)
-    StopRecording();
-
-  int index = Get5_GetMapNumber();
   char map[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(index, map, sizeof(map));
-
-  if (!g_SkipVeto && g_DisplayGotvVetoCvar.BoolValue && index == 0) {
-    float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
-    ChangeMap(map, minDelay);
-  } else {
-    ChangeMap(map);
-  }
+  g_MapsToPlay.GetString(Get5_GetMapNumber(), map, sizeof(map));
+  // If you change these 3 seconds for whatever reason, you must adjust the counter-offset in Event_MatchOver.
+  ChangeMap(map, 3.0);
 }
 
 public void KickClientsOnEnd() {
-  if (g_KickClientsWithNoMatchCvar.BoolValue) {
-    LOOP_CLIENTS(i) {
-      if (IsPlayer(i) && !(g_KickClientImmunityCvar.BoolValue &&
-                           CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
-        KickClient(i, "%t", "MatchFinishedInfoMessage");
-      }
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i) && !(g_KickClientImmunityCvar.BoolValue && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
+      KickClient(i, "%t", "MatchFinishedInfoMessage");
     }
   }
 }
 
-public void EndSeries() {
-  DelayFunction(10.0, KickClientsOnEnd);
-  StopRecording();
-
-  // Figure out who won
-  int t1maps = g_TeamSeriesScores[Get5Team_1];
-  int t2maps = g_TeamSeriesScores[Get5Team_2];
-
-  Get5Team winningTeam = Get5Team_None;
-  if (t1maps > t2maps) {
-    winningTeam = Get5Team_1;
-  } else if (t2maps > t1maps) {
-    winningTeam = Get5Team_2;
-  }
-
-  if (g_ForceWinnerSignal) {
-    winningTeam = g_ForcedWinner;
+public void EndSeries(Get5Team winningTeam, bool printWinnerMessage) {
+  if (g_KickClientsWithNoMatchCvar.BoolValue) {
+    DelayFunction(10.0, KickClientsOnEnd);
   }
 
   Stats_SeriesEnd(winningTeam);
 
+  if (printWinnerMessage) {
+    if (winningTeam == Get5Team_None) {
+      Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[Get5Team_1], g_FormattedTeamNames[Get5Team_2]);
+    } else {
+      if (g_MapsToPlay.Length == 1) {
+        Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[winningTeam]);
+      } else {
+        Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_FormattedTeamNames[winningTeam], g_TeamSeriesScores[winningTeam], g_TeamSeriesScores[OtherMatchTeam(winningTeam)]);
+      }
+    }
+  }
+
   Get5SeriesResultEvent event = new Get5SeriesResultEvent(
-      g_MatchID, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
-      t1maps, t2maps);
+    g_MatchID,
+    new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
+    g_TeamSeriesScores[Get5Team_1],
+    g_TeamSeriesScores[Get5Team_2]
+  );
 
   LogDebug("Calling Get5_OnSeriesResult()");
 
@@ -1308,9 +1290,24 @@ public void EndSeries() {
   Call_Finish();
 
   EventLogger_LogAndDeleteEvent(event);
-
-  RestoreCvars(g_MatchConfigChangedCvars);
   ChangeState(Get5State_None);
+
+  // We need to restore cvars on a timer if GOTV is recording, as it might otherwise set mp_match_restart_delay
+  // "back" to something that's shorter than the GOTV delay, which is a problem.
+  int goTvDelay = GetTvDelay();
+  if (goTvDelay > 0) {
+    CreateTimer(float(goTvDelay) + MATCH_END_DELAY_AFTER_TV, Timer_RestoreCvars);
+  } else {
+    RestoreCvars(g_MatchConfigChangedCvars);
+  }
+}
+
+public Action Timer_RestoreCvars(Handle timer) {
+  if (g_GameState == Get5State_None) {
+    // Only reset if no game is running, otherwise a game started before the GOTV for another ends will mess this up.
+    RestoreCvars(g_MatchConfigChangedCvars);
+  }
+  return Plugin_Handled;
 }
 
 public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
@@ -1341,7 +1338,7 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
   // Round number always -1 if not live.
   g_RoundNumber = g_GameState != Get5State_Live ? -1 : GetRoundsPlayed();
 
-  if (g_GameState >= Get5State_Warmup && !g_DoingBackupRestoreNow) {
+  if (g_GameState >= Get5State_Warmup) {
     WriteBackup();
   }
 }
@@ -1399,7 +1396,7 @@ static bool CreateBackupFolderStructure(const char[] path) {
 }
 
 public void WriteBackup() {
-  if (!g_BackupSystemEnabledCvar.BoolValue || g_DoingBackupRestoreNow) {
+  if (!g_BackupSystemEnabledCvar.BoolValue || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     return;
   }
 
@@ -1610,20 +1607,9 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
 
 public void StartGame(bool knifeRound) {
   LogDebug("StartGame");
-  if (!IsTVEnabled()) {
-    LogMessage("GOTV demo could not be recorded since tv_enable is not set to 1");
-    g_DemoFileName = "";
-  } else {
-    char demoName[PLATFORM_MAX_PATH + 1];
-    if (FormatCvarString(g_DemoNameFormatCvar, demoName, sizeof(demoName)) && Record(demoName)) {
-      Format(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);
-      LogMessage("Recording to %s", g_DemoFileName);
-    } else {
-      g_DemoFileName = "";
-    }
-  }
 
   ExecCfg(g_LiveCfgCvar);
+  StartRecording();
 
   if (knifeRound) {
     LogDebug("StartGame: about to begin knife round");
@@ -1647,11 +1633,6 @@ public Action Timer_PostKnife(Handle timer) {
 
   ExecCfg(g_WarmupCfgCvar);
   EnsureIndefiniteWarmup();
-}
-
-public Action StopDemo(Handle timer) {
-  StopRecording();
-  return Plugin_Handled;
 }
 
 public void ChangeState(Get5State state) {

@@ -226,7 +226,7 @@
     }
     "NextSeriesMapInfoMessage"
     {
-        "da"            "Det næste map i serien er {GREEN}{1}."
+        "da"            "Det næste map i serien er {GREEN}{1}{NORMAL} og det starter om {2}."
     }
     "TeamWonMatchInfoMessage"
     {

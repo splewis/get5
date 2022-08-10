@@ -37,8 +37,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   }
 
   g_ReadyTimeWaitingUsed = 0;
-  g_ForceWinnerSignal = false;
-  g_ForcedWinner = Get5Team_None;
 
   g_MapNumber = 0;
   g_RoundNumber = -1;

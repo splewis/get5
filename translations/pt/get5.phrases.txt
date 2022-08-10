@@ -172,10 +172,6 @@
     {
         "pt"            "A partida foi fnializada."
     }
-    "CurrentScoreInfoMessage"
-    {
-        "pt"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
-    }
     "BackupLoadedInfoMessage"
     {
         "pt"            "Backup carregado com sucesso {1}"

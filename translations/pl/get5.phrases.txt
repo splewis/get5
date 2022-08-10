@@ -156,10 +156,6 @@
     {
         "pl"            "Mecz został zakończony"
     }
-    "CurrentScoreInfoMessage"
-    {
-        "pl"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
-    }
     "BackupLoadedInfoMessage"
     {
         "pl"            "Pomyślnie wczytano kopię meczu {1}"

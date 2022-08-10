@@ -256,10 +256,6 @@
     {
         "hu"            "A mérkőzés befejeződött"
     }
-    "CurrentScoreInfoMessage"
-    {
-        "hu"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
-    }
     "StopCommandNotEnabled"
     {
         "hu"            "A stop parancs nincs engedélyezve."

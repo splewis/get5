@@ -180,10 +180,6 @@
     {
         "chi"            "这场比赛已完结。"
     }
-    "CurrentScoreInfoMessage"
-    {
-        "chi"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
-    }
     "BackupLoadedInfoMessage"
     {
         "chi"            "成功加载备份档案 {1}"

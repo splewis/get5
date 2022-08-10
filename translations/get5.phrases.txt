@@ -291,11 +291,6 @@
     {
         "en"            "The match is over"
     }
-    "CurrentScoreInfoMessage"
-    {
-        "#format"       "{1:s},{2:d},{3:d},{4:s}"
-        "en"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
-    }
     "StopCommandNotEnabled"
     {
         "en"            "The stop command is not enabled."

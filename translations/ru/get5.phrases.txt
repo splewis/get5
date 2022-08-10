@@ -148,10 +148,6 @@
     {
         "ru"            "Матч уже завершен"
     }
-    "CurrentScoreInfoMessage"
-    {
-        "ru"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
-    }
     "BackupLoadedInfoMessage"
     {
         "ru"            "Удачно загружен бэкап {1}"

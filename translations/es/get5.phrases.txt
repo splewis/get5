@@ -184,10 +184,6 @@
     {
         "es"            "La partida está terminada"
     }
-    "CurrentScoreInfoMessage"
-    {
-        "es"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
-    }
     "BackupLoadedInfoMessage"
     {
         "es"            "Backup cargado exitosamente {1}"

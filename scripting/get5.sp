@@ -1500,7 +1500,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
   if (g_GameState == Get5State_Live) {
     int csTeamWinner = event.GetInt("winner");
 
-    Get5_MessageToAll("%t", "CurrentScoreInfoMessage", g_TeamNames[Get5Team_1],
+    Get5_MessageToAll("{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s", g_TeamNames[Get5Team_1],
                       CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
                       CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)), g_TeamNames[Get5Team_2]);
 

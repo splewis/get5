@@ -248,10 +248,6 @@
     {
         "da"            "Kampen er afsluttet"
     }
-    "CurrentScoreInfoMessage"
-    {
-        "da"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
-    }
     "StopCommandNotEnabled"
     {
         "da"            "Stop-kommandoen er ikke aktiveret."

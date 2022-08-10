@@ -152,10 +152,6 @@
     {
         "de"            "Das Match ist beendet"
     }
-    "CurrentScoreInfoMessage"
-    {
-        "de"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
-    }
     "BackupLoadedInfoMessage"
     {
         "de"            "Backup {1} erfolgreich geladen"

@@ -184,10 +184,6 @@
     {
         "fr"            "Le match est terminé"
     }
-    "CurrentScoreInfoMessage"
-    {
-        "fr"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
-    }
     "BackupLoadedInfoMessage"
     {
         "fr"            "Sauvegarde chargée avec succès {1}"

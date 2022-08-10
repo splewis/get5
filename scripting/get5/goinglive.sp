@@ -77,7 +77,12 @@ public Action MatchLive(Handle timer) {
 }
 
 public void SetMatchRestartDelay() {
+  // This ensures that the mp_match_restart_delay is not shorter than what
+  // is required for the GOTV recording to finish.
   ConVar mp_match_restart_delay = FindConVar("mp_match_restart_delay");
-  int delay = GetTvDelay() + MATCH_END_DELAY_AFTER_TV + 5;
-  SetConVarInt(mp_match_restart_delay, delay);
+  int requiredDelay = GetTvDelay() + MATCH_END_DELAY_AFTER_TV + 5;
+  if (requiredDelay > mp_match_restart_delay.IntValue) {
+    LogDebug("Extended mp_match_restart_delay from %d to %d to ensure GOTV can finish recording.", mp_match_restart_delay.IntValue, requiredDelay);
+    mp_match_restart_delay.IntValue = requiredDelay;
+  }
 }

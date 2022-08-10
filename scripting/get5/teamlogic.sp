@@ -397,16 +397,6 @@ public void SetStartingTeams() {
   g_TeamStartingSide[Get5Team_2] = g_TeamSide[Get5Team_2];
 }
 
-public void AddMapScore() {
-  int currentMapNumber = Get5_GetMapNumber();
-
-  g_TeamScoresPerMap.Set(currentMapNumber, CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
-                         view_as<int>(Get5Team_1));
-
-  g_TeamScoresPerMap.Set(currentMapNumber, CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)),
-                         view_as<int>(Get5Team_2));
-}
-
 public int GetMapScore(int mapNumber, Get5Team team) {
   return g_TeamScoresPerMap.Get(mapNumber, view_as<int>(team));
 }

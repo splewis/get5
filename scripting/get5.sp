@@ -1155,17 +1155,18 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
     // Update series scores
     Stats_UpdateMapScore(winningTeam);
-    AddMapScore();
     g_TeamSeriesScores[winningTeam]++;
 
-    // Handle map end
-    int team1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
-    int team2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
+    g_TeamScoresPerMap.Set(g_MapNumber, t1score, view_as<int>(Get5Team_1));
+    g_TeamScoresPerMap.Set(g_MapNumber, t2score, view_as<int>(Get5Team_2));
 
     Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
-        g_MatchID, g_MapNumber,
-        new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), team1score,
-        team2score);
+      g_MatchID,
+      g_MapNumber,
+      new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
+      t1score,
+      t2score
+    );
 
     LogDebug("Calling Get5_OnMapResult()");
 

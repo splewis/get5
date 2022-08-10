@@ -264,8 +264,8 @@
     }
     "NextSeriesMapInfoMessage"
     {
-        "#format"       "{1:s}"
-        "en"            "The next map in the series is {GREEN}{1}{NORMAL}."
+        "#format"       "{1:s},{2:s}"
+        "en"            "The next map in the series is {GREEN}{1}{NORMAL} and it will start in {2}."
     }
     "TeamWonMatchInfoMessage"
     {

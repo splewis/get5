@@ -1,4 +1,3 @@
-/** Begins the LO3 process. **/
 public Action StartGoingLive(Handle timer) {
   LogDebug("StartGoingLive");
   ExecCfg(g_LiveCfgCvar);
@@ -46,10 +45,7 @@ public Action MatchLive(Handle timer) {
   // to be sure.
   SetMatchTeamCvars();
   ExecuteMatchConfigCvars();
-
-  // We force the match end-delay to extend for the duration of the GOTV broadcast here.
   g_PendingSideSwap = false;
-  SetMatchRestartDelay();
 
   for (int i = 0; i < 5; i++) {
     Get5_MessageToAll("%t", "MatchIsLiveInfoMessage");
@@ -74,10 +70,4 @@ public Action MatchLive(Handle timer) {
   }
 
   return Plugin_Handled;
-}
-
-public void SetMatchRestartDelay() {
-  ConVar mp_match_restart_delay = FindConVar("mp_match_restart_delay");
-  int delay = GetTvDelay() + MATCH_END_DELAY_AFTER_TV + 5;
-  SetConVarInt(mp_match_restart_delay, delay);
 }

@@ -172,8 +172,8 @@ bool g_DoingBackupRestoreNow = false;
 
 // Stats values
 StringMap g_FlashbangContainer;  // Stores flashbang-entity-id -> Get5FlashbangDetonatedEvent.
-StringMap g_HEGrenadeContainer;  // Stores flashbang-entity-id -> Get5HEDetonatedEvent.
-StringMap g_MolotovContainer;    // Stores flashbang-entity-id -> Get5MolotovDetonatedEvent.
+StringMap g_HEGrenadeContainer;  // Stores he-entity-id -> Get5HEDetonatedEvent.
+StringMap g_MolotovContainer;    // Stores molotov-entity-id -> Get5MolotovDetonatedEvent.
 int g_LatestUserIdToDetonateMolotov =
     0;  // Molotov detonate and start-burning/extinguish are two separate events always fired right
         // after each other. We need this to bind them together as detonate does not have client id.

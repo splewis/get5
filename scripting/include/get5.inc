@@ -135,254 +135,251 @@ native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount
 
 methodmap Get5StatusTeam < JSON_Object {
 
-    public bool SetTeamName(const char[] event) {
-      return this.SetString("name", event);
-    }
+  public bool SetTeamName(const char[] event) {
+    return this.SetString("name", event);
+  }
 
-    property int SeriesScore {
-      public set(int score) {
-        this.SetInt("series_score", score);
-      }
+  property int SeriesScore {
+    public set(int score) {
+      this.SetInt("series_score", score);
     }
+  }
 
-    property int MapScore {
-      public set(int score) {
-        this.SetInt("current_map_score", score);
-      }
+  property int MapScore {
+    public set(int score) {
+      this.SetInt("current_map_score", score);
     }
+  }
 
-    property int ConnectedClients {
-      public set(int clients) {
-        this.SetInt("connected_clients", clients);
-      }
+  property int ConnectedClients {
+    public set(int clients) {
+      this.SetInt("connected_clients", clients);
     }
+  }
 
-    property bool Ready {
-      public set(bool ready) {
-        this.SetBool("ready", ready);
-      }
+  property bool Ready {
+    public set(bool ready) {
+      this.SetBool("ready", ready);
     }
+  }
 
-    property Get5Side Side {
-      public set(Get5Side side) {
-        this.SetInt("side_int", view_as<int>(side));
-        this.SetHidden("side_int", true);
-        ConvertGet5SideToStringInJson(this, "side", side);
-      }
+  property Get5Side Side {
+    public set(Get5Side side) {
+      this.SetInt("side_int", view_as<int>(side));
+      this.SetHidden("side_int", true);
+      ConvertGet5SideToStringInJson(this, "side", side);
     }
+  }
 
-    public Get5StatusTeam(const char[] teamName,
-        const int seriesScore, const int mapScore, const bool ready, const Get5Side side, const int connectedClients) {
-        Get5StatusTeam self = view_as<Get5StatusTeam>(new JSON_Object());
-        self.SetTeamName(teamName);
-        self.SeriesScore = seriesScore;
-        self.MapScore = mapScore;
-        self.Ready = ready;
-        self.Side = side;
-        self.ConnectedClients = connectedClients;
-        return self;
-    }
-
+  public Get5StatusTeam(const char[] teamName,
+    const int seriesScore, const int mapScore, const bool ready, const Get5Side side, const int connectedClients) {
+    Get5StatusTeam self = view_as<Get5StatusTeam>(new JSON_Object());
+    self.SetTeamName(teamName);
+    self.SeriesScore = seriesScore;
+    self.MapScore = mapScore;
+    self.Ready = ready;
+    self.Side = side;
+    self.ConnectedClients = connectedClients;
+    return self;
+  }
 }
 
 methodmap Get5Status < JSON_Object {
 
-    public bool SetPluginVersion(const char[] event) {
-      return this.SetString("plugin_version", event);
-    }
+  public bool SetPluginVersion(const char[] event) {
+    return this.SetString("plugin_version", event);
+  }
 
-    property Get5State GameState {
-      public set(Get5State state) {
-        ConvertGameStateToStringInJson(this, "gamestate", state);
-      }
+  property Get5State GameState {
+    public set(Get5State state) {
+      ConvertGameStateToStringInJson(this, "gamestate", state);
     }
+  }
 
-    property bool IsPaused {
-      public set(bool paused) {
-        this.SetBool("paused", paused);
-      }
+  property bool IsPaused {
+    public set(bool paused) {
+      this.SetBool("paused", paused);
     }
+  }
 
-    public bool SetConfigFile(const char[] file) {
-      return this.SetString("loaded_config_file", file);
-    }
+  public bool SetConfigFile(const char[] file) {
+    return this.SetString("loaded_config_file", file);
+  }
 
-    public bool SetMatchId(const char[] matchId) {
-      return this.SetString("matchid", matchId);
-    }
+  public bool SetMatchId(const char[] matchId) {
+    return this.SetString("matchid", matchId);
+  }
 
-    property int MapNumber {
-      public set(int mapNumber) {
-        this.SetInt("map_number", mapNumber);
-      }
+  property int MapNumber {
+    public set(int mapNumber) {
+      this.SetInt("map_number", mapNumber);
     }
+  }
 
-    property int RoundNumber {
-      public set(int roundNumber) {
-        this.SetInt("round_number", roundNumber);
-      }
+  property int RoundNumber {
+    public set(int roundNumber) {
+      this.SetInt("round_number", roundNumber);
     }
+  }
 
-    property int RoundTime {
-      public set(int roundTime) {
-        this.SetInt("round_time", roundTime);
-      }
+  property int RoundTime {
+    public set(int roundTime) {
+      this.SetInt("round_time", roundTime);
     }
+  }
 
-    property Get5StatusTeam Team1 {
-      public set(Get5StatusTeam team) {
-        this.SetObject("team1", team);
-      }
+  property Get5StatusTeam Team1 {
+    public set(Get5StatusTeam team) {
+      this.SetObject("team1", team);
     }
+  }
 
-    property Get5StatusTeam Team2 {
-      public set(Get5StatusTeam team) {
-        this.SetObject("team2", team);
-      }
+  property Get5StatusTeam Team2 {
+    public set(Get5StatusTeam team) {
+      this.SetObject("team2", team);
     }
+  }
 
-    public bool AddMap(const char[] map) {
-      if (!this.HasKey("maps")) {
-        this.SetObject("maps", new JSON_Array());
-      }
-      JSON_Array maps = view_as<JSON_Array>(this.GetObject("maps"));
-      maps.PushString(map);
+  public bool AddMap(const char[] map) {
+    if (!this.HasKey("maps")) {
+      this.SetObject("maps", new JSON_Array());
     }
+    JSON_Array maps = view_as<JSON_Array>(this.GetObject("maps"));
+    maps.PushString(map);
+  }
 
-    public Get5Status(const char[] pluginVersion, const Get5State gamestate, const bool isPaused) {
-        Get5Status self = view_as<Get5Status>(new JSON_Object());
-        self.SetPluginVersion(pluginVersion);
-        self.GameState = gamestate;
-        self.IsPaused = isPaused;
-        return self;
-    }
+  public Get5Status(const char[] pluginVersion, const Get5State gamestate, const bool isPaused) {
+    Get5Status self = view_as<Get5Status>(new JSON_Object());
+    self.SetPluginVersion(pluginVersion);
+    self.GameState = gamestate;
+    self.IsPaused = isPaused;
+    return self;
+  }
 }
 
 methodmap Get5Weapon < JSON_Object {
 
-    public bool SetWeaponName(const char[] value) {
-      return this.SetString("name", value);
-    }
+  public bool SetWeaponName(const char[] value) {
+    return this.SetString("name", value);
+  }
 
-    public bool GetWeaponName(char[] buffer, const int maxSize) {
-      return this.GetString("name", buffer, maxSize);
-    }
+  public bool GetWeaponName(char[] buffer, const int maxSize) {
+    return this.GetString("name", buffer, maxSize);
+  }
 
-    property CSWeaponID Id {
-      public get() {
-        return view_as<CSWeaponID>(this.GetInt("id"));
-      }
-      public set(CSWeaponID id) {
-        this.SetInt("id", view_as<int>(id));
-      }
+  property CSWeaponID Id {
+    public get() {
+      return view_as<CSWeaponID>(this.GetInt("id"));
     }
+    public set(CSWeaponID id) {
+      this.SetInt("id", view_as<int>(id));
+    }
+  }
 
-    public Get5Weapon(const char[] weapon, CSWeaponID weaponId) {
-        Get5Weapon self = view_as<Get5Weapon>(new JSON_Object());
-        self.SetWeaponName(weapon);
-        self.Id = weaponId;
-        return self;
-    }
+  public Get5Weapon(const char[] weapon, CSWeaponID weaponId) {
+    Get5Weapon self = view_as<Get5Weapon>(new JSON_Object());
+    self.SetWeaponName(weapon);
+    self.Id = weaponId;
+    return self;
+  }
 }
 
 methodmap Get5Winner < JSON_Object {
 
-    property Get5Side Side {
-      public get() {
-        return view_as<Get5Side>(this.GetInt("side_int"));
-      }
-      public set(Get5Side side) {
-        this.SetInt("side_int", view_as<int>(side));
-        this.SetHidden("side_int", true);
-        ConvertGet5SideToStringInJson(this, "side", side);
-      }
+  property Get5Side Side {
+    public get() {
+      return view_as<Get5Side>(this.GetInt("side_int"));
     }
+    public set(Get5Side side) {
+      this.SetInt("side_int", view_as<int>(side));
+      this.SetHidden("side_int", true);
+      ConvertGet5SideToStringInJson(this, "side", side);
+    }
+  }
 
-    property Get5Team Team {
-      public get() {
-        return view_as<Get5Team>(this.GetInt("team_int"));
-      }
-      public set(Get5Team team) {
-        this.SetInt("team_int", view_as<int>(team));
-        this.SetHidden("team_int", true);
-        ConvertGet5TeamToStringInJson(this, "team", team);
-      }
+  property Get5Team Team {
+    public get() {
+      return view_as<Get5Team>(this.GetInt("team_int"));
     }
+    public set(Get5Team team) {
+      this.SetInt("team_int", view_as<int>(team));
+      this.SetHidden("team_int", true);
+      ConvertGet5TeamToStringInJson(this, "team", team);
+    }
+  }
 
-    public Get5Winner(Get5Team team, Get5Side side) {
-        Get5Winner self = view_as<Get5Winner>(new JSON_Object());
-        self.Team = team;
-        self.Side = side;
-        return self;
-    }
+  public Get5Winner(Get5Team team, Get5Side side) {
+      Get5Winner self = view_as<Get5Winner>(new JSON_Object());
+      self.Team = team;
+      self.Side = side;
+      return self;
+  }
 }
 
 methodmap Get5Player < JSON_Object {
 
-    property Get5Side Side {
-      public get() {
-        return view_as<Get5Side>(this.GetInt("side_int"));
-      }
-      public set(Get5Side side) {
-        this.SetInt("side_int", view_as<int>(side));
-        this.SetHidden("side_int", true);
-        ConvertGet5SideToStringInJson(this, "side", side);
-      }
+  property Get5Side Side {
+    public get() {
+      return view_as<Get5Side>(this.GetInt("side_int"));
     }
+    public set(Get5Side side) {
+      this.SetInt("side_int", view_as<int>(side));
+      this.SetHidden("side_int", true);
+      ConvertGet5SideToStringInJson(this, "side", side);
+    }
+  }
 
-    public bool SetSteamId(const char[] value) {
-      return this.SetString("steamid", value);
-    }
+  public bool SetSteamId(const char[] value) {
+    return this.SetString("steamid", value);
+  }
+  public bool GetSteamId(char[] buffer, const int maxSize) {
+    return this.GetString("steamid", buffer, maxSize);
+  }
 
-    public bool GetSteamId(char[] buffer, const int maxSize) {
-      return this.GetString("steamid", buffer, maxSize);
-    }
+  public bool SetName(const char[] value) {
+    return this.SetString("name", value);
+  }
+  public bool GetName(char[] buffer, const int maxSize) {
+    return this.GetString("name", buffer, maxSize);
+  }
 
-    public bool SetName(const char[] value) {
-      return this.SetString("name", value);
+  property bool IsBot {
+    public get() {
+      return this.GetBool("is_bot");
     }
+    public set(bool bot) {
+      this.SetBool("is_bot", bot);
+    }
+  }
 
-    public bool GetName(char[] buffer, const int maxSize) {
-      return this.GetString("name", buffer, maxSize);
+  property int UserId {
+    public get() {
+      return this.GetInt("user_id");
     }
+    public set(int id) {
+      this.SetInt("user_id", id);
+    }
+  }
 
-    property bool IsBot {
-      public get() {
-        return this.GetBool("is_bot");
-      }
-      public set(bool bot) {
-        this.SetBool("is_bot", bot);
-      }
-    }
-
-    property int UserId {
-      public get() {
-        return this.GetInt("user_id");
-      }
-      public set(int id) {
-        this.SetInt("user_id", id);
-      }
-    }
-
-    public Get5Player(const int userId, const char[] steamId, const Get5Side side, const char[] name, const bool isBot) {
-        Get5Player self = view_as<Get5Player>(new JSON_Object());
-        self.UserId = userId;
-        self.SetSteamId(steamId);
-        self.Side = side;
-        self.SetName(name);
-        self.IsBot = isBot;
-        return self;
-    }
+  public Get5Player(const int userId, const char[] steamId, const Get5Side side, const char[] name, const bool isBot) {
+    Get5Player self = view_as<Get5Player>(new JSON_Object());
+    self.UserId = userId;
+    self.SetSteamId(steamId);
+    self.Side = side;
+    self.SetName(name);
+    self.IsBot = isBot;
+    return self;
+  }
 }
 
 methodmap Get5Event < JSON_Object {
 
-    public bool SetEvent(const char[] event) {
-      return this.SetString("event", event);
-    }
-    public bool GetEvent(char[] buffer, const int maxSize) {
-      return this.GetString("event", buffer, maxSize);
-    }
+  public bool SetEvent(const char[] event) {
+    return this.SetString("event", event);
+  }
+  public bool GetEvent(char[] buffer, const int maxSize) {
+    return this.GetString("event", buffer, maxSize);
+  }
 }
 
 methodmap Get5PlayerConnectedEvent < Get5Event {
@@ -391,7 +388,6 @@ methodmap Get5PlayerConnectedEvent < Get5Event {
     public get() {
       return view_as<Get5Player>(this.GetObject("player"));
     }
-
     public set(Get5Player player) {
       this.SetObject("player", player);
     }
@@ -426,15 +422,12 @@ methodmap Get5PlayerDisconnectedEvent < Get5PlayerConnectedEvent {
 
 methodmap Get5MatchEvent < Get5Event {
 
-    public bool SetMatchId(const char[] matchId)
-    {
-        return this.SetString("matchid", matchId);
-    }
-
-    public bool GetMatchId(char[] buffer, const int maxSize) {
-        return this.GetString("matchid", buffer, maxSize);
-    }
-
+  public bool SetMatchId(const char[] matchId) {
+    return this.SetString("matchid", matchId);
+  }
+  public bool GetMatchId(char[] buffer, const int maxSize) {
+    return this.GetString("matchid", buffer, maxSize);
+  }
 }
 
 methodmap Get5MatchTeamEvent < Get5MatchEvent {
@@ -443,7 +436,6 @@ methodmap Get5MatchTeamEvent < Get5MatchEvent {
     public get() {
       return view_as<Get5Team>(this.GetInt("team_int"));
     }
-
     public set(Get5Team team) {
       this.SetInt("team_int", view_as<int>(team));
       this.SetHidden("team_int", true);
@@ -454,23 +446,21 @@ methodmap Get5MatchTeamEvent < Get5MatchEvent {
 
 methodmap Get5MapEvent < Get5MatchEvent {
 
-    public bool SetMapName(const char[] map) {
-      return this.SetString("map_name", map);
-    }
+  public bool SetMapName(const char[] map) {
+    return this.SetString("map_name", map);
+  }
+  public bool GetMapName(char[] buffer, const int maxSize) {
+    return this.GetString("map_name", buffer, maxSize);
+  }
 
-    public bool GetMapName(char[] buffer, const int maxSize) {
-      return this.GetString("map_name", buffer, maxSize);
+  property int MapNumber {
+    public get() {
+      return this.GetInt("map_number");
     }
-
-    property int MapNumber {
-        public get() {
-          return this.GetInt("map_number");
-        }
-
-        public set(int mapNumber) {
-          this.SetInt("map_number", mapNumber);
-        }
+    public set(int mapNumber) {
+      this.SetInt("map_number", mapNumber);
     }
+  }
 }
 
 methodmap Get5MapTeamEvent < Get5MapEvent {
@@ -479,7 +469,6 @@ methodmap Get5MapTeamEvent < Get5MapEvent {
     public get() {
       return view_as<Get5Team>(this.GetInt("team_int"));
     }
-
     public set(Get5Team team) {
       this.SetInt("team_int", view_as<int>(team));
       this.SetHidden("team_int", true);
@@ -490,67 +479,62 @@ methodmap Get5MapTeamEvent < Get5MapEvent {
 
 methodmap Get5RoundEvent < Get5MapEvent {
 
-    property int RoundNumber {
-        public get() {
-          return this.GetInt("round_number");
-        }
-
-        public set(int roundNumber) {
-          this.SetInt("round_number", roundNumber);
-        }
+  property int RoundNumber {
+    public get() {
+      return this.GetInt("round_number");
     }
+    public set(int roundNumber) {
+      this.SetInt("round_number", roundNumber);
+    }
+  }
 }
 
 methodmap Get5TimedRoundEvent < Get5RoundEvent {
 
-    property int RoundTime {
-        public get() {
-          return this.GetInt("round_time");
-        }
-
-        public set(int roundTime) {
-          this.SetInt("round_time", roundTime);
-        }
+  property int RoundTime {
+    public get() {
+      return this.GetInt("round_time");
     }
+    public set(int roundTime) {
+      this.SetInt("round_time", roundTime);
+    }
+  }
 }
 
 methodmap Get5PlayerMapEvent < Get5MapEvent {
 
-    property Get5Player Player {
-        public get() {
-          return view_as<Get5Player>(this.GetObject("player"));
-        }
-
-        public set(Get5Player player) {
-          this.SetObject("player", player);
-        }
+  property Get5Player Player {
+    public get() {
+      return view_as<Get5Player>(this.GetObject("player"));
     }
+    public set(Get5Player player) {
+      this.SetObject("player", player);
+    }
+  }
 }
 
 methodmap Get5PlayerRoundEvent < Get5RoundEvent {
 
-    property Get5Player Player {
-        public get() {
-          return view_as<Get5Player>(this.GetObject("player"));
-        }
-
-        public set(Get5Player player) {
-          this.SetObject("player", player);
-        }
+  property Get5Player Player {
+    public get() {
+      return view_as<Get5Player>(this.GetObject("player"));
     }
+    public set(Get5Player player) {
+      this.SetObject("player", player);
+    }
+  }
 }
 
 methodmap Get5PlayerTimedRoundEvent < Get5TimedRoundEvent {
 
-    property Get5Player Player {
-        public get() {
-          return view_as<Get5Player>(this.GetObject("player"));
-        }
-
-        public set(Get5Player player) {
-          this.SetObject("player", player);
-        }
+  property Get5Player Player {
+    public get() {
+      return view_as<Get5Player>(this.GetObject("player"));
     }
+    public set(Get5Player player) {
+      this.SetObject("player", player);
+    }
+  }
 }
 
 // MATCH CONFIG
@@ -561,30 +545,27 @@ methodmap Get5SeriesResultEvent < Get5MatchEvent {
     public get() {
       return view_as<Get5Winner>(this.GetObject("winner"));
     }
-
     public set(Get5Winner winner) {
       this.SetObject("winner", winner);
     }
   }
 
   property int Team1SeriesScore {
-      public get() {
-        return this.GetInt("team1_series_score");
-      }
-
-      public set(int score) {
-        this.SetInt("team1_series_score", score);
-      }
+    public get() {
+      return this.GetInt("team1_series_score");
+    }
+    public set(int score) {
+      this.SetInt("team1_series_score", score);
+    }
   }
 
   property int Team2SeriesScore {
-      public get() {
-        return this.GetInt("team2_series_score");
-      }
-
-      public set(int score) {
-        this.SetInt("team2_series_score", score);
-      }
+    public get() {
+      return this.GetInt("team2_series_score");
+    }
+    public set(int score) {
+      this.SetInt("team2_series_score", score);
+    }
   }
 
   public Get5SeriesResultEvent(const char[] matchId, const Get5Winner winner, const int team1Score, const int team2Score) {
@@ -667,13 +648,12 @@ methodmap Get5TeamReadyStatusChangedEvent < Get5MatchTeamEvent {
 
 methodmap Get5MapSelectionEvent < Get5MatchTeamEvent {
 
-    public bool SetMapName(const char[] map)
-    {
-      return this.SetString("map_name", map);
-    }
-    public bool GetMapName(char[] buffer, const int maxSize) {
-      return this.GetString("map_name", buffer, maxSize);
-    }
+  public bool SetMapName(const char[] map) {
+    return this.SetString("map_name", map);
+  }
+  public bool GetMapName(char[] buffer, const int maxSize) {
+    return this.GetString("map_name", buffer, maxSize);
+  }
 }
 
 methodmap Get5MapPickedEvent < Get5MapSelectionEvent {
@@ -833,14 +813,12 @@ methodmap Get5RoundStatsUpdatedEvent < Get5RoundEvent {
 
 methodmap Get5DemoFinishedEvent < Get5MapEvent {
 
-    public bool SetFileName(const char[] filename)
-    {
-        return this.SetString("filename", filename);
-    }
-
-    public bool GetFileName(char[] buffer, const int maxSize) {
-        return this.GetString("filename", buffer, maxSize);
-    }
+  public bool SetFileName(const char[] filename) {
+    return this.SetString("filename", filename);
+  }
+  public bool GetFileName(char[] buffer, const int maxSize) {
+    return this.GetString("filename", buffer, maxSize);
+  }
 
   public Get5DemoFinishedEvent(const char[] matchId, const int mapNumber, const char[] filename) {
     Get5DemoFinishedEvent self = view_as<Get5DemoFinishedEvent>(new JSON_Object());
@@ -850,72 +828,66 @@ methodmap Get5DemoFinishedEvent < Get5MapEvent {
     self.SetFileName(filename);
     return self;
   }
-
 }
 
 methodmap Get5KnifeRoundStartedEvent < Get5MapEvent {
 
-    public Get5KnifeRoundStartedEvent(const char[] matchId, int mapNumber) {
-      Get5KnifeRoundStartedEvent self = view_as<Get5KnifeRoundStartedEvent>(new JSON_Object());
-      self.SetEvent("knife_start");
-      self.SetMatchId(matchId);
-      self.MapNumber = mapNumber;
-      return self;
+  public Get5KnifeRoundStartedEvent(const char[] matchId, int mapNumber) {
+    Get5KnifeRoundStartedEvent self = view_as<Get5KnifeRoundStartedEvent>(new JSON_Object());
+    self.SetEvent("knife_start");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    return self;
   }
-
 }
 
 methodmap Get5KnifeRoundWonEvent < Get5MapTeamEvent {
 
-    // We don't use Get5Winner here as the side represents the picked side.
-    // Team already represents the winning team. Winning side is irrelevant in knife.
-    property Get5Side Side {
-      public get() {
-        return view_as<Get5Side>(this.GetInt("side_int"));
-      }
-
-      public set(Get5Side side) {
-        this.SetInt("side_int", view_as<int>(side));
-        this.SetHidden("side_int", true);
-        ConvertGet5SideToStringInJson(this, "side", side);
-      }
+  // We don't use Get5Winner here as the side represents the picked side.
+  // Team already represents the winning team. Winning side is irrelevant in knife.
+  property Get5Side Side {
+    public get() {
+      return view_as<Get5Side>(this.GetInt("side_int"));
     }
-
-    property bool Swapped {
-      public get() {
-        return this.GetBool("swapped");
-      }
-
-      public set(bool swapped) {
-        this.SetBool("swapped", swapped);
-      }
+    public set(Get5Side side) {
+      this.SetInt("side_int", view_as<int>(side));
+      this.SetHidden("side_int", true);
+      ConvertGet5SideToStringInJson(this, "side", side);
     }
-
-    public Get5KnifeRoundWonEvent(const char[] matchId, int mapNumber, const Get5Team winner, const Get5Side side, const bool swapped) {
-      Get5KnifeRoundWonEvent self = view_as<Get5KnifeRoundWonEvent>(new JSON_Object());
-      self.SetEvent("knife_won");
-      self.SetMatchId(matchId);
-      self.MapNumber = mapNumber;
-      self.Team = winner;
-      self.Side = side;
-      self.Swapped = swapped;
-      return self;
   }
 
+  property bool Swapped {
+    public get() {
+      return this.GetBool("swapped");
+    }
+    public set(bool swapped) {
+      this.SetBool("swapped", swapped);
+    }
+  }
+
+  public Get5KnifeRoundWonEvent(const char[] matchId, int mapNumber, const Get5Team winner, const Get5Side side, const bool swapped) {
+    Get5KnifeRoundWonEvent self = view_as<Get5KnifeRoundWonEvent>(new JSON_Object());
+    self.SetEvent("knife_won");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.Team = winner;
+    self.Side = side;
+    self.Swapped = swapped;
+    return self;
+  }
 }
 
 methodmap Get5MatchPauseEvent < Get5MapTeamEvent {
 
   property Get5PauseType PauseType {
-      public get() {
-        return view_as<Get5PauseType>(this.GetInt("pause_type_int"));
-      }
-
-      public set(Get5PauseType type) {
-        this.SetInt("pause_type_int", view_as<int>(type));
-        this.SetHidden("pause_type_int", true);
-        ConvertGet5PauseTypeToStringInJson(this, "pause_type", type);
-      }
+    public get() {
+      return view_as<Get5PauseType>(this.GetInt("pause_type_int"));
+    }
+    public set(Get5PauseType type) {
+      this.SetInt("pause_type_int", view_as<int>(type));
+      this.SetHidden("pause_type_int", true);
+      ConvertGet5PauseTypeToStringInJson(this, "pause_type", type);
+    }
   }
 }
 
@@ -930,7 +902,6 @@ methodmap Get5MatchPausedEvent < Get5MatchPauseEvent {
     self.PauseType = pauseType;
     return self;
   }
-
 }
 
 methodmap Get5MatchUnpausedEvent < Get5MatchPauseEvent {
@@ -944,81 +915,74 @@ methodmap Get5MatchUnpausedEvent < Get5MatchPauseEvent {
     self.PauseType = pauseType;
     return self;
   }
-
 }
 
 methodmap Get5SeriesStartedEvent < Get5MatchEvent {
 
-    public bool SetTeam1Name(const char[] value)
-    {
-        return this.SetString("team1_name", value);
-    }
+  public bool SetTeam1Name(const char[] value) {
+    return this.SetString("team1_name", value);
+  }
+  public bool GetTeam1Name(char[] buffer, const int maxSize) {
+    return this.GetString("team1_name", buffer, maxSize);
+  }
 
-    public bool GetTeam1Name(char[] buffer, const int maxSize) {
-        return this.GetString("team1_name", buffer, maxSize);
-    }
-
-    public bool SetTeam2Name(const char[] value)
-    {
-        return this.SetString("team2_name", value);
-    }
-
-    public bool GetTeam2Name(char[] buffer, const int maxSize) {
-        return this.GetString("team2_name", buffer, maxSize);
-    }
+  public bool SetTeam2Name(const char[] value) {
+    return this.SetString("team2_name", value);
+  }
+  public bool GetTeam2Name(char[] buffer, const int maxSize) {
+    return this.GetString("team2_name", buffer, maxSize);
+  }
 
   public Get5SeriesStartedEvent(const char[] matchId, const char[] team1Name, const char[] team2Name) {
-        Get5SeriesStartedEvent self = view_as<Get5SeriesStartedEvent>(new JSON_Object());
-        self.SetEvent("series_start");
-        self.SetMatchId(matchId);
-        self.SetTeam1Name(team1Name);
-        self.SetTeam2Name(team2Name);
-        return self;
-    }
+    Get5SeriesStartedEvent self = view_as<Get5SeriesStartedEvent>(new JSON_Object());
+    self.SetEvent("series_start");
+    self.SetMatchId(matchId);
+    self.SetTeam1Name(team1Name);
+    self.SetTeam2Name(team2Name);
+    return self;
+  }
 }
 
 methodmap Get5BackupRestoredEvent < Get5MapEvent {
 
-    public bool SetFileName(const char[] file)
-    {
-        return this.SetString("filename", file);
-    }
-
-    public bool GetFileName(char[] buffer, const int maxSize) {
-        return this.GetString("filename", buffer, maxSize);
-    }
+  public bool SetFileName(const char[] file) {
+    return this.SetString("filename", file);
+  }
+  public bool GetFileName(char[] buffer, const int maxSize) {
+    return this.GetString("filename", buffer, maxSize);
+  }
 
   public Get5BackupRestoredEvent(const char[] matchId, const int mapNumber, const char[] file) {
-        Get5BackupRestoredEvent self = view_as<Get5BackupRestoredEvent>(new JSON_Object());
-        self.SetEvent("backup_loaded");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.SetFileName(file);
-        return self;
-    }
+    Get5BackupRestoredEvent self = view_as<Get5BackupRestoredEvent>(new JSON_Object());
+    self.SetEvent("backup_loaded");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.SetFileName(file);
+    return self;
+  }
 }
 
 methodmap Get5RoundStartedEvent < Get5RoundEvent {
 
   public Get5RoundStartedEvent(const char[] matchId, const int mapNumber, const int roundNumber) {
-        Get5RoundStartedEvent self = view_as<Get5RoundStartedEvent>(new JSON_Object());
-        self.SetEvent("round_start");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        return self;
-    }
+    Get5RoundStartedEvent self = view_as<Get5RoundStartedEvent>(new JSON_Object());
+    self.SetEvent("round_start");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    return self;
+  }
 }
 
 methodmap Get5GoingLiveEvent < Get5MapEvent {
 
   public Get5GoingLiveEvent(const char[] matchId, const int mapNumber) {
-        Get5GoingLiveEvent self = view_as<Get5GoingLiveEvent>(new JSON_Object());
-        self.SetEvent("going_live");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        return self;
-    }
+    Get5GoingLiveEvent self = view_as<Get5GoingLiveEvent>(new JSON_Object());
+    self.SetEvent("going_live");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    return self;
+  }
 }
 
 methodmap Get5RoundEndedEvent < Get5TimedRoundEvent {
@@ -1026,152 +990,138 @@ methodmap Get5RoundEndedEvent < Get5TimedRoundEvent {
   // Note that reason is decremented by 1 to match the values defined at https://github.com/alliedmodders/sourcemod/blob/master/plugins/include/cstrike.inc
   // CSGO increments these by 1 for some reason.
   property CSRoundEndReason Reason {
-      public get() {
-        return view_as<CSRoundEndReason>(this.GetInt("reason"));
-      }
-
-      public set(CSRoundEndReason reason) {
-        this.SetInt("reason", view_as<int>(reason));
-      }
+    public get() {
+      return view_as<CSRoundEndReason>(this.GetInt("reason"));
+    }
+    public set(CSRoundEndReason reason) {
+      this.SetInt("reason", view_as<int>(reason));
+    }
   }
 
   property Get5Winner Winner {
-      public get() {
-        return view_as<Get5Winner>(this.GetObject("winner"));
-      }
-
-      public set(Get5Winner winner) {
-        this.SetObject("winner", winner);
-      }
+    public get() {
+      return view_as<Get5Winner>(this.GetObject("winner"));
+    }
+    public set(Get5Winner winner) {
+      this.SetObject("winner", winner);
+    }
   }
 
   property int Team1Score {
-      public get() {
-        return this.GetInt("team1_score");
-      }
-
-      public set(int score) {
-        this.SetInt("team1_score", score);
-      }
+    public get() {
+      return this.GetInt("team1_score");
+    }
+    public set(int score) {
+      this.SetInt("team1_score", score);
+    }
   }
 
   property int Team2Score {
-      public get() {
-        return this.GetInt("team2_score");
-      }
-
-      public set(int score) {
-        this.SetInt("team2_score", score);
-      }
+    public get() {
+      return this.GetInt("team2_score");
+    }
+    public set(int score) {
+      this.SetInt("team2_score", score);
+    }
   }
 
   public Get5RoundEndedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const CSRoundEndReason reason, const Get5Winner winner, const int team1Score, const int team2Score) {
-        Get5RoundEndedEvent self = view_as<Get5RoundEndedEvent>(new JSON_Object());
-        self.SetEvent("round_end");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.Reason = reason;
-        self.Winner = winner;
-        self.Team1Score = team1Score;
-        self.Team2Score = team2Score;
-        return self;
-    }
+    Get5RoundEndedEvent self = view_as<Get5RoundEndedEvent>(new JSON_Object());
+    self.SetEvent("round_end");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.RoundTime = roundTime;
+    self.Reason = reason;
+    self.Winner = winner;
+    self.Team1Score = team1Score;
+    self.Team2Score = team2Score;
+    return self;
+  }
 }
 
 // All other events
 
 methodmap Get5PlayerSayEvent < Get5PlayerTimedRoundEvent {
 
-  public bool SetCommand(const char[] command)
-  {
+  public bool SetCommand(const char[] command) {
     return this.SetString("command", command);
   }
-
   public bool GetCommand(char[] buffer, const int maxSize) {
     return this.GetString("command", buffer, maxSize);
   }
 
-  public bool SetMessage(const char[] message)
-  {
+  public bool SetMessage(const char[] message) {
     return this.SetString("message", message);
   }
-
   public bool GetMessage(char[] buffer, const int maxSize) {
     return this.GetString("message", buffer, maxSize);
   }
 
   public Get5PlayerSayEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, const char[] command, const char[] message) {
-        Get5PlayerSayEvent self = view_as<Get5PlayerSayEvent>(new JSON_Object());
-        self.SetEvent("player_say");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.SetCommand(command);
-        self.SetMessage(message);
-        return self;
-    }
+    Get5PlayerSayEvent self = view_as<Get5PlayerSayEvent>(new JSON_Object());
+    self.SetEvent("player_say");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.RoundTime = roundTime;
+    self.SetCommand(command);
+    self.SetMessage(message);
+    return self;
+  }
 }
 
 methodmap Get5RoundMVPEvent < Get5PlayerRoundEvent {
 
   // There doesn't seem to be an enum for MVP reason, so we go with the plain integer.
   property int Reason {
-      public get() {
-        return this.GetInt("reason");
-      }
-
-      public set(int reason) {
-        this.SetInt("reason", reason);
-      }
+    public get() {
+      return this.GetInt("reason");
+    }
+    public set(int reason) {
+      this.SetInt("reason", reason);
+    }
   }
 
   public Get5RoundMVPEvent(const char[] matchId, const int mapNumber, const int roundNumber, const Get5Player player, const int reason) {
-        Get5RoundMVPEvent self = view_as<Get5RoundMVPEvent>(new JSON_Object());
-        self.SetEvent("round_mvp");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.Player = player;
-        self.Reason = reason;
-        return self;
-    }
+    Get5RoundMVPEvent self = view_as<Get5RoundMVPEvent>(new JSON_Object());
+    self.SetEvent("round_mvp");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.Player = player;
+    self.Reason = reason;
+    return self;
+  }
 }
 
 methodmap Get5AssisterObject < JSON_Object {
 
   property Get5Player Player {
-      public get() {
-        return view_as<Get5Player>(this.GetObject("player"));
-      }
-
-      public set(Get5Player player) {
-        this.SetObject("player", player);
-      }
+    public get() {
+      return view_as<Get5Player>(this.GetObject("player"));
+    }
+    public set(Get5Player player) {
+      this.SetObject("player", player);
+    }
   }
 
   property bool FriendlyFire {
-      public get() {
-        return this.GetBool("friendly_fire");
-      }
-
-      public set(bool friendlyFire) {
-        this.SetBool("friendly_fire", friendlyFire);
-      }
-
+    public get() {
+      return this.GetBool("friendly_fire");
+    }
+    public set(bool friendlyFire) {
+      this.SetBool("friendly_fire", friendlyFire);
+    }
   }
 
   property bool FlashAssist {
-      public get() {
-        return this.GetBool("flash_assist");
-      }
-
-      public set(bool flashAssist) {
-        this.SetBool("flash_assist", flashAssist);
-      }
-
+    public get() {
+      return this.GetBool("flash_assist");
+    }
+    public set(bool flashAssist) {
+      this.SetBool("flash_assist", flashAssist);
+    }
   }
 
   public Get5AssisterObject(const Get5Player player, bool flashAssist, bool friendlyFire) {
@@ -1181,122 +1131,110 @@ methodmap Get5AssisterObject < JSON_Object {
     self.FriendlyFire = friendlyFire;
     return self;
   }
-
 }
 
 methodmap Get5PlayerWeaponEvent < Get5PlayerTimedRoundEvent {
 
-    property Get5Weapon Weapon {
-        public get() {
-            return view_as<Get5Weapon>(this.GetObject("weapon"));
-        }
-
-        public set(Get5Weapon weapon) {
-            this.SetObject("weapon", weapon);
-        }
+  property Get5Weapon Weapon {
+    public get() {
+      return view_as<Get5Weapon>(this.GetObject("weapon"));
     }
+    public set(Get5Weapon weapon) {
+      this.SetObject("weapon", weapon);
+    }
+  }
 }
 
 methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
 
   property bool Bomb {
-      public get() {
-        return this.GetBool("bomb");
-      }
-
-      public set(bool bomb) {
-        this.SetBool("bomb", bomb);
-      }
+    public get() {
+      return this.GetBool("bomb");
+    }
+    public set(bool bomb) {
+      this.SetBool("bomb", bomb);
+    }
   }
 
   property bool Headshot {
-      public get() {
-        return this.GetBool("headshot");
-      }
-
-      public set(bool headshot) {
-        this.SetBool("headshot", headshot);
-      }
+    public get() {
+      return this.GetBool("headshot");
+    }
+    public set(bool headshot) {
+      this.SetBool("headshot", headshot);
+    }
   }
 
   property bool ThruSmoke {
-      public get() {
-        return this.GetBool("thru_smoke");
-      }
-
-      public set(bool thruSmoke) {
-        this.SetBool("thru_smoke", thruSmoke);
-      }
+    public get() {
+      return this.GetBool("thru_smoke");
+    }
+    public set(bool thruSmoke) {
+      this.SetBool("thru_smoke", thruSmoke);
+    }
   }
 
   property int Penetrated {
-      public get() {
-        return this.GetInt("penetrated");
-      }
-
-      public set(int penetrated) {
-        this.SetInt("penetrated", penetrated);
-      }
+    public get() {
+      return this.GetInt("penetrated");
+    }
+    public set(int penetrated) {
+      this.SetInt("penetrated", penetrated);
+    }
   }
 
   property bool AttackerBlind {
-      public get() {
-        return this.GetBool("attacker_blind");
-      }
-
-      public set(bool blind) {
-        this.SetBool("attacker_blind", blind);
-      }
+    public get() {
+      return this.GetBool("attacker_blind");
+    }
+    public set(bool blind) {
+      this.SetBool("attacker_blind", blind);
+    }
   }
 
   property bool NoScope {
-      public get() {
-        return this.GetBool("no_scope");
-      }
-
-      public set(bool noScope) {
-        this.SetBool("no_scope", noScope);
-      }
+    public get() {
+      return this.GetBool("no_scope");
+    }
+    public set(bool noScope) {
+      this.SetBool("no_scope", noScope);
+    }
   }
 
   property bool Suicide {
-      public get() {
-        return this.GetBool("suicide");
-      }
-
-      public set(bool suicide) {
-        this.SetBool("suicide", suicide);
-      }
+    public get() {
+      return this.GetBool("suicide");
+    }
+    public set(bool suicide) {
+      this.SetBool("suicide", suicide);
+    }
   }
 
   property bool FriendlyFire {
-      public get() {
-        return this.GetBool("friendly_fire");
-      }
-
-      public set(bool friendlyFire) {
-        this.SetBool("friendly_fire", friendlyFire);
-      }
+    public get() {
+      return this.GetBool("friendly_fire");
+    }
+    public set(bool friendlyFire) {
+      this.SetBool("friendly_fire", friendlyFire);
+    }
   }
 
   property Get5Player Attacker {
-      public get() {
-        return view_as<Get5Player>(this.GetObject("attacker"));
-      }
-
-      public set(Get5Player attacker) {
-        this.SetObject("attacker", attacker);
-      }
+    public get() {
+      return view_as<Get5Player>(this.GetObject("attacker"));
+    }
+    public set(Get5Player attacker) {
+      this.SetObject("attacker", attacker);
+    }
   }
 
   property Get5AssisterObject Assist {
-      public get() {
-        return view_as<Get5AssisterObject>(this.GetObject("assist"));
-      }
-
-      public set(Get5AssisterObject assister) {
-        this.SetObject("assist", assister);
-      }
+    public get() {
+      return view_as<Get5AssisterObject>(this.GetObject("assist"));
+    }
+    public set(Get5AssisterObject assister) {
+      this.SetObject("assist", assister);
+    }
   }
 
   // Use before accessing "Assist", as its getter will raise an exception if null.
@@ -1323,270 +1261,256 @@ methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
     const bool attackerBlind,
     const bool suicide,
     const int penetrated,
-    const bool bomb
-    ) {
+    const bool bomb) {
+      Get5PlayerDeathEvent self = view_as<Get5PlayerDeathEvent>(new JSON_Object());
+      self.SetEvent("player_death");
+      self.SetMatchId(matchId);
+      self.MapNumber = mapNumber;
+      self.RoundNumber = roundNumber;
+      self.RoundTime = roundTime;
+      self.Player = victim;
+      self.Weapon = weapon;
+      self.Headshot = headshot;
+      self.FriendlyFire = friendlyFire;
+      self.ThruSmoke = thruSmoke;
+      self.NoScope = noScope;
+      self.AttackerBlind = attackerBlind;
+      self.Suicide = suicide;
+      self.Penetrated = penetrated;
+      self.Bomb = bomb;
 
-        Get5PlayerDeathEvent self = view_as<Get5PlayerDeathEvent>(new JSON_Object());
-        self.SetEvent("player_death");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.Player = victim;
-        self.Weapon = weapon;
-        self.Headshot = headshot;
-        self.FriendlyFire = friendlyFire;
-        self.ThruSmoke = thruSmoke;
-        self.NoScope = noScope;
-        self.AttackerBlind = attackerBlind;
-        self.Suicide = suicide;
-        self.Penetrated = penetrated;
-        self.Bomb = bomb;
-
-        // set nullables to null initially
-        self.SetObject("assist", null);
-        self.SetObject("attacker", null);
-        return self;
-
-    }
+      // set nullables to null initially
+      self.SetObject("assist", null);
+      self.SetObject("attacker", null);
+      return self;
+  }
 }
 
 // GRENADES
 methodmap Get5GrenadeThrownEvent < Get5PlayerWeaponEvent {
 
-    public Get5GrenadeThrownEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, const Get5Weapon weapon) {
-        Get5GrenadeThrownEvent self = view_as<Get5GrenadeThrownEvent>(new JSON_Object());
-        self.SetEvent("grenade_thrown");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.Player = player;
-        self.Weapon = weapon;
-        return self;
-    }
+  public Get5GrenadeThrownEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, const Get5Weapon weapon) {
+    Get5GrenadeThrownEvent self = view_as<Get5GrenadeThrownEvent>(new JSON_Object());
+    self.SetEvent("grenade_thrown");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.RoundTime = roundTime;
+    self.Player = player;
+    self.Weapon = weapon;
+    return self;
+  }
 }
 
 methodmap Get5VictimGrenadeEvent < Get5PlayerWeaponEvent {
 
-    // Array of either Get5DamageGrenadeVictim or Get5BlindedGrenadeVictim
-    property JSON_Array Victims {
-        public get() {
-          return view_as<JSON_Array>(this.GetObject("victims"));
-        }
-
-        public set(JSON_Array victims) {
-          this.SetObject("victims", victims);
-        }
+  // Array of either Get5DamageGrenadeVictim or Get5BlindedGrenadeVictim
+  property JSON_Array Victims {
+    public get() {
+      return view_as<JSON_Array>(this.GetObject("victims"));
     }
+    public set(JSON_Array victims) {
+      this.SetObject("victims", victims);
+    }
+  }
 }
 
 methodmap Get5VictimWithDamageGrenadeEvent < Get5VictimGrenadeEvent {
 
-    property int DamageEnemies {
-        public get() {
-          return this.GetInt("damage_enemies");
-        }
-
-        public set(int damage) {
-          this.SetInt("damage_enemies", damage);
-        }
+  property int DamageEnemies {
+    public get() {
+      return this.GetInt("damage_enemies");
     }
-
-    property int DamageFriendlies {
-        public get() {
-          return this.GetInt("damage_friendlies");
-        }
-
-        public set(int damage) {
-          this.SetInt("damage_friendlies", damage);
-        }
+    public set(int damage) {
+      this.SetInt("damage_enemies", damage);
     }
+  }
+
+  property int DamageFriendlies {
+    public get() {
+      return this.GetInt("damage_friendlies");
+    }
+    public set(int damage) {
+      this.SetInt("damage_friendlies", damage);
+    }
+  }
 }
 
 methodmap Get5SmokeDetonatedEvent < Get5PlayerWeaponEvent {
 
-    property bool ExtinguishedMolotov {
-        public get() {
-          return this.GetBool("extinguished_molotov");
-        }
-
-        public set(bool extinguishedMolotov) {
-          this.SetBool("extinguished_molotov", extinguishedMolotov);
-        }
+  property bool ExtinguishedMolotov {
+    public get() {
+      return this.GetBool("extinguished_molotov");
     }
-
-    public Get5SmokeDetonatedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, bool extinguishedMolotov) {
-        Get5SmokeDetonatedEvent self = view_as<Get5SmokeDetonatedEvent>(new JSON_Object());
-        self.SetEvent("smokegrenade_detonated");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.Player = player;
-        self.Weapon = new Get5Weapon("smokegrenade", CSWeapon_SMOKEGRENADE);
-        self.ExtinguishedMolotov = extinguishedMolotov;
-        return self;
+    public set(bool extinguishedMolotov) {
+      this.SetBool("extinguished_molotov", extinguishedMolotov);
     }
+  }
+
+  public Get5SmokeDetonatedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, bool extinguishedMolotov) {
+    Get5SmokeDetonatedEvent self = view_as<Get5SmokeDetonatedEvent>(new JSON_Object());
+    self.SetEvent("smokegrenade_detonated");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.RoundTime = roundTime;
+    self.Player = player;
+    self.Weapon = new Get5Weapon("smokegrenade", CSWeapon_SMOKEGRENADE);
+    self.ExtinguishedMolotov = extinguishedMolotov;
+    return self;
+  }
 }
 
 methodmap Get5HEDetonatedEvent < Get5VictimWithDamageGrenadeEvent {
 
-    public Get5HEDetonatedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player) {
-        Get5HEDetonatedEvent self = view_as<Get5HEDetonatedEvent>(new JSON_Object());
-        self.SetEvent("hegrenade_detonated");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.Player = player;
-        self.Weapon = new Get5Weapon("hegrenade", CSWeapon_HEGRENADE);
-        self.Victims = new JSON_Array();
-        self.DamageEnemies = 0;
-        self.DamageFriendlies = 0;
-        return self;
-    }
+  public Get5HEDetonatedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player) {
+    Get5HEDetonatedEvent self = view_as<Get5HEDetonatedEvent>(new JSON_Object());
+    self.SetEvent("hegrenade_detonated");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.RoundTime = roundTime;
+    self.Player = player;
+    self.Weapon = new Get5Weapon("hegrenade", CSWeapon_HEGRENADE);
+    self.Victims = new JSON_Array();
+    self.DamageEnemies = 0;
+    self.DamageFriendlies = 0;
+    return self;
+  }
 }
 
 methodmap Get5FlashbangDetonatedEvent < Get5VictimGrenadeEvent {
 
-    public Get5FlashbangDetonatedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player) {
-        Get5FlashbangDetonatedEvent self = view_as<Get5FlashbangDetonatedEvent>(new JSON_Object());
-        self.SetEvent("flashbang_detonated");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.Player = player;
-        self.Weapon = new Get5Weapon("flashbang", CSWeapon_FLASHBANG);
-        self.Victims = new JSON_Array();
-        return self;
-    }
+  public Get5FlashbangDetonatedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player) {
+    Get5FlashbangDetonatedEvent self = view_as<Get5FlashbangDetonatedEvent>(new JSON_Object());
+    self.SetEvent("flashbang_detonated");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.RoundTime = roundTime;
+    self.Player = player;
+    self.Weapon = new Get5Weapon("flashbang", CSWeapon_FLASHBANG);
+    self.Victims = new JSON_Array();
+    return self;
+  }
 }
 
 methodmap Get5DecoyStartedEvent < Get5PlayerWeaponEvent {
 
-    public Get5DecoyStartedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player) {
-        Get5DecoyStartedEvent self = view_as<Get5DecoyStartedEvent>(new JSON_Object());
-        self.SetEvent("decoygrenade_started");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.Player = player;
-        self.Weapon = new Get5Weapon("decoy", CSWeapon_DECOY);
-        return self;
-    }
+  public Get5DecoyStartedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player) {
+    Get5DecoyStartedEvent self = view_as<Get5DecoyStartedEvent>(new JSON_Object());
+    self.SetEvent("decoygrenade_started");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.RoundTime = roundTime;
+    self.Player = player;
+    self.Weapon = new Get5Weapon("decoy", CSWeapon_DECOY);
+    return self;
+  }
 }
 
 // This event fires when the molotov ends, but its RoundTime parameter is when it started burning.
 // Note that this event does *not* fire if the molotov was thrown directly at a smoke and did not start burning.
 methodmap Get5MolotovDetonatedEvent < Get5VictimWithDamageGrenadeEvent {
 
-    // RoundTime is when the molotov detonated.
-    property int EndTime {
-        public get() {
-          return this.GetInt("round_time_ended");
-        }
-
-        public set(int endTime) {
-          this.SetInt("round_time_ended", endTime);
-          this.SetInt("duration", endTime - this.RoundTime);
-        }
+  // RoundTime is when the molotov detonated.
+  property int EndTime {
+    public get() {
+      return this.GetInt("round_time_ended");
     }
-
-    public Get5MolotovDetonatedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player) {
-        Get5MolotovDetonatedEvent self = view_as<Get5MolotovDetonatedEvent>(new JSON_Object());
-        self.SetEvent("molotov_detonated");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.Player = player;
-        self.Weapon = new Get5Weapon("molotov", CSWeapon_MOLOTOV); // Sourcemod does not give us the info required to distinguish between molly and firebomb
-        self.Victims = new JSON_Array();
-        self.EndTime = 0; // Set after the molotov stops burning (either by expiration, extinguish or new round start).
-        self.DamageEnemies = 0;
-        self.DamageFriendlies = 0;
-        return self;
+    public set(int endTime) {
+      this.SetInt("round_time_ended", endTime);
+      this.SetInt("duration", endTime - this.RoundTime);
     }
+  }
+
+  public Get5MolotovDetonatedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player) {
+    Get5MolotovDetonatedEvent self = view_as<Get5MolotovDetonatedEvent>(new JSON_Object());
+    self.SetEvent("molotov_detonated");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.RoundTime = roundTime;
+    self.Player = player;
+    self.Weapon = new Get5Weapon("molotov", CSWeapon_MOLOTOV); // SourceMod does not give us the info required to distinguish between molly and firebomb
+    self.Victims = new JSON_Array();
+    self.EndTime = 0; // Set after the molotov stops burning (either by expiration, extinguish or new round start).
+    self.DamageEnemies = 0;
+    self.DamageFriendlies = 0;
+    return self;
+  }
 }
 
 methodmap Get5GrenadeVictim < JSON_Object {
 
-    property Get5Player Player {
-        public get() {
-          return view_as<Get5Player>(this.GetObject("player"));
-        }
-
-        public set(Get5Player player) {
-          this.SetObject("player", player);
-        }
+  property Get5Player Player {
+    public get() {
+      return view_as<Get5Player>(this.GetObject("player"));
     }
-
-    property bool FriendlyFire {
-        public get() {
-          return this.GetBool("friendly_fire");
-        }
-
-        public set(bool friendlyFire) {
-          this.SetBool("friendly_fire", friendlyFire);
-        }
+    public set(Get5Player player) {
+      this.SetObject("player", player);
     }
+  }
 
+  property bool FriendlyFire {
+    public get() {
+      return this.GetBool("friendly_fire");
+    }
+    public set(bool friendlyFire) {
+      this.SetBool("friendly_fire", friendlyFire);
+    }
+  }
 }
 
 methodmap Get5DamageGrenadeVictim < Get5GrenadeVictim {
 
-    property int Damage {
-        public get() {
-          return this.GetInt("damage");
-        }
-
-        public set(int damage) {
-          this.SetInt("damage", damage);
-        }
+  property int Damage {
+    public get() {
+      return this.GetInt("damage");
     }
-
-    property bool Killed {
-        public get() {
-          return this.GetBool("killed");
-        }
-
-        public set(bool killed) {
-          this.SetBool("killed", killed);
-        }
+    public set(int damage) {
+      this.SetInt("damage", damage);
     }
+  }
 
-    public Get5DamageGrenadeVictim(const Get5Player player, const bool friendlyFire, bool killed, const int damage) {
-        Get5DamageGrenadeVictim self = view_as<Get5DamageGrenadeVictim>(new JSON_Object());
-        self.Player = player
-        self.FriendlyFire = friendlyFire;
-        self.Killed = killed;
-        self.Damage = damage;
-        return self;
+  property bool Killed {
+    public get() {
+      return this.GetBool("killed");
     }
+    public set(bool killed) {
+      this.SetBool("killed", killed);
+    }
+  }
+
+  public Get5DamageGrenadeVictim(const Get5Player player, const bool friendlyFire, bool killed, const int damage) {
+    Get5DamageGrenadeVictim self = view_as<Get5DamageGrenadeVictim>(new JSON_Object());
+    self.Player = player
+    self.FriendlyFire = friendlyFire;
+    self.Killed = killed;
+    self.Damage = damage;
+    return self;
+  }
 }
 
 methodmap Get5BlindedGrenadeVictim < Get5GrenadeVictim {
 
-    property float BlindDuration {
-        public get() {
-          return this.GetFloat("blind_duration");
-        }
-
-        public set(float blindDuration) {
-          this.SetFloat("blind_duration", blindDuration);
-        }
+  property float BlindDuration {
+    public get() {
+      return this.GetFloat("blind_duration");
     }
-
-    public Get5BlindedGrenadeVictim(const Get5Player player, const bool friendlyFire, const float blindDuration) {
-        Get5BlindedGrenadeVictim self = view_as<Get5BlindedGrenadeVictim>(new JSON_Object());
-        self.Player = player
-        self.FriendlyFire = friendlyFire;
-        self.BlindDuration = blindDuration;
-        return self;
+    public set(float blindDuration) {
+      this.SetFloat("blind_duration", blindDuration);
     }
+  }
+
+  public Get5BlindedGrenadeVictim(const Get5Player player, const bool friendlyFire, const float blindDuration) {
+    Get5BlindedGrenadeVictim self = view_as<Get5BlindedGrenadeVictim>(new JSON_Object());
+    self.Player = player
+    self.FriendlyFire = friendlyFire;
+    self.BlindDuration = blindDuration;
+    return self;
+  }
 }
 
 // BOMB
@@ -1607,71 +1531,71 @@ methodmap Get5BombEvent < Get5TimedRoundEvent {
 
 methodmap Get5PlayerBombEvent < Get5PlayerTimedRoundEvent {
 
-    property Get5BombSite Site {
-      public get() {
-        return view_as<Get5BombSite>(this.GetInt("site_int"));
-      }
-      public set(Get5BombSite site) {
-        this.SetInt("site_int", view_as<int>(site));
-        this.SetHidden("site_int", true);
-        ConvertBombSiteToStringInJson(this, "site", site);
-      }
+  property Get5BombSite Site {
+    public get() {
+      return view_as<Get5BombSite>(this.GetInt("site_int"));
     }
+    public set(Get5BombSite site) {
+      this.SetInt("site_int", view_as<int>(site));
+      this.SetHidden("site_int", true);
+      ConvertBombSiteToStringInJson(this, "site", site);
+    }
+  }
 }
 
 methodmap Get5BombPlantedEvent < Get5PlayerBombEvent {
 
-    public Get5BombPlantedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, const Get5BombSite site) {
-        Get5BombPlantedEvent self = view_as<Get5BombPlantedEvent>(new JSON_Object());
-        self.SetEvent("bomb_planted");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.Player = player;
-        self.Site = site;
-        return self;
-    }
+  public Get5BombPlantedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5Player player, const Get5BombSite site) {
+    Get5BombPlantedEvent self = view_as<Get5BombPlantedEvent>(new JSON_Object());
+    self.SetEvent("bomb_planted");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.RoundTime = roundTime;
+    self.Player = player;
+    self.Site = site;
+    return self;
+  }
 }
 
 methodmap Get5BombExplodedEvent < Get5BombEvent {
 
-    public Get5BombExplodedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5BombSite site) {
-        Get5BombExplodedEvent self = view_as<Get5BombExplodedEvent>(new JSON_Object());
-        self.SetEvent("bomb_exploded");
-        self.SetMatchId(matchId);
-        self.MapNumber = mapNumber;
-        self.RoundNumber = roundNumber;
-        self.RoundTime = roundTime;
-        self.Site = site;
-        return self;
-    }
+  public Get5BombExplodedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const Get5BombSite site) {
+    Get5BombExplodedEvent self = view_as<Get5BombExplodedEvent>(new JSON_Object());
+    self.SetEvent("bomb_exploded");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.RoundTime = roundTime;
+    self.Site = site;
+    return self;
+  }
 }
 
 methodmap Get5BombDefusedEvent < Get5PlayerBombEvent {
 
-    property int TimeRemaining {
-      public get() {
-        return this.GetInt("bomb_time_remaining");
-      }
-      public set(int time) {
-        this.SetInt("bomb_time_remaining", time);
-      }
+  property int TimeRemaining {
+    public get() {
+      return this.GetInt("bomb_time_remaining");
     }
+    public set(int time) {
+      this.SetInt("bomb_time_remaining", time);
+    }
+  }
 
-    public Get5BombDefusedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime,
-      const Get5Player player, const Get5BombSite site, const int timeRemaining) {
-      Get5BombDefusedEvent self = view_as<Get5BombDefusedEvent>(new JSON_Object());
-      self.SetEvent("bomb_defused");
-      self.SetMatchId(matchId);
-      self.MapNumber = mapNumber;
-      self.RoundNumber = roundNumber;
-      self.RoundTime = roundTime;
-      self.Player = player;
-      self.Site = site;
-      self.TimeRemaining = timeRemaining;
-      return self;
-    }
+  public Get5BombDefusedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime,
+    const Get5Player player, const Get5BombSite site, const int timeRemaining) {
+    Get5BombDefusedEvent self = view_as<Get5BombDefusedEvent>(new JSON_Object());
+    self.SetEvent("bomb_defused");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.RoundNumber = roundNumber;
+    self.RoundTime = roundTime;
+    self.Player = player;
+    self.Site = site;
+    self.TimeRemaining = timeRemaining;
+    return self;
+  }
 }
 
 // Called each get5-event with JSON formatted event text.

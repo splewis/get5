@@ -177,6 +177,17 @@ end with a full stop as this is added automatically.
 | `VetoCountdown`                             | Veto commencing in _3_ seconds.                                                                                                                                          | Chat       |
 | `NewVersionAvailable`                       | A newer version of Get5 is available. Please visit _splewis.github.io/get5_ to update.                                                                                   | Chat       |
 | `PrereleaseVersionWarning`                  | You are running an unofficial version of Get5 (_0.9.0-c7af39a_) intended for development and testing only. This message can be disabled with _get5_print_update_notice_. | Chat       |
+| `SurrenderCommandNotEnabled`                | The surrender command is not enabled.                                                                                                                                    | Chat       |
+| `SurrenderMinimumRoundDeficit`              | You must be behind by at least _3_ round(s) in order to surrender.                                                                                                       | Chat       |
+| `SurrenderInitiated`                        | A vote to surrender was initiated by _PlayerName_. Your team must reach _3_ votes within _15_ seconds.                                                                   | Chat       |
+| `SurrenderVoteStatus`                       | _2_ of _3_ required surrender votes have been cast.                                                                                                                      | Chat       |
+| `SurrenderSuccessful`                       | _Team A_ has surrendered.                                                                                                                                                | Chat       |
+| `SurrenderVoteFailed`                       | Not enough players on your team voted to surrender.                                                                                                                      | Chat       |
+| `SurrenderOnCooldown`                       | You must wait _1:30_ to initiate a new vote to surrender.                                                                                                                | Chat       |
+| `SurrenderTeamMustRejoin`                   | _Team A_ left the server and must rejoin within _60_ seconds or _Team 2_ will win.                                                                                       | Chat       |
+| `SurrenderRejoinCountdownCanceled`          | Surrender countdown was canceled.                                                                                                                                        | Chat       |
+| `AllPlayersLeftTieCountdown`                | Both teams have left the server. At least one player must rejoin within _60_ seconds or the match will end in a tie.                                                     | Chat       |
+| `SurrenderTeamAppearsToLeaveWarning`        | _Team A_ appears to be leaving the server. Nobody from _Team B_ can leave before the surrender timer has started, or the match will end in a tie.                        | Chat       |
 
 ## Supported Languages {: #supported-languages }
 

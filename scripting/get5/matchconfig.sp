@@ -20,6 +20,9 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     return false;
   }
 
+  EndSurrenderTimers();
+  g_PendingSurrenderTeam = Get5Team_None;
+
   ResetReadyStatus();
   LOOP_TEAMS(team) {
     g_TeamSeriesScores[team] = 0;

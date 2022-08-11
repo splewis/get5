@@ -156,6 +156,11 @@ void WriteBackup() {
     return;
   }
 
+  if (g_PendingSurrenderTeam != Get5Team_None) {
+    LogDebug("Not writing backup as there is a pending surrender for team %d.", g_PendingSurrenderTeam);
+    return;
+  }
+
   if (g_GameState != Get5State_Warmup && g_GameState != Get5State_KnifeRound &&
       g_GameState != Get5State_Live) {
     LogDebug("Not writing backup for game state %d.", g_GameState);
@@ -326,6 +331,11 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
     // config, or the g_MatchID variable will be incorrect. This is suppressed when using the !stop
     // command.
     StopRecording();
+  }
+
+  if (g_EndMatchOnEmptyServerTimer != INVALID_HANDLE) {
+    LogDebug("Killing surrender/empty server timer as backup was requested.");
+    delete g_EndMatchOnEmptyServerTimer;
   }
 
   if (kv.JumpToKey("Match")) {

@@ -71,10 +71,6 @@ cfg/get5/live.cfg # (3)
 :   Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
 using [`get5_endmatch`](../commands/#get5_endmatch). **`Default: 0`**
 
-####`get5_end_match_on_empty_server`
-:   Whether the match is ended with no winner if all players leave (note: this will happen even if all players
-disconnect even in warmup with the intention to reconnect!). **`Default: 0`**
-
 ####`get5_display_gotv_veto`
 :   Whether to wait for map vetoes to be printed to GOTV before changing map. **`Default: 0`**
 
@@ -212,6 +208,33 @@ must confirm. **`Default: 0`**
 :   Whether [tactical pause](../pausing/#tactical) limits (time used and count) are reset each halftime period.
 [Technical pauses](../pausing/#technical) are not reset. **`Default: 1`**
 
+## Surrender
+
+####`get5_surrender_enabled`
+:   Whether the [`!surrender`](../commands/#surrender) command is available. **`Default: 0`**
+
+####`get5_surrender_minimum_round_deficit`
+:   The minimum number of rounds a team must be behind in order to initiate a vote to surrender. This cannot be set
+lower than `1`. **`Default: 8`**
+
+####`get5_surrender_required_votes`
+:   The number of votes required to surrender as a team. If set to `1` or below, any attempt to surrender will
+immediately succeed. **`Default: 3`**
+
+####`get5_surrender_time_limit`
+:   The number of seconds a team has to vote to surrender after the first vote is cast. This cannot be set lower
+than `10`. **`Default: 15`**
+
+####`get5_surrender_cooldown`
+:   The minimum number of seconds a team must wait before they can initiate a surrender vote following a failed
+vote. Set to zero to disable. **`Default: 60`**
+
+####`get5_surrender_time_to_rejoin`
+:   If a full team disconnects, this determines the number of seconds a player from the disconnecting team has to rejoin
+the server before they forfeit the match. If both teams disconnect, this determines how long any player from any team
+has to rejoin the match before it is ended in a tie. This cannot be set lower than 30 and applies even
+if [`get5_surrender_enabled`](#get5_surrender_enabled) is disabled. **`Default: 60`**
+
 ## Formats
 
 **Note: for these, setting the cvar to an empty string ("") will disable the file writing entirely.**
@@ -247,7 +270,7 @@ command as well as the [`get5_loadbackup`](../commands/#get5_loadbackup) command
 :   The folder of saved [backup files](../commands/#get5_loadbackup), relative to the `csgo` directory. You **can** use
 the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`. **`Default: ""`**
 
-!!! warning "Slash, slash, hundred yard dash :material-slash-forward:"
+!!! warning "Slash, slash, hundred-yard dash :material-slash-forward:"
 
     It is very important that your backup path does **not** start with a slash but instead **ends with a slash**. If
     not, the last part of the path will be considered a prefix of the filename and things will not work correctly. Also

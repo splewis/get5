@@ -1135,6 +1135,11 @@ public Action Timer_ReplenishMoney(Handle timer, int client) {
 public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_MatchOver");
   if (g_GameState == Get5State_Live) {
+
+    // If someone called for a pause in the last round; cancel it.
+    if (IsPaused()) {
+      UnpauseGame(Get5Team_None);
+    }
     // Figure out who won
     int t1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
     int t2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));

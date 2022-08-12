@@ -14,10 +14,10 @@ You can get the latest versions here:
 
 ## Download Get5
 
-The latest release of Get5 can be found [here](https://github.com/splewis/get5/releases/latest). Older Releases of 
+The latest release of Get5 can be found [here](https://github.com/splewis/get5/releases/latest). Older Releases of
 Get5 can be found in the [Releases](https://github.com/splewis/get5/releases) section of the repo. Anything *not*
-marked as "Nightly" in the title are known to be stable, but may be lacking features that are currently in development. 
-If you would like to test new features, or be on the "bleeding edge", you can also download any of the latest 
+marked as "Nightly" in the title are known to be stable, but may be lacking features that are currently in development.
+If you would like to test new features, or be on the "bleeding edge", you can also download any of the latest
 pre-releases found at the same link above that are marked in the title with "Nightly" or are marked as "Pre-release".
 
 !!! info
@@ -170,10 +170,10 @@ is just to indicate what the correct structure looks like.
     8. Don't change anything in here. There are no editable files in the `metamod` folder. It's here because SourceMod
        depends on it.
     9. SourceMod binaries.
-    10. This a JSON-example of a [match configuration]. You should use this as a template for your own match configuration.
-        All JSON match configurations **must** end with `.json`.
-    11. The server's default scrim match configuration. This is loaded when using
-        the [`get5_scrim`](../commands/#get5_scrim) command.
+    10. This a JSON-example of a [match configuration](match_schema.md). You should use this as a template for your own
+        match configuration. All JSON match configurations **must** end with `.json`.
+    11. The server's default scrim [match configuration](match_schema.md). This is loaded when using the
+        [`get5_scrim`](../commands/#get5_scrim) command.
     12. Match configurations can be created in both JSON and
         SourceMod's [KeyValue](https://wiki.alliedmods.net/KeyValues_(SourceMod_Scripting)) format. We recommend JSON for
         all new users, but Get5 will continue to support reading `.cfg` files as well.

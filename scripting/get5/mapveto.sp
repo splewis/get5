@@ -30,14 +30,18 @@ public Action Timer_VetoCountdown(Handle timer) {
   } else {
     warningsPrinted++;
     int secondsRemaining = g_VetoCountdownCvar.IntValue - warningsPrinted + 1;
-    Get5_MessageToAll("%t", "VetoCountdown", secondsRemaining);
+    char secondsFormatted[8];
+    Format(secondsFormatted, sizeof(secondsFormatted), "{GREEN}%d{NORMAL}", secondsRemaining);
+    Get5_MessageToAll("%t", "VetoCountdown", secondsFormatted);
     return Plugin_Continue;
   }
 }
 
 static void AbortVeto() {
   Get5_MessageToAll("%t", "CaptainLeftOnVetoInfoMessage");
-  Get5_MessageToAll("%t", "ReadyToResumeVetoInfoMessage");
+  char readyCommandFormatted[64];
+  FormatChatCommand(readyCommandFormatted, sizeof(readyCommandFormatted), "!ready");
+  Get5_MessageToAll("%t", "ReadyToResumeVetoInfoMessage", readyCommandFormatted);
   ChangeState(Get5State_PreVeto);
 }
 
@@ -54,6 +58,7 @@ public void VetoFinished() {
   for (int i = seriesScore; i < g_MapsToPlay.Length; i++) {
     char map[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(i, map, sizeof(map));
+    Format(map, sizeof(map), "{GREEN}%s{NORMAL}", map);
     Get5_MessageToAll("%t", "MapIsInfoMessage", i + 1 - seriesScore, map);
   }
 
@@ -288,6 +293,7 @@ public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
 
     RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
+    Format(mapName, sizeof(mapName), "{LIGHT_RED}%s{NORMAL}", mapName);
     Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], mapName);
 
     Get5MapVetoedEvent event = new Get5MapVetoedEvent(g_MatchID, team, mapName);
@@ -355,7 +361,9 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
     g_MapsToPlay.PushString(mapName);
     RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
-    Get5_MessageToAll("%t", "TeamPickedMapInfoMessage", g_FormattedTeamNames[team], mapName,
+    char mapNameFormatted[PLATFORM_MAX_PATH];
+    Format(mapNameFormatted, sizeof(mapNameFormatted), "{GREEN}%s{NORMAL}", mapName);
+    Get5_MessageToAll("%t", "TeamPickedMapInfoMessage", g_FormattedTeamNames[team], mapNameFormatted,
                       g_MapsToPlay.Length);
     g_LastVetoTeam = team;
 
@@ -435,6 +443,7 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
     char mapName[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(mapNumber, mapName, sizeof(mapName));
 
+    Format(choice, sizeof(choice), "{GREEN}%s{NORMAL}", choice);
     Get5_MessageToAll("%t", "TeamSelectSideInfoMessage", g_FormattedTeamNames[team], choice,
                       mapName);
 

@@ -2,27 +2,27 @@
 {
     "ReadyToVetoInfoMessage"
     {
-        "de"            "Tippe {GREEN}!ready {NORMAL}wenn dein Team bereit zum Voten ist."
+        "de"            "Tippe {1}wenn dein Team bereit zum Voten ist."
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "de"            "Warten auf die Caster, tippe {GREEN}!ready {NORMAL}um zu beginnen."
+        "de"            "Warten auf die Caster, tippe {2} um zu beginnen."
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "de"            "Tippe {GREEN}!ready {NORMAL}wenn dein Team bereit ist das Match Backup wieder einzuspielen."
+        "de"            "Tippe {1}wenn dein Team bereit ist das Match Backup wieder einzuspielen."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "de"            "Tippe {GREEN}!ready {NORMAL}wenn dein Team bereit ist für die Messer-Runde."
+        "de"            "Tippe {1}wenn dein Team bereit ist für die Messer-Runde."
     }
     "ReadyToStartInfoMessage"
     {
-        "de"            "Tippe {GREEN}!ready {NORMAL}wenn dein Team bereit ist zu beginnen."
+        "de"            "Tippe {1}wenn dein Team bereit ist zu beginnen."
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "de"            "{1} gewinnt die Seitenwahl. Wartend auf !stay oder !swap ."
+        "de"            "{1} gewinnt die Seitenwahl. Wartend auf {2} oder {3} ."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
@@ -78,7 +78,7 @@
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "de"            "{1} möchte fortfahren, zum zuzustimmen muss {2} !unpause schreiben."
+        "de"            "{1} möchte fortfahren, zum zuzustimmen muss {2} {3} schreiben."
     }
     "TeamFailToReadyMinPlayerCheck"
     {
@@ -122,19 +122,19 @@
     }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
-        "de"            "{1} möchte die letzte Runde wiederholen, {2} muss mit !stop bestätigen."
+        "de"            "{1} möchte die letzte Runde wiederholen, {2} muss mit {3} bestätigen."
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "de"            "{1} gewinnt die Serie {2}-{3}"
+        "de"            "{1} gewinnt die Serie {2}-{3}."
     }
     "SeriesTiedInfoMessage"
     {
-        "de"            "Die Serie ist unentschieden mit {1}-{2}"
+        "de"            "Die Serie ist unentschieden mit {1}-{2}."
     }
     "NextSeriesMapInfoMessage"
     {
-        "de"            "Die nächste Map in der Serie ist {GREEN}{1}"
+        "de"            "Die nächste Map in der Serie ist {1}."
     }
     "TeamWonMatchInfoMessage"
     {
@@ -150,7 +150,7 @@
     }
     "BackupLoadedInfoMessage"
     {
-        "de"            "Backup {1} erfolgreich geladen"
+        "de"            "Backup {1} erfolgreich geladen."
     }
     "MatchBeginInSecondsInfoMessage"
     {
@@ -182,7 +182,7 @@
     }
     "ChangingMapInfoMessage"
     {
-        "de"            "Ändern der Map in {GREEN}{1}..."
+        "de"            "Ändern der Map in {1}..."
     }
     "MapDecidedInfoMessage"
     {
@@ -190,19 +190,19 @@
     }
     "MapIsInfoMessage"
     {
-        "de"            "Map {1}: {GREEN}{2}"
+        "de"            "Map {1}: {2}"
     }
     "TeamPickedMapInfoMessage"
     {
-        "de"            "{1} wählte {GREEN}{2} {NORMAL}als Map aus {3}"
+        "de"            "{1} wählte {2} als Map aus {3}."
     }
     "TeamSelectSideInfoMessage"
     {
-        "de"            "{1} möchte als {GREEN}{2} {NORMAL}starten {3}"
+        "de"            "{1} möchte als {2} starten {3}."
     }
     "TeamVetoedMapInfoMessage"
     {
-        "de"            "{1} verbietet {LIGHT_RED}{2}"
+        "de"            "{1} verbietet {2}."
     }
     "CaptainLeftOnVetoInfoMessage"
     {
@@ -210,7 +210,7 @@
     }
     "ReadyToResumeVetoInfoMessage"
     {
-        "de"            "Tippe {GREEN}!ready {NORMAL}wenn ihr fertig seit mit dem veto fortzufahren."
+        "de"            "Tippe {1} wenn ihr fertig seit mit dem veto fortzufahren."
     }
     "MatchConfigLoadedInfoMessage"
     {

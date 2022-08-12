@@ -614,13 +614,20 @@ public void OnPluginStart() {
 }
 
 public Action Timer_InfoMessages(Handle timer) {
+  if (g_GameState == Get5State_Live || g_GameState == Get5State_None) {
+    return Plugin_Continue;
+  }
+
+  char readyCommandFormatted[64];
+  FormatChatCommand(readyCommandFormatted, sizeof(readyCommandFormatted), "!ready");
+
   // Handle pre-veto messages
   if (g_GameState == Get5State_PreVeto) {
     if (IsTeamsReady() && !IsSpectatorsReady()) {
       Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
-                        g_FormattedTeamNames[Get5Team_Spec]);
+                        g_FormattedTeamNames[Get5Team_Spec], readyCommandFormatted);
     } else {
-      Get5_MessageToAll("%t", "ReadyToVetoInfoMessage");
+      Get5_MessageToAll("%t", "ReadyToVetoInfoMessage", readyCommandFormatted);
     }
     MissingPlayerInfoMessage();
   } else if (g_GameState == Get5State_Warmup && !g_MapChangePending) {
@@ -628,19 +635,19 @@ public Action Timer_InfoMessages(Handle timer) {
     // Handle warmup state, provided we're not waiting for a map change
     // Backups take priority
     if (!IsTeamsReady() && g_WaitingForRoundBackup) {
-      Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage");
+      Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage", readyCommandFormatted);
       return Plugin_Continue;
     }
 
     // Find out what we're waiting for
     if (IsTeamsReady() && !IsSpectatorsReady()) {
       Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
-                        g_FormattedTeamNames[Get5Team_Spec]);
+                        g_FormattedTeamNames[Get5Team_Spec], readyCommandFormatted);
     } else {
       if (g_MapSides.Get(Get5_GetMapNumber()) == SideChoice_KnifeRound) {
-        Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage");
+        Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage", readyCommandFormatted);
       } else {
-        Get5_MessageToAll("%t", "ReadyToStartInfoMessage");
+        Get5_MessageToAll("%t", "ReadyToStartInfoMessage", readyCommandFormatted);
       }
     }
     MissingPlayerInfoMessage();
@@ -649,7 +656,11 @@ public Action Timer_InfoMessages(Handle timer) {
     Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     // Handle waiting for knife decision
-    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam]);
+    char formattedStayCommand[64];
+    FormatChatCommand(formattedStayCommand, sizeof(formattedStayCommand), "!stay");
+    char formattedSwapCommand[64];
+    FormatChatCommand(formattedSwapCommand, sizeof(formattedSwapCommand), "!swap");
+    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand, formattedSwapCommand);
   } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
     // Handle postgame
     Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
@@ -1097,12 +1108,14 @@ public Action Command_Stop(int client, int args) {
   Get5Team team = GetClientMatchTeam(client);
   g_TeamGivenStopCommand[team] = true;
 
+  char stopCommandFormatted[64];
+  FormatChatCommand(stopCommandFormatted, sizeof(stopCommandFormatted), "!stop");
   if (g_TeamGivenStopCommand[Get5Team_1] && !g_TeamGivenStopCommand[Get5Team_2]) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_FormattedTeamNames[Get5Team_1], g_FormattedTeamNames[Get5Team_2]);
+                      g_FormattedTeamNames[Get5Team_1], g_FormattedTeamNames[Get5Team_2], stopCommandFormatted);
   } else if (!g_TeamGivenStopCommand[Get5Team_1] && g_TeamGivenStopCommand[Get5Team_2]) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_FormattedTeamNames[Get5Team_2], g_FormattedTeamNames[Get5Team_1]);
+                      g_FormattedTeamNames[Get5Team_2], g_FormattedTeamNames[Get5Team_1], stopCommandFormatted);
   } else if (g_TeamGivenStopCommand[Get5Team_1] && g_TeamGivenStopCommand[Get5Team_2]) {
     RestoreLastRound(client);
   }
@@ -1264,6 +1277,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     convertSecondsToMinutesAndSeconds(RoundToFloor(restartDelay), timeToMapChangeFormatted, sizeof(timeToMapChangeFormatted));
 
     g_MapChangePending = true;
+    Format(nextMap, sizeof(nextMap), "{GREEN}%s{NORMAL}", nextMap);
     Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap, timeToMapChangeFormatted);
     ChangeState(Get5State_PostGame);
     // Subtracting 4 seconds makes the map change 1 second before the timer expires, as there is a 3 second built-in
@@ -1519,8 +1533,11 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     }
 
     g_KnifeWinnerTeam = CSTeamToGet5Team(winningCSTeam);
-    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam]);
+    char formattedStayCommand[64];
+    FormatChatCommand(formattedStayCommand, sizeof(formattedStayCommand), "!stay");
+    char formattedSwapCommand[64];
+    FormatChatCommand(formattedSwapCommand, sizeof(formattedSwapCommand), "!swap");
+    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand, formattedSwapCommand);
 
     if (g_TeamTimeToKnifeDecisionCvar.FloatValue > 0)
       CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision);
@@ -1529,9 +1546,11 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
   if (g_GameState == Get5State_Live) {
     int csTeamWinner = event.GetInt("winner");
 
-    Get5_MessageToAll("{LIGHT_GREEN}%s {GREEN}%d {NORMAL}- {GREEN}%d {LIGHT_GREEN}%s", g_TeamNames[Get5Team_1],
-                      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
-                      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)), g_TeamNames[Get5Team_2]);
+    Get5_MessageToAll("%s {GREEN}%d {NORMAL}- {GREEN}%d %s", g_FormattedTeamNames[Get5Team_1],
+      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
+      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)),
+      g_FormattedTeamNames[Get5Team_2]
+    );
 
     Stats_RoundEnd(csTeamWinner);
 

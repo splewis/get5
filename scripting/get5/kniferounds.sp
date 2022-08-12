@@ -15,7 +15,7 @@ public Action StartKnifeRound(Handle timer) {
 
 public Action Timer_AnnounceKnife(Handle timer) {
   for (int i = 0; i < 5; i++) {
-    Get5_MessageToAll("%t", "KnifeInfoMessage");
+    Get5_MessageToAll("{GREEN}%t", "KnifeInfoMessage");
   }
 
   Get5KnifeRoundStartedEvent knifeEvent = new Get5KnifeRoundStartedEvent(g_MatchID, g_MapNumber);

@@ -2,23 +2,23 @@
 {
     "ReadyToVetoInfoMessage"
     {
-        "es"            "Teclee {GREEN}!ready {NORMAL}cuando su equipo este listo para la ronda veto."
+        "es"            "Teclee {1} cuando su equipo este listo para la ronda veto."
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "es"            "Esperando : los casters deben teclear {GREEN}!ready {NORMAL}para que la partida comience."
+        "es"            "Esperando : los casters deben teclear {2} para que la partida comience."
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "es"            "Teclee {GREEN}!ready {NORMAL}cuando este listo para restaurar el backup de la partida."
+        "es"            "Teclee {1} cuando este listo para restaurar el backup de la partida."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "es"            "Teclee {GREEN}!ready {NORMAL}cuando este listo para empezar la ronda Knife."
+        "es"            "Teclee {1} cuando este listo para empezar la ronda Knife."
     }
     "ReadyToStartInfoMessage"
     {
-        "es"            "Teclee {GREEN}!ready {NORMAL}cuando este listo para empezar la ronda."
+        "es"            "Teclee {1} cuando este listo para empezar la ronda."
     }
     "YouAreReady"
     {
@@ -30,7 +30,7 @@
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "es"            "{1} ganó la ronda Knife. Esperando la elección entre !stay o !swap."
+        "es"            "{1} ganó la ronda Knife. Esperando la elección entre {2} o {3}."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
@@ -94,7 +94,7 @@
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "es"            "{1} quiere retomar la partida, esperando a que {2} teclee !unpause"
+        "es"            "{1} quiere retomar la partida, esperando a que {2} teclee {3}."
     }
     "PausesLeftInfoMessage"
     {
@@ -126,11 +126,11 @@
     }
     "ForceReadyInfoMessage"
     {
-        "es"            "Puede teclear {GREEN}!forceready {NORMAL}para forzar su equipo a estar listo si tienen {GREEN}{1}{NORMAL} jugadores"
+        "es"            "Puede teclear {1} para forzar su equipo a estar listo si tienen {2} jugadores"
     }
     "TeammateForceReadied"
     {
-        "es"            "Su equipo a sido forzado a estar listo por {GREEN}{1}"
+        "es"            "Su equipo a sido forzado a estar listo por {1}."
     }
     "AdminForceReadyInfoMessage"
     {
@@ -150,19 +150,19 @@
     }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
-        "es"            "{1} quiere parar y reiniciar la partida, esto requiere {2} confirmaciones con !stop."
+        "es"            "{1} quiere parar y reiniciar la partida, esto requiere {2} confirmaciones con {3}."
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "es"            "{1} ganó las series {2}-{3}"
+        "es"            "{1} ganó las series {2}-{3}."
     }
     "SeriesTiedInfoMessage"
     {
-        "es"            "La serie empató {1}-{2}"
+        "es"            "La serie empató {1}-{2}."
     }
     "NextSeriesMapInfoMessage"
     {
-        "es"            "El proximo mapa de la serie es {GREEN}{1}"
+        "es"            "El proximo mapa de la serie es {1}."
     }
     "TeamWonMatchInfoMessage"
     {
@@ -182,7 +182,7 @@
     }
     "BackupLoadedInfoMessage"
     {
-        "es"            "Backup cargado exitosamente {1}"
+        "es"            "Backup cargado exitosamente {1}."
     }
     "MatchBeginInSecondsInfoMessage"
     {
@@ -202,7 +202,7 @@
     }
     "TeamDecidedToStayInfoMessage"
     {
-        "es"            "{1} {1} decidiío quedarse.."
+        "es"            "{1} {1} decidiío quedarse."
     }
     "TeamDecidedToSwapInfoMessage"
     {
@@ -214,7 +214,7 @@
     }
     "ChangingMapInfoMessage"
     {
-        "es"            "Cambio de mapa por {GREEN}{1}…"
+        "es"            "Cambio de mapa por {1}..."
     }
     "MapDecidedInfoMessage"
     {
@@ -222,19 +222,19 @@
     }
     "MapIsInfoMessage"
     {
-        "es"            "Map {1}: {GREEN}{2}"
+        "es"            "Map {1}: {2}"
     }
     "TeamPickedMapInfoMessage"
     {
-        "es"            "{1} eligió {GREEN}{2} {NORMAL}de mapa {3}}"
+        "es"            "{1} eligió {2} de mapa {3}."
     }
     "TeamSelectSideInfoMessage"
     {
-        "es"            "{1} eligió empezar con {GREEN}{2} {NORMAL}sobre {3}"
+        "es"            "{1} eligió empezar con {2} sobre {3}."
     }
     "TeamVetoedMapInfoMessage"
     {
-        "es"            "{1} rechazó {LIGHT_RED}{2}"
+        "es"            "{1} rechazó {2}."
     }
     "CaptainLeftOnVetoInfoMessage"
     {
@@ -242,7 +242,7 @@
     }
     "ReadyToResumeVetoInfoMessage"
     {
-        "es"            "Teclee {GREEN}!ready {NORMAL}cuando este listo para retomar la partida de veto."
+        "es"            "Teclee {1} cuando este listo para retomar la partida de veto."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -298,6 +298,6 @@
     }
     "VetoCountdown"
     {
-        "es"        "El veto comenzará en {GREEN}{1} {NORMAL}segundos."
+        "es"        "El veto comenzará en {1} segundos."
     }
 }

@@ -2,23 +2,23 @@
 {
     "ReadyToVetoInfoMessage"
     {
-        "hu"            "Írd be a {GREEN}!ready{NORMAL} parancsot, ha a csapatod készen áll a vétóra."
+        "hu"            "Írd be a {1} parancsot, ha a csapatod készen áll a vétóra."
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "hu"            "A {1} várunk, hogy beírja a {GREEN}!ready{NORMAL} parancsot a kezdéshez."
+        "hu"            "A {1} várunk, hogy beírja a {2} parancsot a kezdéshez."
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "hu"            "Írd be a {GREEN}!ready{NORMAL} parancsot, ha a készen állsz a mérkőzés visszatöltésre."
+        "hu"            "Írd be a {1} parancsot, ha a készen állsz a mérkőzés visszatöltésre."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "hu"            "Írd be a {GREEN}!ready{NORMAL} parancsot, ha készen állsz a késelésre."
+        "hu"            "Írd be a {1} parancsot, ha készen állsz a késelésre."
     }
     "ReadyToStartInfoMessage"
     {
-        "hu"            "Írd be a {GREEN}!ready{NORMAL} parancsot, ha készenállsz a kezdésre."
+        "hu"            "Írd be a {1} parancsot, ha készenállsz a kezdésre."
     }
     "YouAreReady"
     {
@@ -26,7 +26,7 @@
     }
     "YouAreReadyAuto"
     {
-        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által. Írd be, hogy !unready ha nem állsz még készen."
+        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által. Írd be, hogy {1} ha nem állsz még készen."
     }
     "YouAreNotReady"
     {
@@ -34,7 +34,7 @@
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "hu"            "{1} nyerte meg a kés kört. Várakozunk, hogy kiválasszák a megfelelő oldalt. {GREEN}!stay{NORMAL} vagy {GREEN}!swap{NORMAL}."
+        "hu"            "{1} nyerte meg a kés kört. Várakozunk, hogy kiválasszák a megfelelő oldalt. {2} vagy {3}."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
@@ -122,7 +122,7 @@
     }
     "PausedForBackup"
     {
-        "hu"            "A játék vissza lett töltve a kör mentésből. Mindkét csapatnak be kell írnia az {GREEN}!unpause{NORMAL} parancsot a folytatáshoz."
+        "hu"            "A játék vissza lett töltve a kör mentésből. Mindkét csapatnak be kell írnia az {1} parancsot a folytatáshoz."
     }
     "UserCannotUnpauseAdmin"
     {
@@ -158,7 +158,7 @@
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "hu"            "{1} szeretné folytatni. Várakozunk a {2} csapatra, hogy beírják a {GREEN}!unpause{NORMAL} parancsot."
+        "hu"            "{1} szeretné folytatni. Várakozunk a {2} csapatra, hogy beírják a {3} parancsot."
     }
     "PausesLeftInfoMessage"
     {
@@ -198,11 +198,11 @@
     }
     "ForceReadyInfoMessage"
     {
-        "hu"            "Beírhatod a {GREEN}!forceready{NORMAL} parancsot, ha fel szeretnéd készíteni a csapatod, ha kevesebb mint {GREEN}{1}{NORMAL} játékosod van."
+        "hu"            "Beírhatod a {1} parancsot, ha fel szeretnéd készíteni a csapatod, ha kevesebb mint {2} játékosod van."
     }
     "TeammateForceReadied"
     {
-        "hu"            "A csapatod felkészült {GREEN}{1} által."
+        "hu"            "A csapatod felkészült {1} által."
     }
     "AdminForceReadyInfoMessage"
     {
@@ -222,19 +222,19 @@
     }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
-        "hu"            "{1} szeretne megállni és visszatölteni az előző kört. {2} el kell fogadni a {GREEN}!stop{NORMAL} paranccsal."
+        "hu"            "{1} szeretne megállni és visszatölteni az előző kört. {2} el kell fogadni a {3} paranccsal."
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "hu"            "{1} áll nyerésre {2}-{3}"
+        "hu"            "{1} áll nyerésre {2}-{3}."
     }
     "SeriesTiedInfoMessage"
     {
-        "hu"            "Az állás döntetlen. {1}-{2}"
+        "hu"            "Az állás döntetlen. {1}-{2}."
     }
     "NextSeriesMapInfoMessage"
     {
-        "hu"            "A következő pálya a szériában {GREEN}{1}"
+        "hu"            "A következő pálya a szériában {1}."
     }
     "TeamWonMatchInfoMessage"
     {
@@ -246,7 +246,7 @@
     }
     "TeamWonSeriesInfoMessage"
     {
-        "hu"            "{1} nyerte a szériát. {2}-{3}"
+        "hu"            "{1} nyerte a szériát. {2}-{3}."
     }
     "MatchFinishedInfoMessage"
     {
@@ -290,7 +290,7 @@
     }
     "ChangingMapInfoMessage"
     {
-        "hu"            "Pályaváltás a következőre {GREEN}{1}..."
+        "hu"            "Pályaváltás a következőre {1}..."
     }
     "MapDecidedInfoMessage"
     {
@@ -298,19 +298,19 @@
     }
     "MapIsInfoMessage"
     {
-        "hu"            "{1}. Pálya: {GREEN}{2}{NORMAL}"
+        "hu"            "{1}. Pálya: {2}"
     }
     "TeamPickedMapInfoMessage"
     {
-        "hu"            "{1} választotta a {GREEN}{2}{NORMAL} {3}. pályának."
+        "hu"            "{1} választotta a {2} {3}. pályának."
     }
     "TeamSelectSideInfoMessage"
     {
-        "hu"            "{1} választott, hogy kezd {GREEN}{2}{NORMAL} oldalon a(z) {3}. pályán."
+        "hu"            "{1} választott, hogy kezd {2} oldalon a(z) {3}. pályán."
     }
     "TeamVetoedMapInfoMessage"
     {
-        "hu"            "{1} szavazott {LIGHT_RED}{2}{NORMAL}."
+        "hu"            "{1} szavazott {2}."
     }
     "CaptainLeftOnVetoInfoMessage"
     {
@@ -318,7 +318,7 @@
     }
     "ReadyToResumeVetoInfoMessage"
     {
-        "hu"            "Írd be a {GREEN}!ready{NORMAL} parancsot ha készenállsz a vétó folytatására."
+        "hu"            "Írd be a {1} parancsot ha készenállsz a vétó folytatására."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -374,6 +374,6 @@
     }
     "VetoCountdown"
     {
-        "hu"            "Kezdődik a vétózás {GREEN}{1}{NORMAL} másodperc múlva."
+        "hu"            "Kezdődik a vétózás {1} másodperc múlva."
     }
 }

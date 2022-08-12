@@ -10,9 +10,11 @@
 
 static char _colorNames[][] = {"{NORMAL}", "{DARK_RED}",    "{PINK}",      "{GREEN}",
                                "{YELLOW}", "{LIGHT_GREEN}", "{LIGHT_RED}", "{GRAY}",
-                               "{ORANGE}", "{LIGHT_BLUE}",  "{DARK_BLUE}", "{PURPLE}"};
+                               "{ORANGE}", "{LIGHT_BLUE}",  "{DARK_BLUE}", "{PURPLE}",
+                               "{GOLD}"};
 static char _colorCodes[][] = {"\x01", "\x02", "\x03", "\x04", "\x05", "\x06",
-                               "\x07", "\x08", "\x09", "\x0B", "\x0C", "\x0E"};
+                               "\x07", "\x08", "\x09", "\x0B", "\x0C", "\x0E",
+                               "\x10"};
 
 // Convenience macros.
 #define LOOP_TEAMS(%1) for (Get5Team %1 = Get5Team_1; %1 < Get5Team_Count; %1 ++)
@@ -186,6 +188,21 @@ stock void Colorize(char[] msg, int size, bool stripColor = false) {
     } else {
       ReplaceString(msg, size, _colorNames[i], _colorCodes[i]);
     }
+  }
+}
+
+stock void FormatChatCommand(char[] buffer, const int bufferLength, const char[] command) {
+  Format(buffer, bufferLength, "{GREEN}%s{NORMAL}", command);
+}
+
+stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client) {
+  Get5Side side = view_as<Get5Side>(IsClientInGame(client) ? GetClientTeam(client) : CS_TEAM_NONE);
+  if (side == Get5Side_CT) {
+    Format(buffer, bufferLength, "{LIGHT_BLUE}%N{NORMAL}", client);
+  } else if (side == Get5Side_T) {
+    Format(buffer, bufferLength, "{GOLD}%N{NORMAL}", client);
+  } else {
+    Format(buffer, bufferLength, "{PURPLE}%N{NORMAL}", client);
   }
 }
 

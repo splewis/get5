@@ -2,27 +2,27 @@
 {
     "ReadyToVetoInfoMessage"
     {
-        "ru"            "Напишите {GREEN}!ready {NORMAL}когда ваша команда будет готова к голосованию."
+        "ru"            "Напишите {1} когда ваша команда будет готова к голосованию."
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "ru"            "Ожидаем, пока все игроки напишут {GREEN}!ready {NORMAL}для начала."
+        "ru"            "Ожидаем, пока все игроки напишут {2} для начала."
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "ru"            "Напиши {GREEN}!ready {NORMAL}когда твоя команда будет готова загрузить сохраненную игру."
+        "ru"            "Напиши {1} когда твоя команда будет готова загрузить сохраненную игру."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "ru"            "Напиши {GREEN}!ready {NORMAL}когда твоя команда будет готова к ножевому раунду."
+        "ru"            "Напиши {1} когда твоя команда будет готова к ножевому раунду."
     }
     "ReadyToStartInfoMessage"
     {
-        "ru"            "Напиши {GREEN}!ready {NORMAL}когда твоя команда будет готова начать."
+        "ru"            "Напиши {1} когда твоя команда будет готова начать."
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "ru"            "{1} выиграла раунд. Ожидаем, пока они напишут !stay или !swap."
+        "ru"            "{1} выиграла раунд. Ожидаем, пока они напишут {2} или {3}."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
@@ -78,7 +78,7 @@
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "ru"            "{1} желает снять паузу, ожидаем когда {2} напишут !unpause."
+        "ru"            "{1} желает снять паузу, ожидаем когда {2} напишут {3}."
     }
     "TeamReadyToVetoInfoMessage"
     {
@@ -118,19 +118,19 @@
     }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
-        "ru"            "{1} желает остановить и перезагрузить последний раунд, ждем {2} чтобы написали !stop для подтверждения."
+        "ru"            "{1} желает остановить и перезагрузить последний раунд, ждем {2} чтобы написали {3} для подтверждения."
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "ru"            "{1} выигрывает со счетом {2}-{3}"
+        "ru"            "{1} выигрывает со счетом {2}-{3}."
     }
     "SeriesTiedInfoMessage"
     {
-        "ru"            "Матч остановлен на счете {1}-{2}"
+        "ru"            "Матч остановлен на счете {1}-{2}."
     }
     "NextSeriesMapInfoMessage"
     {
-        "ru"            "Следующая карта в серии {GREEN}{1}"
+        "ru"            "Следующая карта в серии {1}."
     }
     "TeamWonMatchInfoMessage"
     {
@@ -146,7 +146,7 @@
     }
     "BackupLoadedInfoMessage"
     {
-        "ru"            "Удачно загружен бэкап {1}"
+        "ru"            "Удачно загружен бэкап {1}."
     }
     "MatchBeginInSecondsInfoMessage"
     {
@@ -154,7 +154,7 @@
     }
     "MatchIsLiveInfoMessage"
     {
-        "ru"            "Матч {GREEN}НАЧАЛСЯ!"
+        "ru"            "Матч {GREEN}НАЧАЛСЯ"
     }
     "KnifeIn5SecInfoMessage"
     {
@@ -178,7 +178,7 @@
     }
     "ChangingMapInfoMessage"
     {
-        "ru"            "Карта изменена на {GREEN}{1}..."
+        "ru"            "Карта изменена на {1}..."
     }
     "MapDecidedInfoMessage"
     {
@@ -186,19 +186,19 @@
     }
     "MapIsInfoMessage"
     {
-        "ru"            "Карта {1}: {GREEN}{2}"
+        "ru"            "Карта {1}: {2}"
     }
     "TeamPickedMapInfoMessage"
     {
-        "ru"            "{1} выбрал {GREEN}{2} {NORMAL}как карту {3}"
+        "ru"            "{1} выбрал {2} как карту {3}."
     }
     "TeamSelectSideInfoMessage"
     {
-        "ru"            "{1} выбрали начать за {GREEN}{2} {NORMAL}на {3}"
+        "ru"            "{1} выбрали начать за {2} на {3}."
     }
     "TeamVetoedMapInfoMessage"
     {
-        "ru"            "{1} вычеркнули {LIGHT_RED}{2}"
+        "ru"            "{1} вычеркнули {2}."
     }
     "CaptainLeftOnVetoInfoMessage"
     {
@@ -206,7 +206,7 @@
     }
     "ReadyToResumeVetoInfoMessage"
     {
-        "ru"            "Напишите {GREEN}!ready {NORMAL}, когда будете готовы продолжить голосование."
+        "ru"            "Напишите {1}, когда будете готовы продолжить голосование."
     }
     "MatchConfigLoadedInfoMessage"
     {

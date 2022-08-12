@@ -2,9 +2,9 @@
 
 Get5 has been translated into a few languages, but some a are still incomplete or could use a grammatical hand. If you
 are proficient in a language other than English, you are welcome to open a pull request on GitHub with adjustments or
-even entirely new languages. Note that you should be **good** at the language; machine-translations or sloppy linguistics
-are worse than defaulting Get5 to English. If you cannot code and have found errors in translations, feel free to join
-the [Discord](../community/#discord) and let us know.
+even entirely new languages. Note that you should be **good** at the language; machine-translations or sloppy
+linguistics are worse than defaulting Get5 to English. If you cannot code and have found errors in translations, feel
+free to join the [Discord](../community/#discord) and let us know.
 
 ## How to translate?
 
@@ -18,43 +18,55 @@ entire language file**.
 
 ## Example
 
-```yaml
-"TeamPickedMapInfoMessage"
-{
-  "#format"  "{1:s},{2:s},{3:d}" # (1)
-  "en"       "{1} picked {GREEN}{2}{NORMAL} as map {3}." # (2)
-}
-```
+!!! example "translations/get5.phrases.txt"
 
-1. The `#format` parameter indicates the order and types of parameters. These will *not* be defined in other languages, and
-you should only provide the language string itself (with its language prefix, i.e. `en`). The original file indicates
-what `{1}`, `{2}` and `{3}` are. In this case, the first and second arguments are strings and the third is a number.
-2. Use the English strings and the [reference](#reference) below to determine how to translate the string.
+    ```yaml
+    "TeamPickedMapInfoMessage"
+    {
+        "#format"  "{1:s},{2:s},{3:d}" # (1)
+        "en"       "{1} picked {2} as map {3}." # (2)
+    }
+    ```
+
+    1. The `#format` parameter indicates the order and types of parameters. These will *not* be defined in other 
+       and you should only provide the language string itself (with its language prefix, i.e. `en`). The original file
+       indicates what `{1}`, `{2}` and `{3}` are. In this case, the first and second arguments are strings and the third
+       is a number.
+    2. Use the English strings and the [reference](#reference) below to determine how to translate the string.
 
 As the string implies, this example is used when a team picks a map, and the output is printed to chat and looks like
-this: `Team A picked de_dust2 as map 2.` - with `de_dust2` being colored green.
+this: `Team A picked de_dust2 as map 2.` The French translation file for this string looks like this:
+
+!!! example "translations/fr/get5.phrases.txt"
+
+    ```yaml
+    "TeamPickedMapInfoMessage"
+    {
+        "fr"  "{1} a choisi {2} comme map {3}."
+    }
+    ```
 
 ## Types of strings
 
 ####`Chat`
 
 :   Displayed in the regular game chat. This is the only type that supports
-    [color modifiers](../configuration#color-substitutes).
+[color modifiers](../configuration#color-substitutes). You should use the same colors in the same lexical context as the
+English translation. All injected variables are colored automatically if required.
 
 ####`HintText`
 
 :   Displayed as a ["hint"](https://sourcemod.dev/#/halflife/function.PrintHintText) in the lower center of the screen,
-    where you would also see the pause or restart alert.
+where you would also see the pause or restart alert.
 
 ####`KickedNote`
 
 :   Displayed as a modal in the middle of the CS:GO menu after you have been removed from the server. These must **not**
-    end with a full stop as this is added automatically.
+end with a full stop as this is added automatically.
 
 ####`Menu`
 
 :   Displayed as an in-game menu where you select/browse using the numbers on your keyboard.
-
 
 ## String Reference {: #reference }
 
@@ -66,15 +78,15 @@ this: `Team A picked de_dust2 as map 2.` - with `de_dust2` being colored green.
 
 | String                                      | Example                                                                                                                                                                  | Type       |
 |---------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
-| `WaitingForCastersReadyInfoMessage`         | Waiting for _Team A_ to type !ready to being.                                                                                                                            | Chat       |
-| `ReadyToVetoInfoMessage`                    | Type !ready when your team is ready to veto.                                                                                                                             | Chat       |
-| `ReadyToRestoreBackupInfoMessage`           | Type !ready when you are ready to restore the match backup.                                                                                                              | Chat       |
-| `ReadyToKnifeInfoMessage`                   | Type !ready when you are ready to knife.                                                                                                                                 | Chat       |
-| `ReadyToStartInfoMessage`                   | Type !ready when you are ready to begin.                                                                                                                                 | Chat       |
+| `WaitingForCastersReadyInfoMessage`         | Waiting for _Team A_ to type _!ready_ to begin.                                                                                                                          | Chat       |
+| `ReadyToVetoInfoMessage`                    | Type _!ready_ when your team is ready to veto.                                                                                                                           | Chat       |
+| `ReadyToRestoreBackupInfoMessage`           | Type _!ready_ when you are ready to restore the match backup.                                                                                                            | Chat       |
+| `ReadyToKnifeInfoMessage`                   | Type _!ready_ when you are ready to knife.                                                                                                                               | Chat       |
+| `ReadyToStartInfoMessage`                   | Type _!ready_ when you are ready to begin.                                                                                                                               | Chat       |
 | `YouAreReady`                               | You have been marked as ready.                                                                                                                                           | Chat       |
-| `YouAreReadyAuto`                           | NOTE: You have been marked as ready due to game activity. Type !unready if you are not ready.                                                                            | HintText   |
+| `YouAreReadyAuto`                           | NOTE: You have been marked as ready due to game activity. Type _!unready_ if you are not ready.                                                                          | HintText   |
 | `YouAreNotReady`                            | You have been marked as NOT ready.                                                                                                                                       | Chat       |
-| `WaitingForEnemySwapInfoMessage`            | _Team A_ won the knife round. Waiting for them to type !stay or !swap.                                                                                                   | Chat       |
+| `WaitingForEnemySwapInfoMessage`            | _Team A_ won the knife round. Waiting for them to type _!stay_ or _!swap_.                                                                                               | Chat       |
 | `WaitingForGOTVBrodcastEndingInfoMessage`   | The map will change once the GOTV broadcast has ended.                                                                                                                   | Chat       |
 | `WaitingForGOTVVetoInfoMessage`             | The map will change once the GOTV broadcast has displayed the map vetoes.                                                                                                | Chat       |
 | `NoMatchSetupInfoMessage`                   | No match was set up                                                                                                                                                      | KickedNote |
@@ -100,12 +112,12 @@ this: `Team A picked de_dust2 as map 2.` - with `de_dust2` being colored green.
 | `UserCannotUnpauseAdmin`                    | As an admin has called for this pause, it must also be unpaused by an admin.                                                                                             | Chat       |
 | `PausingTeamCannotUnpauseUntilFreezeTime`   | You cannot unpause before your pause has started. Pause requests cannot be canceled.                                                                                     | Chat       |
 | `PauseRunoutInfoMessage`                    | _Team A_ has run out of pause time. Unpausing the match.                                                                                                                 | Chat       |
-| `TechPauseRunoutInfoMessage`                | Maximum technical pause length has been reached. Anyone may unpause now.                                                                                                 | Chat       |
+| `TechPauseRunoutInfoMessage`                | Maximum technical pause length has been reached. Anyone may _!unpause_ now.                                                                                              | Chat       |
 | `TechPauseNoTimeRemaining`                  | _Team A_ has no more tech pause time. Please use tactical pauses.                                                                                                        | Chat       |
 | `TechPauseNoPausesRemaining`                | _Team B_ has no more tech pauses. Please use tactical pauses.                                                                                                            | Chat       |
 | `TechPausePausesRemaining`                  | Technical pauses remaining for _Team A_: _2_                                                                                                                             | Chat       |
 | `MatchUnpauseInfoMessage`                   | _PlayerName_ unpaused the match.                                                                                                                                         | Chat       |
-| `WaitingForUnpauseInfoMessage`              | _Team A_ wants to unpause, waiting for Team B to type !unpause.                                                                                                          | Chat       |
+| `WaitingForUnpauseInfoMessage`              | _Team A_ wants to unpause, waiting for Team B to type _!unpause_.                                                                                                        | Chat       |
 | `PausesLeftInfoMessage`                     | Tactical pauses remaining for _Team A_: _3_                                                                                                                              | Chat       |
 | `TeamFailToReadyMinPlayerCheck`             | You must have at least _3_ player(s) on the server to ready up.                                                                                                          | Chat       |
 | `TeamReadyToVetoInfoMessage`                | _Team A_ is ready to veto.                                                                                                                                               | Chat       |
@@ -120,7 +132,7 @@ this: `Team A picked de_dust2 as map 2.` - with `de_dust2` being colored green.
 | `AdminForceEndWithWinnerInfoMessage`        | An admin force-ended the match, setting _Team 1_ as the winner.                                                                                                          | Chat       |
 | `AdminForcePauseInfoMessage`                | An admin force-paused the match.                                                                                                                                         | Chat       |
 | `AdminForceUnPauseInfoMessage`              | An admin unpaused the match.                                                                                                                                             | Chat       |
-| `TeamWantsToReloadLastRoundInfoMessage`     | _Team A_ wants to stop and reload last round. _Team B_ must confirm with !stop.                                                                                          | Chat       |
+| `TeamWantsToReloadLastRoundInfoMessage`     | _Team A_ wants to stop and reload last round. _Team B_ must confirm with _!stop_.                                                                                        | Chat       |
 | `TeamWinningSeriesInfoMessage`              | _Team A_ is winning the series _2_-_1_.                                                                                                                                  | Chat       |
 | `SeriesTiedInfoMessage`                     | The series is tied at _1_-_1_.                                                                                                                                           | Chat       |
 | `NextSeriesMapInfoMessage`                  | The next map in the series is _de_nuke_ and it will start in _1:30_.                                                                                                     | Chat       |
@@ -143,7 +155,7 @@ this: `Team A picked de_dust2 as map 2.` - with `de_dust2` being colored green.
 | `TeamSelectSideInfoMessage`                 | _Team A_ has selected to start on _CT_ on _de_nuke_.                                                                                                                     | Chat       |
 | `TeamVetoedMapInfoMessage`                  | _Team A_ vetoed _de_nuke_.                                                                                                                                               | Chat       |
 | `CaptainLeftOnVetoInfoMessage`              | A captain left during the veto, pausing the veto.                                                                                                                        | Chat       |
-| `ReadyToResumeVetoInfoMessage`              | Type !ready when you are ready to resume the veto.                                                                                                                       | Chat       |
+| `ReadyToResumeVetoInfoMessage`              | Type _!ready_ when you are ready to resume the veto.                                                                                                                     | Chat       |
 | `MatchConfigLoadedInfoMessage`              | Loaded match config.                                                                                                                                                     | Chat       |
 | `MoveToCoachInfoMessage`                    | You were moved to the coach position because your team is full.                                                                                                          | Chat       |
 | `ReadyTag`                                  | **[READY]** PlayerName: Hey, I'm ready...                                                                                                                                | Chat       |

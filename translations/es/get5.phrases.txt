@@ -154,7 +154,7 @@
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "es"            "{1}{NORMAL} ganó las series {2}-{3}"
+        "es"            "{1} ganó las series {2}-{3}"
     }
     "SeriesTiedInfoMessage"
     {

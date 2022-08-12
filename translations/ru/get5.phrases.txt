@@ -122,7 +122,7 @@
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "ru"            "{1}{NORMAL} выигрывает со счетом {2}-{3}"
+        "ru"            "{1} выигрывает со счетом {2}-{3}"
     }
     "SeriesTiedInfoMessage"
     {

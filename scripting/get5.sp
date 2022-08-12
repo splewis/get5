@@ -780,7 +780,7 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
     g_TeamSeriesScores[Get5Team_1] = 0;
     g_TeamSeriesScores[Get5Team_2] = 0;
     StopRecording(true);
-    EndSeries(Get5Team_None, false);
+    EndSeries(Get5Team_None, false, false);
   }
 }
 
@@ -897,11 +897,11 @@ static void CheckReadyWaitingTimes() {
 
     // False for printing in all these cases, as CheckReadyWaitingTime prints forfeit messages.
     if (team1Forfeited && team2Forfeited) {
-      EndSeries(Get5Team_None, false);
+      EndSeries(Get5Team_None, false, false);
     } else if (team1Forfeited) {
-      EndSeries(Get5Team_2, false);
+      EndSeries(Get5Team_2, false, false);
     } else if (team2Forfeited) {
-      EndSeries(Get5Team_1, false);
+      EndSeries(Get5Team_1, false, false);
     }
   }
 }
@@ -943,7 +943,26 @@ static void CheckAutoLoadConfig() {
 
 public Action Command_EndMatch(int client, int args) {
   if (g_GameState == Get5State_None) {
+    ReplyToCommand(client, "No match is configured; nothing to end.");
     return Plugin_Handled;
+  }
+
+  Get5Team winningTeam = Get5Team_None; // defaults to tie
+  if (args >= 1) {
+    char forcedWinningTeam[8];
+    GetCmdArg(1, forcedWinningTeam, sizeof(forcedWinningTeam));
+    if (StrEqual("team1", forcedWinningTeam, false)) {
+      winningTeam = Get5Team_1;
+    } else if (StrEqual("team2", forcedWinningTeam, false)) {
+      winningTeam = Get5Team_2;
+    } else {
+      ReplyToCommand(client, "Usage: get5_endmatch <team1|team2> (omit team for tie)");
+      return Plugin_Handled;
+    }
+  }
+
+  if (IsPaused()) {
+    UnpauseGame(Get5Team_None);
   }
 
   // Call game-ending forwards.
@@ -952,7 +971,13 @@ public Action Command_EndMatch(int client, int args) {
   int team2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
 
   Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
-      g_MatchID, g_MapNumber, new Get5Winner(Get5Team_None, Get5Side_None), team1score, team2score);
+    g_MatchID,
+    g_MapNumber,
+    new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
+    team1score,
+    team2score
+  );
+
   LogDebug("Calling Get5_OnMapResult()");
   Call_StartForward(g_OnMapResult);
   Call_PushCell(mapResultEvent);
@@ -960,16 +985,23 @@ public Action Command_EndMatch(int client, int args) {
   EventLogger_LogAndDeleteEvent(mapResultEvent);
 
   // Don't print series result here as admin force-end is printed below.
+  // We force-end the recording as the actual game is not ended, so there is no round restart to match the recording time to.
   StopRecording(true);
-  EndSeries(Get5Team_None, false);
+  EndSeries(winningTeam, false, false);
 
   UpdateClanTags();
 
-  Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
+  if (winningTeam == Get5Team_None) {
+    Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
+  } else {
+    Get5_MessageToAll("%t", "AdminForceEndWithWinnerInfoMessage", g_FormattedTeamNames[winningTeam]);
+  }
 
   if (g_ActiveVetoMenu != null) {
     g_ActiveVetoMenu.Cancel();
   }
+
+  ServerCommand("mp_restartgame 1");
 
   return Plugin_Handled;
 }
@@ -1191,7 +1223,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     if (t1maps == t2maps) {
       // As long as team scores are equal, we play until there are no maps left, regardless of clinch config.
       if (remainingMaps <= 0) {
-        EndSeries(Get5Team_None, true);
+        EndSeries(Get5Team_None, true, true);
         return Plugin_Continue;
       }
     } else if (g_SeriesCanClinch) {
@@ -1199,15 +1231,15 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       int actualMapsToWin = ((g_MapsToPlay.Length - tiedMaps) / 2) + 1;
       if (t1maps == actualMapsToWin) {
         // Team 1 won
-        EndSeries(Get5Team_1, true);
+        EndSeries(Get5Team_1, true, true);
         return Plugin_Continue;
       } else if (t2maps == actualMapsToWin) {
         // Team 2 won
-        EndSeries(Get5Team_2, true);
+        EndSeries(Get5Team_2, true, true);
         return Plugin_Continue;
       }
     } else if (remainingMaps <= 0) {
-      EndSeries(t1maps > t2maps ? Get5Team_1 : Get5Team_2, true); // Tie handled in first if-block
+      EndSeries(t1maps > t2maps ? Get5Team_1 : Get5Team_2, true, true); // Tie handled in first if-block
       return Plugin_Continue;
     }
 
@@ -1257,7 +1289,7 @@ public void KickClientsOnEnd() {
   }
 }
 
-public void EndSeries(Get5Team winningTeam, bool printWinnerMessage) {
+public void EndSeries(Get5Team winningTeam, bool printWinnerMessage, bool waitForGoTv) {
   if (g_KickClientsWithNoMatchCvar.BoolValue) {
     DelayFunction(10.0, KickClientsOnEnd);
   }
@@ -1295,7 +1327,7 @@ public void EndSeries(Get5Team winningTeam, bool printWinnerMessage) {
   // We need to restore cvars on a timer if GOTV is recording, as it might otherwise set mp_match_restart_delay
   // "back" to something that's shorter than the GOTV delay, which is a problem.
   int goTvDelay = GetTvDelay();
-  if (goTvDelay > 0) {
+  if (goTvDelay > 0 && waitForGoTv) {
     CreateTimer(float(goTvDelay) + MATCH_END_DELAY_AFTER_TV, Timer_RestoreCvars);
   } else {
     RestoreCvars(g_MatchConfigChangedCvars);

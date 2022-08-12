@@ -150,7 +150,7 @@
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "chi"            "{1}{NORMAL}在这系列比赛中正处于领先状态 {2}-{3}"
+        "chi"            "{1}在这系列比赛中正处于领先状态 {2}-{3}"
     }
     "SeriesTiedInfoMessage"
     {

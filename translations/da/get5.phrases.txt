@@ -218,7 +218,7 @@
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "da"            "{1}{NORMAL} fører serien {2}-{3}."
+        "da"            "{1} fører serien {2}-{3}."
     }
     "SeriesTiedInfoMessage"
     {

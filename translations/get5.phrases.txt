@@ -224,7 +224,7 @@
     "ForceReadyInfoMessage"
     {
         "#format"       "{1:d}"
-        "en"            "You may type {GREEN}!forceready {NORMAL}to force ready your team if you have less than {GREEN}{1}{NORMAL} players."
+        "en"            "You may type {GREEN}!forceready{NORMAL} to force-ready your team if you have less than {GREEN}{1}{NORMAL} players."
     }
     "TeammateForceReadied"
     {
@@ -237,25 +237,30 @@
     }
     "AdminForceEndInfoMessage"
     {
-        "en"            "An admin force ended the match."
+        "en"            "An admin force-ended the match."
     }
     "AdminForcePauseInfoMessage"
     {
-        "en"            "An admin force paused the match."
+        "en"            "An admin paused the match."
+    }
+    "AdminForceEndWithWinnerInfoMessage"
+    {
+        "#format"       "{1:s}"
+        "en"            "An admin force-ended the match, setting {1} as the winner."
     }
     "AdminForceUnPauseInfoMessage"
     {
-        "en"            "An admin force unpaused the match."
+        "en"            "An admin unpaused the match."
     }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
         "#format"       "{1:s},{2:s}"
-        "en"            "{1} wants to stop and reload last round, need {2} to confirm with !stop."
+        "en"            "{1} wants to stop and reload last round. {2} must confirm with !stop."
     }
     "TeamWinningSeriesInfoMessage"
     {
         "#format"       "{1:s},{2:d},{3:d}"
-        "en"            "{1}{NORMAL} is winning the series {2}-{3}."
+        "en"            "{1} is winning the series {2}-{3}."
     }
     "SeriesTiedInfoMessage"
     {
@@ -344,12 +349,12 @@
     "TeamPickedMapInfoMessage"
     {
         "#format"       "{1:s},{2:s},{3:d}"
-        "en"            "{1} picked {GREEN}{2} {NORMAL}as map {3}."
+        "en"            "{1} picked {GREEN}{2}{NORMAL} as map {3}."
     }
     "TeamSelectSideInfoMessage"
     {
         "#format"       "{1:s},{2:s},{3:s}"
-        "en"            "{1} has selected to start on {GREEN}{2} {NORMAL}on {3}."
+        "en"            "{1} has selected to start on {GREEN}{2}{NORMAL} on {3}."
     }
     "TeamVetoedMapInfoMessage"
     {
@@ -362,7 +367,7 @@
     }
     "ReadyToResumeVetoInfoMessage"
     {
-        "en"            "Type {GREEN}!ready {NORMAL}when you are ready to resume the veto."
+        "en"            "Type {GREEN}!ready{NORMAL} when you are ready to resume the veto."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -423,6 +428,6 @@
     "VetoCountdown"
     {
         "#format"       "{1:i}"
-        "en"        "Veto commencing in {GREEN}{1} {NORMAL}seconds."
+        "en"        "Veto commencing in {GREEN}{1}{NORMAL} seconds."
     }
 }

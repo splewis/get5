@@ -94,8 +94,9 @@ You should put the `url` argument inside quotation marks (`""`).
 
     Loading remote matches requires the [SteamWorks](../installation/#steamworks) extension.
 
-####`get5_endmatch`
-:   Force ends the current match. No winner is set (draw).
+####`get5_endmatch [team1|team2]`
+:   Force-ends the current match. The team argument will force the winner of the series and the current map to be set
+to that team. Omitting the team argument sets no winner (tie).
 
 ####`get5_creatematch [map name] [matchid]` {: #get5_creatematch }
 :   Creates a BO1 match with the current players on the server. `map name` defaults to the current map and `matchid`

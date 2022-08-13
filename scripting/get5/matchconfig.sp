@@ -1081,7 +1081,7 @@ public Action Command_CreateScrim(int client, int args) {
     return Plugin_Handled;
   }
 
-  char matchid[MATCH_ID_LENGTH] = "";
+  char matchid[MATCH_ID_LENGTH] = "scrim";
   char matchMap[PLATFORM_MAX_PATH];
   GetCleanMapName(matchMap, sizeof(matchMap));
   char otherTeamName[MAX_CVAR_LENGTH] = "Away";

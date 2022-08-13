@@ -2,27 +2,27 @@
 {
     "ReadyToVetoInfoMessage"
     {
-        "pl"            "Napisz {GREEN}!ready {NORMAL}kiedy Twoja drużyna będzie gotowa do głosowania."
+        "pl"            "Napisz {1} kiedy Twoja drużyna będzie gotowa do głosowania."
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "pl"            "Czekamy na komentatorów na wpisanie {GREEN}!ready {NORMAL}aby zacząć rozgrywkę."
+        "pl"            "Czekamy na komentatorów na wpisanie {2} aby zacząć rozgrywkę."
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "pl"            "Napisz {GREEN}!ready {NORMAL}kiedy Twoja drużyna będzie gotowa do wczytania meczu."
+        "pl"            "Napisz {1} kiedy Twoja drużyna będzie gotowa do wczytania meczu."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "pl"            "Napisz {GREEN}!ready {NORMAL}kiedy Twoja drużyna będzie gotowa do rundy nożowej."
+        "pl"            "Napisz {1} kiedy Twoja drużyna będzie gotowa do rundy nożowej."
     }
     "ReadyToStartInfoMessage"
     {
-        "pl"            "Napisz {GREEN}!ready {NORMAL}kiedy Twoja drużyna będzie gotowa."
+        "pl"            "Napisz {1} kiedy Twoja drużyna będzie gotowa."
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "pl"            "{1} wygralo runde nożową. Oczekiwanie na !stay lub !swap."
+        "pl"            "{1} wygralo runde nożową. Oczekiwanie na {2} lub {3}."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
@@ -78,7 +78,7 @@
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "pl"            "{1} chce wznowić rozgrywkę, oczekiwanie na {2} na wpisanie !unpause."
+        "pl"            "{1} chce wznowić rozgrywkę, oczekiwanie na {2} na wpisanie {3}."
     }
     "PausesLeftInfoMessage"
     {
@@ -126,27 +126,23 @@
     }
     "TeamWantsToReloadLastRoundInfoMessage"
     {
-        "pl"            "{1} chce zatrzymać mecz i wczytać poprzednią rundę, oczekiwanie na potwierdzenie przez {2} i wpisanie !stop."
+        "pl"            "{1} chce zatrzymać mecz i wczytać poprzednią rundę, oczekiwanie na potwierdzenie przez {2} i wpisanie {3}."
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "pl"            "{1}{NORMAL} wygrywa {2}-{3}"
+        "pl"            "{1} wygrywa {2}-{3}."
     }
     "SeriesTiedInfoMessage"
     {
-        "pl"            "Drużyny remisują {1}-{2}"
+        "pl"            "Drużyny remisują {1}-{2}."
     }
     "NextSeriesMapInfoMessage"
     {
-        "pl"            "Następna mapa w meczu to {GREEN}{1}"
+        "pl"            "Następna mapa w meczu to {1}."
     }
     "TeamWonMatchInfoMessage"
     {
         "pl"            "{1} wygrało mapę."
-    }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "pl"            "{1} i {2} zremisowali spotkanie 1-1."
     }
     "TeamWonSeriesInfoMessage"
     {
@@ -158,7 +154,7 @@
     }
     "BackupLoadedInfoMessage"
     {
-        "pl"            "Pomyślnie wczytano kopię meczu {1}"
+        "pl"            "Pomyślnie wczytano kopię meczu {1}."
     }
     "MatchBeginInSecondsInfoMessage"
     {
@@ -190,7 +186,7 @@
     }
     "ChangingMapInfoMessage"
     {
-        "pl"            "Zmiana mapy na {GREEN}{1}..."
+        "pl"            "Zmiana mapy na {1}..."
     }
     "MapDecidedInfoMessage"
     {
@@ -198,19 +194,19 @@
     }
     "MapIsInfoMessage"
     {
-        "pl"            "Mapa {1}: {GREEN}{2}"
+        "pl"            "Mapa {1}: {2}"
     }
     "TeamPickedMapInfoMessage"
     {
-        "pl"            "{1} wybrało {GREEN}{2} {NORMAL}jako mapę {3}"
+        "pl"            "{1} wybrało {2} jako mapę {3}."
     }
     "TeamSelectSideInfoMessage"
     {
-        "pl"            "{1} wybrało stronę {GREEN}{2} {NORMAL}na {3}"
+        "pl"            "{1} wybrało stronę {2} na {3}."
     }
     "TeamVetoedMapInfoMessage"
     {
-        "pl"            "{1} odrzuciło {LIGHT_RED}{2}"
+        "pl"            "{1} odrzuciło {2}."
     }
     "CaptainLeftOnVetoInfoMessage"
     {
@@ -218,7 +214,7 @@
     }
     "ReadyToResumeVetoInfoMessage"
     {
-        "pl"            "Napisz {GREEN}!ready {NORMAL}kiedy Twoja drużyna będzie gotowa do wznowienia głosowania."
+        "pl"            "Napisz {1} kiedy Twoja drużyna będzie gotowa do wznowienia głosowania."
     }
     "MatchConfigLoadedInfoMessage"
     {

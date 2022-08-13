@@ -153,7 +153,8 @@ public void HandleReadyCommand(int client, bool autoReady) {
   Get5_Message(client, "%t", "YouAreReady");
 
   if (autoReady) {
-    PrintHintText(client, "%t", "YouAreReadyAuto");
+    // We cannot color text in hints, so no formatting the command.
+    PrintHintText(client, "%t", "YouAreReadyAuto", "!unready");
   }
 
   SetClientReady(client, true);
@@ -209,11 +210,12 @@ public Action Command_ForceReadyClient(int client, int args) {
     Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", minReady);
     return Plugin_Handled;
   }
-
+  char formattedClientName[MAX_NAME_LENGTH];
+  FormatPlayerName(formattedClientName, sizeof(formattedClientName), client);
   LOOP_CLIENTS(i) {
     if (IsPlayer(i) && GetClientMatchTeam(i) == team) {
       SetClientReady(i, true);
-      Get5_Message(i, "%t", "TeammateForceReadied", client);
+      Get5_Message(i, "%t", "TeammateForceReadied", formattedClientName);
     }
   }
   SetTeamForcedReady(team, true);
@@ -244,7 +246,7 @@ static void HandleReadyMessage(Get5Team team) {
   } else if (g_GameState == Get5State_Warmup) {
     if (g_WaitingForRoundBackup) {
       Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_FormattedTeamNames[team]);
-    } else if (view_as<SideChoice>(g_MapSides.Get(Get5_GetMapNumber())) == SideChoice_KnifeRound) {
+    } else if (view_as<SideChoice>(g_MapSides.Get(g_MapNumber)) == SideChoice_KnifeRound) {
       Get5_MessageToAll("%t", "TeamReadyToKnifeInfoMessage", g_FormattedTeamNames[team]);
     } else {
       Get5_MessageToAll("%t", "TeamReadyToBeginInfoMessage", g_FormattedTeamNames[team]);
@@ -268,8 +270,12 @@ public void MissingPlayerInfoMessageTeam(Get5Team team) {
   int playerCount = GetTeamPlayerCount(team);
   int readyCount = GetTeamReadyCount(team);
 
-  if (playerCount == readyCount && playerCount < minPlayers && readyCount >= minReady) {
-    Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", minPlayers);
+  if (playerCount == readyCount && playerCount < minPlayers && readyCount >= minReady && minPlayers > 1) {
+    char minPlayersFormatted[32];
+    Format(minPlayersFormatted, sizeof(minPlayersFormatted), "{GREEN}%d{NORMAL}", minPlayers);
+    char forceReadyFormatted[64];
+    FormatChatCommand(forceReadyFormatted, sizeof(forceReadyFormatted), "!forceready");
+    Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", forceReadyFormatted, minPlayersFormatted);
   }
 }
 

@@ -341,15 +341,8 @@ public void Stats_UpdateMapScore(Get5Team winner) {
   DumpToFile();
 }
 
-public void Stats_Forfeit(Get5Team team) {
+public void Stats_Forfeit() {
   g_StatsKv.SetNum(STAT_SERIES_FORFEIT, 1);
-  if (team == Get5Team_1) {
-    Stats_SeriesEnd(Get5Team_2);
-  } else if (team == Get5Team_2) {
-    Stats_SeriesEnd(Get5Team_1);
-  } else {
-    Stats_SeriesEnd(Get5Team_None);
-  }
 }
 
 public void Stats_SeriesEnd(Get5Team winner) {

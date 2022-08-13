@@ -169,6 +169,8 @@ public void WriteBackStructure(const char[] path) {
   kv.SetNum("team1_series_score", g_TeamSeriesScores[Get5Team_1]);
   kv.SetNum("team2_series_score", g_TeamSeriesScores[Get5Team_2]);
 
+  kv.SetNum("series_draw", g_TeamSeriesScores[Get5Team_None]);
+
   // Write original maplist.
   kv.JumpToKey("maps", true);
   for (int i = 0; i < g_MapsToPlay.Length; i++) {
@@ -251,6 +253,12 @@ public bool RestoreFromBackup(const char[] path) {
   g_TeamSeriesScores[Get5Team_1] = kv.GetNum("team1_series_score");
   g_TeamSeriesScores[Get5Team_2] = kv.GetNum("team2_series_score");
 
+  // This ensures that the MapNumber logic correctly calculates the map number when there have been draws.
+  g_TeamSeriesScores[Get5Team_None] = kv.GetNum("series_draw", 0);
+
+  // Immediately set map number global var to ensure anything below doesn't break.
+  g_MapNumber = Get5_GetMapNumber();
+
   char mapName[PLATFORM_MAX_PATH];
   if (g_GameState > Get5State_Veto) {
     if (kv.JumpToKey("maps")) {
@@ -292,11 +300,14 @@ public bool RestoreFromBackup(const char[] path) {
     kv.GoBack();
   }
 
+  // When loading round 0, there is no valve backup, so we assume round 0 if the game is live, otherwise -1
+  int roundNumberRestoredTo = g_GameState == Get5State_Live ? 0 : -1;
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   if (kv.JumpToKey("valve_backup")) {
     g_SavedValveBackup = true;
     kv.ExportToFile(tempValveBackup);
+    roundNumberRestoredTo = kv.GetNum("round", 0);
     kv.GoBack();
   } else {
     g_SavedValveBackup = false;
@@ -306,7 +317,7 @@ public bool RestoreFromBackup(const char[] path) {
   GetCurrentMap(currentMap, sizeof(currentMap));
 
   char currentSeriesMap[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(Get5_GetMapNumber(), currentSeriesMap, sizeof(currentSeriesMap));
+  g_MapsToPlay.GetString(g_MapNumber, currentSeriesMap, sizeof(currentSeriesMap));
 
   if (!StrEqual(currentMap, currentSeriesMap)) {
     ChangeMap(currentSeriesMap, 1.0);
@@ -320,8 +331,7 @@ public bool RestoreFromBackup(const char[] path) {
 
   LogDebug("Calling Get5_OnBackupRestore()");
 
-  Get5BackupRestoredEvent backupEvent =
-      new Get5BackupRestoredEvent(g_MatchID, Get5_GetMapNumber(), path);
+  Get5BackupRestoredEvent backupEvent = new Get5BackupRestoredEvent(g_MatchID, g_MapNumber, roundNumberRestoredTo, path);
 
   Call_StartForward(g_OnBackupRestore);
   Call_PushCell(backupEvent);
@@ -342,7 +352,6 @@ public void RestoreGet5Backup() {
     ChangeState(Get5State_Live);
     SetMatchTeamCvars();
     ExecuteMatchConfigCvars();
-    SetMatchRestartDelay();
 
     // There are some timing issues leading to incorrect score when restoring matches in second
     // half. Doing the restore on a timer

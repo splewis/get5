@@ -55,7 +55,8 @@ interface Get5Match {
     "favored_percentage_text": string, // (15)
     "team1": Get5MatchTeam | Get5MatchTeamFromFile, // (20)
     "team2": Get5MatchTeam | Get5MatchTeamFromFile, // (21)
-    "cvars": { [key: string]: string } // (22)
+    "cvars": { [key: string]: string }, // (22)
+    "clinch_series": boolean // (32)
 }
 ```
 
@@ -124,6 +125,8 @@ interface Get5Match {
 31. _Optional_<br>Determines the starting sides for each map. If this array is shorter than `num_maps`, `side_type` will
     determine the side-behavior of the remaining maps. Ignored if `skip_veto` is `false`.
     <br><br>**`Default: undefined`**
+32. _Optional_<br>If `false`, the entire map list will be played, regardless of score. If `true`, a series will be won
+    when the series score for a team exceeds the number of maps divided by two.<br><br>**`Default: true`**
 
 !!! warning "SteamID64 in `.cfg` files"
 

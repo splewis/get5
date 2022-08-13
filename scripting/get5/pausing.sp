@@ -121,7 +121,9 @@ public Action Command_TechPause(int client, int args) {
   g_TechnicalPausesUsed[team]++;
   PauseGame(team, Get5PauseType_Tech);
 
-  Get5_MessageToAll("%t", "MatchTechPausedByTeamMessage", client);
+  char formattedClientName[MAX_NAME_LENGTH];
+  FormatPlayerName(formattedClientName, sizeof(formattedClientName), client);
+  Get5_MessageToAll("%t", "MatchTechPausedByTeamMessage", formattedClientName);
   if (maxTechPauses > 0) {
     Get5_MessageToAll("%t", "TechPausePausesRemaining", g_FormattedTeamNames[team], maxTechPauses - g_TechnicalPausesUsed[team]);
   }
@@ -176,7 +178,9 @@ public Action Command_Pause(int client, int args) {
   PauseGame(team, Get5PauseType_Tactical);
 
   if (IsPlayer(client)) {
-    Get5_MessageToAll("%t", "MatchPausedByTeamMessage", client);
+    char formattedClientName[MAX_NAME_LENGTH];
+    FormatPlayerName(formattedClientName, sizeof(formattedClientName), client);
+    Get5_MessageToAll("%t", "MatchPausedByTeamMessage", formattedClientName);
   }
 
   if (maxPauses > 0) {
@@ -225,12 +229,16 @@ public Action Command_Unpause(int client, int args) {
     ) {
       UnpauseGame(team);
       if (IsPlayer(client)) {
-        Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", client);
+        char formattedClientName[MAX_NAME_LENGTH];
+        FormatPlayerName(formattedClientName, sizeof(formattedClientName), client);
+        Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", formattedClientName);
       }
       return Plugin_Handled;
     }
   }
 
+  char formattedUnpauseCommand[64];
+  FormatChatCommand(formattedUnpauseCommand, sizeof(formattedUnpauseCommand), "!unpause");
   if (g_TeamReadyForUnpause[Get5Team_1] && g_TeamReadyForUnpause[Get5Team_2]) {
     UnpauseGame(team);
     if (IsPlayer(client)) {
@@ -238,10 +246,10 @@ public Action Command_Unpause(int client, int args) {
     }
   } else if (!g_TeamReadyForUnpause[Get5Team_2]) {
     Get5_MessageToAll("%t", "WaitingForUnpauseInfoMessage", g_FormattedTeamNames[Get5Team_1],
-                      g_FormattedTeamNames[Get5Team_2]);
+                      g_FormattedTeamNames[Get5Team_2], formattedUnpauseCommand);
   } else if (!g_TeamReadyForUnpause[Get5Team_1]) {
     Get5_MessageToAll("%t", "WaitingForUnpauseInfoMessage", g_FormattedTeamNames[Get5Team_2],
-                      g_FormattedTeamNames[Get5Team_1]);
+                      g_FormattedTeamNames[Get5Team_1], formattedUnpauseCommand);
   }
 
   return Plugin_Handled;
@@ -372,7 +380,9 @@ public Action Timer_PauseTimeCheck(Handle timer) {
         if (timeLeft == 0) {
           // Only print to chat when hitting 0, but keep the timer going as tech pauses don't unpause on their own.
           // The PrintHintText below will inform users that they can now unpause.
-          Get5_MessageToAll("%t", "TechPauseRunoutInfoMessage");
+          char formattedUnpauseCommand[64];
+          FormatChatCommand(formattedUnpauseCommand, sizeof(formattedUnpauseCommand), "!unpause");
+          Get5_MessageToAll("%t", "TechPauseRunoutInfoMessage", formattedUnpauseCommand);
         }
       }
     }

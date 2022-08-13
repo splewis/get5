@@ -489,14 +489,15 @@ paths:
       tags:
         - Series Flow
       description: |
-        Fired when a round is restored from a backup.
+        Fired when a round is restored from a backup. Note that the map and round numbers indicate the round being
+        restored **to**, not the round the backup was requested during.
       requestBody:
         content:
           application/json:
             schema:
               title: Get5BackupRestoredEvent
               allOf:
-                - "$ref": "#/components/schemas/Get5MapEvent"
+                - "$ref": "#/components/schemas/Get5RoundEvent"
               properties:
                 event:
                   enum:

@@ -10,9 +10,11 @@
 
 static char _colorNames[][] = {"{NORMAL}", "{DARK_RED}",    "{PINK}",      "{GREEN}",
                                "{YELLOW}", "{LIGHT_GREEN}", "{LIGHT_RED}", "{GRAY}",
-                               "{ORANGE}", "{LIGHT_BLUE}",  "{DARK_BLUE}", "{PURPLE}"};
+                               "{ORANGE}", "{LIGHT_BLUE}",  "{DARK_BLUE}", "{PURPLE}",
+                               "{GOLD}"};
 static char _colorCodes[][] = {"\x01", "\x02", "\x03", "\x04", "\x05", "\x06",
-                               "\x07", "\x08", "\x09", "\x0B", "\x0C", "\x0E"};
+                               "\x07", "\x08", "\x09", "\x0B", "\x0C", "\x0E",
+                               "\x10"};
 
 // Convenience macros.
 #define LOOP_TEAMS(%1) for (Get5Team %1 = Get5Team_1; %1 < Get5Team_Count; %1 ++)
@@ -57,6 +59,12 @@ stock int SumHealthOfTeam(int team) {
     }
   }
   return sum;
+}
+
+stock int ConvertCSTeamToDefaultWinReason(int side) {
+  // This maps to https://github.com/VSES/SourceEngine2007/blob/master/se2007/game/shared/cstrike/cs_gamerules.h, which
+  // is the regular CSRoundEndReason + 1.
+  return view_as<int>(side == CS_TEAM_CT ? CSRoundEnd_CTWin : CSRoundEnd_TerroristWin) + 1;
 }
 
 /**
@@ -189,61 +197,26 @@ stock void Colorize(char[] msg, int size, bool stripColor = false) {
   }
 }
 
+stock void FormatChatCommand(char[] buffer, const int bufferLength, const char[] command) {
+  Format(buffer, bufferLength, "{GREEN}%s{NORMAL}", command);
+}
+
+stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client) {
+  Get5Side side = view_as<Get5Side>(IsClientInGame(client) ? GetClientTeam(client) : CS_TEAM_NONE);
+  if (side == Get5Side_CT) {
+    Format(buffer, bufferLength, "{LIGHT_BLUE}%N{NORMAL}", client);
+  } else if (side == Get5Side_T) {
+    Format(buffer, bufferLength, "{GOLD}%N{NORMAL}", client);
+  } else {
+    Format(buffer, bufferLength, "{PURPLE}%N{NORMAL}", client);
+  }
+}
+
 stock void ReplaceStringWithInt(char[] buffer, int len, const char[] replace, int value,
                                 bool caseSensitive = false) {
   char intString[MAX_INTEGER_STRING_LENGTH];
   IntToString(value, intString, sizeof(intString));
   ReplaceString(buffer, len, replace, intString, caseSensitive);
-}
-
-stock bool IsTVEnabled() {
-  ConVar tvEnabledCvar = FindConVar("tv_enable");
-  if (tvEnabledCvar == null) {
-    LogError("Failed to get tv_enable cvar");
-    return false;
-  }
-  return tvEnabledCvar.BoolValue;
-}
-
-stock int GetTvDelay() {
-  if (IsTVEnabled()) {
-    return GetCvarIntSafe("tv_delay");
-  }
-  return 0;
-}
-
-stock bool Record(const char[] demoName) {
-  char szDemoName[256];
-  strcopy(szDemoName, sizeof(szDemoName), demoName);
-  ReplaceString(szDemoName, sizeof(szDemoName), "\"", "\\\"");
-  ServerCommand("tv_record \"%s\"", szDemoName);
-
-  if (!IsTVEnabled()) {
-    LogError(
-        "Autorecording will not work with current cvar \"tv_enable\"=0. Set \"tv_enable 1\" in server.cfg (or another config file) to fix this.");
-    return false;
-  }
-
-  return true;
-}
-
-stock void StopRecording() {
-  ServerCommand("tv_stoprecord");
-
-  if (StrEqual("", g_DemoFileName, true)) {
-    // Demo not recorded; don't fire demo finish event.
-    return;
-  }
-
-  Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(g_MatchID, g_MapNumber, g_DemoFileName);
-
-  LogDebug("Calling Get5_OnDemoFinished()");
-
-  Call_StartForward(g_OnDemoFinished);
-  Call_PushCell(event);
-  Call_Finish();
-
-  EventLogger_LogAndDeleteEvent(event);
 }
 
 stock bool InWarmup() {
@@ -260,8 +233,10 @@ stock bool InFreezeTime() {
 
 stock void EnsureIndefiniteWarmup() {
   if (!InWarmup()) {
+    LogDebug("EnsureIndefiniteWarmup: Not in warmup; calling StartWarmup()");
     StartWarmup();
   } else {
+    LogDebug("EnsureIndefiniteWarmup: Already in warmup; setting indefinite");
     ServerCommand("mp_warmup_pausetimer 1");
     ServerCommand("mp_do_warmup_period 1");
     ServerCommand("mp_warmup_pausetimer 1");

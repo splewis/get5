@@ -15,7 +15,7 @@ public Action StartKnifeRound(Handle timer) {
 
 public Action Timer_AnnounceKnife(Handle timer) {
   for (int i = 0; i < 5; i++) {
-    Get5_MessageToAll("%t", "KnifeInfoMessage");
+    Get5_MessageToAll("{GREEN}%t", "KnifeInfoMessage");
   }
 
   Get5KnifeRoundStartedEvent knifeEvent = new Get5KnifeRoundStartedEvent(g_MatchID, g_MapNumber);
@@ -55,9 +55,9 @@ static void PerformSideSwap(bool swap) {
     // that way set starting teams won't swap on round 0,
     // since a temp valve backup does not exist.
     if (g_TeamSide[Get5Team_1] == CS_TEAM_CT)
-      g_MapSides.Set(Get5_GetMapNumber(), SideChoice_Team1CT);
+      g_MapSides.Set(g_MapNumber, SideChoice_Team1CT);
     else
-      g_MapSides.Set(Get5_GetMapNumber(), SideChoice_Team1T);
+      g_MapSides.Set(g_MapNumber, SideChoice_Team1T);
   } else {
     g_TeamSide[Get5Team_1] = TEAM1_STARTING_SIDE;
     g_TeamSide[Get5Team_2] = TEAM2_STARTING_SIDE;
@@ -85,6 +85,8 @@ public void EndKnifeRound(bool swap) {
 
   ChangeState(Get5State_GoingLive);
   CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
+
+  g_KnifeWinnerTeam = Get5Team_None;
 }
 
 static bool AwaitingKnifeDecision(int client) {
@@ -96,18 +98,18 @@ static bool AwaitingKnifeDecision(int client) {
 
 public Action Command_Stay(int client, int args) {
   if (AwaitingKnifeDecision(client)) {
-    EndKnifeRound(false);
     Get5_MessageToAll("%t", "TeamDecidedToStayInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
+    EndKnifeRound(false);
   }
   return Plugin_Handled;
 }
 
 public Action Command_Swap(int client, int args) {
   if (AwaitingKnifeDecision(client)) {
-    EndKnifeRound(true);
     Get5_MessageToAll("%t", "TeamDecidedToSwapInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
+    EndKnifeRound(true);
   } else if (g_GameState == Get5State_Warmup && g_InScrimMode &&
              GetClientMatchTeam(client) == Get5Team_1) {
     PerformSideSwap(true);
@@ -142,8 +144,8 @@ public Action Command_T(int client, int args) {
 
 public Action Timer_ForceKnifeDecision(Handle timer) {
   if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
-    EndKnifeRound(false);
     Get5_MessageToAll("%t", "TeamLostTimeToDecideInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
+    EndKnifeRound(false);
   }
 }

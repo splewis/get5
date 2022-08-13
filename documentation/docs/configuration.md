@@ -288,3 +288,4 @@ Example: `This text becomes {DARK_RED}red{NORMAL}, while {YELLOW}all of this wil
 - `{LIGHT_BLUE}`
 - `{DARK_BLUE}`
 - `{PURPLE}`
+- `{GOLD}`

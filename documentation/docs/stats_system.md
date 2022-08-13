@@ -71,8 +71,9 @@ functionality, but can also be used as-is.
 !!! danger "Fixed Match IDs"
 
     If you use the MySQL extension, you should **not** set the `matchid` in your
-    [match configuration](../match_schema/#schema) (just leave it empty) or when creating scrims using the
-    [`get5_scrim`](../commands/#get5_scrim) command. The match ID will be set to the
+    [match configuration](../match_schema/#schema) (just leave it empty) or when creating scrims or matches using the
+    [`get5_scrim`](../commands/#get5_scrim) or [`get5_creatematch`](../commands/#get5_creatematch) commands. The match
+    ID will be set to the
     [auto-incrementing integer](https://dev.mysql.com/doc/refman/8.0/en/example-auto-increment.html) (cast to a string)
     returned by inserting into the `get5_stats_matches` table.
 

@@ -97,7 +97,7 @@ You should put the `url` argument inside quotation marks (`""`).
 ####`get5_endmatch`
 :   Force ends the current match. No winner is set (draw).
 
-####`get5_creatematch [map name] [matchid]`
+####`get5_creatematch [map name] [matchid]` {: #get5_creatematch }
 :   Creates a BO1 match with the current players on the server. `map name` defaults to the current map and `matchid`
     defaults to `manual`. You should **not** provide a match ID if you use the [MySQL extension](../stats_system/#mysql).
 

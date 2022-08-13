@@ -1,4 +1,4 @@
-stock bool StartRecording() {
+bool StartRecording() {
   if (!IsTVEnabled()) {
     LogError("Demo recording will not work with \"tv_enable 0\". Set \"tv_enable 1\" and restart the map to fix this.");
     g_DemoFileName = "";
@@ -23,7 +23,7 @@ stock bool StartRecording() {
   return true;
 }
 
-stock void StopRecording(bool forceStop = false) {
+void StopRecording(bool forceStop = false) {
   if (!IsTVEnabled()) {
     LogDebug("Cannot stop recording as GOTV is not enabled.");
     return;
@@ -66,7 +66,6 @@ static void StopRecordingCallback(char[] matchId, int mapNumber, char[] demoFile
 }
 
 public Action Timer_StopGoTVRecording(Handle timer, DataPack pack) {
-
   char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];
   pack.Reset();
@@ -80,7 +79,6 @@ public Action Timer_StopGoTVRecording(Handle timer, DataPack pack) {
 }
 
 public Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
-
   char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];
   pack.Reset();
@@ -98,7 +96,7 @@ public Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
   return Plugin_Handled;
 }
 
-stock bool IsTVEnabled() {
+bool IsTVEnabled() {
   ConVar tvEnabledCvar = FindConVar("tv_enable");
   if (tvEnabledCvar == null) {
     LogError("Failed to get tv_enable cvar");
@@ -116,7 +114,7 @@ stock bool IsTVEnabled() {
   return false;
 }
 
-stock int GetTvDelay() {
+int GetTvDelay() {
   if (IsTVEnabled()) {
     return GetCvarIntSafe("tv_delay");
   }

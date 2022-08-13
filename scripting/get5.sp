@@ -529,10 +529,11 @@ public void OnPluginStart() {
 
   /** Hooks **/
   HookEvent("cs_win_panel_match", Event_MatchOver);
+  HookEvent("cs_win_panel_round", Event_RoundWinPanel, EventHookMode_Pre);
   HookEvent("player_connect_full", Event_PlayerConnectFull);
   HookEvent("player_disconnect", Event_PlayerDisconnect);
   HookEvent("player_spawn", Event_PlayerSpawn);
-  HookEvent("round_end", Event_RoundEnd);
+  HookEvent("round_end", Event_RoundEnd, EventHookMode_Pre);
   HookEvent("round_freeze_end", Event_FreezeEnd);
   HookEvent("round_prestart", Event_RoundPreStart);
   HookEvent("round_start", Event_RoundStart);
@@ -813,6 +814,7 @@ public void OnMapStart() {
   }
 
   g_ReadyTimeWaitingUsed = 0;
+  g_HasKnifeRoundStarted = false;
 
   if (g_WaitingForRoundBackup) {
     ChangeState(Get5State_Warmup);
@@ -1373,6 +1375,15 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
     ChangeState(Get5State_Live);
   }
 
+  if (g_GameState == Get5State_WaitingForKnifeRoundDecision && !InWarmup()) {
+    // Ensures that round end after knife sends players directly into warmup.
+    // This immediately triggers another Event_RoundPreStart, so we can return here and avoid writing backup twice.
+    LogDebug("Changed to warmup post knife.");
+    ExecCfg(g_WarmupCfgCvar);
+    EnsureIndefiniteWarmup();
+    return Plugin_Continue;
+  }
+
   Stats_ResetRoundValues();
 
   // We need this for events that fire after the map ends, such as grenades detonating (or someone
@@ -1387,6 +1398,7 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
   if (g_GameState >= Get5State_Warmup) {
     WriteBackup();
   }
+  return Plugin_Continue;
 }
 
 public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast) {
@@ -1497,21 +1509,19 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   EventLogger_LogAndDeleteEvent(startEvent);
 }
 
-public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
-  LogDebug("Event_RoundEnd");
-  if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
-    return;
-  }
-
+public Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroadcast) {
+  LogDebug("Event_RoundWinPanel");
   if (g_GameState == Get5State_KnifeRound && g_HasKnifeRoundStarted) {
     g_HasKnifeRoundStarted = false;
 
     ChangeState(Get5State_WaitingForKnifeRoundDecision);
-    CreateTimer(1.0, Timer_PostKnife);
+    if (g_KnifeChangedCvars != INVALID_HANDLE) {
+      RestoreCvars(g_KnifeChangedCvars, true);
+    }
 
     int ctAlive = CountAlivePlayersOnTeam(CS_TEAM_CT);
     int tAlive = CountAlivePlayersOnTeam(CS_TEAM_T);
-    int winningCSTeam = CS_TEAM_NONE;
+    int winningCSTeam;
     if (ctAlive > tAlive) {
       winningCSTeam = CS_TEAM_CT;
     } else if (tAlive > ctAlive) {
@@ -1524,11 +1534,8 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       } else if (tHealth > ctHealth) {
         winningCSTeam = CS_TEAM_T;
       } else {
-        if (GetRandomFloat(0.0, 1.0) < 0.5) {
-          winningCSTeam = CS_TEAM_CT;
-        } else {
-          winningCSTeam = CS_TEAM_T;
-        }
+        winningCSTeam = GetRandomFloat(0.0, 1.0) < 0.5 ? CS_TEAM_CT : CS_TEAM_T;
+        LogDebug("Randomized knife winner to side %d", winningCSTeam);
       }
     }
 
@@ -1539,8 +1546,31 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     FormatChatCommand(formattedSwapCommand, sizeof(formattedSwapCommand), "!swap");
     Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand, formattedSwapCommand);
 
-    if (g_TeamTimeToKnifeDecisionCvar.FloatValue > 0)
-      CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision);
+    if (g_TeamTimeToKnifeDecisionCvar.FloatValue > 0) {
+      CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision, TIMER_FLAG_NO_MAPCHANGE);
+    }
+
+    // This ensures that the correct graphic is displayed in-game for the winning team, as CTs will always win if the
+    // clock runs out. It also ensures that the reason displayed is correct, i.e. just "win" and no "won because clock
+    // ran down".
+    event.SetInt("final_event", ConvertCSTeamToDefaultWinReason(winningCSTeam));
+  }
+  return Plugin_Continue;
+}
+
+public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
+  LogDebug("Event_RoundEnd");
+  if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+    return Plugin_Continue;
+  }
+
+  if (g_GameState == Get5State_WaitingForKnifeRoundDecision && g_KnifeWinnerTeam != Get5Team_None) {
+    int winningCSTeam = Get5TeamToCSTeam(g_KnifeWinnerTeam);
+    // Event_RoundWinPanel is called before Event_RoundEnd, so that event handles knife winner.
+    // We override this event only to have the correct audio callout in the game.
+    event.SetInt("winner", winningCSTeam);
+    event.SetInt("reason", ConvertCSTeamToDefaultWinReason(winningCSTeam));
+    return Plugin_Continue;
   }
 
   if (g_GameState == Get5State_Live) {
@@ -1623,6 +1653,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
     EventLogger_LogAndDeleteEvent(roundEndEvent);
   }
+  return Plugin_Continue;
 }
 
 public void SwapSides() {
@@ -1675,15 +1706,6 @@ public void StartGame(bool knifeRound) {
     ChangeState(Get5State_GoingLive);
     CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
   }
-}
-
-public Action Timer_PostKnife(Handle timer) {
-  if (g_KnifeChangedCvars != INVALID_HANDLE) {
-    RestoreCvars(g_KnifeChangedCvars, true);
-  }
-
-  ExecCfg(g_WarmupCfgCvar);
-  EnsureIndefiniteWarmup();
 }
 
 public void ChangeState(Get5State state) {

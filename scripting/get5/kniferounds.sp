@@ -85,6 +85,8 @@ public void EndKnifeRound(bool swap) {
 
   ChangeState(Get5State_GoingLive);
   CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
+
+  g_KnifeWinnerTeam = Get5Team_None;
 }
 
 static bool AwaitingKnifeDecision(int client) {
@@ -96,18 +98,18 @@ static bool AwaitingKnifeDecision(int client) {
 
 public Action Command_Stay(int client, int args) {
   if (AwaitingKnifeDecision(client)) {
-    EndKnifeRound(false);
     Get5_MessageToAll("%t", "TeamDecidedToStayInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
+    EndKnifeRound(false);
   }
   return Plugin_Handled;
 }
 
 public Action Command_Swap(int client, int args) {
   if (AwaitingKnifeDecision(client)) {
-    EndKnifeRound(true);
     Get5_MessageToAll("%t", "TeamDecidedToSwapInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
+    EndKnifeRound(true);
   } else if (g_GameState == Get5State_Warmup && g_InScrimMode &&
              GetClientMatchTeam(client) == Get5Team_1) {
     PerformSideSwap(true);
@@ -142,8 +144,8 @@ public Action Command_T(int client, int args) {
 
 public Action Timer_ForceKnifeDecision(Handle timer) {
   if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
-    EndKnifeRound(false);
     Get5_MessageToAll("%t", "TeamLostTimeToDecideInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
+    EndKnifeRound(false);
   }
 }

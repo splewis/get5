@@ -94,7 +94,7 @@ You should put the `url` argument inside quotation marks (`""`).
 
     Loading remote matches requires the [SteamWorks](../installation/#steamworks) extension.
 
-####`get5_endmatch [team1|team2]`
+####`get5_endmatch [team1|team2]` {: #get5_endmatch }
 :   Force-ends the current match. The team argument will force the winner of the series and the current map to be set
 to that team. Omitting the team argument sets no winner (tie).
 

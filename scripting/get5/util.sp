@@ -61,6 +61,12 @@ stock int SumHealthOfTeam(int team) {
   return sum;
 }
 
+stock int ConvertCSTeamToDefaultWinReason(int side) {
+  // This maps to https://github.com/VSES/SourceEngine2007/blob/master/se2007/game/shared/cstrike/cs_gamerules.h, which
+  // is the regular CSRoundEndReason + 1.
+  return view_as<int>(side == CS_TEAM_CT ? CSRoundEnd_CTWin : CSRoundEnd_TerroristWin) + 1;
+}
+
 /**
  * Switches and respawns a player onto a new team.
  */
@@ -227,8 +233,10 @@ stock bool InFreezeTime() {
 
 stock void EnsureIndefiniteWarmup() {
   if (!InWarmup()) {
+    LogDebug("EnsureIndefiniteWarmup: Not in warmup; calling StartWarmup()");
     StartWarmup();
   } else {
+    LogDebug("EnsureIndefiniteWarmup: Already in warmup; setting indefinite");
     ServerCommand("mp_warmup_pausetimer 1");
     ServerCommand("mp_do_warmup_period 1");
     ServerCommand("mp_warmup_pausetimer 1");

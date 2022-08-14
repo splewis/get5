@@ -330,7 +330,7 @@ public Action Timer_PauseTimeCheck(Handle timer) {
     }
 
     LOOP_CLIENTS(i) {
-      if (IsPlayer(i)) {
+      if (IsValidClient(i)) {
         if (fixedPauseTime) { // If fixed pause; takes precedence over total time and reuses timeLeft for simplicity
           if (maxTacticalPauses > 0) {
             // Team A (CT) tactical pause (2/4): 0:45
@@ -394,7 +394,7 @@ public Action Timer_PauseTimeCheck(Handle timer) {
     }
 
     LOOP_CLIENTS(i) {
-      if (IsPlayer(i)) {
+      if (IsValidClient(i)) {
         if (timeLeft >= 0) {
           if (maxTechPauses > 0) {
             // Team A (CT) technical pause (3/4): Time remaining before anyone can unpause: 1:30
@@ -418,7 +418,7 @@ public Action Timer_PauseTimeCheck(Handle timer) {
   } else if (g_PauseType == Get5PauseType_Admin) {
 
     LOOP_CLIENTS(i) {
-      if (IsPlayer(i)) {
+      if (IsValidClient(i)) {
         PrintHintText(i, "%t", "PausedByAdministrator");
       }
     }
@@ -426,7 +426,7 @@ public Action Timer_PauseTimeCheck(Handle timer) {
   } else if (g_PauseType == Get5PauseType_Backup) {
 
     LOOP_CLIENTS(i) {
-      if (IsPlayer(i)) {
+      if (IsValidClient(i)) {
         PrintHintText(i, "%t", "PausedForBackup");
       }
     }

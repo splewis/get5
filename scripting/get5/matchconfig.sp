@@ -1055,14 +1055,12 @@ public Action Command_CreateMatch(int client, int args) {
 
   kv.JumpToKey("team1", true);
   int count = AddPlayersToAuthKv(kv, Get5Team_1, teamName);
-  if (count > 0)
-    kv.SetString("name", teamName);
+  kv.SetString("name", count > 0 ? teamName : "Team 1");
   kv.GoBack();
 
   kv.JumpToKey("team2", true);
   count = AddPlayersToAuthKv(kv, Get5Team_2, teamName);
-  if (count > 0)
-    kv.SetString("name", teamName);
+  kv.SetString("name", count > 0 ? teamName : "Team 2");
   kv.GoBack();
 
   kv.JumpToKey("spectators", true);

@@ -64,7 +64,7 @@ force players onto teams, kicking everyone else. **`Default: 1`**
 
 ####`get5_print_update_notice`
 :   Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if
-    [SteamWorks](../installation/#steamworks) has been installed. **`Default: 1`**
+[SteamWorks](../installation/#steamworks) has been installed. **`Default: 1`**
 
 ####`get5_pretty_print_json`
 :   Whether to pretty-print all JSON output. This also affects the output of JSON in the
@@ -139,7 +139,8 @@ if [`get5_print_damage`](#get5_print_damage) is disabled.
 **`Default: 5`**
 
 ####`get5_message_prefix`
-:   The tag applied before plugin messages. **`Default: Get5`**
+:   The tag applied before plugin messages. Note that at least one character must come before
+a [color modifier](#color-substitutes). **`Default: "[{YELLOW}Get5{NORMAL}]"`**
 
 ## Pausing
 
@@ -211,7 +212,7 @@ command as well as the [`get5_loadbackup`](../commands/#get5_loadbackup) command
 the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`. **`Default: ""`**
 
 !!! warning "Slash, slash, hundred yard dash :material-slash-forward:"
- 
+
     It is very important that your backup path does **not** start with a slash but instead **ends with a slash**. If
     not, the last part of the path will be considered a prefix of the filename and things will not work correctly. Also
     note that if you use the [`{MATCHID}`](#tag-matchid) variable, [automatic deletion of backups](#get5_max_backup_age)

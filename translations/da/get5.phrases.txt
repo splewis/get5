@@ -332,10 +332,6 @@
     {
         "da"            "[IKKE KLAR]"
     }
-    "MatchPoweredBy"
-    {
-        "da"        "Drevet af {YELLOW}Get5"
-    }
     "MapVetoPickMenuText"
     {
         "da"        "Vælg et map at spille:"

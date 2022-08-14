@@ -256,10 +256,6 @@
     {
         "chi"            "[未准备]"
     }
-    "MatchPoweredBy"
-    {
-        "chi"        "由{YELLOW}Get5{NORMAL}强力驱动"
-    }
     "MapVetoPickMenuText"
     {
         "chi"        "请选择一张想玩的地图："

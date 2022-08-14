@@ -47,15 +47,7 @@ public Action MatchLive(Handle timer) {
   ExecuteMatchConfigCvars();
   g_PendingSideSwap = false;
 
-  for (int i = 0; i < 5; i++) {
-    Get5_MessageToAll("%t", "MatchIsLiveInfoMessage");
-  }
-
-  char tag[64];
-  g_MessagePrefixCvar.GetString(tag, sizeof(tag));
-  if (!StrEqual(tag, DEFAULT_TAG)) {
-    Get5_MessageToAll("%t", "MatchPoweredBy");
-  }
+  announcePhaseChange("%t", "MatchIsLiveInfoMessage");
 
   if (!g_PrintUpdateNoticeCvar.BoolValue) {
     return Plugin_Handled;
@@ -67,6 +59,18 @@ public Action MatchLive(Handle timer) {
     Get5_MessageToAll("%t", "PrereleaseVersionWarning", PLUGIN_VERSION, conVarName);
   } else if (g_NewerVersionAvailable) {
     Get5_MessageToAll("%t", "NewVersionAvailable", GET5_GITHUB_PAGE);
+  }
+
+  /**
+  * Please do not change this. Thousands of uncompensated hours were poured into making this plugin.
+  * Claiming it as your own because you made slight modifications to it is not cool. If you have suggestions,
+  * bug reports or feature requests, please see GitHub or join our Discord: https://splewis.github.io/get5/community/
+  * Thanks in advance!
+  */
+  char tag[64];
+  g_MessagePrefixCvar.GetString(tag, sizeof(tag));
+  if (!StrEqual(tag, DEFAULT_TAG)) {
+    Get5_MessageToAll("Powered by {YELLOW}Get5");
   }
 
   return Plugin_Handled;

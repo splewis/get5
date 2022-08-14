@@ -336,10 +336,6 @@
     {
         "hu"            "[NEM ÁLL KÉSZEN]"
     }
-    "MatchPoweredBy"
-    {
-        "hu"            "{YELLOW}Get5{NORMAL} által megvalósítva"
-    }
     "MapVetoPickMenuText"
     {
         "hu"            "Válassz pályát, amin játszanál:"

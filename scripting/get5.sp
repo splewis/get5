@@ -1567,8 +1567,27 @@ public Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroad
     }
 
     // This ensures that the correct graphic is displayed in-game for the winning team, as CTs will always win if the
-    // clock runs out. It also ensures that the reason displayed is correct, i.e. just "win" and no "won because clock
+    // clock runs out. It also ensures that the fun fact displayed is correct; overriding to number of players killed
+    // by knife and no "CT won by running down the clock". MVP can still be on the losing team though.
     // ran down".
+    int maxFrags = 0;
+    int topFragClient = 0;
+    int frags;
+    LOOP_CLIENTS(i) {
+      if (IsValidClient(i)) {
+        frags = GetClientFrags(i);
+        if (frags >= maxFrags) {
+          maxFrags = frags;
+          topFragClient = i;
+        }
+      }
+    }
+    if (topFragClient > 0) {
+      // Found here: https://github.com/SteamDatabase/GameTracking-CSGO/blob/master/csgo/bin/server_client_strings.txt
+      event.SetString("funfact_token", "#funfact_knife_kills");
+      event.SetInt("funfact_player", topFragClient);
+      event.SetInt("funfact_data1", maxFrags);
+    }
     event.SetInt("final_event", ConvertCSTeamToDefaultWinReason(winningCSTeam));
   }
   return Plugin_Continue;

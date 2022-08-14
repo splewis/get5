@@ -236,6 +236,12 @@ public bool RestoreFromBackup(const char[] path) {
     if (!LoadMatchConfig(tempBackupFile, true)) {
       delete kv;
       LogError("Could not restore from match config \"%s\"", tempBackupFile);
+      if (g_GameState != Get5State_None) {
+        // If the backup load fails, all the game configs will have been reset by LoadMatchConfig, but the game state
+        // won't. This ensure we don't end up a in a "live" state with no get5 variables set, which would prevent a call
+        // to load a new match.
+        ChangeState(Get5State_None);
+      }
       return false;
     }
     kv.GoBack();

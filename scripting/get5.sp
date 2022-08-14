@@ -38,7 +38,7 @@
 #define DEBUG_CVAR "get5_debug"
 #define MATCH_ID_LENGTH 64
 #define MAX_CVAR_LENGTH 128
-#define MATCH_END_DELAY_AFTER_TV 10
+#define MATCH_END_DELAY_AFTER_TV 15
 
 #define TEAM1_COLOR "{LIGHT_GREEN}"
 #define TEAM2_COLOR "{PINK}"
@@ -797,8 +797,8 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
       g_GameState < Get5State_PostGame && GetRealClientCount() == 0 && !g_MapChangePending) {
     g_TeamSeriesScores[Get5Team_1] = 0;
     g_TeamSeriesScores[Get5Team_2] = 0;
-    StopRecording(true);
-    EndSeries(Get5Team_None, false, false);
+    StopRecording();
+    EndSeries(Get5Team_None, false, 0.0, false);
   }
 }
 
@@ -911,16 +911,19 @@ static void CheckReadyWaitingTimes() {
 
     if (team1Forfeited || team2Forfeited) {
       Stats_Forfeit();
-      StopRecording(true);
-    }
-
-    // False for printing in all these cases, as CheckReadyWaitingTime prints forfeit messages.
-    if (team1Forfeited && team2Forfeited) {
-      EndSeries(Get5Team_None, false, false);
-    } else if (team1Forfeited) {
-      EndSeries(Get5Team_2, false, false);
-    } else if (team2Forfeited) {
-      EndSeries(Get5Team_1, false, false);
+      float minDelay = 5.0;
+      StopRecording(minDelay);
+      float endDelay = float(GetTvDelay());
+      if (endDelay < minDelay) {
+        endDelay = minDelay;
+      }
+      if (team1Forfeited && team2Forfeited) {
+        EndSeries(Get5Team_None, false, endDelay);
+      } else if (team1Forfeited) {
+        EndSeries(Get5Team_2, false, endDelay);
+      } else {
+        EndSeries(Get5Team_1, false, endDelay);
+      }
     }
   }
 }
@@ -1003,10 +1006,8 @@ public Action Command_EndMatch(int client, int args) {
   Call_Finish();
   EventLogger_LogAndDeleteEvent(mapResultEvent);
 
-  // Don't print series result here as admin force-end is printed below.
-  // We force-end the recording as the actual game is not ended, so there is no round restart to match the recording time to.
-  StopRecording(true);
-  EndSeries(winningTeam, false, false);
+  // No delay required when not kicking players.
+  EndSeries(winningTeam, false, 0.0, false);
 
   UpdateClanTags();
 
@@ -1030,6 +1031,7 @@ public Action Command_EndMatch(int client, int args) {
     delete g_KnifeDecisionTimer;
   }
 
+  StopRecording(1.0);
   ServerCommand("mp_restartgame 1");
 
   return Plugin_Handled;
@@ -1186,15 +1188,14 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
   // This ensures that the mp_match_restart_delay is not shorter
   // than what is required for the GOTV recording to finish.
-  ConVar mp_match_restart_delay = FindConVar("mp_match_restart_delay");
-  if (mp_match_restart_delay != INVALID_HANDLE) {
-    int requiredDelay = GetTvDelay() + MATCH_END_DELAY_AFTER_TV;
-    if (requiredDelay > mp_match_restart_delay.IntValue) {
-      LogDebug("Extended mp_match_restart_delay from %d to %d to ensure GOTV can finish recording.",
-        mp_match_restart_delay.IntValue, requiredDelay);
-      mp_match_restart_delay.IntValue = requiredDelay;
-    }
+  float restartDelay = GetCurrentMatchRestartDelay();
+  float requiredDelay = float(GetTvDelay() + MATCH_END_DELAY_AFTER_TV);
+  if (requiredDelay > restartDelay) {
+    LogDebug("Extended mp_match_restart_delay from %f to %f to ensure GOTV broadcast can finish.", restartDelay, requiredDelay);
+    SetCurrentMatchRestartDelay(requiredDelay);
+    restartDelay = requiredDelay; // reassigned because we reuse the variable below.
   }
+  StopRecording(float(MATCH_END_DELAY_AFTER_TV));
 
   if (g_GameState == Get5State_Live) {
 
@@ -1245,16 +1246,10 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     int tiedMaps = g_TeamSeriesScores[Get5Team_None];
     int remainingMaps = g_MapsToPlay.Length - t1maps - t2maps - tiedMaps;
 
-    // Stops recording after GOTV has ended.
-    // mp_match_restart_delay is always of a longer duration than GOTV delay, so the recording
-    // **will** finish before the map changes, regardless if a next map is pending or if the
-    // series ends here.
-    StopRecording();
-
     if (t1maps == t2maps) {
       // As long as team scores are equal, we play until there are no maps left, regardless of clinch config.
       if (remainingMaps <= 0) {
-        EndSeries(Get5Team_None, true, true);
+        EndSeries(Get5Team_None, true, restartDelay);
         return Plugin_Continue;
       }
     } else if (g_SeriesCanClinch) {
@@ -1262,15 +1257,15 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       int actualMapsToWin = ((g_MapsToPlay.Length - tiedMaps) / 2) + 1;
       if (t1maps == actualMapsToWin) {
         // Team 1 won
-        EndSeries(Get5Team_1, true, true);
+        EndSeries(Get5Team_1, true, restartDelay);
         return Plugin_Continue;
       } else if (t2maps == actualMapsToWin) {
         // Team 2 won
-        EndSeries(Get5Team_2, true, true);
+        EndSeries(Get5Team_2, true, restartDelay);
         return Plugin_Continue;
       }
     } else if (remainingMaps <= 0) {
-      EndSeries(t1maps > t2maps ? Get5Team_1 : Get5Team_2, true, true); // Tie handled in first if-block
+      EndSeries(t1maps > t2maps ? Get5Team_1 : Get5Team_2, true, restartDelay); // Tie handled in first if-block
       return Plugin_Continue;
     }
 
@@ -1288,8 +1283,6 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
     char nextMap[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(Get5_GetMapNumber(), nextMap, sizeof(nextMap));
-
-    float restartDelay = FindConVar("mp_match_restart_delay").FloatValue;
 
     char timeToMapChangeFormatted[8];
     convertSecondsToMinutesAndSeconds(RoundToFloor(restartDelay), timeToMapChangeFormatted, sizeof(timeToMapChangeFormatted));
@@ -1313,19 +1306,7 @@ public Action Timer_NextMatchMap(Handle timer) {
   ChangeMap(map, 3.0);
 }
 
-public void KickClientsOnEnd() {
-  LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && !(g_KickClientImmunityCvar.BoolValue && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
-      KickClient(i, "%t", "MatchFinishedInfoMessage");
-    }
-  }
-}
-
-public void EndSeries(Get5Team winningTeam, bool printWinnerMessage, bool waitForGoTv) {
-  if (g_KickClientsWithNoMatchCvar.BoolValue) {
-    DelayFunction(10.0, KickClientsOnEnd);
-  }
-
+void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay, bool kickPlayers = true) {
   Stats_SeriesEnd(winningTeam);
 
   if (printWinnerMessage) {
@@ -1356,19 +1337,46 @@ public void EndSeries(Get5Team winningTeam, bool printWinnerMessage, bool waitFo
   EventLogger_LogAndDeleteEvent(event);
   ChangeState(Get5State_None);
 
-  // We need to restore cvars on a timer if GOTV is recording, as it might otherwise set mp_match_restart_delay
-  // "back" to something that's shorter than the GOTV delay, which is a problem.
-  int goTvDelay = GetTvDelay();
-  if (goTvDelay > 0 && waitForGoTv) {
-    CreateTimer(float(goTvDelay) + MATCH_END_DELAY_AFTER_TV, Timer_RestoreCvars);
-  } else {
+  // We don't want to kick players until after the specified delay, as it will kick casters potentially before GOTV ends.
+  if (kickPlayers && g_KickClientsWithNoMatchCvar.BoolValue) {
+    if (restoreDelay < 0.1) {
+      KickPlayers();
+    } else {
+      CreateTimer(restoreDelay, Timer_KickOnEnd, _, TIMER_FLAG_NO_MAPCHANGE);
+    }
+  }
+
+  if (restoreDelay < 0.1) {
+    // When force-ending the match there is no delay.
     RestoreCvars(g_MatchConfigChangedCvars);
+  } else {
+    // If we restore cvars immediately, it might change the tv_ params or set the mp_match_restart_delay to something
+    // lower, which is noticed by the game and may trigger a map change before GOTV broadcast ends, so we don't do this
+    // until the current match restart delay has passed.
+    CreateTimer(restoreDelay, Timer_RestoreMatchCvars, _, TIMER_FLAG_NO_MAPCHANGE);
   }
 }
 
-public Action Timer_RestoreCvars(Handle timer) {
+public Action Timer_KickOnEnd(Handle timer) {
   if (g_GameState == Get5State_None) {
-    // Only reset if no game is running, otherwise a game started before the GOTV for another ends will mess this up.
+    // If a match was started before this event is triggered, don't do anything.
+    KickPlayers();
+  }
+  return Plugin_Handled;
+}
+
+static void KickPlayers() {
+  bool kickImmunity = g_KickClientImmunityCvar.BoolValue;
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i) && !(kickImmunity && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
+      KickClient(i, "%t", "MatchFinishedInfoMessage");
+    }
+  }
+}
+
+public Action Timer_RestoreMatchCvars(Handle timer) {
+  if (g_GameState == Get5State_None) {
+    // Only reset if no game is running, otherwise a game started before the restart delay for another ends will mess this up.
     RestoreCvars(g_MatchConfigChangedCvars);
   }
   return Plugin_Handled;

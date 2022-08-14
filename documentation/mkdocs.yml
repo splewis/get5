@@ -29,10 +29,11 @@ nav:
       - Configuration: configuration.md
   - Basics:
       - Getting Started: getting_started.md
+      - Match Schema: match_schema.md
       - Commands: commands.md
       - Pausing: pausing.md
       - Backup System: backup.md
-      - Match Schema: match_schema.md
+      - GOTV & Demos: gotv.md
   - Advanced:
       - Developer API: developer_api.md
       - Events & Forwards: events_and_forwards.md

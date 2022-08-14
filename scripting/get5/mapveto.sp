@@ -62,14 +62,16 @@ public void VetoFinished() {
     Get5_MessageToAll("%t", "MapIsInfoMessage", i + 1 - seriesScore, map);
   }
 
+  float delay = 10.0;
   g_MapChangePending = true;
   if (!g_SkipVeto && g_DisplayGotvVetoCvar.BoolValue) {
-    float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
-    StopRecording(); // stops recording after GetTvDelay() seconds.
-    CreateTimer(minDelay, Timer_NextMatchMap);
+    // Players must wait for GOTV to end before we can change map, but we don't need to record that.
+    CreateTimer(float(GetTvDelay()) + delay, Timer_NextMatchMap);
   } else {
-    CreateTimer(10.0, Timer_NextMatchMap);
+    CreateTimer(delay, Timer_NextMatchMap);
   }
+  // Always end recording here; ensures that we can successfully start one after veto.
+  StopRecording(delay);
 }
 
 // Main Veto Controller

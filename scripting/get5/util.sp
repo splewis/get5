@@ -219,6 +219,17 @@ stock void ReplaceStringWithInt(char[] buffer, int len, const char[] replace, in
   ReplaceString(buffer, len, replace, intString, caseSensitive);
 }
 
+stock void announcePhaseChange(const char[] format, const char[] message) {
+  int count = g_PhaseAnnouncementCountCvar.IntValue;
+  if (count > 10) {
+    count = 10;
+  } else if (count > 0) {
+    for (int i = 0; i < count; i++) {
+      Get5_MessageToAll(format, message);
+    }
+  }
+}
+
 stock bool InWarmup() {
   return GameRules_GetProp("m_bWarmupPeriod") != 0;
 }

@@ -260,10 +260,6 @@
     {
         "fr"            "[PAS PRÊT]"
     }
-    "MatchPoweredBy"
-    {
-        "fr"        "Powered by {YELLOW}Get5"
-    }
     "MapVetoPickMenuText"
     {
         "fr"        "Selectionnez une map à JOUER :"

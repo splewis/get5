@@ -100,6 +100,7 @@ ConVar g_VetoCountdownCvar;
 ConVar g_WarmupCfgCvar;
 ConVar g_PrintUpdateNoticeCvar;
 ConVar g_RoundBackupPathCvar;
+ConVar g_PhaseAnnouncementCountCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -298,7 +299,7 @@ Handle g_OnSidePicked = INVALID_HANDLE;
 // clang-format off
 public Plugin myinfo = {
   name = "Get5",
-  author = "splewis",
+  author = "splewis, nickdnk & PhlexPlexico",
   description = "",
   version = PLUGIN_VERSION,
   url = "https://github.com/splewis/get5"
@@ -435,6 +436,9 @@ public void OnPluginStart() {
   g_RoundBackupPathCvar = CreateConVar(
       "get5_backup_path", "",
       "The folder to save backup files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
+  g_PhaseAnnouncementCountCvar = CreateConVar(
+      "get5_phase_announcement_count", "5",
+      "The number of times Get5 will print 'Knife' or 'Match is LIVE' when the game starts. Set to 0 to disable.");
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");

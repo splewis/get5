@@ -392,10 +392,6 @@
     {
         "en"            "[NOT READY]"
     }
-    "MatchPoweredBy"
-    {
-        "en"        "Powered by {YELLOW}Get5"
-    }
     "MapVetoPickMenuText"
     {
         "en"        "Select a map to PLAY:"

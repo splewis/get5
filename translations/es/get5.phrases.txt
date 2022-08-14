@@ -260,10 +260,6 @@
     {
         "es"            "[NO LISTO]"
     }
-    "MatchPoweredBy"
-    {
-        "es"        "Gestionado con {YELLOW}Get5"
-    }
     "MapVetoPickMenuText"
     {
         "es"        "Seleccionar una mapa para el juego:"

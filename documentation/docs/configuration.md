@@ -134,9 +134,12 @@ if [`get5_print_damage`](#get5_print_damage) is disabled.
 - [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - dealt damage to this player, not enough for assist
 ```
 
+####`get5_phase_announcement_count`
+:   The number of times the "Knife" or "Match is LIVE" announcements will be printed in chat. Set to zero to disable.
+**`Default: 5`**
+
 ####`get5_message_prefix`
-:   The tag applied before plugin messages. If you change this variable, `Powered by Get5` will be printed when the game
-goes live. **`Default: Get5`**
+:   The tag applied before plugin messages. **`Default: Get5`**
 
 ## Pausing
 

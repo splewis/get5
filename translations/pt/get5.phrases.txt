@@ -248,8 +248,4 @@
     {
         "pt"            "[NOT READY]"
     }
-    "MatchPoweredBy"
-    {
-        "pt"        "Oferecido por {YELLOW}Get5"
-    }
 }

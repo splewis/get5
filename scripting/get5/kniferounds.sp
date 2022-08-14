@@ -9,11 +9,12 @@ public Action StartKnifeRound(Handle timer) {
     RestartGame(5);
   }
 
-  CreateTimer(10.0, Timer_AnnounceKnife);
+  g_KnifeCountdownTimer = CreateTimer(10.0, Timer_AnnounceKnife);
   return Plugin_Handled;
 }
 
 public Action Timer_AnnounceKnife(Handle timer) {
+  g_KnifeCountdownTimer = INVALID_HANDLE;
   announcePhaseChange("{GREEN}%t", "KnifeInfoMessage");
 
   Get5KnifeRoundStartedEvent knifeEvent = new Get5KnifeRoundStartedEvent(g_MatchID, g_MapNumber);
@@ -85,6 +86,7 @@ public void EndKnifeRound(bool swap) {
   CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
 
   g_KnifeWinnerTeam = Get5Team_None;
+  EnsureIndefiniteWarmup();
 }
 
 static bool AwaitingKnifeDecision(int client) {
@@ -141,6 +143,7 @@ public Action Command_T(int client, int args) {
 }
 
 public Action Timer_ForceKnifeDecision(Handle timer) {
+  g_KnifeDecisionTimer = INVALID_HANDLE;
   if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     Get5_MessageToAll("%t", "TeamLostTimeToDecideInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);

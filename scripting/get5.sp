@@ -146,7 +146,13 @@ MatchSideType g_MatchSideType = MatchSideType_Standard;
 ArrayList g_CvarNames = null;
 ArrayList g_CvarValues = null;
 bool g_InScrimMode = false;
+
+/** Knife for sides **/
 bool g_HasKnifeRoundStarted = false;
+Get5Team g_KnifeWinnerTeam = Get5Team_None;
+Handle g_KnifeChangedCvars = INVALID_HANDLE;
+Handle g_KnifeDecisionTimer = INVALID_HANDLE;
+Handle g_KnifeCountdownTimer = INVALID_HANDLE;
 
 /** Pausing **/
 bool g_IsChangingPauseState = false; // Used to prevent mp_pause_match and mp_unpause_match from being called directly.
@@ -222,9 +228,6 @@ char g_LastKickedPlayerAuth[64];
 ArrayList g_ChatAliases;
 ArrayList g_ChatAliasesCommands;
 
-/** Map game-state **/
-Get5Team g_KnifeWinnerTeam = Get5Team_None;
-
 /** Map-game state not related to the actual gameplay. **/
 char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
@@ -235,7 +238,6 @@ bool g_PendingSideSwap = false;
 bool g_RunningPrereleaseVersion = false;
 bool g_NewerVersionAvailable = false;
 
-Handle g_KnifeChangedCvars = INVALID_HANDLE;
 Handle g_MatchConfigChangedCvars = INVALID_HANDLE;
 
 /** Forwards **/
@@ -1018,6 +1020,16 @@ public Action Command_EndMatch(int client, int args) {
     g_ActiveVetoMenu.Cancel();
   }
 
+  if (g_KnifeCountdownTimer != INVALID_HANDLE) {
+    LogDebug("Killing knife announce countdown timer.");
+    delete g_KnifeCountdownTimer;
+  }
+
+  if (g_KnifeDecisionTimer != INVALID_HANDLE) {
+    LogDebug("Killing knife decision timer.");
+    delete g_KnifeDecisionTimer;
+  }
+
   ServerCommand("mp_restartgame 1");
 
   return Plugin_Handled;
@@ -1551,7 +1563,7 @@ public Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroad
     Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand, formattedSwapCommand);
 
     if (g_TeamTimeToKnifeDecisionCvar.FloatValue > 0) {
-      CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision, TIMER_FLAG_NO_MAPCHANGE);
+      g_KnifeDecisionTimer = CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision);
     }
 
     // This ensures that the correct graphic is displayed in-game for the winning team, as CTs will always win if the

@@ -1,4 +1,11 @@
 bool StartRecording() {
+  char demoFormat[PLATFORM_MAX_PATH];
+  g_DemoNameFormatCvar.GetString(demoFormat, sizeof(demoFormat));
+  if (StrEqual("", demoFormat)) {
+    LogMessage("Demo recording is disabled via get5_demo_name_format.");
+    return false;
+  }
+
   if (!IsTVEnabled()) {
     LogError("Demo recording will not work with \"tv_enable 0\". Set \"tv_enable 1\" and restart the map to fix this.");
     g_DemoFileName = "";
@@ -15,7 +22,7 @@ bool StartRecording() {
   Format(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);
   LogMessage("Recording to %s", g_DemoFileName);
 
-  // Escape unsafe characters and start recording.
+  // Escape unsafe characters and start recording. .dem is appended to the filename automatically.
   char szDemoName[PLATFORM_MAX_PATH + 1];
   strcopy(szDemoName, sizeof(szDemoName), demoName);
   ReplaceString(szDemoName, sizeof(szDemoName), "\"", "\\\"");
@@ -23,57 +30,48 @@ bool StartRecording() {
   return true;
 }
 
-void StopRecording(bool forceStop = false) {
-  if (!IsTVEnabled()) {
-    LogDebug("Cannot stop recording as GOTV is not enabled.");
-    return;
-  }
-  if (forceStop) {
-    LogDebug("Ending GOTV recording immediately by force.");
+void StopRecording(float delay = 0.0) {
+  if (delay < 0.1) {
+    LogDebug("Stopping GOTV recording immediately.");
     StopRecordingCallback(g_MatchID, g_MapNumber, g_DemoFileName);
-    return;
-  }
-  int tvDelay = GetTvDelay();
-  if (tvDelay > 0) {
-    LogDebug("Starting timer that will end GOTV recording in %d seconds.", tvDelay);
-    DataPack pack = CreateDataPack();
-    pack.WriteString(g_MatchID);
-    pack.WriteCell(g_MapNumber);
-    pack.WriteString(g_DemoFileName);
-    CreateTimer(float(tvDelay), Timer_StopGoTVRecording, pack, TIMER_FLAG_NO_MAPCHANGE); // changemap ends recording, so the timer cannot carry over.
   } else {
-    LogDebug("Ending GOTV recording immediately as tv_delay is 0.");
-    StopRecordingCallback(g_MatchID, g_MapNumber, g_DemoFileName);
+    LogDebug("Starting timer that will end GOTV recording in %f seconds.", delay);
+    CreateTimer(delay, Timer_StopGoTVRecording, GetDemoInfoDataPack(g_MatchID, g_MapNumber, g_DemoFileName));
   }
+  g_DemoFileName = "";
 }
 
-static void StopRecordingCallback(char[] matchId, int mapNumber, char[] demoFileName) {
+static void StopRecordingCallback(const char[] matchId, const int mapNumber, const char[] demoFileName) {
   ServerCommand("tv_stoprecord");
   if (StrEqual("", demoFileName)) {
     LogDebug("Demo was not recorded by Get5; not firing Get5_OnDemoFinished()");
     return;
   }
-
   // We delay this by 3 seconds to allow the server to flush to the file before firing the event.
-  // This requires a pack with the data, as the map might change and stuff might happen after the
-  // tv_delay has expired. This would also allow us to extend this delay later without breaking anything.
+  CreateTimer(3.0, Timer_FireStopRecordingEvent, GetDemoInfoDataPack(matchId, mapNumber, demoFileName));
+}
+
+static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber, const char[] demoFileName) {
   DataPack pack = CreateDataPack();
   pack.WriteString(matchId);
   pack.WriteCell(mapNumber);
   pack.WriteString(demoFileName);
+  return pack;
+}
 
-  CreateTimer(3.0, Timer_FireStopRecordingEvent, pack);
+static void ReadDemoDataPack(DataPack pack, char[] matchId, const int matchIdLength, int &mapNumber, char[] demoFileName, const int demoFileNameLength) {
+  pack.Reset();
+  pack.ReadString(matchId, matchIdLength);
+  mapNumber = pack.ReadCell();
+  pack.ReadString(demoFileName, demoFileNameLength);
+  delete pack;
 }
 
 public Action Timer_StopGoTVRecording(Handle timer, DataPack pack) {
   char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];
-  pack.Reset();
-  pack.ReadString(matchId, sizeof(matchId));
-  int mapNumber = pack.ReadCell();
-  pack.ReadString(demoFileName, sizeof(demoFileName));
-  delete pack;
-
+  int mapNumber;
+  ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, demoFileName, sizeof(demoFileName));
   StopRecordingCallback(matchId, mapNumber, demoFileName);
   return Plugin_Handled;
 }
@@ -81,11 +79,8 @@ public Action Timer_StopGoTVRecording(Handle timer, DataPack pack) {
 public Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
   char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];
-  pack.Reset();
-  pack.ReadString(matchId, sizeof(matchId));
-  int mapNumber = pack.ReadCell();
-  pack.ReadString(demoFileName, sizeof(demoFileName));
-  delete pack;
+  int mapNumber;
+  ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, demoFileName, sizeof(demoFileName));
 
   Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(matchId, mapNumber, demoFileName);
   LogDebug("Calling Get5_OnDemoFinished()");
@@ -119,4 +114,19 @@ int GetTvDelay() {
     return GetCvarIntSafe("tv_delay");
   }
   return 0;
+}
+
+float GetCurrentMatchRestartDelay() {
+  ConVar mp_match_restart_delay = FindConVar("mp_match_restart_delay");
+  if (mp_match_restart_delay == INVALID_HANDLE) {
+    return 1.0; // Shouldn't really be possible, but as a safeguard.
+  }
+  return mp_match_restart_delay.FloatValue;
+}
+
+void SetCurrentMatchRestartDelay(float delay) {
+  ConVar mp_match_restart_delay = FindConVar("mp_match_restart_delay");
+  if (mp_match_restart_delay != INVALID_HANDLE) {
+    mp_match_restart_delay.FloatValue = delay;
+  }
 }

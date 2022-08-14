@@ -38,7 +38,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
   g_ReadyTimeWaitingUsed = 0;
   g_HasKnifeRoundStarted = false;
-
+  g_MapChangePending = false;
   g_MapNumber = 0;
   g_RoundNumber = -1;
   g_LastVetoTeam = Get5Team_2;

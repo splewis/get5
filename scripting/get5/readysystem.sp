@@ -8,7 +8,7 @@ public void ResetReadyStatus() {
 }
 
 public bool IsReadyGameState() {
-  return g_GameState == Get5State_PreVeto || g_GameState == Get5State_Warmup;
+  return (g_GameState == Get5State_PreVeto || g_GameState == Get5State_Warmup) && !g_MapChangePending;
 }
 
 // Client ready status

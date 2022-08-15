@@ -15,7 +15,7 @@ public Action StartKnifeRound(Handle timer) {
 
 public Action Timer_AnnounceKnife(Handle timer) {
   g_KnifeCountdownTimer = INVALID_HANDLE;
-  announcePhaseChange("{GREEN}%t", "KnifeInfoMessage");
+  AnnouncePhaseChange("{GREEN}%t", "KnifeInfoMessage");
 
   Get5KnifeRoundStartedEvent knifeEvent = new Get5KnifeRoundStartedEvent(g_MatchID, g_MapNumber);
 

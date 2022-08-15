@@ -47,7 +47,7 @@ public Action MatchLive(Handle timer) {
   ExecuteMatchConfigCvars();
   g_PendingSideSwap = false;
 
-  announcePhaseChange("%t", "MatchIsLiveInfoMessage");
+  AnnouncePhaseChange("%t", "MatchIsLiveInfoMessage");
 
   if (!g_PrintUpdateNoticeCvar.BoolValue) {
     return Plugin_Handled;

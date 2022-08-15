@@ -731,22 +731,6 @@ stock SideChoice SideTypeFromString(const char[] input) {
   }
 }
 
-typedef VoidFunction = function void();
-
-stock void DelayFunction(float delay, VoidFunction f) {
-  DataPack p = CreateDataPack();
-  p.WriteFunction(f);
-  CreateTimer(delay, _DelayFunctionCallback, p);
-}
-
-public Action _DelayFunctionCallback(Handle timer, DataPack data) {
-  data.Reset();
-  Function func = data.ReadFunction();
-  Call_StartFunction(INVALID_HANDLE, func);
-  Call_Finish();
-  delete data;
-}
-
 // Deletes a file if it exists. Returns true if the
 // file existed AND there was an error deleting it.
 public bool DeleteFileIfExists(const char[] path) {

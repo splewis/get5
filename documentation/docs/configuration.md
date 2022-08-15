@@ -49,7 +49,8 @@ cfg/get5/live.cfg # (3)
 :   Whether the [`!stop`](../commands/#stop) command is enabled. **`Default: 1`**
 
 ####`get5_kick_when_no_match_loaded`
-:   Whether to kick all clients if no match is loaded. **`Default: 0`**
+:   Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
+using [`get5_endmatch`](../commands/#get5_endmatch). **`Default: 0`**
 
 ####`get5_end_match_on_empty_server`
 :   Whether the match is ended with no winner if all players leave (note: this will happen even if all players
@@ -188,7 +189,9 @@ must confirm. **`Default: 0`**
 doing! Avoid using spaces or colons.** **`Default: %Y-%m-%d_%H`**
 
 ####`get5_demo_name_format`
-:   Format to name demo files. Set to empty string to disable. **`Default: {MATCHID}_map{MAPNUMBER}_{MAPNAME}`**
+:   Format to use for demo files when [recording matches](gotv.md). Do not include a file extension (`.dem` is added
+automatically). Set to empty string to disable.<br>Note that the [`{MAPNUMBER}`](#tag-mapnumber) variable is not
+zero-indexed!<br>**`Default: {MATCHID}_map{MAPNUMBER}_{MAPNAME}`**
 
 ####`get5_event_log_format`
 :   Format to write event logs to. Set to empty string to disable. **`Default: ""`**

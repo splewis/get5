@@ -39,6 +39,7 @@ Partial Example:
 	"map0"
 	{
 		"mapname"		"de_mirage"
+		"demo_filename" "304_map1_de_mirage.dem"
 		"winner"		"team1"
 		"team1"
 		{

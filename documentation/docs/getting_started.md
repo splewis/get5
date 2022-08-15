@@ -53,7 +53,8 @@ Once you've done this, all that has to happen is teams to [ready up](../commands
 !!! danger "Practice Mode"
 
     If you have [practicemode](https://github.com/splewis/csgo-practice-mode) on your server as well, you may wish to
-    add `sm_practicemode_can_be_started 0` in your [live configuration](../configuration/#phase-configuration-files).
+    add `sm_practicemode_can_be_started 0` in the `cvars` section of your [match configuration](../match_schema/#schema).
+    This will remove the ability to start practice mode until the match is completed or cancelled.
 
 ### Changing Scrim Settings
 

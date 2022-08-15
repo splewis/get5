@@ -223,10 +223,9 @@ stock void AnnouncePhaseChange(const char[] format, const char[] message) {
   int count = g_PhaseAnnouncementCountCvar.IntValue;
   if (count > 10) {
     count = 10;
-  } else if (count > 0) {
-    for (int i = 0; i < count; i++) {
-      Get5_MessageToAll(format, message);
-    }
+  }
+  for (int i = 0; i < count; i++) {
+    Get5_MessageToAll(format, message);
   }
 }
 

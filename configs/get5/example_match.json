@@ -63,6 +63,7 @@
 	},
 
 	"cvars": {
-		"hostname": "Match server #1"
+		"hostname": "Match server #1",
+		"sm_practicemode_can_be_started": "0"
 	}
 }

@@ -235,9 +235,8 @@ the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`. **`Default:
 :   Config file executed when the game goes live. **`Default: get5/live.cfg`**
 
 ####`get5_autoload_config`
-:   A config file to autoload on map starts if no match is loaded, relative to the `csgo` directory. Set to empty
-string
-to disable. **`Default: ""`**
+:  A [match configuration](../match_schema/#schema) file, relative to the `csgo` directory, to autoload when a player joins the server 
+if no match is loaded. Set to empty string to disable. **`Default: ""`**
 
 ####`get5_warmup_cfg`
 :   Config file executed in warmup periods. **`Default: get5/warmup.cfg`**

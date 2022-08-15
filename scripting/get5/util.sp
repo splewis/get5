@@ -101,80 +101,6 @@ stock bool IsAuthedPlayer(int client) {
 }
 
 /**
- * Used to consistently set string keys on JSON objects that receive a Get5Side parameter, which
- * should be output as ct, t, spec or null in JSON.
- */
-stock void ConvertGet5SideToStringInJson(const JSON_Object obj, const char[] key, Get5Side side) {
-  if (side == Get5Side_T) {
-    obj.SetString(key, "t");
-  } else if (side == Get5Side_CT) {
-    obj.SetString(key, "ct");
-  } else if (side == Get5Side_Spec) {
-    obj.SetString(key, "spec");
-  } else {
-    obj.SetObject(key, null);
-  }
-}
-
-/**
- * Used to consistently set string keys on JSON objects that receive a Get5Team parameter, which
- * should be output as team1, team2, spec or null in JSON.
- */
-stock void ConvertGet5TeamToStringInJson(const JSON_Object obj, const char[] key, Get5Team team) {
-  if (team == Get5Team_1) {
-    obj.SetString(key, "team1");
-  } else if (team == Get5Team_2) {
-    obj.SetString(key, "team2");
-  } else if (team == Get5Team_Spec) {
-    obj.SetString(key, "spec");
-  } else {
-    obj.SetObject(key, null);
-  }
-}
-
-/**
- * Used to consistently map a Get5PauseType to string in JSON.
- */
-stock void ConvertGet5PauseTypeToStringInJson(const JSON_Object obj, const char[] key,
-                                              Get5PauseType pauseType) {
-  if (pauseType == Get5PauseType_Admin) {
-    obj.SetString(key, "admin");
-  } else if (pauseType == Get5PauseType_Tech) {
-    obj.SetString(key, "technical");
-  } else if (pauseType == Get5PauseType_Tactical) {
-    obj.SetString(key, "tactical");
-  } else if (pauseType == Get5PauseType_Backup) {
-    obj.SetString(key, "backup");
-  } else {
-    obj.SetObject(key, null);
-  }
-}
-
-/**
- * Used to consistently convert Get5BombSite to 'a', 'b' or null.
- */
-stock void ConvertBombSiteToStringInJson(const JSON_Object obj, const char[] key,
-                                         const Get5BombSite site) {
-  if (site == Get5BombSite_A) {
-    obj.SetString(key, "a");
-  } else if (site == Get5BombSite_B) {
-    obj.SetString(key, "b");
-  } else {
-    obj.SetObject(key, null);
-  }
-}
-
-/**
- * Used to consistently set string keys on JSON objects that receive a Get5State parameter.
- */
-stock void ConvertGameStateToStringInJson(const JSON_Object obj, const char[] key,
-                                          const Get5State state) {
-  char gameStateString[64];
-  GameStateString(state, gameStateString, sizeof(gameStateString));
-  obj.SetString(key, gameStateString);
-}
-
-/**
  * Returns the number of clients that are actual players in the game.
  */
 stock int GetRealClientCount() {
@@ -582,29 +508,6 @@ stock void GetTeamString(Get5Team team, char[] buffer, int len) {
     Format(buffer, len, "spec");
   } else {
     Format(buffer, len, "none");
-  }
-}
-
-stock void GameStateString(Get5State state, char[] buffer, int length) {
-  switch (state) {
-    case Get5State_None:
-      Format(buffer, length, "none");
-    case Get5State_PreVeto:
-      Format(buffer, length, "pre_veto");
-    case Get5State_Veto:
-      Format(buffer, length, "veto");
-    case Get5State_Warmup:
-      Format(buffer, length, "warmup");
-    case Get5State_KnifeRound:
-      Format(buffer, length, "knife");
-    case Get5State_WaitingForKnifeRoundDecision:
-      Format(buffer, length, "waiting_for_knife_decision");
-    case Get5State_GoingLive:
-      Format(buffer, length, "going_live");
-    case Get5State_Live:
-      Format(buffer, length, "live");
-    case Get5State_PostGame:
-      Format(buffer, length, "post_game");
   }
 }
 

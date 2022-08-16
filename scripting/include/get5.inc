@@ -1599,7 +1599,7 @@ methodmap Get5BombDefusedEvent < Get5PlayerBombEvent {
   }
 }
 
-void GameStateString(const Get5State state, char[] buffer, const int length) {
+stock void GameStateString(const Get5State state, char[] buffer, const int length) {
   switch (state) {
     case Get5State_None:
       Format(buffer, length, "none");
@@ -1622,14 +1622,14 @@ void GameStateString(const Get5State state, char[] buffer, const int length) {
   }
 }
 
-void ConvertGameStateToStringInJson(const JSON_Object obj, const char[] key,
+stock void ConvertGameStateToStringInJson(const JSON_Object obj, const char[] key,
                                           const Get5State state) {
   char gameStateString[64];
   GameStateString(state, gameStateString, sizeof(gameStateString));
   obj.SetString(key, gameStateString);
 }
 
-void ConvertGet5SideToStringInJson(const JSON_Object obj, const char[] key, Get5Side side) {
+stock void ConvertGet5SideToStringInJson(const JSON_Object obj, const char[] key, Get5Side side) {
   if (side == Get5Side_T) {
     obj.SetString(key, "t");
   } else if (side == Get5Side_CT) {
@@ -1641,7 +1641,7 @@ void ConvertGet5SideToStringInJson(const JSON_Object obj, const char[] key, Get5
   }
 }
 
-void ConvertGet5TeamToStringInJson(const JSON_Object obj, const char[] key, Get5Team team) {
+stock void ConvertGet5TeamToStringInJson(const JSON_Object obj, const char[] key, Get5Team team) {
   if (team == Get5Team_1) {
     obj.SetString(key, "team1");
   } else if (team == Get5Team_2) {
@@ -1653,7 +1653,7 @@ void ConvertGet5TeamToStringInJson(const JSON_Object obj, const char[] key, Get5
   }
 }
 
-void ConvertGet5PauseTypeToStringInJson(const JSON_Object obj, const char[] key,
+stock void ConvertGet5PauseTypeToStringInJson(const JSON_Object obj, const char[] key,
                                               Get5PauseType pauseType) {
   if (pauseType == Get5PauseType_Admin) {
     obj.SetString(key, "admin");
@@ -1668,7 +1668,7 @@ void ConvertGet5PauseTypeToStringInJson(const JSON_Object obj, const char[] key,
   }
 }
 
-void ConvertBombSiteToStringInJson(const JSON_Object obj, const char[] key,
+stock void ConvertBombSiteToStringInJson(const JSON_Object obj, const char[] key,
                                          const Get5BombSite site) {
   if (site == Get5BombSite_A) {
     obj.SetString(key, "a");

@@ -30,7 +30,7 @@ public Action Timer_VetoCountdown(Handle timer) {
   } else {
     warningsPrinted++;
     int secondsRemaining = g_VetoCountdownCvar.IntValue - warningsPrinted + 1;
-    char secondsFormatted[8];
+    char secondsFormatted[32];
     Format(secondsFormatted, sizeof(secondsFormatted), "{GREEN}%d{NORMAL}", secondsRemaining);
     Get5_MessageToAll("%t", "VetoCountdown", secondsFormatted);
     return Plugin_Continue;

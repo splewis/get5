@@ -242,7 +242,9 @@ public Action Command_Unpause(int client, int args) {
   if (g_TeamReadyForUnpause[Get5Team_1] && g_TeamReadyForUnpause[Get5Team_2]) {
     UnpauseGame(team);
     if (IsPlayer(client)) {
-      Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", client);
+      char formattedClientName[MAX_NAME_LENGTH];
+      FormatPlayerName(formattedClientName, sizeof(formattedClientName), client);
+      Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", formattedClientName);
     }
   } else if (!g_TeamReadyForUnpause[Get5Team_2]) {
     Get5_MessageToAll("%t", "WaitingForUnpauseInfoMessage", g_FormattedTeamNames[Get5Team_1],

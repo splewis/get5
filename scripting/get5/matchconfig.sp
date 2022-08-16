@@ -852,7 +852,10 @@ public Action Command_AddPlayer(int client, int args) {
     if (AddPlayerToTeam(auth, team, name)) {
       ReplyToCommand(client, "Successfully added player %s to %s.", auth, teamString);
     } else {
-      ReplyToCommand(client, "Failed to add player %s to team %. They may already be on a team or you provided an invalid Steam ID.", auth, teamString);
+      ReplyToCommand(
+          client,
+          "Failed to add player %s to team %. They may already be on a team or you provided an invalid Steam ID.",
+          auth, teamString);
     }
 
   } else {
@@ -905,7 +908,10 @@ public Action Command_AddCoach(int client, int args) {
       WriteBackup();
       ReplyToCommand(client, "Successfully added player %s as coach for %s.", auth, teamString);
     } else {
-      ReplyToCommand(client, "Failed to add player %s as coach for %s. They may already be coaching or you provided an invalid Steam ID.", auth, teamString);
+      ReplyToCommand(
+          client,
+          "Failed to add player %s as coach for %s. They may already be coaching or you provided an invalid Steam ID.",
+          auth, teamString);
     }
   } else {
     ReplyToCommand(client, "Usage: get5_addcoach <auth> <team1|team2> [name]");
@@ -951,10 +957,13 @@ public Action Command_AddKickedPlayer(int client, int args) {
     }
 
     if (AddPlayerToTeam(g_LastKickedPlayerAuth, team, name)) {
-      ReplyToCommand(client, "Successfully added kicked player %s to %s.",
-                     g_LastKickedPlayerAuth, teamString);
+      ReplyToCommand(client, "Successfully added kicked player %s to %s.", g_LastKickedPlayerAuth,
+                     teamString);
     } else {
-      ReplyToCommand(client, "Failed to add player %s to %s. They may already be on a team or you provided an invalid Steam ID.", g_LastKickedPlayerAuth, teamString);
+      ReplyToCommand(
+          client,
+          "Failed to add player %s to %s. They may already be on a team or you provided an invalid Steam ID.",
+          g_LastKickedPlayerAuth, teamString);
     }
 
   } else {
@@ -981,7 +990,8 @@ public Action Command_RemovePlayer(int client, int args) {
     if (RemovePlayerFromTeams(auth)) {
       ReplyToCommand(client, "Successfully removed player %s.", auth);
     } else {
-      ReplyToCommand(client, "Player %s not found in auth lists or the Steam ID was invalid.", auth);
+      ReplyToCommand(client, "Player %s not found in auth lists or the Steam ID was invalid.",
+                     auth);
     }
   } else {
     ReplyToCommand(client, "Usage: get5_removeplayer <auth>");
@@ -1010,7 +1020,8 @@ public Action Command_RemoveKickedPlayer(int client, int args) {
   if (RemovePlayerFromTeams(g_LastKickedPlayerAuth)) {
     ReplyToCommand(client, "Successfully removed kicked player %s.", g_LastKickedPlayerAuth);
   } else {
-    ReplyToCommand(client, "Player %s not found in auth lists or the Steam ID was invalid.", g_LastKickedPlayerAuth);
+    ReplyToCommand(client, "Player %s not found in auth lists or the Steam ID was invalid.",
+                   g_LastKickedPlayerAuth);
   }
   return Plugin_Handled;
 }
@@ -1241,7 +1252,8 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
     return;
 
   char logoPath[PLATFORM_MAX_PATH + 1];
-  Format(logoPath, sizeof(logoPath), "materials/panorama/images/tournaments/teams/%s.svg", logoName);
+  Format(logoPath, sizeof(logoPath), "materials/panorama/images/tournaments/teams/%s.svg",
+         logoName);
   if (FileExists(logoPath)) {
     LogDebug("Adding file %s to download table", logoName);
     AddFileToDownloadsTable(logoPath);
@@ -1251,10 +1263,10 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
       LogDebug("Adding file %s to download table", logoName);
       AddFileToDownloadsTable(logoPath);
     } else {
-      LogError("Error in locating file %s. Please ensure the file exists on your game server.", logoPath);
+      LogError("Error in locating file %s. Please ensure the file exists on your game server.",
+               logoPath);
     }
   }
-  
 }
 
 public void CheckTeamNameStatus(Get5Team team) {

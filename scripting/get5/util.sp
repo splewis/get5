@@ -8,13 +8,11 @@
 // Trying to write an empty string often results in the keyvalue not being written, so we use this.
 #define KEYVALUE_STRING_PLACEHOLDER "__placeholder"
 
-static char _colorNames[][] = {"{NORMAL}", "{DARK_RED}",    "{PINK}",      "{GREEN}",
-                               "{YELLOW}", "{LIGHT_GREEN}", "{LIGHT_RED}", "{GRAY}",
-                               "{ORANGE}", "{LIGHT_BLUE}",  "{DARK_BLUE}", "{PURPLE}",
-                               "{GOLD}"};
-static char _colorCodes[][] = {"\x01", "\x02", "\x03", "\x04", "\x05", "\x06",
-                               "\x07", "\x08", "\x09", "\x0B", "\x0C", "\x0E",
-                               "\x10"};
+static char _colorNames[][] = {"{NORMAL}",      "{DARK_RED}",  "{PINK}", "{GREEN}",  "{YELLOW}",
+                               "{LIGHT_GREEN}", "{LIGHT_RED}", "{GRAY}", "{ORANGE}", "{LIGHT_BLUE}",
+                               "{DARK_BLUE}",   "{PURPLE}",    "{GOLD}"};
+static char _colorCodes[][] = {"\x01", "\x02", "\x03", "\x04", "\x05", "\x06", "\x07",
+                               "\x08", "\x09", "\x0B", "\x0C", "\x0E", "\x10"};
 
 // Convenience macros.
 #define LOOP_TEAMS(%1) for (Get5Team %1 = Get5Team_1; %1 < Get5Team_Count; %1 ++)
@@ -62,8 +60,9 @@ stock int SumHealthOfTeam(int team) {
 }
 
 stock int ConvertCSTeamToDefaultWinReason(int side) {
-  // This maps to https://github.com/VSES/SourceEngine2007/blob/master/se2007/game/shared/cstrike/cs_gamerules.h, which
-  // is the regular CSRoundEndReason + 1.
+  // This maps to
+  // https://github.com/VSES/SourceEngine2007/blob/master/se2007/game/shared/cstrike/cs_gamerules.h,
+  // which is the regular CSRoundEndReason + 1.
   return view_as<int>(side == CS_TEAM_CT ? CSRoundEnd_CTWin : CSRoundEnd_TerroristWin) + 1;
 }
 
@@ -686,7 +685,8 @@ stock Get5BombSite GetNearestBombsite(int client) {
   return (aDist < bDist) ? Get5BombSite_A : Get5BombSite_B;
 }
 
-stock void convertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer, const int bufferSize) {
+stock void convertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer,
+                                             const int bufferSize) {
   int minutes = 0;
   int seconds = timeAsSeconds;
   if (timeAsSeconds >= 60) {

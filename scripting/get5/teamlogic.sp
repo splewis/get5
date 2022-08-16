@@ -1,9 +1,11 @@
 public Action Command_JoinGame(int client, const char[] command, int argc) {
-  if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue && IsPlayer(client) && !g_PendingSideSwap) {
-    // In order to avoid duplication of team-join logic, we directly call the same handle that would be called
-    // if the user selected any team after joining. Since Command_JoinTeam handles the actual joining using a
-    // FakeClientCommand, we don't have to do any team-logic here and it won't matter what we pass to Command_JoinTeam.
-    // The only thing that's important is that the command argument is empty, as that avoids a call to GetCmdArg in that function.
+  if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue && IsPlayer(client) &&
+      !g_PendingSideSwap) {
+    // In order to avoid duplication of team-join logic, we directly call the same handle that would
+    // be called if the user selected any team after joining. Since Command_JoinTeam handles the
+    // actual joining using a FakeClientCommand, we don't have to do any team-logic here and it
+    // won't matter what we pass to Command_JoinTeam. The only thing that's important is that the
+    // command argument is empty, as that avoids a call to GetCmdArg in that function.
     CreateTimer(0.1, Timer_PlacePlayerOnJoin, GetClientUserId(client), TIMER_FLAG_NO_MAPCHANGE);
   }
   return Plugin_Continue;
@@ -11,7 +13,7 @@ public Action Command_JoinGame(int client, const char[] command, int argc) {
 
 public Action Timer_PlacePlayerOnJoin(Handle timer, int userId) {
   int client = GetClientOfUserId(userId);
-  if (client) { // Client might have disconnected between timer and callback.
+  if (client) {  // Client might have disconnected between timer and callback.
     Command_JoinTeam(client, "", 1);
   }
 }

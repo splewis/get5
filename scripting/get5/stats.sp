@@ -130,9 +130,9 @@ public Get5Player GetPlayerObject(int client) {
     return new Get5Player(0, "", view_as<Get5Side>(CS_TEAM_NONE), "GOTV", false);
   }
 
-  // In cases where users disconnect (Get5PlayerDisconnectedEvent) without being on a team, they might error out
-  // on GetClientTeam(), so we check that they're in-game before we attempt to determine their team.
-  // Avoids "Client x is not in game" exception.
+  // In cases where users disconnect (Get5PlayerDisconnectedEvent) without being on a team, they
+  // might error out on GetClientTeam(), so we check that they're in-game before we attempt to
+  // determine their team. Avoids "Client x is not in game" exception.
   Get5Side side = view_as<Get5Side>(IsClientInGame(client) ? GetClientTeam(client) : CS_TEAM_NONE);
 
   char name[MAX_NAME_LENGTH];
@@ -253,7 +253,8 @@ public void Stats_RoundStart() {
       Get5Team team = GetClientMatchTeam(i);
       if (team == Get5Team_1 || team == Get5Team_2) {
         // Ensures that each player has zero-filled stats on freeze-time end.
-        // Since joining the game after freeze-time will render you dead, you cannot obtain stats until next round.
+        // Since joining the game after freeze-time will render you dead, you cannot obtain stats
+        // until next round.
         InitPlayerStats(i);
         IncrementPlayerStat(i, STAT_ROUNDSPLAYED);
       }
@@ -688,8 +689,9 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   // falling from vertigo is attacker 0, weapon id 0, weapon "trigger_hurt"
   // c4 is attacker 0, weapon id 0, weapon planted_c4
   // killing self with weapons is attacker == victim
-  // some weapons, such as unsilenced USP or M4A1S and molotov fire are also weapon 0, so weapon ID is unreliable.
-  // with those in mind, we can determine that suicide must be true if attacker is 0 or attacker == victim and it was **not** the bomb.
+  // some weapons, such as unsilenced USP or M4A1S and molotov fire are also weapon 0, so weapon ID
+  // is unreliable. with those in mind, we can determine that suicide must be true if attacker is 0
+  // or attacker == victim and it was **not** the bomb.
   bool killedByBomb = StrEqual("planted_c4", weapon);
   bool isSuicide = (!validAttacker || attacker == victim) && !killedByBomb;
 
@@ -699,7 +701,8 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
   if (!g_FirstDeathDone) {
     g_FirstDeathDone = true;
-    IncrementPlayerStat(victim, (victimTeam == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
+    IncrementPlayerStat(victim,
+                        (victimTeam == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
   }
 
   if (isSuicide) {
@@ -710,7 +713,8 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
     } else {
       if (!g_FirstKillDone) {
         g_FirstKillDone = true;
-        IncrementPlayerStat(attacker, (attackerTeam == CS_TEAM_CT) ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
+        IncrementPlayerStat(attacker,
+                            (attackerTeam == CS_TEAM_CT) ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
       }
 
       g_RoundKills[attacker]++;
@@ -738,10 +742,11 @@ public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   }
 
   Get5PlayerDeathEvent playerDeathEvent = new Get5PlayerDeathEvent(
-      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
-      GetPlayerObject(victim), new Get5Weapon(weapon, weaponId), headshot, validAttacker ? attackerTeam == victimTeam : false,
-      event.GetBool("thrusmoke"), event.GetBool("noscope"), event.GetBool("attackerblind"),
-      isSuicide, event.GetInt("penetrated"), killedByBomb);
+      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(victim),
+      new Get5Weapon(weapon, weaponId), headshot,
+      validAttacker ? attackerTeam == victimTeam : false, event.GetBool("thrusmoke"),
+      event.GetBool("noscope"), event.GetBool("attackerblind"), isSuicide,
+      event.GetInt("penetrated"), killedByBomb);
 
   if (validAttacker) {
     playerDeathEvent.Attacker = GetPlayerObject(attacker);
@@ -785,7 +790,7 @@ static void UpdateTradeStat(int attacker, int victim) {
   LOOP_CLIENTS(i) {
     if (IsPlayer(i) && g_PlayerKilledBy[i] == victim && GetClientTeam(i) == attackerTeam) {
       float dt = GetGameTime() - g_PlayerKilledByTime[i];
-      if (dt < 1.5) { // "Time to trade" window fixed to 1.5 seconds.
+      if (dt < 1.5) {  // "Time to trade" window fixed to 1.5 seconds.
         IncrementPlayerStat(attacker, STAT_TRADEKILL);
         // teammate (i) was traded
         g_PlayerRoundKillOrAssistOrTradedDeath[i] = true;
@@ -972,45 +977,42 @@ static void InitPlayerStats(int client) {
     return;
   }
 
-  char keys[][] = {
-    STAT_KILLS,
-    STAT_DEATHS,
-    STAT_ASSISTS,
-    STAT_FLASHBANG_ASSISTS,
-    STAT_TEAMKILLS,
-    STAT_SUICIDES,
-    STAT_DAMAGE,
-    STAT_UTILITY_DAMAGE,
-    STAT_ENEMIES_FLASHED,
-    STAT_FRIENDLIES_FLASHED,
-    STAT_KNIFE_KILLS,
-    STAT_HEADSHOT_KILLS,
-    STAT_ROUNDSPLAYED,
-    STAT_BOMBDEFUSES,
-    STAT_BOMBPLANTS,
-    STAT_1K,
-    STAT_2K,
-    STAT_3K,
-    STAT_4K,
-    STAT_5K,
-    STAT_V1,
-    STAT_V2,
-    STAT_V3,
-    STAT_V4,
-    STAT_V5,
-    STAT_FIRSTKILL_T,
-    STAT_FIRSTKILL_CT,
-    STAT_FIRSTDEATH_T,
-    STAT_FIRSTDEATH_CT,
-    STAT_TRADEKILL,
-    STAT_KAST,
-    STAT_CONTRIBUTION_SCORE,
-    STAT_MVP
-  };
+  char keys[][] = {STAT_KILLS,
+                   STAT_DEATHS,
+                   STAT_ASSISTS,
+                   STAT_FLASHBANG_ASSISTS,
+                   STAT_TEAMKILLS,
+                   STAT_SUICIDES,
+                   STAT_DAMAGE,
+                   STAT_UTILITY_DAMAGE,
+                   STAT_ENEMIES_FLASHED,
+                   STAT_FRIENDLIES_FLASHED,
+                   STAT_KNIFE_KILLS,
+                   STAT_HEADSHOT_KILLS,
+                   STAT_ROUNDSPLAYED,
+                   STAT_BOMBDEFUSES,
+                   STAT_BOMBPLANTS,
+                   STAT_1K,
+                   STAT_2K,
+                   STAT_3K,
+                   STAT_4K,
+                   STAT_5K,
+                   STAT_V1,
+                   STAT_V2,
+                   STAT_V3,
+                   STAT_V4,
+                   STAT_V5,
+                   STAT_FIRSTKILL_T,
+                   STAT_FIRSTKILL_CT,
+                   STAT_FIRSTDEATH_T,
+                   STAT_FIRSTDEATH_CT,
+                   STAT_TRADEKILL,
+                   STAT_KAST,
+                   STAT_CONTRIBUTION_SCORE,
+                   STAT_MVP};
 
   int length = sizeof(keys);
-  for (int i = 0; i < length; i++)
-  {
+  for (int i = 0; i < length; i++) {
     g_StatsKv.SetNum(keys[i], 0);
   }
 
@@ -1188,8 +1190,7 @@ public void PrintDamageInfo(int client) {
 
       g_DamagePrintFormatCvar.GetString(message, msgSize);
       ReplaceStringWithInt(message, msgSize, "{DMG_TO}", g_DamageDone[client][i], false);
-      ReplaceStringWithInt(message, msgSize, "{HITS_TO}", g_DamageDoneHits[client][i],
-                           false);
+      ReplaceStringWithInt(message, msgSize, "{HITS_TO}", g_DamageDoneHits[client][i], false);
 
       if (g_DamageDoneKill[client][i]) {
         ReplaceString(message, msgSize, "{KILL_TO}", "{GREEN}X{NORMAL}", false);
@@ -1202,8 +1203,7 @@ public void PrintDamageInfo(int client) {
       }
 
       ReplaceStringWithInt(message, msgSize, "{DMG_FROM}", g_DamageDone[i][client], false);
-      ReplaceStringWithInt(message, msgSize, "{HITS_FROM}", g_DamageDoneHits[i][client],
-                           false);
+      ReplaceStringWithInt(message, msgSize, "{HITS_FROM}", g_DamageDoneHits[i][client], false);
 
       if (g_DamageDoneKill[i][client]) {
         ReplaceString(message, msgSize, "{KILL_FROM}", "{DARK_RED}X{NORMAL}", false);

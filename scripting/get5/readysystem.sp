@@ -8,7 +8,8 @@ public void ResetReadyStatus() {
 }
 
 public bool IsReadyGameState() {
-  return (g_GameState == Get5State_PreVeto || g_GameState == Get5State_Warmup) && !g_MapChangePending;
+  return (g_GameState == Get5State_PreVeto || g_GameState == Get5State_Warmup) &&
+         !g_MapChangePending;
 }
 
 // Client ready status
@@ -270,12 +271,14 @@ public void MissingPlayerInfoMessageTeam(Get5Team team) {
   int playerCount = GetTeamPlayerCount(team);
   int readyCount = GetTeamReadyCount(team);
 
-  if (playerCount == readyCount && playerCount < minPlayers && readyCount >= minReady && minPlayers > 1) {
+  if (playerCount == readyCount && playerCount < minPlayers && readyCount >= minReady &&
+      minPlayers > 1) {
     char minPlayersFormatted[32];
     Format(minPlayersFormatted, sizeof(minPlayersFormatted), "{GREEN}%d{NORMAL}", minPlayers);
     char forceReadyFormatted[64];
     FormatChatCommand(forceReadyFormatted, sizeof(forceReadyFormatted), "!forceready");
-    Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", forceReadyFormatted, minPlayersFormatted);
+    Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", forceReadyFormatted,
+                       minPlayersFormatted);
   }
 }
 

@@ -23,11 +23,11 @@
 #include "include/restorecvars.inc"
 #include <cstrike>
 #include <json>  // github.com/clugg/sm-json
+#include <regex>
 #include <sdkhooks>
 #include <sdktools>
 #include <sourcemod>
 #include <testing>
-#include <regex>
 
 #undef REQUIRE_EXTENSIONS
 #include <SteamWorks>
@@ -48,7 +48,8 @@
 #define DEFAULT_TAG "[{YELLOW}Get5{NORMAL}]"
 
 #if !defined LATEST_VERSION_URL
-#define LATEST_VERSION_URL "https://raw.githubusercontent.com/splewis/get5/master/scripting/get5/version.sp"
+#define LATEST_VERSION_URL \
+  "https://raw.githubusercontent.com/splewis/get5/master/scripting/get5/version.sp"
 #endif
 
 #if !defined GET5_GITHUB_PAGE
@@ -155,9 +156,10 @@ Handle g_KnifeDecisionTimer = INVALID_HANDLE;
 Handle g_KnifeCountdownTimer = INVALID_HANDLE;
 
 /** Pausing **/
-bool g_IsChangingPauseState = false; // Used to prevent mp_pause_match and mp_unpause_match from being called directly.
-Get5Team g_PausingTeam = Get5Team_None; // The team that last called for a pause.
-Get5PauseType g_PauseType = Get5PauseType_None; // The type of pause last initiated.
+bool g_IsChangingPauseState =
+    false;  // Used to prevent mp_pause_match and mp_unpause_match from being called directly.
+Get5Team g_PausingTeam = Get5Team_None;          // The team that last called for a pause.
+Get5PauseType g_PauseType = Get5PauseType_None;  // The type of pause last initiated.
 int g_LatestPauseDuration = 0;
 bool g_TeamReadyForUnpause[MATCHTEAM_COUNT];
 bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
@@ -316,8 +318,8 @@ public void OnPluginStart() {
   InitDebugLog(DEBUG_CVAR, "get5");
   LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
 
-  // Because we use SDKHooks for damage, we need to re-hook clients that are already on the server in case
-  // the plugin is reloaded. This includes bots.
+  // Because we use SDKHooks for damage, we need to re-hook clients that are already on the server
+  // in case the plugin is reloaded. This includes bots.
   LOOP_CLIENTS(i) {
     if (IsValidClient(i)) {
       Stats_HookDamageForClient(i);
@@ -434,7 +436,9 @@ public void OnPluginStart() {
                    "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
   g_WarmupCfgCvar =
       CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
-  g_PrintUpdateNoticeCvar = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
+  g_PrintUpdateNoticeCvar = CreateConVar(
+      "get5_print_update_notice", "1",
+      "Whether to print to chat when the game goes live if a new version of Get5 is available.");
   g_RoundBackupPathCvar = CreateConVar(
       "get5_backup_path", "",
       "The folder to save backup files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
@@ -638,7 +642,6 @@ public Action Timer_InfoMessages(Handle timer) {
     }
     MissingPlayerInfoMessage();
   } else if (g_GameState == Get5State_Warmup && !g_MapChangePending) {
-
     // Handle warmup state, provided we're not waiting for a map change
     // Backups take priority
     if (!IsTeamsReady() && g_WaitingForRoundBackup) {
@@ -667,7 +670,9 @@ public Action Timer_InfoMessages(Handle timer) {
     FormatChatCommand(formattedStayCommand, sizeof(formattedStayCommand), "!stay");
     char formattedSwapCommand[64];
     FormatChatCommand(formattedSwapCommand, sizeof(formattedSwapCommand), "!swap");
-    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand, formattedSwapCommand);
+    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
+                      g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand,
+                      formattedSwapCommand);
   } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
     // Handle postgame
     Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
@@ -969,7 +974,7 @@ public Action Command_EndMatch(int client, int args) {
     return Plugin_Handled;
   }
 
-  Get5Team winningTeam = Get5Team_None; // defaults to tie
+  Get5Team winningTeam = Get5Team_None;  // defaults to tie
   if (args >= 1) {
     char forcedWinningTeam[8];
     GetCmdArg(1, forcedWinningTeam, sizeof(forcedWinningTeam));
@@ -993,12 +998,9 @@ public Action Command_EndMatch(int client, int args) {
   int team2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
 
   Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
-    g_MatchID,
-    g_MapNumber,
-    new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
-    team1score,
-    team2score
-  );
+      g_MatchID, g_MapNumber,
+      new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), team1score,
+      team2score);
 
   LogDebug("Calling Get5_OnMapResult()");
   Call_StartForward(g_OnMapResult);
@@ -1014,7 +1016,8 @@ public Action Command_EndMatch(int client, int args) {
   if (winningTeam == Get5Team_None) {
     Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
   } else {
-    Get5_MessageToAll("%t", "AdminForceEndWithWinnerInfoMessage", g_FormattedTeamNames[winningTeam]);
+    Get5_MessageToAll("%t", "AdminForceEndWithWinnerInfoMessage",
+                      g_FormattedTeamNames[winningTeam]);
   }
 
   if (g_ActiveVetoMenu != null) {
@@ -1132,10 +1135,12 @@ public Action Command_Stop(int client, int args) {
   FormatChatCommand(stopCommandFormatted, sizeof(stopCommandFormatted), "!stop");
   if (g_TeamGivenStopCommand[Get5Team_1] && !g_TeamGivenStopCommand[Get5Team_2]) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_FormattedTeamNames[Get5Team_1], g_FormattedTeamNames[Get5Team_2], stopCommandFormatted);
+                      g_FormattedTeamNames[Get5Team_1], g_FormattedTeamNames[Get5Team_2],
+                      stopCommandFormatted);
   } else if (!g_TeamGivenStopCommand[Get5Team_1] && g_TeamGivenStopCommand[Get5Team_2]) {
     Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_FormattedTeamNames[Get5Team_2], g_FormattedTeamNames[Get5Team_1], stopCommandFormatted);
+                      g_FormattedTeamNames[Get5Team_2], g_FormattedTeamNames[Get5Team_1],
+                      stopCommandFormatted);
   } else if (g_TeamGivenStopCommand[Get5Team_1] && g_TeamGivenStopCommand[Get5Team_2]) {
     RestoreLastRound(client);
   }
@@ -1191,14 +1196,14 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
   float restartDelay = GetCurrentMatchRestartDelay();
   float requiredDelay = float(GetTvDelay() + MATCH_END_DELAY_AFTER_TV);
   if (requiredDelay > restartDelay) {
-    LogDebug("Extended mp_match_restart_delay from %f to %f to ensure GOTV broadcast can finish.", restartDelay, requiredDelay);
+    LogDebug("Extended mp_match_restart_delay from %f to %f to ensure GOTV broadcast can finish.",
+             restartDelay, requiredDelay);
     SetCurrentMatchRestartDelay(requiredDelay);
-    restartDelay = requiredDelay; // reassigned because we reuse the variable below.
+    restartDelay = requiredDelay;  // reassigned because we reuse the variable below.
   }
   StopRecording(float(MATCH_END_DELAY_AFTER_TV));
 
   if (g_GameState == Get5State_Live) {
-
     // If someone called for a pause in the last round; cancel it.
     if (IsPaused()) {
       UnpauseGame(Get5Team_None);
@@ -1226,12 +1231,9 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     g_TeamScoresPerMap.Set(g_MapNumber, t2score, view_as<int>(Get5Team_2));
 
     Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
-      g_MatchID,
-      g_MapNumber,
-      new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
-      t1score,
-      t2score
-    );
+        g_MatchID, g_MapNumber,
+        new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), t1score,
+        t2score);
 
     LogDebug("Calling Get5_OnMapResult()");
 
@@ -1247,7 +1249,8 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     int remainingMaps = g_MapsToPlay.Length - t1maps - t2maps - tiedMaps;
 
     if (t1maps == t2maps) {
-      // As long as team scores are equal, we play until there are no maps left, regardless of clinch config.
+      // As long as team scores are equal, we play until there are no maps left, regardless of
+      // clinch config.
       if (remainingMaps <= 0) {
         EndSeries(Get5Team_None, true, restartDelay);
         return Plugin_Continue;
@@ -1265,7 +1268,8 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
         return Plugin_Continue;
       }
     } else if (remainingMaps <= 0) {
-      EndSeries(t1maps > t2maps ? Get5Team_1 : Get5Team_2, true, restartDelay); // Tie handled in first if-block
+      EndSeries(t1maps > t2maps ? Get5Team_1 : Get5Team_2, true,
+                restartDelay);  // Tie handled in first if-block
       return Plugin_Continue;
     }
 
@@ -1285,14 +1289,15 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     g_MapsToPlay.GetString(Get5_GetMapNumber(), nextMap, sizeof(nextMap));
 
     char timeToMapChangeFormatted[8];
-    convertSecondsToMinutesAndSeconds(RoundToFloor(restartDelay), timeToMapChangeFormatted, sizeof(timeToMapChangeFormatted));
+    convertSecondsToMinutesAndSeconds(RoundToFloor(restartDelay), timeToMapChangeFormatted,
+                                      sizeof(timeToMapChangeFormatted));
 
     g_MapChangePending = true;
     Format(nextMap, sizeof(nextMap), "{GREEN}%s{NORMAL}", nextMap);
     Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap, timeToMapChangeFormatted);
     ChangeState(Get5State_PostGame);
-    // Subtracting 4 seconds makes the map change 1 second before the timer expires, as there is a 3 second built-in
-    // delay in the ChangeMap function called by Timer_NextMatchMap.
+    // Subtracting 4 seconds makes the map change 1 second before the timer expires, as there is a 3
+    // second built-in delay in the ChangeMap function called by Timer_NextMatchMap.
     CreateTimer(restartDelay - 4, Timer_NextMatchMap);
   }
 
@@ -1302,31 +1307,33 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 public Action Timer_NextMatchMap(Handle timer) {
   char map[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(Get5_GetMapNumber(), map, sizeof(map));
-  // If you change these 3 seconds for whatever reason, you must adjust the counter-offset in Event_MatchOver.
+  // If you change these 3 seconds for whatever reason, you must adjust the counter-offset in
+  // Event_MatchOver.
   ChangeMap(map, 3.0);
 }
 
-void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay, bool kickPlayers = true) {
+void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay,
+               bool kickPlayers = true) {
   Stats_SeriesEnd(winningTeam);
 
   if (printWinnerMessage) {
     if (winningTeam == Get5Team_None) {
-      Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[Get5Team_1], g_FormattedTeamNames[Get5Team_2]);
+      Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[Get5Team_1],
+                        g_FormattedTeamNames[Get5Team_2]);
     } else {
       if (g_MapsToPlay.Length == 1) {
         Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[winningTeam]);
       } else {
-        Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_FormattedTeamNames[winningTeam], g_TeamSeriesScores[winningTeam], g_TeamSeriesScores[OtherMatchTeam(winningTeam)]);
+        Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_FormattedTeamNames[winningTeam],
+                          g_TeamSeriesScores[winningTeam],
+                          g_TeamSeriesScores[OtherMatchTeam(winningTeam)]);
       }
     }
   }
 
   Get5SeriesResultEvent event = new Get5SeriesResultEvent(
-    g_MatchID,
-    new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
-    g_TeamSeriesScores[Get5Team_1],
-    g_TeamSeriesScores[Get5Team_2]
-  );
+      g_MatchID, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
+      g_TeamSeriesScores[Get5Team_1], g_TeamSeriesScores[Get5Team_2]);
 
   LogDebug("Calling Get5_OnSeriesResult()");
 
@@ -1337,7 +1344,8 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
   EventLogger_LogAndDeleteEvent(event);
   ChangeState(Get5State_None);
 
-  // We don't want to kick players until after the specified delay, as it will kick casters potentially before GOTV ends.
+  // We don't want to kick players until after the specified delay, as it will kick casters
+  // potentially before GOTV ends.
   if (kickPlayers && g_KickClientsWithNoMatchCvar.BoolValue) {
     if (restoreDelay < 0.1) {
       KickPlayers();
@@ -1350,9 +1358,10 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
     // When force-ending the match there is no delay.
     RestoreCvars(g_MatchConfigChangedCvars);
   } else {
-    // If we restore cvars immediately, it might change the tv_ params or set the mp_match_restart_delay to something
-    // lower, which is noticed by the game and may trigger a map change before GOTV broadcast ends, so we don't do this
-    // until the current match restart delay has passed.
+    // If we restore cvars immediately, it might change the tv_ params or set the
+    // mp_match_restart_delay to something lower, which is noticed by the game and may trigger a map
+    // change before GOTV broadcast ends, so we don't do this until the current match restart delay
+    // has passed.
     CreateTimer(restoreDelay, Timer_RestoreMatchCvars, _, TIMER_FLAG_NO_MAPCHANGE);
   }
 }
@@ -1368,7 +1377,8 @@ public Action Timer_KickOnEnd(Handle timer) {
 static void KickPlayers() {
   bool kickImmunity = g_KickClientImmunityCvar.BoolValue;
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && !(kickImmunity && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
+    if (IsPlayer(i) &&
+        !(kickImmunity && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
       KickClient(i, "%t", "MatchFinishedInfoMessage");
     }
   }
@@ -1376,7 +1386,8 @@ static void KickPlayers() {
 
 public Action Timer_RestoreMatchCvars(Handle timer) {
   if (g_GameState == Get5State_None) {
-    // Only reset if no game is running, otherwise a game started before the restart delay for another ends will mess this up.
+    // Only reset if no game is running, otherwise a game started before the restart delay for
+    // another ends will mess this up.
     RestoreCvars(g_MatchConfigChangedCvars);
   }
   return Plugin_Handled;
@@ -1401,7 +1412,8 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
 
   if (g_GameState == Get5State_WaitingForKnifeRoundDecision && !InWarmup()) {
     // Ensures that round end after knife sends players directly into warmup.
-    // This immediately triggers another Event_RoundPreStart, so we can return here and avoid writing backup twice.
+    // This immediately triggers another Event_RoundPreStart, so we can return here and avoid
+    // writing backup twice.
     LogDebug("Changed to warmup post knife.");
     ExecCfg(g_WarmupCfgCvar);
     EnsureIndefiniteWarmup();
@@ -1413,8 +1425,8 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
   // We need this for events that fire after the map ends, such as grenades detonating (or someone
   // dying in fire), to be correct. It's sort of an edge-case, but due to how Get5_GetMapNumber
   // works, it will return +1 if called after a map has been decided, but before the game actually
-  // stops, which could lead to events having the wrong map number, so we set both of these here and not
-  // in round_end
+  // stops, which could lead to events having the wrong map number, so we set both of these here and
+  // not in round_end
   g_MapNumber = Get5_GetMapNumber();
   // Round number always -1 if not live.
   g_RoundNumber = g_GameState != Get5State_Live ? -1 : GetRoundsPlayed();
@@ -1428,8 +1440,9 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
 public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_FreezeEnd");
 
-  // If someone changes the map while in a pause, we have to make sure we reset this state, as the UnpauseGame function
-  // will not be called to do it. FreezeTimeEnd is always called when the map initially loads.
+  // If someone changes the map while in a pause, we have to make sure we reset this state, as the
+  // UnpauseGame function will not be called to do it. FreezeTimeEnd is always called when the map
+  // initially loads.
   g_LatestPauseDuration = 0;
   g_PauseType = Get5PauseType_None;
   g_PausingTeam = Get5Team_None;
@@ -1441,14 +1454,12 @@ public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
   }
 }
 
-
 static bool CreateDirectoryWithPermissions(const char[] directory) {
   LogDebug("Creating directory: %s", directory);
-  return CreateDirectory(directory, // sets 777 permissions.
-    FPERM_U_READ | FPERM_U_WRITE | FPERM_U_EXEC |
-    FPERM_G_READ | FPERM_G_WRITE | FPERM_G_EXEC |
-    FPERM_O_READ | FPERM_O_WRITE | FPERM_O_EXEC
-  );
+  return CreateDirectory(directory,  // sets 777 permissions.
+                         FPERM_U_READ | FPERM_U_WRITE | FPERM_U_EXEC | FPERM_G_READ |
+                             FPERM_G_WRITE | FPERM_G_EXEC | FPERM_O_READ | FPERM_O_WRITE |
+                             FPERM_O_EXEC);
 }
 
 static bool CreateBackupFolderStructure(const char[] path) {
@@ -1457,14 +1468,16 @@ static bool CreateBackupFolderStructure(const char[] path) {
   }
 
   LogDebug("Creating backup directory %s because it does not exist.", path);
-  char folders[16][PLATFORM_MAX_PATH]; // {folder1, folder2, etc}
-  char fullFolderPath[PLATFORM_MAX_PATH] = ""; // initially empty, but we append every time a folder is created/verified
-  char currentFolder[PLATFORM_MAX_PATH]; // shorthand for folders[i]
+  char folders[16][PLATFORM_MAX_PATH];  // {folder1, folder2, etc}
+  char fullFolderPath[PLATFORM_MAX_PATH] =
+      "";  // initially empty, but we append every time a folder is created/verified
+  char currentFolder[PLATFORM_MAX_PATH];  // shorthand for folders[i]
 
   ExplodeString(path, "/", folders, sizeof(folders), PLATFORM_MAX_PATH, true);
   for (int i = 0; i < sizeof(folders); i++) {
     currentFolder = folders[i];
-    if (strlen(currentFolder) == 0) { // as the loop is a fixed size, we stop when there are no more pieces.
+    if (strlen(currentFolder) ==
+        0) {  // as the loop is a fixed size, we stop when there are no more pieces.
       break;
     }
     // Append the current folder to the full path
@@ -1487,8 +1500,12 @@ public void WriteBackup() {
   ReplaceString(folder, sizeof(folder), "{MATCHID}", g_MatchID);
 
   int backupFolderLength = strlen(folder);
-  if (backupFolderLength > 0 && (folder[0] == '/' || folder[0] == '.' || folder[backupFolderLength-1] != '/' || StrContains(folder, "//") != -1)) {
-    LogError("get5_backup_path must end with a slash and must not start with a slash or dot. It will be reset to an empty string! Current value: %s", folder);
+  if (backupFolderLength > 0 &&
+      (folder[0] == '/' || folder[0] == '.' || folder[backupFolderLength - 1] != '/' ||
+       StrContains(folder, "//") != -1)) {
+    LogError(
+        "get5_backup_path must end with a slash and must not start with a slash or dot. It will be reset to an empty string! Current value: %s",
+        folder);
     folder = "";
     g_RoundBackupPathCvar.SetString(folder, false, false);
   } else {
@@ -1500,7 +1517,7 @@ public void WriteBackup() {
     Format(path, sizeof(path), "%sget5_backup_match%s_map%d_round%d.cfg", folder, g_MatchID,
            g_MapNumber, g_RoundNumber);
   } else {
-  Format(path, sizeof(path), "%sget5_backup_match%s_map%d_prelive.cfg", folder, g_MatchID,
+    Format(path, sizeof(path), "%sget5_backup_match%s_map%d_prelive.cfg", folder, g_MatchID,
            g_MapNumber);
   }
   LogDebug("Writing backup to %s", path);
@@ -1568,16 +1585,19 @@ public Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroad
     FormatChatCommand(formattedStayCommand, sizeof(formattedStayCommand), "!stay");
     char formattedSwapCommand[64];
     FormatChatCommand(formattedSwapCommand, sizeof(formattedSwapCommand), "!swap");
-    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand, formattedSwapCommand);
+    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
+                      g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand,
+                      formattedSwapCommand);
 
     if (g_TeamTimeToKnifeDecisionCvar.FloatValue > 0) {
-      g_KnifeDecisionTimer = CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision);
+      g_KnifeDecisionTimer =
+          CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision);
     }
 
-    // This ensures that the correct graphic is displayed in-game for the winning team, as CTs will always win if the
-    // clock runs out. It also ensures that the fun fact displayed is correct; overriding to number of players killed
-    // by knife and no "CT won by running down the clock". MVP can still be on the losing team though.
-    // ran down".
+    // This ensures that the correct graphic is displayed in-game for the winning team, as CTs will
+    // always win if the clock runs out. It also ensures that the fun fact displayed is correct;
+    // overriding to number of players killed by knife and no "CT won by running down the clock".
+    // MVP can still be on the losing team though. ran down".
     int maxFrags = 0;
     int topFragClient = 0;
     int frags;
@@ -1591,7 +1611,8 @@ public Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroad
       }
     }
     if (topFragClient > 0) {
-      // Found here: https://github.com/SteamDatabase/GameTracking-CSGO/blob/master/csgo/bin/server_client_strings.txt
+      // Found here:
+      // https://github.com/SteamDatabase/GameTracking-CSGO/blob/master/csgo/bin/server_client_strings.txt
       event.SetString("funfact_token", "#funfact_knife_kills");
       event.SetInt("funfact_player", topFragClient);
       event.SetInt("funfact_data1", maxFrags);
@@ -1620,16 +1641,15 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     int csTeamWinner = event.GetInt("winner");
 
     Get5_MessageToAll("%s {GREEN}%d {NORMAL}- {GREEN}%d %s", g_FormattedTeamNames[Get5Team_1],
-      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
-      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)),
-      g_FormattedTeamNames[Get5Team_2]
-    );
+                      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
+                      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)),
+                      g_FormattedTeamNames[Get5Team_2]);
 
     Stats_RoundEnd(csTeamWinner);
 
     if (g_DamagePrintCvar.BoolValue) {
       LOOP_CLIENTS(i) {
-        PrintDamageInfo(i); // Checks valid client etc. on its own.
+        PrintDamageInfo(i);  // Checks valid client etc. on its own.
       }
     }
 
@@ -1892,11 +1912,11 @@ public void EventLogger_LogAndDeleteEvent(Get5Event event) {
 }
 
 stock void CheckForLatestVersion() {
-
   // both x.y.z-dev and x.y.z-abcdef contain a single dash, so we can look for that.
   g_RunningPrereleaseVersion = StrContains(PLUGIN_VERSION, "-", true) > -1;
   if (g_RunningPrereleaseVersion) {
-    LogMessage("Non-official Get5 version detected. Skipping update check. You may see this if you compiled Get5 \
+    LogMessage(
+        "Non-official Get5 version detected. Skipping update check. You may see this if you compiled Get5 \
 yourself or if you downloaded a pre-release for testing. If you are done testing, please download an official \
 release version to remove this message.");
     return;
@@ -1910,12 +1930,10 @@ release version to remove this message.");
   Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, LATEST_VERSION_URL);
   SteamWorks_SetHTTPCallbacks(req, VersionCheckRequestCallback);
   SteamWorks_SendHTTPRequest(req);
-
 }
 
 stock int VersionCheckRequestCallback(Handle request, bool failure, bool requestSuccessful,
-                                               EHTTPStatusCode statusCode) {
-
+                                      EHTTPStatusCode statusCode) {
   if (failure || !requestSuccessful) {
     LogError("Failed to check for Get5 update. HTTP error code: %d.", statusCode);
     delete request;
@@ -1928,9 +1946,9 @@ stock int VersionCheckRequestCallback(Handle request, bool failure, bool request
   SteamWorks_GetHTTPResponseBodyData(request, response, responseSize);
   delete request;
 
-  // Since we're comparing against master, which always contains a -dev tag, we extract the version substring
-  // *before* that -dev tag (or whatever it might be). This *should* have been removed by the CI flow, so that official
-  // releases don't contain the -dev tag.
+  // Since we're comparing against master, which always contains a -dev tag, we extract the version
+  // substring *before* that -dev tag (or whatever it might be). This *should* have been removed by
+  // the CI flow, so that official releases don't contain the -dev tag.
   Regex versionRegex = new Regex("#define PLUGIN_VERSION \"(.+)-.+\"");
 
   RegexError rError;
@@ -1954,12 +1972,13 @@ stock int VersionCheckRequestCallback(Handle request, bool failure, bool request
     LogDebug("Newest Get5 version from GitHub is: %s", newestVersionFound);
     g_NewerVersionAvailable = !StrEqual(PLUGIN_VERSION, newestVersionFound);
     if (g_NewerVersionAvailable) {
-      LogMessage("A newer version of Get5 is available. You are running %s while the latest version is %s.", PLUGIN_VERSION, newestVersionFound);
+      LogMessage(
+          "A newer version of Get5 is available. You are running %s while the latest version is %s.",
+          PLUGIN_VERSION, newestVersionFound);
     } else {
       LogMessage("Update check successful. Get5 is up-to-date (%s).", PLUGIN_VERSION);
     }
   }
 
   delete versionRegex;
-
 }

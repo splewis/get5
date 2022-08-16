@@ -1872,6 +1872,6 @@ public __pl_get5_SetNTVOptional() {
   MarkNativeAsOptional("Get5_AddLiveCvar");
   MarkNativeAsOptional("Get5_IncreasePlayerStat");
   MarkNativeAsOptional("Get5_GetMatchStats");
-  MarkNativeAsOptinoal("Get5_GetMapNumber");
+  MarkNativeAsOptional("Get5_GetMapNumber");
 }
 #endif

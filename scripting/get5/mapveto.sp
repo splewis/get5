@@ -365,8 +365,8 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
 
     char mapNameFormatted[PLATFORM_MAX_PATH];
     Format(mapNameFormatted, sizeof(mapNameFormatted), "{GREEN}%s{NORMAL}", mapName);
-    Get5_MessageToAll("%t", "TeamPickedMapInfoMessage", g_FormattedTeamNames[team], mapNameFormatted,
-                      g_MapsToPlay.Length);
+    Get5_MessageToAll("%t", "TeamPickedMapInfoMessage", g_FormattedTeamNames[team],
+                      mapNameFormatted, g_MapsToPlay.Length);
     g_LastVetoTeam = team;
 
     Get5MapPickedEvent event =

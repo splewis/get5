@@ -223,7 +223,8 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-public void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv, const Get5Team team) {
+public void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv,
+                    const Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
   char nameSz[MAX_NAME_LENGTH * 2 + 1];

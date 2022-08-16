@@ -1,8 +1,7 @@
 public bool PauseableGameState() {
   return (g_GameState == Get5State_KnifeRound ||
-  g_GameState == Get5State_WaitingForKnifeRoundDecision ||
-  g_GameState == Get5State_Live ||
-  g_GameState == Get5State_GoingLive);
+          g_GameState == Get5State_WaitingForKnifeRoundDecision || g_GameState == Get5State_Live ||
+          g_GameState == Get5State_GoingLive);
 }
 
 public void PauseGame(Get5Team team, Get5PauseType type) {
@@ -42,7 +41,8 @@ public Action Timer_ResetPauseRestriction(Handle timer, int data) {
 }
 
 stock void UnpauseGame(Get5Team team) {
-  Get5MatchUnpausedEvent event = new Get5MatchUnpausedEvent(g_MatchID, g_MapNumber, team, g_PauseType);
+  Get5MatchUnpausedEvent event =
+      new Get5MatchUnpausedEvent(g_MatchID, g_MapNumber, team, g_PauseType);
 
   LogDebug("Calling Get5_OnMatchUnpaused()");
 
@@ -64,7 +64,8 @@ public Action Command_PauseOrUnpauseMatch(int client, const char[] command, int 
   if (g_GameState == Get5State_None || g_IsChangingPauseState) {
     return Plugin_Continue;
   }
-  ReplyToCommand(client, "Get5 prevents calls to %s. Administrators should use sm_pause/sm_unpause.", command);
+  ReplyToCommand(
+      client, "Get5 prevents calls to %s. Administrators should use sm_pause/sm_unpause.", command);
   return Plugin_Stop;
 }
 
@@ -95,7 +96,8 @@ public Action Command_TechPause(int client, int args) {
 
   if (g_PauseType != Get5PauseType_None) {
     g_TeamReadyForUnpause[team] = false;
-    LogDebug("Ignoring technical pause request as game is already paused; setting team to not ready to unpause.");
+    LogDebug(
+        "Ignoring technical pause request as game is already paused; setting team to not ready to unpause.");
     return Plugin_Handled;
   }
 
@@ -125,7 +127,8 @@ public Action Command_TechPause(int client, int args) {
   FormatPlayerName(formattedClientName, sizeof(formattedClientName), client);
   Get5_MessageToAll("%t", "MatchTechPausedByTeamMessage", formattedClientName);
   if (maxTechPauses > 0) {
-    Get5_MessageToAll("%t", "TechPausePausesRemaining", g_FormattedTeamNames[team], maxTechPauses - g_TechnicalPausesUsed[team]);
+    Get5_MessageToAll("%t", "TechPausePausesRemaining", g_FormattedTeamNames[team],
+                      maxTechPauses - g_TechnicalPausesUsed[team]);
   }
   return Plugin_Handled;
 }
@@ -153,7 +156,8 @@ public Action Command_Pause(int client, int args) {
 
   if (g_PauseType != Get5PauseType_None) {
     g_TeamReadyForUnpause[team] = false;
-    LogDebug("Ignoring tactical pause request as game is already paused; setting team to not ready to unpause.");
+    LogDebug(
+        "Ignoring tactical pause request as game is already paused; setting team to not ready to unpause.");
     return Plugin_Handled;
   }
 
@@ -163,8 +167,10 @@ public Action Command_Pause(int client, int args) {
     int maxPauseTime = g_MaxPauseTimeCvar.IntValue;
     if (maxPauseTime > 0 && g_TacticalPauseTimeUsed[team] >= maxPauseTime) {
       char maxPauseTimeFormatted[16];
-      convertSecondsToMinutesAndSeconds(maxPauseTime, maxPauseTimeFormatted, sizeof(maxPauseTimeFormatted));
-      Get5_Message(client, "%t", "MaxPausesTimeUsedInfoMessage", maxPauseTimeFormatted, g_FormattedTeamNames[team]);
+      convertSecondsToMinutesAndSeconds(maxPauseTime, maxPauseTimeFormatted,
+                                        sizeof(maxPauseTimeFormatted));
+      Get5_Message(client, "%t", "MaxPausesTimeUsedInfoMessage", maxPauseTimeFormatted,
+                   g_FormattedTeamNames[team]);
       return Plugin_Handled;
     }
   }
@@ -225,8 +231,7 @@ public Action Command_Unpause(int client, int args) {
     int techPausesUsed = g_TechnicalPausesUsed[g_PausingTeam];
 
     if ((maxTechPauseDuration > 0 && g_LatestPauseDuration >= maxTechPauseDuration) ||
-       (maxTechPauses > 0 && techPausesUsed > maxTechPauses)
-    ) {
+        (maxTechPauses > 0 && techPausesUsed > maxTechPauses)) {
       UnpauseGame(team);
       if (IsPlayer(client)) {
         char formattedClientName[MAX_NAME_LENGTH];
@@ -279,14 +284,13 @@ public Action Timer_PauseTimeCheck(Handle timer) {
   CSTeamString(Get5TeamToCSTeam(team), teamString, sizeof(teamString));
 
   if (g_PauseType == Get5PauseType_Tactical) {
-
     int maxTacticalPauseTime = g_MaxPauseTimeCvar.IntValue;
     int maxTacticalPauses = g_MaxTacticalPausesCvar.IntValue;
     int tacticalPausesUsed = g_TacticalPausesUsed[team];
 
     int fixedPauseTime = g_FixedPauseTimeCvar.IntValue;
     if (fixedPauseTime > 0 && fixedPauseTime < 15) {
-      fixedPauseTime = 15; // Don't allow less than 15 second fixed pauses.
+      fixedPauseTime = 15;  // Don't allow less than 15 second fixed pauses.
     }
 
     // -1 assumes unlimited.
@@ -299,23 +303,27 @@ public Action Timer_PauseTimeCheck(Handle timer) {
         return Plugin_Stop;
       }
     } else if (maxTacticalPauses > 0 && tacticalPausesUsed > maxTacticalPauses) {
-      // The game gets unpaused if the number of maximum pauses changes to below the number of used pauses while a
-      // pause is active. Kind of a weird edge-case, but it should be handled gracefully.
-      Get5_MessageToAll("%t", "MaxPausesUsedInfoMessage", maxTacticalPauses, g_FormattedTeamNames[g_PausingTeam]);
+      // The game gets unpaused if the number of maximum pauses changes to below the number of used
+      // pauses while a pause is active. Kind of a weird edge-case, but it should be handled
+      // gracefully.
+      Get5_MessageToAll("%t", "MaxPausesUsedInfoMessage", maxTacticalPauses,
+                        g_FormattedTeamNames[g_PausingTeam]);
       UnpauseGame(team);
       return Plugin_Stop;
     } else if (!g_TeamReadyForUnpause[team]) {
-      // If the team that called the pause has indicated they are ready, no more time should be subtracted from their
-      // maximum pause time, but the timer must keep running as they could go back to not-ready-for-unpause before the
-      // other team unpauses, in which case we would keep counting their seconds used.
+      // If the team that called the pause has indicated they are ready, no more time should be
+      // subtracted from their maximum pause time, but the timer must keep running as they could go
+      // back to not-ready-for-unpause before the other team unpauses, in which case we would keep
+      // counting their seconds used.
       g_TacticalPauseTimeUsed[team]++;
-      LogDebug("Adding tactical pause time used for Get5Team %d. Now: %d", team, g_TacticalPauseTimeUsed[team]);
+      LogDebug("Adding tactical pause time used for Get5Team %d. Now: %d", team,
+               g_TacticalPauseTimeUsed[team]);
       if (maxTacticalPauseTime > 0) {
         timeLeft = maxTacticalPauseTime - g_TacticalPauseTimeUsed[team];
         if (timeLeft <= 0) {
-           Get5_MessageToAll("%t", "PauseRunoutInfoMessage", g_FormattedTeamNames[team]);
-           UnpauseGame(team);
-           return Plugin_Stop;
+          Get5_MessageToAll("%t", "PauseRunoutInfoMessage", g_FormattedTeamNames[team]);
+          UnpauseGame(team);
+          return Plugin_Stop;
         }
       }
     }
@@ -328,45 +336,56 @@ public Action Timer_PauseTimeCheck(Handle timer) {
 
     char pauseTimeMaxFormatted[16] = "";
     if (timeLeft >= 0) {
-      convertSecondsToMinutesAndSeconds(maxTacticalPauseTime, pauseTimeMaxFormatted, sizeof(pauseTimeMaxFormatted));
+      convertSecondsToMinutesAndSeconds(maxTacticalPauseTime, pauseTimeMaxFormatted,
+                                        sizeof(pauseTimeMaxFormatted));
     }
 
     LOOP_CLIENTS(i) {
       if (IsValidClient(i)) {
-        if (fixedPauseTime) { // If fixed pause; takes precedence over total time and reuses timeLeft for simplicity
+        if (fixedPauseTime) {  // If fixed pause; takes precedence over total time and reuses
+                               // timeLeft for simplicity
           if (maxTacticalPauses > 0) {
             // Team A (CT) tactical pause (2/4): 0:45
-            PrintHintText(i, "%s (%s) %t (%d/%d): %s", g_TeamNames[team], teamString, "TacticalPauseMidSentence", tacticalPausesUsed, maxTacticalPauses, timeLeftFormatted);
+            PrintHintText(i, "%s (%s) %t (%d/%d): %s", g_TeamNames[team], teamString,
+                          "TacticalPauseMidSentence", tacticalPausesUsed, maxTacticalPauses,
+                          timeLeftFormatted);
           } else {
             // Team A (CT) tactical pause: 0:45
-            PrintHintText(i, "%s (%s) %t: %s", g_TeamNames[team], teamString, "TacticalPauseMidSentence", timeLeftFormatted);
+            PrintHintText(i, "%s (%s) %t: %s", g_TeamNames[team], teamString,
+                          "TacticalPauseMidSentence", timeLeftFormatted);
           }
-        } else if (timeLeft >= 0) { // If total time restriction
+        } else if (timeLeft >= 0) {  // If total time restriction
           if (maxTacticalPauses > 0) {
             // Team A (CT) tactical pause (2/4).
             // Remaining pause time: 0:45 / 3:00
-            PrintHintText(i, "%s (%s) %t (%d/%d).\n%t: %s / %s", g_TeamNames[team], teamString, "TacticalPauseMidSentence", tacticalPausesUsed, maxTacticalPauses, "PauseTimeRemainingPrefix", timeLeftFormatted, pauseTimeMaxFormatted);
+            PrintHintText(i, "%s (%s) %t (%d/%d).\n%t: %s / %s", g_TeamNames[team], teamString,
+                          "TacticalPauseMidSentence", tacticalPausesUsed, maxTacticalPauses,
+                          "PauseTimeRemainingPrefix", timeLeftFormatted, pauseTimeMaxFormatted);
           } else {
             // Team A (CT) tactical pause.
             // Remaining pause time: 0:45 / 3:00
-            PrintHintText(i, "%s (%s) %t.\n%t: %s / %s", g_TeamNames[team], teamString, "TacticalPauseMidSentence", "PauseTimeRemainingPrefix", timeLeftFormatted, pauseTimeMaxFormatted);
+            PrintHintText(i, "%s (%s) %t.\n%t: %s / %s", g_TeamNames[team], teamString,
+                          "TacticalPauseMidSentence", "PauseTimeRemainingPrefix", timeLeftFormatted,
+                          pauseTimeMaxFormatted);
           }
-        } else { // if no time restriction or awaiting unpause
+        } else {  // if no time restriction or awaiting unpause
           if (maxTacticalPauses > 0) {
             // Team A (CT) tactical pause (2/4).
             // Awaiting unpause.
-            PrintHintText(i, "%s (%s) %t (%d/%d).\n%t.", g_TeamNames[team], teamString, "TacticalPauseMidSentence", tacticalPausesUsed, maxTacticalPauses, "AwaitingUnpause");
+            PrintHintText(i, "%s (%s) %t (%d/%d).\n%t.", g_TeamNames[team], teamString,
+                          "TacticalPauseMidSentence", tacticalPausesUsed, maxTacticalPauses,
+                          "AwaitingUnpause");
           } else {
             // Team A (CT) tactical pause.
             // Awaiting unpause.
-            PrintHintText(i, "%s (%s) %t.\n%t.", g_TeamNames[team], teamString, "TacticalPauseMidSentence", "AwaitingUnpause");
+            PrintHintText(i, "%s (%s) %t.\n%t.", g_TeamNames[team], teamString,
+                          "TacticalPauseMidSentence", "AwaitingUnpause");
           }
         }
       }
     }
 
   } else if (g_PauseType == Get5PauseType_Tech) {
-
     int maxTechPauseDuration = g_MaxTechPauseDurationCvar.IntValue;
     int maxTechPauses = g_MaxTechPausesCvar.IntValue;
     int techPausesUsed = g_TechnicalPausesUsed[team];
@@ -374,14 +393,16 @@ public Action Timer_PauseTimeCheck(Handle timer) {
     // -1 assumes unlimited.
     int timeLeft = -1;
 
-    // If tech pause max is reduced to below what is used, we don't want to print remaining time, as anyone can unpause.
-    // We achieve this by simply skipping the time calculation if max tech pauses have been exceeded.
+    // If tech pause max is reduced to below what is used, we don't want to print remaining time, as
+    // anyone can unpause. We achieve this by simply skipping the time calculation if max tech
+    // pauses have been exceeded.
     if (!g_TeamReadyForUnpause[team] && (maxTechPauses == 0 || techPausesUsed <= maxTechPauses)) {
       if (maxTechPauseDuration > 0) {
         timeLeft = maxTechPauseDuration - g_LatestPauseDuration;
         if (timeLeft == 0) {
-          // Only print to chat when hitting 0, but keep the timer going as tech pauses don't unpause on their own.
-          // The PrintHintText below will inform users that they can now unpause.
+          // Only print to chat when hitting 0, but keep the timer going as tech pauses don't
+          // unpause on their own. The PrintHintText below will inform users that they can now
+          // unpause.
           char formattedUnpauseCommand[64];
           FormatChatCommand(formattedUnpauseCommand, sizeof(formattedUnpauseCommand), "!unpause");
           Get5_MessageToAll("%t", "TechPauseRunoutInfoMessage", formattedUnpauseCommand);
@@ -400,25 +421,31 @@ public Action Timer_PauseTimeCheck(Handle timer) {
         if (timeLeft >= 0) {
           if (maxTechPauses > 0) {
             // Team A (CT) technical pause (3/4): Time remaining before anyone can unpause: 1:30
-            PrintHintText(i, "%s (%s) %t (%d/%d).\n%t: %s", g_TeamNames[team], teamString, "TechnicalPauseMidSentence", techPausesUsed, maxTechPauses, "TimeRemainingBeforeAnyoneCanUnpausePrefix", timeLeftFormatted);
+            PrintHintText(i, "%s (%s) %t (%d/%d).\n%t: %s", g_TeamNames[team], teamString,
+                          "TechnicalPauseMidSentence", techPausesUsed, maxTechPauses,
+                          "TimeRemainingBeforeAnyoneCanUnpausePrefix", timeLeftFormatted);
           } else {
             // Team A (CT) technical pause. Time remaining before anyone can unpause: 1:30
-            PrintHintText(i, "%s (%s) %t.\n%t: %s", g_TeamNames[team], teamString, "TechnicalPauseMidSentence", "TimeRemainingBeforeAnyoneCanUnpausePrefix", timeLeftFormatted);
+            PrintHintText(i, "%s (%s) %t.\n%t: %s", g_TeamNames[team], teamString,
+                          "TechnicalPauseMidSentence", "TimeRemainingBeforeAnyoneCanUnpausePrefix",
+                          timeLeftFormatted);
           }
         } else {
           if (maxTechPauses > 0) {
             // Team A (CT) technical pause (3/4). Awaiting unpause.
-            PrintHintText(i, "%s (%s) %t (%d/%d).\n%t.", g_TeamNames[team], teamString, "TechnicalPauseMidSentence", techPausesUsed, maxTechPauses, "AwaitingUnpause");
+            PrintHintText(i, "%s (%s) %t (%d/%d).\n%t.", g_TeamNames[team], teamString,
+                          "TechnicalPauseMidSentence", techPausesUsed, maxTechPauses,
+                          "AwaitingUnpause");
           } else {
             // Team A (CT) technical pause. Awaiting unpause.
-            PrintHintText(i, "%s (%s) %t.\n%t.", g_TeamNames[team], teamString, "TechnicalPauseMidSentence", "AwaitingUnpause");
+            PrintHintText(i, "%s (%s) %t.\n%t.", g_TeamNames[team], teamString,
+                          "TechnicalPauseMidSentence", "AwaitingUnpause");
           }
         }
       }
     }
 
   } else if (g_PauseType == Get5PauseType_Admin) {
-
     LOOP_CLIENTS(i) {
       if (IsValidClient(i)) {
         PrintHintText(i, "%t", "PausedByAdministrator");
@@ -426,13 +453,11 @@ public Action Timer_PauseTimeCheck(Handle timer) {
     }
 
   } else if (g_PauseType == Get5PauseType_Backup) {
-
     LOOP_CLIENTS(i) {
       if (IsValidClient(i)) {
         PrintHintText(i, "%t", "PausedForBackup");
       }
     }
-
   }
   return Plugin_Continue;
 }

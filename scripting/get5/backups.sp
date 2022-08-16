@@ -40,7 +40,6 @@ public Action Command_ListBackups(int client, int args) {
 
   DirectoryListing files = OpenDirectory(strlen(path) > 0 ? path : ".");
   if (files != null) {
-
     char backupInfo[256];
     char pattern[PLATFORM_MAX_PATH];
     Format(pattern, sizeof(pattern), "get5_backup_match%s", matchID);
@@ -237,9 +236,9 @@ public bool RestoreFromBackup(const char[] path) {
       delete kv;
       LogError("Could not restore from match config \"%s\"", tempBackupFile);
       if (g_GameState != Get5State_None) {
-        // If the backup load fails, all the game configs will have been reset by LoadMatchConfig, but the game state
-        // won't. This ensure we don't end up a in a "live" state with no get5 variables set, which would prevent a call
-        // to load a new match.
+        // If the backup load fails, all the game configs will have been reset by LoadMatchConfig,
+        // but the game state won't. This ensure we don't end up a in a "live" state with no get5
+        // variables set, which would prevent a call to load a new match.
         ChangeState(Get5State_None);
       }
       return false;
@@ -259,7 +258,8 @@ public bool RestoreFromBackup(const char[] path) {
   g_TeamSeriesScores[Get5Team_1] = kv.GetNum("team1_series_score");
   g_TeamSeriesScores[Get5Team_2] = kv.GetNum("team2_series_score");
 
-  // This ensures that the MapNumber logic correctly calculates the map number when there have been draws.
+  // This ensures that the MapNumber logic correctly calculates the map number when there have been
+  // draws.
   g_TeamSeriesScores[Get5Team_None] = kv.GetNum("series_draw", 0);
 
   // Immediately set map number global var to ensure anything below doesn't break.
@@ -306,7 +306,8 @@ public bool RestoreFromBackup(const char[] path) {
     kv.GoBack();
   }
 
-  // When loading round 0, there is no valve backup, so we assume round 0 if the game is live, otherwise -1
+  // When loading round 0, there is no valve backup, so we assume round 0 if the game is live,
+  // otherwise -1
   int roundNumberRestoredTo = g_GameState == Get5State_Live ? 0 : -1;
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
@@ -337,7 +338,8 @@ public bool RestoreFromBackup(const char[] path) {
 
   LogDebug("Calling Get5_OnBackupRestore()");
 
-  Get5BackupRestoredEvent backupEvent = new Get5BackupRestoredEvent(g_MatchID, g_MapNumber, roundNumberRestoredTo, path);
+  Get5BackupRestoredEvent backupEvent =
+      new Get5BackupRestoredEvent(g_MatchID, g_MapNumber, roundNumberRestoredTo, path);
 
   Call_StartForward(g_OnBackupRestore);
   Call_PushCell(backupEvent);
@@ -430,7 +432,8 @@ public void DeleteOldBackups() {
   g_RoundBackupPathCvar.GetString(path, sizeof(path));
 
   if (StrContains(path, "{MATCHID}") != -1) {
-    LogError("Automatic backup deletion cannot be performed when get5_backup_path contains the {MATCHID} variable.");
+    LogError(
+        "Automatic backup deletion cannot be performed when get5_backup_path contains the {MATCHID} variable.");
     return;
   }
 

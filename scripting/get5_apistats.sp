@@ -284,7 +284,8 @@ static void AddIntStat(Handle req, KeyValues kv, const char[] field) {
   AddIntParam(req, field, kv.GetNum(field));
 }
 
-public void UpdatePlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv, const Get5Team team) {
+public void UpdatePlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv,
+                       const Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
 

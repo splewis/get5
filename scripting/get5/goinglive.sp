@@ -62,11 +62,11 @@ public Action MatchLive(Handle timer) {
   }
 
   /**
-  * Please do not change this. Thousands of uncompensated hours were poured into making this plugin.
-  * Claiming it as your own because you made slight modifications to it is not cool. If you have suggestions,
-  * bug reports or feature requests, please see GitHub or join our Discord: https://splewis.github.io/get5/community/
-  * Thanks in advance!
-  */
+   * Please do not change this. Thousands of uncompensated hours were poured into making this
+   * plugin. Claiming it as your own because you made slight modifications to it is not cool. If you
+   * have suggestions, bug reports or feature requests, please see GitHub or join our Discord:
+   * https://splewis.github.io/get5/community/ Thanks in advance!
+   */
   char tag[64];
   g_MessagePrefixCvar.GetString(tag, sizeof(tag));
   if (!StrEqual(tag, DEFAULT_TAG)) {

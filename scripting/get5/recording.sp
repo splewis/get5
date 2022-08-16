@@ -7,7 +7,8 @@ bool StartRecording() {
   }
 
   if (!IsTVEnabled()) {
-    LogError("Demo recording will not work with \"tv_enable 0\". Set \"tv_enable 1\" and restart the map to fix this.");
+    LogError(
+        "Demo recording will not work with \"tv_enable 0\". Set \"tv_enable 1\" and restart the map to fix this.");
     g_DemoFileName = "";
     return false;
   }
@@ -36,22 +37,26 @@ void StopRecording(float delay = 0.0) {
     StopRecordingCallback(g_MatchID, g_MapNumber, g_DemoFileName);
   } else {
     LogDebug("Starting timer that will end GOTV recording in %f seconds.", delay);
-    CreateTimer(delay, Timer_StopGoTVRecording, GetDemoInfoDataPack(g_MatchID, g_MapNumber, g_DemoFileName));
+    CreateTimer(delay, Timer_StopGoTVRecording,
+                GetDemoInfoDataPack(g_MatchID, g_MapNumber, g_DemoFileName));
   }
   g_DemoFileName = "";
 }
 
-static void StopRecordingCallback(const char[] matchId, const int mapNumber, const char[] demoFileName) {
+static void StopRecordingCallback(const char[] matchId, const int mapNumber,
+                                  const char[] demoFileName) {
   ServerCommand("tv_stoprecord");
   if (StrEqual("", demoFileName)) {
     LogDebug("Demo was not recorded by Get5; not firing Get5_OnDemoFinished()");
     return;
   }
   // We delay this by 3 seconds to allow the server to flush to the file before firing the event.
-  CreateTimer(3.0, Timer_FireStopRecordingEvent, GetDemoInfoDataPack(matchId, mapNumber, demoFileName));
+  CreateTimer(3.0, Timer_FireStopRecordingEvent,
+              GetDemoInfoDataPack(matchId, mapNumber, demoFileName));
 }
 
-static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber, const char[] demoFileName) {
+static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber,
+                                    const char[] demoFileName) {
   DataPack pack = CreateDataPack();
   pack.WriteString(matchId);
   pack.WriteCell(mapNumber);
@@ -59,7 +64,8 @@ static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber, c
   return pack;
 }
 
-static void ReadDemoDataPack(DataPack pack, char[] matchId, const int matchIdLength, int &mapNumber, char[] demoFileName, const int demoFileNameLength) {
+static void ReadDemoDataPack(DataPack pack, char[] matchId, const int matchIdLength, int &mapNumber,
+                             char[] demoFileName, const int demoFileNameLength) {
   pack.Reset();
   pack.ReadString(matchId, matchIdLength);
   mapNumber = pack.ReadCell();
@@ -119,7 +125,7 @@ int GetTvDelay() {
 float GetCurrentMatchRestartDelay() {
   ConVar mp_match_restart_delay = FindConVar("mp_match_restart_delay");
   if (mp_match_restart_delay == INVALID_HANDLE) {
-    return 1.0; // Shouldn't really be possible, but as a safeguard.
+    return 1.0;  // Shouldn't really be possible, but as a safeguard.
   }
   return mp_match_restart_delay.FloatValue;
 }

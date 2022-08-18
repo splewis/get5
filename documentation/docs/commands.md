@@ -30,8 +30,7 @@ Please note that these can be typed by *all players* in chat.
 
 ####`!coach`
 
-:   Moves a client to coach for their team. Requires that
-the [`sv_coaching_enabled`](https://totalcsgo.com/command/svcoachingenabled) variable is set to `1`.
+:   Moves a client to [coach for their team](coaching.md).
 
 ####`!stay`
 
@@ -51,13 +50,13 @@ the [get5_stop_command_enabled](../configuration/#get5_stop_command_enabled) is 
 
 :   Force-readies your team, marking all players on your team as ready.
 
-####`!ringer`
+####`!ringer <target>` {: #ringer }
 
-:   Adds/removes a ringer to/from the home scrim team.
+:   Alias for [`get5_ringer`](#get5_ringer).
 
 ####`!scrim`
 
-:   Shortcut for [`get5_scrim`](#get5_scrim).
+:   Alias for [`get5_scrim`](#get5_scrim).
 
 ####`!get5`
 
@@ -100,12 +99,12 @@ to that team. Omitting the team argument sets no winner (tie).
 
 ####`get5_creatematch [map name] [matchid]` {: #get5_creatematch }
 :   Creates a BO1 match with the current players on the server. `map name` defaults to the current map and `matchid`
-    defaults to `manual`. You should **not** provide a match ID if you use the [MySQL extension](../stats_system/#mysql).
+defaults to `manual`. You should **not** provide a match ID if you use the [MySQL extension](../stats_system/#mysql).
 
 ####`get5_scrim [opposing team name] [map name] [matchid]` {: #get5_scrim }
 :   Creates a [scrim](../getting_started/#scrims) on the current map. The opposing team name defaults to `Away`
-    and the map defaults to the current map. `matchid` defaults to `scrim`. You should **not** provide a match ID if
-    you use the [MySQL extension](../stats_system/#mysql).
+and the map defaults to the current map. `matchid` defaults to `scrim`. You should **not** provide a match ID if
+you use the [MySQL extension](../stats_system/#mysql).
 
 ####`get5_addplayer <auth> <team1|team2|spec> [name]` {: #get5_addplayer }
 :   Adds a Steam ID to a team (can be any format for the Steam ID). The name parameter optionally locks the player's
@@ -115,8 +114,10 @@ name.
 :   Adds a Steam ID to a team as a coach. The name parameter optionally locks the player's
 name.
 
-####`get5_removeplayer <auth>`
-:   Removes a steam ID from all teams (can be any format for the Steam ID).
+####`get5_removeplayer <auth>` {: #get5_removeplayer}
+:   Removes a steam ID from all teams (can be any format for the Steam ID). This also removes the player as
+a [coach](coaching.md). If [`get5_check_auths`](../configuration/#get5_check_auths) is set, the player will be removed
+from the server immediately.
 
 ####`get5_addkickedplayer <team1|team2|spec> [name]` {: #get5_addkickedplayer }
 :   Adds the last kicked Steam ID to a team. The name parameter optionally locks the player's name.
@@ -223,9 +224,17 @@ name.
 :   Lists backup files for the current match or a given match ID if provided. If you define
 [`get5_backup_path`](../configuration/#get5_backup_path), it will only list backups found under that prefix.
 
-####`get5_ringer <player>`
-:   Adds/removes a ringer to/from the home scrim team. `player` is the name of the player. Similar
-to [`!ringer`](../commands/#ringer)
+####`get5_ringer <target>` {: #get5_ringer }
+:   Adds/removes a ringer to/from the home scrim team. `target` is the name of the player, their user ID or their Steam
+ID. Similar to [`!ringer`](../commands/#ringer) in chat.
+
+!!! example "User ID vs client index"
+
+    To view user IDs, type `users` in console. In this example, `3` is the user ID and `1` is the client index:
+    ```
+    > users
+    1:3:"Quinn"
+    ```
 
 ####`get5_debuginfo [file]` {: #get5_debuginfo }
 :   Dumps debug info to a file (`addons/sourcemod/logs/get5_debuginfo.txt` if no file parameter is provided).

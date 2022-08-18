@@ -105,8 +105,9 @@ interface Get5Match {
 22. _Optional_<br>Various commands to execute on the server when loading the match configuration. This can be both
     regular server-commands and any [`Get5 configuration parameter`](configuration.md),
     i.e. `{"hostname": "Match #3123 - Astralis vs. NaVi"}`.<br><br>**`Default: undefined`**
-23. _Optional_<br>Similarly to `players`, this object maps coaches using their Steam ID and
-    name.<br><br>**`Default: undefined`**
+23. _Optional_<br>Similarly to `players`, this object maps [coaches](coaching.md) using their Steam ID and
+    name, locking them to the coach slot until removed
+    using [`get5_removeplayer`](../commands/#get5_removeplayer)<br><br>**`Default: undefined`**
 24. _Required_<br>The players on the team.
 25. _Optional_<br>Wrapper of the server's `mp_teammatchstat_txt` cvar, but can use `{MAPNUMBER}` and `{MAXMAPS}` as
     variables that get replaced with their integer values. In a BoX series, you probably don't want to set this since

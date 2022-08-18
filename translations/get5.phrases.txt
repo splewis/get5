@@ -389,6 +389,20 @@
     {
         "en"            "You were moved to the coach position because your team is full."
     }
+    "CoachingNotEnabled"
+    {
+        "#format"       "{1:s}"
+        "en"            "Coaching is not enabled. You must set {1} to 1."
+    }
+    "CanOnlyCoachDuringFreezetimeOrWarmup"
+    {
+        "en"            "You can only request to coach during warmup or freezetime."
+    }
+    "AllCoachSlotsFilledForTeam"
+    {
+        "#format"       "{1:d}"
+        "en"            "All coach slots ({1}) are currently filled for your team."
+    }
     "ReadyTag"
     {
         "en"            "[READY]"

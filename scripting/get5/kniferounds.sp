@@ -42,14 +42,12 @@ static void PerformSideSwap(bool swap) {
 
     LOOP_CLIENTS(i) {
       if (IsValidClient(i)) {
-        int team = GetClientTeam(i);
-        if (team == CS_TEAM_T) {
-          SwitchPlayerTeam(i, CS_TEAM_CT);
-        } else if (team == CS_TEAM_CT) {
-          SwitchPlayerTeam(i, CS_TEAM_T);
-        } else if (IsClientCoaching(i)) {
-          int correctTeam = Get5TeamToCSTeam(GetClientMatchTeam(i));
-          UpdateCoachTarget(i, correctTeam);
+        if (IsFakeClient(i)) {
+          // Because bots never have an assigned team, they won't be moved around by CheckClientTeam. We kick them to
+          // prevent one team from having too many players. They will rejoin if defined in the live config.
+          KickClient(i);
+        } else {
+          CheckClientTeam(i);
         }
       }
     }

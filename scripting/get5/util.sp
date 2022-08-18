@@ -66,22 +66,12 @@ stock int ConvertCSTeamToDefaultWinReason(int side) {
   return view_as<int>(side == CS_TEAM_CT ? CSRoundEnd_CTWin : CSRoundEnd_TerroristWin) + 1;
 }
 
-/**
- * Switches and respawns a player onto a new team.
- */
 stock void SwitchPlayerTeam(int client, int team) {
+  // Check avoids killing player if they're already on the right team.
   if (GetClientTeam(client) == team) {
     return;
   }
-
-  LogDebug("SwitchPlayerTeam %L to %d", client, team);
-  if (team > CS_TEAM_SPECTATOR) {
-    CS_SwitchTeam(client, team);
-    CS_UpdateClientModel(client);
-    CS_RespawnPlayer(client);
-  } else {
-    ChangeClientTeam(client, team);
-  }
+  ChangeClientTeam(client, team);
 }
 
 /**
@@ -208,12 +198,7 @@ stock void RestartGame(int delay) {
 }
 
 stock bool IsClientCoaching(int client) {
-  return GetClientTeam(client) == CS_TEAM_SPECTATOR &&
-         GetEntProp(client, Prop_Send, "m_iCoachingTeam") != 0;
-}
-
-stock void UpdateCoachTarget(int client, int csTeam) {
-  SetEntProp(client, Prop_Send, "m_iCoachingTeam", csTeam);
+  return GetClientCoachingSide(client) != Get5Side_None;
 }
 
 stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
@@ -699,7 +684,7 @@ stock Get5BombSite GetNearestBombsite(int client) {
   float aDist = GetVectorDistance(aCenter, pos, true);
   float bDist = GetVectorDistance(bCenter, pos, true);
 
-  LogDebug("Bomb planted. Distance to A: %d. Distance to B: %d.", aDist, bDist);
+  LogDebug("Bomb planted. Distance to A: %f. Distance to B: %f.", aDist, bDist);
 
   return (aDist < bDist) ? Get5BombSite_A : Get5BombSite_B;
 }

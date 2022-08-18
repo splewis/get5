@@ -142,6 +142,7 @@ int g_MinSpectatorsToReady = 0;
 float g_RoundStartedTime = 0.0;
 float g_BombPlantedTime = 0.0;
 Get5BombSite g_BombSiteLastPlanted = Get5BombSite_Unknown;
+bool g_AssignUnTeamedPlayersOnRoundStart = false;
 
 bool g_SkipVeto = false;
 float g_VetoMenuTime = 0.0;
@@ -229,7 +230,6 @@ ArrayList g_ChatAliasesCommands;
 /** Map-game state not related to the actual gameplay. **/
 char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
-bool g_MovingClientToCoach[MAXPLAYERS + 1];
 bool g_PendingSideSwap = false;
 
 // version check state
@@ -687,7 +687,6 @@ public Action Timer_InfoMessages(Handle timer) {
 
 public void OnClientAuthorized(int client, const char[] auth) {
   SetClientReady(client, false);
-  g_MovingClientToCoach[client] = false;
   if (StrEqual(auth, "BOT", false)) {
     return;
   }
@@ -696,11 +695,8 @@ public void OnClientAuthorized(int client, const char[] auth) {
     Get5Team team = GetClientMatchTeam(client);
     if (team == Get5Team_None) {
       RememberAndKickClient(client, "%t", "YouAreNotAPlayerInfoMessage");
-    } else {
-      int teamCount = CountPlayersOnMatchTeam(team, client);
-      if (teamCount >= g_PlayersPerTeam && !g_CoachingEnabledCvar.BoolValue) {
-        KickClient(client, "%t", "TeamIsFullInfoMessage");
-      }
+    } else if (CountPlayersOnTeam(team, client) >= g_PlayersPerTeam && !g_CoachingEnabledCvar.BoolValue) {
+      KickClient(client, "%t", "TeamIsFullInfoMessage");
     }
   }
 }
@@ -1551,6 +1547,20 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
 
   if (g_GameState != Get5State_Live) {
     return;
+  }
+
+  // Ensures that players who connect during halftime/team swap are placed in their correct slots  as soon as the
+  // following round starts. Otherwise they could be left on the "no team" screen and potentially
+  // ghost, depending on where the camera drops them. Especially important for coaches.
+  if (g_AssignUnTeamedPlayersOnRoundStart) {
+    g_AssignUnTeamedPlayersOnRoundStart = false;
+    LOOP_CLIENTS(i) {
+      // We check only for connection here, as that's required to put them in the game, as they may
+      // not actually be considered "in the game" yet, so IsValidClient() might not work.
+      if (IsClientConnected(i)) {
+        CheckClientTeam(i);
+      }
+    }
   }
 
   Get5RoundStartedEvent startEvent =

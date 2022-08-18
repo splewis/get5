@@ -154,11 +154,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
   LOOP_CLIENTS(i) {
     if (IsAuthedPlayer(i)) {
-      if (GetClientMatchTeam(i) == Get5Team_None) {
-        RememberAndKickClient(i, "%t", "YouAreNotAPlayerInfoMessage");
-      } else {
-        CheckClientTeam(i);
-      }
+      CheckClientTeam(i);
     }
   }
 
@@ -807,13 +803,16 @@ public Action Command_LoadTeam(int client, int args) {
 
 public Action Command_AddPlayer(int client, int args) {
   if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
+    ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
-  }
-
-  if (g_InScrimMode) {
-    ReplyToCommand(
-        client, "Cannot use get5_addplayer in scrim mode. Use get5_ringer to swap a players team.");
+  } else if (g_InScrimMode) {
+    ReplyToCommand(client, "Cannot use get5_addplayer in scrim mode. Use get5_ringer to swap a player's team.");
+    return Plugin_Handled;
+  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+    ReplyToCommand(client, "Cannot add players while waiting for round backup.");
+    return Plugin_Handled;
+  } else if (g_PendingSideSwap || InHalftimePhase()) {
+    ReplyToCommand(client, "Cannot add players during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
@@ -855,10 +854,19 @@ public Action Command_AddPlayer(int client, int args) {
 
 public Action Command_AddCoach(int client, int args) {
   if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot change coach targets when there is no match to modify");
+    ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
   } else if (!g_CoachingEnabledCvar.BoolValue) {
-    ReplyToCommand(client, "Cannot change coach targets if coaching is disabled.");
+    ReplyToCommand(client, "Coaching is not enabled.");
+    return Plugin_Handled;
+  } else if (g_InScrimMode) {
+    ReplyToCommand(client, "Coaches cannot be added in scrim mode. Use the !coach command in chat.");
+    return Plugin_Handled;
+  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+    ReplyToCommand(client, "Cannot add coaches while waiting for round backup.");
+    return Plugin_Handled;
+  } else if (g_PendingSideSwap || InHalftimePhase()) {
+    ReplyToCommand(client, "Cannot add coaches during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
@@ -881,21 +889,29 @@ public Action Command_AddCoach(int client, int args) {
       return Plugin_Handled;
     }
 
-    if (GetTeamCoaches(team).Length == g_CoachesPerTeam) {
+    if (CountCoachesOnTeam(team) == g_CoachesPerTeam) {
       ReplyToCommand(client, "Coach Spots are full for %s.", teamString);
       return Plugin_Handled;
     }
 
     if (AddCoachToTeam(auth, team, name)) {
-      // Check if we are in the playerlist already and remove.
+      // If the player is already on the team as a regular player, remove them when adding to coaches.
       int index = GetTeamAuths(team).FindString(auth);
       if (index >= 0) {
         GetTeamAuths(team).Erase(index);
       }
-      // Update the backup structure as well for round restores, covers edge
-      // case of users joining, coaching, stopping, and getting 16k cash as player.
-      WriteBackup();
+
       ReplyToCommand(client, "Successfully added player %s as coach for %s.", auth, teamString);
+
+      // If the user is already on the server as a player, move them to coaching immediately.
+      int addedClient = AuthToClient(auth);
+      if (addedClient > 0 && IsClientConnected(addedClient)) {
+        Get5Side side = view_as<Get5Side>(Get5TeamToCSTeam(team));
+        if (side != Get5Side_None) {
+          LogDebug("Player %s was present on the server when added as coach; moving them to coach for %d.", auth, team);
+          SetClientCoaching(addedClient, side);
+        }
+      }
     } else {
       ReplyToCommand(
           client,
@@ -910,14 +926,16 @@ public Action Command_AddCoach(int client, int args) {
 
 public Action Command_AddKickedPlayer(int client, int args) {
   if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
+    ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
-  }
-
-  if (g_InScrimMode) {
-    ReplyToCommand(
-        client,
-        "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a players team.");
+  } else if (g_InScrimMode) {
+    ReplyToCommand(client, "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a player's team.");
+    return Plugin_Handled;
+  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+    ReplyToCommand(client, "Cannot add players while waiting for round backup.");
+    return Plugin_Handled;
+  } else if (g_PendingSideSwap || InHalftimePhase()) {
+    ReplyToCommand(client, "Cannot add players during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
@@ -1169,7 +1187,7 @@ public Action Command_CreateScrim(int client, int args) {
 
 public Action Command_Ringer(int client, int args) {
   if (g_GameState == Get5State_None || !g_InScrimMode) {
-    ReplyToCommand(client, "This command can only be used in scrim mode");
+    ReplyToCommand(client, "This command can only be used in scrim mode.");
     return Plugin_Handled;
   }
 

@@ -354,34 +354,21 @@ public void RestoreGet5Backup() {
   // This variable is reset on a timer since the implementation of the
   // mp_backup_restore_load_file doesn't do everything in one frame.
   g_DoingBackupRestoreNow = true;
-  ExecCfg(g_LiveCfgCvar);
+  ExecCfg(g_LiveCfgCvar); // async
+  CreateTimer(0.5, Timer_ExecMatchConfig, _, TIMER_FLAG_NO_MAPCHANGE);
 
   if (g_SavedValveBackup) {
     ChangeState(Get5State_Live);
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-
     // There are some timing issues leading to incorrect score when restoring matches in second
     // half. Doing the restore on a timer
     CreateTimer(1.0, Time_StartRestore);
   } else {
     SetStartingTeams();
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-    LOOP_CLIENTS(i) {
-      if (IsPlayer(i)) {
-        CheckClientTeam(i);
-      }
-    }
-
     if (g_GameState == Get5State_Live) {
       EndWarmup();
       EndWarmup();
       ServerCommand("mp_restartgame 5");
       PauseGame(Get5Team_None, Get5PauseType_Backup);
-      if (g_CoachingEnabledCvar.BoolValue) {
-        CreateTimer(6.0, Timer_SwapCoaches);
-      }
     } else {
       EnsureIndefiniteWarmup();
     }
@@ -390,13 +377,13 @@ public void RestoreGet5Backup() {
   }
 }
 
-public Action Timer_SwapCoaches(Handle timer) {
-  LOOP_CLIENTS(i) {
-    if (IsAuthedPlayer(i)) {
-      CheckIfClientCoachingAndMoveToCoach(i, Get5Team_1);
-      CheckIfClientCoachingAndMoveToCoach(i, Get5Team_2);
-    }
-  }
+public Action Timer_ExecMatchConfig(Handle timer) {
+  // This needs to go on a callback because ServerCommand("exec") is async, so the config will load
+  // *after* the match cvars if we put them in RestoreGet5Backup, which we don't want, as that's not the order in which
+  // they were loaded when the match was initially set up.
+  SetMatchTeamCvars();
+  ExecuteMatchConfigCvars();
+  return Plugin_Handled;
 }
 
 public Action Time_StartRestore(Handle timer) {
@@ -405,7 +392,7 @@ public Action Time_StartRestore(Handle timer) {
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
-  CreateTimer(0.1, Timer_FinishBackup);
+  CreateTimer(0.5, Timer_FinishBackup);
 }
 
 public Action Timer_FinishBackup(Handle timer) {
@@ -414,9 +401,12 @@ public Action Timer_FinishBackup(Handle timer) {
     // coaches get moved back onto the team.
     // We cannot trust Valve's system as a disconnected
     // player will count as a "player" and not be placed
-    // in the coach slot. So, we cannot enable warmup during
-    // the round restore process if using a Valve backup.
-    CreateTimer(0.5, Timer_SwapCoaches);
+    // in the coach slot.
+    LOOP_CLIENTS(i) {
+      if (IsValidClient(i)) {
+        CheckClientTeam(i);
+      }
+    }
   }
   g_DoingBackupRestoreNow = false;
 }

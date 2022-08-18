@@ -59,8 +59,9 @@ disconnect even in warmup with the intention to reconnect!). **`Default: 0`**
 :   Whether to wait for map vetoes to be printed to GOTV before changing map. **`Default: 0`**
 
 ####`get5_check_auths`
-:   Whether the Steam IDs from a `players` of a [match configuration](../match_schema/#schema) section are used to
-force players onto teams, kicking everyone else. **`Default: 1`**
+:   Whether the Steam IDs from the `players` and `coaches` sections of a [match configuration](../match_schema/#schema)
+are used to force players onto teams. Anyone not defined will be removed from the game, or if
+in [scrim mode](../getting_started/#scrims), put on `team2`. **`Default: 1`**
 
 ####`get5_print_update_notice`
 :   Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if

@@ -2,6 +2,9 @@ public Action StartKnifeRound(Handle timer) {
   g_HasKnifeRoundStarted = false;
   g_PendingSideSwap = false;
 
+  // Removes ready tags
+  SetMatchTeamCvars();
+
   Get5_MessageToAll("%t", "KnifeIn5SecInfoMessage");
   if (InWarmup()) {
     EndWarmup(5);

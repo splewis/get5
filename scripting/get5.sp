@@ -1343,6 +1343,7 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
 
   EventLogger_LogAndDeleteEvent(event);
   ChangeState(Get5State_None);
+  g_MatchID = "";
 
   // We don't want to kick players until after the specified delay, as it will kick casters
   // potentially before GOTV ends.

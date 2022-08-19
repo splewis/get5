@@ -36,6 +36,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     ClearArray(GetTeamAuths(team));
   }
 
+  g_MatchID = "";
   g_ReadyTimeWaitingUsed = 0;
   g_HasKnifeRoundStarted = false;
   g_MapChangePending = false;

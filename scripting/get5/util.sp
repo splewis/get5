@@ -66,12 +66,20 @@ stock int ConvertCSTeamToDefaultWinReason(int side) {
   return view_as<int>(side == CS_TEAM_CT ? CSRoundEnd_CTWin : CSRoundEnd_TerroristWin) + 1;
 }
 
-stock void SwitchPlayerTeam(int client, int team) {
+stock void SwitchPlayerTeam(int client, Get5Side side, bool useDefaultTeamSelection = true) {
   // Check avoids killing player if they're already on the right team.
+  int team = view_as<int>(side);
   if (GetClientTeam(client) == team) {
     return;
   }
-  ChangeClientTeam(client, team);
+  if (useDefaultTeamSelection || team == CS_TEAM_SPECTATOR) {
+    ChangeClientTeam(client, team);
+  } else {
+    // When doing side-swap in knife-rounds, we do this to prevent the score from going -1 for everyone.
+    CS_SwitchTeam(client, team);
+    CS_UpdateClientModel(client);
+    CS_RespawnPlayer(client);
+  }
 }
 
 /**
@@ -116,8 +124,14 @@ stock void FormatChatCommand(char[] buffer, const int bufferLength, const char[]
   Format(buffer, bufferLength, "{GREEN}%s{NORMAL}", command);
 }
 
-stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client) {
-  Get5Side side = view_as<Get5Side>(IsClientInGame(client) ? GetClientTeam(client) : CS_TEAM_NONE);
+stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client, const Get5Side forcedSide = Get5Side_None) {
+  // Used when injecting the team for coaching players, who are always on team spectator.
+  Get5Side side;
+  if (forcedSide == Get5Side_None) {
+    side = view_as<Get5Side>(IsClientInGame(client) ? GetClientTeam(client) : CS_TEAM_NONE);
+  } else {
+    side = forcedSide;
+  }
   if (side == Get5Side_CT) {
     Format(buffer, bufferLength, "{LIGHT_BLUE}%N{NORMAL}", client);
   } else if (side == Get5Side_T) {

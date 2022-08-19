@@ -142,7 +142,7 @@ int g_MinSpectatorsToReady = 0;
 float g_RoundStartedTime = 0.0;
 float g_BombPlantedTime = 0.0;
 Get5BombSite g_BombSiteLastPlanted = Get5BombSite_Unknown;
-bool g_AssignUnTeamedPlayersOnRoundStart = false;
+bool g_AssignTeamNonePlayersOnRoundStart = false;
 
 bool g_SkipVeto = false;
 float g_VetoMenuTime = 0.0;
@@ -462,6 +462,7 @@ public void OnPluginStart() {
   g_VersionCvar.SetString(PLUGIN_VERSION);
 
   g_CoachingEnabledCvar = FindConVar("sv_coaching_enabled");
+  g_CoachingEnabledCvar.AddChangeHook(CoachingChangedHook); // used to move people off coaching if it gets disabled.
 
   /** Client commands **/
   g_ChatAliases = new ArrayList(ByteCountToCells(ALIAS_LENGTH));
@@ -695,7 +696,8 @@ public void OnClientAuthorized(int client, const char[] auth) {
     Get5Team team = GetClientMatchTeam(client);
     if (team == Get5Team_None) {
       RememberAndKickClient(client, "%t", "YouAreNotAPlayerInfoMessage");
-    } else if (CountPlayersOnTeam(team, client) >= g_PlayersPerTeam && !g_CoachingEnabledCvar.BoolValue) {
+    } else if (CountPlayersOnTeam(team, client) >= g_PlayersPerTeam
+      && (!g_CoachingEnabledCvar.BoolValue || CountCoachesOnTeam(team, client) >= g_CoachesPerTeam)) {
       KickClient(client, "%t", "TeamIsFullInfoMessage");
     }
   }
@@ -1549,11 +1551,11 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
     return;
   }
 
-  // Ensures that players who connect during halftime/team swap are placed in their correct slots  as soon as the
+  // Ensures that players who connect during halftime/team swap are placed in their correct slots as soon as the
   // following round starts. Otherwise they could be left on the "no team" screen and potentially
   // ghost, depending on where the camera drops them. Especially important for coaches.
-  if (g_AssignUnTeamedPlayersOnRoundStart) {
-    g_AssignUnTeamedPlayersOnRoundStart = false;
+  if (g_AssignTeamNonePlayersOnRoundStart) {
+    g_AssignTeamNonePlayersOnRoundStart = false;
     LOOP_CLIENTS(i) {
       // We check only for connection here, as that's required to put them in the game, as they may
       // not actually be considered "in the game" yet, so IsValidClient() might not work.

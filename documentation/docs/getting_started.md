@@ -33,8 +33,8 @@ file as soon as a player joins by setting [`get5_autoload_config`](../configurat
 
 ## Scrims {: #scrims }
 
-While Get5 is intended for matches (league matches, LAN-matches, cups, etc.), it can be used for everyday
-scrims/gathers/whatever as well. If that is your use case, you should do a few things differently. We call "_having a
+While Get5 is intended for matches (league matches, LANs, cups, etc.), it can be used for everyday
+scrims or gathers as well. If that is your use case, you should do a few things differently. We call "_having a
 home team defined and anyone else on the opposing team_" a **scrim**, and loading this configuration is referred to as
 **scrim mode**.
 

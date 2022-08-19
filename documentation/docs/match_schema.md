@@ -66,8 +66,9 @@ interface Get5Match {
    match IDs from another source, they **must** be integers (in a string) and must increment between
    matches.<br><br>**`Default: ""`**
 2. _Optional_<br>The number of maps to play in the series.<br><br>**`Default: 3`**
-3. _Optional_<br>The number of players per team.<br><br>**`Default: 5`**
-4. _Optional_<br>The maximum number of coaches per team.<br><br>**`Default: 2`**
+3. _Optional_<br>The number of players per team. You should **never** set this to a value higher than the number of
+   players you want to actually play in a game, *excluding* coaches.<br><br>**`Default: 5`**
+4. _Optional_<br>The maximum number of [coaches](coaching.md) per team.<br><br>**`Default: 2`**
 5. _Optional_<br>The minimum number of players of each team that must type [`!ready`](../commands/#ready) for the game
    to begin.<br><br>**`Default: 1`**
 6. _Optional_<br>The minimum number of spectators that must be [`!ready`](../commands/#ready) for the game to
@@ -106,8 +107,8 @@ interface Get5Match {
     regular server-commands and any [`Get5 configuration parameter`](configuration.md),
     i.e. `{"hostname": "Match #3123 - Astralis vs. NaVi"}`.<br><br>**`Default: undefined`**
 23. _Optional_<br>Similarly to `players`, this object maps [coaches](coaching.md) using their Steam ID and
-    name, locking them to the coach slot until removed
-    using [`get5_removeplayer`](../commands/#get5_removeplayer)<br><br>**`Default: undefined`**
+    name, locking them to the coach slot unless removed using [`get5_removeplayer`](../commands/#get5_removeplayer).
+    Setting a Steam ID as coach takes precedence over being set as a player.<br><br>**`Default: undefined`**
 24. _Required_<br>The players on the team.
 25. _Optional_<br>Wrapper of the server's `mp_teammatchstat_txt` cvar, but can use `{MAPNUMBER}` and `{MAXMAPS}` as
     variables that get replaced with their integer values. In a BoX series, you probably don't want to set this since

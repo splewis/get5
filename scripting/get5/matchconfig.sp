@@ -37,6 +37,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   }
 
   g_MatchID = "";
+  g_AssignTeamNonePlayersOnRoundStart = false;
   g_ReadyTimeWaitingUsed = 0;
   g_HasKnifeRoundStarted = false;
   g_MapChangePending = false;
@@ -125,13 +126,12 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   // that are set in the OnSeriesInit event.
   // Add to download table after setting.
   SetMatchTeamCvars();
-  ExecuteMatchConfigCvars();
-  LoadPlayerNames();
-  AddTeamLogosToDownloadTable();
 
   if (!restoreBackup) {
-    SetStartingTeams(); // This cannot be called during backup, as it will reset the sides!
+    SetStartingTeams();
     ExecCfg(g_WarmupCfgCvar);
+    ExecuteMatchConfigCvars();
+    LoadPlayerNames();
     EnsureIndefiniteWarmup();
     if (IsPaused()) {
       LogDebug("Match was paused when loading match config. Unpausing.");
@@ -152,13 +152,18 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     EventLogger_LogAndDeleteEvent(startEvent);
   }
 
+  AddTeamLogosToDownloadTable();
+  ExecuteMatchConfigCvars();
+  LoadPlayerNames();
+  strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
+
+  // ExecuteMatchConfigCvars must be executed before we place players, as it might have get5_check_auths 1.
   LOOP_CLIENTS(i) {
     if (IsAuthedPlayer(i)) {
       CheckClientTeam(i);
     }
   }
 
-  strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
   Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
   return true;
 }

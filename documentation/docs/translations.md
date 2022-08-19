@@ -29,9 +29,9 @@ entire language file**.
     ```
 
     1. The `#format` parameter indicates the order and types of parameters. These will *not* be defined in other 
-       and you should only provide the language string itself (with its language prefix, i.e. `en`). The original file
-       indicates what `{1}`, `{2}` and `{3}` are. In this case, the first and second arguments are strings and the third
-       is a number.
+       languages, and you should only provide the language string itself (with its language prefix, i.e. `en`). The
+       original file indicates what `{1}`, `{2}` and `{3}` are. In this case, the first and second arguments are strings
+       and the third is a number.
     2. Use the English strings and the [reference](#reference) below to determine how to translate the string.
 
 As the string implies, this example is used when a team picks a map, and the output is printed to chat and looks like
@@ -158,7 +158,12 @@ end with a full stop as this is added automatically.
 | `CaptainLeftOnVetoInfoMessage`              | A captain left during the veto, pausing the veto.                                                                                                                        | Chat       |
 | `ReadyToResumeVetoInfoMessage`              | Type _!ready_ when you are ready to resume the veto.                                                                                                                     | Chat       |
 | `MatchConfigLoadedInfoMessage`              | Loaded match config.                                                                                                                                                     | Chat       |
-| `MoveToCoachInfoMessage`                    | You were moved to the coach position because your team is full.                                                                                                          | Chat       |
+| `MoveToCoachInfoMessage`                    | You were moved to the coach position as your team is full.                                                                                                               | Chat       |
+| `CannotLeaveCoachingTeamIsFull`             | You cannot leave the coach position as your team is full.                                                                                                                | Chat       |
+| `CoachingNotEnabled`                        | Coaching is not enabled. You must set _sv_coaching_enabled_ to 1.                                                                                                        | Chat       |
+| `PlayerIsCoachingTeam`                      | _PlayerName_ is coaching _Team A_.                                                                                                                                       | Chat       |
+| `CanOnlyCoachDuringWarmup`                  | You can only change to or from coach during warmup.                                                                                                                      | Chat       |
+| `AllCoachSlotsFilledForTeam`                | All coach slots (_2_) are currently filled for your team.                                                                                                                | Chat       |
 | `ReadyTag`                                  | **[READY]** PlayerName: Hey, I'm ready...                                                                                                                                | Chat       |
 | `NotReadyTag`                               | **[NOT READY]** PlayerName: Hey, I'm not ready...                                                                                                                        | Chat       |
 | `MapVetoPickMenuText`                       | Select a map to PLAY:                                                                                                                                                    | Menu       |

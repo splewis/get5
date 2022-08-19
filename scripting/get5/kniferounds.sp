@@ -47,7 +47,7 @@ static void PerformSideSwap(bool swap) {
           // prevent one team from having too many players. They will rejoin if defined in the live config.
           KickClient(i);
         } else {
-          CheckClientTeam(i);
+          CheckClientTeam(i, false);
         }
       }
     }

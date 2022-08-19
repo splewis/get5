@@ -30,7 +30,8 @@ Please note that these can be typed by *all players* in chat.
 
 ####`!coach`
 
-:   Moves a client to [coach for their team](coaching.md).
+:   Requests to become a [coach](coaching.md) for your team. If already coaching, this will move you back as a player
+if possible. Can only be used during warmup.
 
 ####`!stay`
 

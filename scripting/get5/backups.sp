@@ -7,6 +7,11 @@ public Action Command_LoadBackup(int client, int args) {
     return Plugin_Handled;
   }
 
+  if (g_PendingSideSwap || InHalftimePhase()) {
+    ReplyToCommand(client, "You cannot load a backup during halftime.");
+    return Plugin_Handled;
+  }
+
   char path[PLATFORM_MAX_PATH];
   if (args >= 1 && GetCmdArg(1, path, sizeof(path))) {
     if (RestoreFromBackup(path)) {

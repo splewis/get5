@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Swagger UI</title>
+  <link rel="stylesheet" type="text/css" href="../assets/stylesheets/swagger-ui.css" />
+  <link rel="stylesheet" type="text/css" id="slate-css" media="none" href="../assets/stylesheets//swagger-ui-dark.css" />
+</head>
+
+<body style="overflow:hidden;background: ;">
+  <div id="swagger-ui"></div>
+  <script src="../assets/javascripts//swagger-ui-bundle.js" charset="UTF-8"> </script>
+  <script src="../assets/javascripts//swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+  <script>
+    window.onload = function () {
+      window.ui = SwaggerUIBundle({
+        "dom_id": '#swagger-ui',
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        
+        url: '../event_schema.yml',
+        
+        
+    "docExpansion": "list",
+    "filter": false,
+    "tryItOutEnabled": false,
+    "supportedSubmitMethods": [
+        "get",
+        "put",
+        "post",
+        "delete",
+        "options",
+        "head",
+        "patch",
+        "trace"
+    ],
+    "syntaxHighlight.theme": "agate"
+
+      })
+      const scheme = parent.scheme
+      if (scheme === "slate") {
+          enable_dark_mode();
+      }
+    }
+    const resize_ob = new ResizeObserver(function(entries) {
+      parent.update_swagger_ui_iframe_height("cdfc664e");
+    });
+
+    // start observing for resize
+    resize_ob.observe(document.querySelector("body"));
+
+    enable_dark_mode = function(){
+      document.getElementById("slate-css").media = ""
+    }
+
+    disable_dark_mode = function(){
+      document.getElementById("slate-css").media = "none"
+    }
+  </script>
+</body>
+
+</html>

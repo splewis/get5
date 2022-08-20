@@ -1,0 +1,1279 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="https://splewis.github.io/get5/latest/configuration/" rel="canonical"/>
+<link href="../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.4.0" name="generator"/>
+<title>Configuration - Get5</title>
+<link href="../assets/stylesheets/main.69437709.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="" data-md-color-primary="" data-md-color-scheme="default" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#configuration">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<div data-md-component="outdated" hidden="">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Get5" class="md-header__button md-logo" data-md-component="logo" href=".." title="Get5">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Get5
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Configuration
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="" data-md-color-media="" data-md-color-primary="" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="" data-md-color-media="" data-md-color-primary="" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+</form>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/splewis/get5" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.1.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    splewis/get5
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Get5" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Get5">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+    Get5
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/splewis/get5" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.1.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    splewis/get5
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="..">
+        Home
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2">
+          Setup
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Setup" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+          Setup
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../installation/">
+        Installation
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Configuration
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Configuration
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#main-config">
+    The Main Config File
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#phase-configuration-files">
+    Phase Configuration Files
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#server-setup">
+    Server Setup
+  </a>
+<nav aria-label="Server Setup" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_server_id">
+    get5_server_id
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_kick_immunity">
+    get5_kick_immunity
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stop_command_enabled">
+    get5_stop_command_enabled
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_kick_when_no_match_loaded">
+    get5_kick_when_no_match_loaded
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_end_match_on_empty_server">
+    get5_end_match_on_empty_server
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_display_gotv_veto">
+    get5_display_gotv_veto
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_check_auths">
+    get5_check_auths
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_print_update_notice">
+    get5_print_update_notice
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_pretty_print_json">
+    get5_pretty_print_json
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_hostname_format">
+    get5_hostname_format
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#match-setup">
+    Match Setup
+  </a>
+<nav aria-label="Match Setup" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_ready_team_tag">
+    get5_ready_team_tag
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_live_countdown_time">
+    get5_live_countdown_time
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_auto_ready_active_players">
+    get5_auto_ready_active_players
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_set_client_clan_tags">
+    get5_set_client_clan_tags
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_time_to_start">
+    get5_time_to_start
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_time_to_make_knife_decision">
+    get5_time_to_make_knife_decision
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_veto_countdown">
+    get5_veto_countdown
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_veto_confirmation_time">
+    get5_veto_confirmation_time
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_print_damage">
+    get5_print_damage
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_print_damage_excess">
+    get5_print_damage_excess
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_damageprint_format">
+    get5_damageprint_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_message_prefix">
+    get5_message_prefix
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pausing">
+    Pausing
+  </a>
+<nav aria-label="Pausing" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_pausing_enabled">
+    get5_pausing_enabled
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_max_pauses">
+    get5_max_pauses
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_max_pause_time">
+    get5_max_pause_time
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_fixed_pause_time">
+    get5_fixed_pause_time
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_allow_technical_pause">
+    get5_allow_technical_pause
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_max_tech_pauses">
+    get5_max_tech_pauses
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_tech_pause_time">
+    get5_tech_pause_time
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_pause_on_veto">
+    get5_pause_on_veto
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_reset_pauses_each_half">
+    get5_reset_pauses_each_half
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#formats">
+    Formats
+  </a>
+<nav aria-label="Formats" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_time_format">
+    get5_time_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_name_format">
+    get5_demo_name_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_event_log_format">
+    get5_event_log_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stats_path_format">
+    get5_stats_path_format
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#backup-system">
+    Backup System
+  </a>
+<nav aria-label="Backup System" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_backup_system_enabled">
+    get5_backup_system_enabled
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_max_backup_age">
+    get5_max_backup_age
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#config-files">
+    Config Files
+  </a>
+<nav aria-label="Config Files" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_live_cfg">
+    get5_live_cfg
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_autoload_config">
+    get5_autoload_config
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_warmup_cfg">
+    get5_warmup_cfg
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#substitution-variables">
+    Substitution Variables
+  </a>
+<nav aria-label="Substitution Variables" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#state-substitutes">
+    Match/State Substitutes
+  </a>
+<nav aria-label="Match/State Substitutes" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-time">
+    {TIME}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-mapname">
+    {MAPNAME}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-mapnumber">
+    {MAPNUMBER}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-maxmaps">
+    {MAXMAPS}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-matchid">
+    {MATCHID}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-team1">
+    {TEAM1}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-team2">
+    {TEAM2}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-matchtitle">
+    {MATCHTITLE}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-serverid">
+    {SERVERID}
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#color-substitutes">
+    Colour Substitutes
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3">
+          Basics
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Basics" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+          Basics
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../getting_started/">
+        Getting Started
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../commands/">
+        Commands
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../pausing/">
+        Pausing
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../backup/">
+        Backup System
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../match_schema/">
+        Match Schema
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4">
+          Advanced
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Advanced" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+          Advanced
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../developer_api/">
+        Developer API
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../events_and_forwards/">
+        Events &amp; Forwards
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../stats_system/">
+        Player Stats System
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../translations/">
+        Translations
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5">
+          Social
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Social" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+          Social
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../community/">
+        Community &amp; Support
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#main-config">
+    The Main Config File
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#phase-configuration-files">
+    Phase Configuration Files
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#server-setup">
+    Server Setup
+  </a>
+<nav aria-label="Server Setup" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_server_id">
+    get5_server_id
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_kick_immunity">
+    get5_kick_immunity
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stop_command_enabled">
+    get5_stop_command_enabled
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_kick_when_no_match_loaded">
+    get5_kick_when_no_match_loaded
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_end_match_on_empty_server">
+    get5_end_match_on_empty_server
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_display_gotv_veto">
+    get5_display_gotv_veto
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_check_auths">
+    get5_check_auths
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_print_update_notice">
+    get5_print_update_notice
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_pretty_print_json">
+    get5_pretty_print_json
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_hostname_format">
+    get5_hostname_format
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#match-setup">
+    Match Setup
+  </a>
+<nav aria-label="Match Setup" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_ready_team_tag">
+    get5_ready_team_tag
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_live_countdown_time">
+    get5_live_countdown_time
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_auto_ready_active_players">
+    get5_auto_ready_active_players
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_set_client_clan_tags">
+    get5_set_client_clan_tags
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_time_to_start">
+    get5_time_to_start
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_time_to_make_knife_decision">
+    get5_time_to_make_knife_decision
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_veto_countdown">
+    get5_veto_countdown
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_veto_confirmation_time">
+    get5_veto_confirmation_time
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_print_damage">
+    get5_print_damage
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_print_damage_excess">
+    get5_print_damage_excess
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_damageprint_format">
+    get5_damageprint_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_message_prefix">
+    get5_message_prefix
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pausing">
+    Pausing
+  </a>
+<nav aria-label="Pausing" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_pausing_enabled">
+    get5_pausing_enabled
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_max_pauses">
+    get5_max_pauses
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_max_pause_time">
+    get5_max_pause_time
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_fixed_pause_time">
+    get5_fixed_pause_time
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_allow_technical_pause">
+    get5_allow_technical_pause
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_max_tech_pauses">
+    get5_max_tech_pauses
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_tech_pause_time">
+    get5_tech_pause_time
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_pause_on_veto">
+    get5_pause_on_veto
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_reset_pauses_each_half">
+    get5_reset_pauses_each_half
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#formats">
+    Formats
+  </a>
+<nav aria-label="Formats" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_time_format">
+    get5_time_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_name_format">
+    get5_demo_name_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_event_log_format">
+    get5_event_log_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stats_path_format">
+    get5_stats_path_format
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#backup-system">
+    Backup System
+  </a>
+<nav aria-label="Backup System" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_backup_system_enabled">
+    get5_backup_system_enabled
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_max_backup_age">
+    get5_max_backup_age
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#config-files">
+    Config Files
+  </a>
+<nav aria-label="Config Files" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_live_cfg">
+    get5_live_cfg
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_autoload_config">
+    get5_autoload_config
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_warmup_cfg">
+    get5_warmup_cfg
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#substitution-variables">
+    Substitution Variables
+  </a>
+<nav aria-label="Substitution Variables" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#state-substitutes">
+    Match/State Substitutes
+  </a>
+<nav aria-label="Match/State Substitutes" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-time">
+    {TIME}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-mapname">
+    {MAPNAME}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-mapnumber">
+    {MAPNUMBER}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-maxmaps">
+    {MAXMAPS}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-matchid">
+    {MATCHID}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-team1">
+    {TEAM1}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-team2">
+    {TEAM2}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-matchtitle">
+    {MATCHTITLE}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-serverid">
+    {SERVERID}
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#color-substitutes">
+    Colour Substitutes
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/splewis/get5/blob/master/documentation/docs/configuration.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
+</a>
+<h1 id="configuration"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97 0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1 0 .33.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z"></path></svg></span> Configuration</h1>
+<p>This is a list of all the configuration parameters you can set that change how Get5 behaves.</p>
+<h3 id="main-config">The Main Config File</h3>
+<p>The config file is auto-generated on <strong>first plugin run</strong>, then auto-executed on each plugin start. The file is located
+here:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="l l-Scalar l-Scalar-Plain">cfg/sourcemod/get5.cfg</span><span class="w"></span>
+</code></pre></div>
+<p>You can either set the below parameters in that file, or in the <code>cvars</code> section of a match config. As mentioned in
+the explanation of the <a href="../match_schema">match schema</a>, that section will override all other settings.</p>
+<h3 id="phase-configuration-files">Phase Configuration Files</h3>
+<p>You should also have three config files. These can be edited, but we recommend not
+blindly pasting another config in (e.g. ESL, CEVO). Configs that execute warmup commands (<code>mp_warmup_end</code>, for
+example) <strong>will</strong> cause problems. These must only include commands you would run in the console (such
+as <code>mp_friendly_fire 1</code>) and should determine the rules for those three stage of your match. You can
+also <a href="#config-files">point to other files</a> by editing
+the main config file.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/warmup.cfg</span><span class="w"> </span><span class="c1"># (1)</span><span class="w"></span>
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/knife.cfg</span><span class="w"> </span><span class="c1"># (2)</span><span class="w"></span>
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/live.cfg</span><span class="w"> </span><span class="c1"># (3)</span><span class="w"></span>
+</code></pre></div>
+<ol>
+<li>Executed when the warmup/veto phase begins.</li>
+<li>Executed when the knife-round starts.</li>
+<li>Executed when the game goes live.</li>
+</ol>
+<h2 id="server-setup">Server Setup</h2>
+<p><strong>These options will generally not be directly presented to clients.</strong></p>
+<h4 id="get5_server_id"><code>get5_server_id</code></h4>
+<dl>
+<dd>Integer that identifies your server. This is used in temp files to prevent collisions. Defines the
+<a href="#tag-serverid"><code>{SERVERID}</code></a> substitution and the return value of the <code>Get5_GetServerID</code> native. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_kick_immunity"><code>get5_kick_immunity</code></h4>
+<dl>
+<dd>Whether <a href="../installation/#administrators">admins</a> will be immune to kicks from
+<a href="#get5_kick_when_no_match_loaded"><code>get5_kick_when_no_match_loaded</code></a>. <strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_stop_command_enabled"><code>get5_stop_command_enabled</code></h4>
+<dl>
+<dd>Whether the <a href="../commands/#stop"><code>!stop</code></a> command is enabled. <strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_kick_when_no_match_loaded"><code>get5_kick_when_no_match_loaded</code></h4>
+<dl>
+<dd>Whether to kick all clients if no match is loaded. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_end_match_on_empty_server"><code>get5_end_match_on_empty_server</code></h4>
+<dl>
+<dd>Whether the match is ended with no winner if all players leave (note: this will happen even if all players
+disconnect even in warmup with the intention to reconnect!). <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_display_gotv_veto"><code>get5_display_gotv_veto</code></h4>
+<dl>
+<dd>Whether to wait for map vetoes to be printed to GOTV before changing map. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_check_auths"><code>get5_check_auths</code></h4>
+<dl>
+<dd>Whether the Steam IDs from a "players" section are used to force players onto teams, and will kick
+users if they are not in the auth list. <strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_print_update_notice"><code>get5_print_update_notice</code></h4>
+<dl>
+<dd>Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if
+<a href="../installation/#steamworks">SteamWorks</a> has been installed. <strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_pretty_print_json"><code>get5_pretty_print_json</code></h4>
+<dl>
+<dd>Whether to pretty-print all JSON output. This also affects the output of JSON in the
+<a href="../events_and_forwards">event system</a>. <strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_hostname_format"><code>get5_hostname_format</code></h4>
+<dl>
+<dd>The hostname to apply to the server when a match configuration is loaded.
+<a href="#state-substitutes">State substitutes</a> can be used. Leave blank to disable changing the hostname.
+<strong><code>Default: Get5: {TEAM1} vs {TEAM2}</code></strong></dd>
+</dl>
+<h2 id="match-setup">Match Setup</h2>
+<p><strong>These options will generally be represented by in-game changes to the client.</strong></p>
+<h4 id="get5_ready_team_tag"><code>get5_ready_team_tag</code></h4>
+<dl>
+<dd>Adds <code>[READY]</code> or <code>[NOT READY]</code> tags before team names, and removes clan tags from users. <strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_live_countdown_time"><code>get5_live_countdown_time</code></h4>
+<dl>
+<dd>Number of seconds used to count down when a match is going live. <strong><code>Default: 10</code></strong></dd>
+</dl>
+<h4 id="get5_auto_ready_active_players"><code>get5_auto_ready_active_players</code></h4>
+<dl>
+<dd>Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_set_client_clan_tags"><code>get5_set_client_clan_tags</code></h4>
+<dl>
+<dd>Whether to set client clan tags to player ready status. <strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_time_to_start"><code>get5_time_to_start</code></h4>
+<dl>
+<dd>Time (in seconds) teams have to ready up before forfeiting the match, 0 = unlimited. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_time_to_make_knife_decision"><code>get5_time_to_make_knife_decision</code></h4>
+<dl>
+<dd>Time (in seconds) a team has to make a <a href="../commands/#stay"><code>!stay</code></a> or <a href="../commands/#swap"><code>!swap</code></a>
+decision after winning knife round, 0 = unlimited. <strong><code>Default: 60</code></strong></dd>
+</dl>
+<h4 id="get5_veto_countdown"><code>get5_veto_countdown</code></h4>
+<dl>
+<dd>Time (in seconds) to countdown before veto process commences. <strong><code>Default: 5</code></strong></dd>
+</dl>
+<h4 id="get5_veto_confirmation_time"><code>get5_veto_confirmation_time</code></h4>
+<dl>
+<dd>Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be
+required. 0 to disable. <strong><code>Default: 2.0</code></strong></dd>
+</dl>
+<h4 id="get5_print_damage"><code>get5_print_damage</code></h4>
+<dl>
+<dd>Whether to print damage reports on round ends. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_print_damage_excess"><code>get5_print_damage_excess</code></h4>
+<dl>
+<dd>Whether to include damage that exceeds the remaining health of a player in the chat
+report. If enabled, you can inflict more than 100 damage to a player in the damage report. Ignored if
+<a href="#get5_print_damage"><code>get5_print_damage</code></a> is disabled. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_damageprint_format"><code>get5_damageprint_format</code></h4>
+<dl>
+<dd>
+<p>Formatting of damage reports in chat on round end. Ignored
+if <a href="#get5_print_damage"><code>get5_print_damage</code></a> is disabled.
+<strong><code>Default: - [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)</code></strong></p>
+<p>The default example above prints the following to chat on round end and includes information about assists and flash
+assists.</p>
+<p><code>{KILL_TO}</code> becomes a green <code>X</code> for a kill or a yellow <code>A</code> or <code>F</code> for assist or flash assist, respectively.
+<code>{KILL_FROM}</code> is similar to <code>{KILL_TO}</code>, but the <code>X</code> value is red (indicating a player killed you). No attribution
+becomes a white dash.</p>
+</dd>
+</dl>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>[Get5] Team A 1 - 0 Team B
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - killed this player, they assisted in killing you
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - killed by this player, flash assisted in killing them
+<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - no interaction, this player survived
+<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - assisted in killing this player
+<a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - dealt damage to this player, not enough for assist
+</code></pre></div>
+<h4 id="get5_message_prefix"><code>get5_message_prefix</code></h4>
+<dl>
+<dd>The tag applied before plugin messages. If you change this variable, <code>Powered by Get5</code> will be printed when the game
+goes live. <strong><code>Default: Get5</code></strong></dd>
+</dl>
+<h2 id="pausing">Pausing</h2>
+<h4 id="get5_pausing_enabled"><code>get5_pausing_enabled</code></h4>
+<dl>
+<dd>Whether <a href="../pausing">pauses</a> are available to clients or not. <strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_max_pauses"><code>get5_max_pauses</code></h4>
+<dl>
+<dd>Number of <a href="../pausing/#tactical">tactical pauses</a> a team can use. 0 = unlimited. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_max_pause_time"><code>get5_max_pause_time</code></h4>
+<dl>
+<dd>Maximum number of seconds the game can spend under tactical pause for a team. 0 = unlimited. When pauses are
+unlimited and when <a href="#get5_fixed_pause_time">get5_fixed_pause_time</a> is zero, both teams
+must call <a href="../commands/#unpause"><code>!unpause</code></a> to continue the match. This parameter is ignored
+if <a href="#get5_fixed_pause_time">get5_fixed_pause_time</a> is set to a non-zero
+value. <strong><code>Default: 300 (5 minutes)</code></strong></dd>
+</dl>
+<h4 id="get5_fixed_pause_time"><code>get5_fixed_pause_time</code></h4>
+<dl>
+<dd>If non-zero, the fixed length in seconds all <a href="../pausing/#tactical"><code>tactical</code></a> pauses will be. Adjusting this to
+non-zero will use the in-game timeout counter, and the <a href="#get5_max_pause_time">get5_max_pause_time</a>
+parameter is ignored. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_allow_technical_pause"><code>get5_allow_technical_pause</code></h4>
+<dl>
+<dd>Whether <a href="../pausing/#technical">technical pauses</a> are available to clients or not. <strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_max_tech_pauses"><code>get5_max_tech_pauses</code></h4>
+<dl>
+<dd>Number of <a href="../pausing/#technical">technical pauses</a> a team is allowed to have, 0=unlimited. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_tech_pause_time"><code>get5_tech_pause_time</code></h4>
+<dl>
+<dd>If non-zero, number of seconds before any team can call <a href="../commands/#unpause"><code>!unpause</code></a> to end
+a <a href="../pausing/#technical">technical pause</a> without confirmation from the pausing team. 0 = unlimited and both teams
+must confirm. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_pause_on_veto"><code>get5_pause_on_veto</code></h4>
+<dl>
+<dd>Whether to freeze players during the map-veto phase. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_reset_pauses_each_half"><code>get5_reset_pauses_each_half</code></h4>
+<dl>
+<dd>Whether <a href="../pausing/#tactical">tactical pause</a> limits (time used and count) are reset each halftime period.
+<a href="../pausing/#technical">Technical pauses</a> are not reset. <strong><code>Default: 1</code></strong></dd>
+</dl>
+<h2 id="formats">Formats</h2>
+<p><strong>Note: for these, setting the cvar to an empty string ("") will disable the file writing entirely.</strong></p>
+<h4 id="get5_time_format"><code>get5_time_format</code></h4>
+<dl>
+<dd>Time format string. This determines the <a href="#tag-time"><code>{TIME}</code></a> tag. <strong>Do not change this unless you know what you are
+doing! Avoid using spaces or colons.</strong> <strong><code>Default: %Y-%m-%d_%H</code></strong></dd>
+</dl>
+<h4 id="get5_demo_name_format"><code>get5_demo_name_format</code></h4>
+<dl>
+<dd>Format to name demo files. Set to empty string to disable. <strong><code>Default: {MATCHID}_map{MAPNUMBER}_{MAPNAME}</code></strong></dd>
+</dl>
+<h4 id="get5_event_log_format"><code>get5_event_log_format</code></h4>
+<dl>
+<dd>Format to write event logs to. Set to empty string to disable. <strong><code>Default: ""</code></strong></dd>
+</dl>
+<h4 id="get5_stats_path_format"><code>get5_stats_path_format</code></h4>
+<dl>
+<dd>Path where stats are output at each map end if it is set. Set to empty string to
+disable. <strong><code>Default: get5_matchstats_{MATCHID}.cfg</code></strong></dd>
+</dl>
+<h2 id="backup-system">Backup System</h2>
+<h4 id="get5_backup_system_enabled"><code>get5_backup_system_enabled</code></h4>
+<dl>
+<dd>Whether the <a href="../backup/">backup system</a> is enabled. This is required for the use of the <a href="../commands/#stop"><code>!stop</code></a>
+command as well as the <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a> command. <strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_max_backup_age"><code>get5_max_backup_age</code></h4>
+<dl>
+<dd>Number of seconds before a Get5 backup file is automatically deleted. 0 to disable. <strong><code>Default: 160000</code></strong></dd>
+</dl>
+<h2 id="config-files">Config Files</h2>
+<h4 id="get5_live_cfg"><code>get5_live_cfg</code></h4>
+<dl>
+<dd>Config file executed when the game goes live. <strong><code>Default: get5/live.cfg</code></strong></dd>
+</dl>
+<h4 id="get5_autoload_config"><code>get5_autoload_config</code></h4>
+<dl>
+<dd>A config file to autoload on map starts if no match is loaded, relative to the <code>csgo</code> directory. Set to empty
+string
+to disable. <strong><code>Default: ""</code></strong></dd>
+</dl>
+<h4 id="get5_warmup_cfg"><code>get5_warmup_cfg</code></h4>
+<dl>
+<dd>Config file executed in warmup periods. <strong><code>Default: get5/warmup.cfg</code></strong></dd>
+</dl>
+<h2 id="substitution-variables">Substitution Variables</h2>
+<h3 id="state-substitutes">Match/State Substitutes</h3>
+<p>Various configuration parameters, such as the file format parameters or the <code>get5_hostname_format</code> option, take
+placeholder strings that will be replaced by meaningful values when printed.</p>
+<h4 id="tag-time"><code>{TIME}</code></h4>
+<dl>
+<dd>The current time, determined by <a href="#get5_time_format"><code>get5_time_format</code></a>.</dd>
+</dl>
+<h4 id="tag-mapname"><code>{MAPNAME}</code></h4>
+<dl>
+<dd>The pretty-printed name of the map, i.e. <strong>Dust II</strong> for <code>de_dust2</code>.</dd>
+</dl>
+<h4 id="tag-mapnumber"><code>{MAPNUMBER}</code></h4>
+<dl>
+<dd>The map number being played. <strong>Note: Not zero-indexed!</strong></dd>
+</dl>
+<h4 id="tag-maxmaps"><code>{MAXMAPS}</code></h4>
+<dl>
+<dd>The maximum number of maps in the series, i.e. <code>3</code> for a Bo3. <strong>Note: Not zero-indexed!</strong></dd>
+</dl>
+<h4 id="tag-matchid"><code>{MATCHID}</code></h4>
+<dl>
+<dd>The match ID.</dd>
+</dl>
+<h4 id="tag-team1"><code>{TEAM1}</code></h4>
+<dl>
+<dd>The name of <code>team1</code>.</dd>
+</dl>
+<h4 id="tag-team2"><code>{TEAM2}</code></h4>
+<dl>
+<dd>The name of <code>team2</code>.</dd>
+</dl>
+<h4 id="tag-matchtitle"><code>{MATCHTITLE}</code></h4>
+<dl>
+<dd>The title of the current match.</dd>
+</dl>
+<h4 id="tag-serverid"><code>{SERVERID}</code></h4>
+<dl>
+<dd>The value provided to the <a href="#get5_server_id"><code>get5_server_id</code></a> parameter.</dd>
+</dl>
+<h3 id="color-substitutes">Colour Substitutes</h3>
+<p>These variables can be used to color text in the chat. You must return to <code>{NORMAL}</code> (white)
+after using a color variable. Note that a color prefix cannot be <em>followed by a space</em>.</p>
+<p>Example: <code>This text becomes {DARK_RED}red{NORMAL}, while {YELLOW}all of this will be yellow</code>.</p>
+<ul>
+<li><code>{NORMAL}</code></li>
+<li><code>{DARK_RED}</code></li>
+<li><code>{PINK}</code></li>
+<li><code>{GREEN}</code></li>
+<li><code>{YELLOW}</code></li>
+<li><code>{LIGHT_GREEN}</code></li>
+<li><code>{LIGHT_RED}</code></li>
+<li><code>{GRAY}</code></li>
+<li><code>{ORANGE}</code></li>
+<li><code>{LIGHT_BLUE}</code></li>
+<li><code>{DARK_BLUE}</code></li>
+<li><code>{PURPLE}</code></li>
+</ul>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Installation" class="md-footer__link md-footer__link--prev" href="../installation/" rel="prev">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</div>
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Previous
+              </span>
+              Installation
+            </div>
+</div>
+</a>
+<a aria-label="Next: Getting Started" class="md-footer__link md-footer__link--next" href="../getting_started/" rel="next">
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Next
+              </span>
+              Getting Started
+            </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+<script src="../assets/javascripts/bundle.9c69f0bc.min.js"></script>
+<script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
+<script src="../javascripts/tablesort.js"></script>
+</body>
+</html>

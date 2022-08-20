@@ -1,0 +1,945 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="https://splewis.github.io/get5/latest/commands/" rel="canonical"/>
+<link href="../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.4.0" name="generator"/>
+<title>Commands - Get5</title>
+<link href="../assets/stylesheets/main.69437709.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="" data-md-color-primary="" data-md-color-scheme="default" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#commands">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<div data-md-component="outdated" hidden="">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Get5" class="md-header__button md-logo" data-md-component="logo" href=".." title="Get5">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Get5
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Commands
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="" data-md-color-media="" data-md-color-primary="" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="" data-md-color-media="" data-md-color-primary="" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
+</label>
+</form>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/splewis/get5" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.1.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    splewis/get5
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Get5" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Get5">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+    Get5
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/splewis/get5" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.1.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    splewis/get5
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="..">
+        Home
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2">
+          Setup
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Setup" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+          Setup
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../installation/">
+        Installation
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../configuration/">
+        Configuration
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3">
+          Basics
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Basics" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+          Basics
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../getting_started/">
+        Getting Started
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Commands
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Commands
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#client-commands">
+    Client Commands
+  </a>
+<nav aria-label="Client Commands" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ready">
+    !ready
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#unready">
+    !unready
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pause">
+    !pause or !tac
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#unpause">
+    !unpause
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tech">
+    !tech
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#coach">
+    !coach
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stay">
+    !stay
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#swap">
+    !swap or !switch
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stop">
+    !stop
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#forceready">
+    !forceready
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ringer">
+    !ringer
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#scrim">
+    !scrim
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5">
+    !get5
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#serveradmin-commands">
+    Server/Admin Commands
+  </a>
+<nav aria-label="Server/Admin Commands" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_loadmatch">
+    get5_loadmatch &lt;filename&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_loadbackup">
+    get5_loadbackup &lt;filename&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_last_backup_file">
+    get5_last_backup_file
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_loadteam">
+    get5_loadteam &lt;team1|team2|spec&gt; &lt;filename&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_loadmatch_url">
+    get5_loadmatch_url &lt;url&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_endmatch">
+    get5_endmatch
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_creatematch">
+    get5_creatematch
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_scrim">
+    get5_scrim [opposing team name] [map name] [matchid]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_addplayer">
+    get5_addplayer &lt;auth&gt; &lt;team1|team2|spec&gt; [name]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_addcoach">
+    get5_addcoach &lt;auth&gt; &lt;team1|team2&gt; [name]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_removeplayer-auth">
+    get5_removeplayer &lt;auth&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_addkickedplayer">
+    get5_addkickedplayer &lt;team1|team2|spec&gt; [name]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_removekickedplayer">
+    get5_removekickedplayer &lt;team1|team2|spec&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_forceready">
+    get5_forceready
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_dumpstats">
+    get5_dumpstats
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_status">
+    get5_status
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_listbackups">
+    get5_listbackups [matchid]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_ringer-player">
+    get5_ringer &lt;player&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_debuginfo">
+    get5_debuginfo [file]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_test">
+    get5_test
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_web_available">
+    get5_web_available
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../pausing/">
+        Pausing
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../backup/">
+        Backup System
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../match_schema/">
+        Match Schema
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4">
+          Advanced
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Advanced" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+          Advanced
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../developer_api/">
+        Developer API
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../events_and_forwards/">
+        Events &amp; Forwards
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../stats_system/">
+        Player Stats System
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../translations/">
+        Translations
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5">
+          Social
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Social" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+          Social
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../community/">
+        Community &amp; Support
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#client-commands">
+    Client Commands
+  </a>
+<nav aria-label="Client Commands" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ready">
+    !ready
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#unready">
+    !unready
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pause">
+    !pause or !tac
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#unpause">
+    !unpause
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tech">
+    !tech
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#coach">
+    !coach
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stay">
+    !stay
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#swap">
+    !swap or !switch
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stop">
+    !stop
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#forceready">
+    !forceready
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ringer">
+    !ringer
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#scrim">
+    !scrim
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5">
+    !get5
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#serveradmin-commands">
+    Server/Admin Commands
+  </a>
+<nav aria-label="Server/Admin Commands" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_loadmatch">
+    get5_loadmatch &lt;filename&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_loadbackup">
+    get5_loadbackup &lt;filename&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_last_backup_file">
+    get5_last_backup_file
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_loadteam">
+    get5_loadteam &lt;team1|team2|spec&gt; &lt;filename&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_loadmatch_url">
+    get5_loadmatch_url &lt;url&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_endmatch">
+    get5_endmatch
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_creatematch">
+    get5_creatematch
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_scrim">
+    get5_scrim [opposing team name] [map name] [matchid]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_addplayer">
+    get5_addplayer &lt;auth&gt; &lt;team1|team2|spec&gt; [name]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_addcoach">
+    get5_addcoach &lt;auth&gt; &lt;team1|team2&gt; [name]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_removeplayer-auth">
+    get5_removeplayer &lt;auth&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_addkickedplayer">
+    get5_addkickedplayer &lt;team1|team2|spec&gt; [name]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_removekickedplayer">
+    get5_removekickedplayer &lt;team1|team2|spec&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_forceready">
+    get5_forceready
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_dumpstats">
+    get5_dumpstats
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_status">
+    get5_status
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_listbackups">
+    get5_listbackups [matchid]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_ringer-player">
+    get5_ringer &lt;player&gt;
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_debuginfo">
+    get5_debuginfo [file]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_test">
+    get5_test
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_web_available">
+    get5_web_available
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/splewis/get5/blob/master/documentation/docs/commands.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
+</a>
+<h1 id="commands"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 2a4 4 0 0 1 4 4v2h4V6a4 4 0 0 1 4-4 4 4 0 0 1 4 4 4 4 0 0 1-4 4h-2v4h2a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4v-2h-4v2a4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4h2v-4H6a4 4 0 0 1-4-4 4 4 0 0 1 4-4m10 16a2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2h-2v2m-2-8h-4v4h4v-4m-8 6a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2v-2H6M8 6a2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2h2V6m10 2a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2v2h2Z"></path></svg></span> Commands</h1>
+<p>Generally admin commands will have a <code>get5_</code> prefix and must be used in console. Commands intended for general player
+usage are created with <code>sm_</code> prefixes, which means SourceMod automatically registers a <code>!</code> and <code>.</code> chat version of the
+command. (For example: <code>sm_ready</code> in console is equivalent to <code>!ready</code> or <code>.ready</code> in chat).</p>
+<h2 id="client-commands">Client Commands</h2>
+<p>Please note that these can be typed by <em>all players</em> in chat.</p>
+<h4 id="ready"><code>!ready</code></h4>
+<dl>
+<dd>Marks the player as ready.</dd>
+</dl>
+<h4 id="unready"><code>!unready</code></h4>
+<dl>
+<dd>Marks the player as not ready.</dd>
+</dl>
+<h4 id="pause"><code>!pause</code> or <code>!tac</code></h4>
+<dl>
+<dd>Requests a <a href="../pausing/#tactical">tactical pause</a>.</dd>
+</dl>
+<h4 id="unpause"><code>!unpause</code></h4>
+<dl>
+<dd>Requests to unpause the game.</dd>
+</dl>
+<h4 id="tech"><code>!tech</code></h4>
+<dl>
+<dd>Requests a <a href="../pausing/#technical">technical pause</a>.</dd>
+</dl>
+<h4 id="coach"><code>!coach</code></h4>
+<dl>
+<dd>Moves a client to coach for their team. Requires that
+the <a href="https://totalcsgo.com/command/svcoachingenabled"><code>sv_coaching_enabled</code></a> variable is set to <code>1</code>.</dd>
+</dl>
+<h4 id="stay"><code>!stay</code></h4>
+<dl>
+<dd>Elects to stay after a knife round win. This can be substituted by <code>!ct</code> or <code>!t</code> to select a side.</dd>
+</dl>
+<h4 id="swap"><code>!swap</code> or <code>!switch</code></h4>
+<dl>
+<dd>Elects to swap team side after a knife round win. This can be substituted by <code>!ct</code> or <code>!t</code> to select a side.</dd>
+</dl>
+<h4 id="stop"><code>!stop</code></h4>
+<dl>
+<dd>Asks to reload the last match backup file. The opposing team must confirm. Only works if
+the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a> and
+the <a href="../configuration/#get5_stop_command_enabled">get5_stop_command_enabled</a> is set to <code>1</code>.</dd>
+</dl>
+<h4 id="forceready"><code>!forceready</code></h4>
+<dl>
+<dd>Force-readies your team, marking all players on your team as ready.</dd>
+</dl>
+<h4 id="ringer"><code>!ringer</code></h4>
+<dl>
+<dd>Adds/removes a ringer to/from the home scrim team.</dd>
+</dl>
+<h4 id="scrim"><code>!scrim</code></h4>
+<dl>
+<dd>Shortcut for <a href="#get5_scrim"><code>get5_scrim</code></a>.</dd>
+</dl>
+<h4 id="get5"><code>!get5</code></h4>
+<dl>
+<dd>Opens a menu that wraps some common commands. It's mostly intended for people using scrim settings, and has
+menu buttons for starting a scrim, force-starting, force-ending, adding a ringer, and loading the most recent backup
+file.</dd>
+</dl>
+<h2 id="serveradmin-commands">Server/Admin Commands</h2>
+<p>Please note that these are meant to be used by <em>admins</em> in console.</p>
+<h4 id="get5_loadmatch"><code>get5_loadmatch &lt;filename&gt;</code></h4>
+<dl>
+<dd>Loads a <a href="../match_schema">match configuration</a> file (JSON or KeyValue) relative from the <code>csgo</code> directory.</dd>
+</dl>
+<h4 id="get5_loadbackup"><code>get5_loadbackup &lt;filename&gt;</code></h4>
+<dl>
+<dd>Loads a match backup file (JSON or KeyValue) relative from the <code>csgo</code>
+directory. Only works if the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a>.</dd>
+</dl>
+<h4 id="get5_last_backup_file"><code>get5_last_backup_file</code></h4>
+<dl>
+<dd>Prints the name of the last match backup file Get5 wrote in the current series, this is automatically updated each
+time a backup file is written. Empty string if no backup was written.</dd>
+</dl>
+<h4 id="get5_loadteam"><code>get5_loadteam &lt;team1|team2|spec&gt; &lt;filename&gt;</code></h4>
+<dl>
+<dd>Loads a <a href="../match_schema">team section of a match configuration</a> from a file into a team relative from the <code>csgo</code>
+directory. The file must contain a <code>Get5MatchTeam</code> object.</dd>
+</dl>
+<h4 id="get5_loadmatch_url"><code>get5_loadmatch_url &lt;url&gt;</code></h4>
+<dl>
+<dd>Loads a remote (JSON-formatted) <a href="../match_schema">match configuration</a> by sending an HTTP(S) <code>GET</code> to the given URL.
+You should put the <code>url</code> argument inside quotation marks (<code>""</code>).</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">SteamWorks required</p>
+<p>Loading remote matches requires the <a href="../installation/#steamworks">SteamWorks</a> extension.</p>
+</div>
+<h4 id="get5_endmatch"><code>get5_endmatch</code></h4>
+<dl>
+<dd>Force ends the current match. No winner is set (draw).</dd>
+</dl>
+<h4 id="get5_creatematch"><code>get5_creatematch</code></h4>
+<dl>
+<dd>Creates a BO1 match with the current players on the server on the current map.</dd>
+</dl>
+<h4 id="get5_scrim"><code>get5_scrim [opposing team name] [map name] [matchid]</code></h4>
+<dl>
+<dd>Creates a <a href="../getting_started/#scrims">scrim</a> on the current map. For example, if you're
+playing <em>fnatic</em> on <code>de_dust2</code> you might run <code>get5_scrim fnatic de_dust2</code>. The other team name defaults to "away"
+and the map defaults to the current map. <code>matchid</code> defaults to an empty string.</dd>
+</dl>
+<h4 id="get5_addplayer"><code>get5_addplayer &lt;auth&gt; &lt;team1|team2|spec&gt; [name]</code></h4>
+<dl>
+<dd>Adds a Steam ID to a team (can be any format for the Steam ID). The name parameter optionally locks the player's
+name.</dd>
+</dl>
+<h4 id="get5_addcoach"><code>get5_addcoach &lt;auth&gt; &lt;team1|team2&gt; [name]</code></h4>
+<dl>
+<dd>Adds a Steam ID to a team as a coach. The name parameter optionally locks the player's
+name.</dd>
+</dl>
+<h4 id="get5_removeplayer-auth"><code>get5_removeplayer &lt;auth&gt;</code></h4>
+<dl>
+<dd>Removes a steam ID from all teams (can be any format for the Steam ID).</dd>
+</dl>
+<h4 id="get5_addkickedplayer"><code>get5_addkickedplayer &lt;team1|team2|spec&gt; [name]</code></h4>
+<dl>
+<dd>Adds the last kicked Steam ID to a team. The name parameter optionally locks the player's name.</dd>
+</dl>
+<h4 id="get5_removekickedplayer"><code>get5_removekickedplayer &lt;team1|team2|spec&gt;</code></h4>
+<dl>
+<dd>Removes the last kicked Steam ID from all teams. Cannot be used in scrim mode.</dd>
+</dl>
+<h4 id="get5_forceready"><code>get5_forceready</code></h4>
+<dl>
+<dd>Marks all teams as ready. <code>get5_forcestart</code> does the same thing.</dd>
+</dl>
+<h4 id="get5_dumpstats"><code>get5_dumpstats</code></h4>
+<dl>
+<dd>Dumps current match stats to a file.</dd>
+</dl>
+<h4 id="get5_status"><code>get5_status</code></h4>
+<dl>
+<dd>Replies with JSON formatted match state (available to all clients).</dd>
+</dl>
+<details class="abstract">
+<summary>Definition</summary>
+<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:"/> Properties marked as <code>undefined</code> are only present if a match configuration has been loaded.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">StatusTeam</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">    </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="c1">// (11)</span><span class="w"></span>
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">    </span><span class="s2">"series_score"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="c1">// (12)</span><span class="w"></span>
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">    </span><span class="s2">"current_map_score"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="c1">// (13)</span><span class="w"></span>
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="s2">"connected_clients"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="c1">// (14)</span><span class="w"></span>
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">    </span><span class="s2">"ready"</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">,</span><span class="w"> </span><span class="c1">// (15)</span><span class="w"></span>
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="s2">"side"</span><span class="o">:</span><span class="w"> </span><span class="s2">"t"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"ct"</span><span class="w"> </span><span class="c1">// (16)</span><span class="w"></span>
+<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="p">}</span><span class="w"></span>
+<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>
+<a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">Status</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="w">    </span><span class="s2">"plugin_version"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="c1">// (1)</span><span class="w"></span>
+<a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">    </span><span class="s2">"gamestate"</span><span class="o">:</span><span class="w"> </span><span class="s2">"none"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"pre_veto"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"veto"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"warmup"</span><span class="w"></span>
+<a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="s2">"knife"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"waiting_for_knife_decision"</span><span class="w"></span>
+<a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="s2">"going_live"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"live"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"post_game"</span><span class="p">,</span><span class="w"> </span><span class="c1">// (2)</span><span class="w"></span>
+<a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">    </span><span class="s2">"paused"</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">,</span><span class="w"> </span><span class="c1">// (3)</span><span class="w"></span>
+<a href="#__codelineno-0-16" id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="w">    </span><span class="s2">"loaded_config_file"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (4)</span><span class="w"></span>
+<a href="#__codelineno-0-17" id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="w">    </span><span class="s2">"matchid"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (5)</span><span class="w"></span>
+<a href="#__codelineno-0-18" id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="w">    </span><span class="s2">"map_number"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (6)</span><span class="w"></span>
+<a href="#__codelineno-0-19" id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="w">    </span><span class="s2">"round_number"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (7)</span><span class="w"></span>
+<a href="#__codelineno-0-20" id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="w">    </span><span class="s2">"round_time"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (8)</span><span class="w"></span>
+<a href="#__codelineno-0-21" id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">    </span><span class="s2">"team1"</span><span class="o">:</span><span class="w"> </span><span class="nx">StatusTeam</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (9),</span><span class="w"></span>
+<a href="#__codelineno-0-22" id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="w">    </span><span class="s2">"team2"</span><span class="o">:</span><span class="w"> </span><span class="nx">StatusTeam</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (10)</span><span class="w"></span>
+<a href="#__codelineno-0-23" id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="w">    </span><span class="s2">"maps"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (17)</span><span class="w"></span>
+<a href="#__codelineno-0-24" id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<ol>
+<li>The version of Get5 you are currently running, along with that version's commit. <code>Example: "0.8.1-8ef7ffa3"</code></li>
+<li>The current state of the game. The definition lists them in the order they occur.</li>
+<li>Whether the game is currently paused.</li>
+<li>The match configuration file currently loaded. <code>Example: "addons/sourcemod/configs/get5/match_config.json"</code>.</li>
+<li>The current match ID. Empty string if not defined or <code>scrim</code> or <code>manual</code> if using
+   <a href="../commands/#get5_scrim"><code>get5_scrim</code></a> or <a href="../commands/#get5_creatematch"><code>get5_creatematch</code></a>.</li>
+<li>The current map number, starting at <code>0</code>. You can use this to determine the current map by looking at the <code>maps</code>
+   array.</li>
+<li>The current round number, starting at <code>0</code>. <code>-1</code> if <code>gamestate</code> is not <code>live</code>.</li>
+<li>The number of milliseconds elapsed in the current round.</li>
+<li>Describes <code>team1</code>.</li>
+<li>Describes <code>team2</code>.</li>
+<li>The name of the team.</li>
+<li>The current series score; the number of maps won.</li>
+<li>The number of rounds won on the current map.</li>
+<li>The number of currently connected players.</li>
+<li>Whether the team is <a href="../commands/#ready"><code>!ready</code></a>.</li>
+<li>The side the team is currently on.</li>
+<li>The maps to be played in the series, i.e. <code>["de_dust2", "de_mirage", "de_nuke"]</code>. Maps are played in the order they
+    appear in this array. <code>map_number</code> is the array index of the current map. <strong>Note:</strong> <code>maps</code> is only present if the
+    maps have been decided (i.e. after <code>veto</code>).</li>
+</ol>
+</details>
+<details class="example">
+<summary>Example</summary>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">    </span><span class="s2">"plugin_version"</span><span class="o">:</span><span class="w"> </span><span class="s2">"0.9.4-8ef7ffa3"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">    </span><span class="s2">"gamestate"</span><span class="o">:</span><span class="w"> </span><span class="s2">"live"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">    </span><span class="s2">"paused"</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="s2">"loaded_config_file"</span><span class="o">:</span><span class="w"> </span><span class="s2">"addons/sourcemod/configs/get5/match_config.json"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">    </span><span class="s2">"matchid"</span><span class="o">:</span><span class="w"> </span><span class="s2">"1743"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">    </span><span class="s2">"map_number"</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">    </span><span class="s2">"round_number"</span><span class="o">:</span><span class="w"> </span><span class="mf">14</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w">    </span><span class="s2">"round_time"</span><span class="o">:</span><span class="w"> </span><span class="mf">14234</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="w">    </span><span class="s2">"team1"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-1-11" id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="w">        </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="s2">"NaVi"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-12" id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="w">        </span><span class="s2">"series_score"</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-13" id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="w">        </span><span class="s2">"current_map_score"</span><span class="o">:</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-14" id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="w">        </span><span class="s2">"connected_clients"</span><span class="o">:</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-15" id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="w">        </span><span class="s2">"ready"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-16" id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="w">        </span><span class="s2">"side"</span><span class="o">:</span><span class="w"> </span><span class="s2">"t"</span><span class="w"></span>
+<a href="#__codelineno-1-17" id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="w">    </span><span class="p">},</span><span class="w"></span>
+<a href="#__codelineno-1-18" id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="w">    </span><span class="s2">"team2"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-1-19" id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="w">        </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Astralis"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-20" id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="w">        </span><span class="s2">"series_score"</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-21" id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="w">        </span><span class="s2">"current_map_score"</span><span class="o">:</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-22" id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="w">        </span><span class="s2">"connected_clients"</span><span class="o">:</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-23" id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="w">        </span><span class="s2">"ready"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-24" id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="w">        </span><span class="s2">"side"</span><span class="o">:</span><span class="w"> </span><span class="s2">"ct"</span><span class="w"></span>
+<a href="#__codelineno-1-25" id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="w">    </span><span class="p">},</span><span class="w"></span>
+<a href="#__codelineno-1-26" id="__codelineno-1-26" name="__codelineno-1-26"></a><span class="w">    </span><span class="s2">"maps"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<a href="#__codelineno-1-27" id="__codelineno-1-27" name="__codelineno-1-27"></a><span class="w">        </span><span class="s2">"de_dust2"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-28" id="__codelineno-1-28" name="__codelineno-1-28"></a><span class="w">        </span><span class="s2">"de_nuke"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-29" id="__codelineno-1-29" name="__codelineno-1-29"></a><span class="w">        </span><span class="s2">"de_inferno"</span><span class="w"></span>
+<a href="#__codelineno-1-30" id="__codelineno-1-30" name="__codelineno-1-30"></a><span class="w">    </span><span class="p">]</span><span class="w"></span>
+<a href="#__codelineno-1-31" id="__codelineno-1-31" name="__codelineno-1-31"></a><span class="p">}</span><span class="w"></span>
+</code></pre></div>
+</details>
+<h4 id="get5_listbackups"><code>get5_listbackups [matchid]</code></h4>
+<dl>
+<dd>Lists backup files for the current match or a given match ID if provided.</dd>
+</dl>
+<h4 id="get5_ringer-player"><code>get5_ringer &lt;player&gt;</code></h4>
+<dl>
+<dd>Adds/removes a ringer to/from the home scrim team. <code>player</code> is the name of the player. Similar
+to <a href="../commands/#ringer"><code>!ringer</code></a></dd>
+</dl>
+<h4 id="get5_debuginfo"><code>get5_debuginfo [file]</code></h4>
+<dl>
+<dd>Dumps debug info to a file (<code>addons/sourcemod/logs/get5_debuginfo.txt</code> if no file parameter is provided).</dd>
+</dl>
+<h4 id="get5_test"><code>get5_test</code></h4>
+<dl>
+<dd>Runs get5 tests. <strong>This should not be used on a live match server since it will reload a match config to test</strong>.</dd>
+</dl>
+<h4 id="get5_web_available"><code>get5_web_available</code></h4>
+<dl>
+<dd>Indicates if the Get5 web panel has been installed.</dd>
+</dl>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Getting Started" class="md-footer__link md-footer__link--prev" href="../getting_started/" rel="prev">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</div>
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Previous
+              </span>
+              Getting Started
+            </div>
+</div>
+</a>
+<a aria-label="Next: Pausing" class="md-footer__link md-footer__link--next" href="../pausing/" rel="next">
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Next
+              </span>
+              Pausing
+            </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+<script src="../assets/javascripts/bundle.9c69f0bc.min.js"></script>
+<script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
+<script src="../javascripts/tablesort.js"></script>
+</body>
+</html>

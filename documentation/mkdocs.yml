@@ -22,6 +22,12 @@ theme:
         name: Switch to light mode
 plugins:
   - swagger-ui-tag
+  - mike:
+      # These fields are all optional; the defaults are as below...
+      canonical_version: null
+      version_selector: true
+      css_dir: css
+      javascript_dir: js
 nav:
   - Home: index.md
   - Setup:
@@ -59,3 +65,7 @@ markdown_extensions:
 extra_javascript:
   - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
   - javascripts/tablesort.js
+extra:
+  version:
+    default: latest
+    provider: mike

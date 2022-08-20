@@ -4,7 +4,6 @@ on:
     branches:
       - "master"
       - "development"
-      - "adjust_docs"
 jobs:
   build:
     name: Deploy docs
@@ -12,12 +11,17 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v2
-
-      - name: Deploy docs
-        uses: mhausenblas/mkdocs-deploy-gh-pages@master
-        # Or use mhausenblas/mkdocs-deploy-gh-pages@nomaterial to build without the mkdocs-material theme
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CONFIG_FILE: documentation/mkdocs.yml
-          EXTRA_PACKAGES: build-base
-          REQUIREMENTS: documentation/requirements.txt
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: |
+          cd documentation
+          pip install -r requirements.txt
+          git config user.name docs && git config user.email githubactions@github.com
+          git fetch origin gh-pages --depth=1
+          if [ ${{ github.ref }} == 'refs/heads/master' ]
+          then
+            mike deploy latest --push
+          else
+            mike deploy dev --push
+          fi

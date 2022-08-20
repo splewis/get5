@@ -326,7 +326,27 @@
     }
     "MoveToCoachInfoMessage"
     {
-        "da"            "Da dit hold er fuldt, blev du flyttet til trænerposition."
+        "da"            "Da dit hold er fyldt, blev du flyttet til trænerposition."
+    }
+    "CannotLeaveCoachingTeamIsFull"
+    {
+        "da"            "Du kan ikke forlade trænerpositionen, da dit hold er fyldt."
+    }
+    "CoachingNotEnabled"
+    {
+        "da"            "Trænerindstillingen er ikke aktiveret. {1} skal sættes til 1."
+    }
+    "PlayerIsCoachingTeam"
+    {
+        "da"            "{1} er træner for {2}."
+    }
+    "CanOnlyCoachDuringWarmup"
+    {
+        "da"            "Du kan kun skifte til og fra trænerposition under opvarmning,"
+    }
+    "AllCoachSlotsFilledForTeam"
+    {
+        "da"            "Alle trænerpositioner ({1}) for dit hold er fyldt."
     }
     "ReadyTag"
     {

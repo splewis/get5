@@ -129,7 +129,9 @@ public Action Command_SmCoach(int client, int args) {
   }
 
   if (!g_CoachingEnabledCvar.BoolValue) {
-    Get5_Message(client, "%t", "CoachingNotEnabled", "sv_coaching_enabled");
+    char formattedCoachingCvar[64];
+    FormatCvarName(formattedCoachingCvar, sizeof(formattedCoachingCvar), "sv_coaching_enabled");
+    Get5_Message(client, "%t", "CoachingNotEnabled", formattedCoachingCvar);
     return Plugin_Continue;
   }
 

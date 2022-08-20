@@ -63,12 +63,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     return false;
   }
 
-  if (!g_CheckAuthsCvar.BoolValue &&
-      (GetTeamAuths(Get5Team_1).Length != 0 || GetTeamAuths(Get5Team_2).Length != 0)) {
-    LogError(
-        "Setting player auths in the \"players\" section has no impact with get5_check_auths 0");
-  }
-
   // Copy all the maps into the veto pool.
   char mapName[PLATFORM_MAX_PATH];
   for (int i = 0; i < g_MapPoolList.Length; i++) {
@@ -150,6 +144,14 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     Call_Finish();
 
     EventLogger_LogAndDeleteEvent(startEvent);
+
+    if (!g_CheckAuthsCvar.BoolValue &&
+        (GetTeamAuths(Get5Team_1).Length != 0
+        || GetTeamAuths(Get5Team_2).Length != 0
+        || GetTeamCoaches(Get5Team_1).Length != 0
+        || GetTeamCoaches(Get5Team_2).Length != 0)) {
+      LogError("Setting player auths in the \"players\" or \"coaches\" section has no impact with get5_check_auths 0");
+    }
   }
 
   AddTeamLogosToDownloadTable();

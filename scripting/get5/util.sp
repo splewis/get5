@@ -124,6 +124,10 @@ stock void FormatChatCommand(char[] buffer, const int bufferLength, const char[]
   Format(buffer, bufferLength, "{GREEN}%s{NORMAL}", command);
 }
 
+stock void FormatCvarName(char[] buffer, const int bufferLength, const char[] cVar) {
+  Format(buffer, bufferLength, "{GRAY}%s{NORMAL}", cVar);
+}
+
 stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client, const Get5Side forcedSide = Get5Side_None) {
   // Used when injecting the team for coaching players, who are always on team spectator.
   Get5Side side;

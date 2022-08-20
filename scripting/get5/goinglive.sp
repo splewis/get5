@@ -56,6 +56,7 @@ public Action MatchLive(Handle timer) {
   if (g_RunningPrereleaseVersion) {
     char conVarName[64];
     g_PrintUpdateNoticeCvar.GetName(conVarName, sizeof(conVarName));
+    FormatCvarName(conVarName, sizeof(conVarName), conVarName);
     Get5_MessageToAll("%t", "PrereleaseVersionWarning", PLUGIN_VERSION, conVarName);
   } else if (g_NewerVersionAvailable) {
     Get5_MessageToAll("%t", "NewVersionAvailable", GET5_GITHUB_PAGE);

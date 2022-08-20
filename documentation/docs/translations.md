@@ -177,3 +177,19 @@ end with a full stop as this is added automatically.
 | `VetoCountdown`                             | Veto commencing in _3_ seconds.                                                                                                                                          | Chat       |
 | `NewVersionAvailable`                       | A newer version of Get5 is available. Please visit _splewis.github.io/get5_ to update.                                                                                   | Chat       |
 | `PrereleaseVersionWarning`                  | You are running an unofficial version of Get5 (_0.9.0-c7af39a_) intended for development and testing only. This message can be disabled with _get5_print_update_notice_. | Chat       |
+
+## Supported Languages {: #supported-languages }
+
+These are the languages Get5 supports. The links will take you to the source translation file for the language on
+GitHub. Most languages are incomplete, and if a translation string is missing, the English default will be used.
+
+#### :flag_gb: [English](https://github.com/splewis/get5/blob/development/translations/get5.phrases.txt) (default) {: #en }
+#### :flag_fr: [French](https://github.com/splewis/get5/tree/development/translations/fr/get5.phrases.txt) {: #fr }
+#### :flag_de: [German](https://github.com/splewis/get5/tree/development/translations/de/get5.phrases.txt) {: #de }
+#### :flag_es: [Spanish](https://github.com/splewis/get5/tree/development/translations/es/get5.phrases.txt) {: #es }
+#### :flag_cn: [Chinese](https://github.com/splewis/get5/tree/development/translations/chi/get5.phrases.txt) {: #cn }
+#### :flag_dk: [Danish](https://github.com/splewis/get5/tree/development/translations/da/get5.phrases.txt) {: #da }
+#### :flag_hu: [Hungarian](https://github.com/splewis/get5/tree/development/translations/hu/get5.phrases.txt) {: #hu }
+#### :flag_pl: [Polish](https://github.com/splewis/get5/tree/development/translations/pl/get5.phrases.txt) {: #pl }
+#### :flag_pt: [Portuguese](https://github.com/splewis/get5/tree/development/translations/pt/get5.phrases.txt) {: #pt }
+#### :flag_ru: [Russian](https://github.com/splewis/get5/tree/development/translations/ru/get5.phrases.txt) {: #ru }

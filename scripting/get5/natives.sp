@@ -145,11 +145,13 @@ public int Native_SetPlayerName(Handle plugin, int numParams) {
   char name[MAX_NAME_LENGTH];
   GetNativeString(1, auth, sizeof(auth));
   GetNativeString(2, name, sizeof(name));
+  bool suppressPlayerNameLoad = GetNativeCell(3);
   char steam64[AUTH_LENGTH];
-  ConvertAuthToSteam64(auth, steam64);
-  if (strlen(name) > 0 && !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
+  if (strlen(name) > 0 && ConvertAuthToSteam64(auth, steam64)) {
     g_PlayerNames.SetString(steam64, name);
-    LoadPlayerNames();
+    if (!suppressPlayerNameLoad) {
+      LoadPlayerNames();
+    }
   }
 }
 

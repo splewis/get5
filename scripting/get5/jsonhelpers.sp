@@ -123,7 +123,7 @@ stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list,
         data.GetString(k, name, sizeof(name));
         char steam64[AUTH_LENGTH];
         if (ConvertAuthToSteam64(k, steam64)) {
-          Get5_SetPlayerName(steam64, name);
+          Get5_SetPlayerName(steam64, name, true);
           list.PushString(steam64);
           count++;
         }

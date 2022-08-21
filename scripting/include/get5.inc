@@ -87,8 +87,9 @@ native bool Get5_LoadMatchConfigFromURL(const char[] url, ArrayList paramNames =
 native bool Get5_AddPlayerToTeam(const char[] steamId, Get5Team team,
                                  const char[] playerName = "");
 
-// Force sets a steam64 to map to a specified playername
-native bool Get5_SetPlayerName(const char[] steamId, const char[] playerName);
+// Force sets a steam64 to map to a specified playername. If calling this multiple times, you may want to
+// suppress loading the player names until the last call.
+native bool Get5_SetPlayerName(const char[] steamId, const char[] playerName, bool suppressNameLoading = false);
 
 // Removes a player from all match teams.
 // Returns if they were successfully removed (false if not round).

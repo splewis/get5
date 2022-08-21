@@ -1010,6 +1010,8 @@ public Action Command_EndMatch(int client, int args) {
   Call_Finish();
   EventLogger_LogAndDeleteEvent(mapResultEvent);
 
+  StopRecording(1.0); // must go before EndSeries as it depends on g_MatchID.
+
   // No delay required when not kicking players.
   EndSeries(winningTeam, false, 0.0, false);
 
@@ -1036,7 +1038,6 @@ public Action Command_EndMatch(int client, int args) {
     delete g_KnifeDecisionTimer;
   }
 
-  StopRecording(1.0);
   ServerCommand("mp_restartgame 1");
 
   return Plugin_Handled;

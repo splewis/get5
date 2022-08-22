@@ -231,13 +231,13 @@ the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`. **`Default:
 ## Config Files
 
 ####`get5_live_cfg`
-:   Config file executed when the game goes live, relative to `csgo/cfg`.<br>**`Default: get5/live.cfg`**
+:   Config file executed when the game goes live, relative to `csgo/cfg`.<br>**`Default: "get5/live.cfg"`**
 
 ####`get5_warmup_cfg`
-:   Config file executed in warmup periods, relative to `csgo/cfg`.<br>**`Default: get5/warmup.cfg`**
+:   Config file executed in warmup periods, relative to `csgo/cfg`.<br>**`Default: "get5/warmup.cfg"`**
 
 ####`get5_knife_cfg`
-:   Config file executed for the knife round, relative to `csgo/cfg`.<br>**`Default: get5/knife.cfg`**
+:   Config file executed for the knife round, relative to `csgo/cfg`.<br>**`Default: "get5/knife.cfg"`**
 
 ####`get5_autoload_config`
 :  A [match configuration](../match_schema/#schema) file, relative to the `csgo` directory, to autoload when a player

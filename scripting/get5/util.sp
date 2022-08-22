@@ -176,6 +176,7 @@ stock bool InFreezeTime() {
 
 stock void StartWarmup(int warmupTime = 0) {
   ServerCommand("mp_do_warmup_period 1");
+  ServerCommand("mp_warmuptime_all_players_connected 0");
   if (!InWarmup()) {
     ServerCommand("mp_warmup_start");
   }

@@ -32,6 +32,27 @@ cfg/get5/live.cfg # (3)
 2. Executed when the knife-round starts.
 3. Executed when the game goes live.
 
+!!! danger "Prohibited options"
+
+    You should avoid these commands in your live, knife and warmup configuration files, as all of these are handled by
+    Get5 automatically. Introducing restarts, warmup changes or [GOTV](gotv.md) delay modifications can cause problems.
+    If you want to set your `tv_delay`, do it in the `cvars` section of your [match configuration](match_schema.md).
+
+    ```
+    mp_do_warmup_period
+    mp_restartgame
+    mp_warmup_end
+    mp_warmup_pausetimer   
+    mp_warmup_start
+    mp_warmuptime
+    mp_warmuptime_all_players_connected
+    tv_delay
+    tv_delaymapchange
+    tv_enable
+    tv_record
+    tv_stoprecord
+    ```
+
 ## Server Setup
 
 **These options will generally not be directly presented to clients.**

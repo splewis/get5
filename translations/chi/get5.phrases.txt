@@ -144,7 +144,7 @@
     {
         "chi"            "一名管理员强制解除了比赛暂停。"
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
         "chi"            "{1}想停止比赛并重新加载比赛至上一回合，需要{2}输入{3}来确认。"
     }

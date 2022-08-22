@@ -140,7 +140,7 @@
     {
         "pt"            "O administrador forçou o resumo de uma partida."
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
         "pt"            "{1} quer parar e recomeçar o último round. Para isso precisa que outros {2} confirmem digitanto {3}."
     }

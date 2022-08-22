@@ -216,9 +216,9 @@
     {
         "da"            "En admin har tvunget kampen til at fortsætte."
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
-        "da"            "{1} vil stoppe og genindlæse sidste runde. Afventer {3} fra {2}."
+        "da"            "{1} vil stoppe og genindlæse til starten af denne runde. Afventer {3} fra {2}."
     }
     "TeamWinningSeriesInfoMessage"
     {
@@ -251,6 +251,10 @@
     "StopCommandNotEnabled"
     {
         "da"            "Stop-kommandoen er ikke aktiveret."
+    }
+    "StopCommandVotingReset"
+    {
+        "da"            "Anmodningen fra {1} om at stoppe spillet blev annulleret, da en ny runde startede."
     }
     "BackupLoadedInfoMessage"
     {

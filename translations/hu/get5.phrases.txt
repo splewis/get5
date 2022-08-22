@@ -220,7 +220,7 @@
     {
         "hu"            "Egy admin, a mérkőzés folytatását hajtotta végre."
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
         "hu"            "{1} szeretne megállni és visszatölteni az előző kört. {2} el kell fogadni a {3} paranccsal."
     }

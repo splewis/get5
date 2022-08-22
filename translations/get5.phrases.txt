@@ -258,10 +258,10 @@
     {
         "en"            "An admin unpaused the match."
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
         "#format"       "{1:s},{2:s},{3:s}"
-        "en"            "{1} wants to stop and reload last round. {2} must confirm with {3}."
+        "en"            "{1} wants to restore the game to the beginning of the current round. {2} must confirm with {3}."
     }
     "TeamWinningSeriesInfoMessage"
     {
@@ -300,6 +300,11 @@
     "StopCommandNotEnabled"
     {
         "en"            "The stop command is not enabled."
+    }
+    "StopCommandVotingReset"
+    {
+        "#format"       "{1:s}"
+        "en"            "The request by {1} to stop the game was canceled as a new round started."
     }
     "BackupLoadedInfoMessage"
     {

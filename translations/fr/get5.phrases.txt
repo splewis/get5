@@ -148,7 +148,7 @@
     {
         "fr"            "Un admin a forcé la reprise du match."
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
         "fr"            "{1} souhaite arrêter et recommencer au dernier round, cela nécessite que {2} confirme avec {3}."
     }

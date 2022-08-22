@@ -124,7 +124,7 @@
     {
         "pl"            "Administrator wznowił mecz."
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
         "pl"            "{1} chce zatrzymać mecz i wczytać poprzednią rundę, oczekiwanie na potwierdzenie przez {2} i wpisanie {3}."
     }

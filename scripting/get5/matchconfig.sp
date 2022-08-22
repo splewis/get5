@@ -14,7 +14,7 @@
 #define CONFIG_VETOFIRST_DEFAULT "team1"
 #define CONFIG_SIDETYPE_DEFAULT "standard"
 
-stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
+bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   if (g_GameState != Get5State_None && !restoreBackup) {
     return false;
   }
@@ -37,7 +37,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   }
 
   g_MatchID = "";
-  g_AssignTeamNonePlayersOnRoundStart = false;
   g_ReadyTimeWaitingUsed = 0;
   g_HasKnifeRoundStarted = false;
   g_MapChangePending = false;
@@ -101,7 +100,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
       }
     }
 
-    ChangeState(Get5State_Warmup);
     if (!restoreBackup) {
       // When restoring from backup, changelevel is called after loading the match config.
       g_MapPoolList.GetString(Get5_GetMapNumber(), mapName, sizeof(mapName));
@@ -111,18 +109,22 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
         ChangeMap(mapName);
       }
     }
-  } else {
+  } else if (!restoreBackup) {
     ChangeState(Get5State_PreVeto);
   }
 
-  // We need to ensure our match team CVARs are set
-  // before calling the event so we can grab values
-  // that are set in the OnSeriesInit event.
-  // Add to download table after setting.
+  // Before we run the Get5_OnSeriesInit forward, we want to ensure that as much game state is set as possible,
+  // so that any implementation reacting to that event/forward will have all the natives return proper data.
   SetMatchTeamCvars();
+  LoadPlayerNames();
+  AddTeamLogosToDownloadTable();
+  // This gets called twice because ExecCfg(g_WarmupCfgCvar) also does it async, but we need it here.
+  ExecuteMatchConfigCvars();
 
   if (!restoreBackup) {
+    // SetStartingTeams must *not* be called when loading a backup, as it will override the sides saved in the backup!
     SetStartingTeams();
+    ChangeState(Get5State_Warmup);
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();
     if (IsPaused()) {
@@ -152,13 +154,11 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     }
   }
 
-  AddTeamLogosToDownloadTable();
-  LoadPlayerNames();
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
 
   // ExecuteMatchConfigCvars must be executed before we place players, as it might have get5_check_auths 1.
   LOOP_CLIENTS(i) {
-    if (IsAuthedPlayer(i)) {
+    if (IsAuthedPlayer(i) && !IsClientSourceTV(i)) {
       CheckClientTeam(i);
     }
   }

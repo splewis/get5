@@ -45,7 +45,7 @@ static void PerformSideSwap(bool swap) {
           // Because bots never have an assigned team, they won't be moved around by CheckClientTeam. We kick them to
           // prevent one team from having too many players. They will rejoin if defined in the live config.
           KickClient(i);
-        } else {
+        } else if (!IsClientSourceTV(i)) {
           CheckClientTeam(i, false);
         }
       }

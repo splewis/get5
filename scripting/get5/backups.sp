@@ -66,7 +66,7 @@ public Action Command_ListBackups(int client, int args) {
   return Plugin_Handled;
 }
 
-public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
+bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
   KeyValues kv = new KeyValues("Backup");
   if (!kv.ImportFromFile(path)) {
     LogError("Failed to find or read backup file \"%s\"", path);
@@ -143,7 +143,7 @@ public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
   return true;
 }
 
-public void WriteBackStructure(const char[] path) {
+void WriteBackupStructure(const char[] path) {
   KeyValues kv = new KeyValues("Backup");
   char timeString[PLATFORM_MAX_PATH];
   FormatTime(timeString, sizeof(timeString), "%Y-%m-%d %H:%M:%S", GetTime());
@@ -174,6 +174,11 @@ public void WriteBackStructure(const char[] path) {
   kv.SetNum("team2_series_score", g_TeamSeriesScores[Get5Team_2]);
 
   kv.SetNum("series_draw", g_TeamSeriesScores[Get5Team_None]);
+
+  kv.SetNum("team1_pauses_used", g_TacticalPausesUsed[Get5Team_1]);
+  kv.SetNum("team2_pauses_used", g_TacticalPausesUsed[Get5Team_2]);
+  kv.SetNum("team1_pause_time_used", g_TacticalPauseTimeUsed[Get5Team_1]);
+  kv.SetNum("team2_pause_time_used", g_TacticalPauseTimeUsed[Get5Team_2]);
 
   // Write original maplist.
   kv.JumpToKey("maps", true);
@@ -225,7 +230,7 @@ public void WriteBackStructure(const char[] path) {
   delete kv;
 }
 
-public bool RestoreFromBackup(const char[] path) {
+bool RestoreFromBackup(const char[] path) {
   KeyValues kv = new KeyValues("Backup");
   if (!kv.ImportFromFile(path)) {
     LogError("Failed to read backup file \"%s\"", path);
@@ -240,12 +245,10 @@ public bool RestoreFromBackup(const char[] path) {
     if (!LoadMatchConfig(tempBackupFile, true)) {
       delete kv;
       LogError("Could not restore from match config \"%s\"", tempBackupFile);
-      if (g_GameState != Get5State_None) {
-        // If the backup load fails, all the game configs will have been reset by LoadMatchConfig,
-        // but the game state won't. This ensure we don't end up a in a "live" state with no get5
-        // variables set, which would prevent a call to load a new match.
-        ChangeState(Get5State_None);
-      }
+      // If the backup load fails, all the game configs will have been reset by LoadMatchConfig,
+      // but the game state won't. This ensures we don't end up a in a "live" state with no get5
+      // variables set, which would prevent a call to load a new match.
+      ChangeState(Get5State_None);
       return false;
     }
     kv.GoBack();
@@ -266,6 +269,12 @@ public bool RestoreFromBackup(const char[] path) {
   // This ensures that the MapNumber logic correctly calculates the map number when there have been
   // draws.
   g_TeamSeriesScores[Get5Team_None] = kv.GetNum("series_draw", 0);
+
+  // This isn't perfect, but it's better than resetting all pauses used to zero in cases of restore on a new server.
+  g_TacticalPausesUsed[Get5Team_1] =  kv.GetNum("team1_pauses_used", 0);
+  g_TacticalPausesUsed[Get5Team_2] =  kv.GetNum("team2_pauses_used", 0);
+  g_TacticalPauseTimeUsed[Get5Team_1] =  kv.GetNum("team1_pause_time_used", 0);
+  g_TacticalPauseTimeUsed[Get5Team_2] =  kv.GetNum("team2_pause_time_used", 0);
 
   // Immediately set map number global var to ensure anything below doesn't break.
   g_MapNumber = Get5_GetMapNumber();
@@ -332,9 +341,8 @@ public bool RestoreFromBackup(const char[] path) {
   g_MapsToPlay.GetString(g_MapNumber, currentSeriesMap, sizeof(currentSeriesMap));
 
   if (!StrEqual(currentMap, currentSeriesMap)) {
-    ChangeMap(currentSeriesMap, 1.0);
-    g_WaitingForRoundBackup = (g_GameState >= Get5State_Live);
-
+    ChangeMap(currentSeriesMap, 3.0);
+    g_WaitingForRoundBackup = true;
   } else {
     RestoreGet5Backup();
   }
@@ -355,33 +363,29 @@ public bool RestoreFromBackup(const char[] path) {
   return true;
 }
 
-public void RestoreGet5Backup() {
-  // This variable is reset on a timer since the implementation of the
-  // mp_backup_restore_load_file doesn't do everything in one frame.
-  g_DoingBackupRestoreNow = true;
-  ExecCfg(g_LiveCfgCvar);
-
+void RestoreGet5Backup() {
   if (g_SavedValveBackup) {
-    ChangeState(Get5State_Live);
-    // There are some timing issues leading to incorrect score when restoring matches in second
-    // half. Doing the restore on a timer
-    CreateTimer(1.0, Time_StartRestore);
-  } else {
-    SetStartingTeams();
-    if (g_GameState == Get5State_Live) {
-      EndWarmup();
-      RestartGame(5);
-      PauseGame(Get5Team_None, Get5PauseType_Backup);
-    } else {
-      StartWarmup();
+    // If you load a backup during a live round, the game might get stuck if there are only bots remaining and no
+    // players are alive. Other stuff will probably also go wrong, so we just reset the game before loading the
+    // backup to avoid any weird edge-cases.
+    if (!InWarmup()) {
+     RestartGame();
     }
-    g_DoingBackupRestoreNow = false;
+    ExecCfg(g_LiveCfgCvar);
+    PauseGame(Get5Team_None, Get5PauseType_Backup);
+    g_DoingBackupRestoreNow = true; // reset after the backup has completed, suppresses various events and hooks until then.
+    CreateTimer(1.5, Time_StartRestore);
+  } else {
+    // Backup was for veto or warmup; go to warmup.
+    UnpauseGame(Get5Team_None);
+    ExecCfg(g_WarmupCfgCvar);
+    RestartGame();
+    StartWarmup();
   }
 }
 
 public Action Time_StartRestore(Handle timer) {
-  PauseGame(Get5Team_None, Get5PauseType_Backup);
-
+  ChangeState(Get5State_Live);
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
@@ -389,22 +393,24 @@ public Action Time_StartRestore(Handle timer) {
 }
 
 public Action Timer_FinishBackup(Handle timer) {
-  if (g_CoachingEnabledCvar.BoolValue) {
-    // If we are coaching we want to ensure our
-    // coaches get moved back onto the team.
-    // We cannot trust Valve's system as a disconnected
-    // player will count as a "player" and not be placed
-    // in the coach slot.
-    LOOP_CLIENTS(i) {
-      if (IsValidClient(i)) {
-        CheckClientTeam(i);
-      }
+  // This ensures that coaches are moved to their slots.
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i) && !IsClientSourceTV(i)) {
+      CheckClientTeam(i);
     }
   }
   g_DoingBackupRestoreNow = false;
+  // Delete the temporary backup file we just wrote and restored from.
+  char tempValveBackup[PLATFORM_MAX_PATH];
+  GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
+  if (DeleteFile(tempValveBackup)) {
+    LogDebug("Deleted temp valve backup file: %s", tempValveBackup);
+  } else {
+    LogDebug("Failed to delete temp valve backup file: %s", tempValveBackup);
+  }
 }
 
-public void DeleteOldBackups() {
+void DeleteOldBackups() {
   int maxTimeDifference = g_MaxBackupAgeCvar.IntValue;
   if (maxTimeDifference <= 0) {
     LogDebug("Backups are not being deleted as get5_max_backup_age is 0.");

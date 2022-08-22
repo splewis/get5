@@ -142,7 +142,6 @@ int g_MinSpectatorsToReady = 0;
 float g_RoundStartedTime = 0.0;
 float g_BombPlantedTime = 0.0;
 Get5BombSite g_BombSiteLastPlanted = Get5BombSite_Unknown;
-bool g_AssignTeamNonePlayersOnRoundStart = false;
 
 bool g_SkipVeto = false;
 float g_VetoMenuTime = 0.0;
@@ -714,15 +713,24 @@ public void OnClientPutInServer(int client) {
     return;
   }
 
-  CheckAutoLoadConfig();
-  if (g_GameState <= Get5State_Warmup && g_GameState != Get5State_None) {
+  // If a player joins during freezetime, ensure their round stats are 0, as there will be no round-start event to do it.
+  // Maybe this could just be freezetime end?
+  Stats_ResetClientRoundValues(client);
+
+  // This checks for gamestate none on its own.
+  if (CheckAutoLoadConfig()) {
+    return;
+  }
+
+  // Because OnConfigsExecuted may run before a client is on the server, we have to repeat the logic here when the
+  // first client connects.
+  if ((g_GameState <= Get5State_Warmup || g_WaitingForRoundBackup) && g_GameState != Get5State_None) {
     if (GetRealClientCount() <= 1) {
+      ChangeState(Get5State_Warmup);
       ExecCfg(g_WarmupCfgCvar);
       StartWarmup();
     }
   }
-
-  Stats_ResetClientRoundValues(client);
 }
 
 public void OnClientPostAdminCheck(int client) {
@@ -809,7 +817,8 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
   }
 }
 
-public void OnMapStart() {
+public void OnConfigsExecuted() {
+  LogDebug("OnConfigsExecuted");
   g_MapChangePending = false;
   // Recording is always automatically stopped on map change, and
   // since there are no hooks to detect tv_stoprecord, we reset
@@ -817,34 +826,33 @@ public void OnMapStart() {
   g_DemoFileName = "";
   DeleteOldBackups();
 
+  // Always reset ready status on map start
   ResetReadyStatus();
+
+  if (CheckAutoLoadConfig()) {
+    // If gamestate is none and a config was autoloaded, a match config will set all of the below state.
+    LogMessage("Match configuration was loaded via get5_autoload_config.");
+    return;
+  }
+
   LOOP_TEAMS(team) {
     g_TeamGivenStopCommand[team] = false;
     g_TeamReadyForUnpause[team] = false;
-    g_TacticalPauseTimeUsed[team] = 0;
-    g_TacticalPausesUsed[team] = 0;
-    g_TechnicalPausesUsed[team] = 0;
+    if (!g_WaitingForRoundBackup) {
+      g_TacticalPauseTimeUsed[team] = 0;
+      g_TacticalPausesUsed[team] = 0;
+      g_TechnicalPausesUsed[team] = 0;
+    }
   }
 
   g_ReadyTimeWaitingUsed = 0;
   g_HasKnifeRoundStarted = false;
 
-  if (g_WaitingForRoundBackup) {
+  // On map start, always put the game in warmup mode.
+  // When executing a backup load, the live config is loaded and warmup ends.
+  if (g_GameState != Get5State_None || g_WaitingForRoundBackup) {
+    LogDebug("Putting game into warmup in OnConfigsExecuted.");
     ChangeState(Get5State_Warmup);
-    ExecCfg(g_LiveCfgCvar);
-    StartWarmup();
-  }
-}
-
-public void OnConfigsExecuted() {
-  SetStartingTeams();
-  CheckAutoLoadConfig();
-
-  if (g_GameState == Get5State_PostGame) {
-    ChangeState(Get5State_Warmup);
-  }
-
-  if (g_GameState == Get5State_Warmup || g_GameState == Get5State_Veto) {
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();
   }
@@ -952,14 +960,16 @@ static bool CheckReadyWaitingTime(Get5Team team) {
   return false;
 }
 
-static void CheckAutoLoadConfig() {
-  if (g_GameState == Get5State_None) {
+static bool CheckAutoLoadConfig() {
+  if (g_GameState == Get5State_None && !g_WaitingForRoundBackup) {
     char autoloadConfig[PLATFORM_MAX_PATH];
     g_AutoLoadConfigCvar.GetString(autoloadConfig, sizeof(autoloadConfig));
     if (!StrEqual(autoloadConfig, "")) {
       LoadMatchConfig(autoloadConfig);
+      return true;
     }
   }
+  return false;
 }
 
 /**
@@ -1406,29 +1416,6 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
   }
   g_PendingSideSwap = false;
 
-  if (!InWarmup()) {
-    if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
-      // Ensures that round end after knife sends players directly into warmup.
-      // This immediately triggers another Event_RoundPreStart, so we can return here and avoid
-      // writing backup twice.
-      LogDebug("Changed to warmup post knife.");
-      ExecCfg(g_WarmupCfgCvar);
-      StartWarmup();
-      return Plugin_Continue;
-    }
-    // We also cannot do this during warmup, as sending users into warmup post-knife triggers a round start event,
-    // hence why it's in here. We add an extra restart to clear lingering state from the knife round, such as the round
-    // indicator in the middle of the scoreboard not being reset. This also tightly couples the live-announcement to
-    // the actual live start.
-    if (g_GameState == Get5State_GoingLive) {
-      LogDebug("Changed to live.");
-      ChangeState(Get5State_Live);
-      RestartGame();
-      CreateTimer(3.0, MatchLive, _, TIMER_FLAG_NO_MAPCHANGE);
-      return Plugin_Continue; // Next round start will take care of below, such as writing backup.
-    }
-  }
-
   Stats_ResetRoundValues();
 
   // We need this for events that fire after the map ends, such as grenades detonating (or someone
@@ -1440,9 +1427,6 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
   // Round number always -1 if not live.
   g_RoundNumber = g_GameState != Get5State_Live ? -1 : GetRoundsPlayed();
 
-  if (g_GameState >= Get5State_Warmup) {
-    WriteBackup();
-  }
   return Plugin_Continue;
 }
 
@@ -1504,6 +1488,14 @@ public void WriteBackup() {
     return;
   }
 
+  if (g_PauseType == Get5PauseType_Backup) {
+    // If there was no valve backup found when restoring the game, the above checks will not trigger a return,
+    // so we do this to prevent overwriting an already-written backup in the event the game starts in the same round
+    // it was *just* restored to and this function runs.
+    LogDebug("Skipping backup round write as the round started paused for backup.");
+    return;
+  }
+
   char folder[PLATFORM_MAX_PATH];
   g_RoundBackupPathCvar.GetString(folder, sizeof(folder));
   ReplaceString(folder, sizeof(folder), "{MATCHID}", g_MatchID);
@@ -1530,7 +1522,7 @@ public void WriteBackup() {
            g_MapNumber);
   }
   LogDebug("Writing backup to %s", path);
-  WriteBackStructure(path);
+  WriteBackupStructure(path);
   g_LastGet5BackupCvar.SetString(path);
 
   // Reset this when writing a new backup, as voting has no reference to which round the teams wanted to restore to, so
@@ -1553,22 +1545,45 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_BombPlantedTime = 0.0;
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
-  if (g_GameState != Get5State_Live) {
-    return;
+  // We cannot do this during warmup, as sending users into warmup post-knife triggers a round start event.
+  // We add an extra restart to clear lingering state from the knife round, such as the round
+  // indicator in the middle of the scoreboard not being reset. This also tightly couples the live-announcement to
+  // the actual live start.
+  if (!InWarmup()) {
+    if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
+      // Ensures that round end after knife sends players directly into warmup.
+      // This immediately triggers another Event_RoundStart, so we can return here and avoid
+      // writing backup twice.
+      LogDebug("Changed to warmup post knife.");
+      ExecCfg(g_WarmupCfgCvar);
+      StartWarmup();
+      return;
+    }
+    if (g_GameState == Get5State_GoingLive) {
+      LogDebug("Changed to live.");
+      ChangeState(Get5State_Live);
+      RestartGame();
+      CreateTimer(3.0, MatchLive, _, TIMER_FLAG_NO_MAPCHANGE);
+      return; // Next round start will take care of below, such as writing backup.
+    }
   }
 
   // Ensures that players who connect during halftime/team swap are placed in their correct slots as soon as the
   // following round starts. Otherwise they could be left on the "no team" screen and potentially
   // ghost, depending on where the camera drops them. Especially important for coaches.
-  if (g_AssignTeamNonePlayersOnRoundStart) {
-    g_AssignTeamNonePlayersOnRoundStart = false;
-    LOOP_CLIENTS(i) {
-      // We check only for connection here, as that's required to put them in the game, as they may
-      // not actually be considered "in the game" yet, so IsValidClient() might not work.
-      if (IsClientConnected(i)) {
-        CheckClientTeam(i);
-      }
+  // We do this step *before* we write the backup, so we don't have any lingering players in case of a restore.
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i) && !IsClientSourceTV(i) && GetClientTeam(i) == CS_TEAM_NONE) {
+      CheckClientTeam(i);
     }
+  }
+
+  if (g_GameState >= Get5State_Warmup) {
+    WriteBackup();
+  }
+
+  if (g_GameState != Get5State_Live) {
+    return;
   }
 
   Get5RoundStartedEvent startEvent =
@@ -1803,6 +1818,11 @@ public void StartGame(bool knifeRound) {
 }
 
 public void ChangeState(Get5State state) {
+  if (g_GameState == state) {
+    LogDebug("Ignoring request to change game state. Already in state %d.", state);
+    return;
+  }
+
   g_GameStateCvar.IntValue = view_as<int>(state);
 
   Get5GameStateChangedEvent event = new Get5GameStateChangedEvent(state, g_GameState);

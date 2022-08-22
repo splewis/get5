@@ -181,7 +181,7 @@ stock void StartWarmup(int warmupTime = 0) {
     ServerCommand("mp_warmup_start");
   }
   if (warmupTime < 1) {
-    LogDebug("Setting indefinite pause.");
+    LogDebug("Setting indefinite warmup.");
     // Setting mp_warmuptime to anything less than 7 triggers the countdown to restart regardless of
     // mp_warmup_pausetimer 1, and this might be tick-related, so we set it to 10 just for good measure.
     ServerCommand("mp_warmuptime 10");

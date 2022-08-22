@@ -111,7 +111,6 @@ static void AddGlobalStateInfo(File f) {
   f.WriteLine("g_InScrimMode = %d", g_InScrimMode);
   f.WriteLine("g_SeriesCanClinch = %d", g_SeriesCanClinch);
   f.WriteLine("g_HasKnifeRoundStarted = %d", g_HasKnifeRoundStarted);
-  f.WriteLine("g_AssignTeamNonePlayersOnRoundStart = %d", g_AssignTeamNonePlayersOnRoundStart);
 
   f.WriteLine("g_MapChangePending = %d", g_MapChangePending);
   f.WriteLine("g_PendingSideSwap = %d", g_PendingSideSwap);

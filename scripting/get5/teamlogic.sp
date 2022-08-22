@@ -13,7 +13,7 @@ public Action Timer_PlacePlayerOnJoin(Handle timer, int userId) {
 }
 
 void CheckClientTeam(int client, bool useDefaultTeamSelection = true) {
-  if (!g_CheckAuthsCvar.BoolValue) {
+  if (!g_CheckAuthsCvar.BoolValue || IsFakeClient(client) || IsClientSourceTV(client)) {
     // Teams are not enforced; do nothing.
     return;
   }
@@ -69,7 +69,6 @@ void CheckClientTeam(int client, bool useDefaultTeamSelection = true) {
 static void PlacePlayerOnTeam(int client) {
   if (g_PendingSideSwap || InHalftimePhase()) {
     LogDebug("Blocking attempt to join a team due to halftime or pending team swap.");
-    g_AssignTeamNonePlayersOnRoundStart = true;
     return;
   }
   CheckClientTeam(client);
@@ -266,10 +265,6 @@ Get5Team CSTeamToGet5Team(int csTeam) {
 }
 
 Get5Team GetAuthMatchTeam(const char[] steam64) {
-  if (g_GameState == Get5State_None) {
-    return Get5Team_None;
-  }
-
   if (g_InScrimMode) {
     return IsAuthOnTeam(steam64, Get5Team_1) ? Get5Team_1 : Get5Team_2;
   }

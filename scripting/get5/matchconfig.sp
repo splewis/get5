@@ -428,9 +428,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
     kv.GetString("name", g_TeamNames[Get5Team_Spec], MAX_CVAR_LENGTH,
                  CONFIG_SPECTATORSNAME_DEFAULT);
     kv.GoBack();
-
-    Format(g_FormattedTeamNames[Get5Team_Spec], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
-           g_DefaultTeamColors[Get5Team_Spec], g_TeamNames[Get5Team_Spec]);
+    FormatTeamName(Get5Team_Spec);
   }
 
   if (kv.JumpToKey("team1")) {
@@ -546,9 +544,7 @@ static bool LoadMatchFromJson(JSON_Object json) {
     json_object_get_string_safe(spec, "name", g_TeamNames[Get5Team_Spec], MAX_CVAR_LENGTH,
                                 CONFIG_SPECTATORSNAME_DEFAULT);
     AddJsonAuthsToList(spec, "players", GetTeamAuths(Get5Team_Spec), AUTH_LENGTH);
-
-    Format(g_FormattedTeamNames[Get5Team_Spec], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
-           g_DefaultTeamColors[Get5Team_Spec], g_TeamNames[Get5Team_Spec]);
+    FormatTeamName(Get5Team_Spec);
   }
 
   JSON_Object team1 = json.GetObject("team1");
@@ -616,8 +612,8 @@ static void LoadTeamDataJson(JSON_Object json, Get5Team matchTeam) {
   if (StrEqual(fromfile, "")) {
     // TODO: this needs to support both an array and a dictionary
     // For now, it only supports an array
-    JSON_Object coaches = json.GetObject("coaches");
     AddJsonAuthsToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
+    JSON_Object coaches = json.GetObject("coaches");
     if (coaches != null) {
       AddJsonAuthsToList(json, "coaches", GetTeamCoaches(matchTeam), AUTH_LENGTH);
     }
@@ -638,8 +634,7 @@ static void LoadTeamDataJson(JSON_Object json, Get5Team matchTeam) {
   }
 
   g_TeamSeriesScores[matchTeam] = json_object_get_int_safe(json, "series_score", 0);
-  Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
-         g_DefaultTeamColors[matchTeam], g_TeamNames[matchTeam]);
+  FormatTeamName(matchTeam);
 }
 
 static void LoadTeamData(KeyValues kv, Get5Team matchTeam) {
@@ -666,8 +661,21 @@ static void LoadTeamData(KeyValues kv, Get5Team matchTeam) {
   }
 
   g_TeamSeriesScores[matchTeam] = kv.GetNum("series_score", 0);
-  Format(g_FormattedTeamNames[matchTeam], MAX_CVAR_LENGTH, "%s%s{NORMAL}",
-         g_DefaultTeamColors[matchTeam], g_TeamNames[matchTeam]);
+  FormatTeamName(matchTeam);
+}
+
+static void FormatTeamName(const Get5Team team) {
+  char color[32];
+  if (team == Get5Team_1) {
+    g_Team1NameColorCvar.GetString(color, sizeof(color));
+  } else if (team == Get5Team_2) {
+    g_Team2NameColorCvar.GetString(color, sizeof(color));
+  } else if (team == Get5Team_Spec) {
+    g_SpecNameColorCvar.GetString(color, sizeof(color));
+  } else {
+    color = "{NORMAL}";
+  }
+  Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color, g_TeamNames[team]);
 }
 
 static void LoadDefaultMapList(ArrayList list) {
@@ -1065,14 +1073,18 @@ public Action Command_CreateMatch(int client, int args) {
 
   char teamName[MAX_CVAR_LENGTH];
 
+  // If team names are empty because nobody is on on the server, the will be set by
+  // CheckTeamNameStatus during ready-phase. We cannot write empty strings to KeyValues, so we just skip them.
   kv.JumpToKey("team1", true);
-  int count = AddPlayersToAuthKv(kv, Get5Team_1, teamName);
-  kv.SetString("name", count > 0 ? teamName : "Team 1");
+  if (AddPlayersToAuthKv(kv, Get5Team_1, teamName) > 0) {
+    kv.SetString("name", teamName);
+  }
   kv.GoBack();
 
   kv.JumpToKey("team2", true);
-  count = AddPlayersToAuthKv(kv, Get5Team_2, teamName);
-  kv.SetString("name", count > 0 ? teamName : "Team 2");
+  if (AddPlayersToAuthKv(kv, Get5Team_2, teamName) > 0) {
+    kv.SetString("name", teamName);
+  }
   kv.GoBack();
 
   kv.JumpToKey("spectators", true);
@@ -1282,12 +1294,6 @@ public void CheckTeamNameStatus(Get5Team team) {
         }
       }
     }
-
-    char colorTag[32] = TEAM1_COLOR;
-    if (team == Get5Team_2)
-      colorTag = TEAM2_COLOR;
-
-    Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", colorTag,
-           g_TeamNames[team]);
+    FormatTeamName(team);
   }
 }

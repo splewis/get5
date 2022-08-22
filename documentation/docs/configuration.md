@@ -142,6 +142,18 @@ if [`get5_print_damage`](#get5_print_damage) is disabled.
 :   The tag applied before plugin messages. Note that at least one character must come before
 a [color modifier](#color-substitutes). **`Default: "[{YELLOW}Get5{NORMAL}]"`**
 
+####`get5_team1_color`
+:   The [color](#color-substitutes) to use when printing the name of `team1` in chat
+messages.<br>**`Default: "{LIGHT_GREEN}"`**
+
+####`get5_team2_color`
+:   The [color](#color-substitutes) to use when printing the name of `team2` in chat
+messages.<br>**`Default: "{PINK}"`**
+
+####`get5_spec_color`
+:   The [color](#color-substitutes) to use when printing the name of `spectators` in chat
+messages.<br>**`Default: "{NORMAL}"`**
+
 ## Pausing
 
 ####`get5_pausing_enabled`

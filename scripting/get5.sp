@@ -40,8 +40,6 @@
 #define MAX_CVAR_LENGTH 128
 #define MATCH_END_DELAY_AFTER_TV 15
 
-#define TEAM1_COLOR "{LIGHT_GREEN}"
-#define TEAM2_COLOR "{PINK}"
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T
 #define DEFAULT_TAG "[{YELLOW}Get5{NORMAL}]"
@@ -102,6 +100,9 @@ ConVar g_VetoCountdownCvar;
 ConVar g_PrintUpdateNoticeCvar;
 ConVar g_RoundBackupPathCvar;
 ConVar g_PhaseAnnouncementCountCvar;
+ConVar g_Team1NameColorCvar;
+ConVar g_Team2NameColorCvar;
+ConVar g_SpecNameColorCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -215,12 +216,6 @@ bool g_ClientReady[MAXPLAYERS + 1];         // Whether clients are marked ready.
 int g_TeamSide[MATCHTEAM_COUNT];            // Current CS_TEAM_* side for the team.
 int g_TeamStartingSide[MATCHTEAM_COUNT];
 int g_ReadyTimeWaitingUsed = 0;
-char g_DefaultTeamColors[][] = {
-    TEAM1_COLOR,
-    TEAM2_COLOR,
-    "{NORMAL}",
-    "{NORMAL}",
-};
 
 char g_LastKickedPlayerAuth[64];
 
@@ -444,6 +439,15 @@ public void OnPluginStart() {
   g_PhaseAnnouncementCountCvar = CreateConVar(
       "get5_phase_announcement_count", "5",
       "The number of times Get5 will print 'Knife' or 'Match is LIVE' when the game starts. Set to 0 to disable.");
+  g_Team1NameColorCvar = CreateConVar(
+      "get5_team1_color", "{LIGHT_GREEN}",
+      "The color used for the name of team 1 in chat messages.");
+  g_Team2NameColorCvar = CreateConVar(
+      "get5_team2_color", "{PINK}",
+      "The color used for the name of team 2 in chat messages.");
+  g_SpecNameColorCvar = CreateConVar(
+      "get5_spec_color", "{NORMAL}",
+      "The color used for the name of spectators in chat messages.");
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");

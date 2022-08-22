@@ -359,8 +359,7 @@ public void RestoreGet5Backup() {
   // This variable is reset on a timer since the implementation of the
   // mp_backup_restore_load_file doesn't do everything in one frame.
   g_DoingBackupRestoreNow = true;
-  ExecCfg(g_LiveCfgCvar); // async
-  CreateTimer(0.5, Timer_ExecMatchConfig, _, TIMER_FLAG_NO_MAPCHANGE);
+  ExecCfg(g_LiveCfgCvar);
 
   if (g_SavedValveBackup) {
     ChangeState(Get5State_Live);
@@ -371,24 +370,13 @@ public void RestoreGet5Backup() {
     SetStartingTeams();
     if (g_GameState == Get5State_Live) {
       EndWarmup();
-      EndWarmup();
-      ServerCommand("mp_restartgame 5");
+      RestartGame(5);
       PauseGame(Get5Team_None, Get5PauseType_Backup);
     } else {
-      EnsureIndefiniteWarmup();
+      StartWarmup();
     }
-
     g_DoingBackupRestoreNow = false;
   }
-}
-
-public Action Timer_ExecMatchConfig(Handle timer) {
-  // This needs to go on a callback because ServerCommand("exec") is async, so the config will load
-  // *after* the match cvars if we put them in RestoreGet5Backup, which we don't want, as that's not the order in which
-  // they were loaded when the match was initially set up.
-  SetMatchTeamCvars();
-  ExecuteMatchConfigCvars();
-  return Plugin_Handled;
 }
 
 public Action Time_StartRestore(Handle timer) {

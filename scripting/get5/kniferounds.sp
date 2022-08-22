@@ -1,6 +1,5 @@
 public Action StartKnifeRound(Handle timer) {
   g_HasKnifeRoundStarted = false;
-  g_PendingSideSwap = false;
 
   // Removes ready tags
   SetMatchTeamCvars();
@@ -81,13 +80,14 @@ public void EndKnifeRound(bool swap) {
   Call_PushCell(knifeEvent);
   Call_Finish();
 
+  if (g_KnifeDecisionTimer != INVALID_HANDLE) {
+    LogDebug("Stopped knife decision timer as a choice was made before it expired.");
+    delete g_KnifeDecisionTimer;
+  }
+
   EventLogger_LogAndDeleteEvent(knifeEvent);
-
-  ChangeState(Get5State_GoingLive);
-  CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
-
   g_KnifeWinnerTeam = Get5Team_None;
-  EnsureIndefiniteWarmup();
+  StartGoingLive();
 }
 
 static bool AwaitingKnifeDecision(int client) {

@@ -718,7 +718,7 @@ public void OnClientPutInServer(int client) {
   if (g_GameState <= Get5State_Warmup && g_GameState != Get5State_None) {
     if (GetRealClientCount() <= 1) {
       ExecCfg(g_WarmupCfgCvar);
-      EnsureIndefiniteWarmup();
+      StartWarmup();
     }
   }
 
@@ -832,9 +832,7 @@ public void OnMapStart() {
   if (g_WaitingForRoundBackup) {
     ChangeState(Get5State_Warmup);
     ExecCfg(g_LiveCfgCvar);
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-    EnsureIndefiniteWarmup();
+    StartWarmup();
   }
 }
 
@@ -848,9 +846,7 @@ public void OnConfigsExecuted() {
 
   if (g_GameState == Get5State_Warmup || g_GameState == Get5State_Veto) {
     ExecCfg(g_WarmupCfgCvar);
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-    EnsureIndefiniteWarmup();
+    StartWarmup();
   }
 }
 
@@ -874,7 +870,7 @@ public Action Timer_CheckReady(Handle timer) {
       // We don't wait for spectators when initiating veto
       LogDebug("Timer_CheckReady: starting veto");
       ChangeState(Get5State_Veto);
-      ServerCommand("mp_restartgame 1");
+      RestartGame();
       CreateVeto();
     } else {
       CheckReadyWaitingTimes();
@@ -1038,7 +1034,7 @@ public Action Command_EndMatch(int client, int args) {
     delete g_KnifeDecisionTimer;
   }
 
-  ServerCommand("mp_restartgame 1");
+  RestartGame();
 
   return Plugin_Handled;
 }
@@ -1406,22 +1402,31 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
   }
 
   if (g_PendingSideSwap) {
-    g_PendingSideSwap = false;
     SwapSides();
   }
+  g_PendingSideSwap = false;
 
-  if (g_GameState == Get5State_GoingLive) {
-    ChangeState(Get5State_Live);
-  }
-
-  if (g_GameState == Get5State_WaitingForKnifeRoundDecision && !InWarmup()) {
-    // Ensures that round end after knife sends players directly into warmup.
-    // This immediately triggers another Event_RoundPreStart, so we can return here and avoid
-    // writing backup twice.
-    LogDebug("Changed to warmup post knife.");
-    ExecCfg(g_WarmupCfgCvar);
-    EnsureIndefiniteWarmup();
-    return Plugin_Continue;
+  if (!InWarmup()) {
+    if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
+      // Ensures that round end after knife sends players directly into warmup.
+      // This immediately triggers another Event_RoundPreStart, so we can return here and avoid
+      // writing backup twice.
+      LogDebug("Changed to warmup post knife.");
+      ExecCfg(g_WarmupCfgCvar);
+      StartWarmup();
+      return Plugin_Continue;
+    }
+    // We also cannot do this during warmup, as sending users into warmup post-knife triggers a round start event,
+    // hence why it's in here. We add an extra restart to clear lingering state from the knife round, such as the round
+    // indicator in the middle of the scoreboard not being reset. This also tightly couples the live-announcement to
+    // the actual live start.
+    if (g_GameState == Get5State_GoingLive) {
+      LogDebug("Changed to live.");
+      ChangeState(Get5State_Live);
+      RestartGame();
+      CreateTimer(3.0, MatchLive, _, TIMER_FLAG_NO_MAPCHANGE);
+      return Plugin_Continue; // Next round start will take care of below, such as writing backup.
+    }
   }
 
   Stats_ResetRoundValues();
@@ -1749,8 +1754,6 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
 public void SwapSides() {
   LogDebug("SwapSides");
-  // EventLogger_SideSwap(g_TeamSide[Get5Team_1], g_TeamSide[Get5Team_2]);
-
   int tmp = g_TeamSide[Get5Team_1];
   g_TeamSide[Get5Team_1] = g_TeamSide[Get5Team_2];
   g_TeamSide[Get5Team_2] = tmp;
@@ -1780,11 +1783,10 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
 
 public void StartGame(bool knifeRound) {
   LogDebug("StartGame");
-
-  ExecCfg(g_LiveCfgCvar);
   StartRecording();
 
   if (knifeRound) {
+    ExecCfg(g_LiveCfgCvar); // live first, then apply and save knife cvars below
     LogDebug("StartGame: about to begin knife round");
     ChangeState(Get5State_KnifeRound);
     if (g_KnifeChangedCvars != INVALID_HANDLE) {
@@ -1795,9 +1797,8 @@ public void StartGame(bool knifeRound) {
     g_KnifeChangedCvars = ExecuteAndSaveCvars(knifeConfig);
     CreateTimer(1.0, StartKnifeRound);
   } else {
-    LogDebug("StartGame: about to go live");
-    ChangeState(Get5State_GoingLive);
-    CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
+    // If there is no knife round, we go directly to live, which loads the live config etc. on its own.
+    StartGoingLive();
   }
 }
 

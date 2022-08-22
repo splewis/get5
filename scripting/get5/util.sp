@@ -174,27 +174,20 @@ stock bool InFreezeTime() {
   return GameRules_GetProp("m_bFreezePeriod") != 0;
 }
 
-stock void EnsureIndefiniteWarmup() {
-  if (!InWarmup()) {
-    LogDebug("EnsureIndefiniteWarmup: Not in warmup; calling StartWarmup()");
-    StartWarmup();
-  } else {
-    LogDebug("EnsureIndefiniteWarmup: Already in warmup; setting indefinite");
-    ServerCommand("mp_warmup_pausetimer 1");
-    ServerCommand("mp_do_warmup_period 1");
-    ServerCommand("mp_warmup_pausetimer 1");
-  }
-}
-
-stock void StartWarmup(bool indefiniteWarmup = true, int warmupTime = 60) {
+stock void StartWarmup(int warmupTime = 0) {
   ServerCommand("mp_do_warmup_period 1");
-  ServerCommand("mp_warmuptime %d", warmupTime);
-  ServerCommand("mp_warmup_start");
-
-  // For some reason it needs to get sent twice. Ask Valve.
-  if (indefiniteWarmup) {
+  if (!InWarmup()) {
+    ServerCommand("mp_warmup_start");
+  }
+  if (warmupTime < 1) {
+    LogDebug("Setting indefinite pause.");
+    // Setting mp_warmuptime to anything less than 7 triggers the countdown to restart regardless of
+    // mp_warmup_pausetimer 1, and this might be tick-related, so we set it to 10 just for good measure.
+    ServerCommand("mp_warmuptime 10");
     ServerCommand("mp_warmup_pausetimer 1");
-    ServerCommand("mp_warmup_pausetimer 1");
+  } else {
+    ServerCommand("mp_warmuptime %d", warmupTime);
+    ServerCommand("mp_warmup_pausetimer 0");
   }
 }
 
@@ -202,8 +195,8 @@ stock void EndWarmup(int time = 0) {
   if (time == 0) {
     ServerCommand("mp_warmup_end");
   } else {
-    ServerCommand("mp_warmup_pausetimer 0");
     ServerCommand("mp_warmuptime %d", time);
+    ServerCommand("mp_warmup_pausetimer 0");
   }
 }
 
@@ -211,7 +204,7 @@ stock bool IsPaused() {
   return GameRules_GetProp("m_bMatchWaitingForResume") != 0;
 }
 
-stock void RestartGame(int delay) {
+stock void RestartGame(int delay = 1) {
   ServerCommand("mp_restartgame %d", delay);
 }
 
@@ -550,12 +543,6 @@ public void MatchSideTypeToString(MatchSideType type, char[] str, int len) {
   } else {
     Format(str, len, "always_knife");
   }
-}
-
-stock void ExecCfg(ConVar cvar) {
-  char cfg[PLATFORM_MAX_PATH];
-  cvar.GetString(cfg, sizeof(cfg));
-  ServerCommand("exec \"%s\"", cfg);
 }
 
 // Taken from Zephyrus (https://forums.alliedmods.net/showpost.php?p=2231850&postcount=2)

@@ -1,24 +1,6 @@
-public Action StartGoingLive(Handle timer) {
+void StartGoingLive() {
   LogDebug("StartGoingLive");
   ExecCfg(g_LiveCfgCvar);
-  SetMatchTeamCvars();
-  ExecuteMatchConfigCvars();
-
-  // Force kill the warmup if we (still) need to.
-  Get5_MessageToAll("%t", "MatchBeginInSecondsInfoMessage", g_LiveCountdownTimeCvar.IntValue);
-  if (InWarmup()) {
-    EndWarmup(g_LiveCountdownTimeCvar.IntValue);
-  } else {
-    RestartGame(g_LiveCountdownTimeCvar.IntValue);
-  }
-
-  // Always disable sv_cheats!
-  ServerCommand("sv_cheats 0");
-
-  // Delayed an extra 5 seconds for the final 3-second countdown
-  // the game uses after the origina countdown.
-  float delay = float(5 + g_LiveCountdownTimeCvar.IntValue);
-  CreateTimer(delay, MatchLive);
 
   Get5GoingLiveEvent liveEvent = new Get5GoingLiveEvent(g_MatchID, g_MapNumber);
 
@@ -30,22 +12,34 @@ public Action StartGoingLive(Handle timer) {
 
   EventLogger_LogAndDeleteEvent(liveEvent);
 
+  ChangeState(Get5State_GoingLive);
+
+  // This ensures that we can send send the game to warmup and count down *even if* someone had put "mp_warmup_end", or
+  // something else that would mess up warmup, in their live config, which they shouldn't. But we can't be sure.
+  CreateTimer(1.0, Timer_GoToLiveAfterWarmupCountdown, _, TIMER_FLAG_NO_MAPCHANGE);
+}
+
+public Action Timer_GoToLiveAfterWarmupCountdown(Handle timer) {
+  if (g_GameState != Get5State_GoingLive) {
+    return Plugin_Handled; // super defensive race-condition check.
+  }
+  // Always disable sv_cheats!
+  ServerCommand("sv_cheats 0");
+  // Ensure we're in warmup and counting down to live. Round_PreStart handles the rest.
+  int countdown = g_LiveCountdownTimeCvar.IntValue;
+  if (countdown < 5) {
+    countdown = 5; // ensures that a cvar countdown value of 0 does not leave the game forever in warmup.
+  }
+  Get5_MessageToAll("%t", "MatchBeginInSecondsInfoMessage", countdown);
+  StartWarmup(countdown);
+  LogDebug("Started warmup countdown to live in %s seconds.", countdown);
   return Plugin_Handled;
 }
 
 public Action MatchLive(Handle timer) {
-  if (g_GameState == Get5State_None) {
+  if (g_GameState != Get5State_Live) {
     return Plugin_Handled;
   }
-
-  // Reset match config cvars. The problem is that when they are first
-  // set in StartGoingLive is that setting them right after executing the
-  // live config causes the live config values to get used for some reason
-  // (asynchronous command execution/cvar setting?), so they're set again
-  // to be sure.
-  SetMatchTeamCvars();
-  ExecuteMatchConfigCvars();
-  g_PendingSideSwap = false;
 
   AnnouncePhaseChange("%t", "MatchIsLiveInfoMessage");
 

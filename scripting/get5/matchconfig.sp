@@ -124,9 +124,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   if (!restoreBackup) {
     SetStartingTeams();
     ExecCfg(g_WarmupCfgCvar);
-    ExecuteMatchConfigCvars();
-    LoadPlayerNames();
-    EnsureIndefiniteWarmup();
+    StartWarmup();
     if (IsPaused()) {
       LogDebug("Match was paused when loading match config. Unpausing.");
       UnpauseGame(Get5Team_None);
@@ -155,7 +153,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   }
 
   AddTeamLogosToDownloadTable();
-  ExecuteMatchConfigCvars();
   LoadPlayerNames();
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
 
@@ -1302,4 +1299,19 @@ public void CheckTeamNameStatus(Get5Team team) {
     }
     FormatTeamName(team);
   }
+}
+
+void ExecCfg(ConVar cvar) {
+  char cfg[PLATFORM_MAX_PATH];
+  cvar.GetString(cfg, sizeof(cfg));
+  ServerCommand("exec \"%s\"", cfg);
+  CreateTimer(0.1, Timer_ExecMatchConfig, _, TIMER_FLAG_NO_MAPCHANGE);
+}
+
+public Action Timer_ExecMatchConfig(Handle timer) {
+  // When we load config files using ServerCommand("exec") above, which is async, we want match config cvars to always
+  // override.
+  SetMatchTeamCvars();
+  ExecuteMatchConfigCvars();
+  return Plugin_Handled;
 }

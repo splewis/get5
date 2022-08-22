@@ -44,7 +44,6 @@
 #define TEAM2_COLOR "{PINK}"
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T
-#define KNIFE_CONFIG "get5/knife.cfg"
 #define DEFAULT_TAG "[{YELLOW}Get5{NORMAL}]"
 
 #if !defined LATEST_VERSION_URL
@@ -78,6 +77,8 @@ ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunityCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
+ConVar g_WarmupCfgCvar;
+ConVar g_KnifeCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
 ConVar g_MaxBackupAgeCvar;
 ConVar g_MaxTacticalPausesCvar;
@@ -98,7 +99,6 @@ ConVar g_TeamTimeToStartCvar;
 ConVar g_TimeFormatCvar;
 ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
-ConVar g_WarmupCfgCvar;
 ConVar g_PrintUpdateNoticeCvar;
 ConVar g_RoundBackupPathCvar;
 ConVar g_PhaseAnnouncementCountCvar;
@@ -379,8 +379,9 @@ public void OnPluginStart() {
   g_KickClientsWithNoMatchCvar =
       CreateConVar("get5_kick_when_no_match_loaded", "0",
                    "Whether the plugin kicks new clients when no match is loaded");
-  g_LiveCfgCvar =
-      CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to exec when the game goes live");
+  g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to exec when the game goes live.");
+  g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods.");
+  g_KnifeCfgCvar = CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to exec in knife periods.");
   g_LiveCountdownTimeCvar = CreateConVar(
       "get5_live_countdown_time", "10",
       "Number of seconds used to count down when a match is going live", 0, true, 5.0, true, 60.0);
@@ -434,8 +435,6 @@ public void OnPluginStart() {
   g_VetoCountdownCvar =
       CreateConVar("get5_veto_countdown", "5",
                    "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
-  g_WarmupCfgCvar =
-      CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
   g_PrintUpdateNoticeCvar = CreateConVar(
       "get5_print_update_notice", "1",
       "Whether to print to chat when the game goes live if a new version of Get5 is available.");
@@ -1763,7 +1762,9 @@ public void StartGame(bool knifeRound) {
     if (g_KnifeChangedCvars != INVALID_HANDLE) {
       CloseCvarStorage(g_KnifeChangedCvars);
     }
-    g_KnifeChangedCvars = ExecuteAndSaveCvars(KNIFE_CONFIG);
+    char knifeConfig[PLATFORM_MAX_PATH];
+    g_KnifeCfgCvar.GetString(knifeConfig, sizeof(knifeConfig));
+    g_KnifeChangedCvars = ExecuteAndSaveCvars(knifeConfig);
     CreateTimer(1.0, StartKnifeRound);
   } else {
     LogDebug("StartGame: about to go live");

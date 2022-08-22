@@ -7,7 +7,7 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/dev/configuration/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.3.1, mkdocs-material-8.4.0" name="generator"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.4.1" name="generator"/>
 <title>Configuration - Get5</title>
 <link href="../assets/stylesheets/main.69437709.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
@@ -399,13 +399,18 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_autoload_config">
-    get5_autoload_config
+<a class="md-nav__link" href="#get5_warmup_cfg">
+    get5_warmup_cfg
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_warmup_cfg">
-    get5_warmup_cfg
+<a class="md-nav__link" href="#get5_knife_cfg">
+    get5_knife_cfg
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_autoload_config">
+    get5_autoload_config
   </a>
 </li>
 </ul>
@@ -861,13 +866,18 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_autoload_config">
-    get5_autoload_config
+<a class="md-nav__link" href="#get5_warmup_cfg">
+    get5_warmup_cfg
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_warmup_cfg">
-    get5_warmup_cfg
+<a class="md-nav__link" href="#get5_knife_cfg">
+    get5_knife_cfg
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_autoload_config">
+    get5_autoload_config
   </a>
 </li>
 </ul>
@@ -965,8 +975,7 @@ the explanation of the <a href="../match_schema">match schema</a>, that section 
 blindly pasting another config in (e.g. ESL, CEVO). Configs that execute warmup commands (<code>mp_warmup_end</code>, for
 example) <strong>will</strong> cause problems. These must only include commands you would run in the console (such
 as <code>mp_friendly_fire 1</code>) and should determine the rules for those three stage of your match. You can
-also <a href="#config-files">point to other files</a> by editing
-the main config file.</p>
+also <a href="#config-files">point to other files</a> by editing the main config file.</p>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/warmup.cfg</span><span class="w"> </span><span class="c1"># (1)</span><span class="w"></span>
 <a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/knife.cfg</span><span class="w"> </span><span class="c1"># (2)</span><span class="w"></span>
 <a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/live.cfg</span><span class="w"> </span><span class="c1"># (3)</span><span class="w"></span>
@@ -1200,16 +1209,20 @@ does not work.</p>
 <h2 id="config-files">Config Files</h2>
 <h4 id="get5_live_cfg"><code>get5_live_cfg</code></h4>
 <dl>
-<dd>Config file executed when the game goes live. <strong><code>Default: get5/live.cfg</code></strong></dd>
-</dl>
-<h4 id="get5_autoload_config"><code>get5_autoload_config</code></h4>
-<dl>
-<dd>A <a href="../match_schema/#schema">match configuration</a> file, relative to the <code>csgo</code> directory, to autoload when a player joins the server 
-if no match is loaded. Set to empty string to disable. <strong><code>Default: ""</code></strong></dd>
+<dd>Config file executed when the game goes live, relative to <code>csgo/cfg</code>.<br/><strong><code>Default: "get5/live.cfg"</code></strong></dd>
 </dl>
 <h4 id="get5_warmup_cfg"><code>get5_warmup_cfg</code></h4>
 <dl>
-<dd>Config file executed in warmup periods. <strong><code>Default: get5/warmup.cfg</code></strong></dd>
+<dd>Config file executed in warmup periods, relative to <code>csgo/cfg</code>.<br/><strong><code>Default: "get5/warmup.cfg"</code></strong></dd>
+</dl>
+<h4 id="get5_knife_cfg"><code>get5_knife_cfg</code></h4>
+<dl>
+<dd>Config file executed for the knife round, relative to <code>csgo/cfg</code>.<br/><strong><code>Default: "get5/knife.cfg"</code></strong></dd>
+</dl>
+<h4 id="get5_autoload_config"><code>get5_autoload_config</code></h4>
+<dl>
+<dd>A <a href="../match_schema/#schema">match configuration</a> file, relative to the <code>csgo</code> directory, to autoload when a player
+joins the server if no match is loaded. Set to empty string to disable. <strong><code>Default: ""</code></strong></dd>
 </dl>
 <h2 id="substitution-variables">Substitution Variables</h2>
 <h3 id="state-substitutes">Match/State Substitutes</h3>

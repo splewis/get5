@@ -480,8 +480,7 @@ public void LoadPlayerNames() {
     ArrayList coachIds = GetTeamCoaches(team);
     for (int i = 0; i < ids.Length; i++) {
       ids.GetString(i, id, sizeof(id));
-      if (g_PlayerNames.GetString(id, name, sizeof(name)) && !StrEqual(name, "") &&
-          !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
+      if (g_PlayerNames.GetString(id, name, sizeof(name)) && !StrEqual(name, "")) {
         namesKv.SetString(id, name);
         numNames++;
       }
@@ -490,8 +489,7 @@ public void LoadPlayerNames() {
       // There's a way to push an array of cells into the end, however, it
       // becomes a single element, rather than pushing individually.
       coachIds.GetString(i, id, sizeof(id));
-      if (g_PlayerNames.GetString(id, name, sizeof(name)) && !StrEqual(name, "") &&
-          !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
+      if (g_PlayerNames.GetString(id, name, sizeof(name)) && !StrEqual(name, "")) {
         namesKv.SetString(id, name);
         numNames++;
       }
@@ -503,8 +501,9 @@ public void LoadPlayerNames() {
     DeleteFile(nameFile);
     if (namesKv.ExportToFile(nameFile)) {
       ServerCommand("sv_load_forced_client_names_file %s", nameFile);
+      LogDebug("Wrote %d fixed player name(s) to %s.", numNames, nameFile);
     } else {
-      LogError("Failed to write names keyvalue file to %s", nameFile);
+      LogError("Failed to write fixed player names to %s.", nameFile);
     }
   }
 

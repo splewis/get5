@@ -124,12 +124,13 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   // that are set in the OnSeriesInit event.
   // Add to download table after setting.
   SetMatchTeamCvars();
+  ExecuteMatchConfigCvars();
+  LoadPlayerNames();
+  AddTeamLogosToDownloadTable();
 
   if (!restoreBackup) {
-    SetStartingTeams();
+    SetStartingTeams(); // This cannot be called during backup, as it will reset the sides!
     ExecCfg(g_WarmupCfgCvar);
-    ExecuteMatchConfigCvars();
-    LoadPlayerNames();
     EnsureIndefiniteWarmup();
     if (IsPaused()) {
       LogDebug("Match was paused when loading match config. Unpausing.");
@@ -160,11 +161,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     }
   }
 
-  AddTeamLogosToDownloadTable();
-  ExecuteMatchConfigCvars();
-  LoadPlayerNames();
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
-
   Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
   return true;
 }
@@ -424,7 +421,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
 
   GetTeamAuths(Get5Team_Spec).Clear();
   if (kv.JumpToKey("spectators")) {
-    AddSubsectionAuthsToList(kv, "players", GetTeamAuths(Get5Team_Spec), AUTH_LENGTH);
+    AddSubsectionAuthsToList(kv, "players", GetTeamAuths(Get5Team_Spec));
     kv.GetString("name", g_TeamNames[Get5Team_Spec], MAX_CVAR_LENGTH,
                  CONFIG_SPECTATORSNAME_DEFAULT);
     kv.GoBack();
@@ -472,7 +469,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
       char value[MAX_CVAR_LENGTH];
       do {
         kv.GetSectionName(name, sizeof(name));
-        kv.GetString(NULL_STRING, value, sizeof(value));
+        ReadEmptyStringInsteadOfPlaceholder(kv, value, sizeof(value));
         g_CvarNames.PushString(name);
         g_CvarValues.PushString(value);
       } while (kv.GotoNextKey(false));
@@ -643,8 +640,8 @@ static void LoadTeamData(KeyValues kv, Get5Team matchTeam) {
   kv.GetString("fromfile", fromfile, sizeof(fromfile));
 
   if (StrEqual(fromfile, "")) {
-    AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
-    AddSubsectionAuthsToList(kv, "coaches", GetTeamCoaches(matchTeam), AUTH_LENGTH);
+    AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam));
+    AddSubsectionAuthsToList(kv, "coaches", GetTeamCoaches(matchTeam));
     kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
@@ -1145,30 +1142,30 @@ public Action Command_CreateScrim(int client, int args) {
     MatchConfigFail("Failed to read scrim template in %s", templateFile);
     return Plugin_Handled;
   }
-
+  // Because we read the field and write it again, then load it as a match config, we have to make sure empty
+  // strings are not being skipped.
   if (kv.JumpToKey("team1") && kv.JumpToKey("players") && kv.GotoFirstSubKey(false)) {
-    // Empty string values are found when reading KeyValues, but don't get written out.
-    // So this adds a value for each auth so scrim templates don't have to insert fake values.
+    char name[MAX_NAME_LENGTH];
     do {
-      char auth[AUTH_LENGTH];
-      char name[MAX_NAME_LENGTH];
-      kv.GetString(NULL_STRING, name, sizeof(name), KEYVALUE_STRING_PLACEHOLDER);
-      kv.GetSectionName(auth, sizeof(auth));
-
-      // This shouldn't be necessary, but when the name field was empty, the
-      // use of KEYVALUE_STRING_PLACEHOLDER as a default doesn't seem to work.
-      // TODO: figure out what's going on with needing this here.
-      if (StrEqual(name, "")) {
-        name = KEYVALUE_STRING_PLACEHOLDER;
-      }
-
-      kv.SetString(NULL_STRING, name);
+      WritePlaceholderInsteadOfEmptyString(kv, name, sizeof(name));
     } while (kv.GotoNextKey(false));
     kv.Rewind();
   } else {
     delete kv;
     MatchConfigFail("You must add players to team1 on your scrim template!");
     return Plugin_Handled;
+  }
+
+  // Also ensure empty string values in cvars get printed to the match config.
+  if (kv.JumpToKey("cvars")) {
+    if (kv.GotoFirstSubKey(false)) {
+      char cVarValue[MAX_CVAR_LENGTH];
+      do {
+        WritePlaceholderInsteadOfEmptyString(kv, cVarValue, sizeof(cVarValue));
+      } while (kv.GotoNextKey(false));
+      kv.GoBack();
+    }
+    kv.GoBack();
   }
 
   kv.JumpToKey("team2", true);

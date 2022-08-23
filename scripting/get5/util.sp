@@ -4,8 +4,8 @@
 #define MAX_FLOAT_STRING_LENGTH 32
 #define AUTH_LENGTH 64
 
-// Dummy value for when we need to write a keyvalue string, but we don't care about the value.
-// Trying to write an empty string often results in the keyvalue not being written, so we use this.
+// Dummy value for when we need to write a KeyValue string, but we don't care about the value *or* when the value is an
+// empty string. Trying to write an empty string results in the KeyValue not being written, so we use this.
 #define KEYVALUE_STRING_PLACEHOLDER "__placeholder"
 
 static char _colorNames[][] = {"{NORMAL}",      "{DARK_RED}",  "{PINK}", "{GREEN}",  "{YELLOW}",
@@ -383,28 +383,27 @@ stock int AddKeysToList(KeyValues kv, ArrayList list, int maxKeyLength) {
   return count;
 }
 
-stock int AddSubsectionAuthsToList(KeyValues kv, const char[] section, ArrayList list,
-                                   int maxKeyLength) {
+stock int AddSubsectionAuthsToList(KeyValues kv, const char[] section, ArrayList list) {
   int count = 0;
   if (kv.JumpToKey(section)) {
-    count = AddAuthsToList(kv, list, maxKeyLength);
+    count = AddAuthsToList(kv, list);
     kv.GoBack();
   }
   return count;
 }
 
-stock int AddAuthsToList(KeyValues kv, ArrayList list, int maxKeyLength) {
+stock int AddAuthsToList(KeyValues kv, ArrayList list) {
   int count = 0;
-  char[] buffer = new char[maxKeyLength];
+  char buffer[AUTH_LENGTH];
   char steam64[AUTH_LENGTH];
   char name[MAX_NAME_LENGTH];
   if (kv.GotoFirstSubKey(false)) {
     do {
-      kv.GetSectionName(buffer, maxKeyLength);
-      kv.GetString(NULL_STRING, name, sizeof(name));
+      kv.GetSectionName(buffer, AUTH_LENGTH);
+      ReadEmptyStringInsteadOfPlaceholder(kv, name, sizeof(name));
       if (ConvertAuthToSteam64(buffer, steam64)) {
         list.PushString(steam64);
-        Get5_SetPlayerName(steam64, name);
+        Get5_SetPlayerName(steam64, name, true);
         count++;
       }
     } while (kv.GotoNextKey(false));
@@ -417,6 +416,26 @@ stock bool RemoveStringFromArray(ArrayList list, const char[] str) {
   int index = list.FindString(str);
   if (index != -1) {
     list.Erase(index);
+    return true;
+  }
+  return false;
+}
+
+// Because KeyValue cannot write empty strings, we use this to consistently read empty strings and replace
+// our empty-string-placeholder with actual empty string.
+stock bool ReadEmptyStringInsteadOfPlaceholder(const KeyValues kv, char[] buffer, const int bufferSize) {
+  kv.GetString(NULL_STRING, buffer, bufferSize);
+  if (StrEqual(KEYVALUE_STRING_PLACEHOLDER, buffer)) {
+    Format(buffer, bufferSize, "");
+    return true;
+  }
+  return false;
+}
+
+stock bool WritePlaceholderInsteadOfEmptyString(const KeyValues kv, char[] buffer, const int bufferSize) {
+  kv.GetString(NULL_STRING, buffer, bufferSize);
+  if (StrEqual("", buffer)) {
+    kv.SetString(NULL_STRING, KEYVALUE_STRING_PLACEHOLDER);
     return true;
   }
   return false;

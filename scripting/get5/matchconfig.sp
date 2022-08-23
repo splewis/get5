@@ -1071,7 +1071,8 @@ public Action Command_CreateMatch(int client, int args) {
   char teamName[MAX_CVAR_LENGTH];
 
   // If team names are empty because nobody is on on the server, the will be set by
-  // CheckTeamNameStatus during ready-phase. We cannot write empty strings to KeyValues, so we just skip them.
+  // CheckTeamNameStatus during ready-phase. We cannot write empty strings to KeyValues, so we just
+  // skip them.
   kv.JumpToKey("team1", true);
   if (AddPlayersToAuthKv(kv, Get5Team_1, teamName) > 0) {
     kv.SetString("name", teamName);

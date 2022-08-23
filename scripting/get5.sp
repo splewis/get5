@@ -374,9 +374,12 @@ public void OnPluginStart() {
   g_KickClientsWithNoMatchCvar =
       CreateConVar("get5_kick_when_no_match_loaded", "0",
                    "Whether the plugin kicks new clients when no match is loaded");
-  g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to exec when the game goes live.");
-  g_WarmupCfgCvar = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods.");
-  g_KnifeCfgCvar = CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to exec in knife periods.");
+  g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg",
+                               "Config file to exec when the game goes live.");
+  g_WarmupCfgCvar =
+      CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods.");
+  g_KnifeCfgCvar =
+      CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to exec in knife periods.");
   g_LiveCountdownTimeCvar = CreateConVar(
       "get5_live_countdown_time", "10",
       "Number of seconds used to count down when a match is going live", 0, true, 5.0, true, 60.0);
@@ -439,15 +442,12 @@ public void OnPluginStart() {
   g_PhaseAnnouncementCountCvar = CreateConVar(
       "get5_phase_announcement_count", "5",
       "The number of times Get5 will print 'Knife' or 'Match is LIVE' when the game starts. Set to 0 to disable.");
-  g_Team1NameColorCvar = CreateConVar(
-      "get5_team1_color", "{LIGHT_GREEN}",
-      "The color used for the name of team 1 in chat messages.");
-  g_Team2NameColorCvar = CreateConVar(
-      "get5_team2_color", "{PINK}",
-      "The color used for the name of team 2 in chat messages.");
-  g_SpecNameColorCvar = CreateConVar(
-      "get5_spec_color", "{NORMAL}",
-      "The color used for the name of spectators in chat messages.");
+  g_Team1NameColorCvar = CreateConVar("get5_team1_color", "{LIGHT_GREEN}",
+                                      "The color used for the name of team 1 in chat messages.");
+  g_Team2NameColorCvar = CreateConVar("get5_team2_color", "{PINK}",
+                                      "The color used for the name of team 2 in chat messages.");
+  g_SpecNameColorCvar = CreateConVar("get5_spec_color", "{NORMAL}",
+                                     "The color used for the name of spectators in chat messages.");
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");

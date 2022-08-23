@@ -72,6 +72,7 @@ static void KV_Test() {
 
   AssertEq("maps_to_win", g_MapsToWin, 2);
   AssertEq("bo2_series", g_BO2Match, false);
+  AssertEq("num_maps", g_NumberOfMapsInSeries, 3);
   AssertEq("skip_veto", g_SkipVeto, false);
   AssertEq("players_per_team", g_PlayersPerTeam, 5);
   AssertEq("favored_percentage_team1", g_FavoredTeamPercentage, 65);

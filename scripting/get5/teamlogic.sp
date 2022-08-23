@@ -492,7 +492,8 @@ void LoadPlayerNames() {
   }
 
   if (numNames > 0) {
-    char nameFile[] = "get5_names.txt";
+    char nameFile[PLATFORM_MAX_PATH];
+    GetTempFilePath(nameFile, sizeof(nameFile), TEMP_VALVE_NAMES_FILE_PATTERN);
     DeleteFile(nameFile);
     if (namesKv.ExportToFile(nameFile)) {
       ServerCommand("sv_load_forced_client_names_file %s", nameFile);

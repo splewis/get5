@@ -1,5 +1,6 @@
 #define TEMP_MATCHCONFIG_BACKUP_PATTERN "get5_match_config_backup%d.txt"
 #define TEMP_VALVE_BACKUP_PATTERN "get5_temp_backup%d.txt"
+#define TEMP_VALVE_NAMES_FILE_PATTERN "get5_names%d.txt"
 
 public Action Command_LoadBackup(int client, int args) {
   if (!g_BackupSystemEnabledCvar.BoolValue) {

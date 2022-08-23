@@ -41,6 +41,7 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   g_HasKnifeRoundStarted = false;
   g_MapChangePending = false;
   g_MapNumber = 0;
+  g_NumberOfMapsInSeries = 0;
   g_RoundNumber = -1;
   g_LastVetoTeam = Get5Team_2;
   g_MapPoolList.Clear();
@@ -295,9 +296,8 @@ public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
 public void WriteMatchToKv(KeyValues kv) {
   kv.SetString("matchid", g_MatchID);
   kv.SetNum("scrim", g_InScrimMode);
-  kv.SetNum("maps_to_win", g_MapsToWin);
-  kv.SetNum("bo2_series", g_BO2Match);
   kv.SetNum("skip_veto", g_SkipVeto);
+  kv.SetNum("num_maps", g_NumberOfMapsInSeries);
   kv.SetNum("players_per_team", g_PlayersPerTeam);
   kv.SetNum("coaches_per_team", g_CoachesPerTeam);
   kv.SetNum("min_players_to_ready", g_MinPlayersToReady);
@@ -386,26 +386,18 @@ static bool LoadMatchFromKv(KeyValues kv) {
       kv.GetNum("min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
   g_SkipVeto = kv.GetNum("skip_veto", CONFIG_SKIPVETO_DEFAULT) != 0;
 
-  // bo2_series and maps_to_win are deprecated. They are used if provided, but otherwise
-  // num_maps' default is the fallback.
-  bool bo2 = (kv.GetNum("bo2_series", false) != 0);
-  int mapsToWin = kv.GetNum("maps_to_win", 0);
-  int numMaps = kv.GetNum("num_maps", CONFIG_NUM_MAPSDEFAULT);
-  if (bo2 || numMaps == 2) {
+  g_NumberOfMapsInSeries = kv.GetNum("num_maps", CONFIG_NUM_MAPSDEFAULT);
+  if (g_NumberOfMapsInSeries == 2) {
     g_BO2Match = true;
     g_MapsToWin = 2;
   } else {
     g_BO2Match = false;
-    if (mapsToWin >= 1) {
-      g_MapsToWin = mapsToWin;
-    } else {
-      // Normal path. No even numbers allowed since we already handled bo2.
-      if (numMaps % 2 == 0) {
-        MatchConfigFail("Cannot create a series of %d maps. Use a odd number or 2.", numMaps);
-        return false;
-      }
-      g_MapsToWin = (numMaps + 1) / 2;
+    // Normal path. No even numbers allowed since we already handled bo2.
+    if (g_NumberOfMapsInSeries % 2 == 0) {
+      MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
+      return false;
     }
+    g_MapsToWin = (g_NumberOfMapsInSeries + 1) / 2;
   }
 
   char vetoFirstBuffer[64];
@@ -499,27 +491,18 @@ static bool LoadMatchFromJson(JSON_Object json) {
                                                     CONFIG_MINSPECTATORSTOREADY_DEFAULT);
   g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
 
-  // bo2_series and maps_to_win are deprecated. They are used if provided, but otherwise
-  // num_maps' default is the fallback.
-  bool bo2 = json_object_get_bool_safe(json, "bo2_series", false);
-  int mapsToWin = json_object_get_int_safe(json, "maps_to_win", 0);
-  int numMaps = json_object_get_int_safe(json, "num_maps", CONFIG_NUM_MAPSDEFAULT);
-
-  if (bo2 || numMaps == 2) {
+  g_NumberOfMapsInSeries = json_object_get_int_safe(json, "num_maps", CONFIG_NUM_MAPSDEFAULT);
+  if (g_NumberOfMapsInSeries == 2) {
     g_BO2Match = true;
     g_MapsToWin = 2;
   } else {
     g_BO2Match = false;
-    if (mapsToWin >= 1) {
-      g_MapsToWin = mapsToWin;
-    } else {
-      // Normal path. No even numbers allowed since we already handled bo2.
-      if (numMaps % 2 == 0) {
-        MatchConfigFail("Cannot create a series of %d maps. Use a odd number or 2.", numMaps);
-        return false;
-      }
-      g_MapsToWin = (numMaps + 1) / 2;
+    // Normal path. No even numbers allowed since we already handled bo2.
+    if (g_NumberOfMapsInSeries % 2 == 0) {
+      MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
+      return false;
     }
+    g_MapsToWin = (g_NumberOfMapsInSeries + 1) / 2;
   }
 
   char vetoFirstBuffer[64];
@@ -1059,7 +1042,7 @@ public Action Command_CreateMatch(int client, int args) {
 
   KeyValues kv = new KeyValues("Match");
   kv.SetString("matchid", matchid);
-  kv.SetNum("maps_to_win", 1);
+  kv.SetNum("num_maps", 1);
   kv.SetNum("skip_veto", 1);
   kv.SetNum("players_per_team", 5);
   kv.SetNum("clinch_series", 1);

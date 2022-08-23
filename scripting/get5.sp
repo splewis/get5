@@ -119,7 +119,8 @@ bool g_SeriesCanClinch = true;
 int g_RoundNumber = -1;  // The round number, 0-indexed. -1 if the match is not live.
 // The active map number, used by stats. Required as the calculated round number changes immediately
 // as a map ends, but before the map changes to the next.
-int g_MapNumber = 0;
+int g_MapNumber = 0; // the current map number, starting at 0.
+int g_NumberOfMapsInSeries = 0; // the number of maps to play in the series.
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MATCHTEAM_COUNT];

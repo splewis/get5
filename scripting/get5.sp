@@ -708,7 +708,7 @@ public void RememberAndKickClient(int client, const char[] format, const char[] 
 }
 
 public void OnClientPutInServer(int client) {
-  Stats_HookDamageForClient(client);
+  Stats_HookDamageForClient(client); // Also needed for bots!
   if (IsFakeClient(client)) {
     return;
   }
@@ -717,7 +717,7 @@ public void OnClientPutInServer(int client) {
   // Maybe this could just be freezetime end?
   Stats_ResetClientRoundValues(client);
 
-  // This checks for gamestate none on its own.
+  // This checks for gamestate none and pending backup on its own.
   if (CheckAutoLoadConfig()) {
     return;
   }
@@ -817,6 +817,7 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
   }
 }
 
+// This runs every time a map starts *or* when the plugin is reloaded.
 public void OnConfigsExecuted() {
   LogDebug("OnConfigsExecuted");
   g_MapChangePending = false;
@@ -831,18 +832,18 @@ public void OnConfigsExecuted() {
 
   if (CheckAutoLoadConfig()) {
     // If gamestate is none and a config was autoloaded, a match config will set all of the below state.
-    LogMessage("Match configuration was loaded via get5_autoload_config.");
     return;
   }
 
   LOOP_TEAMS(team) {
     g_TeamGivenStopCommand[team] = false;
     g_TeamReadyForUnpause[team] = false;
-    if (!g_WaitingForRoundBackup) {
-      g_TacticalPauseTimeUsed[team] = 0;
-      g_TacticalPausesUsed[team] = 0;
-      g_TechnicalPausesUsed[team] = 0;
-    }
+
+    // We don't need to check for g_WaitingForRoundBackup here, as a backup will override the pauses consumed anyway; if
+    // the map is changed, we always load the backup pauses.
+    g_TacticalPauseTimeUsed[team] = 0;
+    g_TacticalPausesUsed[team] = 0;
+    g_TechnicalPausesUsed[team] = 0;
   }
 
   g_ReadyTimeWaitingUsed = 0;
@@ -965,8 +966,11 @@ static bool CheckAutoLoadConfig() {
     char autoloadConfig[PLATFORM_MAX_PATH];
     g_AutoLoadConfigCvar.GetString(autoloadConfig, sizeof(autoloadConfig));
     if (!StrEqual(autoloadConfig, "")) {
-      LoadMatchConfig(autoloadConfig);
-      return true;
+      bool loaded = LoadMatchConfig(autoloadConfig); // return false if match config load fails!
+      if (loaded) {
+        LogMessage("Match configuration was loaded via get5_autoload_config.");
+      }
+      return loaded;
     }
   }
   return false;

@@ -175,8 +175,10 @@ void WriteBackupStructure(const char[] path) {
 
   kv.SetNum("series_draw", g_TeamSeriesScores[Get5Team_None]);
 
-  kv.SetNum("team1_pauses_used", g_TacticalPausesUsed[Get5Team_1]);
-  kv.SetNum("team2_pauses_used", g_TacticalPausesUsed[Get5Team_2]);
+  kv.SetNum("team1_tac_pauses_used", g_TacticalPausesUsed[Get5Team_1]);
+  kv.SetNum("team2_tac_pauses_used", g_TacticalPausesUsed[Get5Team_2]);
+  kv.SetNum("team1_tech_pauses_used", g_TechnicalPausesUsed[Get5Team_1]);
+  kv.SetNum("team2_tech_pauses_used", g_TechnicalPausesUsed[Get5Team_2]);
   kv.SetNum("team1_pause_time_used", g_TacticalPauseTimeUsed[Get5Team_1]);
   kv.SetNum("team2_pause_time_used", g_TacticalPauseTimeUsed[Get5Team_2]);
 
@@ -254,6 +256,17 @@ bool RestoreFromBackup(const char[] path) {
     kv.GoBack();
   }
 
+  if (g_GameState != Get5State_Live) {
+    // This isn't perfect, but it's better than resetting all pauses used to zero in cases of restore on a new server.
+    // If restoring while live, we just retain the current pauses used, as they should be the "most correct".
+    g_TacticalPausesUsed[Get5Team_1] = kv.GetNum("team1_tac_pauses_used", 0);
+    g_TacticalPausesUsed[Get5Team_2] = kv.GetNum("team2_tac_pauses_used", 0);
+    g_TechnicalPausesUsed[Get5Team_1] = kv.GetNum("team1_tech_pauses_used", 0);
+    g_TechnicalPausesUsed[Get5Team_2] = kv.GetNum("team2_tech_pauses_used", 0);
+    g_TacticalPauseTimeUsed[Get5Team_1] = kv.GetNum("team1_pause_time_used", 0);
+    g_TacticalPauseTimeUsed[Get5Team_2] = kv.GetNum("team2_pause_time_used", 0);
+  }
+
   kv.GetString("matchid", g_MatchID, sizeof(g_MatchID));
   g_GameState = view_as<Get5State>(kv.GetNum("gamestate"));
 
@@ -269,12 +282,6 @@ bool RestoreFromBackup(const char[] path) {
   // This ensures that the MapNumber logic correctly calculates the map number when there have been
   // draws.
   g_TeamSeriesScores[Get5Team_None] = kv.GetNum("series_draw", 0);
-
-  // This isn't perfect, but it's better than resetting all pauses used to zero in cases of restore on a new server.
-  g_TacticalPausesUsed[Get5Team_1] =  kv.GetNum("team1_pauses_used", 0);
-  g_TacticalPausesUsed[Get5Team_2] =  kv.GetNum("team2_pauses_used", 0);
-  g_TacticalPauseTimeUsed[Get5Team_1] =  kv.GetNum("team1_pause_time_used", 0);
-  g_TacticalPauseTimeUsed[Get5Team_2] =  kv.GetNum("team2_pause_time_used", 0);
 
   // Immediately set map number global var to ensure anything below doesn't break.
   g_MapNumber = Get5_GetMapNumber();

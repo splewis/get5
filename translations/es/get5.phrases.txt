@@ -148,7 +148,7 @@
     {
         "es"            "Un administrador forzó la recuperación de la partida."
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
         "es"            "{1} quiere parar y reiniciar la partida, esto requiere {2} confirmaciones con {3}."
     }

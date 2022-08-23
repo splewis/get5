@@ -120,7 +120,7 @@
     {
         "de"            "Ein Admin hat das Match fortgesetzt."
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
         "de"            "{1} möchte die letzte Runde wiederholen, {2} muss mit {3} bestätigen."
     }

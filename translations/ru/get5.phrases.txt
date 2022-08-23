@@ -116,7 +116,7 @@
     {
         "ru"            "Администратор силы возобновленная игра."
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
         "ru"            "{1} желает остановить и перезагрузить последний раунд, ждем {2} чтобы написали {3} для подтверждения."
     }

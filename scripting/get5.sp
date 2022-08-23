@@ -1137,11 +1137,11 @@ public Action Command_Stop(int client, int args) {
   char stopCommandFormatted[64];
   FormatChatCommand(stopCommandFormatted, sizeof(stopCommandFormatted), "!stop");
   if (g_TeamGivenStopCommand[Get5Team_1] && !g_TeamGivenStopCommand[Get5Team_2]) {
-    Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
+    Get5_MessageToAll("%t", "TeamWantsToReloadCurrentRound",
                       g_FormattedTeamNames[Get5Team_1], g_FormattedTeamNames[Get5Team_2],
                       stopCommandFormatted);
   } else if (!g_TeamGivenStopCommand[Get5Team_1] && g_TeamGivenStopCommand[Get5Team_2]) {
-    Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
+    Get5_MessageToAll("%t", "TeamWantsToReloadCurrentRound",
                       g_FormattedTeamNames[Get5Team_2], g_FormattedTeamNames[Get5Team_1],
                       stopCommandFormatted);
   } else if (g_TeamGivenStopCommand[Get5Team_1] && g_TeamGivenStopCommand[Get5Team_2]) {
@@ -1527,6 +1527,16 @@ public void WriteBackup() {
   LogDebug("Writing backup to %s", path);
   WriteBackStructure(path);
   g_LastGet5BackupCvar.SetString(path);
+
+  // Reset this when writing a new backup, as voting has no reference to which round the teams wanted to restore to, so
+  // votes to restore during one round should not carry over into the next round, as it would just restore that round
+  // instead.
+  LOOP_TEAMS(t) {
+    if (g_TeamGivenStopCommand[t]) {
+      Get5_MessageToAll("%t", "StopCommandVotingReset", g_FormattedTeamNames[t]);
+    }
+    g_TeamGivenStopCommand[t] = false;
+  }
 }
 
 public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {

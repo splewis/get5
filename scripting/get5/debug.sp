@@ -99,8 +99,17 @@ static void AddGlobalStateInfo(File f) {
   WriteArrayList(f, "g_MapPoolList", g_MapPoolList);
   WriteArrayList(f, "g_MapsToPlay", g_MapsToPlay);
   WriteArrayList(f, "g_MapsLeftInVetoPool", g_MapsLeftInVetoPool);
-  // TODO: write g_MapSides (it's not a string so WriteArrayList doesn't work).
-
+  f.WriteLine("Defined map sides:");
+  for (int i = 0; i < g_MapSides.Length; i++) {
+    SideChoice c = g_MapSides.Get(i);
+    if (c == SideChoice_Team1CT) {
+      f.WriteLine("g_MapSides(%d) = team1_ct", i);
+    } else if (c == SideChoice_Team1T) {
+      f.WriteLine("g_MapSides(%d) = team1_t", i);
+    } else {
+      f.WriteLine("g_MapSides(%d) = knife", i);
+    }
+  }
   f.WriteLine("g_MatchTitle = %s", g_MatchTitle);
   f.WriteLine("g_PlayersPerTeam = %d", g_PlayersPerTeam);
   f.WriteLine("g_CoachesPerTeam = %d", g_CoachesPerTeam);

@@ -123,7 +123,8 @@ interface Get5Match {
     cvars.<br><br>**`Default: ""`**
 28. Match teams can also be loaded from a separate file, allowing you to easily re-use a match configuration for
     different sets of teams. A `fromfile` value could be `"addons/sourcemod/configs/get5/team_nip.json"`, and that file
-    should contain a valid `Get5MatchTeam` object.
+    should contain a valid `Get5MatchTeam` object. Note that the file you point to must be in the same format as the
+    main file, so pointing to a `.cfg` file when the main file is `.json` will **not** work.
 29. _Optional_<br>The name of the spectator team.<br><br>**`Default: "casters"`**
 30. _Optional_<br>The spectator/caster Steam IDs and names.
 31. _Optional_<br>Determines the starting sides for each map. If this array is shorter than `num_maps`, `side_type` will

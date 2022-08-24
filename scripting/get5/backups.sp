@@ -210,18 +210,21 @@ void WriteBackupStructure(const char[] path) {
   WriteMatchToKv(kv);
   kv.GoBack();
 
-  // Write valve's backup format into the file.
-  char lastBackup[PLATFORM_MAX_PATH];
-  ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
-  if (g_GameState == Get5State_Live && lastBackupCvar != null) {
-    lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
-    KeyValues valveBackup = new KeyValues("valve_backup");
-    if (valveBackup.ImportFromFile(lastBackup)) {
-      kv.JumpToKey("valve_backup", true);
-      KvCopySubkeys(valveBackup, kv);
-      kv.GoBack();
+  if (g_GameState == Get5State_Live) {
+    // Write valve's backup format into the file. This only applies to live rounds, as any pre-live backups should
+    // just restart the game to the knife round.
+    char lastBackup[PLATFORM_MAX_PATH];
+    ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
+    if (lastBackupCvar != null) {
+      lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
+      KeyValues valveBackup = new KeyValues("valve_backup");
+      if (valveBackup.ImportFromFile(lastBackup)) {
+        kv.JumpToKey("valve_backup", true);
+        KvCopySubkeys(valveBackup, kv);
+        kv.GoBack();
+      }
+      delete valveBackup;
     }
-    delete valveBackup;
   }
 
   // Write the get5 stats into the file.
@@ -328,9 +331,8 @@ bool RestoreFromBackup(const char[] path) {
     kv.GoBack();
   }
 
-  // When loading round 0, there is no valve backup, so we assume round 0 if the game is live,
-  // otherwise -1
-  int roundNumberRestoredTo = g_GameState == Get5State_Live ? 0 : -1;
+  // When loading pre-live, there is no Valve backup, so we assume -1.
+  int roundNumberRestoredTo = -1;
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   if (kv.JumpToKey("valve_backup")) {
@@ -373,6 +375,7 @@ bool RestoreFromBackup(const char[] path) {
 
 void RestoreGet5Backup() {
   if (g_SavedValveBackup) {
+    LogDebug("Restored backup with Valve backup. Doing match restore...");
     // If you load a backup during a live round, the game might get stuck if there are only bots remaining and no
     // players are alive. Other stuff will probably also go wrong, so we just reset the game before loading the
     // backup to avoid any weird edge-cases.
@@ -384,11 +387,19 @@ void RestoreGet5Backup() {
     g_DoingBackupRestoreNow = true; // reset after the backup has completed, suppresses various events and hooks until then.
     CreateTimer(1.5, Time_StartRestore);
   } else {
+    LogDebug("Restored backup with no Valve backup. Going to warmup now.");
     // Backup was for veto or warmup; go to warmup.
     UnpauseGame(Get5Team_None);
     ExecCfg(g_WarmupCfgCvar);
     RestartGame();
     StartWarmup();
+  }
+  // Last step is assigning players to their teams. This is normally done inside LoadMatchConfig, but since we need
+  // the team sides to be applied from the backup, we skip it then and do it here.
+  LOOP_CLIENTS(i) {
+    if (IsAuthedPlayer(i) && !IsClientSourceTV(i)) {
+      CheckClientTeam(i);
+    }
   }
 }
 

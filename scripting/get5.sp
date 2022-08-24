@@ -837,9 +837,8 @@ public void OnConfigsExecuted() {
   LOOP_TEAMS(team) {
     g_TeamGivenStopCommand[team] = false;
     g_TeamReadyForUnpause[team] = false;
-
     // We don't need to check for g_WaitingForRoundBackup here, as a backup will override the pauses consumed anyway; if
-    // the map is changed, we always load the backup pauses.
+    // the map is changed, we always load the backup pauses. See the RestoreFromBackup function.
     g_TacticalPauseTimeUsed[team] = 0;
     g_TacticalPausesUsed[team] = 0;
     g_TechnicalPausesUsed[team] = 0;
@@ -855,6 +854,11 @@ public void OnConfigsExecuted() {
     ChangeState(Get5State_Warmup);
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();
+  }
+  // This must not be called when waiting for a backup, as it will set the sides incorrectly if the team swapped in
+  // knife or if the backup target is the second half.
+  if (!g_WaitingForRoundBackup) {
+    SetStartingTeams();
   }
 }
 
@@ -1581,7 +1585,7 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
     }
   }
 
-  if (g_GameState >= Get5State_Warmup) {
+  if (g_GameState == Get5State_Warmup || g_GameState == Get5State_KnifeRound || g_GameState == Get5State_Live) {
     WriteBackup();
   }
 

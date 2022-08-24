@@ -32,7 +32,7 @@ public Action Timer_GoToLiveAfterWarmupCountdown(Handle timer) {
   }
   Get5_MessageToAll("%t", "MatchBeginInSecondsInfoMessage", countdown);
   StartWarmup(countdown);
-  LogDebug("Started warmup countdown to live in %s seconds.", countdown);
+  LogDebug("Started warmup countdown to live in %d seconds.", countdown);
   return Plugin_Handled;
 }
 

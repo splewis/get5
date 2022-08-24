@@ -93,7 +93,9 @@ interface Get5Match {
 14. _Optional_<br>Wrapper for the server's `mp_teamprediction_pct`. This determines the chances of `team1`
     winning.<br><br>**`Default: 0`**
 15. _Optional_<br>Wrapper for the server's `mp_teamprediction_txt`.<br><br>**`Default: ""`**
-16. _Required_<br>The team's name. Sets `mp_teamname_1` or `mp_teamname_2`. Printed frequently in chat.
+16. _Optional_<br>The team's name. Sets `mp_teamname_1` or `mp_teamname_2`. Printed frequently in chat. If you don't
+    define a team name, it will be set to `team_` followed by the name of the captain, i.e. `team_s1mple`.
+    <br><br>**`Default: ""`**
 17. _Optional_<br>A short version of the team name, used in clan tags in-game (requires
     that [`get5_set_client_clan_tags`](../configuration#get5_set_client_clan_tags) is disabled).
     <br><br>**`Default: ""`**

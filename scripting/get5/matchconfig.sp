@@ -111,12 +111,12 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   SetMatchTeamCvars();
   LoadPlayerNames();
   AddTeamLogosToDownloadTable();
-  // This gets called twice because ExecCfg(g_WarmupCfgCvar) also does it async, but we need it here.
+  // ExecuteMatchConfigCvars gets called twice because ExecCfg(g_WarmupCfgCvar) also does it async, but we need it here
+  // as the team assigment below depends on it.
   ExecuteMatchConfigCvars();
+  SetStartingTeams();
 
   if (!restoreBackup) {
-    // SetStartingTeams must *not* be called when loading a backup, as it will override the sides saved in the backup!
-    SetStartingTeams();
     ChangeState(Get5State_Warmup);
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();
@@ -145,16 +145,19 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
         || GetTeamCoaches(Get5Team_2).Length != 0)) {
       LogError("Setting player auths in the \"players\" or \"coaches\" section has no impact with get5_check_auths 0");
     }
+
+    // ExecuteMatchConfigCvars must be executed before we place players, as it might have get5_check_auths 1.
+    // We must also have called SetStartingTeams to get the sides right.
+    // When restoring from backup, assigning to teams is done after loading the match config as it depends on the sides
+    // being set correctly by the backup, so we put it inside this "if" here.
+    LOOP_CLIENTS(i) {
+      if (IsAuthedPlayer(i) && !IsClientSourceTV(i)) {
+        CheckClientTeam(i);
+      }
+    }
   }
 
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
-
-  // ExecuteMatchConfigCvars must be executed before we place players, as it might have get5_check_auths 1.
-  LOOP_CLIENTS(i) {
-    if (IsAuthedPlayer(i) && !IsClientSourceTV(i)) {
-      CheckClientTeam(i);
-    }
-  }
 
   Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
   return true;

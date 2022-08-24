@@ -40,12 +40,12 @@ static void PerformSideSwap(bool swap) {
     g_TeamSide[Get5Team_1] = tmp;
 
     LOOP_CLIENTS(i) {
-      if (IsValidClient(i)) {
+      if (IsValidClient(i) && !IsClientSourceTV(i)) {
         if (IsFakeClient(i)) {
           // Because bots never have an assigned team, they won't be moved around by CheckClientTeam. We kick them to
           // prevent one team from having too many players. They will rejoin if defined in the live config.
           KickClient(i);
-        } else if (!IsClientSourceTV(i)) {
+        } else {
           CheckClientTeam(i, false);
         }
       }

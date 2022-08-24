@@ -82,7 +82,7 @@ public void VetoController(int client) {
   }
 
   int mapsLeft = g_MapsLeftInVetoPool.Length;
-  int maxMaps = MaxMapsToPlay(g_MapsToWin);
+  int maxMaps = g_NumberOfMapsInSeries;
 
   int mapsPicked = g_MapsToPlay.Length;
   int sidesSet = g_MapSides.Length;
@@ -110,7 +110,7 @@ public void VetoController(int client) {
   // The purpose is to force the veto process to take a
   // ban/ban/ban/ban/pick/pick/last map unused process for BO2's.
   bool bo2_hack = false;
-  if (g_BO2Match && (mapsLeft == 3 || mapsLeft == 2)) {
+  if (g_NumberOfMapsInSeries == 2 && (mapsLeft == 3 || mapsLeft == 2)) {
     bo2_hack = true;
   }
 
@@ -157,7 +157,7 @@ public void VetoController(int client) {
     VetoFinished();
 
   } else if (mapsLeft == 1) {
-    if (g_BO2Match) {
+    if (g_NumberOfMapsInSeries == 2) {
       // Terminate the veto since we've had ban-ban-ban-ban-pick-pick
       VetoFinished();
       return;

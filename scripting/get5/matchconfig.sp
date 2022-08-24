@@ -72,29 +72,22 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     g_TeamScoresPerMap.Set(g_TeamScoresPerMap.Length - 1, 0, 1);
   }
 
-  if (g_BO2Match) {
-    g_MapsToWin = 2;
-  }
-
-  if (MaxMapsToPlay(g_MapsToWin) > g_MapPoolList.Length) {
-    MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps",
-                    MaxMapsToPlay(g_MapsToWin), g_MapPoolList.Length);
+  if (g_NumberOfMapsInSeries > g_MapPoolList.Length) {
+    MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps", g_NumberOfMapsInSeries, g_MapPoolList.Length);
     return false;
   }
 
   if (g_SkipVeto) {
     // Copy the first k maps from the maplist to the final match maps.
-    for (int i = 0; i < MaxMapsToPlay(g_MapsToWin); i++) {
+    for (int i = 0; i < g_NumberOfMapsInSeries; i++) {
       g_MapPoolList.GetString(i, mapName, sizeof(mapName));
       g_MapsToPlay.PushString(mapName);
 
       // Push a map side if one hasn't been set yet.
       if (g_MapSides.Length < g_MapsToPlay.Length) {
-        if (g_MatchSideType == MatchSideType_Standard) {
+        if (g_MatchSideType == MatchSideType_Standard || g_MatchSideType == MatchSideType_AlwaysKnife) {
           g_MapSides.Push(SideChoice_KnifeRound);
-        } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
-          g_MapSides.Push(SideChoice_KnifeRound);
-        } else if (g_MatchSideType == MatchSideType_NeverKnife) {
+        } else {
           g_MapSides.Push(SideChoice_Team1CT);
         }
       }
@@ -387,17 +380,10 @@ static bool LoadMatchFromKv(KeyValues kv) {
   g_SkipVeto = kv.GetNum("skip_veto", CONFIG_SKIPVETO_DEFAULT) != 0;
 
   g_NumberOfMapsInSeries = kv.GetNum("num_maps", CONFIG_NUM_MAPSDEFAULT);
-  if (g_NumberOfMapsInSeries == 2) {
-    g_BO2Match = true;
-    g_MapsToWin = 2;
-  } else {
-    g_BO2Match = false;
-    // Normal path. No even numbers allowed since we already handled bo2.
-    if (g_NumberOfMapsInSeries % 2 == 0) {
-      MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
-      return false;
-    }
-    g_MapsToWin = (g_NumberOfMapsInSeries + 1) / 2;
+  g_MapsToWin = MapsToWin(g_NumberOfMapsInSeries);
+  if (g_NumberOfMapsInSeries != 2 && g_NumberOfMapsInSeries % 2 == 0) {
+    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
+    return false;
   }
 
   char vetoFirstBuffer[64];
@@ -492,17 +478,10 @@ static bool LoadMatchFromJson(JSON_Object json) {
   g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
 
   g_NumberOfMapsInSeries = json_object_get_int_safe(json, "num_maps", CONFIG_NUM_MAPSDEFAULT);
-  if (g_NumberOfMapsInSeries == 2) {
-    g_BO2Match = true;
-    g_MapsToWin = 2;
-  } else {
-    g_BO2Match = false;
-    // Normal path. No even numbers allowed since we already handled bo2.
-    if (g_NumberOfMapsInSeries % 2 == 0) {
-      MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
-      return false;
-    }
-    g_MapsToWin = (g_NumberOfMapsInSeries + 1) / 2;
+  g_MapsToWin = MapsToWin(g_NumberOfMapsInSeries);
+  if (g_NumberOfMapsInSeries != 2 && g_NumberOfMapsInSeries % 2 == 0) {
+    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
+    return false;
   }
 
   char vetoFirstBuffer[64];
@@ -686,8 +665,6 @@ public void SetMatchTeamCvars() {
     tTeam = Get5Team_1;
   }
 
-  int mapsPlayed = Get5_GetMapNumber();
-
   // Get the match configs set by the config file.
   // These might be modified so copies are made here.
   char ctMatchText[MAX_CVAR_LENGTH];
@@ -698,8 +675,8 @@ public void SetMatchTeamCvars() {
   // Update mp_teammatchstat_txt with the match title.
   char mapstat[MAX_CVAR_LENGTH];
   strcopy(mapstat, sizeof(mapstat), g_MatchTitle);
-  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAPNUMBER}", mapsPlayed + 1);
-  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAXMAPS}", MaxMapsToPlay(g_MapsToWin));
+  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAPNUMBER}", Get5_GetMapNumber() + 1, false);
+  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAXMAPS}", g_NumberOfMapsInSeries, false);
   SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
 
   if (g_MapsToWin >= 3) {

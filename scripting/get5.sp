@@ -114,7 +114,6 @@ ConVar g_CoachingEnabledCvar;
 
 /** Series config game-state **/
 int g_MapsToWin = 1;  // Maps needed to win the series.
-bool g_BO2Match = false;
 bool g_SeriesCanClinch = true;
 int g_RoundNumber = -1;  // The round number, 0-indexed. -1 if the match is not live.
 // The active map number, used by stats. Required as the calculated round number changes immediately
@@ -1908,11 +1907,10 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   strcopy(team2Str, sizeof(team2Str), g_TeamNames[Get5Team_2]);
   ReplaceString(team2Str, sizeof(team2Str), " ", "_");
 
-  int mapNumber = g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2] + 1;
   // MATCHTITLE must go first as it can contain other placeholders
   ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle, false);
-  ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", mapNumber, false);
-  ReplaceStringWithInt(buffer, len, "{MAXMAPS}", MaxMapsToPlay(g_MapsToWin));
+  ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", Get5_GetMapNumber() + 1, false);
+  ReplaceStringWithInt(buffer, len, "{MAXMAPS}", g_NumberOfMapsInSeries, false);
   ReplaceString(buffer, len, "{MATCHID}", g_MatchID, false);
   ReplaceString(buffer, len, "{MAPNAME}", mapName, false);
   ReplaceStringWithInt(buffer, len, "{SERVERID}", g_ServerIdCvar.IntValue, false);

@@ -94,7 +94,6 @@ static void AddGlobalStateInfo(File f) {
   f.WriteLine("g_MatchID = %s", g_MatchID);
   f.WriteLine("g_RoundNumber = %d", g_RoundNumber);
   f.WriteLine("g_MapsToWin = %d", g_MapsToWin);
-  f.WriteLine("g_BO2Match = %d", g_BO2Match);
   f.WriteLine("g_LastVetoTeam = %d", g_LastVetoTeam);
   WriteArrayList(f, "g_MapPoolList", g_MapPoolList);
   WriteArrayList(f, "g_MapsToPlay", g_MapsToPlay);

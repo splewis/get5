@@ -1580,7 +1580,7 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   // ghost, depending on where the camera drops them. Especially important for coaches.
   // We do this step *before* we write the backup, so we don't have any lingering players in case of a restore.
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && !IsClientSourceTV(i) && GetClientTeam(i) == CS_TEAM_NONE) {
+    if (IsPlayer(i) && GetClientTeam(i) == CS_TEAM_NONE) {
       CheckClientTeam(i);
     }
   }

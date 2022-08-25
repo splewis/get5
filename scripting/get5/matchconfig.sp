@@ -151,7 +151,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     // When restoring from backup, assigning to teams is done after loading the match config as it depends on the sides
     // being set correctly by the backup, so we put it inside this "if" here.
     LOOP_CLIENTS(i) {
-      if (IsAuthedPlayer(i) && !IsClientSourceTV(i)) {
+      if (IsPlayer(i)) {
         CheckClientTeam(i);
       }
     }

@@ -397,7 +397,7 @@ void RestoreGet5Backup() {
   // Last step is assigning players to their teams. This is normally done inside LoadMatchConfig, but since we need
   // the team sides to be applied from the backup, we skip it then and do it here.
   LOOP_CLIENTS(i) {
-    if (IsAuthedPlayer(i) && !IsClientSourceTV(i)) {
+    if (IsPlayer(i)) {
       CheckClientTeam(i);
     }
   }
@@ -414,7 +414,7 @@ public Action Time_StartRestore(Handle timer) {
 public Action Timer_FinishBackup(Handle timer) {
   // This ensures that coaches are moved to their slots.
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && !IsClientSourceTV(i)) {
+    if (IsPlayer(i)) {
       CheckClientTeam(i);
     }
   }

@@ -13,7 +13,7 @@ public Action Timer_PlacePlayerOnJoin(Handle timer, int userId) {
 }
 
 void CheckClientTeam(int client, bool useDefaultTeamSelection = true) {
-  if (!g_CheckAuthsCvar.BoolValue || IsFakeClient(client) || IsClientSourceTV(client)) {
+  if (!g_CheckAuthsCvar.BoolValue || IsFakeClient(client)) {
     // Teams are not enforced; do nothing.
     return;
   }
@@ -115,7 +115,7 @@ public void CoachingChangedHook(ConVar convar, const char[] oldValue, const char
   if (StringToInt(oldValue) != 0 && !convar.BoolValue) {
     LogDebug("Detected sv_coaching_enabled was disabled. Checking for coaches.");
     LOOP_CLIENTS(i) {
-      if (IsAuthedPlayer(i) && IsClientCoaching(i)) {
+      if (IsPlayer(i) && IsClientCoaching(i)) {
         CheckClientTeam(i);
       }
     }

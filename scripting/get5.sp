@@ -114,7 +114,6 @@ ConVar g_CoachingEnabledCvar;
 
 /** Series config game-state **/
 int g_MapsToWin = 1;  // Maps needed to win the series.
-bool g_BO2Match = false;
 bool g_SeriesCanClinch = true;
 int g_RoundNumber = -1;  // The round number, 0-indexed. -1 if the match is not live.
 // The active map number, used by stats. Required as the calculated round number changes immediately
@@ -229,7 +228,6 @@ ArrayList g_ChatAliasesCommands;
 /** Map-game state not related to the actual gameplay. **/
 char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
-bool g_MovingClientToCoach[MAXPLAYERS + 1];
 bool g_PendingSideSwap = false;
 
 // version check state
@@ -462,6 +460,7 @@ public void OnPluginStart() {
   g_VersionCvar.SetString(PLUGIN_VERSION);
 
   g_CoachingEnabledCvar = FindConVar("sv_coaching_enabled");
+  g_CoachingEnabledCvar.AddChangeHook(CoachingChangedHook); // used to move people off coaching if it gets disabled.
 
   /** Client commands **/
   g_ChatAliases = new ArrayList(ByteCountToCells(ALIAS_LENGTH));
@@ -687,7 +686,6 @@ public Action Timer_InfoMessages(Handle timer) {
 
 public void OnClientAuthorized(int client, const char[] auth) {
   SetClientReady(client, false);
-  g_MovingClientToCoach[client] = false;
   if (StrEqual(auth, "BOT", false)) {
     return;
   }
@@ -696,11 +694,9 @@ public void OnClientAuthorized(int client, const char[] auth) {
     Get5Team team = GetClientMatchTeam(client);
     if (team == Get5Team_None) {
       RememberAndKickClient(client, "%t", "YouAreNotAPlayerInfoMessage");
-    } else {
-      int teamCount = CountPlayersOnMatchTeam(team, client);
-      if (teamCount >= g_PlayersPerTeam && !g_CoachingEnabledCvar.BoolValue) {
-        KickClient(client, "%t", "TeamIsFullInfoMessage");
-      }
+    } else if (CountPlayersOnTeam(team, client) >= g_PlayersPerTeam
+      && (!g_CoachingEnabledCvar.BoolValue || CountCoachesOnTeam(team, client) >= g_CoachesPerTeam)) {
+      KickClient(client, "%t", "TeamIsFullInfoMessage");
     }
   }
 }
@@ -711,20 +707,29 @@ public void RememberAndKickClient(int client, const char[] format, const char[] 
 }
 
 public void OnClientPutInServer(int client) {
-  Stats_HookDamageForClient(client);
+  Stats_HookDamageForClient(client); // Also needed for bots!
   if (IsFakeClient(client)) {
     return;
   }
 
-  CheckAutoLoadConfig();
-  if (g_GameState <= Get5State_Warmup && g_GameState != Get5State_None) {
-    if (GetRealClientCount() <= 1) {
-      ExecCfg(g_WarmupCfgCvar);
-      EnsureIndefiniteWarmup();
-    }
+  // If a player joins during freezetime, ensure their round stats are 0, as there will be no round-start event to do it.
+  // Maybe this could just be freezetime end?
+  Stats_ResetClientRoundValues(client);
+
+  // This checks for gamestate none and pending backup on its own.
+  if (CheckAutoLoadConfig()) {
+    return;
   }
 
-  Stats_ResetClientRoundValues(client);
+  // Because OnConfigsExecuted may run before a client is on the server, we have to repeat the logic here when the
+  // first client connects.
+  if ((g_GameState <= Get5State_Warmup || g_WaitingForRoundBackup) && g_GameState != Get5State_None) {
+    if (GetRealClientCount() <= 1) {
+      ChangeState(Get5State_Warmup);
+      ExecCfg(g_WarmupCfgCvar);
+      StartWarmup();
+    }
+  }
 }
 
 public void OnClientPostAdminCheck(int client) {
@@ -811,7 +816,9 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
   }
 }
 
-public void OnMapStart() {
+// This runs every time a map starts *or* when the plugin is reloaded.
+public void OnConfigsExecuted() {
+  LogDebug("OnConfigsExecuted");
   g_MapChangePending = false;
   // Recording is always automatically stopped on map change, and
   // since there are no hooks to detect tv_stoprecord, we reset
@@ -819,10 +826,19 @@ public void OnMapStart() {
   g_DemoFileName = "";
   DeleteOldBackups();
 
+  // Always reset ready status on map start
   ResetReadyStatus();
+
+  if (CheckAutoLoadConfig()) {
+    // If gamestate is none and a config was autoloaded, a match config will set all of the below state.
+    return;
+  }
+
   LOOP_TEAMS(team) {
     g_TeamGivenStopCommand[team] = false;
     g_TeamReadyForUnpause[team] = false;
+    // We don't need to check for g_WaitingForRoundBackup here, as a backup will override the pauses consumed anyway; if
+    // the map is changed, we always load the backup pauses. See the RestoreFromBackup function.
     g_TacticalPauseTimeUsed[team] = 0;
     g_TacticalPausesUsed[team] = 0;
     g_TechnicalPausesUsed[team] = 0;
@@ -831,28 +847,18 @@ public void OnMapStart() {
   g_ReadyTimeWaitingUsed = 0;
   g_HasKnifeRoundStarted = false;
 
-  if (g_WaitingForRoundBackup) {
+  // On map start, always put the game in warmup mode.
+  // When executing a backup load, the live config is loaded and warmup ends.
+  if (g_GameState != Get5State_None || g_WaitingForRoundBackup) {
+    LogDebug("Putting game into warmup in OnConfigsExecuted.");
     ChangeState(Get5State_Warmup);
-    ExecCfg(g_LiveCfgCvar);
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-    EnsureIndefiniteWarmup();
-  }
-}
-
-public void OnConfigsExecuted() {
-  SetStartingTeams();
-  CheckAutoLoadConfig();
-
-  if (g_GameState == Get5State_PostGame) {
-    ChangeState(Get5State_Warmup);
-  }
-
-  if (g_GameState == Get5State_Warmup || g_GameState == Get5State_Veto) {
     ExecCfg(g_WarmupCfgCvar);
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-    EnsureIndefiniteWarmup();
+    StartWarmup();
+  }
+  // This must not be called when waiting for a backup, as it will set the sides incorrectly if the team swapped in
+  // knife or if the backup target is the second half.
+  if (!g_WaitingForRoundBackup) {
+    SetStartingTeams();
   }
 }
 
@@ -876,7 +882,7 @@ public Action Timer_CheckReady(Handle timer) {
       // We don't wait for spectators when initiating veto
       LogDebug("Timer_CheckReady: starting veto");
       ChangeState(Get5State_Veto);
-      ServerCommand("mp_restartgame 1");
+      RestartGame();
       CreateVeto();
     } else {
       CheckReadyWaitingTimes();
@@ -958,14 +964,19 @@ static bool CheckReadyWaitingTime(Get5Team team) {
   return false;
 }
 
-static void CheckAutoLoadConfig() {
-  if (g_GameState == Get5State_None) {
+static bool CheckAutoLoadConfig() {
+  if (g_GameState == Get5State_None && !g_WaitingForRoundBackup) {
     char autoloadConfig[PLATFORM_MAX_PATH];
     g_AutoLoadConfigCvar.GetString(autoloadConfig, sizeof(autoloadConfig));
     if (!StrEqual(autoloadConfig, "")) {
-      LoadMatchConfig(autoloadConfig);
+      bool loaded = LoadMatchConfig(autoloadConfig); // return false if match config load fails!
+      if (loaded) {
+        LogMessage("Match configuration was loaded via get5_autoload_config.");
+      }
+      return loaded;
     }
   }
+  return false;
 }
 
 /**
@@ -1012,6 +1023,8 @@ public Action Command_EndMatch(int client, int args) {
   Call_Finish();
   EventLogger_LogAndDeleteEvent(mapResultEvent);
 
+  StopRecording(1.0); // must go before EndSeries as it depends on g_MatchID.
+
   // No delay required when not kicking players.
   EndSeries(winningTeam, false, 0.0, false);
 
@@ -1038,8 +1051,7 @@ public Action Command_EndMatch(int client, int args) {
     delete g_KnifeDecisionTimer;
   }
 
-  StopRecording(1.0);
-  ServerCommand("mp_restartgame 1");
+  RestartGame();
 
   return Plugin_Handled;
 }
@@ -1261,7 +1273,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       }
     } else if (g_SeriesCanClinch) {
       // This adjusts for ties!
-      int actualMapsToWin = ((g_MapsToPlay.Length - tiedMaps) / 2) + 1;
+      int actualMapsToWin = MapsToWin(g_MapsToPlay.Length - tiedMaps);
       if (t1maps == actualMapsToWin) {
         // Team 1 won
         EndSeries(Get5Team_1, true, restartDelay);
@@ -1407,23 +1419,9 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
   }
 
   if (g_PendingSideSwap) {
-    g_PendingSideSwap = false;
     SwapSides();
   }
-
-  if (g_GameState == Get5State_GoingLive) {
-    ChangeState(Get5State_Live);
-  }
-
-  if (g_GameState == Get5State_WaitingForKnifeRoundDecision && !InWarmup()) {
-    // Ensures that round end after knife sends players directly into warmup.
-    // This immediately triggers another Event_RoundPreStart, so we can return here and avoid
-    // writing backup twice.
-    LogDebug("Changed to warmup post knife.");
-    ExecCfg(g_WarmupCfgCvar);
-    EnsureIndefiniteWarmup();
-    return Plugin_Continue;
-  }
+  g_PendingSideSwap = false;
 
   Stats_ResetRoundValues();
 
@@ -1436,9 +1434,6 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
   // Round number always -1 if not live.
   g_RoundNumber = g_GameState != Get5State_Live ? -1 : GetRoundsPlayed();
 
-  if (g_GameState >= Get5State_Warmup) {
-    WriteBackup();
-  }
   return Plugin_Continue;
 }
 
@@ -1500,6 +1495,14 @@ public void WriteBackup() {
     return;
   }
 
+  if (g_PauseType == Get5PauseType_Backup) {
+    // If there was no valve backup found when restoring the game, the above checks will not trigger a return,
+    // so we do this to prevent overwriting an already-written backup in the event the game starts in the same round
+    // it was *just* restored to and this function runs.
+    LogDebug("Skipping backup round write as the round started paused for backup.");
+    return;
+  }
+
   char folder[PLATFORM_MAX_PATH];
   g_RoundBackupPathCvar.GetString(folder, sizeof(folder));
   ReplaceString(folder, sizeof(folder), "{MATCHID}", g_MatchID);
@@ -1526,7 +1529,7 @@ public void WriteBackup() {
            g_MapNumber);
   }
   LogDebug("Writing backup to %s", path);
-  WriteBackStructure(path);
+  WriteBackupStructure(path);
   g_LastGet5BackupCvar.SetString(path);
 
   // Reset this when writing a new backup, as voting has no reference to which round the teams wanted to restore to, so
@@ -1548,6 +1551,43 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_RoundStartedTime = 0.0;
   g_BombPlantedTime = 0.0;
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
+
+  // We cannot do this during warmup, as sending users into warmup post-knife triggers a round start event.
+  // We add an extra restart to clear lingering state from the knife round, such as the round
+  // indicator in the middle of the scoreboard not being reset. This also tightly couples the live-announcement to
+  // the actual live start.
+  if (!InWarmup()) {
+    if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
+      // Ensures that round end after knife sends players directly into warmup.
+      // This immediately triggers another Event_RoundStart, so we can return here and avoid
+      // writing backup twice.
+      LogDebug("Changed to warmup post knife.");
+      ExecCfg(g_WarmupCfgCvar);
+      StartWarmup();
+      return;
+    }
+    if (g_GameState == Get5State_GoingLive) {
+      LogDebug("Changed to live.");
+      ChangeState(Get5State_Live);
+      RestartGame();
+      CreateTimer(3.0, MatchLive, _, TIMER_FLAG_NO_MAPCHANGE);
+      return; // Next round start will take care of below, such as writing backup.
+    }
+  }
+
+  // Ensures that players who connect during halftime/team swap are placed in their correct slots as soon as the
+  // following round starts. Otherwise they could be left on the "no team" screen and potentially
+  // ghost, depending on where the camera drops them. Especially important for coaches.
+  // We do this step *before* we write the backup, so we don't have any lingering players in case of a restore.
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i) && GetClientTeam(i) == CS_TEAM_NONE) {
+      CheckClientTeam(i);
+    }
+  }
+
+  if (g_GameState == Get5State_Warmup || g_GameState == Get5State_KnifeRound || g_GameState == Get5State_Live) {
+    WriteBackup();
+  }
 
   if (g_GameState != Get5State_Live) {
     return;
@@ -1736,8 +1776,6 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
 public void SwapSides() {
   LogDebug("SwapSides");
-  // EventLogger_SideSwap(g_TeamSide[Get5Team_1], g_TeamSide[Get5Team_2]);
-
   int tmp = g_TeamSide[Get5Team_1];
   g_TeamSide[Get5Team_1] = g_TeamSide[Get5Team_2];
   g_TeamSide[Get5Team_2] = tmp;
@@ -1767,11 +1805,10 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
 
 public void StartGame(bool knifeRound) {
   LogDebug("StartGame");
-
-  ExecCfg(g_LiveCfgCvar);
   StartRecording();
 
   if (knifeRound) {
+    ExecCfg(g_LiveCfgCvar); // live first, then apply and save knife cvars below
     LogDebug("StartGame: about to begin knife round");
     ChangeState(Get5State_KnifeRound);
     if (g_KnifeChangedCvars != INVALID_HANDLE) {
@@ -1782,13 +1819,17 @@ public void StartGame(bool knifeRound) {
     g_KnifeChangedCvars = ExecuteAndSaveCvars(knifeConfig);
     CreateTimer(1.0, StartKnifeRound);
   } else {
-    LogDebug("StartGame: about to go live");
-    ChangeState(Get5State_GoingLive);
-    CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
+    // If there is no knife round, we go directly to live, which loads the live config etc. on its own.
+    StartGoingLive();
   }
 }
 
 public void ChangeState(Get5State state) {
+  if (g_GameState == state) {
+    LogDebug("Ignoring request to change game state. Already in state %d.", state);
+    return;
+  }
+
   g_GameStateCvar.IntValue = view_as<int>(state);
 
   Get5GameStateChangedEvent event = new Get5GameStateChangedEvent(state, g_GameState);
@@ -1870,11 +1911,10 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   strcopy(team2Str, sizeof(team2Str), g_TeamNames[Get5Team_2]);
   ReplaceString(team2Str, sizeof(team2Str), " ", "_");
 
-  int mapNumber = g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2] + 1;
   // MATCHTITLE must go first as it can contain other placeholders
   ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle, false);
-  ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", mapNumber, false);
-  ReplaceStringWithInt(buffer, len, "{MAXMAPS}", MaxMapsToPlay(g_MapsToWin));
+  ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", Get5_GetMapNumber() + 1, false);
+  ReplaceStringWithInt(buffer, len, "{MAXMAPS}", g_NumberOfMapsInSeries, false);
   ReplaceString(buffer, len, "{MATCHID}", g_MatchID, false);
   ReplaceString(buffer, len, "{MAPNAME}", mapName, false);
   ReplaceStringWithInt(buffer, len, "{SERVERID}", g_ServerIdCvar.IntValue, false);

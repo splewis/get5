@@ -61,7 +61,7 @@
     }
     "TeamIsFullInfoMessage"
     {
-        "en"            "Your team is full."
+        "en"            "Your team is full"
     }
     "TeamForfeitInfoMessage"
     {
@@ -387,7 +387,30 @@
     }
     "MoveToCoachInfoMessage"
     {
-        "en"            "You were moved to the coach position because your team is full."
+        "en"            "You were moved to the coach position as your team is full."
+    }
+    "CannotLeaveCoachingTeamIsFull"
+    {
+        "en"            "You cannot leave the coach position as your team is full."
+    }
+    "CoachingNotEnabled"
+    {
+        "#format"       "{1:s}"
+        "en"            "Coaching is not enabled. You must set {1} to 1."
+    }
+    "PlayerIsCoachingTeam"
+    {
+        "#format"       "{1:s},{2:s}"
+        "en"            "{1} is coaching {2}."
+    }
+    "CanOnlyCoachDuringWarmup"
+    {
+        "en"            "You can only change to or from coach during warmup."
+    }
+    "AllCoachSlotsFilledForTeam"
+    {
+        "#format"       "{1:d}"
+        "en"            "All coach slots ({1}) are currently filled for your team."
     }
     "ReadyTag"
     {

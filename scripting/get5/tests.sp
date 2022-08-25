@@ -21,11 +21,15 @@ public void Get5_Test() {
 static void Utils_Test() {
   SetTestContext("Utils_Test");
 
-  // MaxMapsToPlay
-  AssertEq("MaxMapsToPlay1", MaxMapsToPlay(1), 1);
-  AssertEq("MaxMapsToPlay2", MaxMapsToPlay(2), 3);
-  AssertEq("MaxMapsToPlay3", MaxMapsToPlay(3), 5);
-  AssertEq("MaxMapsToPlay4", MaxMapsToPlay(4), 7);
+  // MapsToWin
+  AssertEq("MapsToWin1", MapsToWin(1), 1);
+  AssertEq("MapsToWin2", MapsToWin(2), 2);
+  AssertEq("MapsToWin3", MapsToWin(3), 2);
+  AssertEq("MapsToWin4", MapsToWin(4), 3);
+  AssertEq("MapsToWin5", MapsToWin(5), 3);
+  AssertEq("MapsToWin6", MapsToWin(6), 4);
+  AssertEq("MapsToWin7", MapsToWin(7), 4);
+  AssertEq("MapsToWin8", MapsToWin(8), 5);
 
   // ConvertAuthToSteam64
   char input[64] = "STEAM_0:1:52245092";
@@ -71,7 +75,6 @@ static void KV_Test() {
   SetTestContext("KV_Test");
 
   AssertEq("maps_to_win", g_MapsToWin, 2);
-  AssertEq("bo2_series", g_BO2Match, false);
   AssertEq("num_maps", g_NumberOfMapsInSeries, 3);
   AssertEq("skip_veto", g_SkipVeto, false);
   AssertEq("players_per_team", g_PlayersPerTeam, 5);

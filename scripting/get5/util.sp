@@ -66,21 +66,19 @@ stock int ConvertCSTeamToDefaultWinReason(int side) {
   return view_as<int>(side == CS_TEAM_CT ? CSRoundEnd_CTWin : CSRoundEnd_TerroristWin) + 1;
 }
 
-/**
- * Switches and respawns a player onto a new team.
- */
-stock void SwitchPlayerTeam(int client, int team) {
+stock void SwitchPlayerTeam(int client, Get5Side side, bool useDefaultTeamSelection = true) {
+  // Check avoids killing player if they're already on the right team.
+  int team = view_as<int>(side);
   if (GetClientTeam(client) == team) {
     return;
   }
-
-  LogDebug("SwitchPlayerTeam %L to %d", client, team);
-  if (team > CS_TEAM_SPECTATOR) {
+  if (useDefaultTeamSelection || team == CS_TEAM_SPECTATOR) {
+    ChangeClientTeam(client, team);
+  } else {
+    // When doing side-swap in knife-rounds, we do this to prevent the score from going -1 for everyone.
     CS_SwitchTeam(client, team);
     CS_UpdateClientModel(client);
     CS_RespawnPlayer(client);
-  } else {
-    ChangeClientTeam(client, team);
   }
 }
 
@@ -126,8 +124,18 @@ stock void FormatChatCommand(char[] buffer, const int bufferLength, const char[]
   Format(buffer, bufferLength, "{GREEN}%s{NORMAL}", command);
 }
 
-stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client) {
-  Get5Side side = view_as<Get5Side>(IsClientInGame(client) ? GetClientTeam(client) : CS_TEAM_NONE);
+stock void FormatCvarName(char[] buffer, const int bufferLength, const char[] cVar) {
+  Format(buffer, bufferLength, "{GRAY}%s{NORMAL}", cVar);
+}
+
+stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client, const Get5Side forcedSide = Get5Side_None) {
+  // Used when injecting the team for coaching players, who are always on team spectator.
+  Get5Side side;
+  if (forcedSide == Get5Side_None) {
+    side = view_as<Get5Side>(IsClientInGame(client) ? GetClientTeam(client) : CS_TEAM_NONE);
+  } else {
+    side = forcedSide;
+  }
   if (side == Get5Side_CT) {
     Format(buffer, bufferLength, "{LIGHT_BLUE}%N{NORMAL}", client);
   } else if (side == Get5Side_T) {
@@ -166,27 +174,21 @@ stock bool InFreezeTime() {
   return GameRules_GetProp("m_bFreezePeriod") != 0;
 }
 
-stock void EnsureIndefiniteWarmup() {
-  if (!InWarmup()) {
-    LogDebug("EnsureIndefiniteWarmup: Not in warmup; calling StartWarmup()");
-    StartWarmup();
-  } else {
-    LogDebug("EnsureIndefiniteWarmup: Already in warmup; setting indefinite");
-    ServerCommand("mp_warmup_pausetimer 1");
-    ServerCommand("mp_do_warmup_period 1");
-    ServerCommand("mp_warmup_pausetimer 1");
-  }
-}
-
-stock void StartWarmup(bool indefiniteWarmup = true, int warmupTime = 60) {
+stock void StartWarmup(int warmupTime = 0) {
   ServerCommand("mp_do_warmup_period 1");
-  ServerCommand("mp_warmuptime %d", warmupTime);
-  ServerCommand("mp_warmup_start");
-
-  // For some reason it needs to get sent twice. Ask Valve.
-  if (indefiniteWarmup) {
+  ServerCommand("mp_warmuptime_all_players_connected 0");
+  if (!InWarmup()) {
+    ServerCommand("mp_warmup_start");
+  }
+  if (warmupTime < 1) {
+    LogDebug("Setting indefinite warmup.");
+    // Setting mp_warmuptime to anything less than 7 triggers the countdown to restart regardless of
+    // mp_warmup_pausetimer 1, and this might be tick-related, so we set it to 10 just for good measure.
+    ServerCommand("mp_warmuptime 10");
     ServerCommand("mp_warmup_pausetimer 1");
-    ServerCommand("mp_warmup_pausetimer 1");
+  } else {
+    ServerCommand("mp_warmuptime %d", warmupTime);
+    ServerCommand("mp_warmup_pausetimer 0");
   }
 }
 
@@ -194,8 +196,8 @@ stock void EndWarmup(int time = 0) {
   if (time == 0) {
     ServerCommand("mp_warmup_end");
   } else {
-    ServerCommand("mp_warmup_pausetimer 0");
     ServerCommand("mp_warmuptime %d", time);
+    ServerCommand("mp_warmup_pausetimer 0");
   }
 }
 
@@ -203,17 +205,12 @@ stock bool IsPaused() {
   return GameRules_GetProp("m_bMatchWaitingForResume") != 0;
 }
 
-stock void RestartGame(int delay) {
+stock void RestartGame(int delay = 1) {
   ServerCommand("mp_restartgame %d", delay);
 }
 
 stock bool IsClientCoaching(int client) {
-  return GetClientTeam(client) == CS_TEAM_SPECTATOR &&
-         GetEntProp(client, Prop_Send, "m_iCoachingTeam") != 0;
-}
-
-stock void UpdateCoachTarget(int client, int csTeam) {
-  SetEntProp(client, Prop_Send, "m_iCoachingTeam", csTeam);
+  return GetClientCoachingSide(client) != Get5Side_None;
 }
 
 stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
@@ -500,11 +497,9 @@ stock int AuthToClient(const char[] auth) {
   return -1;
 }
 
-stock int MaxMapsToPlay(int mapsToWin) {
-  if (g_BO2Match)
-    return 2;
-  else
-    return 2 * mapsToWin - 1;
+stock int MapsToWin(int numberOfMaps) {
+  // This works because integers are rounded down; so 3 / 2 = 1.5, which becomes 1 as integer.
+  return (numberOfMaps / 2) + 1;
 }
 
 stock void CSTeamString(int csTeam, char[] buffer, int len) {
@@ -547,12 +542,6 @@ public void MatchSideTypeToString(MatchSideType type, char[] str, int len) {
   } else {
     Format(str, len, "always_knife");
   }
-}
-
-stock void ExecCfg(ConVar cvar) {
-  char cfg[PLATFORM_MAX_PATH];
-  cvar.GetString(cfg, sizeof(cfg));
-  ServerCommand("exec \"%s\"", cfg);
 }
 
 // Taken from Zephyrus (https://forums.alliedmods.net/showpost.php?p=2231850&postcount=2)
@@ -699,7 +688,7 @@ stock Get5BombSite GetNearestBombsite(int client) {
   float aDist = GetVectorDistance(aCenter, pos, true);
   float bDist = GetVectorDistance(bCenter, pos, true);
 
-  LogDebug("Bomb planted. Distance to A: %d. Distance to B: %d.", aDist, bDist);
+  LogDebug("Bomb planted. Distance to A: %f. Distance to B: %f.", aDist, bDist);
 
   return (aDist < bDist) ? Get5BombSite_A : Get5BombSite_B;
 }

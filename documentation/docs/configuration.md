@@ -17,8 +17,7 @@ the explanation of the [match schema](../match_schema), that section will overri
 ### Phase Configuration Files
 
 You should also have three config files. These can be edited, but we recommend not
-blindly pasting another config in (e.g. ESL, CEVO). Configs that execute warmup commands (`mp_warmup_end`, for
-example) **will** cause problems. These must only include commands you would run in the console (such
+blindly pasting another config in (e.g. ESL, CEVO). These must only include commands you would run in the console (such
 as `mp_friendly_fire 1`) and should determine the rules for those three stage of your match. You can
 also [point to other files](#config-files) by editing the main config file.
 
@@ -31,6 +30,27 @@ cfg/get5/live.cfg # (3)
 1. Executed when the warmup/veto phase begins.
 2. Executed when the knife-round starts.
 3. Executed when the game goes live.
+
+!!! danger "Prohibited options"
+
+    You should avoid these commands in your live, knife and warmup configuration files, as all of these are handled by
+    Get5 automatically. Introducing restarts, warmup changes or [GOTV](gotv.md) delay modifications can cause problems.
+    If you want to set your `tv_delay`, do it in the `cvars` section of your [match configuration](match_schema.md).
+
+    ```
+    mp_do_warmup_period
+    mp_restartgame
+    mp_warmup_end
+    mp_warmup_pausetimer   
+    mp_warmup_start
+    mp_warmuptime
+    mp_warmuptime_all_players_connected
+    tv_delay
+    tv_delaymapchange
+    tv_enable
+    tv_record
+    tv_stoprecord
+    ```
 
 ## Server Setup
 
@@ -59,8 +79,9 @@ disconnect even in warmup with the intention to reconnect!). **`Default: 0`**
 :   Whether to wait for map vetoes to be printed to GOTV before changing map. **`Default: 0`**
 
 ####`get5_check_auths`
-:   Whether the Steam IDs from a `players` of a [match configuration](../match_schema/#schema) section are used to
-force players onto teams, kicking everyone else. **`Default: 1`**
+:   Whether the Steam IDs from the `players` and `coaches` sections of a [match configuration](../match_schema/#schema)
+are used to force players onto teams. Anyone not defined will be removed from the game, or if
+in [scrim mode](../getting_started/#scrims), put on `team2`. **`Default: 1`**
 
 ####`get5_print_update_notice`
 :   Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if

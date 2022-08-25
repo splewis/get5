@@ -66,8 +66,9 @@ interface Get5Match {
    match IDs from another source, they **must** be integers (in a string) and must increment between
    matches.<br><br>**`Default: ""`**
 2. _Optional_<br>The number of maps to play in the series.<br><br>**`Default: 3`**
-3. _Optional_<br>The number of players per team.<br><br>**`Default: 5`**
-4. _Optional_<br>The maximum number of coaches per team.<br><br>**`Default: 2`**
+3. _Optional_<br>The number of players per team. You should **never** set this to a value higher than the number of
+   players you want to actually play in a game, *excluding* coaches.<br><br>**`Default: 5`**
+4. _Optional_<br>The maximum number of [coaches](coaching.md) per team.<br><br>**`Default: 2`**
 5. _Optional_<br>The minimum number of players of each team that must type [`!ready`](../commands/#ready) for the game
    to begin.<br><br>**`Default: 1`**
 6. _Optional_<br>The minimum number of spectators that must be [`!ready`](../commands/#ready) for the game to
@@ -92,7 +93,9 @@ interface Get5Match {
 14. _Optional_<br>Wrapper for the server's `mp_teamprediction_pct`. This determines the chances of `team1`
     winning.<br><br>**`Default: 0`**
 15. _Optional_<br>Wrapper for the server's `mp_teamprediction_txt`.<br><br>**`Default: ""`**
-16. _Required_<br>The team's name. Sets `mp_teamname_1` or `mp_teamname_2`. Printed frequently in chat.
+16. _Optional_<br>The team's name. Sets `mp_teamname_1` or `mp_teamname_2`. Printed frequently in chat. If you don't
+    define a team name, it will be set to `team_` followed by the name of the captain, i.e. `team_s1mple`.
+    <br><br>**`Default: ""`**
 17. _Optional_<br>A short version of the team name, used in clan tags in-game (requires
     that [`get5_set_client_clan_tags`](../configuration#get5_set_client_clan_tags) is disabled).
     <br><br>**`Default: ""`**
@@ -105,8 +108,9 @@ interface Get5Match {
 22. _Optional_<br>Various commands to execute on the server when loading the match configuration. This can be both
     regular server-commands and any [`Get5 configuration parameter`](configuration.md),
     i.e. `{"hostname": "Match #3123 - Astralis vs. NaVi"}`.<br><br>**`Default: undefined`**
-23. _Optional_<br>Similarly to `players`, this object maps coaches using their Steam ID and
-    name.<br><br>**`Default: undefined`**
+23. _Optional_<br>Similarly to `players`, this object maps [coaches](coaching.md) using their Steam ID and
+    name, locking them to the coach slot unless removed using [`get5_removeplayer`](../commands/#get5_removeplayer).
+    Setting a Steam ID as coach takes precedence over being set as a player.<br><br>**`Default: undefined`**
 24. _Required_<br>The players on the team.
 25. _Optional_<br>Wrapper of the server's `mp_teammatchstat_txt` cvar, but can use `{MAPNUMBER}` and `{MAXMAPS}` as
     variables that get replaced with their integer values. In a BoX series, you probably don't want to set this since
@@ -119,7 +123,8 @@ interface Get5Match {
     cvars.<br><br>**`Default: ""`**
 28. Match teams can also be loaded from a separate file, allowing you to easily re-use a match configuration for
     different sets of teams. A `fromfile` value could be `"addons/sourcemod/configs/get5/team_nip.json"`, and that file
-    should contain a valid `Get5MatchTeam` object.
+    should contain a valid `Get5MatchTeam` object. Note that the file you point to must be in the same format as the
+    main file, so pointing to a `.cfg` file when the main file is `.json` will **not** work.
 29. _Optional_<br>The name of the spectator team.<br><br>**`Default: "casters"`**
 30. _Optional_<br>The spectator/caster Steam IDs and names.
 31. _Optional_<br>Determines the starting sides for each map. If this array is shorter than `num_maps`, `side_type` will

@@ -166,7 +166,7 @@ public void Stats_Reset() {
 public void Stats_InitSeries() {
   Stats_Reset();
   char seriesType[32];
-  Format(seriesType, sizeof(seriesType), "bo%d", MaxMapsToPlay(g_MapsToWin));
+  Format(seriesType, sizeof(seriesType), "bo%d", g_NumberOfMapsInSeries);
   g_StatsKv.SetString(STAT_SERIESTYPE, seriesType);
   g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamNames[Get5Team_1]);
   g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[Get5Team_2]);

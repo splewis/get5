@@ -14,7 +14,7 @@
 #define CONFIG_VETOFIRST_DEFAULT "team1"
 #define CONFIG_SIDETYPE_DEFAULT "standard"
 
-stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
+bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   if (g_GameState != Get5State_None && !restoreBackup) {
     return false;
   }
@@ -62,12 +62,6 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     return false;
   }
 
-  if (!g_CheckAuthsCvar.BoolValue &&
-      (GetTeamAuths(Get5Team_1).Length != 0 || GetTeamAuths(Get5Team_2).Length != 0)) {
-    LogError(
-        "Setting player auths in the \"players\" section has no impact with get5_check_auths 0");
-  }
-
   // Copy all the maps into the veto pool.
   char mapName[PLATFORM_MAX_PATH];
   for (int i = 0; i < g_MapPoolList.Length; i++) {
@@ -78,35 +72,27 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     g_TeamScoresPerMap.Set(g_TeamScoresPerMap.Length - 1, 0, 1);
   }
 
-  if (g_BO2Match) {
-    g_MapsToWin = 2;
-  }
-
-  if (MaxMapsToPlay(g_MapsToWin) > g_MapPoolList.Length) {
-    MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps",
-                    MaxMapsToPlay(g_MapsToWin), g_MapPoolList.Length);
+  if (g_NumberOfMapsInSeries > g_MapPoolList.Length) {
+    MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps", g_NumberOfMapsInSeries, g_MapPoolList.Length);
     return false;
   }
 
   if (g_SkipVeto) {
     // Copy the first k maps from the maplist to the final match maps.
-    for (int i = 0; i < MaxMapsToPlay(g_MapsToWin); i++) {
+    for (int i = 0; i < g_NumberOfMapsInSeries; i++) {
       g_MapPoolList.GetString(i, mapName, sizeof(mapName));
       g_MapsToPlay.PushString(mapName);
 
       // Push a map side if one hasn't been set yet.
       if (g_MapSides.Length < g_MapsToPlay.Length) {
-        if (g_MatchSideType == MatchSideType_Standard) {
+        if (g_MatchSideType == MatchSideType_Standard || g_MatchSideType == MatchSideType_AlwaysKnife) {
           g_MapSides.Push(SideChoice_KnifeRound);
-        } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
-          g_MapSides.Push(SideChoice_KnifeRound);
-        } else if (g_MatchSideType == MatchSideType_NeverKnife) {
+        } else {
           g_MapSides.Push(SideChoice_Team1CT);
         }
       }
     }
 
-    ChangeState(Get5State_Warmup);
     if (!restoreBackup) {
       // When restoring from backup, changelevel is called after loading the match config.
       g_MapPoolList.GetString(Get5_GetMapNumber(), mapName, sizeof(mapName));
@@ -116,23 +102,24 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
         ChangeMap(mapName);
       }
     }
-  } else {
+  } else if (!restoreBackup) {
     ChangeState(Get5State_PreVeto);
   }
 
-  // We need to ensure our match team CVARs are set
-  // before calling the event so we can grab values
-  // that are set in the OnSeriesInit event.
-  // Add to download table after setting.
+  // Before we run the Get5_OnSeriesInit forward, we want to ensure that as much game state is set as possible,
+  // so that any implementation reacting to that event/forward will have all the natives return proper data.
   SetMatchTeamCvars();
-  ExecuteMatchConfigCvars();
   LoadPlayerNames();
   AddTeamLogosToDownloadTable();
+  // ExecuteMatchConfigCvars gets called twice because ExecCfg(g_WarmupCfgCvar) also does it async, but we need it here
+  // as the team assigment below depends on it.
+  ExecuteMatchConfigCvars();
+  SetStartingTeams();
 
   if (!restoreBackup) {
-    SetStartingTeams(); // This cannot be called during backup, as it will reset the sides!
+    ChangeState(Get5State_Warmup);
     ExecCfg(g_WarmupCfgCvar);
-    EnsureIndefiniteWarmup();
+    StartWarmup();
     if (IsPaused()) {
       LogDebug("Match was paused when loading match config. Unpausing.");
       UnpauseGame(Get5Team_None);
@@ -150,19 +137,28 @@ stock bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     Call_Finish();
 
     EventLogger_LogAndDeleteEvent(startEvent);
-  }
 
-  LOOP_CLIENTS(i) {
-    if (IsAuthedPlayer(i)) {
-      if (GetClientMatchTeam(i) == Get5Team_None) {
-        RememberAndKickClient(i, "%t", "YouAreNotAPlayerInfoMessage");
-      } else {
+    if (!g_CheckAuthsCvar.BoolValue &&
+        (GetTeamAuths(Get5Team_1).Length != 0
+        || GetTeamAuths(Get5Team_2).Length != 0
+        || GetTeamCoaches(Get5Team_1).Length != 0
+        || GetTeamCoaches(Get5Team_2).Length != 0)) {
+      LogError("Setting player auths in the \"players\" or \"coaches\" section has no impact with get5_check_auths 0");
+    }
+
+    // ExecuteMatchConfigCvars must be executed before we place players, as it might have get5_check_auths 1.
+    // We must also have called SetStartingTeams to get the sides right.
+    // When restoring from backup, assigning to teams is done after loading the match config as it depends on the sides
+    // being set correctly by the backup, so we put it inside this "if" here.
+    LOOP_CLIENTS(i) {
+      if (IsPlayer(i)) {
         CheckClientTeam(i);
       }
     }
   }
 
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
+
   Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
   return true;
 }
@@ -387,17 +383,10 @@ static bool LoadMatchFromKv(KeyValues kv) {
   g_SkipVeto = kv.GetNum("skip_veto", CONFIG_SKIPVETO_DEFAULT) != 0;
 
   g_NumberOfMapsInSeries = kv.GetNum("num_maps", CONFIG_NUM_MAPSDEFAULT);
-  if (g_NumberOfMapsInSeries == 2) {
-    g_BO2Match = true;
-    g_MapsToWin = 2;
-  } else {
-    g_BO2Match = false;
-    // Normal path. No even numbers allowed since we already handled bo2.
-    if (g_NumberOfMapsInSeries % 2 == 0) {
-      MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
-      return false;
-    }
-    g_MapsToWin = (g_NumberOfMapsInSeries + 1) / 2;
+  g_MapsToWin = MapsToWin(g_NumberOfMapsInSeries);
+  if (g_NumberOfMapsInSeries != 2 && g_NumberOfMapsInSeries % 2 == 0) {
+    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
+    return false;
   }
 
   char vetoFirstBuffer[64];
@@ -492,17 +481,10 @@ static bool LoadMatchFromJson(JSON_Object json) {
   g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
 
   g_NumberOfMapsInSeries = json_object_get_int_safe(json, "num_maps", CONFIG_NUM_MAPSDEFAULT);
-  if (g_NumberOfMapsInSeries == 2) {
-    g_BO2Match = true;
-    g_MapsToWin = 2;
-  } else {
-    g_BO2Match = false;
-    // Normal path. No even numbers allowed since we already handled bo2.
-    if (g_NumberOfMapsInSeries % 2 == 0) {
-      MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
-      return false;
-    }
-    g_MapsToWin = (g_NumberOfMapsInSeries + 1) / 2;
+  g_MapsToWin = MapsToWin(g_NumberOfMapsInSeries);
+  if (g_NumberOfMapsInSeries != 2 && g_NumberOfMapsInSeries % 2 == 0) {
+    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
+    return false;
   }
 
   char vetoFirstBuffer[64];
@@ -608,8 +590,7 @@ static void LoadTeamDataJson(JSON_Object json, Get5Team matchTeam) {
       LogError("Cannot load team config from file \"%s\", fromfile");
     } else {
       LoadTeamDataJson(fromfileJson, matchTeam);
-      fromfileJson.Cleanup();
-      delete fromfileJson;
+      json_cleanup_and_delete(fromfileJson);
     }
   }
 
@@ -686,8 +667,6 @@ public void SetMatchTeamCvars() {
     tTeam = Get5Team_1;
   }
 
-  int mapsPlayed = Get5_GetMapNumber();
-
   // Get the match configs set by the config file.
   // These might be modified so copies are made here.
   char ctMatchText[MAX_CVAR_LENGTH];
@@ -698,8 +677,8 @@ public void SetMatchTeamCvars() {
   // Update mp_teammatchstat_txt with the match title.
   char mapstat[MAX_CVAR_LENGTH];
   strcopy(mapstat, sizeof(mapstat), g_MatchTitle);
-  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAPNUMBER}", mapsPlayed + 1);
-  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAXMAPS}", MaxMapsToPlay(g_MapsToWin));
+  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAPNUMBER}", Get5_GetMapNumber() + 1, false);
+  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAXMAPS}", g_NumberOfMapsInSeries, false);
   SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
 
   if (g_MapsToWin >= 3) {
@@ -807,13 +786,16 @@ public Action Command_LoadTeam(int client, int args) {
 
 public Action Command_AddPlayer(int client, int args) {
   if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
+    ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
-  }
-
-  if (g_InScrimMode) {
-    ReplyToCommand(
-        client, "Cannot use get5_addplayer in scrim mode. Use get5_ringer to swap a players team.");
+  } else if (g_InScrimMode) {
+    ReplyToCommand(client, "Cannot use get5_addplayer in scrim mode. Use get5_ringer to swap a player's team.");
+    return Plugin_Handled;
+  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+    ReplyToCommand(client, "Cannot add players while waiting for round backup.");
+    return Plugin_Handled;
+  } else if (g_PendingSideSwap || InHalftimePhase()) {
+    ReplyToCommand(client, "Cannot add players during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
@@ -855,10 +837,19 @@ public Action Command_AddPlayer(int client, int args) {
 
 public Action Command_AddCoach(int client, int args) {
   if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot change coach targets when there is no match to modify");
+    ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
   } else if (!g_CoachingEnabledCvar.BoolValue) {
-    ReplyToCommand(client, "Cannot change coach targets if coaching is disabled.");
+    ReplyToCommand(client, "Coaching is not enabled.");
+    return Plugin_Handled;
+  } else if (g_InScrimMode) {
+    ReplyToCommand(client, "Coaches cannot be added in scrim mode. Use the !coach command in chat.");
+    return Plugin_Handled;
+  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+    ReplyToCommand(client, "Cannot add coaches while waiting for round backup.");
+    return Plugin_Handled;
+  } else if (g_PendingSideSwap || InHalftimePhase()) {
+    ReplyToCommand(client, "Cannot add coaches during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
@@ -881,21 +872,29 @@ public Action Command_AddCoach(int client, int args) {
       return Plugin_Handled;
     }
 
-    if (GetTeamCoaches(team).Length == g_CoachesPerTeam) {
+    if (CountCoachesOnTeam(team) == g_CoachesPerTeam) {
       ReplyToCommand(client, "Coach Spots are full for %s.", teamString);
       return Plugin_Handled;
     }
 
     if (AddCoachToTeam(auth, team, name)) {
-      // Check if we are in the playerlist already and remove.
+      // If the player is already on the team as a regular player, remove them when adding to coaches.
       int index = GetTeamAuths(team).FindString(auth);
       if (index >= 0) {
         GetTeamAuths(team).Erase(index);
       }
-      // Update the backup structure as well for round restores, covers edge
-      // case of users joining, coaching, stopping, and getting 16k cash as player.
-      WriteBackup();
+
       ReplyToCommand(client, "Successfully added player %s as coach for %s.", auth, teamString);
+
+      // If the user is already on the server as a player, move them to coaching immediately.
+      int addedClient = AuthToClient(auth);
+      if (addedClient > 0 && IsClientConnected(addedClient)) {
+        Get5Side side = view_as<Get5Side>(Get5TeamToCSTeam(team));
+        if (side != Get5Side_None) {
+          LogDebug("Player %s was present on the server when added as coach; moving them to coach for %d.", auth, team);
+          SetClientCoaching(addedClient, side);
+        }
+      }
     } else {
       ReplyToCommand(
           client,
@@ -910,14 +909,16 @@ public Action Command_AddCoach(int client, int args) {
 
 public Action Command_AddKickedPlayer(int client, int args) {
   if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
+    ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
-  }
-
-  if (g_InScrimMode) {
-    ReplyToCommand(
-        client,
-        "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a players team.");
+  } else if (g_InScrimMode) {
+    ReplyToCommand(client, "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a player's team.");
+    return Plugin_Handled;
+  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+    ReplyToCommand(client, "Cannot add players while waiting for round backup.");
+    return Plugin_Handled;
+  } else if (g_PendingSideSwap || InHalftimePhase()) {
+    ReplyToCommand(client, "Cannot add players during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
@@ -1169,7 +1170,7 @@ public Action Command_CreateScrim(int client, int args) {
 
 public Action Command_Ringer(int client, int args) {
   if (g_GameState == Get5State_None || !g_InScrimMode) {
-    ReplyToCommand(client, "This command can only be used in scrim mode");
+    ReplyToCommand(client, "This command can only be used in scrim mode.");
     return Plugin_Handled;
   }
 
@@ -1277,4 +1278,19 @@ public void CheckTeamNameStatus(Get5Team team) {
     }
     FormatTeamName(team);
   }
+}
+
+void ExecCfg(ConVar cvar) {
+  char cfg[PLATFORM_MAX_PATH];
+  cvar.GetString(cfg, sizeof(cfg));
+  ServerCommand("exec \"%s\"", cfg);
+  CreateTimer(0.1, Timer_ExecMatchConfig, _, TIMER_FLAG_NO_MAPCHANGE);
+}
+
+public Action Timer_ExecMatchConfig(Handle timer) {
+  // When we load config files using ServerCommand("exec") above, which is async, we want match config cvars to always
+  // override.
+  SetMatchTeamCvars();
+  ExecuteMatchConfigCvars();
+  return Plugin_Handled;
 }

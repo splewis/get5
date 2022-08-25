@@ -29,9 +29,9 @@ entire language file**.
     ```
 
     1. The `#format` parameter indicates the order and types of parameters. These will *not* be defined in other 
-       and you should only provide the language string itself (with its language prefix, i.e. `en`). The original file
-       indicates what `{1}`, `{2}` and `{3}` are. In this case, the first and second arguments are strings and the third
-       is a number.
+       languages, and you should only provide the language string itself (with its language prefix, i.e. `en`). The
+       original file indicates what `{1}`, `{2}` and `{3}` are. In this case, the first and second arguments are strings
+       and the third is a number.
     2. Use the English strings and the [reference](#reference) below to determine how to translate the string.
 
 As the string implies, this example is used when a team picks a map, and the output is printed to chat and looks like
@@ -158,7 +158,12 @@ end with a full stop as this is added automatically.
 | `CaptainLeftOnVetoInfoMessage`              | A captain left during the veto, pausing the veto.                                                                                                                        | Chat       |
 | `ReadyToResumeVetoInfoMessage`              | Type _!ready_ when you are ready to resume the veto.                                                                                                                     | Chat       |
 | `MatchConfigLoadedInfoMessage`              | Loaded match config.                                                                                                                                                     | Chat       |
-| `MoveToCoachInfoMessage`                    | You were moved to the coach position because your team is full.                                                                                                          | Chat       |
+| `MoveToCoachInfoMessage`                    | You were moved to the coach position as your team is full.                                                                                                               | Chat       |
+| `CannotLeaveCoachingTeamIsFull`             | You cannot leave the coach position as your team is full.                                                                                                                | Chat       |
+| `CoachingNotEnabled`                        | Coaching is not enabled. You must set _sv_coaching_enabled_ to 1.                                                                                                        | Chat       |
+| `PlayerIsCoachingTeam`                      | _PlayerName_ is coaching _Team A_.                                                                                                                                       | Chat       |
+| `CanOnlyCoachDuringWarmup`                  | You can only change to or from coach during warmup.                                                                                                                      | Chat       |
+| `AllCoachSlotsFilledForTeam`                | All coach slots (_2_) are currently filled for your team.                                                                                                                | Chat       |
 | `ReadyTag`                                  | **[READY]** PlayerName: Hey, I'm ready...                                                                                                                                | Chat       |
 | `NotReadyTag`                               | **[NOT READY]** PlayerName: Hey, I'm not ready...                                                                                                                        | Chat       |
 | `MapVetoPickMenuText`                       | Select a map to PLAY:                                                                                                                                                    | Menu       |
@@ -172,3 +177,19 @@ end with a full stop as this is added automatically.
 | `VetoCountdown`                             | Veto commencing in _3_ seconds.                                                                                                                                          | Chat       |
 | `NewVersionAvailable`                       | A newer version of Get5 is available. Please visit _splewis.github.io/get5_ to update.                                                                                   | Chat       |
 | `PrereleaseVersionWarning`                  | You are running an unofficial version of Get5 (_0.9.0-c7af39a_) intended for development and testing only. This message can be disabled with _get5_print_update_notice_. | Chat       |
+
+## Supported Languages {: #supported-languages }
+
+These are the languages Get5 supports. The links will take you to the source translation file for the language on
+GitHub. Most languages are incomplete, and if a translation string is missing, the English default will be used.
+
+#### :flag_gb: [English](https://github.com/splewis/get5/blob/development/translations/get5.phrases.txt) (default) {: #en }
+#### :flag_fr: [French](https://github.com/splewis/get5/tree/development/translations/fr/get5.phrases.txt) {: #fr }
+#### :flag_de: [German](https://github.com/splewis/get5/tree/development/translations/de/get5.phrases.txt) {: #de }
+#### :flag_es: [Spanish](https://github.com/splewis/get5/tree/development/translations/es/get5.phrases.txt) {: #es }
+#### :flag_cn: [Chinese](https://github.com/splewis/get5/tree/development/translations/chi/get5.phrases.txt) {: #cn }
+#### :flag_dk: [Danish](https://github.com/splewis/get5/tree/development/translations/da/get5.phrases.txt) {: #da }
+#### :flag_hu: [Hungarian](https://github.com/splewis/get5/tree/development/translations/hu/get5.phrases.txt) {: #hu }
+#### :flag_pl: [Polish](https://github.com/splewis/get5/tree/development/translations/pl/get5.phrases.txt) {: #pl }
+#### :flag_pt: [Portuguese](https://github.com/splewis/get5/tree/development/translations/pt/get5.phrases.txt) {: #pt }
+#### :flag_ru: [Russian](https://github.com/splewis/get5/tree/development/translations/ru/get5.phrases.txt) {: #ru }

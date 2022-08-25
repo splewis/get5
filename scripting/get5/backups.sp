@@ -1,9 +1,15 @@
 #define TEMP_MATCHCONFIG_BACKUP_PATTERN "get5_match_config_backup%d.txt"
 #define TEMP_VALVE_BACKUP_PATTERN "get5_temp_backup%d.txt"
+#define TEMP_VALVE_NAMES_FILE_PATTERN "get5_names%d.txt"
 
 public Action Command_LoadBackup(int client, int args) {
   if (!g_BackupSystemEnabledCvar.BoolValue) {
     ReplyToCommand(client, "The backup system is disabled");
+    return Plugin_Handled;
+  }
+
+  if (g_PendingSideSwap || InHalftimePhase()) {
+    ReplyToCommand(client, "You cannot load a backup during halftime.");
     return Plugin_Handled;
   }
 
@@ -61,7 +67,7 @@ public Action Command_ListBackups(int client, int args) {
   return Plugin_Handled;
 }
 
-public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
+bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
   KeyValues kv = new KeyValues("Backup");
   if (!kv.ImportFromFile(path)) {
     LogError("Failed to find or read backup file \"%s\"", path);
@@ -138,7 +144,7 @@ public bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
   return true;
 }
 
-public void WriteBackStructure(const char[] path) {
+void WriteBackupStructure(const char[] path) {
   KeyValues kv = new KeyValues("Backup");
   char timeString[PLATFORM_MAX_PATH];
   FormatTime(timeString, sizeof(timeString), "%Y-%m-%d %H:%M:%S", GetTime());
@@ -170,6 +176,13 @@ public void WriteBackStructure(const char[] path) {
 
   kv.SetNum("series_draw", g_TeamSeriesScores[Get5Team_None]);
 
+  kv.SetNum("team1_tac_pauses_used", g_TacticalPausesUsed[Get5Team_1]);
+  kv.SetNum("team2_tac_pauses_used", g_TacticalPausesUsed[Get5Team_2]);
+  kv.SetNum("team1_tech_pauses_used", g_TechnicalPausesUsed[Get5Team_1]);
+  kv.SetNum("team2_tech_pauses_used", g_TechnicalPausesUsed[Get5Team_2]);
+  kv.SetNum("team1_pause_time_used", g_TacticalPauseTimeUsed[Get5Team_1]);
+  kv.SetNum("team2_pause_time_used", g_TacticalPauseTimeUsed[Get5Team_2]);
+
   // Write original maplist.
   kv.JumpToKey("maps", true);
   for (int i = 0; i < g_MapsToPlay.Length; i++) {
@@ -197,18 +210,21 @@ public void WriteBackStructure(const char[] path) {
   WriteMatchToKv(kv);
   kv.GoBack();
 
-  // Write valve's backup format into the file.
-  char lastBackup[PLATFORM_MAX_PATH];
-  ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
-  if (g_GameState == Get5State_Live && lastBackupCvar != null) {
-    lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
-    KeyValues valveBackup = new KeyValues("valve_backup");
-    if (valveBackup.ImportFromFile(lastBackup)) {
-      kv.JumpToKey("valve_backup", true);
-      KvCopySubkeys(valveBackup, kv);
-      kv.GoBack();
+  if (g_GameState == Get5State_Live) {
+    // Write valve's backup format into the file. This only applies to live rounds, as any pre-live backups should
+    // just restart the game to the knife round.
+    char lastBackup[PLATFORM_MAX_PATH];
+    ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
+    if (lastBackupCvar != null) {
+      lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
+      KeyValues valveBackup = new KeyValues("valve_backup");
+      if (valveBackup.ImportFromFile(lastBackup)) {
+        kv.JumpToKey("valve_backup", true);
+        KvCopySubkeys(valveBackup, kv);
+        kv.GoBack();
+      }
+      delete valveBackup;
     }
-    delete valveBackup;
   }
 
   // Write the get5 stats into the file.
@@ -220,7 +236,7 @@ public void WriteBackStructure(const char[] path) {
   delete kv;
 }
 
-public bool RestoreFromBackup(const char[] path) {
+bool RestoreFromBackup(const char[] path) {
   KeyValues kv = new KeyValues("Backup");
   if (!kv.ImportFromFile(path)) {
     LogError("Failed to read backup file \"%s\"", path);
@@ -235,15 +251,24 @@ public bool RestoreFromBackup(const char[] path) {
     if (!LoadMatchConfig(tempBackupFile, true)) {
       delete kv;
       LogError("Could not restore from match config \"%s\"", tempBackupFile);
-      if (g_GameState != Get5State_None) {
-        // If the backup load fails, all the game configs will have been reset by LoadMatchConfig,
-        // but the game state won't. This ensure we don't end up a in a "live" state with no get5
-        // variables set, which would prevent a call to load a new match.
-        ChangeState(Get5State_None);
-      }
+      // If the backup load fails, all the game configs will have been reset by LoadMatchConfig,
+      // but the game state won't. This ensures we don't end up a in a "live" state with no get5
+      // variables set, which would prevent a call to load a new match.
+      ChangeState(Get5State_None);
       return false;
     }
     kv.GoBack();
+  }
+
+  if (g_GameState != Get5State_Live) {
+    // This isn't perfect, but it's better than resetting all pauses used to zero in cases of restore on a new server.
+    // If restoring while live, we just retain the current pauses used, as they should be the "most correct".
+    g_TacticalPausesUsed[Get5Team_1] = kv.GetNum("team1_tac_pauses_used", 0);
+    g_TacticalPausesUsed[Get5Team_2] = kv.GetNum("team2_tac_pauses_used", 0);
+    g_TechnicalPausesUsed[Get5Team_1] = kv.GetNum("team1_tech_pauses_used", 0);
+    g_TechnicalPausesUsed[Get5Team_2] = kv.GetNum("team2_tech_pauses_used", 0);
+    g_TacticalPauseTimeUsed[Get5Team_1] = kv.GetNum("team1_pause_time_used", 0);
+    g_TacticalPauseTimeUsed[Get5Team_2] = kv.GetNum("team2_pause_time_used", 0);
   }
 
   kv.GetString("matchid", g_MatchID, sizeof(g_MatchID));
@@ -306,9 +331,8 @@ public bool RestoreFromBackup(const char[] path) {
     kv.GoBack();
   }
 
-  // When loading round 0, there is no valve backup, so we assume round 0 if the game is live,
-  // otherwise -1
-  int roundNumberRestoredTo = g_GameState == Get5State_Live ? 0 : -1;
+  // When loading pre-live, there is no Valve backup, so we assume -1.
+  int roundNumberRestoredTo = -1;
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   if (kv.JumpToKey("valve_backup")) {
@@ -327,9 +351,8 @@ public bool RestoreFromBackup(const char[] path) {
   g_MapsToPlay.GetString(g_MapNumber, currentSeriesMap, sizeof(currentSeriesMap));
 
   if (!StrEqual(currentMap, currentSeriesMap)) {
-    ChangeMap(currentSeriesMap, 1.0);
-    g_WaitingForRoundBackup = (g_GameState >= Get5State_Live);
-
+    ChangeMap(currentSeriesMap, 3.0);
+    g_WaitingForRoundBackup = true;
   } else {
     RestoreGet5Backup();
   }
@@ -350,78 +373,63 @@ public bool RestoreFromBackup(const char[] path) {
   return true;
 }
 
-public void RestoreGet5Backup() {
-  // This variable is reset on a timer since the implementation of the
-  // mp_backup_restore_load_file doesn't do everything in one frame.
-  g_DoingBackupRestoreNow = true;
-  ExecCfg(g_LiveCfgCvar);
-
+void RestoreGet5Backup() {
   if (g_SavedValveBackup) {
-    ChangeState(Get5State_Live);
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-
-    // There are some timing issues leading to incorrect score when restoring matches in second
-    // half. Doing the restore on a timer
-    CreateTimer(1.0, Time_StartRestore);
+    LogDebug("Restored backup with Valve backup. Doing match restore...");
+    // If you load a backup during a live round, the game might get stuck if there are only bots remaining and no
+    // players are alive. Other stuff will probably also go wrong, so we just reset the game before loading the
+    // backup to avoid any weird edge-cases.
+    if (!InWarmup()) {
+     RestartGame();
+    }
+    ExecCfg(g_LiveCfgCvar);
+    PauseGame(Get5Team_None, Get5PauseType_Backup);
+    g_DoingBackupRestoreNow = true; // reset after the backup has completed, suppresses various events and hooks until then.
+    CreateTimer(1.5, Time_StartRestore);
   } else {
-    SetStartingTeams();
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-    LOOP_CLIENTS(i) {
-      if (IsPlayer(i)) {
-        CheckClientTeam(i);
-      }
-    }
-
-    if (g_GameState == Get5State_Live) {
-      EndWarmup();
-      EndWarmup();
-      ServerCommand("mp_restartgame 5");
-      PauseGame(Get5Team_None, Get5PauseType_Backup);
-      if (g_CoachingEnabledCvar.BoolValue) {
-        CreateTimer(6.0, Timer_SwapCoaches);
-      }
-    } else {
-      EnsureIndefiniteWarmup();
-    }
-
-    g_DoingBackupRestoreNow = false;
+    LogDebug("Restored backup with no Valve backup. Going to warmup now.");
+    // Backup was for veto or warmup; go to warmup.
+    UnpauseGame(Get5Team_None);
+    ExecCfg(g_WarmupCfgCvar);
+    RestartGame();
+    StartWarmup();
   }
-}
-
-public Action Timer_SwapCoaches(Handle timer) {
+  // Last step is assigning players to their teams. This is normally done inside LoadMatchConfig, but since we need
+  // the team sides to be applied from the backup, we skip it then and do it here.
   LOOP_CLIENTS(i) {
-    if (IsAuthedPlayer(i)) {
-      CheckIfClientCoachingAndMoveToCoach(i, Get5Team_1);
-      CheckIfClientCoachingAndMoveToCoach(i, Get5Team_2);
+    if (IsPlayer(i)) {
+      CheckClientTeam(i);
     }
   }
 }
 
 public Action Time_StartRestore(Handle timer) {
-  PauseGame(Get5Team_None, Get5PauseType_Backup);
-
+  ChangeState(Get5State_Live);
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
-  CreateTimer(0.1, Timer_FinishBackup);
+  CreateTimer(0.5, Timer_FinishBackup);
 }
 
 public Action Timer_FinishBackup(Handle timer) {
-  if (g_CoachingEnabledCvar.BoolValue) {
-    // If we are coaching we want to ensure our
-    // coaches get moved back onto the team.
-    // We cannot trust Valve's system as a disconnected
-    // player will count as a "player" and not be placed
-    // in the coach slot. So, we cannot enable warmup during
-    // the round restore process if using a Valve backup.
-    CreateTimer(0.5, Timer_SwapCoaches);
+  // This ensures that coaches are moved to their slots.
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i)) {
+      CheckClientTeam(i);
+    }
   }
   g_DoingBackupRestoreNow = false;
+  // Delete the temporary backup file we just wrote and restored from.
+  char tempValveBackup[PLATFORM_MAX_PATH];
+  GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
+  if (DeleteFile(tempValveBackup)) {
+    LogDebug("Deleted temp valve backup file: %s", tempValveBackup);
+  } else {
+    LogDebug("Failed to delete temp valve backup file: %s", tempValveBackup);
+  }
 }
 
-public void DeleteOldBackups() {
+void DeleteOldBackups() {
   int maxTimeDifference = g_MaxBackupAgeCvar.IntValue;
   if (maxTimeDifference <= 0) {
     LogDebug("Backups are not being deleted as get5_max_backup_age is 0.");

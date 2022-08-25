@@ -1,6 +1,5 @@
 public Action StartKnifeRound(Handle timer) {
   g_HasKnifeRoundStarted = false;
-  g_PendingSideSwap = false;
 
   // Removes ready tags
   SetMatchTeamCvars();
@@ -41,15 +40,13 @@ static void PerformSideSwap(bool swap) {
     g_TeamSide[Get5Team_1] = tmp;
 
     LOOP_CLIENTS(i) {
-      if (IsValidClient(i)) {
-        int team = GetClientTeam(i);
-        if (team == CS_TEAM_T) {
-          SwitchPlayerTeam(i, CS_TEAM_CT);
-        } else if (team == CS_TEAM_CT) {
-          SwitchPlayerTeam(i, CS_TEAM_T);
-        } else if (IsClientCoaching(i)) {
-          int correctTeam = Get5TeamToCSTeam(GetClientMatchTeam(i));
-          UpdateCoachTarget(i, correctTeam);
+      if (IsValidClient(i) && !IsClientSourceTV(i)) {
+        if (IsFakeClient(i)) {
+          // Because bots never have an assigned team, they won't be moved around by CheckClientTeam. We kick them to
+          // prevent one team from having too many players. They will rejoin if defined in the live config.
+          KickClient(i);
+        } else {
+          CheckClientTeam(i, false);
         }
       }
     }
@@ -83,13 +80,14 @@ public void EndKnifeRound(bool swap) {
   Call_PushCell(knifeEvent);
   Call_Finish();
 
+  if (g_KnifeDecisionTimer != INVALID_HANDLE) {
+    LogDebug("Stopped knife decision timer as a choice was made before it expired.");
+    delete g_KnifeDecisionTimer;
+  }
+
   EventLogger_LogAndDeleteEvent(knifeEvent);
-
-  ChangeState(Get5State_GoingLive);
-  CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
-
   g_KnifeWinnerTeam = Get5Team_None;
-  EnsureIndefiniteWarmup();
+  StartGoingLive();
 }
 
 static bool AwaitingKnifeDecision(int client) {

@@ -1273,7 +1273,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       }
     } else if (g_SeriesCanClinch) {
       // This adjusts for ties!
-      int actualMapsToWin = ((g_MapsToPlay.Length - tiedMaps) / 2) + 1;
+      int actualMapsToWin = MapsToWin(g_MapsToPlay.Length - tiedMaps);
       if (t1maps == actualMapsToWin) {
         // Team 1 won
         EndSeries(Get5Team_1, true, restartDelay);

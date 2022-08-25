@@ -498,11 +498,8 @@ stock int AuthToClient(const char[] auth) {
 }
 
 stock int MapsToWin(int numberOfMaps) {
-  if (numberOfMaps <= 2) {
-    return numberOfMaps;
-  } else {
-    return (numberOfMaps / 2) + 1;
-  }
+  // This works because integers are rounded down; so 3 / 2 = 1.5, which becomes 1 as integer.
+  return (numberOfMaps / 2) + 1;
 }
 
 stock void CSTeamString(int csTeam, char[] buffer, int len) {

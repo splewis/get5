@@ -158,6 +158,11 @@
       </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../coaching/">
+        Coaching
+      </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../pausing/">
         Pausing
       </a>
@@ -253,13 +258,6 @@
 <p>Get5 can be configured to automatically record matches. This is enabled by default based on the state
 of <a href="../configuration/#get5_demo_name_format"><code>get5_demo_name_format</code></a> and can be disabled by setting that parameter to
 an empty string.</p>
-<div class="admonition warning">
-<p class="admonition-title">Don't mess too much with the delay!</p>
-<p>Changing the <code>tv_delay</code> or <code>tv_enable</code> in <code>warmup.cfg</code>, <code>live.cfg</code> etc. is going to cause problems with your demos.
-We recommend you set this variable either on your server in general or only once in the <code>cvar</code> section of your
-<a href="../match_schema">match configuration</a>. You should also not set <code>tv_delaymapchange</code> as Get5 handles this
-automatically.</p>
-</div>
 <p>Demo recording starts once all teams have readied up and ends shortly following a map result. When a demo file is
 written to disk, the <a href="../events_and_forwards/"><code>Get5_OnDemoFinished</code></a> forward is called, which you can use to move the
 file or upload it somewhere. The filename can also be found in the map-section of the
@@ -268,6 +266,17 @@ file or upload it somewhere. The filename can also be found in the map-section o
 map ends if GOTV is enabled to ensure that it won't be shorter than what is required for the GOTV broadcast to finish.
 Players will also not be <a href="../configuration/#get5_kick_when_no_match_loaded">kicked from the server</a> before this delay
 has passed.</p>
+<div class="admonition warning">
+<p class="admonition-title">Don't mess too much with the TV! <img alt="📺" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f4fa.svg" title=":tv:"/></p>
+<p>Changing <code>tv_delay</code> or <code>tv_enable</code> in <code>warmup.cfg</code>, <code>live.cfg</code> etc. is going to cause problems with your demos.
+We recommend you set <code>tv_delay</code> either on your server in general or only once in the <code>cvars</code> section of your
+<a href="../match_schema">match configuration</a>. You should also not set <code>tv_delaymapchange</code> as Get5 handles this
+automatically.</p>
+<p>We recommend that you <strong>do not</strong> set <code>tv_enable</code> in your match configuration, as it <strong>requires</strong> a map change for
+the GOTV bot to join the server. You should enable GOTV in your general server config and refrain from turning it on
+and off with Get5. Note that setting <code>tv_enable 1</code> won't allow people to join your server's GOTV. You must also set
+<code>tv_advertise_watchable 1</code>, so you don't have to worry about ghosting if this is disabled.</p>
+</div>
 </article>
 </div>
 </div>

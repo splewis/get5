@@ -1231,13 +1231,14 @@ must confirm. <strong><code>Default: 0</code></strong></dd>
 <h4 id="get5_time_format"><code>get5_time_format</code></h4>
 <dl>
 <dd>Time format string. This determines the <a href="#tag-time"><code>{TIME}</code></a> tag. <strong>Do not change this unless you know what you are
-doing! Avoid using spaces or colons.</strong> <strong><code>Default: %Y-%m-%d_%H</code></strong></dd>
+doing! Avoid using spaces or colons.</strong> <strong><code>Default: "%Y-%m-%d_%H-%M-%S"</code></strong></dd>
 </dl>
 <h4 id="get5_demo_name_format"><code>get5_demo_name_format</code></h4>
 <dl>
 <dd>Format to use for demo files when <a href="../gotv/">recording matches</a>. Do not include a file extension (<code>.dem</code> is added
-automatically). Set to empty string to disable.<br/>Note that the <a href="#tag-mapnumber"><code>{MAPNUMBER}</code></a> variable is not
-zero-indexed!<br/><strong><code>Default: {MATCHID}_map{MAPNUMBER}_{MAPNAME}</code></strong></dd>
+automatically). Set to empty string to disable. If you do not include the <a href="#tag-time"><code>{TIME}</code></a> tag, you will have
+problems with duplicate files if restoring a game from a backup.<br/>Note that the <a href="#tag-mapnumber"><code>{MAPNUMBER}</code></a>
+variable is not zero-indexed!<br/><strong><code>Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"</code></strong></dd>
 </dl>
 <h4 id="get5_event_log_format"><code>get5_event_log_format</code></h4>
 <dl>
@@ -1246,7 +1247,7 @@ zero-indexed!<br/><strong><code>Default: {MATCHID}_map{MAPNUMBER}_{MAPNAME}</cod
 <h4 id="get5_stats_path_format"><code>get5_stats_path_format</code></h4>
 <dl>
 <dd>Path where stats are output at each map end if it is set. Set to empty string to
-disable. <strong><code>Default: get5_matchstats_{MATCHID}.cfg</code></strong></dd>
+disable. <strong><code>Default: "get5_matchstats_{MATCHID}.cfg"</code></strong></dd>
 </dl>
 <h2 id="backup-system">Backup System</h2>
 <h4 id="get5_backup_system_enabled"><code>get5_backup_system_enabled</code></h4>

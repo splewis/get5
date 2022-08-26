@@ -218,19 +218,20 @@ must confirm. **`Default: 0`**
 
 ####`get5_time_format`
 :   Time format string. This determines the [`{TIME}`](#tag-time) tag. **Do not change this unless you know what you are
-doing! Avoid using spaces or colons.** **`Default: %Y-%m-%d_%H`**
+doing! Avoid using spaces or colons.** **`Default: "%Y-%m-%d_%H-%M-%S"`**
 
 ####`get5_demo_name_format`
 :   Format to use for demo files when [recording matches](gotv.md). Do not include a file extension (`.dem` is added
-automatically). Set to empty string to disable.<br>Note that the [`{MAPNUMBER}`](#tag-mapnumber) variable is not
-zero-indexed!<br>**`Default: {MATCHID}_map{MAPNUMBER}_{MAPNAME}`**
+automatically). Set to empty string to disable. If you do not include the [`{TIME}`](#tag-time) tag, you will have
+problems with duplicate files if restoring a game from a backup.<br>Note that the [`{MAPNUMBER}`](#tag-mapnumber)
+variable is not zero-indexed!<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
 
 ####`get5_event_log_format`
 :   Format to write event logs to. Set to empty string to disable. **`Default: ""`**
 
 ####`get5_stats_path_format`
 :   Path where stats are output at each map end if it is set. Set to empty string to
-disable. **`Default: get5_matchstats_{MATCHID}.cfg`**
+disable. **`Default: "get5_matchstats_{MATCHID}.cfg"`**
 
 ## Backup System
 

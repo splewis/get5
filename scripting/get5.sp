@@ -353,8 +353,8 @@ public void OnPluginStart() {
   g_CheckAuthsCvar =
       CreateConVar("get5_check_auths", "1",
                    "If set to 0, get5 will not force players to the correct team based on steamid");
-  g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
-                                      "Format for demo file names, use \"\" to disable");
+  g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
+                                      "Format for demo file names, use \"\" to disable. Do not remove the {TIME} placeholder if you use the backup system.");
   g_DisplayGotvVetoCvar =
       CreateConVar("get5_display_gotv_veto", "0",
                    "Whether to wait for map vetos to be printed to GOTV before changing map");
@@ -424,7 +424,7 @@ public void OnPluginStart() {
       "get5_time_to_make_knife_decision", "60",
       "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited");
   g_TimeFormatCvar = CreateConVar(
-      "get5_time_format", "%Y-%m-%d_%H",
+      "get5_time_format", "%Y-%m-%d_%H-%M-%S",
       "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
   g_VetoConfirmationTimeCvar = CreateConVar(
       "get5_veto_confirmation_time", "2.0",

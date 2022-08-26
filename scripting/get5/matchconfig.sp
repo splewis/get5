@@ -115,12 +115,13 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
   // Before we run the Get5_OnSeriesInit forward, we want to ensure that as much game state is set as possible,
   // so that any implementation reacting to that event/forward will have all the natives return proper data.
+  // ExecuteMatchConfigCvars gets called twice because ExecCfg(g_WarmupCfgCvar) also does it async, but we need it here
+  // as the team assigment below depends on it. We set this one first as the others may depend on something changed in
+  // the match cvars section.
+  ExecuteMatchConfigCvars();
   SetMatchTeamCvars();
   LoadPlayerNames();
   AddTeamLogosToDownloadTable();
-  // ExecuteMatchConfigCvars gets called twice because ExecCfg(g_WarmupCfgCvar) also does it async, but we need it here
-  // as the team assigment below depends on it.
-  ExecuteMatchConfigCvars();
   SetStartingTeams();
 
   if (!restoreBackup) {
@@ -1296,7 +1297,7 @@ void ExecCfg(ConVar cvar) {
 public Action Timer_ExecMatchConfig(Handle timer) {
   // When we load config files using ServerCommand("exec") above, which is async, we want match config cvars to always
   // override.
-  SetMatchTeamCvars();
   ExecuteMatchConfigCvars();
+  SetMatchTeamCvars();
   return Plugin_Handled;
 }

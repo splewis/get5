@@ -178,7 +178,6 @@ Menu g_ActiveVetoMenu = null;
 
 /** Backup data **/
 bool g_WaitingForRoundBackup = false;
-bool g_SavedValveBackup = false;
 bool g_DoingBackupRestoreNow = false;
 
 // Stats values
@@ -909,6 +908,7 @@ public Action Timer_CheckReady(Handle timer) {
         LogDebug("Timer_CheckReady: starting without a knife round");
         StartGame(false);
       }
+      StartRecording();
     } else {
       CheckReadyWaitingTimes();
     }
@@ -1172,7 +1172,7 @@ public void RestoreLastRound(int client) {
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
   if (!StrEqual(lastBackup, "")) {
-    if (RestoreFromBackup(lastBackup)) {
+    if (RestoreFromBackup(lastBackup, false)) {
       Get5_MessageToAll("%t", "BackupLoadedInfoMessage", lastBackup);
       // Fix the last backup cvar since it gets reset.
       g_LastGet5BackupCvar.SetString(lastBackup);
@@ -1805,7 +1805,6 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
 
 public void StartGame(bool knifeRound) {
   LogDebug("StartGame");
-  StartRecording();
 
   if (knifeRound) {
     ExecCfg(g_LiveCfgCvar); // live first, then apply and save knife cvars below

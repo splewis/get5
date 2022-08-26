@@ -254,7 +254,7 @@
     }
     "StopCommandVotingReset"
     {
-        "da"            "Anmodningen fra {1} om at stoppe spillet blev annulleret, da en ny runde startede."
+        "da"            "Anmodningen fra {1} om at stoppe spillet blev annulleret, da runden sluttede."
     }
     "BackupLoadedInfoMessage"
     {

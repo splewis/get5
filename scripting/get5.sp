@@ -178,7 +178,6 @@ Menu g_ActiveVetoMenu = null;
 
 /** Backup data **/
 bool g_WaitingForRoundBackup = false;
-bool g_SavedValveBackup = false;
 bool g_DoingBackupRestoreNow = false;
 
 // Stats values
@@ -353,8 +352,8 @@ public void OnPluginStart() {
   g_CheckAuthsCvar =
       CreateConVar("get5_check_auths", "1",
                    "If set to 0, get5 will not force players to the correct team based on steamid");
-  g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
-                                      "Format for demo file names, use \"\" to disable");
+  g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
+                                      "Format for demo file names, use \"\" to disable. Do not remove the {TIME} placeholder if you use the backup system.");
   g_DisplayGotvVetoCvar =
       CreateConVar("get5_display_gotv_veto", "0",
                    "Whether to wait for map vetos to be printed to GOTV before changing map");
@@ -424,7 +423,7 @@ public void OnPluginStart() {
       "get5_time_to_make_knife_decision", "60",
       "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited");
   g_TimeFormatCvar = CreateConVar(
-      "get5_time_format", "%Y-%m-%d_%H",
+      "get5_time_format", "%Y-%m-%d_%H-%M-%S",
       "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
   g_VetoConfirmationTimeCvar = CreateConVar(
       "get5_veto_confirmation_time", "2.0",
@@ -820,6 +819,9 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
 public void OnConfigsExecuted() {
   LogDebug("OnConfigsExecuted");
   g_MapChangePending = false;
+  g_DoingBackupRestoreNow = false;
+  g_ReadyTimeWaitingUsed = 0;
+  g_HasKnifeRoundStarted = false;
   // Recording is always automatically stopped on map change, and
   // since there are no hooks to detect tv_stoprecord, we reset
   // our recording var if a map change is performed unexpectedly.
@@ -844,12 +846,9 @@ public void OnConfigsExecuted() {
     g_TechnicalPausesUsed[team] = 0;
   }
 
-  g_ReadyTimeWaitingUsed = 0;
-  g_HasKnifeRoundStarted = false;
-
   // On map start, always put the game in warmup mode.
-  // When executing a backup load, the live config is loaded and warmup ends.
-  if (g_GameState != Get5State_None || g_WaitingForRoundBackup) {
+  // When executing a backup load, the live config is loaded and warmup ends after players ready-up again.
+  if (g_GameState != Get5State_None) {
     LogDebug("Putting game into warmup in OnConfigsExecuted.");
     ChangeState(Get5State_Warmup);
     ExecCfg(g_WarmupCfgCvar);
@@ -909,6 +908,7 @@ public Action Timer_CheckReady(Handle timer) {
         LogDebug("Timer_CheckReady: starting without a knife round");
         StartGame(false);
       }
+      StartRecording();
     } else {
       CheckReadyWaitingTimes();
     }
@@ -1172,7 +1172,7 @@ public void RestoreLastRound(int client) {
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
   if (!StrEqual(lastBackup, "")) {
-    if (RestoreFromBackup(lastBackup)) {
+    if (RestoreFromBackup(lastBackup, false)) {
       Get5_MessageToAll("%t", "BackupLoadedInfoMessage", lastBackup);
       // Fix the last backup cvar since it gets reset.
       g_LastGet5BackupCvar.SetString(lastBackup);
@@ -1234,9 +1234,8 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       winningTeam = Get5Team_2;
     }
 
-    // If the round ends because the match is over, we clear the grenade container immediately as
-    // there will be no RoundStart event to do it, and the sideSwap check in RoundEnd will not
-    // trigger it either.
+    // If the round ends because the match is over, we clear the grenade container immediately as they will not fire
+    // on their own if the game state is not live.
     Stats_ResetGrenadeContainers();
 
     // Update series scores
@@ -1309,7 +1308,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
                                       sizeof(timeToMapChangeFormatted));
 
     g_MapChangePending = true;
-    Format(nextMap, sizeof(nextMap), "{GREEN}%s{NORMAL}", nextMap);
+    FormatMapName(nextMap, nextMap, sizeof(nextMap), true, true);
     Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap, timeToMapChangeFormatted);
     ChangeState(Get5State_PostGame);
     // Subtracting 4 seconds makes the map change 1 second before the timer expires, as there is a 3
@@ -1449,7 +1448,7 @@ public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
 
   // We always want this to be correct, regardless of game state.
   g_RoundStartedTime = GetEngineTime();
-  if (g_GameState == Get5State_Live && !g_DoingBackupRestoreNow && !g_WaitingForRoundBackup) {
+  if (g_GameState == Get5State_Live && !IsDoingRestoreOrMapChange()) {
     Stats_RoundStart();
   }
 }
@@ -1491,15 +1490,7 @@ static bool CreateBackupFolderStructure(const char[] path) {
 }
 
 public void WriteBackup() {
-  if (!g_BackupSystemEnabledCvar.BoolValue || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
-    return;
-  }
-
-  if (g_PauseType == Get5PauseType_Backup) {
-    // If there was no valve backup found when restoring the game, the above checks will not trigger a return,
-    // so we do this to prevent overwriting an already-written backup in the event the game starts in the same round
-    // it was *just* restored to and this function runs.
-    LogDebug("Skipping backup round write as the round started paused for backup.");
+  if (!g_BackupSystemEnabledCvar.BoolValue || IsDoingRestoreOrMapChange()) {
     return;
   }
 
@@ -1531,16 +1522,6 @@ public void WriteBackup() {
   LogDebug("Writing backup to %s", path);
   WriteBackupStructure(path);
   g_LastGet5BackupCvar.SetString(path);
-
-  // Reset this when writing a new backup, as voting has no reference to which round the teams wanted to restore to, so
-  // votes to restore during one round should not carry over into the next round, as it would just restore that round
-  // instead.
-  LOOP_TEAMS(t) {
-    if (g_TeamGivenStopCommand[t]) {
-      Get5_MessageToAll("%t", "StopCommandVotingReset", g_FormattedTeamNames[t]);
-    }
-    g_TeamGivenStopCommand[t] = false;
-  }
 }
 
 public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
@@ -1551,6 +1532,11 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_RoundStartedTime = 0.0;
   g_BombPlantedTime = 0.0;
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
+
+  if (g_WaitingForRoundBackup || g_MapChangePending) {
+    // We don't want g_DoingBackupRestoreNow filtered here, as we need the round start event after restoring a match.
+    return;
+  }
 
   // We cannot do this during warmup, as sending users into warmup post-knife triggers a round start event.
   // We add an extra restart to clear lingering state from the knife round, such as the round
@@ -1586,13 +1572,16 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   }
 
   if (g_GameState == Get5State_Warmup || g_GameState == Get5State_KnifeRound || g_GameState == Get5State_Live) {
-    WriteBackup();
+    WriteBackup(); // Filters out backup states on its own
   }
 
   if (g_GameState != Get5State_Live) {
     return;
   }
 
+  // We still want to fire the Get5_OnRoundStart event when doing a backup (g_DoingBackupRestoreNow), as this may be
+  // required to insert the round into a database or event log, as the round is actually starting now and may have been
+  // deleted when the backup load was requested.
   Get5RoundStartedEvent startEvent =
       new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
 
@@ -1679,7 +1668,7 @@ public Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroad
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundEnd");
-  if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -1747,12 +1736,6 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       }
     }
 
-    if (g_PendingSideSwap) {
-      // Normally we would do this in RoundStart, but since there is a significant delay between
-      // round *actual end* and and RoundStart when swapping sides, we do it here instead.
-      Stats_ResetGrenadeContainers();
-    }
-
     // CSRoundEndReason is incorrect in CSGO compared to the enumerations defined here:
     // https://github.com/alliedmodders/sourcemod/blob/master/plugins/include/cstrike.inc#L53-L77
     // - which is why we subtract one.
@@ -1770,6 +1753,16 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     Call_Finish();
 
     EventLogger_LogAndDeleteEvent(roundEndEvent);
+
+    // Reset this when a round ends, as voting has no reference to which round the teams wanted to restore to, so
+    // votes to restore during one round should not carry over into the next round, as it would just restore that round
+    // instead.
+    LOOP_TEAMS(t) {
+      if (g_TeamGivenStopCommand[t]) {
+        Get5_MessageToAll("%t", "StopCommandVotingReset", g_FormattedTeamNames[t]);
+      }
+      g_TeamGivenStopCommand[t] = false;
+    }
   }
   return Plugin_Continue;
 }
@@ -1805,7 +1798,6 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
 
 public void StartGame(bool knifeRound) {
   LogDebug("StartGame");
-  StartRecording();
 
   if (knifeRound) {
     ExecCfg(g_LiveCfgCvar); // live first, then apply and save knife cvars below

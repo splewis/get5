@@ -4,7 +4,7 @@
 
 public Action Command_LoadBackup(int client, int args) {
   if (!g_BackupSystemEnabledCvar.BoolValue) {
-    ReplyToCommand(client, "The backup system is disabled");
+    ReplyToCommand(client, "The backup system is disabled.");
     return Plugin_Handled;
   }
 
@@ -17,6 +17,7 @@ public Action Command_LoadBackup(int client, int args) {
   if (args >= 1 && GetCmdArg(1, path, sizeof(path))) {
     if (RestoreFromBackup(path)) {
       Get5_MessageToAll("%t", "BackupLoadedInfoMessage", path);
+      g_LastGet5BackupCvar.SetString(path);
     } else {
       ReplyToCommand(client, "Failed to load backup %s - check error logs", path);
     }
@@ -236,12 +237,18 @@ void WriteBackupStructure(const char[] path) {
   delete kv;
 }
 
-bool RestoreFromBackup(const char[] path) {
+bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
   KeyValues kv = new KeyValues("Backup");
   if (!kv.ImportFromFile(path)) {
     LogError("Failed to read backup file \"%s\"", path);
     delete kv;
     return false;
+  }
+
+  if (restartRecording) {
+    // We must stop recording when loading a backup, and we must do it before we load the match config, or the g_MatchID
+    // variable will be incorrect. This is suppressed when using the !stop command.
+    StopRecording();
   }
 
   if (kv.JumpToKey("Match")) {
@@ -332,16 +339,15 @@ bool RestoreFromBackup(const char[] path) {
   }
 
   // When loading pre-live, there is no Valve backup, so we assume -1.
+  g_WaitingForRoundBackup = false;
   int roundNumberRestoredTo = -1;
-  char tempValveBackup[PLATFORM_MAX_PATH];
-  GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   if (kv.JumpToKey("valve_backup")) {
-    g_SavedValveBackup = true;
+    g_WaitingForRoundBackup = true;
+    char tempValveBackup[PLATFORM_MAX_PATH];
+    GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
     kv.ExportToFile(tempValveBackup);
     roundNumberRestoredTo = kv.GetNum("round", 0);
     kv.GoBack();
-  } else {
-    g_SavedValveBackup = false;
   }
 
   char currentMap[PLATFORM_MAX_PATH];
@@ -351,10 +357,29 @@ bool RestoreFromBackup(const char[] path) {
   g_MapsToPlay.GetString(g_MapNumber, currentSeriesMap, sizeof(currentSeriesMap));
 
   if (!StrEqual(currentMap, currentSeriesMap)) {
+    // We don't need to assign players if changing map; this will be done when the players rejoin.
+    // If a map is to be changed, we want to suppress all stats events immediately, as the Get5_OnBackupRestore is
+    // called now and we don't want events firing after this until the game is live again.
     ChangeMap(currentSeriesMap, 3.0);
-    g_WaitingForRoundBackup = true;
   } else {
-    RestoreGet5Backup();
+    // We must assign players to their teams. This is normally done inside LoadMatchConfig, but since we need
+    // the team sides to be applied from the backup, we skip it then and do it here.
+    LOOP_CLIENTS(i) {
+      if (IsPlayer(i)) {
+        CheckClientTeam(i);
+      }
+    }
+    if (g_WaitingForRoundBackup) {
+      // Same map, but round restore with a Valve backup; do normal restore immediately with no ready-up.
+      RestoreGet5Backup(restartRecording);
+    } else {
+      // We are restarting to the same map for prelive; just go back into warmup and let players ready-up again.
+      ResetReadyStatus();
+      UnpauseGame(Get5Team_None);
+      ChangeState(Get5State_Warmup);
+      ExecCfg(g_WarmupCfgCvar);
+      StartWarmup();
+    }
   }
 
   delete kv;
@@ -373,34 +398,31 @@ bool RestoreFromBackup(const char[] path) {
   return true;
 }
 
-void RestoreGet5Backup() {
-  if (g_SavedValveBackup) {
-    LogDebug("Restored backup with Valve backup. Doing match restore...");
-    // If you load a backup during a live round, the game might get stuck if there are only bots remaining and no
-    // players are alive. Other stuff will probably also go wrong, so we just reset the game before loading the
-    // backup to avoid any weird edge-cases.
-    if (!InWarmup()) {
-     RestartGame();
-    }
-    ExecCfg(g_LiveCfgCvar);
-    PauseGame(Get5Team_None, Get5PauseType_Backup);
-    g_DoingBackupRestoreNow = true; // reset after the backup has completed, suppresses various events and hooks until then.
-    CreateTimer(1.5, Time_StartRestore);
-  } else {
-    LogDebug("Restored backup with no Valve backup. Going to warmup now.");
-    // Backup was for veto or warmup; go to warmup.
-    UnpauseGame(Get5Team_None);
-    ExecCfg(g_WarmupCfgCvar);
-    RestartGame();
-    StartWarmup();
+void RestoreGet5Backup(bool restartRecording = true) {
+  // If you load a backup during a live round, the game might get stuck if there are only bots remaining and no
+  // players are alive. Other stuff will probably also go wrong, so we just reset the game before loading the
+  // backup to avoid any weird edge-cases.
+  if (!InWarmup()) {
+   RestartGame();
   }
-  // Last step is assigning players to their teams. This is normally done inside LoadMatchConfig, but since we need
-  // the team sides to be applied from the backup, we skip it then and do it here.
-  LOOP_CLIENTS(i) {
-    if (IsPlayer(i)) {
-      CheckClientTeam(i);
-    }
+  ExecCfg(g_LiveCfgCvar);
+  PauseGame(Get5Team_None, Get5PauseType_Backup);
+  g_DoingBackupRestoreNow = true; // reset after the backup has completed, suppresses various events and hooks until then.
+  g_WaitingForRoundBackup = false;
+  CreateTimer(1.5, Time_StartRestore);
+  if (restartRecording) {
+    // Since a backup command forces the recording to stop, we restart it here once the backup has completed.
+    // We have to do this on a delay, as when loading from a live game, the backup will already be recording and must
+    // flush before a new record command can be issued. This is suppressed when using the !stop command!
+    CreateTimer(3.0, Timer_StartRecordingAfterBackup, _, TIMER_FLAG_NO_MAPCHANGE);
   }
+}
+
+public Action Timer_StartRecordingAfterBackup(Handle timer) {
+  if (g_GameState != Get5State_Live) {
+    return;
+  }
+  StartRecording();
 }
 
 public Action Time_StartRestore(Handle timer) {

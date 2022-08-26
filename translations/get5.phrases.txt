@@ -304,7 +304,7 @@
     "StopCommandVotingReset"
     {
         "#format"       "{1:s}"
-        "en"            "The request by {1} to stop the game was canceled as a new round started."
+        "en"            "The request by {1} to stop the game was canceled as the round ended."
     }
     "BackupLoadedInfoMessage"
     {

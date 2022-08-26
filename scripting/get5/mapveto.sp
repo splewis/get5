@@ -53,13 +53,13 @@ public void VetoFinished() {
     UnpauseGame(Get5Team_None);
   }
 
-  // Use total series score as starting point, to not print skipped maps
-  int seriesScore = g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2];
-  for (int i = seriesScore; i < g_MapsToPlay.Length; i++) {
+  // If a team has a map advantage, don't print that map.
+  int mapNumber = Get5_GetMapNumber();
+  for (int i = mapNumber; i < g_MapsToPlay.Length; i++) {
     char map[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(i, map, sizeof(map));
-    Format(map, sizeof(map), "{GREEN}%s{NORMAL}", map);
-    Get5_MessageToAll("%t", "MapIsInfoMessage", i + 1 - seriesScore, map);
+    FormatMapName(map, map, sizeof(map), true, true);
+    Get5_MessageToAll("%t", "MapIsInfoMessage", i + 1 - mapNumber, map);
   }
 
   float delay = 10.0;

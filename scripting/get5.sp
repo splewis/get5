@@ -1234,9 +1234,8 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       winningTeam = Get5Team_2;
     }
 
-    // If the round ends because the match is over, we clear the grenade container immediately as
-    // there will be no RoundStart event to do it, and the sideSwap check in RoundEnd will not
-    // trigger it either.
+    // If the round ends because the match is over, we clear the grenade container immediately as they will not fire
+    // on their own if the game state is not live.
     Stats_ResetGrenadeContainers();
 
     // Update series scores
@@ -1523,16 +1522,6 @@ public void WriteBackup() {
   LogDebug("Writing backup to %s", path);
   WriteBackupStructure(path);
   g_LastGet5BackupCvar.SetString(path);
-
-  // Reset this when writing a new backup, as voting has no reference to which round the teams wanted to restore to, so
-  // votes to restore during one round should not carry over into the next round, as it would just restore that round
-  // instead.
-  LOOP_TEAMS(t) {
-    if (g_TeamGivenStopCommand[t]) {
-      Get5_MessageToAll("%t", "StopCommandVotingReset", g_FormattedTeamNames[t]);
-    }
-    g_TeamGivenStopCommand[t] = false;
-  }
 }
 
 public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
@@ -1746,12 +1735,6 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       }
     }
 
-    if (g_PendingSideSwap) {
-      // Normally we would do this in RoundStart, but since there is a significant delay between
-      // round *actual end* and and RoundStart when swapping sides, we do it here instead.
-      Stats_ResetGrenadeContainers();
-    }
-
     // CSRoundEndReason is incorrect in CSGO compared to the enumerations defined here:
     // https://github.com/alliedmodders/sourcemod/blob/master/plugins/include/cstrike.inc#L53-L77
     // - which is why we subtract one.
@@ -1769,6 +1752,16 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     Call_Finish();
 
     EventLogger_LogAndDeleteEvent(roundEndEvent);
+
+    // Reset this when a round ends, as voting has no reference to which round the teams wanted to restore to, so
+    // votes to restore during one round should not carry over into the next round, as it would just restore that round
+    // instead.
+    LOOP_TEAMS(t) {
+      if (g_TeamGivenStopCommand[t]) {
+        Get5_MessageToAll("%t", "StopCommandVotingReset", g_FormattedTeamNames[t]);
+      }
+      g_TeamGivenStopCommand[t] = false;
+    }
   }
   return Plugin_Continue;
 }

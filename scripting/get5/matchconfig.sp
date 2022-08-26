@@ -102,13 +102,15 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
       if (!StrEqual(mapName, currentMap)) {
         ChangeMap(mapName);
       }
-    } else if (g_GameState == Get5State_None) {
-      // If going directly from gamestate none to a backup with no veto config, we set warmup which is then changed
-      // as soon as the backup loads. It just can't be gamestate none for the rest of the function.
-      ChangeState(Get5State_Warmup);
     }
   } else if (!restoreBackup) {
     ChangeState(Get5State_PreVeto);
+  }
+
+  if (g_GameState == Get5State_None) {
+    // Make sure here that we don't run the code below in game state none, but also not overriding PreVeto.
+    // Currently, this could happen if you restored a backup with skip_veto:false.
+    ChangeState(Get5State_Warmup);
   }
 
   // Before we run the Get5_OnSeriesInit forward, we want to ensure that as much game state is set as possible,

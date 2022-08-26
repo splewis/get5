@@ -94,6 +94,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     }
 
     if (!restoreBackup) {
+      ChangeState(Get5State_Warmup);
       // When restoring from backup, changelevel is called after loading the match config.
       g_MapPoolList.GetString(Get5_GetMapNumber(), mapName, sizeof(mapName));
       char currentMap[PLATFORM_MAX_PATH];
@@ -101,6 +102,10 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
       if (!StrEqual(mapName, currentMap)) {
         ChangeMap(mapName);
       }
+    } else if (g_GameState == Get5State_None) {
+      // If going directly from gamestate none to a backup with no veto config, we set warmup which is then changed
+      // as soon as the backup loads. It just can't be gamestate none for the rest of the function.
+      ChangeState(Get5State_Warmup);
     }
   } else if (!restoreBackup) {
     ChangeState(Get5State_PreVeto);
@@ -117,7 +122,6 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   SetStartingTeams();
 
   if (!restoreBackup) {
-    ChangeState(Get5State_Warmup);
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();
     if (IsPaused()) {

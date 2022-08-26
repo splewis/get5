@@ -358,6 +358,9 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
 
   if (!StrEqual(currentMap, currentSeriesMap)) {
     // We don't need to assign players if changing map; this will be done when the players rejoin.
+    // If a map is to be changed, we want to suppress all stats events immediately, as the Get5_OnBackupRestore is
+    // called now and we don't want events firing after this until the game is live again.
+    g_DoingBackupRestoreNow = true;
     ChangeMap(currentSeriesMap, 3.0);
   } else {
     // We must assign players to their teams. This is normally done inside LoadMatchConfig, but since we need

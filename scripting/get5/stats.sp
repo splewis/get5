@@ -362,16 +362,16 @@ public void EndMolotovEvent(const char[] molotovKey) {
 
   Get5MolotovDetonatedEvent molotovObject;
   if (g_MolotovContainer.GetValue(molotovKey, molotovObject)) {
-    molotovObject.EndTime = GetRoundTime();
-
-    LogDebug("Calling Get5_OnMolotovDetonated()");
-
-    Call_StartForward(g_OnMolotovDetonated);
-    Call_PushCell(molotovObject);
-    Call_Finish();
-
-    EventLogger_LogAndDeleteEvent(molotovObject);
-
+    if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+      delete molotovObject;
+    } else {
+      molotovObject.EndTime = GetRoundTime();
+      LogDebug("Calling Get5_OnMolotovDetonated()");
+      Call_StartForward(g_OnMolotovDetonated);
+      Call_PushCell(molotovObject);
+      Call_Finish();
+      EventLogger_LogAndDeleteEvent(molotovObject);
+    }
     g_MolotovContainer.Remove(molotovKey);
   }
 }
@@ -379,14 +379,15 @@ public void EndMolotovEvent(const char[] molotovKey) {
 public void EndHEEvent(const char[] grenadeKey) {
   Get5HEDetonatedEvent heObject;
   if (g_HEGrenadeContainer.GetValue(grenadeKey, heObject)) {
-    LogDebug("Calling Get5_OnHEGrenadeDetonated()");
-
-    Call_StartForward(g_OnHEGrenadeDetonated);
-    Call_PushCell(heObject);
-    Call_Finish();
-
-    EventLogger_LogAndDeleteEvent(heObject);
-
+    if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+      delete heObject;
+    } else {
+      LogDebug("Calling Get5_OnHEGrenadeDetonated()");
+      Call_StartForward(g_OnHEGrenadeDetonated);
+      Call_PushCell(heObject);
+      Call_Finish();
+      EventLogger_LogAndDeleteEvent(heObject);
+    }
     g_HEGrenadeContainer.Remove(grenadeKey);
   }
 }
@@ -394,14 +395,15 @@ public void EndHEEvent(const char[] grenadeKey) {
 public void EndFlashbangEvent(const char[] flashKey) {
   Get5FlashbangDetonatedEvent flashEvent;
   if (g_FlashbangContainer.GetValue(flashKey, flashEvent)) {
-    LogDebug("Calling Get5_OnFlashbangDetonated()");
-
-    Call_StartForward(g_OnFlashbangDetonated);
-    Call_PushCell(flashEvent);
-    Call_Finish();
-
-    EventLogger_LogAndDeleteEvent(flashEvent);
-
+    if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+      delete flashEvent;
+    } else {
+      LogDebug("Calling Get5_OnFlashbangDetonated()");
+      Call_StartForward(g_OnFlashbangDetonated);
+      Call_PushCell(flashEvent);
+      Call_Finish();
+      EventLogger_LogAndDeleteEvent(flashEvent);
+    }
     g_FlashbangContainer.Remove(flashKey);
   }
 }
@@ -504,7 +506,9 @@ public Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, boo
 }
 
 public Action Stats_MolotovEndedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  // No backup check; the event is deleted in EndMolotovEvent to prevent leaks, as this function works like the
+  // the HE/flash timer callbacks which also do not check for backup state.
+  if (g_GameState != Get5State_Live) {
     return Plugin_Continue;
   }
 
@@ -638,9 +642,12 @@ public Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dont
 }
 
 public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBroadcast) {
+  if (g_WaitingForRoundBackup || g_DoingBackupRestoreNow) {
+    return Plugin_Continue;
+  }
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
 
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live) {
     if (g_AutoReadyActivePlayersCvar.BoolValue && IsAuthedPlayer(attacker)) {
       // HandleReadyCommand checks for game state, so we don't need to do that here as well.
       HandleReadyCommand(attacker, true);

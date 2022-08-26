@@ -819,6 +819,9 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
 public void OnConfigsExecuted() {
   LogDebug("OnConfigsExecuted");
   g_MapChangePending = false;
+  g_DoingBackupRestoreNow = false;
+  g_ReadyTimeWaitingUsed = 0;
+  g_HasKnifeRoundStarted = false;
   // Recording is always automatically stopped on map change, and
   // since there are no hooks to detect tv_stoprecord, we reset
   // our recording var if a map change is performed unexpectedly.
@@ -843,12 +846,9 @@ public void OnConfigsExecuted() {
     g_TechnicalPausesUsed[team] = 0;
   }
 
-  g_ReadyTimeWaitingUsed = 0;
-  g_HasKnifeRoundStarted = false;
-
   // On map start, always put the game in warmup mode.
-  // When executing a backup load, the live config is loaded and warmup ends.
-  if (g_GameState != Get5State_None || g_WaitingForRoundBackup) {
+  // When executing a backup load, the live config is loaded and warmup ends after players ready-up again.
+  if (g_GameState != Get5State_None) {
     LogDebug("Putting game into warmup in OnConfigsExecuted.");
     ChangeState(Get5State_Warmup);
     ExecCfg(g_WarmupCfgCvar);
@@ -1495,14 +1495,6 @@ public void WriteBackup() {
     return;
   }
 
-  if (g_PauseType == Get5PauseType_Backup) {
-    // If there was no valve backup found when restoring the game, the above checks will not trigger a return,
-    // so we do this to prevent overwriting an already-written backup in the event the game starts in the same round
-    // it was *just* restored to and this function runs.
-    LogDebug("Skipping backup round write as the round started paused for backup.");
-    return;
-  }
-
   char folder[PLATFORM_MAX_PATH];
   g_RoundBackupPathCvar.GetString(folder, sizeof(folder));
   ReplaceString(folder, sizeof(folder), "{MATCHID}", g_MatchID);
@@ -1552,6 +1544,10 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_BombPlantedTime = 0.0;
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
+  if (g_WaitingForRoundBackup) {
+    return;
+  }
+
   // We cannot do this during warmup, as sending users into warmup post-knife triggers a round start event.
   // We add an extra restart to clear lingering state from the knife round, such as the round
   // indicator in the middle of the scoreboard not being reset. This also tightly couples the live-announcement to
@@ -1586,13 +1582,16 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   }
 
   if (g_GameState == Get5State_Warmup || g_GameState == Get5State_KnifeRound || g_GameState == Get5State_Live) {
-    WriteBackup();
+    WriteBackup(); // Filters out backup states on its own
   }
 
   if (g_GameState != Get5State_Live) {
     return;
   }
 
+  // We still want to fire the Get5_OnRoundStart event when doing a backup (g_DoingBackupRestoreNow), as this may be
+  // required to insert the round into a database or event log, as the round is actually starting now and may have been
+  // deleted when the backup load was requested.
   Get5RoundStartedEvent startEvent =
       new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
 

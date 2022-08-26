@@ -1309,7 +1309,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
                                       sizeof(timeToMapChangeFormatted));
 
     g_MapChangePending = true;
-    Format(nextMap, sizeof(nextMap), "{GREEN}%s{NORMAL}", nextMap);
+    FormatMapName(nextMap, nextMap, sizeof(nextMap), true, true);
     Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap, timeToMapChangeFormatted);
     ChangeState(Get5State_PostGame);
     // Subtracting 4 seconds makes the map change 1 second before the timer expires, as there is a 3

@@ -305,7 +305,7 @@ stock int GetCvarIntSafe(const char[] cvarName) {
   }
 }
 
-stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool cleanName = false) {
+stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool cleanName = false, bool color = false) {
   // explode map by '/' so we can remove any directory prefixes (e.g. workshop stuff)
   char buffers[4][PLATFORM_MAX_PATH];
   int numSplits = ExplodeString(mapName, "/", buffers, sizeof(buffers), PLATFORM_MAX_PATH);
@@ -338,7 +338,18 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
       strcopy(buffer, len, "Vertigo");
     } else if (StrEqual(buffer, "de_ancient")) {
       strcopy(buffer, len, "Ancient");
+    } else if (StrEqual(buffer, "de_tuscan")) {
+      strcopy(buffer, len, "Tuscan");
+    } else if (StrEqual(buffer, "de_prime")) {
+      strcopy(buffer, len, "Prime");
+    } else if (StrEqual(buffer, "de_grind")) {
+      strcopy(buffer, len, "Grind");
+    } else if (StrEqual(buffer, "de_mocha")) {
+      strcopy(buffer, len, "Mocha");
     }
+  }
+  if (color) {
+    Format(buffer, len, "{GREEN}%s{NORMAL}", buffer);
   }
 }
 

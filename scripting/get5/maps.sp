@@ -1,6 +1,6 @@
 stock void ChangeMap(const char[] map, float delay = 3.0) {
-  char formattedMapName[32];
-  Format(formattedMapName, sizeof(formattedMapName), "{GREEN}%s{NORMAL}", map);
+  char formattedMapName[64];
+  FormatMapName(map, formattedMapName, sizeof(formattedMapName), true, true);
   Get5_MessageToAll("%t", "ChangingMapInfoMessage", formattedMapName);
 
   // pass the "true" name to a timer to changelevel

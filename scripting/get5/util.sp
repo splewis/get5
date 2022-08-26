@@ -714,3 +714,7 @@ stock void convertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer,
   }
   Format(buffer, bufferSize, seconds < 10 ? "%d:0%d" : "%d:%d", minutes, seconds);
 }
+
+stock bool IsDoingRestoreOrMapChange() {
+  return g_DoingBackupRestoreNow || g_WaitingForRoundBackup || g_MapChangePending;
+}

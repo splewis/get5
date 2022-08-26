@@ -1448,7 +1448,7 @@ public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
 
   // We always want this to be correct, regardless of game state.
   g_RoundStartedTime = GetEngineTime();
-  if (g_GameState == Get5State_Live && !g_DoingBackupRestoreNow && !g_WaitingForRoundBackup) {
+  if (g_GameState == Get5State_Live && !IsDoingRestoreOrMapChange()) {
     Stats_RoundStart();
   }
 }
@@ -1490,7 +1490,7 @@ static bool CreateBackupFolderStructure(const char[] path) {
 }
 
 public void WriteBackup() {
-  if (!g_BackupSystemEnabledCvar.BoolValue || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (!g_BackupSystemEnabledCvar.BoolValue || IsDoingRestoreOrMapChange()) {
     return;
   }
 
@@ -1533,7 +1533,8 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_BombPlantedTime = 0.0;
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
-  if (g_WaitingForRoundBackup) {
+  if (g_WaitingForRoundBackup || g_MapChangePending) {
+    // We don't want g_DoingBackupRestoreNow filtered here, as we need the round start event after restoring a match.
     return;
   }
 
@@ -1667,7 +1668,7 @@ public Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroad
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundEnd");
-  if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 

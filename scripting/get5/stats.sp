@@ -18,7 +18,7 @@ public void Stats_PluginStart() {
 
 public Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, float &damage,
                           int &damagetype) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
   LogDebug("HandlePlayerDamage(victim=%d, attacker=%d, inflictor=%d, damage=%f, damageType=%d)",
@@ -362,7 +362,7 @@ public void EndMolotovEvent(const char[] molotovKey) {
 
   Get5MolotovDetonatedEvent molotovObject;
   if (g_MolotovContainer.GetValue(molotovKey, molotovObject)) {
-    if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+    if (IsDoingRestoreOrMapChange()) {
       delete molotovObject;
     } else {
       molotovObject.EndTime = GetRoundTime();
@@ -379,7 +379,7 @@ public void EndMolotovEvent(const char[] molotovKey) {
 public void EndHEEvent(const char[] grenadeKey) {
   Get5HEDetonatedEvent heObject;
   if (g_HEGrenadeContainer.GetValue(grenadeKey, heObject)) {
-    if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+    if (IsDoingRestoreOrMapChange()) {
       delete heObject;
     } else {
       LogDebug("Calling Get5_OnHEGrenadeDetonated()");
@@ -395,7 +395,7 @@ public void EndHEEvent(const char[] grenadeKey) {
 public void EndFlashbangEvent(const char[] flashKey) {
   Get5FlashbangDetonatedEvent flashEvent;
   if (g_FlashbangContainer.GetValue(flashKey, flashEvent)) {
-    if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+    if (IsDoingRestoreOrMapChange()) {
       delete flashEvent;
     } else {
       LogDebug("Calling Get5_OnFlashbangDetonated()");
@@ -409,7 +409,7 @@ public void EndFlashbangEvent(const char[] flashKey) {
 }
 
 public Action Stats_DecoyStartedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -434,7 +434,7 @@ public Action Stats_DecoyStartedEvent(Event event, const char[] name, bool dontB
 }
 
 public Action Stats_SmokeGrenadeDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -462,7 +462,7 @@ public Action Stats_SmokeGrenadeDetonateEvent(Event event, const char[] name, bo
 }
 
 public Action Stats_MolotovStartBurnEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -490,7 +490,7 @@ public Action Stats_MolotovStartBurnEvent(Event event, const char[] name, bool d
 }
 
 public Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -525,7 +525,7 @@ public Action Stats_MolotovEndedEvent(Event event, const char[] name, bool dontB
 }
 
 public Action Stats_MolotovDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -545,7 +545,7 @@ public Action Stats_MolotovDetonateEvent(Event event, const char[] name, bool do
 }
 
 public Action Stats_FlashbangDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -579,7 +579,7 @@ public Action Timer_HandleFlashbang(Handle timer, int entityId) {
 }
 
 public Action Stats_HEGrenadeDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -613,7 +613,7 @@ public Action Timer_HandleHEGrenade(Handle timer, int entityId) {
 }
 
 public Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -642,7 +642,7 @@ public Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dont
 }
 
 public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_WaitingForRoundBackup || g_DoingBackupRestoreNow) {
+  if (IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
@@ -809,7 +809,7 @@ static void UpdateTradeStat(int attacker, int victim) {
 }
 
 public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -838,7 +838,7 @@ public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBr
 }
 
 public Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -871,7 +871,7 @@ public Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBr
 }
 
 public Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -890,7 +890,7 @@ public Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontB
 }
 
 public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 
@@ -932,7 +932,7 @@ public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBr
 }
 
 public Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (g_GameState != Get5State_Live || g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
 

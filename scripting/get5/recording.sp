@@ -28,6 +28,7 @@ bool StartRecording() {
   strcopy(szDemoName, sizeof(szDemoName), demoName);
   ReplaceString(szDemoName, sizeof(szDemoName), "\"", "\\\"");
   ServerCommand("tv_record \"%s\"", szDemoName);
+  Stats_SetDemoName(g_DemoFileName);
   return true;
 }
 

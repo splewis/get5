@@ -330,15 +330,17 @@ public void Stats_RoundEnd(int csTeamWinner) {
 
 public void Stats_UpdateMapScore(Get5Team winner) {
   GoToMap();
-
   char winnerString[16];
   GetTeamString(winner, winnerString, sizeof(winnerString));
-
   g_StatsKv.SetString(STAT_MAPWINNER, winnerString);
-  g_StatsKv.SetString(STAT_DEMOFILENAME, g_DemoFileName);
-
   GoBackFromMap();
+  DumpToFile();
+}
 
+void Stats_SetDemoName(const char[] demoFileName) {
+  GoToMap();
+  g_StatsKv.SetString(STAT_DEMOFILENAME, demoFileName);
+  GoBackFromMap();
   DumpToFile();
 }
 

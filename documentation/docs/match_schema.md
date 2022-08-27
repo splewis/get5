@@ -37,26 +37,26 @@ interface Get5MatchTeamFromFile {
 interface Get5Match {
     "match_title": string // (25)
     "matchid": string, // (1)
+    "clinch_series": boolean // (32)
     "num_maps": number, // (2)
     "players_per_team": number, // (3)
     "coaches_per_team": number, // (4)
     "min_players_to_ready": number, // (5)
     "min_spectators_to_ready": number, // (6)
     "skip_veto": boolean, // (7),
-    "veto_first": "team1" | "team2", // (11)
+    "veto_first": "team1" | "team2" | "random", // (11)
     "side_type": "standard" | "always_knife" | "never_knife", // (12)
     "map_sides": ["team1_ct" | "team1_t" | "knife"], // (31)
     "spectators": { // (10)
         "name": string // (29)
         "players": Get5PlayerSet // (30)
     },
-    "map_list": [string], // (13)
+    "maplist": [string], // (13)
     "favored_percentage_team1": number, // (14)
     "favored_percentage_text": string, // (15)
     "team1": Get5MatchTeam | Get5MatchTeamFromFile, // (20)
     "team2": Get5MatchTeam | Get5MatchTeamFromFile, // (21)
-    "cvars": { [key: string]: string }, // (22)
-    "clinch_series": boolean // (32)
+    "cvars": { [key: string]: string } // (22)
 }
 ```
 
@@ -69,7 +69,7 @@ interface Get5Match {
 3. _Optional_<br>The number of players per team. You should **never** set this to a value higher than the number of
    players you want to actually play in a game, *excluding* coaches.<br><br>**`Default: 5`**
 4. _Optional_<br>The maximum number of [coaches](coaching.md) per team.<br><br>**`Default: 2`**
-5. _Optional_<br>The minimum number of players of each team that must type [`!ready`](../commands/#ready) for the game
+5. _Optional_<br>The minimum number of players from each team that must type [`!ready`](../commands/#ready) for the game
    to begin.<br><br>**`Default: 1`**
 6. _Optional_<br>The minimum number of spectators that must be [`!ready`](../commands/#ready) for the game to
    begin.<br><br>**`Default: 0`**
@@ -133,77 +133,168 @@ interface Get5Match {
 32. _Optional_<br>If `false`, the entire map list will be played, regardless of score. If `true`, a series will be won
     when the series score for a team exceeds the number of maps divided by two.<br><br>**`Default: true`**
 
-!!! warning "SteamID64 in `.cfg` files"
+## Examples {: #example }
 
-    You may have trouble using SteamID64 inside a KeyValue (`.cfg`) match config. The Valve KeyValue parser will
-    interpret any integer string as an integer (even if read as a string), and this value will
-    not fit inside a SourceMod-internal 32-bit cell. For `.cfg`, use the regular steamID, i.e. `STEAM_0:0:13723968`.
-    This is *not* a problem if you use the JSON format. Also, remember not to pass SteamID 64 as numbers, as they are
-    too large to reliably handle in JavaScript; always enclose them in quotes.
+These examples are identical in the way they would work if loaded.
 
-#### Example
+=== "JSON (recommended)"
 
-```typescript title="JSON example with Node.js"
-const match_schema: Match = {
-    "match_title": "Astralis vs. NaVi",
-    "matchid": "3123",
-    "num_maps": 3,
-    "players_per_team": 5,
-    "coaches_per_team": 2,
-    "min_players_to_ready": 2,
-    "min_spectators_to_ready": 0,
-    "skip_veto": false,
-    "veto_first": "team1",
-    "side_type": "standard",
-    "spectators": {
-        "name": "Blast PRO 2021",
-        "players": {
-            "76561197987511774": "Anders Blume"
-        }
-    },
-    "map_list": ["de_dust2", "de_nuke", "de_inferno", "de_mirage", "de_vertigo", "de_ancient", "de_overpass"],
-    "team1": {
-        "name": "Natus Vincere",
-        "tag": "NaVi",
-        "flag": "UA",
-        "logo": "nv",
-        "players": {
-            "76561198034202275": "s1mple",
-            "76561198044045107": "electronic",
-            "76561198246607476": "b1t",
-            "76561198121220486": "Perfecto",
-            "76561198040577200": "sdy"
+    ```typescript title="JSON example with Node.js"
+    const match_schema: Get5Match = {
+        "match_title": "Astralis vs. NaVi",
+        "matchid": "3123",
+        "clinch_series": true,
+        "num_maps": 3,
+        "players_per_team": 5,
+        "coaches_per_team": 2,
+        "min_players_to_ready": 2,
+        "min_spectators_to_ready": 0,
+        "skip_veto": false,
+        "veto_first": "team1",
+        "side_type": "standard",
+        "spectators": {
+            "name": "Blast PRO 2021",
+            "players": {
+                "76561197987511774": "Anders Blume"
+            }
         },
-        "coaches": {
-            "76561198013523865": "B1ad3"
-        }
-    },
-    "team2": {
-        "name": "Astralis",
-        "tag": "Astralis",
-        "flag": "DK",
-        "logo": "as",
-        "players": {
-            "76561197990682262": "Xyp9x",
-            "76561198010511021": "gla1ve",
-            "76561197979669175": "K0nfig",
-            "76561198028458803": "BlameF",
-            "76561198024248129": "farlig"
+        "maplist": ["de_dust2", "de_nuke", "de_inferno", "de_mirage", "de_vertigo", "de_ancient", "de_overpass"],
+        "map_sides": ["team1_ct", "team2_ct", "knife"] // Example; would only work with "skip_veto": true
+        "team1": {
+            "name": "Natus Vincere",
+            "tag": "NaVi",
+            "flag": "UA",
+            "logo": "nv",
+            "players": {
+                "76561198034202275": "s1mple",
+                "76561198044045107": "electronic",
+                "76561198246607476": "b1t",
+                "76561198121220486": "Perfecto",
+                "76561198040577200": "sdy"
+            },
+            "coaches": {
+                "76561198013523865": "B1ad3"
+            }
         },
-        "coaches": {
-            "76561197987144812": "Trace"
+        "team2": {
+            "name": "Astralis",
+            "tag": "Astralis",
+            "flag": "DK",
+            "logo": "as",
+            "players": {
+                "76561197990682262": "Xyp9x",
+                "76561198010511021": "gla1ve",
+                "76561197979669175": "K0nfig",
+                "76561198028458803": "BlameF",
+                "76561198024248129": "farlig"
+            },
+            "coaches": {
+                "76561197987144812": "Trace"
+            }
+        },
+        "cvars": {
+            "hostname": "Get5 Match #3123",
+            "mp_friendly_fire": "0",
+            "get5_end_match_on_empty_server": "0",
+            "get5_stop_command_enabled": "0",
+            "sm_practicemode_can_be_started": "0"
         }
-    },
-    "cvars": {
-        "hostname": "Get5 Match #3123",
-        "mp_friendly_fire": "0",
-        "get5_end_match_on_empty_server": "0",
-        "get5_stop_command_enabled": "0",
-        "sm_practicemode_can_be_started": "0"
     }
-}
+    
+    // And the config file could be placed on the server like this:
+    const json = JSON.stringify(match_schema);
+    fs.writeFileSync('addons/sourcemod/get5/astralis_vs_navi_3123.json', json);
+    ```
+=== "KeyValue"
 
-// And the config file could be placed on the server like this:
-const json = JSON.stringify(match_schema);
-fs.writeFileSync('addons/sourcemod/get5/astralis_vs_navi_3123.json', json);
-```
+    !!! warning "All strings, no brakes"
+
+        Note that `false` does not exist in the KeyValue format and that all numerical values are wrapped in quotes. The
+        empty strings as values in dictionaries (`maplist` and `map_sides`) are also required.
+    
+    ```cfg title="Valve KeyValue"
+    "Match"
+    {
+    	"match_title"               "Astralis vs. NaVi"
+    	"matchid"		            "3123"
+        "clinch_series"             "1"
+    	"num_maps"		            "3"
+    	"players_per_team"          "5"
+    	"coaches_per_team"          "2"
+    	"min_players_to_ready"      "2"
+    	"min_spectators_to_ready"   "0"
+    	"skip_veto"		            "0"
+    	"veto_first"	            "team1"
+        "side_type"		            "standard"
+    	"spectators"    
+    	{
+    	    "name" "Blast PRO 2021"
+    		"players"
+    		{
+    			"76561197987511774"	"Anders Blume"
+    		}
+    	}
+    	"maplist"
+    	{
+    		"de_dust2"		""
+    		"de_nuke"		""
+    		"de_inferno"	""
+    		"de_mirage"		""
+    		"de_vertigo"	""
+    		"de_ancient"	""
+    		"de_overpass"	""
+    	}
+    	"map_sides"  // Example; would only work with "skip_veto" "1"
+    	{
+    	    "team1_ct" ""
+    	    "team2_ct" ""
+    	    "knife"    ""
+    	}
+    	"team1"
+    	{
+    		"name"		"Natus Vincere"
+    		"tag"		"NaVi"
+    		"flag"		"UA"
+    		"logo"		"nv"
+    		"players"
+    		{
+                "76561198034202275" "s1mple"
+                "76561198044045107" "electronic"
+                "76561198246607476" "b1t"
+                "76561198121220486" "Perfecto"
+                "76561198040577200" "sdy"
+    		}
+    		"coaches"
+    		{
+                "76561198013523865" "B1ad3"
+            }
+    	}
+    	"team2"
+    	{
+    		"name"		"Astralis"
+    		"tag"		"Astralis"
+    		"flag"		"DK"
+    		"logo"		"as"
+    		"players"
+    		{
+                "76561197990682262" "Xyp9x"
+                "76561198010511021" "gla1ve"
+                "76561197979669175" "K0nfig"
+                "76561198028458803" "BlameF"
+                "76561198024248129" "farlig"
+    		}
+    		"coaches"
+    		{
+                "76561197987144812" "Trace"
+            }
+    	}
+    	"cvars"
+    	{
+            "hostname"                       "Get5 Match #3123"
+            "mp_friendly_fire"               "0"
+            "get5_end_match_on_empty_server" "0"
+            "get5_stop_command_enabled"      "0"
+            "sm_practicemode_can_be_started" "0"
+    	}
+    }
+    ```

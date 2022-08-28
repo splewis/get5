@@ -74,7 +74,7 @@
     }
     "MatchUnpauseInfoMessage"
     {
-        "pl"            "{1:N} odpauzowało mecz."
+        "pl"            "{1} odpauzowało mecz."
     }
     "WaitingForUnpauseInfoMessage"
     {
@@ -86,7 +86,7 @@
     }
     "TeamFailToReadyMinPlayerCheck"
     {
-        "pl"            "Musi być conajmniej {1}graczy na serwerze aby móc być gotowym."
+        "pl"            "Musi być conajmniej {1} graczy na serwerze aby móc być gotowym."
     }
     "TeamReadyToVetoInfoMessage"
     {

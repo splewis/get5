@@ -2,7 +2,7 @@
 {
     "ReadyToVetoInfoMessage"
     {
-        "de"            "Tippe {1}wenn dein Team bereit zum Voten ist."
+        "de"            "Tippe {1} wenn dein Team bereit zum Voten ist."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -10,19 +10,19 @@
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "de"            "Tippe {1}wenn dein Team bereit ist das Match Backup wieder einzuspielen."
+        "de"            "Tippe {1} wenn dein Team bereit ist das Match Backup wieder einzuspielen."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "de"            "Tippe {1}wenn dein Team bereit ist für die Messer-Runde."
+        "de"            "Tippe {1} wenn dein Team bereit ist für die Messer-Runde."
     }
     "ReadyToStartInfoMessage"
     {
-        "de"            "Tippe {1}wenn dein Team bereit ist zu beginnen."
+        "de"            "Tippe {1} wenn dein Team bereit ist zu beginnen."
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "de"            "{1} gewinnt die Seitenwahl. Wartend auf {2} oder {3} ."
+        "de"            "{1} gewinnt die Seitenwahl. Wartend auf {2} oder {3}."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
@@ -74,7 +74,7 @@
     }
     "MatchUnpauseInfoMessage"
     {
-        "de"            "{1:N} hat das Match fortgesetzt."
+        "de"            "{1} hat das Match fortgesetzt."
     }
     "WaitingForUnpauseInfoMessage"
     {

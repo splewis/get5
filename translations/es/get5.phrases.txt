@@ -90,7 +90,7 @@
     }
     "MatchUnpauseInfoMessage"
     {
-        "es"            "{1:N} terminó su pausa."
+        "es"            "{1} terminó su pausa."
     }
     "WaitingForUnpauseInfoMessage"
     {

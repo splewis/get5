@@ -86,7 +86,7 @@
     }
     "MatchUnpauseInfoMessage"
     {
-        "chi"            "{1:N}解除了比赛的暂停。"
+        "chi"            "{1}解除了比赛的暂停。"
     }
     "WaitingForUnpauseInfoMessage"
     {

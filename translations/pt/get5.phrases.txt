@@ -82,7 +82,7 @@
     }
     "MatchUnpauseInfoMessage"
     {
-        "pt"            "{1:N} resumiu a partida."
+        "pt"            "{1} resumiu a partida."
     }
     "WaitingForUnpauseInfoMessage"
     {

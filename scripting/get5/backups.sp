@@ -431,6 +431,19 @@ public Action Time_StartRestore(Handle timer) {
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
   CreateTimer(0.5, Timer_FinishBackup);
+
+  // We need to fire the OnRoundStarted event manually, as it will be suppressed during backups and won't fire while
+  // g_DoingBackupRestoreNow is true.
+  KeyValues kv = new KeyValues("Backup");
+  if (kv.ImportFromFile(tempValveBackup)) {
+    Get5RoundStartedEvent startEvent = new Get5RoundStartedEvent(g_MatchID, g_MapNumber, kv.GetNum("round", 0));
+    LogDebug("Calling Get5_OnRoundStart() via backup.");
+    Call_StartForward(g_OnRoundStart);
+    Call_PushCell(startEvent);
+    Call_Finish();
+    EventLogger_LogAndDeleteEvent(startEvent);
+  }
+  delete kv;
 }
 
 public Action Timer_FinishBackup(Handle timer) {

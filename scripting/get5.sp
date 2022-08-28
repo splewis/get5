@@ -1533,8 +1533,8 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_BombPlantedTime = 0.0;
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
-  if (g_WaitingForRoundBackup || g_MapChangePending) {
-    // We don't want g_DoingBackupRestoreNow filtered here, as we need the round start event after restoring a match.
+  if (IsDoingRestoreOrMapChange()) {
+    // Get5_OnRoundStart() is fired from within the backup event when loading the valve backup.
     return;
   }
 
@@ -1579,18 +1579,12 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
     return;
   }
 
-  // We still want to fire the Get5_OnRoundStart event when doing a backup (g_DoingBackupRestoreNow), as this may be
-  // required to insert the round into a database or event log, as the round is actually starting now and may have been
-  // deleted when the backup load was requested.
   Get5RoundStartedEvent startEvent =
       new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
-
   LogDebug("Calling Get5_OnRoundStart()");
-
   Call_StartForward(g_OnRoundStart);
   Call_PushCell(startEvent);
   Call_Finish();
-
   EventLogger_LogAndDeleteEvent(startEvent);
 }
 

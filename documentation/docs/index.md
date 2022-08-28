@@ -16,11 +16,11 @@ Highlights of Get5 include:
 - In-game map-veto support from the match's list of maps
 - Support for multi-map series (Bo1, Bo2, Bo3, Bo5, etc.)
 - Warmup and [`!ready`](commands/#ready)-system for each team
-- Automatic GOTV demo recording
+- [Automatic GOTV demo recording](gotv.md)
 - [Advanced backup system](backup.md) built on top of Valve's backup system
 - Knifing for sides
 - [Advanced pausing](pausing.md) support
-- Coaching support
+- [Coaching](coaching.md) support
 - Lightweight usage for [scrims](getting_started/#scrims)
 - [Event logging and SourceMod forwards](events_and_forwards.md) you can interface with, allowing for collection of stats etc.
 - [Commands](commands/#serveradmin-commands) allow remote management of the plugin

@@ -250,12 +250,19 @@ public void Stats_ResetGrenadeContainers() {
 public void Stats_RoundStart() {
   LOOP_CLIENTS(i) {
     if (IsPlayer(i)) {
+      // Ensures that each player has zero-filled stats on freeze-time end.
+      // Since joining the game after freeze-time will render you dead, you cannot obtain stats
+      // until next round.
+      Get5Side side = view_as<Get5Side>(GetClientTeam(i));
+      if (side == Get5Side_None) {
+        continue; // Don't do anything to players pending team join.
+      }
       Get5Team team = GetClientMatchTeam(i);
       if (team == Get5Team_1 || team == Get5Team_2) {
-        // Ensures that each player has zero-filled stats on freeze-time end.
-        // Since joining the game after freeze-time will render you dead, you cannot obtain stats
-        // until next round.
-        InitPlayerStats(i);
+        InitPlayerStats(i, side);
+        if (side == Get5Side_Spec) {
+          continue; // exclude coaches from STAT_ROUNDSPLAYED.
+        }
         IncrementPlayerStat(i, STAT_ROUNDSPLAYED);
       }
     }
@@ -970,7 +977,7 @@ static int SetPlayerStat(int client, const char[] field, int newValue) {
   return newValue;
 }
 
-static void InitPlayerStats(int client) {
+static void InitPlayerStats(int client, Get5Side side) {
   if (!GoToPlayer(client)) {
     return;
   }
@@ -979,6 +986,9 @@ static void InitPlayerStats(int client) {
   char name[MAX_NAME_LENGTH];
   GetClientName(client, name, sizeof(name));
   g_StatsKv.SetString(STAT_NAME, name);
+
+  // Update if client is coaching. Spectators are excluded as their match team is spec; this checks side only.
+  g_StatsKv.SetNum(STAT_COACHING, side == Get5Side_Spec);
 
   // If the player already had their stats set, don't override them.
   if (g_StatsKv.GetNum(STAT_INIT, 0) > 0) {

@@ -235,6 +235,9 @@ public void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyV
 
   if (kv.GotoFirstSubKey()) {
     do {
+      if (kv.GetNum(STAT_COACHING, 0) > 0) {
+        continue; // Don't update stats for coaches.
+      }
       kv.GetSectionName(auth, sizeof(auth));
       kv.GetString("name", name, sizeof(name));
       db.Escape(auth, authSz, sizeof(authSz));

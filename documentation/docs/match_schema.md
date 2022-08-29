@@ -123,9 +123,10 @@ interface Get5Match {
     series, `mp_teamscore` cvars are automatically set and take the place of the `mp_teammatchstat_x`
     cvars.<br><br>**`Default: ""`**
 28. Match teams can also be loaded from a separate file, allowing you to easily re-use a match configuration for
-    different sets of teams. A `fromfile` value could be `"addons/sourcemod/configs/get5/team_nip.json"`, and that file
-    should contain a valid `Get5MatchTeam` object. Note that the file you point to must be in the same format as the
-    main file, so pointing to a `.cfg` file when the main file is `.json` will **not** work.
+    different sets of teams. A `fromfile` value could be `"addons/sourcemod/configs/get5/team_nip.json"`, and is always
+    relative to the `csgo` directory. The file should contain a valid `Get5MatchTeam` object. Note that the file you
+    point to must be in the same format as the main file, so pointing to a `.cfg` file when the main file is `.json`
+    will **not** work.
 29. _Optional_<br>The name of the spectator team.<br><br>**`Default: "casters"`**
 30. _Optional_<br>The spectator/caster Steam IDs and names.
 31. _Optional_<br>Determines the starting sides for each map. If this array is shorter than `num_maps`, `side_type` will
@@ -140,7 +141,93 @@ These examples are identical in the way they would work if loaded.
 
 === "JSON (recommended)"
 
-    ```typescript title="JSON example with Node.js"
+    !!! tip "Example only"
+        
+        `map_sides` would only work with `skip_veto: true`.
+
+    ```json title="addons/sourcemod/get5/astralis_vs_navi_3123.json"
+    {
+      "match_title": "Astralis vs. NaVi",
+      "matchid": "3123",
+      "clinch_series": true,
+      "num_maps": 3,
+      "players_per_team": 5,
+      "coaches_per_team": 2,
+      "min_players_to_ready": 2,
+      "min_spectators_to_ready": 0,
+      "skip_veto": false,
+      "veto_first": "team1",
+      "side_type": "standard",
+      "spectators": {
+        "name": "Blast PRO 2021",
+        "players": {
+          "76561197987511774": "Anders Blume"
+        }
+      },
+      "maplist": [
+        "de_dust2",
+        "de_nuke",
+        "de_inferno",
+        "de_mirage",
+        "de_vertigo",
+        "de_ancient",
+        "de_overpass"
+      ],
+      "map_sides": [
+        "team1_ct",
+        "team2_ct",
+        "knife"
+      ],
+      "team1": {
+        "fromfile": "addons/sourcemod/get5/team_navi.json"
+      },
+      "team2": {
+        "name": "Astralis",
+        "tag": "Astralis",
+        "flag": "DK",
+        "logo": "as",
+        "players": {
+          "76561197990682262": "Xyp9x",
+          "76561198010511021": "gla1ve",
+          "76561197979669175": "K0nfig",
+          "76561198028458803": "BlameF",
+          "76561198024248129": "farlig"
+        },
+        "coaches": {
+          "76561197987144812": "Trace"
+        }
+      },
+      "cvars": {
+        "hostname": "Get5 Match #3123",
+        "mp_friendly_fire": "0",
+        "get5_end_match_on_empty_server": "0",
+        "get5_stop_command_enabled": "0",
+        "sm_practicemode_can_be_started": "0"
+      }
+    }
+    ```
+    `fromfile` example:
+    ```json title="addons/sourcemod/get5/team_navi.json"
+    {
+      "name": "Natus Vincere",
+      "tag": "NaVi",
+      "flag": "UA",
+      "logo": "nv",
+      "players": {
+        "76561198034202275": "s1mple",
+        "76561198044045107": "electronic",
+        "76561198246607476": "b1t",
+        "76561198121220486": "Perfecto",
+        "76561198040577200": "sdy"
+      },
+      "coaches": {
+        "76561198013523865": "B1ad3"
+      }
+    }
+    ```
+
+    And in TypeScript, using the above interface definition file:
+    ```typescript title="Typescript JSON example with Node.js"
     const match_schema: Get5Match = {
         "match_title": "Astralis vs. NaVi",
         "matchid": "3123",
@@ -160,9 +247,9 @@ These examples are identical in the way they would work if loaded.
             }
         },
         "maplist": ["de_dust2", "de_nuke", "de_inferno", "de_mirage", "de_vertigo", "de_ancient", "de_overpass"],
-        "map_sides": ["team1_ct", "team2_ct", "knife"] // Example; would only work with "skip_veto": true
+        "map_sides": ["team1_ct", "team2_ct", "knife"], // Example; would only work with "skip_veto": true
         "team1": {
-            "fromfile": "team_navi.json"
+            "fromfile": "addons/sourcemod/get5/team_navi.json"
         },
         "team2": {
             "name": "Astralis",
@@ -193,25 +280,6 @@ These examples are identical in the way they would work if loaded.
     const json = JSON.stringify(match_schema);
     fs.writeFileSync('addons/sourcemod/get5/astralis_vs_navi_3123.json', json);
     ```
-    `fromfile` example:
-    ```typescript title="team_navi.json"
-    {
-        "name": "Natus Vincere",
-        "tag": "NaVi",
-        "flag": "UA",
-        "logo": "nv",
-        "players": {
-            "76561198034202275": "s1mple",
-            "76561198044045107": "electronic",
-            "76561198246607476": "b1t",
-            "76561198121220486": "Perfecto",
-            "76561198040577200": "sdy"
-        },
-        "coaches": {
-            "76561198013523865": "B1ad3"
-        }
-    }
-    ```
 
 === "KeyValue"
 
@@ -220,7 +288,7 @@ These examples are identical in the way they would work if loaded.
         Note that `false` does not exist in the KeyValue format and that all numerical values are wrapped in quotes. The
         empty strings as values in dictionaries (`maplist` and `map_sides`) are also required.
     
-    ```cfg title="Valve KeyValue"
+    ```cfg title="addons/sourcemod/get5/astralis_vs_navi_3123.cfg"
     "Match"
     {
     	"match_title"               "Astralis vs. NaVi"
@@ -260,7 +328,7 @@ These examples are identical in the way they would work if loaded.
     	}
     	"team1"
     	{
-            "fromfile"  "team_navi.cfg"
+            "fromfile"  "addons/sourcemod/get5/team_navi.cfg"
     	}
     	"team2"
     	{
@@ -292,7 +360,7 @@ These examples are identical in the way they would work if loaded.
     }
     ```
     `fromfile` example:
-    ```cfg title="team_navi.cfg"
+    ```cfg title="addons/sourcemod/get5/team_navi.cfg"
     { 
         "name"		"Natus Vincere"
     	"tag"		"NaVi"

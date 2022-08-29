@@ -79,6 +79,7 @@ public void VetoFinished() {
 public void VetoController(int client) {
   if (!IsPlayer(client) || GetClientMatchTeam(client) == Get5Team_Spec) {
     AbortVeto();
+    return;
   }
 
   int mapsLeft = g_MapsLeftInVetoPool.Length;

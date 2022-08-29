@@ -16,17 +16,17 @@ better support in various programming languages than Valve's KeyValue format (wh
 ## The schema {: #schema }
 
 ```typescript title="TypeScript interface definition of a match configuration"
-type Get5PlayerSteamID = string; // (8)
-type Get5PlayerSet = { [key: Get5PlayerSteamID]: string }; // (9)
+type SteamID = string // (8)
+type Get5PlayerSet = { [key: SteamID]: string } | [SteamID] // (9)
 
 interface Get5MatchTeam {
-    "players": Get5PlayerSet, // (24)
+    "players": Get5PlayerSet // (24)
     "coaches": Get5PlayerSet // (23)
-    "name": string, // (16)
-    "tag": string, // (17)
-    "flag": string, // (18)
-    "logo": string, // (19)
-    "series_score": number, // (26)
+    "name": string // (16)
+    "tag": string // (17)
+    "flag": string // (18)
+    "logo": string // (19)
+    "series_score": number // (26)
     "matchtext": string // (27)
 }
 
@@ -36,26 +36,26 @@ interface Get5MatchTeamFromFile {
 
 interface Get5Match {
     "match_title": string // (25)
-    "matchid": string, // (1)
+    "matchid": string // (1)
     "clinch_series": boolean // (32)
-    "num_maps": number, // (2)
-    "players_per_team": number, // (3)
-    "coaches_per_team": number, // (4)
-    "min_players_to_ready": number, // (5)
-    "min_spectators_to_ready": number, // (6)
-    "skip_veto": boolean, // (7),
-    "veto_first": "team1" | "team2" | "random", // (11)
-    "side_type": "standard" | "always_knife" | "never_knife", // (12)
-    "map_sides": ["team1_ct" | "team1_t" | "knife"], // (31)
+    "num_maps": number // (2)
+    "players_per_team": number // (3)
+    "coaches_per_team": number // (4)
+    "min_players_to_ready": number // (5)
+    "min_spectators_to_ready": number // (6)
+    "skip_veto": boolean // (7),
+    "veto_first": "team1" | "team2" | "random" // (11)
+    "side_type": "standard" | "always_knife" | "never_knife" // (12)
+    "map_sides": ["team1_ct" | "team1_t" | "knife"] // (31)
     "spectators": { // (10)
         "name": string // (29)
         "players": Get5PlayerSet // (30)
     },
-    "maplist": [string], // (13)
-    "favored_percentage_team1": number, // (14)
-    "favored_percentage_text": string, // (15)
-    "team1": Get5MatchTeam | Get5MatchTeamFromFile, // (20)
-    "team2": Get5MatchTeam | Get5MatchTeamFromFile, // (21)
+    "maplist": [string] // (13)
+    "favored_percentage_team1": number // (14)
+    "favored_percentage_text": string // (15)
+    "team1": Get5MatchTeam | Get5MatchTeamFromFile // (20)
+    "team2": Get5MatchTeam | Get5MatchTeamFromFile // (21)
     "cvars": { [key: string]: string } // (22)
 }
 ```
@@ -77,8 +77,9 @@ interface Get5Match {
    not set, sides are determined by `side_type`.<br><br>**`Default: false`**
 8. A player's :material-steam: Steam ID. This can be in any format, but we recommend a string representation of SteamID
    64, i.e. `"76561197987713664"`.
-9. Players are represented each with a mapping of `Get5PlayerSteamID -> PlayerName` as a key-value dictionary. The name
-   is optional and should be set to an empty string to let players decide their own name.
+9. Players are represented each with a mapping of `SteamID -> PlayerName` as a key-value dictionary. The name
+   is optional and should be set to an empty string to let players decide their own name. You can also provide a simple
+   string array of `SteamID` disable name-locking.
 10. _Optional_<br>The spectators to allow into the game. If not defined, spectators cannot join the
     game.<br><br>**`Default: undefined`**
 11. _Optional_<br>The team that vetoes first.<br><br>**`Default: "team1"`**
@@ -161,20 +162,7 @@ These examples are identical in the way they would work if loaded.
         "maplist": ["de_dust2", "de_nuke", "de_inferno", "de_mirage", "de_vertigo", "de_ancient", "de_overpass"],
         "map_sides": ["team1_ct", "team2_ct", "knife"] // Example; would only work with "skip_veto": true
         "team1": {
-            "name": "Natus Vincere",
-            "tag": "NaVi",
-            "flag": "UA",
-            "logo": "nv",
-            "players": {
-                "76561198034202275": "s1mple",
-                "76561198044045107": "electronic",
-                "76561198246607476": "b1t",
-                "76561198121220486": "Perfecto",
-                "76561198040577200": "sdy"
-            },
-            "coaches": {
-                "76561198013523865": "B1ad3"
-            }
+            "fromfile": "team_navi.json"
         },
         "team2": {
             "name": "Astralis",
@@ -205,6 +193,26 @@ These examples are identical in the way they would work if loaded.
     const json = JSON.stringify(match_schema);
     fs.writeFileSync('addons/sourcemod/get5/astralis_vs_navi_3123.json', json);
     ```
+    `fromfile` example:
+    ```typescript title="team_navi.json"
+    {
+        "name": "Natus Vincere",
+        "tag": "NaVi",
+        "flag": "UA",
+        "logo": "nv",
+        "players": {
+            "76561198034202275": "s1mple",
+            "76561198044045107": "electronic",
+            "76561198246607476": "b1t",
+            "76561198121220486": "Perfecto",
+            "76561198040577200": "sdy"
+        },
+        "coaches": {
+            "76561198013523865": "B1ad3"
+        }
+    }
+    ```
+
 === "KeyValue"
 
     !!! warning "All strings, no brakes"
@@ -252,22 +260,7 @@ These examples are identical in the way they would work if loaded.
     	}
     	"team1"
     	{
-    		"name"		"Natus Vincere"
-    		"tag"		"NaVi"
-    		"flag"		"UA"
-    		"logo"		"nv"
-    		"players"
-    		{
-                "76561198034202275" "s1mple"
-                "76561198044045107" "electronic"
-                "76561198246607476" "b1t"
-                "76561198121220486" "Perfecto"
-                "76561198040577200" "sdy"
-    		}
-    		"coaches"
-    		{
-                "76561198013523865" "B1ad3"
-            }
+            "fromfile"  "team_navi.cfg"
     	}
     	"team2"
     	{
@@ -296,5 +289,26 @@ These examples are identical in the way they would work if loaded.
             "get5_stop_command_enabled"      "0"
             "sm_practicemode_can_be_started" "0"
     	}
+    }
+    ```
+    `fromfile` example:
+    ```cfg title="team_navi.cfg"
+    { 
+        "name"		"Natus Vincere"
+    	"tag"		"NaVi"
+    	"flag"		"UA"
+    	"logo"		"nv"
+    	"players"
+    	{
+            "76561198034202275" "s1mple"
+            "76561198044045107" "electronic"
+            "76561198246607476" "b1t"
+            "76561198121220486" "Perfecto"
+            "76561198040577200" "sdy"
+    	}
+    	"coaches"
+    	{
+            "76561198013523865" "B1ad3"
+        }
     }
     ```

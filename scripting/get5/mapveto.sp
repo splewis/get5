@@ -295,8 +295,11 @@ public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
 
     RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
-    Format(mapName, sizeof(mapName), "{LIGHT_RED}%s{NORMAL}", mapName);
-    Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], mapName);
+    char formattedMapName[PLATFORM_MAX_PATH];
+    FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), true, false);
+    // Add color here as FormatMapName would make the color green.
+    Format(formattedMapName, sizeof(formattedMapName), "{LIGHT_RED}%s{NORMAL}", formattedMapName);
+    Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], formattedMapName);
 
     Get5MapVetoedEvent event = new Get5MapVetoedEvent(g_MatchID, team, mapName);
 
@@ -364,7 +367,7 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
     RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
 
     char mapNameFormatted[PLATFORM_MAX_PATH];
-    Format(mapNameFormatted, sizeof(mapNameFormatted), "{GREEN}%s{NORMAL}", mapName);
+    FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), true, true);
     Get5_MessageToAll("%t", "TeamPickedMapInfoMessage", g_FormattedTeamNames[team],
                       mapNameFormatted, g_MapsToPlay.Length);
     g_LastVetoTeam = team;

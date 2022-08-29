@@ -719,16 +719,9 @@ public void OnClientPutInServer(int client) {
   if (CheckAutoLoadConfig()) {
     return;
   }
-
-  // Because OnConfigsExecuted may run before a client is on the server, we have to repeat the logic here when the
+  // Because OnConfigsExecuted may run before a client is on the server, we have to repeat the start-logic here when the
   // first client connects.
-  if ((g_GameState <= Get5State_Warmup || g_WaitingForRoundBackup) && g_GameState != Get5State_None) {
-    if (GetRealClientCount() <= 1) {
-      ChangeState(Get5State_Warmup);
-      ExecCfg(g_WarmupCfgCvar);
-      StartWarmup();
-    }
-  }
+  SetServerStateOnStartup(false);
 }
 
 public void OnClientPostAdminCheck(int client) {
@@ -839,21 +832,16 @@ public void OnConfigsExecuted() {
   LOOP_TEAMS(team) {
     g_TeamGivenStopCommand[team] = false;
     g_TeamReadyForUnpause[team] = false;
-    // We don't need to check for g_WaitingForRoundBackup here, as a backup will override the pauses consumed anyway; if
-    // the map is changed, we always load the backup pauses. See the RestoreFromBackup function.
-    g_TacticalPauseTimeUsed[team] = 0;
-    g_TacticalPausesUsed[team] = 0;
-    g_TechnicalPausesUsed[team] = 0;
+    if (!g_WaitingForRoundBackup) {
+      g_TacticalPauseTimeUsed[team] = 0;
+      g_TacticalPausesUsed[team] = 0;
+      g_TechnicalPausesUsed[team] = 0;
+    }
   }
 
   // On map start, always put the game in warmup mode.
   // When executing a backup load, the live config is loaded and warmup ends after players ready-up again.
-  if (g_GameState != Get5State_None) {
-    LogDebug("Putting game into warmup in OnConfigsExecuted.");
-    ChangeState(Get5State_Warmup);
-    ExecCfg(g_WarmupCfgCvar);
-    StartWarmup();
-  }
+  SetServerStateOnStartup(true);
   // This must not be called when waiting for a backup, as it will set the sides incorrectly if the team swapped in
   // knife or if the backup target is the second half.
   if (!g_WaitingForRoundBackup) {
@@ -1807,6 +1795,25 @@ public void StartGame(bool knifeRound) {
   } else {
     // If there is no knife round, we go directly to live, which loads the live config etc. on its own.
     StartGoingLive();
+  }
+}
+
+void SetServerStateOnStartup(bool force) {
+  if (g_GameState == Get5State_None) {
+    return;
+  }
+  if (!force && GetRealClientCount() != 1) {
+    // Only run on first client connect or if forced (during OnConfigsExecuted).
+    return;
+  }
+  if (g_GameState <= Get5State_Warmup || g_WaitingForRoundBackup) {
+    // If the server is in veto/preveto when someone joins or the configs exec, it should remain in that state.
+    // This would happen if the a config with veto is loaded before someone joins the server.
+    if (g_GameState != Get5State_Veto && g_GameState != Get5State_PreVeto) {
+      ChangeState(Get5State_Warmup);
+    }
+    ExecCfg(g_WarmupCfgCvar);
+    StartWarmup();
   }
 }
 

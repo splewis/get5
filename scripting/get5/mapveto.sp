@@ -50,6 +50,9 @@ static void AbortVeto() {
   if (g_ActiveVetoMenu != null) {
     g_ActiveVetoMenu.Cancel();
   }
+  if (IsPaused()) {
+    UnpauseGame(Get5Team_None);
+  }
 }
 
 public void VetoFinished() {

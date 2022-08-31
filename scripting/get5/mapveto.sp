@@ -22,6 +22,10 @@ public void CreateVeto() {
 
 public Action Timer_VetoCountdown(Handle timer) {
   static int warningsPrinted = 0;
+  if (g_GameState != Get5State_Veto) {
+    warningsPrinted = 0;
+    return Plugin_Stop;
+  }
   if (warningsPrinted >= g_VetoCountdownCvar.IntValue) {
     warningsPrinted = 0;
     Get5Team startingTeam = OtherMatchTeam(g_LastVetoTeam);
@@ -43,6 +47,9 @@ static void AbortVeto() {
   FormatChatCommand(readyCommandFormatted, sizeof(readyCommandFormatted), "!ready");
   Get5_MessageToAll("%t", "ReadyToResumeVetoInfoMessage", readyCommandFormatted);
   ChangeState(Get5State_PreVeto);
+  if (g_ActiveVetoMenu != null) {
+    g_ActiveVetoMenu.Cancel();
+  }
 }
 
 public void VetoFinished() {
@@ -279,6 +286,9 @@ public void GiveMapVetoMenu(int client) {
 
 public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
+    if (g_GameState != Get5State_Veto) {
+      return;
+    }
     int client = param1;
     Get5Team team = GetClientMatchTeam(client);
     char mapName[PLATFORM_MAX_PATH];
@@ -319,10 +329,11 @@ public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
     if (g_GameState == Get5State_Veto) {
       AbortVeto();
     }
-
   } else if (action == MenuAction_End) {
+    if (menu == g_ActiveVetoMenu) {
+      g_ActiveVetoMenu = null;
+    }
     delete menu;
-    g_ActiveVetoMenu = null;
   }
 }
 
@@ -350,6 +361,9 @@ public void GiveMapPickMenu(int client) {
 
 public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
+    if (g_GameState != Get5State_Veto) {
+      return;
+    }
     int client = param1;
     Get5Team team = GetClientMatchTeam(client);
     char mapName[PLATFORM_MAX_PATH];
@@ -392,10 +406,11 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
     if (g_GameState == Get5State_Veto) {
       AbortVeto();
     }
-
   } else if (action == MenuAction_End) {
+    if (menu == g_ActiveVetoMenu) {
+      g_ActiveVetoMenu = null;
+    }
     delete menu;
-    g_ActiveVetoMenu = null;
   }
 }
 
@@ -416,6 +431,9 @@ public void GiveSidePickMenu(int client) {
 
 public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
+    if (g_GameState != Get5State_Veto) {
+      return;
+    }
     int client = param1;
     Get5Team team = GetClientMatchTeam(client);
     char choice[PLATFORM_MAX_PATH];
@@ -473,9 +491,10 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
     if (g_GameState == Get5State_Veto) {
       AbortVeto();
     }
-
   } else if (action == MenuAction_End) {
+    if (menu == g_ActiveVetoMenu) {
+      g_ActiveVetoMenu = null;
+    }
     delete menu;
-    g_ActiveVetoMenu = null;
   }
 }

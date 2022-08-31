@@ -72,6 +72,7 @@ public void VetoFinished() {
   }
   // Always end recording here; ensures that we can successfully start one after veto.
   StopRecording(delay);
+  WriteBackup(); // Write first pre-live backup after veto.
 }
 
 // Main Veto Controller
@@ -321,6 +322,7 @@ public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
 
   } else if (action == MenuAction_End) {
     delete menu;
+    g_ActiveVetoMenu = null;
   }
 }
 
@@ -393,6 +395,7 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
 
   } else if (action == MenuAction_End) {
     delete menu;
+    g_ActiveVetoMenu = null;
   }
 }
 
@@ -473,5 +476,6 @@ public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
 
   } else if (action == MenuAction_End) {
     delete menu;
+    g_ActiveVetoMenu = null;
   }
 }

@@ -46,6 +46,7 @@ public Action Command_ListBackups(int client, int args) {
   ReplaceString(path, sizeof(path), "{MATCHID}", matchID);
 
   DirectoryListing files = OpenDirectory(strlen(path) > 0 ? path : ".");
+  bool foundBackups = false;
   if (files != null) {
     char backupInfo[256];
     char pattern[PLATFORM_MAX_PATH];
@@ -54,6 +55,7 @@ public Action Command_ListBackups(int client, int args) {
     char filename[PLATFORM_MAX_PATH];
     while (files.GetNext(filename, sizeof(filename))) {
       if (StrContains(filename, pattern) == 0) {
+        foundBackups = true;
         Format(filename, sizeof(filename), "%s%s", path, filename);
         if (GetBackupInfo(filename, backupInfo, sizeof(backupInfo))) {
           ReplyToCommand(client, backupInfo);
@@ -63,6 +65,10 @@ public Action Command_ListBackups(int client, int args) {
       }
     }
     delete files;
+  }
+
+  if (!foundBackups) {
+    ReplyToCommand(client, "Found no backup files matching the provided parameters.");
   }
 
   return Plugin_Handled;
@@ -298,38 +304,36 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
   g_MapNumber = Get5_GetMapNumber();
 
   char mapName[PLATFORM_MAX_PATH];
-  if (g_GameState > Get5State_Veto) {
-    if (kv.JumpToKey("maps")) {
-      g_MapsToPlay.Clear();
-      g_MapSides.Clear();
-      if (kv.GotoFirstSubKey(false)) {
-        do {
-          kv.GetSectionName(mapName, sizeof(mapName));
-          SideChoice sides = view_as<SideChoice>(kv.GetNum(NULL_STRING));
-          g_MapsToPlay.PushString(mapName);
-          g_MapSides.Push(sides);
-        } while (kv.GotoNextKey(false));
-        kv.GoBack();
-      }
+  if (kv.JumpToKey("maps")) {
+    g_MapsToPlay.Clear();
+    g_MapSides.Clear();
+    if (kv.GotoFirstSubKey(false)) {
+      do {
+        kv.GetSectionName(mapName, sizeof(mapName));
+        SideChoice sides = view_as<SideChoice>(kv.GetNum(NULL_STRING));
+        g_MapsToPlay.PushString(mapName);
+        g_MapSides.Push(sides);
+      } while (kv.GotoNextKey(false));
       kv.GoBack();
     }
+    kv.GoBack();
+  }
 
-    if (kv.JumpToKey("map_scores")) {
-      if (kv.GotoFirstSubKey()) {
-        do {
-          char buf[32];
-          kv.GetSectionName(buf, sizeof(buf));
-          int map = StringToInt(buf);
+  if (kv.JumpToKey("map_scores")) {
+    if (kv.GotoFirstSubKey()) {
+      do {
+        char buf[32];
+        kv.GetSectionName(buf, sizeof(buf));
+        int map = StringToInt(buf);
 
-          int t1 = kv.GetNum("team1");
-          int t2 = kv.GetNum("team2");
-          g_TeamScoresPerMap.Set(map, t1, view_as<int>(Get5Team_1));
-          g_TeamScoresPerMap.Set(map, t2, view_as<int>(Get5Team_2));
-        } while (kv.GotoNextKey());
-        kv.GoBack();
-      }
+        int t1 = kv.GetNum("team1");
+        int t2 = kv.GetNum("team2");
+        g_TeamScoresPerMap.Set(map, t1, view_as<int>(Get5Team_1));
+        g_TeamScoresPerMap.Set(map, t2, view_as<int>(Get5Team_2));
+      } while (kv.GotoNextKey());
       kv.GoBack();
     }
+    kv.GoBack();
   }
 
   if (kv.JumpToKey("stats")) {

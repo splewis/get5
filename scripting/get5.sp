@@ -1482,6 +1482,13 @@ public void WriteBackup() {
     return;
   }
 
+  if (g_GameState != Get5State_Warmup
+    && g_GameState != Get5State_KnifeRound
+    && g_GameState != Get5State_Live) {
+    LogDebug("Not writing backup for game state %d.", g_GameState);
+    return; // Only backup post-veto warmup, knife and live.
+  }
+
   char folder[PLATFORM_MAX_PATH];
   g_RoundBackupPathCvar.GetString(folder, sizeof(folder));
   ReplaceString(folder, sizeof(folder), "{MATCHID}", g_MatchID);
@@ -1559,9 +1566,7 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
     }
   }
 
-  if (g_GameState == Get5State_Warmup || g_GameState == Get5State_KnifeRound || g_GameState == Get5State_Live) {
-    WriteBackup(); // Filters out backup states on its own
-  }
+  WriteBackup();
 
   if (g_GameState != Get5State_Live) {
     return;

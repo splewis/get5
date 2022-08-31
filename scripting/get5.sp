@@ -974,7 +974,7 @@ static bool CheckAutoLoadConfig() {
 public Action Command_EndMatch(int client, int args) {
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "No match is configured; nothing to end.");
-    return Plugin_Handled;
+    return;
   }
 
   Get5Team winningTeam = Get5Team_None;  // defaults to tie
@@ -987,7 +987,7 @@ public Action Command_EndMatch(int client, int args) {
       winningTeam = Get5Team_2;
     } else {
       ReplyToCommand(client, "Usage: get5_endmatch <team1|team2> (omit team for tie)");
-      return Plugin_Handled;
+      return;
     }
   }
 
@@ -1040,14 +1040,12 @@ public Action Command_EndMatch(int client, int args) {
   }
 
   RestartGame();
-
-  return Plugin_Handled;
 }
 
 public Action Command_LoadMatch(int client, int args) {
   if (g_GameState != Get5State_None) {
-    ReplyToCommand(client, "Cannot load a match when a match is already loaded");
-    return Plugin_Handled;
+    ReplyToCommand(client, "Cannot load a match config when another is already loaded.");
+    return;
   }
 
   char arg[PLATFORM_MAX_PATH];
@@ -1058,14 +1056,12 @@ public Action Command_LoadMatch(int client, int args) {
   } else {
     ReplyToCommand(client, "Usage: get5_loadmatch <filename>");
   }
-
-  return Plugin_Handled;
 }
 
 public Action Command_LoadMatchUrl(int client, int args) {
   if (g_GameState != Get5State_None) {
-    ReplyToCommand(client, "Cannot load a match config with another match already loaded");
-    return Plugin_Handled;
+    ReplyToCommand(client, "Cannot load a match config when another is already loaded.");
+    return;
   }
 
   bool steamWorksAvaliable = LibraryExists("SteamWorks");
@@ -1084,14 +1080,12 @@ public Action Command_LoadMatchUrl(int client, int args) {
       ReplyToCommand(client, "Usage: get5_loadmatch_url <url>");
     }
   }
-
-  return Plugin_Handled;
 }
 
 public Action Command_DumpStats(int client, int args) {
   if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot dump match stats with no match existing");
-    return Plugin_Handled;
+    ReplyToCommand(client, "Cannot dump match stats when no match is loaded.");
+    return;
   }
 
   char arg[PLATFORM_MAX_PATH];
@@ -1107,8 +1101,6 @@ public Action Command_DumpStats(int client, int args) {
   } else {
     ReplyToCommand(client, "Failed to save match stats to %s", arg);
   }
-
-  return Plugin_Handled;
 }
 
 public Action Command_Stop(int client, int args) {
@@ -1192,7 +1184,7 @@ public Action Timer_ReplenishMoney(Handle timer, int client) {
 public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_MatchOver");
   if (g_GameState == Get5State_None) {
-    return Plugin_Continue;
+    return;
   }
 
   // This ensures that the mp_match_restart_delay is not shorter
@@ -1256,7 +1248,7 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       // clinch config.
       if (remainingMaps <= 0) {
         EndSeries(Get5Team_None, true, restartDelay);
-        return Plugin_Continue;
+        return;
       }
     } else if (g_SeriesCanClinch) {
       // This adjusts for ties!
@@ -1264,16 +1256,16 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       if (t1maps == actualMapsToWin) {
         // Team 1 won
         EndSeries(Get5Team_1, true, restartDelay);
-        return Plugin_Continue;
+        return;
       } else if (t2maps == actualMapsToWin) {
         // Team 2 won
         EndSeries(Get5Team_2, true, restartDelay);
-        return Plugin_Continue;
+        return;
       }
     } else if (remainingMaps <= 0) {
       EndSeries(t1maps > t2maps ? Get5Team_1 : Get5Team_2, true,
                 restartDelay);  // Tie handled in first if-block
-      return Plugin_Continue;
+      return;
     }
 
     if (t1maps > t2maps) {
@@ -1303,8 +1295,6 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     // second built-in delay in the ChangeMap function called by Timer_NextMatchMap.
     CreateTimer(restartDelay - 4, Timer_NextMatchMap);
   }
-
-  return Plugin_Continue;
 }
 
 public Action Timer_NextMatchMap(Handle timer) {
@@ -1399,6 +1389,9 @@ public Action Timer_RestoreMatchCvars(Handle timer) {
 
 public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundPreStart");
+  if (g_GameState == Get5State_None) {
+    return;
+  }
 
   if (g_GameState == Get5State_Live) {
     // End lingering grenade trackers from previous round.
@@ -1420,8 +1413,6 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
   g_MapNumber = Get5_GetMapNumber();
   // Round number always -1 if not live.
   g_RoundNumber = g_GameState != Get5State_Live ? -1 : GetRoundsPlayed();
-
-  return Plugin_Continue;
 }
 
 public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast) {
@@ -1528,7 +1519,7 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_BombPlantedTime = 0.0;
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
-  if (IsDoingRestoreOrMapChange()) {
+  if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {
     // Get5_OnRoundStart() is fired from within the backup event when loading the valve backup.
     return;
   }
@@ -1650,13 +1641,12 @@ public Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroad
     }
     event.SetInt("final_event", ConvertCSTeamToDefaultWinReason(winningCSTeam));
   }
-  return Plugin_Continue;
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundEnd");
-  if (IsDoingRestoreOrMapChange()) {
-    return Plugin_Continue;
+  if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {
+    return;
   }
 
   if (g_GameState == Get5State_WaitingForKnifeRoundDecision && g_KnifeWinnerTeam != Get5Team_None) {
@@ -1665,7 +1655,7 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     // We override this event only to have the correct audio callout in the game.
     event.SetInt("winner", winningCSTeam);
     event.SetInt("reason", ConvertCSTeamToDefaultWinReason(winningCSTeam));
-    return Plugin_Continue;
+    return;
   }
 
   if (g_GameState == Get5State_Live) {
@@ -1751,7 +1741,6 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       g_TeamGivenStopCommand[t] = false;
     }
   }
-  return Plugin_Continue;
 }
 
 public void SwapSides() {
@@ -1779,8 +1768,6 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
       event.BroadcastDisabled = true;
     }
   }
-
-  return Plugin_Continue;
 }
 
 public void StartGame(bool knifeRound) {

@@ -69,8 +69,9 @@ interface Get5Match {
 3. _Optional_<br>The number of players per team. You should **never** set this to a value higher than the number of
    players you want to actually play in a game, *excluding* coaches.<br><br>**`Default: 5`**
 4. _Optional_<br>The maximum number of [coaches](coaching.md) per team.<br><br>**`Default: 2`**
-5. _Optional_<br>The minimum number of players from each team that must type [`!ready`](../commands/#ready) for the game
-   to begin.<br><br>**`Default: 1`**
+5. _Optional_<br>The minimum number of players that must be present for the [`!forceready`](../commands/#forceready)
+   command to succeed. If not forcing a team ready, **all** players must [`!ready`](../commands/#ready) up
+   themselves.<br><br>**`Default: 0`**
 6. _Optional_<br>The minimum number of spectators that must be [`!ready`](../commands/#ready) for the game to
    begin.<br><br>**`Default: 0`**
 7. _Optional_<br>Whether to skip the veto phase. When skipping veto, `map_sides` determines sides, and if `map_sides` is

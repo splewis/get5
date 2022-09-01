@@ -235,9 +235,9 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
         !g_DoingBackupRestoreNow) {
       Get5Team matchTeam = CSTeamToGet5Team(csTeam);
       if (IsTeamReady(matchTeam)) {
-        Format(taggedName, sizeof(taggedName), "%T %s", "ReadyTag", LANG_SERVER, name);
+        Format(taggedName, sizeof(taggedName), "%s %T", name, "ReadyTag", LANG_SERVER);
       } else {
-        Format(taggedName, sizeof(taggedName), "%T %s", "NotReadyTag", LANG_SERVER, name);
+        Format(taggedName, sizeof(taggedName), "%s %T", name, "NotReadyTag", LANG_SERVER);
       }
     } else {
       strcopy(taggedName, sizeof(taggedName), name);

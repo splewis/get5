@@ -128,14 +128,9 @@ stock void FormatCvarName(char[] buffer, const int bufferLength, const char[] cV
   Format(buffer, bufferLength, "{GRAY}%s{NORMAL}", cVar);
 }
 
-stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client, const Get5Side forcedSide = Get5Side_None) {
+stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client, const Get5Team team) {
   // Used when injecting the team for coaching players, who are always on team spectator.
-  Get5Side side;
-  if (forcedSide == Get5Side_None) {
-    side = view_as<Get5Side>(IsClientInGame(client) ? GetClientTeam(client) : CS_TEAM_NONE);
-  } else {
-    side = forcedSide;
-  }
+  Get5Side side = view_as<Get5Side>(Get5_Get5TeamToCSTeam(team));
   if (side == Get5Side_CT) {
     Format(buffer, bufferLength, "{LIGHT_BLUE}%N{NORMAL}", client);
   } else if (side == Get5Side_T) {

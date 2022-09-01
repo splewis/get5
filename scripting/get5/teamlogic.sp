@@ -100,8 +100,9 @@ void SetClientCoaching(int client, Get5Side side) {
   SetEntProp(client, Prop_Send, "m_iAccount", 0); // Ensures coaches have no money if they were to rejoin the game.
 
   char formattedPlayerName[MAX_NAME_LENGTH];
-  FormatPlayerName(formattedPlayerName, sizeof(formattedPlayerName), client, side);
-  Get5_MessageToAll("%t", "PlayerIsCoachingTeam", formattedPlayerName, g_FormattedTeamNames[GetClientMatchTeam(client)]);
+  Get5Team team = GetClientMatchTeam(client);
+  FormatPlayerName(formattedPlayerName, sizeof(formattedPlayerName), client, team);
+  Get5_MessageToAll("%t", "PlayerIsCoachingTeam", formattedPlayerName, g_FormattedTeamNames[team]);
 }
 
 public void CoachingChangedHook(ConVar convar, const char[] oldValue, const char[] newValue) {

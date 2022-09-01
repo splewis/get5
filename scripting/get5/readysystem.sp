@@ -212,7 +212,7 @@ public Action Command_ForceReadyClient(int client, int args) {
     return Plugin_Handled;
   }
   char formattedClientName[MAX_NAME_LENGTH];
-  FormatPlayerName(formattedClientName, sizeof(formattedClientName), client);
+  FormatPlayerName(formattedClientName, sizeof(formattedClientName), client, team);
   LOOP_CLIENTS(i) {
     if (IsPlayer(i) && GetClientMatchTeam(i) == team) {
       SetClientReady(i, true);

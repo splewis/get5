@@ -124,7 +124,7 @@ public Action Command_TechPause(int client, int args) {
   PauseGame(team, Get5PauseType_Tech);
 
   char formattedClientName[MAX_NAME_LENGTH];
-  FormatPlayerName(formattedClientName, sizeof(formattedClientName), client);
+  FormatPlayerName(formattedClientName, sizeof(formattedClientName), client, team);
   Get5_MessageToAll("%t", "MatchTechPausedByTeamMessage", formattedClientName);
   if (maxTechPauses > 0) {
     Get5_MessageToAll("%t", "TechPausePausesRemaining", g_FormattedTeamNames[team],
@@ -185,7 +185,7 @@ public Action Command_Pause(int client, int args) {
 
   if (IsPlayer(client)) {
     char formattedClientName[MAX_NAME_LENGTH];
-    FormatPlayerName(formattedClientName, sizeof(formattedClientName), client);
+    FormatPlayerName(formattedClientName, sizeof(formattedClientName), client, team);
     Get5_MessageToAll("%t", "MatchPausedByTeamMessage", formattedClientName);
   }
 
@@ -235,7 +235,7 @@ public Action Command_Unpause(int client, int args) {
       UnpauseGame(team);
       if (IsPlayer(client)) {
         char formattedClientName[MAX_NAME_LENGTH];
-        FormatPlayerName(formattedClientName, sizeof(formattedClientName), client);
+        FormatPlayerName(formattedClientName, sizeof(formattedClientName), client, team);
         Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", formattedClientName);
       }
       return Plugin_Handled;
@@ -248,7 +248,7 @@ public Action Command_Unpause(int client, int args) {
     UnpauseGame(team);
     if (IsPlayer(client)) {
       char formattedClientName[MAX_NAME_LENGTH];
-      FormatPlayerName(formattedClientName, sizeof(formattedClientName), client);
+      FormatPlayerName(formattedClientName, sizeof(formattedClientName), client, team);
       Get5_MessageToAll("%t", "MatchUnpauseInfoMessage", formattedClientName);
     }
   } else if (!g_TeamReadyForUnpause[Get5Team_2]) {

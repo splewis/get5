@@ -113,7 +113,7 @@ stock int GetRealClientCount() {
 stock void Colorize(char[] msg, int size, bool stripColor = false) {
   for (int i = 0; i < sizeof(_colorNames); i++) {
     if (stripColor) {
-      ReplaceString(msg, size, _colorNames[i], "\x01");  // replace with white
+      ReplaceString(msg, size, _colorNames[i], "");  // replace with no color tag
     } else {
       ReplaceString(msg, size, _colorNames[i], _colorCodes[i]);
     }

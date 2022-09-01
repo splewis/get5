@@ -186,7 +186,7 @@ These examples are identical in the way they would work if loaded.
         "name": "Astralis",
         "tag": "Astralis",
         "flag": "DK",
-        "logo": "as",
+        "logo": "astr",
         "players": {
           "76561197990682262": "Xyp9x",
           "76561198010511021": "gla1ve",
@@ -213,7 +213,7 @@ These examples are identical in the way they would work if loaded.
       "name": "Natus Vincere",
       "tag": "NaVi",
       "flag": "UA",
-      "logo": "nv",
+      "logo": "navi",
       "players": {
         "76561198034202275": "s1mple",
         "76561198044045107": "electronic",
@@ -256,7 +256,7 @@ These examples are identical in the way they would work if loaded.
             "name": "Astralis",
             "tag": "Astralis",
             "flag": "DK",
-            "logo": "as",
+            "logo": "astr",
             "players": {
                 "76561197990682262": "Xyp9x",
                 "76561198010511021": "gla1ve",
@@ -336,7 +336,7 @@ These examples are identical in the way they would work if loaded.
     		"name"		"Astralis"
     		"tag"		"Astralis"
     		"flag"		"DK"
-    		"logo"		"as"
+    		"logo"		"astr"
     		"players"
     		{
                 "76561197990682262" "Xyp9x"
@@ -366,7 +366,7 @@ These examples are identical in the way they would work if loaded.
         "name"		"Natus Vincere"
     	"tag"		"NaVi"
     	"flag"		"UA"
-    	"logo"		"nv"
+    	"logo"		"navi"
     	"players"
     	{
             "76561198034202275" "s1mple"

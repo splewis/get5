@@ -706,6 +706,7 @@ public void RememberAndKickClient(int client, const char[] format, const char[] 
 }
 
 public void OnClientPutInServer(int client) {
+  LogDebug("OnClientPutInServer");
   Stats_HookDamageForClient(client); // Also needed for bots!
   if (IsFakeClient(client)) {
     return;
@@ -811,6 +812,16 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
 // This runs every time a map starts *or* when the plugin is reloaded.
 public void OnConfigsExecuted() {
   LogDebug("OnConfigsExecuted");
+  // If the server has hibernation enabled, running this without a delay will cause it to frequently fail with
+  // "Gamerules lookup failed" probably due to some odd internal race-condition where the game is not yet running
+  // when we attempt to determine its "is paused" or "is in warmup" state. Putting it on a 1 second callback seems
+  // to solve this problem.
+  CreateTimer(1.0, Timer_ConfigsExecutedCallback);
+}
+
+public Action Timer_ConfigsExecutedCallback(Handle timer) {
+  LogDebug("OnConfigsExecuted timer callback");
+
   g_MapChangePending = false;
   g_DoingBackupRestoreNow = false;
   g_ReadyTimeWaitingUsed = 0;

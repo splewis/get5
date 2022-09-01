@@ -1,13 +1,10 @@
-public Action Command_JoinGame(int client, const char[] command, int argc) {
-  if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue && IsPlayer(client)) {
-    CreateTimer(0.1, Timer_PlacePlayerOnJoin, GetClientUserId(client), TIMER_FLAG_NO_MAPCHANGE);
+Action Command_JoinGame(int client, const char[] command, int argc) {
+  LogDebug("Client %d sent joingame command.", client);
+  if (CheckAutoLoadConfig()) {
+    // Autoload places players on teams.
+    return;
   }
-  return Plugin_Continue;
-}
-
-public Action Timer_PlacePlayerOnJoin(Handle timer, int userId) {
-  int client = GetClientOfUserId(userId);
-  if (client) {  // Client might have disconnected between timer and callback.
+  if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue && IsPlayer(client)) {
     PlacePlayerOnTeam(client);
   }
 }
@@ -74,7 +71,7 @@ static void PlacePlayerOnTeam(int client) {
   CheckClientTeam(client);
 }
 
-public Action Command_JoinTeam(int client, const char[] command, int argc) {
+Action Command_JoinTeam(int client, const char[] command, int argc) {
   if (g_GameState == Get5State_None || !g_CheckAuthsCvar.BoolValue) {
     return Plugin_Continue;
   }

@@ -157,9 +157,19 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     // We must also have called SetStartingTeams to get the sides right.
     // When restoring from backup, assigning to teams is done after loading the match config as it depends on the sides
     // being set correctly by the backup, so we put it inside this "if" here.
+    // When the match is loaded, we do not want to assign players on no team, as they may be in the process of joining
+    // the server, which is the reason for the timer callback. This has caused problems with players getting stuck on
+    // no team when using match config autoload, essentially recreating the "coaching bug". Adding a second seems to
+    // solve this problem. We cannot just skip team none, as players may also just be on the team selection menu when
+    // the match is loaded, meaning they will never have a joingame hook, as it already happened, and we still want
+    // those players placed.
     LOOP_CLIENTS(i) {
       if (IsPlayer(i)) {
-        CheckClientTeam(i);
+        if (GetClientTeam(i) == CS_TEAM_NONE) {
+          CreateTimer(1.0, Timer_PlacePlayerFromTeamNone, i, TIMER_FLAG_NO_MAPCHANGE);
+        } else {
+          CheckClientTeam(i);
+        }
       }
     }
   }
@@ -168,6 +178,12 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
   Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
   return true;
+}
+
+static Action Timer_PlacePlayerFromTeamNone(Handle timer, int client) {
+  if (g_GameState != Get5State_None && IsPlayer(client)) {
+    CheckClientTeam(client);
+  }
 }
 
 public bool LoadMatchFile(const char[] config) {

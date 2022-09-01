@@ -711,15 +711,9 @@ public void OnClientPutInServer(int client) {
   if (IsFakeClient(client)) {
     return;
   }
-
   // If a player joins during freezetime, ensure their round stats are 0, as there will be no round-start event to do it.
   // Maybe this could just be freezetime end?
   Stats_ResetClientRoundValues(client);
-
-  // This checks for gamestate none and pending backup on its own.
-  if (CheckAutoLoadConfig()) {
-    return;
-  }
   // Because OnConfigsExecuted may run before a client is on the server, we have to repeat the start-logic here when the
   // first client connects.
   SetServerStateOnStartup(false);
@@ -963,7 +957,7 @@ static bool CheckReadyWaitingTime(Get5Team team) {
   return false;
 }
 
-static bool CheckAutoLoadConfig() {
+bool CheckAutoLoadConfig() {
   if (g_GameState == Get5State_None && !g_WaitingForRoundBackup) {
     char autoloadConfig[PLATFORM_MAX_PATH];
     g_AutoLoadConfigCvar.GetString(autoloadConfig, sizeof(autoloadConfig));

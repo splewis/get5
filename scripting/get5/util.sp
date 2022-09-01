@@ -86,7 +86,7 @@ stock void SwitchPlayerTeam(int client, Get5Side side, bool useDefaultTeamSelect
  * Returns if a client is valid.
  */
 stock bool IsValidClient(int client) {
-  return client > 0 && client <= MaxClients && IsClientConnected(client) && IsClientInGame(client);
+  return client > 0 && client <= MaxClients && IsClientInGame(client);
 }
 
 stock bool IsPlayer(int client) {

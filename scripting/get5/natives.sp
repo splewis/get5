@@ -31,7 +31,7 @@ public int Native_GetGameState(Handle plugin, int numParams) {
 
 public int Native_Message(Handle plugin, int numParams) {
   int client = GetNativeCell(1);
-  if (client != 0 && (!IsClientConnected(client) || !IsClientInGame(client)))
+  if (client != 0 && !IsClientInGame(client))
     return;
 
   char buffer[1024];
@@ -51,7 +51,7 @@ public int Native_Message(Handle plugin, int numParams) {
   if (client == 0) {
     Colorize(finalMsg, sizeof(finalMsg), false);
     PrintToConsole(client, finalMsg);
-  } else if (IsClientInGame(client)) {
+  } else {
     Colorize(finalMsg, sizeof(finalMsg));
     PrintToChat(client, finalMsg);
   }
@@ -92,7 +92,7 @@ public int Native_MessageToAll(Handle plugin, int numParams) {
 
   // Don't use LOOP_CLIENTS(i) because we need client 0 here.
   for (int i = 0; i <= MaxClients; i++) {
-    if (i != 0 && (!IsClientConnected(i) || !IsClientInGame(i))) {
+    if (i != 0 && !IsClientInGame(i)) {
       continue;
     }
 

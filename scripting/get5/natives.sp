@@ -49,7 +49,7 @@ public int Native_Message(Handle plugin, int numParams) {
     Format(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
 
   if (client == 0) {
-    Colorize(finalMsg, sizeof(finalMsg), false);
+    Colorize(finalMsg, sizeof(finalMsg), true);
     PrintToConsole(client, finalMsg);
   } else {
     Colorize(finalMsg, sizeof(finalMsg));
@@ -105,12 +105,12 @@ public int Native_MessageToAll(Handle plugin, int numParams) {
     else
       Format(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
 
-    if (i != 0) {
+    if (i == 0) {
+      Colorize(finalMsg, sizeof(finalMsg), true);
+      PrintToConsole(i, finalMsg);
+    } else {
       Colorize(finalMsg, sizeof(finalMsg));
       PrintToChat(i, finalMsg);
-    } else {
-      Colorize(finalMsg, sizeof(finalMsg), false);
-      PrintToConsole(i, finalMsg);
     }
   }
 }

@@ -224,7 +224,7 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
 }
 
 static void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv,
-                    const Get5Team team) {
+                           const Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
   char nameSz[MAX_NAME_LENGTH * 2 + 1];
@@ -236,7 +236,7 @@ static void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyV
   if (kv.GotoFirstSubKey()) {
     do {
       if (kv.GetNum(STAT_COACHING, 0) > 0) {
-        continue; // Don't update stats for coaches.
+        continue;  // Don't update stats for coaches.
       }
       kv.GetSectionName(auth, sizeof(auth));
       kv.GetString("name", name, sizeof(name));

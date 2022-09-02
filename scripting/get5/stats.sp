@@ -17,7 +17,7 @@ void Stats_PluginStart() {
 }
 
 static Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, float &damage,
-                          int &damagetype) {
+                                 int &damagetype) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
@@ -255,13 +255,13 @@ void Stats_RoundStart() {
       // until next round.
       Get5Side side = view_as<Get5Side>(GetClientTeam(i));
       if (side == Get5Side_None) {
-        continue; // Don't do anything to players pending team join.
+        continue;  // Don't do anything to players pending team join.
       }
       Get5Team team = GetClientMatchTeam(i);
       if (team == Get5Team_1 || team == Get5Team_2) {
         InitPlayerStats(i, side);
         if (side == Get5Side_Spec) {
-          continue; // exclude coaches from STAT_ROUNDSPLAYED.
+          continue;  // exclude coaches from STAT_ROUNDSPLAYED.
         }
         IncrementPlayerStat(i, STAT_ROUNDSPLAYED);
       }
@@ -505,8 +505,8 @@ static Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, boo
 }
 
 static Action Stats_MolotovEndedEvent(Event event, const char[] name, bool dontBroadcast) {
-  // No backup check; the event is deleted in EndMolotovEvent to prevent leaks, as this function works like the
-  // the HE/flash timer callbacks which also do not check for backup state.
+  // No backup check; the event is deleted in EndMolotovEvent to prevent leaks, as this function
+  // works like the the HE/flash timer callbacks which also do not check for backup state.
   if (g_GameState != Get5State_Live) {
     return;
   }
@@ -956,7 +956,8 @@ static void InitPlayerStats(int client, Get5Side side) {
   GetClientName(client, name, sizeof(name));
   g_StatsKv.SetString(STAT_NAME, name);
 
-  // Update if client is coaching. Spectators are excluded as their match team is spec; this checks side only.
+  // Update if client is coaching. Spectators are excluded as their match team is spec; this checks
+  // side only.
   g_StatsKv.SetNum(STAT_COACHING, side == Get5Side_Spec);
 
   // If the player already had their stats set, don't override them.

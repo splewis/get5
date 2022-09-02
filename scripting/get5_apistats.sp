@@ -196,7 +196,8 @@ static void CheckForLogo(const char[] logo) {
   }
 }
 
-static int LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status, int data) {
+static int LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status,
+                        int data) {
   if (failure || !successful) {
     LogError("Logo request failed, status code = %d", status);
     return;
@@ -285,7 +286,7 @@ static void AddIntStat(Handle req, KeyValues kv, const char[] field) {
 }
 
 static void UpdatePlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv,
-                       const Get5Team team) {
+                              const Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
 

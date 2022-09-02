@@ -4,8 +4,9 @@
 #define MAX_FLOAT_STRING_LENGTH 32
 #define AUTH_LENGTH 64
 
-// Dummy value for when we need to write a KeyValue string, but we don't care about the value *or* when the value is an
-// empty string. Trying to write an empty string results in the KeyValue not being written, so we use this.
+// Dummy value for when we need to write a KeyValue string, but we don't care about the value *or*
+// when the value is an empty string. Trying to write an empty string results in the KeyValue not
+// being written, so we use this.
 #define KEYVALUE_STRING_PLACEHOLDER "__placeholder"
 
 static char _colorNames[][] = {"{NORMAL}",      "{DARK_RED}",  "{PINK}", "{GREEN}",  "{YELLOW}",
@@ -75,7 +76,8 @@ stock void SwitchPlayerTeam(int client, Get5Side side, bool useDefaultTeamSelect
   if (useDefaultTeamSelection || team == CS_TEAM_SPECTATOR) {
     ChangeClientTeam(client, team);
   } else {
-    // When doing side-swap in knife-rounds, we do this to prevent the score from going -1 for everyone.
+    // When doing side-swap in knife-rounds, we do this to prevent the score from going -1 for
+    // everyone.
     CS_SwitchTeam(client, team);
     CS_UpdateClientModel(client);
     CS_RespawnPlayer(client);
@@ -128,7 +130,8 @@ stock void FormatCvarName(char[] buffer, const int bufferLength, const char[] cV
   Format(buffer, bufferLength, "{GRAY}%s{NORMAL}", cVar);
 }
 
-stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client, const Get5Team team) {
+stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client,
+                            const Get5Team team) {
   // Used when injecting the team for coaching players, who are always on team spectator.
   Get5Side side = view_as<Get5Side>(Get5_Get5TeamToCSTeam(team));
   if (side == Get5Side_CT) {
@@ -178,7 +181,8 @@ stock void StartWarmup(int warmupTime = 0) {
   if (warmupTime < 1) {
     LogDebug("Setting indefinite warmup.");
     // Setting mp_warmuptime to anything less than 7 triggers the countdown to restart regardless of
-    // mp_warmup_pausetimer 1, and this might be tick-related, so we set it to 10 just for good measure.
+    // mp_warmup_pausetimer 1, and this might be tick-related, so we set it to 10 just for good
+    // measure.
     ServerCommand("mp_warmuptime 10");
     ServerCommand("mp_warmup_pausetimer 1");
   } else {
@@ -296,7 +300,8 @@ stock int GetCvarIntSafe(const char[] cvarName) {
   }
 }
 
-stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool cleanName = false, bool color = false) {
+stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool cleanName = false,
+                         bool color = false) {
   // explode map by '/' so we can remove any directory prefixes (e.g. workshop stuff)
   char buffers[4][PLATFORM_MAX_PATH];
   int numSplits = ExplodeString(mapName, "/", buffers, sizeof(buffers), PLATFORM_MAX_PATH);
@@ -420,9 +425,10 @@ stock bool RemoveStringFromArray(ArrayList list, const char[] str) {
   return false;
 }
 
-// Because KeyValue cannot write empty strings, we use this to consistently read empty strings and replace
-// our empty-string-placeholder with actual empty string.
-stock bool ReadEmptyStringInsteadOfPlaceholder(const KeyValues kv, char[] buffer, const int bufferSize) {
+// Because KeyValue cannot write empty strings, we use this to consistently read empty strings and
+// replace our empty-string-placeholder with actual empty string.
+stock bool ReadEmptyStringInsteadOfPlaceholder(const KeyValues kv, char[] buffer,
+                                               const int bufferSize) {
   kv.GetString(NULL_STRING, buffer, bufferSize);
   if (StrEqual(KEYVALUE_STRING_PLACEHOLDER, buffer)) {
     Format(buffer, bufferSize, "");
@@ -431,7 +437,8 @@ stock bool ReadEmptyStringInsteadOfPlaceholder(const KeyValues kv, char[] buffer
   return false;
 }
 
-stock bool WritePlaceholderInsteadOfEmptyString(const KeyValues kv, char[] buffer, const int bufferSize) {
+stock bool WritePlaceholderInsteadOfEmptyString(const KeyValues kv, char[] buffer,
+                                                const int bufferSize) {
   kv.GetString(NULL_STRING, buffer, bufferSize);
   if (StrEqual("", buffer)) {
     kv.SetString(NULL_STRING, KEYVALUE_STRING_PLACEHOLDER);

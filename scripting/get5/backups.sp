@@ -156,11 +156,10 @@ void WriteBackup() {
     return;
   }
 
-  if (g_GameState != Get5State_Warmup
-    && g_GameState != Get5State_KnifeRound
-    && g_GameState != Get5State_Live) {
+  if (g_GameState != Get5State_Warmup && g_GameState != Get5State_KnifeRound &&
+      g_GameState != Get5State_Live) {
     LogDebug("Not writing backup for game state %d.", g_GameState);
-    return; // Only backup post-veto warmup, knife and live.
+    return;  // Only backup post-veto warmup, knife and live.
   }
 
   char folder[PLATFORM_MAX_PATH];
@@ -296,8 +295,8 @@ static void WriteBackupStructure(const char[] path) {
   kv.GoBack();
 
   if (g_GameState == Get5State_Live) {
-    // Write valve's backup format into the file. This only applies to live rounds, as any pre-live backups should
-    // just restart the game to the knife round.
+    // Write valve's backup format into the file. This only applies to live rounds, as any pre-live
+    // backups should just restart the game to the knife round.
     char lastBackup[PLATFORM_MAX_PATH];
     ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
     if (lastBackupCvar != null) {
@@ -330,8 +329,9 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
   }
 
   if (restartRecording) {
-    // We must stop recording when loading a backup, and we must do it before we load the match config, or the g_MatchID
-    // variable will be incorrect. This is suppressed when using the !stop command.
+    // We must stop recording when loading a backup, and we must do it before we load the match
+    // config, or the g_MatchID variable will be incorrect. This is suppressed when using the !stop
+    // command.
     StopRecording();
   }
 
@@ -352,8 +352,9 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
   }
 
   if (g_GameState != Get5State_Live) {
-    // This isn't perfect, but it's better than resetting all pauses used to zero in cases of restore on a new server.
-    // If restoring while live, we just retain the current pauses used, as they should be the "most correct".
+    // This isn't perfect, but it's better than resetting all pauses used to zero in cases of
+    // restore on a new server. If restoring while live, we just retain the current pauses used, as
+    // they should be the "most correct".
     g_TacticalPausesUsed[Get5Team_1] = kv.GetNum("team1_tac_pauses_used", 0);
     g_TacticalPausesUsed[Get5Team_2] = kv.GetNum("team2_tac_pauses_used", 0);
     g_TechnicalPausesUsed[Get5Team_1] = kv.GetNum("team1_tech_pauses_used", 0);
@@ -440,22 +441,25 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
 
   if (!StrEqual(currentMap, currentSeriesMap)) {
     // We don't need to assign players if changing map; this will be done when the players rejoin.
-    // If a map is to be changed, we want to suppress all stats events immediately, as the Get5_OnBackupRestore is
-    // called now and we don't want events firing after this until the game is live again.
+    // If a map is to be changed, we want to suppress all stats events immediately, as the
+    // Get5_OnBackupRestore is called now and we don't want events firing after this until the game
+    // is live again.
     ChangeMap(currentSeriesMap, 3.0);
   } else {
-    // We must assign players to their teams. This is normally done inside LoadMatchConfig, but since we need
-    // the team sides to be applied from the backup, we skip it then and do it here.
+    // We must assign players to their teams. This is normally done inside LoadMatchConfig, but
+    // since we need the team sides to be applied from the backup, we skip it then and do it here.
     LOOP_CLIENTS(i) {
       if (IsPlayer(i)) {
         CheckClientTeam(i);
       }
     }
     if (g_WaitingForRoundBackup) {
-      // Same map, but round restore with a Valve backup; do normal restore immediately with no ready-up.
+      // Same map, but round restore with a Valve backup; do normal restore immediately with no
+      // ready-up.
       RestoreGet5Backup(restartRecording);
     } else {
-      // We are restarting to the same map for prelive; just go back into warmup and let players ready-up again.
+      // We are restarting to the same map for prelive; just go back into warmup and let players
+      // ready-up again.
       ResetReadyStatus();
       UnpauseGame(Get5Team_None);
       ChangeState(Get5State_Warmup);
@@ -481,21 +485,23 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
 }
 
 void RestoreGet5Backup(bool restartRecording = true) {
-  // If you load a backup during a live round, the game might get stuck if there are only bots remaining and no
-  // players are alive. Other stuff will probably also go wrong, so we just reset the game before loading the
-  // backup to avoid any weird edge-cases.
+  // If you load a backup during a live round, the game might get stuck if there are only bots
+  // remaining and no players are alive. Other stuff will probably also go wrong, so we just reset
+  // the game before loading the backup to avoid any weird edge-cases.
   if (!InWarmup()) {
-   RestartGame();
+    RestartGame();
   }
   ExecCfg(g_LiveCfgCvar);
   PauseGame(Get5Team_None, Get5PauseType_Backup);
-  g_DoingBackupRestoreNow = true; // reset after the backup has completed, suppresses various events and hooks until then.
+  g_DoingBackupRestoreNow = true;  // reset after the backup has completed, suppresses various
+                                   // events and hooks until then.
   g_WaitingForRoundBackup = false;
   CreateTimer(1.5, Timer_StartRestore);
   if (restartRecording) {
-    // Since a backup command forces the recording to stop, we restart it here once the backup has completed.
-    // We have to do this on a delay, as when loading from a live game, the backup will already be recording and must
-    // flush before a new record command can be issued. This is suppressed when using the !stop command!
+    // Since a backup command forces the recording to stop, we restart it here once the backup has
+    // completed. We have to do this on a delay, as when loading from a live game, the backup will
+    // already be recording and must flush before a new record command can be issued. This is
+    // suppressed when using the !stop command!
     CreateTimer(3.0, Timer_StartRecordingAfterBackup, _, TIMER_FLAG_NO_MAPCHANGE);
   }
 }
@@ -514,11 +520,12 @@ static Action Timer_StartRestore(Handle timer) {
   ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
   CreateTimer(0.5, Timer_FinishBackup);
 
-  // We need to fire the OnRoundStarted event manually, as it will be suppressed during backups and won't fire while
-  // g_DoingBackupRestoreNow is true.
+  // We need to fire the OnRoundStarted event manually, as it will be suppressed during backups and
+  // won't fire while g_DoingBackupRestoreNow is true.
   KeyValues kv = new KeyValues("Backup");
   if (kv.ImportFromFile(tempValveBackup)) {
-    Get5RoundStartedEvent startEvent = new Get5RoundStartedEvent(g_MatchID, g_MapNumber, kv.GetNum("round", 0));
+    Get5RoundStartedEvent startEvent =
+        new Get5RoundStartedEvent(g_MatchID, g_MapNumber, kv.GetNum("round", 0));
     LogDebug("Calling Get5_OnRoundStart() via backup.");
     Call_StartForward(g_OnRoundStart);
     Call_PushCell(startEvent);

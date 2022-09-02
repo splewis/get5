@@ -24,7 +24,8 @@ void CheckClientTeam(int client, bool useDefaultTeamSelection = true) {
   Get5Side correctSide = view_as<Get5Side>(Get5TeamToCSTeam(correctTeam));
   if (correctSide == Get5Side_None) {
     // This should not be possible.
-    LogError("Client %d belongs to no side. This is an unexpected error and should be reported.", client);
+    LogError("Client %d belongs to no side. This is an unexpected error and should be reported.",
+             client);
     return;
   }
 
@@ -40,20 +41,21 @@ void CheckClientTeam(int client, bool useDefaultTeamSelection = true) {
     return;
   }
 
-  // If player was not locked to coaching, check if their team's current size -self is less than the max.
+  // If player was not locked to coaching, check if their team's current size -self is less than the
+  // max.
   if (CountPlayersOnTeam(correctTeam, client) < g_PlayersPerTeam) {
     SwitchPlayerTeam(client, correctSide, useDefaultTeamSelection);
     return;
   }
 
-  // We end here if a player was not a predefined coach while there was no space as a regular player. If coaching is
-  // enabled, we drop the player in coach, and if not, they must be kicked.
+  // We end here if a player was not a predefined coach while there was no space as a regular
+  // player. If coaching is enabled, we drop the player in coach, and if not, they must be kicked.
   if (g_CoachingEnabledCvar.BoolValue && coachesOnTeam < g_CoachesPerTeam) {
     Get5_Message(client, "%t", "MoveToCoachInfoMessage");
-    // In scrim mode, we don't put coaches or players of the "away" team into any auth arrays; they default to the
-    // opposite of the home team. If a full team's coach disconnects or leaves and rejoins, they should be placed on the
-    // coach team if their team is full. In a regular match, they will have called .coach before the map starts and will
-    // be placed by auth above.
+    // In scrim mode, we don't put coaches or players of the "away" team into any auth arrays; they
+    // default to the opposite of the home team. If a full team's coach disconnects or leaves and
+    // rejoins, they should be placed on the coach team if their team is full. In a regular match,
+    // they will have called .coach before the map starts and will be placed by auth above.
     if (!g_InScrimMode) {
       MovePlayerToCoachInConfig(client, correctTeam);
     }
@@ -75,9 +77,10 @@ Action Command_JoinTeam(int client, const char[] command, int argc) {
   if (g_GameState == Get5State_None || !g_CheckAuthsCvar.BoolValue) {
     return Plugin_Continue;
   }
-  // If, in some odd case, a player should find themselves on no team while g_CheckAuthsCvar is true, we want to let
-  // them trigger the PlacePlayerOnTeam logic when clicking any team. In any other case, we just block.
-  // Blocking ensures that coaches in scrim-mode will not stop coaching if they select a team in the menu.
+  // If, in some odd case, a player should find themselves on no team while g_CheckAuthsCvar is
+  // true, we want to let them trigger the PlacePlayerOnTeam logic when clicking any team. In any
+  // other case, we just block. Blocking ensures that coaches in scrim-mode will not stop coaching
+  // if they select a team in the menu.
   if (IsAuthedPlayer(client) && GetClientTeam(client) == CS_TEAM_NONE) {
     PlacePlayerOnTeam(client);
   }
@@ -97,7 +100,8 @@ void SetClientCoaching(int client, Get5Side side) {
   SwitchPlayerTeam(client, Get5Side_Spec);
   SetEntProp(client, Prop_Send, "m_iCoachingTeam", side);
   SetEntProp(client, Prop_Send, "m_iObserverMode", 4);
-  SetEntProp(client, Prop_Send, "m_iAccount", 0); // Ensures coaches have no money if they were to rejoin the game.
+  SetEntProp(client, Prop_Send, "m_iAccount",
+             0);  // Ensures coaches have no money if they were to rejoin the game.
 
   char formattedPlayerName[MAX_NAME_LENGTH];
   Get5Team team = GetClientMatchTeam(client);
@@ -109,7 +113,8 @@ void CoachingChangedHook(ConVar convar, const char[] oldValue, const char[] newV
   if (g_GameState == Get5State_None) {
     return;
   }
-  // If disabling coaching, make sure we swap coaches to team or kick them, as they are now regular spectators.
+  // If disabling coaching, make sure we swap coaches to team or kick them, as they are now regular
+  // spectators.
   if (StringToInt(oldValue) != 0 && !convar.BoolValue) {
     LogDebug("Detected sv_coaching_enabled was disabled. Checking for coaches.");
     LOOP_CLIENTS(i) {
@@ -154,8 +159,8 @@ Action Command_SmCoach(int client, int args) {
         Get5_Message(client, "%t", "CannotLeaveCoachingTeamIsFull");
         return Plugin_Continue;
       }
-      // Fall-through to CheckClientTeam(i) below, which moves the player back on the team because they are not
-      // defined as a coach in auth.
+      // Fall-through to CheckClientTeam(i) below, which moves the player back on the team because
+      // they are not defined as a coach in auth.
     } else {
       if (coachSlotsFull) {
         Get5_Message(client, "%t", "AllCoachSlotsFilledForTeam", g_CoachesPerTeam);
@@ -203,9 +208,10 @@ static void MoveCoachToPlayerInConfig(const int client, const Get5Team team) {
   char auth[AUTH_LENGTH];
   GetAuth(client, auth, sizeof(auth));
   AddPlayerToTeam(auth, team, "");
-  // This differs from MovePlayerToCoachInConfig because being in coach array + player array will make coaching
-  // take precedence, so if you're being added from coach to player, and you're already defined as a player, the above
-  // function will return false, so we always remove from the coach array when moving from coach to player.
+  // This differs from MovePlayerToCoachInConfig because being in coach array + player array will
+  // make coaching take precedence, so if you're being added from coach to player, and you're
+  // already defined as a player, the above function will return false, so we always remove from the
+  // coach array when moving from coach to player.
   int index = GetTeamCoaches(team).FindString(auth);
   if (index >= 0) {
     LogDebug("Removing client %d from coach team auth array for team %d", client, team);
@@ -217,7 +223,9 @@ Action Command_Coach(int client, const char[] command, int argc) {
   if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
-  ReplyToCommand(client, "Please use .coach in chat or sm_coach instead of the built-in console coach command.");
+  ReplyToCommand(
+      client,
+      "Please use .coach in chat or sm_coach instead of the built-in console coach command.");
   return Plugin_Stop;
 }
 
@@ -298,7 +306,8 @@ int CountCoachesOnTeam(Get5Team team, int exclude = -1) {
   int count = 0;
   Get5Side side = view_as<Get5Side>(Get5TeamToCSTeam(team));
   LOOP_CLIENTS(i) {
-    if (i != exclude && IsAuthedPlayer(i) && GetClientMatchTeam(i) == team && GetClientCoachingSide(i) == side) {
+    if (i != exclude && IsAuthedPlayer(i) && GetClientMatchTeam(i) == team &&
+        GetClientCoachingSide(i) == side) {
       count++;
     }
   }
@@ -309,7 +318,8 @@ int CountPlayersOnTeam(Get5Team team, int exclude = -1) {
   int count = 0;
   Get5Side side = view_as<Get5Side>(Get5TeamToCSTeam(team));
   LOOP_CLIENTS(i) {
-    if (i != exclude && IsAuthedPlayer(i) && GetClientMatchTeam(i) == team && view_as<Get5Side>(GetClientTeam(i)) == side) {
+    if (i != exclude && IsAuthedPlayer(i) && GetClientMatchTeam(i) == team &&
+        view_as<Get5Side>(GetClientTeam(i)) == side) {
       count++;
     }
   }
@@ -322,7 +332,7 @@ bool IsClientCoaching(int client) {
 
 static Get5Side GetClientCoachingSide(int client) {
   if (GetClientTeam(client) != CS_TEAM_SPECTATOR) {
-   return Get5Side_None;
+    return Get5Side_None;
   }
   int side = GetEntProp(client, Prop_Send, "m_iCoachingTeam");
   if (side == CS_TEAM_CT) {

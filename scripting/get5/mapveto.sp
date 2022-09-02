@@ -82,7 +82,7 @@ static void VetoFinished() {
   }
   // Always end recording here; ensures that we can successfully start one after veto.
   StopRecording(delay);
-  WriteBackup(); // Write first pre-live backup after veto.
+  WriteBackup();  // Write first pre-live backup after veto.
 }
 
 // Main Veto Controller
@@ -210,7 +210,7 @@ static void VetoController(int client) {
 // Confirmations
 
 static void GiveConfirmationMenu(int client, MenuHandler handler, const char[] title,
-                          const char[] confirmChoice) {
+                                 const char[] confirmChoice) {
   // Figure out text for positive and negative values
   char positiveBuffer[1024], negativeBuffer[1024];
   Format(positiveBuffer, sizeof(positiveBuffer), "%T", "ConfirmPositiveOptionText", client);
@@ -314,7 +314,8 @@ static int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
     FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), true, false);
     // Add color here as FormatMapName would make the color green.
     Format(formattedMapName, sizeof(formattedMapName), "{LIGHT_RED}%s{NORMAL}", formattedMapName);
-    Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], formattedMapName);
+    Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team],
+                      formattedMapName);
 
     Get5MapVetoedEvent event = new Get5MapVetoedEvent(g_MatchID, team, mapName);
 

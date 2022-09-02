@@ -14,21 +14,23 @@ void StartGoingLive() {
 
   ChangeState(Get5State_GoingLive);
 
-  // This ensures that we can send send the game to warmup and count down *even if* someone had put "mp_warmup_end", or
-  // something else that would mess up warmup, in their live config, which they shouldn't. But we can't be sure.
+  // This ensures that we can send send the game to warmup and count down *even if* someone had put
+  // "mp_warmup_end", or something else that would mess up warmup, in their live config, which they
+  // shouldn't. But we can't be sure.
   CreateTimer(1.0, Timer_GoToLiveAfterWarmupCountdown, _, TIMER_FLAG_NO_MAPCHANGE);
 }
 
 static Action Timer_GoToLiveAfterWarmupCountdown(Handle timer) {
   if (g_GameState != Get5State_GoingLive) {
-    return Plugin_Handled; // super defensive race-condition check.
+    return Plugin_Handled;  // super defensive race-condition check.
   }
   // Always disable sv_cheats!
   ServerCommand("sv_cheats 0");
   // Ensure we're in warmup and counting down to live. Round_PreStart handles the rest.
   int countdown = g_LiveCountdownTimeCvar.IntValue;
   if (countdown < 5) {
-    countdown = 5; // ensures that a cvar countdown value of 0 does not leave the game forever in warmup.
+    countdown =
+        5;  // ensures that a cvar countdown value of 0 does not leave the game forever in warmup.
   }
   Get5_MessageToAll("%t", "MatchBeginInSecondsInfoMessage", countdown);
   StartWarmup(countdown);

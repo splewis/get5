@@ -73,7 +73,8 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   }
 
   if (g_NumberOfMapsInSeries > g_MapPoolList.Length) {
-    MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps", g_NumberOfMapsInSeries, g_MapPoolList.Length);
+    MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps",
+                    g_NumberOfMapsInSeries, g_MapPoolList.Length);
     return false;
   }
 
@@ -85,7 +86,8 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
       // Push a map side if one hasn't been set yet.
       if (g_MapSides.Length < g_MapsToPlay.Length) {
-        if (g_MatchSideType == MatchSideType_Standard || g_MatchSideType == MatchSideType_AlwaysKnife) {
+        if (g_MatchSideType == MatchSideType_Standard ||
+            g_MatchSideType == MatchSideType_AlwaysKnife) {
           g_MapSides.Push(SideChoice_KnifeRound);
         } else {
           g_MapSides.Push(SideChoice_Team1CT);
@@ -108,16 +110,17 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   }
 
   if (g_GameState == Get5State_None) {
-    // Make sure here that we don't run the code below in game state none, but also not overriding PreVeto.
-    // Currently, this could happen if you restored a backup with skip_veto:false.
+    // Make sure here that we don't run the code below in game state none, but also not overriding
+    // PreVeto. Currently, this could happen if you restored a backup with skip_veto:false.
     ChangeState(Get5State_Warmup);
   }
 
-  // Before we run the Get5_OnSeriesInit forward, we want to ensure that as much game state is set as possible,
-  // so that any implementation reacting to that event/forward will have all the natives return proper data.
-  // ExecuteMatchConfigCvars gets called twice because ExecCfg(g_WarmupCfgCvar) also does it async, but we need it here
-  // as the team assigment below depends on it. We set this one first as the others may depend on something changed in
-  // the match cvars section.
+  // Before we run the Get5_OnSeriesInit forward, we want to ensure that as much game state is set
+  // as possible, so that any implementation reacting to that event/forward will have all the
+  // natives return proper data. ExecuteMatchConfigCvars gets called twice because
+  // ExecCfg(g_WarmupCfgCvar) also does it async, but we need it here as the team assigment below
+  // depends on it. We set this one first as the others may depend on something changed in the match
+  // cvars section.
   ExecuteMatchConfigCvars();
   SetMatchTeamCvars();
   LoadPlayerNames();
@@ -146,23 +149,23 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     EventLogger_LogAndDeleteEvent(startEvent);
 
     if (!g_CheckAuthsCvar.BoolValue &&
-        (GetTeamAuths(Get5Team_1).Length != 0
-        || GetTeamAuths(Get5Team_2).Length != 0
-        || GetTeamCoaches(Get5Team_1).Length != 0
-        || GetTeamCoaches(Get5Team_2).Length != 0)) {
-      LogError("Setting player auths in the \"players\" or \"coaches\" section has no impact with get5_check_auths 0");
+        (GetTeamAuths(Get5Team_1).Length != 0 || GetTeamAuths(Get5Team_2).Length != 0 ||
+         GetTeamCoaches(Get5Team_1).Length != 0 || GetTeamCoaches(Get5Team_2).Length != 0)) {
+      LogError(
+          "Setting player auths in the \"players\" or \"coaches\" section has no impact with get5_check_auths 0");
     }
 
-    // ExecuteMatchConfigCvars must be executed before we place players, as it might have get5_check_auths 1.
-    // We must also have called SetStartingTeams to get the sides right.
-    // When restoring from backup, assigning to teams is done after loading the match config as it depends on the sides
-    // being set correctly by the backup, so we put it inside this "if" here.
-    // When the match is loaded, we do not want to assign players on no team, as they may be in the process of joining
-    // the server, which is the reason for the timer callback. This has caused problems with players getting stuck on
-    // no team when using match config autoload, essentially recreating the "coaching bug". Adding a second seems to
-    // solve this problem. We cannot just skip team none, as players may also just be on the team selection menu when
-    // the match is loaded, meaning they will never have a joingame hook, as it already happened, and we still want
-    // those players placed.
+    // ExecuteMatchConfigCvars must be executed before we place players, as it might have
+    // get5_check_auths 1. We must also have called SetStartingTeams to get the sides right. When
+    // restoring from backup, assigning to teams is done after loading the match config as it
+    // depends on the sides being set correctly by the backup, so we put it inside this "if" here.
+    // When the match is loaded, we do not want to assign players on no team, as they may be in the
+    // process of joining the server, which is the reason for the timer callback. This has caused
+    // problems with players getting stuck on no team when using match config autoload, essentially
+    // recreating the "coaching bug". Adding a second seems to solve this problem. We cannot just
+    // skip team none, as players may also just be on the team selection menu when the match is
+    // loaded, meaning they will never have a joingame hook, as it already happened, and we still
+    // want those players placed.
     LOOP_CLIENTS(i) {
       if (IsPlayer(i)) {
         if (GetClientTeam(i) == CS_TEAM_NONE) {
@@ -298,7 +301,7 @@ stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
 
 // SteamWorks HTTP callback for fetching a workshop collection
 static int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful,
-                                     EHTTPStatusCode statusCode, Handle data) {
+                                            EHTTPStatusCode statusCode, Handle data) {
   if (failure || !requestSuccessful) {
     MatchConfigFail("Steamworks GET request failed, HTTP status code = %d", statusCode);
     return;
@@ -408,7 +411,8 @@ static bool LoadMatchFromKv(KeyValues kv) {
   g_NumberOfMapsInSeries = kv.GetNum("num_maps", CONFIG_NUM_MAPSDEFAULT);
   g_MapsToWin = MapsToWin(g_NumberOfMapsInSeries);
   if (g_NumberOfMapsInSeries != 2 && g_NumberOfMapsInSeries % 2 == 0) {
-    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
+    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.",
+                    g_NumberOfMapsInSeries);
     return false;
   }
 
@@ -506,7 +510,8 @@ static bool LoadMatchFromJson(JSON_Object json) {
   g_NumberOfMapsInSeries = json_object_get_int_safe(json, "num_maps", CONFIG_NUM_MAPSDEFAULT);
   g_MapsToWin = MapsToWin(g_NumberOfMapsInSeries);
   if (g_NumberOfMapsInSeries != 2 && g_NumberOfMapsInSeries % 2 == 0) {
-    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
+    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.",
+                    g_NumberOfMapsInSeries);
     return false;
   }
 
@@ -802,13 +807,16 @@ Action Command_AddPlayer(int client, int args) {
     ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
   } else if (g_InScrimMode) {
-    ReplyToCommand(client, "Cannot use get5_addplayer in scrim mode. Use get5_ringer to swap a player's team.");
+    ReplyToCommand(
+        client,
+        "Cannot use get5_addplayer in scrim mode. Use get5_ringer to swap a player's team.");
     return Plugin_Handled;
   } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     ReplyToCommand(client, "Cannot add players while waiting for round backup.");
     return Plugin_Handled;
   } else if (g_PendingSideSwap || InHalftimePhase()) {
-    ReplyToCommand(client, "Cannot add players during halftime. Please wait until the next round starts.");
+    ReplyToCommand(client,
+                   "Cannot add players during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
@@ -856,13 +864,15 @@ Action Command_AddCoach(int client, int args) {
     ReplyToCommand(client, "Coaching is not enabled.");
     return Plugin_Handled;
   } else if (g_InScrimMode) {
-    ReplyToCommand(client, "Coaches cannot be added in scrim mode. Use the !coach command in chat.");
+    ReplyToCommand(client,
+                   "Coaches cannot be added in scrim mode. Use the !coach command in chat.");
     return Plugin_Handled;
   } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     ReplyToCommand(client, "Cannot add coaches while waiting for round backup.");
     return Plugin_Handled;
   } else if (g_PendingSideSwap || InHalftimePhase()) {
-    ReplyToCommand(client, "Cannot add coaches during halftime. Please wait until the next round starts.");
+    ReplyToCommand(client,
+                   "Cannot add coaches during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
@@ -891,7 +901,8 @@ Action Command_AddCoach(int client, int args) {
     }
 
     if (AddCoachToTeam(auth, team, name)) {
-      // If the player is already on the team as a regular player, remove them when adding to coaches.
+      // If the player is already on the team as a regular player, remove them when adding to
+      // coaches.
       int index = GetTeamAuths(team).FindString(auth);
       if (index >= 0) {
         GetTeamAuths(team).Erase(index);
@@ -904,7 +915,9 @@ Action Command_AddCoach(int client, int args) {
       if (addedClient > 0 && IsClientConnected(addedClient)) {
         Get5Side side = view_as<Get5Side>(Get5TeamToCSTeam(team));
         if (side != Get5Side_None) {
-          LogDebug("Player %s was present on the server when added as coach; moving them to coach for %d.", auth, team);
+          LogDebug(
+              "Player %s was present on the server when added as coach; moving them to coach for %d.",
+              auth, team);
           SetClientCoaching(addedClient, side);
         }
       }
@@ -925,13 +938,16 @@ Action Command_AddKickedPlayer(int client, int args) {
     ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
   } else if (g_InScrimMode) {
-    ReplyToCommand(client, "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a player's team.");
+    ReplyToCommand(
+        client,
+        "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a player's team.");
     return Plugin_Handled;
   } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
     ReplyToCommand(client, "Cannot add players while waiting for round backup.");
     return Plugin_Handled;
   } else if (g_PendingSideSwap || InHalftimePhase()) {
-    ReplyToCommand(client, "Cannot add players during halftime. Please wait until the next round starts.");
+    ReplyToCommand(client,
+                   "Cannot add players during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
@@ -1140,8 +1156,8 @@ Action Command_CreateScrim(int client, int args) {
     MatchConfigFail("Failed to read scrim template in %s", templateFile);
     return Plugin_Handled;
   }
-  // Because we read the field and write it again, then load it as a match config, we have to make sure empty
-  // strings are not being skipped.
+  // Because we read the field and write it again, then load it as a match config, we have to make
+  // sure empty strings are not being skipped.
   if (kv.JumpToKey("team1") && kv.JumpToKey("players") && kv.GotoFirstSubKey(false)) {
     char name[MAX_NAME_LENGTH];
     do {
@@ -1301,8 +1317,8 @@ void ExecCfg(ConVar cvar) {
 }
 
 static Action Timer_ExecMatchConfig(Handle timer) {
-  // When we load config files using ServerCommand("exec") above, which is async, we want match config cvars to always
-  // override.
+  // When we load config files using ServerCommand("exec") above, which is async, we want match
+  // config cvars to always override.
   ExecuteMatchConfigCvars();
   SetMatchTeamCvars();
   return Plugin_Handled;

@@ -4,7 +4,7 @@
 
 #define CONFIRM_NEGATIVE_VALUE "_"
 
-public void CreateVeto() {
+void CreateVeto() {
   if (g_MapPoolList.Length % 2 == 0) {
     LogError(
         "Warning, the maplist is even number sized (%d maps), vetos may not function correctly!",
@@ -20,7 +20,7 @@ public void CreateVeto() {
   CreateTimer(1.0, Timer_VetoCountdown, _, TIMER_REPEAT);
 }
 
-public Action Timer_VetoCountdown(Handle timer) {
+static Action Timer_VetoCountdown(Handle timer) {
   static int warningsPrinted = 0;
   if (g_GameState != Get5State_Veto) {
     warningsPrinted = 0;
@@ -55,7 +55,7 @@ static void AbortVeto() {
   }
 }
 
-public void VetoFinished() {
+static void VetoFinished() {
   ChangeState(Get5State_Warmup);
   Get5_MessageToAll("%t", "MapDecidedInfoMessage");
 
@@ -87,7 +87,7 @@ public void VetoFinished() {
 
 // Main Veto Controller
 
-public void VetoController(int client) {
+static void VetoController(int client) {
   if (!IsPlayer(client) || GetClientMatchTeam(client) == Get5Team_Spec) {
     AbortVeto();
     return;
@@ -209,7 +209,7 @@ public void VetoController(int client) {
 
 // Confirmations
 
-public void GiveConfirmationMenu(int client, MenuHandler handler, const char[] title,
+static void GiveConfirmationMenu(int client, MenuHandler handler, const char[] title,
                           const char[] confirmChoice) {
   // Figure out text for positive and negative values
   char positiveBuffer[1024], negativeBuffer[1024];
@@ -267,7 +267,7 @@ static bool ConfirmationNegative(const char[] choice) {
 
 // Map Vetos
 
-public void GiveMapVetoMenu(int client) {
+static void GiveMapVetoMenu(int client) {
   Menu menu = new Menu(MapVetoMenuHandler);
   menu.SetTitle("%T", "MapVetoBanMenuText", client);
   menu.ExitButton = false;
@@ -287,7 +287,7 @@ public void GiveMapVetoMenu(int client) {
   SetConfirmationTime(true);
 }
 
-public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
+static int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     if (g_GameState != Get5State_Veto) {
       return;
@@ -342,7 +342,7 @@ public int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
 
 // Map Picks
 
-public void GiveMapPickMenu(int client) {
+static void GiveMapPickMenu(int client) {
   Menu menu = new Menu(MapPickMenuHandler);
   menu.SetTitle("%T", "MapVetoPickMenuText", client);
   menu.ExitButton = false;
@@ -362,7 +362,7 @@ public void GiveMapPickMenu(int client) {
   SetConfirmationTime(true);
 }
 
-public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
+static int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     if (g_GameState != Get5State_Veto) {
       return;
@@ -419,7 +419,7 @@ public int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
 
 // Side Picks
 
-public void GiveSidePickMenu(int client) {
+static void GiveSidePickMenu(int client) {
   Menu menu = new Menu(SidePickMenuHandler);
   menu.ExitButton = false;
   char mapName[PLATFORM_MAX_PATH];
@@ -432,7 +432,7 @@ public void GiveSidePickMenu(int client) {
   SetConfirmationTime(true);
 }
 
-public int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
+static int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     if (g_GameState != Get5State_Veto) {
       return;

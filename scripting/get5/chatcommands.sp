@@ -1,4 +1,4 @@
-public void AddAliasedCommand(const char[] command, ConCmd callback, const char[] description) {
+void AddAliasedCommand(const char[] command, ConCmd callback, const char[] description) {
   char smCommandBuffer[COMMAND_LENGTH];
   Format(smCommandBuffer, sizeof(smCommandBuffer), "sm_%s", command);
   RegConsoleCmd(smCommandBuffer, callback, description);
@@ -8,7 +8,7 @@ public void AddAliasedCommand(const char[] command, ConCmd callback, const char[
   AddChatAlias(dotCommandBuffer, smCommandBuffer);
 }
 
-public void AddChatAlias(const char[] alias, const char[] command) {
+static void AddChatAlias(const char[] alias, const char[] command) {
   // Don't allow duplicate aliases to be added.
   if (g_ChatAliases.FindString(alias) == -1) {
     g_ChatAliases.PushString(alias);
@@ -16,7 +16,7 @@ public void AddChatAlias(const char[] alias, const char[] command) {
   }
 }
 
-public void CheckForChatAlias(int client, const char[] command, const char[] sArgs) {
+void CheckForChatAlias(int client, const char[] sArgs) {
   // No chat aliases are needed if the game isn't setup at all.
   if (g_GameState == Get5State_None) {
     return;

@@ -186,7 +186,7 @@ static Action Timer_PlacePlayerFromTeamNone(Handle timer, int client) {
   }
 }
 
-public bool LoadMatchFile(const char[] config) {
+static bool LoadMatchFile(const char[] config) {
   Get5PreloadMatchConfigEvent event = new Get5PreloadMatchConfigEvent(config);
 
   LogDebug("Calling Get5_OnPreLoadMatchConfig()");
@@ -297,7 +297,7 @@ stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
 }
 
 // SteamWorks HTTP callback for fetching a workshop collection
-public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful,
+static int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful,
                                      EHTTPStatusCode statusCode, Handle data) {
   if (failure || !requestSuccessful) {
     MatchConfigFail("Steamworks GET request failed, HTTP status code = %d", statusCode);
@@ -312,7 +312,7 @@ public int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), g_LoadedConfigUrl);
 }
 
-public void WriteMatchToKv(KeyValues kv) {
+void WriteMatchToKv(KeyValues kv) {
   kv.SetString("matchid", g_MatchID);
   kv.SetNum("scrim", g_InScrimMode);
   kv.SetNum("skip_veto", g_SkipVeto);
@@ -682,7 +682,7 @@ static void LoadDefaultMapList(ArrayList list) {
   }
 }
 
-public void SetMatchTeamCvars() {
+void SetMatchTeamCvars() {
   Get5Team ctTeam = Get5Team_1;
   Get5Team tTeam = Get5Team_2;
   if (g_TeamStartingSide[Get5Team_1] == CS_TEAM_T) {
@@ -739,17 +739,7 @@ public void SetMatchTeamCvars() {
   }
 }
 
-public Get5Team GetMapWinner(int mapNumber) {
-  int team1score = GetMapScore(mapNumber, Get5Team_1);
-  int team2score = GetMapScore(mapNumber, Get5Team_2);
-  if (team1score > team2score) {
-    return Get5Team_1;
-  } else {
-    return Get5Team_2;
-  }
-}
-
-public void ExecuteMatchConfigCvars() {
+static void ExecuteMatchConfigCvars() {
   // Save the original match cvar values if we haven't already.
   if (g_MatchConfigChangedCvars == INVALID_HANDLE) {
     g_MatchConfigChangedCvars = SaveCvars(g_CvarNames);
@@ -769,7 +759,7 @@ public void ExecuteMatchConfigCvars() {
   }
 }
 
-public Action Command_LoadTeam(int client, int args) {
+Action Command_LoadTeam(int client, int args) {
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
     return Plugin_Handled;
@@ -807,7 +797,7 @@ public Action Command_LoadTeam(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_AddPlayer(int client, int args) {
+Action Command_AddPlayer(int client, int args) {
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
@@ -858,7 +848,7 @@ public Action Command_AddPlayer(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_AddCoach(int client, int args) {
+Action Command_AddCoach(int client, int args) {
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
@@ -930,7 +920,7 @@ public Action Command_AddCoach(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_AddKickedPlayer(int client, int args) {
+Action Command_AddKickedPlayer(int client, int args) {
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
@@ -985,7 +975,7 @@ public Action Command_AddKickedPlayer(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_RemovePlayer(int client, int args) {
+Action Command_RemovePlayer(int client, int args) {
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
     return Plugin_Handled;
@@ -1012,7 +1002,7 @@ public Action Command_RemovePlayer(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_RemoveKickedPlayer(int client, int args) {
+Action Command_RemoveKickedPlayer(int client, int args) {
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "Cannot change player lists when there is no match to modify.");
     return Plugin_Handled;
@@ -1039,7 +1029,7 @@ public Action Command_RemoveKickedPlayer(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_CreateMatch(int client, int args) {
+Action Command_CreateMatch(int client, int args) {
   if (g_GameState != Get5State_None) {
     ReplyToCommand(client, "Cannot create a match when a match is already loaded");
     return Plugin_Handled;
@@ -1107,7 +1097,7 @@ public Action Command_CreateMatch(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_CreateScrim(int client, int args) {
+Action Command_CreateScrim(int client, int args) {
   if (g_GameState != Get5State_None) {
     ReplyToCommand(client, "Cannot create a match when a match is already loaded");
     return Plugin_Handled;
@@ -1191,7 +1181,7 @@ public Action Command_CreateScrim(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_Ringer(int client, int args) {
+Action Command_Ringer(int client, int args) {
   if (g_GameState == Get5State_None || !g_InScrimMode) {
     ReplyToCommand(client, "This command can only be used in scrim mode.");
     return Plugin_Handled;
@@ -1287,7 +1277,7 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
   }
 }
 
-public void CheckTeamNameStatus(Get5Team team) {
+void CheckTeamNameStatus(Get5Team team) {
   if (StrEqual(g_TeamNames[team], "") && team != Get5Team_Spec) {
     LOOP_CLIENTS(i) {
       if (IsAuthedPlayer(i)) {
@@ -1310,7 +1300,7 @@ void ExecCfg(ConVar cvar) {
   CreateTimer(0.1, Timer_ExecMatchConfig, _, TIMER_FLAG_NO_MAPCHANGE);
 }
 
-public Action Timer_ExecMatchConfig(Handle timer) {
+static Action Timer_ExecMatchConfig(Handle timer) {
   // When we load config files using ServerCommand("exec") above, which is async, we want match config cvars to always
   // override.
   ExecuteMatchConfigCvars();

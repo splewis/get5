@@ -1,7 +1,7 @@
 // TODO: Also try to write the original match config file.
 // Also consider the last K lines from the most recent errors_* file?
 
-public Action Command_DebugInfo(int client, int args) {
+Action Command_DebugInfo(int client, int args) {
   char path[PLATFORM_MAX_PATH + 1];
 
   if (args == 0 || !GetCmdArg(1, path, sizeof(path))) {

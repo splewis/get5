@@ -2,7 +2,7 @@
 #define TEMP_VALVE_BACKUP_PATTERN "get5_temp_backup%d.txt"
 #define TEMP_VALVE_NAMES_FILE_PATTERN "get5_names%d.txt"
 
-public Action Command_LoadBackup(int client, int args) {
+Action Command_LoadBackup(int client, int args) {
   if (!g_BackupSystemEnabledCvar.BoolValue) {
     ReplyToCommand(client, "The backup system is disabled.");
     return Plugin_Handled;
@@ -28,7 +28,7 @@ public Action Command_LoadBackup(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_ListBackups(int client, int args) {
+Action Command_ListBackups(int client, int args) {
   if (!g_BackupSystemEnabledCvar.BoolValue) {
     ReplyToCommand(client, "The backup system is disabled");
     return Plugin_Handled;
@@ -74,7 +74,7 @@ public Action Command_ListBackups(int client, int args) {
   return Plugin_Handled;
 }
 
-bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
+static bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
   KeyValues kv = new KeyValues("Backup");
   if (!kv.ImportFromFile(path)) {
     LogError("Failed to find or read backup file \"%s\"", path);
@@ -151,7 +151,85 @@ bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
   return true;
 }
 
-void WriteBackupStructure(const char[] path) {
+void WriteBackup() {
+  if (!g_BackupSystemEnabledCvar.BoolValue || IsDoingRestoreOrMapChange()) {
+    return;
+  }
+
+  if (g_GameState != Get5State_Warmup
+    && g_GameState != Get5State_KnifeRound
+    && g_GameState != Get5State_Live) {
+    LogDebug("Not writing backup for game state %d.", g_GameState);
+    return; // Only backup post-veto warmup, knife and live.
+  }
+
+  char folder[PLATFORM_MAX_PATH];
+  g_RoundBackupPathCvar.GetString(folder, sizeof(folder));
+  ReplaceString(folder, sizeof(folder), "{MATCHID}", g_MatchID);
+
+  int backupFolderLength = strlen(folder);
+  if (backupFolderLength > 0 &&
+      (folder[0] == '/' || folder[0] == '.' || folder[backupFolderLength - 1] != '/' ||
+       StrContains(folder, "//") != -1)) {
+    LogError(
+        "get5_backup_path must end with a slash and must not start with a slash or dot. It will be reset to an empty string! Current value: %s",
+        folder);
+    folder = "";
+    g_RoundBackupPathCvar.SetString(folder, false, false);
+  } else {
+    CreateBackupFolderStructure(folder);
+  }
+
+  char path[PLATFORM_MAX_PATH];
+  if (g_GameState == Get5State_Live) {
+    Format(path, sizeof(path), "%sget5_backup_match%s_map%d_round%d.cfg", folder, g_MatchID,
+           g_MapNumber, g_RoundNumber);
+  } else {
+    Format(path, sizeof(path), "%sget5_backup_match%s_map%d_prelive.cfg", folder, g_MatchID,
+           g_MapNumber);
+  }
+  LogDebug("Writing backup to %s", path);
+  WriteBackupStructure(path);
+  g_LastGet5BackupCvar.SetString(path);
+}
+
+static bool CreateDirectoryWithPermissions(const char[] directory) {
+  LogDebug("Creating directory: %s", directory);
+  return CreateDirectory(directory,  // sets 777 permissions.
+                         FPERM_U_READ | FPERM_U_WRITE | FPERM_U_EXEC | FPERM_G_READ |
+                             FPERM_G_WRITE | FPERM_G_EXEC | FPERM_O_READ | FPERM_O_WRITE |
+                             FPERM_O_EXEC);
+}
+
+static bool CreateBackupFolderStructure(const char[] path) {
+  if (strlen(path) == 0 || DirExists(path)) {
+    return true;
+  }
+
+  LogDebug("Creating backup directory %s because it does not exist.", path);
+  char folders[16][PLATFORM_MAX_PATH];  // {folder1, folder2, etc}
+  char fullFolderPath[PLATFORM_MAX_PATH] =
+      "";  // initially empty, but we append every time a folder is created/verified
+  char currentFolder[PLATFORM_MAX_PATH];  // shorthand for folders[i]
+
+  ExplodeString(path, "/", folders, sizeof(folders), PLATFORM_MAX_PATH, true);
+  for (int i = 0; i < sizeof(folders); i++) {
+    currentFolder = folders[i];
+    if (strlen(currentFolder) ==
+        0) {  // as the loop is a fixed size, we stop when there are no more pieces.
+      break;
+    }
+    // Append the current folder to the full path
+    Format(fullFolderPath, sizeof(fullFolderPath), "%s%s/", fullFolderPath, currentFolder);
+    if (!DirExists(fullFolderPath) && !CreateDirectoryWithPermissions(fullFolderPath)) {
+      LogError("Failed to create or verify existence of directory: %s", fullFolderPath);
+      return false;
+    }
+  }
+  return true;
+}
+
+static void WriteBackupStructure(const char[] path) {
   KeyValues kv = new KeyValues("Backup");
   char timeString[PLATFORM_MAX_PATH];
   FormatTime(timeString, sizeof(timeString), "%Y-%m-%d %H:%M:%S", GetTime());
@@ -413,7 +491,7 @@ void RestoreGet5Backup(bool restartRecording = true) {
   PauseGame(Get5Team_None, Get5PauseType_Backup);
   g_DoingBackupRestoreNow = true; // reset after the backup has completed, suppresses various events and hooks until then.
   g_WaitingForRoundBackup = false;
-  CreateTimer(1.5, Time_StartRestore);
+  CreateTimer(1.5, Timer_StartRestore);
   if (restartRecording) {
     // Since a backup command forces the recording to stop, we restart it here once the backup has completed.
     // We have to do this on a delay, as when loading from a live game, the backup will already be recording and must
@@ -422,14 +500,14 @@ void RestoreGet5Backup(bool restartRecording = true) {
   }
 }
 
-public Action Timer_StartRecordingAfterBackup(Handle timer) {
+static Action Timer_StartRecordingAfterBackup(Handle timer) {
   if (g_GameState != Get5State_Live) {
     return;
   }
   StartRecording();
 }
 
-public Action Time_StartRestore(Handle timer) {
+static Action Timer_StartRestore(Handle timer) {
   ChangeState(Get5State_Live);
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
@@ -450,7 +528,7 @@ public Action Time_StartRestore(Handle timer) {
   delete kv;
 }
 
-public Action Timer_FinishBackup(Handle timer) {
+static Action Timer_FinishBackup(Handle timer) {
   // This ensures that coaches are moved to their slots.
   LOOP_CLIENTS(i) {
     if (IsPlayer(i)) {

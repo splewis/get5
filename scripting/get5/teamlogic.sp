@@ -105,7 +105,7 @@ void SetClientCoaching(int client, Get5Side side) {
   Get5_MessageToAll("%t", "PlayerIsCoachingTeam", formattedPlayerName, g_FormattedTeamNames[team]);
 }
 
-public void CoachingChangedHook(ConVar convar, const char[] oldValue, const char[] newValue) {
+void CoachingChangedHook(ConVar convar, const char[] oldValue, const char[] newValue) {
   if (g_GameState == Get5State_None) {
     return;
   }
@@ -120,7 +120,7 @@ public void CoachingChangedHook(ConVar convar, const char[] oldValue, const char
   }
 }
 
-public Action Command_SmCoach(int client, int args) {
+Action Command_SmCoach(int client, int args) {
   if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
@@ -213,7 +213,7 @@ static void MoveCoachToPlayerInConfig(const int client, const Get5Team team) {
   }
 }
 
-public Action Command_Coach(int client, const char[] command, int argc) {
+Action Command_Coach(int client, const char[] command, int argc) {
   if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
@@ -316,7 +316,11 @@ int CountPlayersOnTeam(Get5Team team, int exclude = -1) {
   return count;
 }
 
-Get5Side GetClientCoachingSide(int client) {
+bool IsClientCoaching(int client) {
+  return GetClientCoachingSide(client) != Get5Side_None;
+}
+
+static Get5Side GetClientCoachingSide(int client) {
   if (GetClientTeam(client) != CS_TEAM_SPECTATOR) {
    return Get5Side_None;
   }
@@ -369,11 +373,11 @@ ArrayList GetTeamCoaches(Get5Team team) {
   return g_TeamCoaches[team];
 }
 
-bool IsAuthOnTeam(const char[] auth, Get5Team team) {
+static bool IsAuthOnTeam(const char[] auth, Get5Team team) {
   return GetTeamAuths(team).FindString(auth) >= 0;
 }
 
-bool IsAuthOnTeamCoach(const char[] auth, Get5Team team) {
+static bool IsAuthOnTeamCoach(const char[] auth, Get5Team team) {
   return GetTeamCoaches(team).FindString(auth) >= 0;
 }
 

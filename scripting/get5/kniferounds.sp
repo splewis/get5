@@ -1,4 +1,4 @@
-public Action StartKnifeRound(Handle timer) {
+Action StartKnifeRound(Handle timer) {
   g_HasKnifeRoundStarted = false;
 
   // Removes ready tags
@@ -15,7 +15,7 @@ public Action StartKnifeRound(Handle timer) {
   return Plugin_Handled;
 }
 
-public Action Timer_AnnounceKnife(Handle timer) {
+static Action Timer_AnnounceKnife(Handle timer) {
   g_KnifeCountdownTimer = INVALID_HANDLE;
   AnnouncePhaseChange("{GREEN}%t", "KnifeInfoMessage");
 
@@ -67,7 +67,7 @@ static void PerformSideSwap(bool swap) {
   SetMatchTeamCvars();
 }
 
-public void EndKnifeRound(bool swap) {
+static void EndKnifeRound(bool swap) {
   PerformSideSwap(swap);
 
   Get5KnifeRoundWonEvent knifeEvent =
@@ -97,7 +97,7 @@ static bool AwaitingKnifeDecision(int client) {
   return waiting && (onWinningTeam || admin);
 }
 
-public Action Command_Stay(int client, int args) {
+Action Command_Stay(int client, int args) {
   if (AwaitingKnifeDecision(client)) {
     Get5_MessageToAll("%t", "TeamDecidedToStayInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
@@ -106,7 +106,7 @@ public Action Command_Stay(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_Swap(int client, int args) {
+Action Command_Swap(int client, int args) {
   if (AwaitingKnifeDecision(client)) {
     Get5_MessageToAll("%t", "TeamDecidedToSwapInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
@@ -118,7 +118,7 @@ public Action Command_Swap(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_Ct(int client, int args) {
+Action Command_Ct(int client, int args) {
   if (IsPlayer(client)) {
     if (GetClientTeam(client) == CS_TEAM_CT)
       FakeClientCommand(client, "sm_stay");
@@ -133,7 +133,7 @@ public Action Command_Ct(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_T(int client, int args) {
+Action Command_T(int client, int args) {
   if (IsPlayer(client)) {
     if (GetClientTeam(client) == CS_TEAM_T)
       FakeClientCommand(client, "sm_stay");
@@ -143,7 +143,7 @@ public Action Command_T(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Timer_ForceKnifeDecision(Handle timer) {
+Action Timer_ForceKnifeDecision(Handle timer) {
   g_KnifeDecisionTimer = INVALID_HANDLE;
   if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     Get5_MessageToAll("%t", "TeamLostTimeToDecideInfoMessage",

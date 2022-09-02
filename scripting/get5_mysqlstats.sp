@@ -115,7 +115,7 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
   }
 }
 
-public void MatchInitCallback(Database dbObj, DBResultSet results, const char[] error, any data) {
+static void MatchInitCallback(Database dbObj, DBResultSet results, const char[] error, any data) {
   if (results == null) {
     LogError("Failed to get Match ID from match init query: %s.", error);
     g_DisableStats = true;
@@ -157,7 +157,7 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-public void UpdateRoundStats(const char[] matchId, const int mapNumber) {
+static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
   // Update team scores
   int t1score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_1));
   int t2score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_2));
@@ -223,7 +223,7 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-public void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv,
+static void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv,
                     const Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
@@ -374,7 +374,7 @@ public void Get5_OnSeriesResult(const Get5SeriesResultEvent event) {
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-public int SQLErrorCheckCallback(Handle owner, Handle hndl, const char[] error, int data) {
+static int SQLErrorCheckCallback(Handle owner, Handle hndl, const char[] error, int data) {
   if (!StrEqual("", error)) {
     LogError("Last Connect SQL Error: %s", error);
   }

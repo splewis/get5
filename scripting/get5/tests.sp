@@ -1,9 +1,9 @@
-public Action Command_Test(int args) {
+Action Command_Test(int args) {
   Get5_Test();
   return Plugin_Handled;
 }
 
-public void Get5_Test() {
+static void Get5_Test() {
   if (g_GameState != Get5State_None) {
     g_GameState = Get5State_None;
   }

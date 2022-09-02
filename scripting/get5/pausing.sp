@@ -1,10 +1,10 @@
-public bool PauseableGameState() {
+static bool PauseableGameState() {
   return (g_GameState == Get5State_KnifeRound ||
           g_GameState == Get5State_WaitingForKnifeRoundDecision || g_GameState == Get5State_Live ||
           g_GameState == Get5State_GoingLive);
 }
 
-public void PauseGame(Get5Team team, Get5PauseType type) {
+void PauseGame(Get5Team team, Get5PauseType type) {
   if (type == Get5PauseType_None) {
     LogError("PauseGame() called with Get5PauseType_None. Please call UnpauseGame() instead.");
     UnpauseGame(team);
@@ -36,11 +36,11 @@ public void PauseGame(Get5Team team, Get5PauseType type) {
   CreateTimer(0.1, Timer_ResetPauseRestriction);
 }
 
-public Action Timer_ResetPauseRestriction(Handle timer, int data) {
+static Action Timer_ResetPauseRestriction(Handle timer, int data) {
   g_IsChangingPauseState = false;
 }
 
-stock void UnpauseGame(Get5Team team) {
+void UnpauseGame(Get5Team team) {
   Get5MatchUnpausedEvent event =
       new Get5MatchUnpausedEvent(g_MatchID, g_MapNumber, team, g_PauseType);
 
@@ -60,7 +60,7 @@ stock void UnpauseGame(Get5Team team) {
   CreateTimer(0.1, Timer_ResetPauseRestriction);
 }
 
-public Action Command_PauseOrUnpauseMatch(int client, const char[] command, int argc) {
+Action Command_PauseOrUnpauseMatch(int client, const char[] command, int argc) {
   if (g_GameState == Get5State_None || g_IsChangingPauseState) {
     return Plugin_Continue;
   }
@@ -69,7 +69,7 @@ public Action Command_PauseOrUnpauseMatch(int client, const char[] command, int 
   return Plugin_Stop;
 }
 
-public Action Command_TechPause(int client, int args) {
+Action Command_TechPause(int client, int args) {
   if (client == 0) {
     // Redirect admin use of sm_tech to regular pause. We only have one type of admin pause.
     return Command_Pause(client, args);
@@ -133,7 +133,7 @@ public Action Command_TechPause(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_Pause(int client, int args) {
+Action Command_Pause(int client, int args) {
   if (client == 0) {
     PauseGame(Get5Team_None, Get5PauseType_Admin);
     Get5_MessageToAll("%t", "AdminForcePauseInfoMessage");
@@ -198,7 +198,7 @@ public Action Command_Pause(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_Unpause(int client, int args) {
+Action Command_Unpause(int client, int args) {
   if (!IsPaused()) {
     // Game is not paused; ignore command.
     return Plugin_Handled;
@@ -262,7 +262,7 @@ public Action Command_Unpause(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Timer_PauseTimeCheck(Handle timer) {
+static Action Timer_PauseTimeCheck(Handle timer) {
   if (g_PauseType == Get5PauseType_None || !IsPaused()) {
     LogDebug("Stopping pause timer as game is not paused.");
     return Plugin_Stop;

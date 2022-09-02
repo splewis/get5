@@ -1,4 +1,4 @@
-public void Stats_PluginStart() {
+void Stats_PluginStart() {
   HookEvent("bomb_defused", Stats_BombDefusedEvent);
   HookEvent("bomb_exploded", Stats_BombExplodedEvent);
   HookEvent("bomb_planted", Stats_BombPlantedEvent);
@@ -16,7 +16,7 @@ public void Stats_PluginStart() {
   HookEvent("smokegrenade_detonate", Stats_SmokeGrenadeDetonateEvent);
 }
 
-public Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, float &damage,
+static Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, float &damage,
                           int &damagetype) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
@@ -121,7 +121,7 @@ public Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, floa
   return Plugin_Continue;
 }
 
-public Get5Player GetPlayerObject(int client) {
+Get5Player GetPlayerObject(int client) {
   if (client == 0) {
     return new Get5Player(0, "", view_as<Get5Side>(CS_TEAM_NONE), "Console", false);
   }
@@ -151,19 +151,19 @@ public Get5Player GetPlayerObject(int client) {
   }
 }
 
-public void Stats_HookDamageForClient(int client) {
+void Stats_HookDamageForClient(int client) {
   SDKHook(client, SDKHook_OnTakeDamageAlive, HandlePlayerDamage);
   LogDebug("Hooked client %d to SDKHook_OnTakeDamageAlive", client);
 }
 
-public void Stats_Reset() {
+void Stats_Reset() {
   if (g_StatsKv != null) {
     delete g_StatsKv;
   }
   g_StatsKv = new KeyValues("Stats");
 }
 
-public void Stats_InitSeries() {
+void Stats_InitSeries() {
   Stats_Reset();
   char seriesType[32];
   Format(seriesType, sizeof(seriesType), "bo%d", g_NumberOfMapsInSeries);
@@ -173,7 +173,7 @@ public void Stats_InitSeries() {
   DumpToFile();
 }
 
-public void Stats_ResetRoundValues() {
+void Stats_ResetRoundValues() {
   g_FirstKillDone = false;
   g_FirstDeathDone = false;
   g_SetTeamClutching[CS_TEAM_CT] = false;
@@ -184,7 +184,7 @@ public void Stats_ResetRoundValues() {
   }
 }
 
-public void Stats_ResetClientRoundValues(int client) {
+void Stats_ResetClientRoundValues(int client) {
   g_RoundKills[client] = 0;
   g_RoundClutchingEnemyCount[client] = 0;
   g_PlayerKilledBy[client] = -1;
@@ -201,7 +201,7 @@ public void Stats_ResetClientRoundValues(int client) {
   }
 }
 
-public void Stats_ResetGrenadeContainers() {
+void Stats_ResetGrenadeContainers() {
   LogDebug("Clearing out any lingering events in grenade StringMaps...");
 
   // If any molotovs were active on the previous round when it ended (or on halftime/game end), we
@@ -247,7 +247,7 @@ public void Stats_ResetGrenadeContainers() {
   g_LatestMolotovToExtinguishBySmoke = 0;
 }
 
-public void Stats_RoundStart() {
+void Stats_RoundStart() {
   LOOP_CLIENTS(i) {
     if (IsPlayer(i)) {
       // Ensures that each player has zero-filled stats on freeze-time end.
@@ -269,7 +269,7 @@ public void Stats_RoundStart() {
   }
 }
 
-public void Stats_RoundEnd(int csTeamWinner) {
+void Stats_RoundEnd(int csTeamWinner) {
   // Update team scores.
   GoToMap();
   char mapName[PLATFORM_MAX_PATH];
@@ -335,7 +335,7 @@ public void Stats_RoundEnd(int csTeamWinner) {
   }
 }
 
-public void Stats_UpdateMapScore(Get5Team winner) {
+void Stats_UpdateMapScore(Get5Team winner) {
   GoToMap();
   char winnerString[16];
   GetTeamString(winner, winnerString, sizeof(winnerString));
@@ -351,18 +351,18 @@ void Stats_SetDemoName(const char[] demoFileName) {
   DumpToFile();
 }
 
-public void Stats_Forfeit() {
+void Stats_Forfeit() {
   g_StatsKv.SetNum(STAT_SERIES_FORFEIT, 1);
 }
 
-public void Stats_SeriesEnd(Get5Team winner) {
+void Stats_SeriesEnd(Get5Team winner) {
   char winnerString[16];
   GetTeamString(winner, winnerString, sizeof(winnerString));
   g_StatsKv.SetString(STAT_SERIESWINNER, winnerString);
   DumpToFile();
 }
 
-public void EndMolotovEvent(const char[] molotovKey) {
+static void EndMolotovEvent(const char[] molotovKey) {
   // Since a molotov can be active when the round is ending, we need to grab the information from it
   // on both RoundStart
   // **and** on its expire event.
@@ -383,7 +383,7 @@ public void EndMolotovEvent(const char[] molotovKey) {
   }
 }
 
-public void EndHEEvent(const char[] grenadeKey) {
+static void EndHEEvent(const char[] grenadeKey) {
   Get5HEDetonatedEvent heObject;
   if (g_HEGrenadeContainer.GetValue(grenadeKey, heObject)) {
     if (IsDoingRestoreOrMapChange()) {
@@ -399,7 +399,7 @@ public void EndHEEvent(const char[] grenadeKey) {
   }
 }
 
-public void EndFlashbangEvent(const char[] flashKey) {
+static void EndFlashbangEvent(const char[] flashKey) {
   Get5FlashbangDetonatedEvent flashEvent;
   if (g_FlashbangContainer.GetValue(flashKey, flashEvent)) {
     if (IsDoingRestoreOrMapChange()) {
@@ -415,7 +415,7 @@ public void EndFlashbangEvent(const char[] flashKey) {
   }
 }
 
-public Action Stats_DecoyStartedEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_DecoyStartedEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -438,7 +438,7 @@ public Action Stats_DecoyStartedEvent(Event event, const char[] name, bool dontB
   EventLogger_LogAndDeleteEvent(decoyObject);
 }
 
-public Action Stats_SmokeGrenadeDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_SmokeGrenadeDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -464,7 +464,7 @@ public Action Stats_SmokeGrenadeDetonateEvent(Event event, const char[] name, bo
   g_LatestMolotovToExtinguishBySmoke = 0;
 }
 
-public Action Stats_MolotovStartBurnEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_MolotovStartBurnEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -490,7 +490,7 @@ public Action Stats_MolotovStartBurnEvent(Event event, const char[] name, bool d
       true);
 }
 
-public Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -504,7 +504,7 @@ public Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, boo
   LogDebug("Molotov Event: %s, %d", name, entityId);
 }
 
-public Action Stats_MolotovEndedEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_MolotovEndedEvent(Event event, const char[] name, bool dontBroadcast) {
   // No backup check; the event is deleted in EndMolotovEvent to prevent leaks, as this function works like the
   // the HE/flash timer callbacks which also do not check for backup state.
   if (g_GameState != Get5State_Live) {
@@ -521,7 +521,7 @@ public Action Stats_MolotovEndedEvent(Event event, const char[] name, bool dontB
   EndMolotovEvent(molotovKey);
 }
 
-public Action Stats_MolotovDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_MolotovDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -539,7 +539,7 @@ public Action Stats_MolotovDetonateEvent(Event event, const char[] name, bool do
   g_LatestUserIdToDetonateMolotov = attacker;
 }
 
-public Action Stats_FlashbangDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_FlashbangDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -562,7 +562,7 @@ public Action Stats_FlashbangDetonateEvent(Event event, const char[] name, bool 
   CreateTimer(0.001, Timer_HandleFlashbang, entityId, TIMER_FLAG_NO_MAPCHANGE);
 }
 
-public Action Timer_HandleFlashbang(Handle timer, int entityId) {
+static Action Timer_HandleFlashbang(Handle timer, int entityId) {
   char flashKey[16];
   IntToString(entityId, flashKey, sizeof(flashKey));
 
@@ -571,7 +571,7 @@ public Action Timer_HandleFlashbang(Handle timer, int entityId) {
   return Plugin_Handled;
 }
 
-public Action Stats_HEGrenadeDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_HEGrenadeDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -594,7 +594,7 @@ public Action Stats_HEGrenadeDetonateEvent(Event event, const char[] name, bool 
   CreateTimer(0.001, Timer_HandleHEGrenade, entityId, TIMER_FLAG_NO_MAPCHANGE);
 }
 
-public Action Timer_HandleHEGrenade(Handle timer, int entityId) {
+static Action Timer_HandleHEGrenade(Handle timer, int entityId) {
   char grenadeKey[16];
   IntToString(entityId, grenadeKey, sizeof(grenadeKey));
 
@@ -603,7 +603,7 @@ public Action Timer_HandleHEGrenade(Handle timer, int entityId) {
   return Plugin_Handled;
 }
 
-public Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -630,7 +630,7 @@ public Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dont
   EventLogger_LogAndDeleteEvent(grenadeEvent);
 }
 
-public Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBroadcast) {
   if (IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -794,7 +794,7 @@ static void UpdateTradeStat(int attacker, int victim) {
   }
 }
 
-public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -821,7 +821,7 @@ public Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBr
   }
 }
 
-public Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -852,7 +852,7 @@ public Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBr
   }
 }
 
-public Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -869,7 +869,7 @@ public Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontB
   EventLogger_LogAndDeleteEvent(bombExplodedEvent);
 }
 
-public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -909,7 +909,7 @@ public Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBr
   }
 }
 
-public Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroadcast) {
+static Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return;
   }
@@ -1009,7 +1009,7 @@ static void InitPlayerStats(int client, Get5Side side) {
   GoBackFromPlayer();
 }
 
-public int AddToPlayerStat(int client, const char[] field, int delta) {
+int AddToPlayerStat(int client, const char[] field, int delta) {
   if (IsFakeClient(client)) {
     return 0;
   }
@@ -1086,18 +1086,18 @@ static int GetClutchingClient(int csTeam) {
   }
 }
 
-public void DumpToFile() {
+static void DumpToFile() {
   char path[PLATFORM_MAX_PATH + 1];
   if (FormatCvarString(g_StatsPathFormatCvar, path, sizeof(path))) {
     DumpToFilePath(path);
   }
 }
 
-public bool DumpToFilePath(const char[] path) {
+bool DumpToFilePath(const char[] path) {
   return IsJSONPath(path) ? DumpToJSONFile(path) : g_StatsKv.ExportToFile(path);
 }
 
-public bool DumpToJSONFile(const char[] path) {
+static bool DumpToJSONFile(const char[] path) {
   g_StatsKv.Rewind();
   g_StatsKv.GotoFirstSubKey(false);
   JSON_Object stats = EncodeKeyValue(g_StatsKv);
@@ -1122,7 +1122,7 @@ public bool DumpToJSONFile(const char[] path) {
   return true;
 }
 
-JSON_Object EncodeKeyValue(KeyValues kv) {
+static JSON_Object EncodeKeyValue(KeyValues kv) {
   char keyBuffer[256];
   char valBuffer[256];
   char sectionName[256];
@@ -1155,7 +1155,7 @@ JSON_Object EncodeKeyValue(KeyValues kv) {
   return json_kv;
 }
 
-public void PrintDamageInfo(int client) {
+void PrintDamageInfo(int client) {
   if (!IsPlayer(client)) {
     return;
   }

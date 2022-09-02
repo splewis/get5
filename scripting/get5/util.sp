@@ -204,10 +204,6 @@ stock void RestartGame(int delay = 1) {
   ServerCommand("mp_restartgame %d", delay);
 }
 
-stock bool IsClientCoaching(int client) {
-  return GetClientCoachingSide(client) != Get5Side_None;
-}
-
 stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
                        const char[] logo = "", const char[] matchstat = "", int series_score = 0) {
   int team_int = (csTeam == CS_TEAM_CT) ? 1 : 2;
@@ -468,7 +464,7 @@ stock bool IsPlayerTeam(Get5Team team) {
   return team == Get5Team_1 || team == Get5Team_2;
 }
 
-public Get5Team VetoFirstFromString(const char[] str) {
+stock Get5Team VetoFirstFromString(const char[] str) {
   if (StrEqual(str, "random", false)) {
     return view_as<Get5Team>(GetRandomInt(0, 1));
   } else if (StrEqual(str, "team2", false)) {
@@ -530,7 +526,7 @@ stock void GetTeamString(Get5Team team, char[] buffer, int len) {
   }
 }
 
-public MatchSideType MatchSideTypeFromString(const char[] str) {
+stock MatchSideType MatchSideTypeFromString(const char[] str) {
   if (StrEqual(str, "normal", false) || StrEqual(str, "standard", false)) {
     return MatchSideType_Standard;
   } else if (StrEqual(str, "never_knife", false)) {
@@ -540,7 +536,7 @@ public MatchSideType MatchSideTypeFromString(const char[] str) {
   }
 }
 
-public void MatchSideTypeToString(MatchSideType type, char[] str, int len) {
+stock void MatchSideTypeToString(MatchSideType type, char[] str, int len) {
   if (type == MatchSideType_Standard) {
     Format(str, len, "standard");
   } else if (type == MatchSideType_NeverKnife) {
@@ -648,7 +644,7 @@ stock SideChoice SideTypeFromString(const char[] input) {
 
 // Deletes a file if it exists. Returns true if the
 // file existed AND there was an error deleting it.
-public bool DeleteFileIfExists(const char[] path) {
+stock bool DeleteFileIfExists(const char[] path) {
   if (FileExists(path)) {
     if (!DeleteFile(path)) {
       LogError("Failed to delete file %s", path);
@@ -659,7 +655,7 @@ public bool DeleteFileIfExists(const char[] path) {
   return true;
 }
 
-public bool IsJSONPath(const char[] path) {
+stock bool IsJSONPath(const char[] path) {
   int length = strlen(path);
   if (length >= 5) {
     return strcmp(path[length - 5], ".json", false) == 0;
@@ -668,11 +664,11 @@ public bool IsJSONPath(const char[] path) {
   }
 }
 
-public int GetMilliSecondsPassedSince(float timestamp) {
+stock int GetMilliSecondsPassedSince(float timestamp) {
   return RoundToFloor((GetEngineTime() - timestamp) * 1000);
 }
 
-public int GetRoundsPlayed() {
+stock int GetRoundsPlayed() {
   return GameRules_GetProp("m_totalRoundsPlayed");
 }
 

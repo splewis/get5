@@ -19,7 +19,7 @@ void StartGoingLive() {
   CreateTimer(1.0, Timer_GoToLiveAfterWarmupCountdown, _, TIMER_FLAG_NO_MAPCHANGE);
 }
 
-public Action Timer_GoToLiveAfterWarmupCountdown(Handle timer) {
+static Action Timer_GoToLiveAfterWarmupCountdown(Handle timer) {
   if (g_GameState != Get5State_GoingLive) {
     return Plugin_Handled; // super defensive race-condition check.
   }
@@ -36,7 +36,7 @@ public Action Timer_GoToLiveAfterWarmupCountdown(Handle timer) {
   return Plugin_Handled;
 }
 
-public Action MatchLive(Handle timer) {
+Action Timer_MatchLive(Handle timer) {
   if (g_GameState != Get5State_Live) {
     return Plugin_Handled;
   }

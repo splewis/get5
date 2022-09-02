@@ -2,27 +2,27 @@
  * Ready System
  */
 
-public void ResetReadyStatus() {
+void ResetReadyStatus() {
   SetAllTeamsForcedReady(false);
   SetAllClientsReady(false);
 }
 
-public bool IsReadyGameState() {
+static bool IsReadyGameState() {
   return (g_GameState == Get5State_PreVeto || g_GameState == Get5State_Warmup) &&
          !g_MapChangePending;
 }
 
 // Client ready status
 
-public bool IsClientReady(int client) {
+static bool IsClientReady(int client) {
   return g_ClientReady[client] == true;
 }
 
-public void SetClientReady(int client, bool ready) {
+void SetClientReady(int client, bool ready) {
   g_ClientReady[client] = ready;
 }
 
-public void SetAllClientsReady(bool ready) {
+static void SetAllClientsReady(bool ready) {
   LOOP_CLIENTS(i) {
     SetClientReady(i, ready);
   }
@@ -30,15 +30,15 @@ public void SetAllClientsReady(bool ready) {
 
 // Team ready override
 
-public bool IsTeamForcedReady(Get5Team team) {
+static bool IsTeamForcedReady(Get5Team team) {
   return g_TeamReadyOverride[team] == true;
 }
 
-public void SetTeamForcedReady(Get5Team team, bool ready) {
+static void SetTeamForcedReady(Get5Team team, bool ready) {
   g_TeamReadyOverride[team] = ready;
 }
 
-public void SetAllTeamsForcedReady(bool ready) {
+static void SetAllTeamsForcedReady(bool ready) {
   LOOP_TEAMS(team) {
     SetTeamForcedReady(team, ready);
   }
@@ -46,15 +46,15 @@ public void SetAllTeamsForcedReady(bool ready) {
 
 // Team ready status
 
-public bool IsTeamsReady() {
+bool IsTeamsReady() {
   return IsTeamReady(Get5Team_1) && IsTeamReady(Get5Team_2);
 }
 
-public bool IsSpectatorsReady() {
+bool IsSpectatorsReady() {
   return IsTeamReady(Get5Team_Spec);
 }
 
-public bool IsTeamReady(Get5Team team) {
+bool IsTeamReady(Get5Team team) {
   if (g_GameState == Get5State_Live) {
     return true;
   }
@@ -83,7 +83,7 @@ public bool IsTeamReady(Get5Team team) {
   return false;
 }
 
-public int GetTeamReadyCount(Get5Team team) {
+static int GetTeamReadyCount(Get5Team team) {
   int readyCount = 0;
   LOOP_CLIENTS(i) {
     if (IsPlayer(i) && GetClientMatchTeam(i) == team && !IsClientCoaching(i) && IsClientReady(i)) {
@@ -93,7 +93,7 @@ public int GetTeamReadyCount(Get5Team team) {
   return readyCount;
 }
 
-public int GetTeamPlayerCount(Get5Team team) {
+static int GetTeamPlayerCount(Get5Team team) {
   int playerCount = 0;
   LOOP_CLIENTS(i) {
     if (IsPlayer(i) && GetClientMatchTeam(i) == team && !IsClientCoaching(i)) {
@@ -103,7 +103,7 @@ public int GetTeamPlayerCount(Get5Team team) {
   return playerCount;
 }
 
-public int GetTeamMinReady(Get5Team team) {
+static int GetTeamMinReady(Get5Team team) {
   if (team == Get5Team_1 || team == Get5Team_2) {
     return g_MinPlayersToReady;
   } else if (team == Get5Team_Spec) {
@@ -113,7 +113,7 @@ public int GetTeamMinReady(Get5Team team) {
   }
 }
 
-public int GetPlayersPerTeam(Get5Team team) {
+static int GetPlayersPerTeam(Get5Team team) {
   if (team == Get5Team_1 || team == Get5Team_2) {
     return g_PlayersPerTeam;
   } else if (team == Get5Team_Spec) {
@@ -126,7 +126,7 @@ public int GetPlayersPerTeam(Get5Team team) {
 
 // Admin commands
 
-public Action Command_AdminForceReady(int client, int args) {
+Action Command_AdminForceReady(int client, int args) {
   if (!IsReadyGameState()) {
     return Plugin_Handled;
   }
@@ -141,7 +141,7 @@ public Action Command_AdminForceReady(int client, int args) {
 
 // Client commands
 // Re-used to automatically ready players on warmup-activity, hence the helper-method.
-public void HandleReadyCommand(int client, bool autoReady) {
+void HandleReadyCommand(int client, bool autoReady) {
   if (!IsReadyGameState()) {
     return;
   }
@@ -165,12 +165,12 @@ public void HandleReadyCommand(int client, bool autoReady) {
   }
 }
 
-public Action Command_Ready(int client, int args) {
+Action Command_Ready(int client, int args) {
   HandleReadyCommand(client, false);
   return Plugin_Handled;
 }
 
-public Action Command_NotReady(int client, int args) {
+Action Command_NotReady(int client, int args) {
   Get5Team team = GetClientMatchTeam(client);
   if (!IsReadyGameState() || team == Get5Team_None || !IsClientReady(client)) {
     return Plugin_Handled;
@@ -198,7 +198,7 @@ public Action Command_NotReady(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_ForceReadyClient(int client, int args) {
+Action Command_ForceReadyClient(int client, int args) {
   Get5Team team = GetClientMatchTeam(client);
   if (!IsReadyGameState() || team == Get5Team_None || IsTeamReady(team)) {
     return Plugin_Handled;
@@ -255,13 +255,13 @@ static void HandleReadyMessage(Get5Team team) {
   }
 }
 
-public void MissingPlayerInfoMessage() {
+void MissingPlayerInfoMessage() {
   MissingPlayerInfoMessageTeam(Get5Team_1);
   MissingPlayerInfoMessageTeam(Get5Team_2);
   MissingPlayerInfoMessageTeam(Get5Team_Spec);
 }
 
-public void MissingPlayerInfoMessageTeam(Get5Team team) {
+static void MissingPlayerInfoMessageTeam(Get5Team team) {
   if (IsTeamForcedReady(team)) {
     return;
   }
@@ -284,7 +284,7 @@ public void MissingPlayerInfoMessageTeam(Get5Team team) {
 
 // Helpers
 
-public void UpdateClanTags() {
+void UpdateClanTags() {
   if (!g_SetClientClanTagCvar.BoolValue) {
     LogDebug("Not setting client clan tags because get5_set_client_clan_tags is 0");
     return;

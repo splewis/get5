@@ -74,7 +74,7 @@ static void ReadDemoDataPack(DataPack pack, char[] matchId, const int matchIdLen
   delete pack;
 }
 
-public Action Timer_StopGoTVRecording(Handle timer, DataPack pack) {
+static Action Timer_StopGoTVRecording(Handle timer, DataPack pack) {
   char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];
   int mapNumber;
@@ -83,7 +83,7 @@ public Action Timer_StopGoTVRecording(Handle timer, DataPack pack) {
   return Plugin_Handled;
 }
 
-public Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
+static Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
   char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];
   int mapNumber;
@@ -98,7 +98,7 @@ public Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
   return Plugin_Handled;
 }
 
-bool IsTVEnabled() {
+static bool IsTVEnabled() {
   ConVar tvEnabledCvar = FindConVar("tv_enable");
   if (tvEnabledCvar == null) {
     LogError("Failed to get tv_enable cvar");

@@ -10,7 +10,7 @@ Action Command_DebugInfo(int client, int args) {
 
   File f = OpenFile(path, "w");
   if (f == null) {
-    LogError("Failed to open get5_debug.txt for writing");
+    LogError("Failed to open %s for writing", path);
     return Plugin_Handled;
   }
 

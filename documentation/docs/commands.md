@@ -79,11 +79,11 @@ Please note that these are meant to be used by *admins* in console.
 
 ####`get5_loadmatch <filename>` {: #get5_loadmatch }
 
-:   Loads a [match configuration](../match_schema) file (JSON or KeyValue) relative from the `csgo` directory.
+:   Loads a [match configuration](../match_schema) file (JSON or KeyValue) relative to the `csgo` directory.
 
 ####`get5_loadbackup <filename>` {: #get5_loadbackup }
-:   Loads a match backup, relative from the `csgo`
-directory. Only works if the [backup system is enabled](../configuration/#get5_backup_system_enabled). If you define
+:   Loads a match backup, relative to the `csgo`
+directory. Requires that the [backup system is enabled](../configuration/#get5_backup_system_enabled). If you define
 [`get5_backup_path`](../configuration/#get5_backup_path), you must include the path in the filename.
 
 ####`get5_last_backup_file`
@@ -91,7 +91,7 @@ directory. Only works if the [backup system is enabled](../configuration/#get5_b
 time a backup file is written. Empty string if no backup was written.
 
 ####`get5_loadteam <team1|team2|spec> <filename>` {: #get5_loadteam }
-:   Loads a [team section of a match configuration](../match_schema) from a file into a team relative from the `csgo`
+:   Loads a [team section of a match configuration](../match_schema) from a file into a team relative to the `csgo`
 directory. The file must contain a `Get5MatchTeam` object.
 
 ####`get5_loadmatch_url <url>` {: #get5_loadmatch_url }
@@ -140,7 +140,7 @@ from the server immediately.
 ####`get5_status`
 :   Replies with JSON formatted match state (available to all clients).
 
-??? abstract "Definition"
+!!! abstract "Definition"
 
     :warning: Properties marked as `undefined` are only present if a match configuration has been loaded.
 
@@ -173,7 +173,23 @@ from the server immediately.
 
     1. The version of Get5 you are currently running, along with that version's commit. `Example: "0.8.1-8ef7ffa3"`
     2. The current state of the game. The definition lists them in the order they would typically occur.
-    3. Whether the game is currently paused.
+       <br><br>**`none`**<br>No Get5 configuration was loaded and Get5 will only interfere if
+       [`get5_autoload_config`](../configuration/#get5_autoload_config) is defined.
+       <br><br>**`pre_veto`**<br>The game is in warmup, waiting for players to [`!ready`](../commands/#ready) for
+       [vetoing](veto.md).
+       <br><br>**`veto`**<br>The game is in warmup with the [veto](veto.md) phase currently ongoing.
+       <br><br>**`warmup`**<br>The game is in warmup, waiting for players to [`!ready`](../commands/#ready) for either
+       the knife-round or live.
+       <br><br>**`knife`**<br>The knife-round is ongoing.
+       <br><br>**`waiting_for_knife_decision`**<br>The knife-round has ended and a decision to
+       [`!stay`](../commands/#stay) or [`!swap`](../commands/#swap) is pending.
+       <br><br>**`going_live`**<br>The countdown to live has begun.
+       <br><br>**`live`**<br>The game is live.
+       <br><br>**`pending_restore`**<br>A [backup](backup.md) for a different map was loaded and the game is either
+       pending a map change or waiting for users to [`!ready`](../commands/#ready) to restore to a live round.
+       <br><br>**`post_game`**<br>The map has ended and the countdown to the next map is ongoing. This stage will only
+       occur in multi-map series, as single-map matches end immediately.
+    3. Whether the game is currently [paused](pausing.md).
     4. The match configuration file currently loaded. `Example: "addons/sourcemod/configs/get5/match_config.json"`.
     5. The current match ID. Empty string if not defined or `scrim` or `manual` if using
        [`get5_scrim`](../commands/#get5_scrim) or [`get5_creatematch`](../commands/#get5_creatematch).
@@ -247,12 +263,12 @@ See [this article](https://wiki.alliedmods.net/Admin_Commands_(SourceMod)#How_to
     1:43:"Quinn"
     ```
 
-####`get5_debuginfo [file]` {: #get5_debuginfo }
-:   Dumps debug info to a file (`addons/sourcemod/logs/get5_debuginfo.txt` if no file parameter is provided).
-
 ####`get5_dumpstats [file]` {: #get5_dumpstats }
 :   Dumps [player stats](../stats_system/#keyvalue) to a file (`addons/sourcemod/get5_matchstats.cfg` if no file
 parameter is provided).
+
+####`get5_debuginfo [file]` {: #get5_debuginfo }
+:   Dumps debug info to a file (`addons/sourcemod/logs/get5_debuginfo.txt` if no file parameter is provided).
 
 ####`get5_test`
 :   Runs get5 tests. **This should not be used on a live match server since it will reload a match config to test**.

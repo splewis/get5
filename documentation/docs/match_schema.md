@@ -75,8 +75,8 @@ interface Get5Match {
    themselves.<br><br>**`Default: 0`**
 6. _Optional_<br>The minimum number of spectators that must be [`!ready`](../commands/#ready) for the game to
    begin.<br><br>**`Default: 0`**
-7. _Optional_<br>Whether to skip the veto phase. When skipping veto, `map_sides` determines sides, and if `map_sides` is
-   not set, sides are determined by `side_type`.<br><br>**`Default: false`**
+7. _Optional_<br>Whether to skip the [veto](veto.md) phase. When skipping veto, `map_sides` determines sides, and
+   if `map_sides` is not set, sides are determined by `side_type`.<br><br>**`Default: false`**
 8. A player's :material-steam: Steam ID. This can be in any format, but we recommend a string representation of SteamID
    64, i.e. `"76561197987713664"`.
 9. Players are represented each with a mapping of `SteamID -> PlayerName` as a key-value dictionary. The name
@@ -84,15 +84,15 @@ interface Get5Match {
    string array of `SteamID` disable name-locking.
 10. _Optional_<br>The spectators to allow into the game. If not defined, spectators cannot join the
     game.<br><br>**`Default: undefined`**
-11. _Optional_<br>The team that vetoes first.<br><br>**`Default: "team1"`**
-12. _Optional_<br>The method used to determine sides when vetoing **or** if veto is disabled and `map_sides` are not
-    set.<br><br>`standard` means that the team that doesn't pick a map gets the side choice (only if `skip_veto`
+11. _Optional_<br>The team that [vetoes](veto.md) first.<br><br>**`Default: "team1"`**
+12. _Optional_<br>The method used to determine sides when [vetoing](veto.md) **or** if veto is disabled and `map_sides`
+    are not set.<br><br>`standard` means that the team that doesn't pick a map gets the side choice (only if `skip_veto`
     is `false`).<br><br>`always_knife` means that sides are always determined by a knife-round.<br><br>`never_knife`
     means that `team1` always starts on CT.<br><br>This parameter is ignored if `map_sides` is set for all
     maps. `standard` and `always_knife` behave similarly when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
 13. _Required_<br>The map pool to pick from, as an array of strings (`["de_dust2", "de_nuke"]` etc.), or if `skip_veto`
     is `true`, the order of maps played (limited by `num_maps`). **This should always be odd-sized if using the in-game
-    veto system.**
+    [veto system](veto.md).**
 14. _Optional_<br>Wrapper for the server's `mp_teamprediction_pct`. This determines the chances of `team1`
     winning.<br><br>**`Default: 0`**
 15. _Optional_<br>Wrapper for the server's `mp_teamprediction_txt`.<br><br>**`Default: ""`**

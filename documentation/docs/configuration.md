@@ -54,110 +54,87 @@ cfg/get5/live.cfg # (3)
 
 ## Server Setup
 
-**These options will generally not be directly presented to clients.**
-
 ####`get5_server_id`
 :   Integer that identifies your server. This is used in temp files to prevent collisions. Defines the
-[`{SERVERID}`](#tag-serverid) substitution and the return value of the `Get5_GetServerID` native. **`Default: 0`**
+[`{SERVERID}`](#tag-serverid) substitution and the return value of the `Get5_GetServerID` native.<br>**`Default: 0`**
 
 ####`get5_kick_immunity`
 :   Whether [admins](../installation/#administrators) will be immune to kicks from
-[`get5_kick_when_no_match_loaded`](#get5_kick_when_no_match_loaded). **`Default: 1`**
-
-####`get5_stop_command_enabled`
-:   Whether the [`!stop`](../commands/#stop) command is enabled. **`Default: 1`**
+[`get5_kick_when_no_match_loaded`](#get5_kick_when_no_match_loaded).<br>**`Default: 1`**
 
 ####`get5_kick_when_no_match_loaded`
 :   Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
-using [`get5_endmatch`](../commands/#get5_endmatch). **`Default: 0`**
+using [`get5_endmatch`](../commands/#get5_endmatch).<br>**`Default: 0`**
 
 ####`get5_display_gotv_veto`
-:   Whether to wait for map vetoes to be printed to GOTV before changing map. **`Default: 0`**
+:   Whether to wait for [map vetoes](veto.md) to be broadcast to [GOTV](gotv.md) before changing
+map.<br>**`Default: 0`**
 
 ####`get5_check_auths`
 :   Whether the Steam IDs from the `players` and `coaches` sections of a [match configuration](../match_schema/#schema)
 are used to force players onto teams. Anyone not defined will be removed from the game, or if
-in [scrim mode](../getting_started/#scrims), put on `team2`. **`Default: 1`**
+in [scrim mode](../getting_started/#scrims), put on `team2`.<br>**`Default: 1`**
 
 ####`get5_print_update_notice`
 :   Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if
-[SteamWorks](../installation/#steamworks) has been installed. **`Default: 1`**
+[SteamWorks](../installation/#steamworks) has been installed.<br>**`Default: 1`**
 
 ####`get5_pretty_print_json`
 :   Whether to pretty-print all JSON output. This also affects the output of JSON in the
-[event system](../events_and_forwards). **`Default: 1`**
+[event system](../events_and_forwards).<br>**`Default: 1`**
 
-####`get5_hostname_format`
-:   The hostname to apply to the server when a match configuration is loaded.
-[State substitutes](#state-substitutes) can be used. Leave blank to disable changing the hostname.
-**`Default: Get5: {TEAM1} vs {TEAM2}`**
+####`get5_autoload_config`
+:  A [match configuration](../match_schema/#schema) file, relative to the `csgo` directory, to autoload when the server
+starts, when Get5 is reloaded or if no match is loaded when a player joins the server. Set to empty string to
+disable.<br>**`Default: ""`**
+
+####`get5_debug`
+:   Enable or disable verbose debug output from Get5. Intended for development and debugging purposes
+only.<br>**`Default: 0`**
 
 ## Match Setup
 
-**These options will generally be represented by in-game changes to the client.**
-
 ####`get5_ready_team_tag`
-:   Adds `[READY]` or `[NOT READY]` tags before team names, and removes clan tags from users. **`Default: 1`**
+:   Adds `[READY]` or `[NOT READY]` tags to team names.<br>**`Default: 1`**
 
 ####`get5_live_countdown_time`
-:   Number of seconds used to count down when a match is going live. **`Default: 10`**
+:   Number of seconds used to count down when a match is going live.<br>**`Default: 10`**
 
 ####`get5_auto_ready_active_players`
-:   Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase. **`Default: 0`**
+:   Whether to automatically mark players as ready if they kill anyone in the warmup or [veto](veto.md)
+phase.<br>**`Default: 0`**
 
 ####`get5_set_client_clan_tags`
-:   Whether to set client clan tags to player ready status. **`Default: 1`**
+:   Whether to set client clan tags to player ready status.<br>**`Default: 1`**
 
 ####`get5_time_to_start`
-:   Time (in seconds) teams have to ready up before forfeiting the match, 0 = unlimited. **`Default: 0`**
+:   Time (in seconds) teams have to ready up before forfeiting the match. Set to zero to remove
+limit.<br>**`Default: 0`**
 
 ####`get5_time_to_make_knife_decision`
 :   Time (in seconds) a team has to make a [`!stay`](../commands/#stay) or [`!swap`](../commands/#swap)
-decision after winning knife round, 0 = unlimited. **`Default: 60`**
+decision after winning knife round. Set to zero to remove limit.<br>**`Default: 60`**
 
 ####`get5_veto_countdown`
-:   Time (in seconds) to countdown before veto process commences. **`Default: 5`**
+:   Time (in seconds) to countdown before the [veto](veto.md) process commences. Set to zero to move to veto without a
+countdown.<br>**`Default: 5`**
 
 ####`get5_veto_confirmation_time`
-:   Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be
-required. 0 to disable. **`Default: 2.0`**
+:   Time (in seconds) from presenting a [veto](veto.md) menu to a selection being made, during which a confirmation will
+be required. 0 to disable.<br>**`Default: 2.0`**
 
 ####`get5_print_damage`
-:   Whether to print damage reports on round ends. **`Default: 0`**
+:   Whether to print damage reports when a round ends. The format is determined
+by [`get5_damageprint_format`](#get5_damageprint_format).<br>**`Default: 0`**
 
 ####`get5_print_damage_excess`
 :   Whether to include damage that exceeds the remaining health of a player in the chat
 report. If enabled, you can inflict more than 100 damage to a player in the damage report. Ignored if
-[`get5_print_damage`](#get5_print_damage) is disabled. **`Default: 0`**
-
-####`get5_damageprint_format`
-:   Formatting of damage reports in chat on round end. Ignored
-if [`get5_print_damage`](#get5_print_damage) is disabled.
-**`Default: - [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)`**
-
-    The default example above prints the following to chat on round end and includes information about assists and flash
-    assists.
-
-    `{KILL_TO}` becomes a green `X` for a kill or a yellow `A` or `F` for assist or flash assist, respectively.
-    `{KILL_FROM}` is similar to `{KILL_TO}`, but the `X` value is red (indicating a player killed you). No attribution
-    becomes a white dash.
-
-```
-[Get5] Team A 1 - 0 Team B
-- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - killed this player, they assisted in killing you
-- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - killed by this player, flash assisted in killing them
-- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - no interaction, this player survived
-- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - assisted in killing this player
-- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - dealt damage to this player, not enough for assist
-```
+[`get5_print_damage`](#get5_print_damage) is disabled.<br>**`Default: 0`**
 
 ####`get5_phase_announcement_count`
-:   The number of times the "Knife" or "Match is LIVE" announcements will be printed in chat. Set to zero to disable.
-**`Default: 5`**
-
-####`get5_message_prefix`
-:   The tag applied before plugin messages. Note that at least one character must come before
-a [color modifier](#color-substitutes). **`Default: "[{YELLOW}Get5{NORMAL}]"`**
+:   The number of times the "Knife" or "Match is LIVE" announcements will be printed in chat. Set to zero to
+disable.<br>**`Default: 5`**
 
 ####`get5_team1_color`
 :   The [color](#color-substitutes) to use when printing the name of `team1` in chat
@@ -174,39 +151,40 @@ messages.<br>**`Default: "{NORMAL}"`**
 ## Pausing
 
 ####`get5_pausing_enabled`
-:   Whether [pauses](../pausing) are available to clients or not. **`Default: 1`**
+:   Whether [pauses](../pausing) are available to clients or not.<br>**`Default: 1`**
 
 ####`get5_max_pauses`
-:   Number of [tactical pauses](../pausing/#tactical) a team can use. 0 = unlimited. **`Default: 0`**
+:   Number of [tactical pauses](../pausing/#tactical) a team can use. Set to zero to remove limit.<br>**`Default: 0`**
 
 ####`get5_max_pause_time`
-:   Maximum number of seconds the game can spend under tactical pause for a team. 0 = unlimited. When pauses are
+:   Maximum number of seconds the game can spend under tactical pause for a team. When pauses are
 unlimited and when [get5_fixed_pause_time](#get5_fixed_pause_time) is zero, both teams
 must call [`!unpause`](../commands/#unpause) to continue the match. This parameter is ignored
 if [get5_fixed_pause_time](#get5_fixed_pause_time) is set to a non-zero
-value. **`Default: 300 (5 minutes)`**
+value. Set to zero to remove limit.<br>**`Default: 300`**
 
 ####`get5_fixed_pause_time`
 :   If non-zero, the fixed length in seconds of all [`tactical`](../pausing/#tactical) pauses. This takes precedence
-over the [get5_max_pause_time](#get5_max_pause_time) parameter, which will be ignored. **`Default: 0`**
+over the [get5_max_pause_time](#get5_max_pause_time) parameter, which will be ignored.<br>**`Default: 0`**
 
 ####`get5_allow_technical_pause`
-:   Whether [technical pauses](../pausing/#technical) are available to clients or not. **`Default: 1`**
+:   Whether [technical pauses](../pausing/#technical) are available to clients or not.<br>**`Default: 1`**
 
 ####`get5_max_tech_pauses`
-:   Number of [technical pauses](../pausing/#technical) a team is allowed to have, 0=unlimited. **`Default: 0`**
+:   Number of [technical pauses](../pausing/#technical) a team is allowed to have. Set to zero to remove
+limit.<br>**`Default: 0`**
 
 ####`get5_tech_pause_time`
 :   If non-zero, number of seconds before any team can call [`!unpause`](../commands/#unpause) to end
-a [technical pause](../pausing/#technical) without confirmation from the pausing team. 0 = unlimited and both teams
-must confirm. **`Default: 0`**
+a [technical pause](../pausing/#technical) without confirmation from the pausing team. Set to zero to remove
+limit.<br>**`Default: 0`**
 
 ####`get5_pause_on_veto`
-:   Whether to freeze players during the map-veto phase. **`Default: 0`**
+:   Whether to freeze players during the [veto](veto.md) phase.<br>**`Default: 0`**
 
 ####`get5_reset_pauses_each_half`
 :   Whether [tactical pause](../pausing/#tactical) limits (time used and count) are reset each halftime period.
-[Technical pauses](../pausing/#technical) are not reset. **`Default: 1`**
+[Technical pauses](../pausing/#technical) are not reset.<br>**`Default: 1`**
 
 ## Surrender
 
@@ -235,40 +213,22 @@ the server before they forfeit the match. If both teams disconnect, this determi
 has to rejoin the match before it is ended in a tie. This cannot be set lower than 30 and applies even
 if [`get5_surrender_enabled`](#get5_surrender_enabled) is disabled. **`Default: 60`**
 
-## Formats
-
-**Note: for these, setting the cvar to an empty string ("") will disable the file writing entirely.**
-
-####`get5_time_format`
-:   Time format string. This determines the [`{TIME}`](#tag-time) tag. **Do not change this unless you know what you are
-doing! Avoid using spaces or colons.** **`Default: "%Y-%m-%d_%H-%M-%S"`**
-
-####`get5_demo_name_format`
-:   Format to use for demo files when [recording matches](gotv.md). Do not include a file extension (`.dem` is added
-automatically). Set to empty string to disable. If you do not include the [`{TIME}`](#tag-time) tag, you will have
-problems with duplicate files if restoring a game from a backup.<br>Note that the [`{MAPNUMBER}`](#tag-mapnumber)
-variable is not zero-indexed!<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
-
-####`get5_event_log_format`
-:   Format to write event logs to. Set to empty string to disable. **`Default: ""`**
-
-####`get5_stats_path_format`
-:   Path where stats are output at each map end if it is set. Set to empty string to
-disable. **`Default: "get5_matchstats_{MATCHID}.cfg"`**
-
 ## Backup System
 
 ####`get5_backup_system_enabled`
 :   Whether the [backup system](backup.md) is enabled. This is required for the use of the [`!stop`](../commands/#stop)
-command as well as the [`get5_loadbackup`](../commands/#get5_loadbackup) command. **`Default: 1`**
+command as well as the [`get5_loadbackup`](../commands/#get5_loadbackup) command.<br>**`Default: 1`**
+
+####`get5_stop_command_enabled`
+:   Whether the [`!stop`](../commands/#stop) command is enabled.<br>**`Default: 1`**
 
 ####`get5_max_backup_age`
 :   Number of seconds before a Get5 backup file is automatically deleted. 0 to disable. If you define
-[`get5_backup_path`](#get5_backup_path), only files in that path will be deleted. **`Default: 160000`**
+[`get5_backup_path`](#get5_backup_path), only files in that path will be deleted.<br>**`Default: 160000`**
 
 ####`get5_backup_path`
 :   The folder of saved [backup files](../commands/#get5_loadbackup), relative to the `csgo` directory. You **can** use
-the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`. **`Default: ""`**
+the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`.<br>**`Default: ""`**
 
 !!! warning "Slash, slash, hundred-yard dash :material-slash-forward:"
 
@@ -285,6 +245,65 @@ the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`. **`Default:
 
     :no_entry: `/backups/{MATCHID}`
 
+## Formats & Paths
+
+####`get5_time_format`
+:   Date and time format string. This determines the [`{TIME}`](#tag-time) tag.<br>**`Default: "%Y-%m-%d_%H-%M-%S"`**
+
+!!! danger "Advanced users only"
+
+    Do not change the time format unless you know what you are doing. Please always include a component of hours,
+    minutes and seconds so that [demo files](#get5_demo_name_format) will not be overwritten. You can find the reference
+    for formatting a time string [here](https://cplusplus.com/reference/ctime/strftime/). The default example above
+    prints time in this format: `2022-06-12_13-15-45`.
+
+####`get5_demo_name_format`
+:   Format to use for demo files when [recording matches](gotv.md). Do not include a file extension (`.dem` is added
+automatically). If you do not include the [`{TIME}`](#tag-time) tag, you will have
+problems with duplicate files if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber)
+variable is not zero-indexed. Set to empty string to disable recording
+demos.<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
+
+####`get5_event_log_format`
+:   Format to write event logs to. Set to empty string to disable writing event logs.<br>**`Default: ""`**
+
+####`get5_stats_path_format`
+:   Path where stats are output on each map end. Set to empty string to
+disable.<br>**`Default: "get5_matchstats_{MATCHID}.cfg"`**
+
+####`get5_hostname_format`
+:   The hostname to apply to the server when a match configuration is loaded.
+[State substitutes](#state-substitutes) can be used. Leave blank to disable changing the hostname.<br>
+**`Default: "Get5: {TEAM1} vs {TEAM2}"`**
+
+####`get5_message_prefix`
+:   The tag applied before plugin messages. Note that at least one character must come before
+a [color modifier](#color-substitutes).<br>**`Default: "[{YELLOW}Get5{NORMAL}]"`**
+
+####`get5_damageprint_format`
+:   Formatting of damage reports in chat on round end. Ignored
+if [`get5_print_damage`](#get5_print_damage) is disabled.<br>
+**`Default: "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)"`**
+
+!!! example "Damage report example"
+
+    The default example above prints the following to chat on round end and includes information about kills, deaths,
+    assists and flash assists.
+
+    `{KILL_TO}` becomes a green `X` for a kill or a yellow `A` or `F` for assist or flash assist, respectively.
+
+    `{KILL_FROM}` is similar to `{KILL_TO}`, but the `X` value is red (indicating a player killed you).
+
+    No attribution replaces `{KILL_TO}` and/or `{KILL_FROM}` with a white dash: `-`.
+    ```
+    [Get5] Team A 1 - 0 Team B
+    - [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - Killed this player, they assisted in killing you.
+    - [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - Killed by this player, flash assisted in killing them.
+    - [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - No interaction, this player survived.
+    - [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - Assisted in killing this player.
+    - [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - Dealt damage to this player, not enough for assist.
+    ```
+
 ## Config Files
 
 ####`get5_live_cfg`
@@ -295,10 +314,6 @@ the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`. **`Default:
 
 ####`get5_knife_cfg`
 :   Config file executed for the knife round, relative to `csgo/cfg`.<br>**`Default: "get5/knife.cfg"`**
-
-####`get5_autoload_config`
-:  A [match configuration](../match_schema/#schema) file, relative to the `csgo` directory, to autoload when a player
-joins the server if no match is loaded. Set to empty string to disable. **`Default: ""`**
 
 ## Substitution Variables
 
@@ -318,7 +333,7 @@ placeholder strings that will be replaced by meaningful values when printed. Not
 :   The map number being played. **Note: Not zero-indexed!**
 
 ####`{MAXMAPS}` {: #tag-maxmaps}
-:   The maximum number of maps in the series, i.e. `3` for a Bo3. **Note: Not zero-indexed!**
+:   The maximum number of maps in the series, i.e. `3` for a Bo3.
 
 ####`{MATCHID}` {: #tag-matchid}
 :   The match ID.

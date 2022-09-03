@@ -7,7 +7,7 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/latest/commands/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.3.1, mkdocs-material-8.4.0" name="generator"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.4.2" name="generator"/>
 <title>Commands - Get5</title>
 <link href="../assets/stylesheets/main.69437709.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
@@ -147,6 +147,11 @@
         Getting Started
       </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../match_schema/">
+        Match Schema
+      </a>
+</li>
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
 <label class="md-nav__link md-nav__link--active" for="__toc">
@@ -220,7 +225,7 @@
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#ringer">
-    !ringer
+    !ringer &lt;target&gt;
   </a>
 </li>
 <li class="md-nav__item">
@@ -269,12 +274,12 @@
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_endmatch">
-    get5_endmatch
+    get5_endmatch [team1|team2]
   </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_creatematch">
-    get5_creatematch
+    get5_creatematch [map name] [matchid]
   </a>
 </li>
 <li class="md-nav__item">
@@ -293,7 +298,7 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_removeplayer-auth">
+<a class="md-nav__link" href="#get5_removeplayer">
     get5_removeplayer &lt;auth&gt;
   </a>
 </li>
@@ -313,11 +318,6 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_dumpstats">
-    get5_dumpstats
-  </a>
-</li>
-<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_status">
     get5_status
   </a>
@@ -328,13 +328,18 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_ringer-player">
-    get5_ringer &lt;player&gt;
+<a class="md-nav__link" href="#get5_ringer">
+    get5_ringer &lt;target&gt;
   </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_debuginfo">
     get5_debuginfo [file]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_dumpstats">
+    get5_dumpstats [file]
   </a>
 </li>
 <li class="md-nav__item">
@@ -354,6 +359,11 @@
 </nav>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../coaching/">
+        Coaching
+      </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../pausing/">
         Pausing
       </a>
@@ -364,8 +374,8 @@
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../match_schema/">
-        Match Schema
+<a class="md-nav__link" href="../gotv/">
+        GOTV &amp; Demos
       </a>
 </li>
 </ul>
@@ -498,7 +508,7 @@
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#ringer">
-    !ringer
+    !ringer &lt;target&gt;
   </a>
 </li>
 <li class="md-nav__item">
@@ -547,12 +557,12 @@
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_endmatch">
-    get5_endmatch
+    get5_endmatch [team1|team2]
   </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_creatematch">
-    get5_creatematch
+    get5_creatematch [map name] [matchid]
   </a>
 </li>
 <li class="md-nav__item">
@@ -571,7 +581,7 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_removeplayer-auth">
+<a class="md-nav__link" href="#get5_removeplayer">
     get5_removeplayer &lt;auth&gt;
   </a>
 </li>
@@ -591,11 +601,6 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_dumpstats">
-    get5_dumpstats
-  </a>
-</li>
-<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_status">
     get5_status
   </a>
@@ -606,13 +611,18 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_ringer-player">
-    get5_ringer &lt;player&gt;
+<a class="md-nav__link" href="#get5_ringer">
+    get5_ringer &lt;target&gt;
   </a>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_debuginfo">
     get5_debuginfo [file]
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_dumpstats">
+    get5_dumpstats [file]
   </a>
 </li>
 <li class="md-nav__item">
@@ -666,8 +676,8 @@ command. (For example: <code>sm_ready</code> in console is equivalent to <code>!
 </dl>
 <h4 id="coach"><code>!coach</code></h4>
 <dl>
-<dd>Moves a client to coach for their team. Requires that
-the <a href="https://totalcsgo.com/command/svcoachingenabled"><code>sv_coaching_enabled</code></a> variable is set to <code>1</code>.</dd>
+<dd>Requests to become a <a href="../coaching/">coach</a> for your team. If already coaching, this will move you back as a player
+if possible. Can only be used during warmup.</dd>
 </dl>
 <h4 id="stay"><code>!stay</code></h4>
 <dl>
@@ -687,13 +697,13 @@ the <a href="../configuration/#get5_stop_command_enabled">get5_stop_command_enab
 <dl>
 <dd>Force-readies your team, marking all players on your team as ready.</dd>
 </dl>
-<h4 id="ringer"><code>!ringer</code></h4>
+<h4 id="ringer"><code>!ringer &lt;target&gt;</code></h4>
 <dl>
-<dd>Adds/removes a ringer to/from the home scrim team.</dd>
+<dd>Alias for <a href="#get5_ringer"><code>get5_ringer</code></a>.</dd>
 </dl>
 <h4 id="scrim"><code>!scrim</code></h4>
 <dl>
-<dd>Shortcut for <a href="#get5_scrim"><code>get5_scrim</code></a>.</dd>
+<dd>Alias for <a href="#get5_scrim"><code>get5_scrim</code></a>.</dd>
 </dl>
 <h4 id="get5"><code>!get5</code></h4>
 <dl>
@@ -709,8 +719,9 @@ file.</dd>
 </dl>
 <h4 id="get5_loadbackup"><code>get5_loadbackup &lt;filename&gt;</code></h4>
 <dl>
-<dd>Loads a match backup file (JSON or KeyValue) relative from the <code>csgo</code>
-directory. Only works if the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a>.</dd>
+<dd>Loads a match backup, relative from the <code>csgo</code>
+directory. Only works if the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a>. If you define
+<a href="../configuration/#get5_backup_path"><code>get5_backup_path</code></a>, you must include the path in the filename.</dd>
 </dl>
 <h4 id="get5_last_backup_file"><code>get5_last_backup_file</code></h4>
 <dl>
@@ -731,19 +742,21 @@ You should put the <code>url</code> argument inside quotation marks (<code>""</c
 <p class="admonition-title">SteamWorks required</p>
 <p>Loading remote matches requires the <a href="../installation/#steamworks">SteamWorks</a> extension.</p>
 </div>
-<h4 id="get5_endmatch"><code>get5_endmatch</code></h4>
+<h4 id="get5_endmatch"><code>get5_endmatch [team1|team2]</code></h4>
 <dl>
-<dd>Force ends the current match. No winner is set (draw).</dd>
+<dd>Force-ends the current match. The team argument will force the winner of the series and the current map to be set
+to that team. Omitting the team argument sets no winner (tie).</dd>
 </dl>
-<h4 id="get5_creatematch"><code>get5_creatematch</code></h4>
+<h4 id="get5_creatematch"><code>get5_creatematch [map name] [matchid]</code></h4>
 <dl>
-<dd>Creates a BO1 match with the current players on the server on the current map.</dd>
+<dd>Creates a BO1 match with the current players on the server. <code>map name</code> defaults to the current map and <code>matchid</code>
+defaults to <code>manual</code>. You should <strong>not</strong> provide a match ID if you use the <a href="../stats_system/#mysql">MySQL extension</a>.</dd>
 </dl>
 <h4 id="get5_scrim"><code>get5_scrim [opposing team name] [map name] [matchid]</code></h4>
 <dl>
-<dd>Creates a <a href="../getting_started/#scrims">scrim</a> on the current map. For example, if you're
-playing <em>fnatic</em> on <code>de_dust2</code> you might run <code>get5_scrim fnatic de_dust2</code>. The other team name defaults to "away"
-and the map defaults to the current map. <code>matchid</code> defaults to an empty string.</dd>
+<dd>Creates a <a href="../getting_started/#scrims">scrim</a> on the current map. The opposing team name defaults to <code>Away</code>
+and the map defaults to the current map. <code>matchid</code> defaults to <code>scrim</code>. You should <strong>not</strong> provide a match ID if
+you use the <a href="../stats_system/#mysql">MySQL extension</a>.</dd>
 </dl>
 <h4 id="get5_addplayer"><code>get5_addplayer &lt;auth&gt; &lt;team1|team2|spec&gt; [name]</code></h4>
 <dl>
@@ -755,9 +768,11 @@ name.</dd>
 <dd>Adds a Steam ID to a team as a coach. The name parameter optionally locks the player's
 name.</dd>
 </dl>
-<h4 id="get5_removeplayer-auth"><code>get5_removeplayer &lt;auth&gt;</code></h4>
+<h4 id="get5_removeplayer"><code>get5_removeplayer &lt;auth&gt;</code></h4>
 <dl>
-<dd>Removes a steam ID from all teams (can be any format for the Steam ID).</dd>
+<dd>Removes a steam ID from all teams (can be any format for the Steam ID). This also removes the player as
+a <a href="../coaching/">coach</a>. If <a href="../configuration/#get5_check_auths"><code>get5_check_auths</code></a> is set, the player will be removed
+from the server immediately.</dd>
 </dl>
 <h4 id="get5_addkickedplayer"><code>get5_addkickedplayer &lt;team1|team2|spec&gt; [name]</code></h4>
 <dl>
@@ -770,10 +785,6 @@ name.</dd>
 <h4 id="get5_forceready"><code>get5_forceready</code></h4>
 <dl>
 <dd>Marks all teams as ready. <code>get5_forcestart</code> does the same thing.</dd>
-</dl>
-<h4 id="get5_dumpstats"><code>get5_dumpstats</code></h4>
-<dl>
-<dd>Dumps current match stats to a file.</dd>
 </dl>
 <h4 id="get5_status"><code>get5_status</code></h4>
 <dl>
@@ -868,16 +879,29 @@ name.</dd>
 </details>
 <h4 id="get5_listbackups"><code>get5_listbackups [matchid]</code></h4>
 <dl>
-<dd>Lists backup files for the current match or a given match ID if provided.</dd>
+<dd>Lists backup files for the current match or a given match ID if provided. If you define
+<a href="../configuration/#get5_backup_path"><code>get5_backup_path</code></a>, it will only list backups found under that prefix.</dd>
 </dl>
-<h4 id="get5_ringer-player"><code>get5_ringer &lt;player&gt;</code></h4>
+<h4 id="get5_ringer"><code>get5_ringer &lt;target&gt;</code></h4>
 <dl>
-<dd>Adds/removes a ringer to/from the home scrim team. <code>player</code> is the name of the player. Similar
-to <a href="../commands/#ringer"><code>!ringer</code></a></dd>
+<dd>Adds/removes a ringer to/from the home scrim team. <code>target</code> is the name of the player, their user ID or their Steam
+ID. Similar to <a href="../commands/#ringer"><code>!ringer</code></a> in chat.</dd>
 </dl>
+<div class="admonition example">
+<p class="admonition-title">User ID vs client index</p>
+<p>To view user IDs, type <code>users</code> in console. In this example, <code>3</code> is the user ID and <code>1</code> is the client index:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>&gt; users
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>1:3:"Quinn"
+</code></pre></div></p>
+</div>
 <h4 id="get5_debuginfo"><code>get5_debuginfo [file]</code></h4>
 <dl>
 <dd>Dumps debug info to a file (<code>addons/sourcemod/logs/get5_debuginfo.txt</code> if no file parameter is provided).</dd>
+</dl>
+<h4 id="get5_dumpstats"><code>get5_dumpstats [file]</code></h4>
+<dl>
+<dd>Dumps <a href="../stats_system/#keyvalue">player stats</a> to a file (<code>addons/sourcemod/get5_matchstats.cfg</code> if no file
+parameter is provided).</dd>
 </dl>
 <h4 id="get5_test"><code>get5_test</code></h4>
 <dl>
@@ -893,7 +917,7 @@ to <a href="../commands/#ringer"><code>!ringer</code></a></dd>
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Getting Started" class="md-footer__link md-footer__link--prev" href="../getting_started/" rel="prev">
+<a aria-label="Previous: Match Schema" class="md-footer__link md-footer__link--prev" href="../match_schema/" rel="prev">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -902,17 +926,17 @@ to <a href="../commands/#ringer"><code>!ringer</code></a></dd>
 <span class="md-footer__direction">
                 Previous
               </span>
-              Getting Started
+              Match Schema
             </div>
 </div>
 </a>
-<a aria-label="Next: Pausing" class="md-footer__link md-footer__link--next" href="../pausing/" rel="next">
+<a aria-label="Next: Coaching" class="md-footer__link md-footer__link--next" href="../coaching/" rel="next">
 <div class="md-footer__title">
 <div class="md-ellipsis">
 <span class="md-footer__direction">
                 Next
               </span>
-              Pausing
+              Coaching
             </div>
 </div>
 <div class="md-footer__button md-icon">

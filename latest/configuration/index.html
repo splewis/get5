@@ -7,7 +7,7 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/latest/configuration/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.3.1, mkdocs-material-8.4.0" name="generator"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.4.2" name="generator"/>
 <title>Configuration - Get5</title>
 <link href="../assets/stylesheets/main.69437709.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
@@ -268,8 +268,28 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_phase_announcement_count">
+    get5_phase_announcement_count
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_message_prefix">
     get5_message_prefix
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_team1_color">
+    get5_team1_color
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_team2_color">
+    get5_team2_color
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_spec_color">
+    get5_spec_color
   </a>
 </li>
 </ul>
@@ -374,6 +394,11 @@
     get5_max_backup_age
   </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_backup_path">
+    get5_backup_path
+  </a>
+</li>
 </ul>
 </nav>
 </li>
@@ -389,13 +414,18 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_autoload_config">
-    get5_autoload_config
+<a class="md-nav__link" href="#get5_warmup_cfg">
+    get5_warmup_cfg
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_warmup_cfg">
-    get5_warmup_cfg
+<a class="md-nav__link" href="#get5_knife_cfg">
+    get5_knife_cfg
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_autoload_config">
+    get5_autoload_config
   </a>
 </li>
 </ul>
@@ -493,8 +523,18 @@
       </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../match_schema/">
+        Match Schema
+      </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../commands/">
         Commands
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../coaching/">
+        Coaching
       </a>
 </li>
 <li class="md-nav__item">
@@ -508,8 +548,8 @@
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../match_schema/">
-        Match Schema
+<a class="md-nav__link" href="../gotv/">
+        GOTV &amp; Demos
       </a>
 </li>
 </ul>
@@ -715,8 +755,28 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_phase_announcement_count">
+    get5_phase_announcement_count
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_message_prefix">
     get5_message_prefix
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_team1_color">
+    get5_team1_color
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_team2_color">
+    get5_team2_color
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_spec_color">
+    get5_spec_color
   </a>
 </li>
 </ul>
@@ -821,6 +881,11 @@
     get5_max_backup_age
   </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_backup_path">
+    get5_backup_path
+  </a>
+</li>
 </ul>
 </nav>
 </li>
@@ -836,13 +901,18 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_autoload_config">
-    get5_autoload_config
+<a class="md-nav__link" href="#get5_warmup_cfg">
+    get5_warmup_cfg
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_warmup_cfg">
-    get5_warmup_cfg
+<a class="md-nav__link" href="#get5_knife_cfg">
+    get5_knife_cfg
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_autoload_config">
+    get5_autoload_config
   </a>
 </li>
 </ul>
@@ -937,11 +1007,9 @@ here:</p>
 the explanation of the <a href="../match_schema">match schema</a>, that section will override all other settings.</p>
 <h3 id="phase-configuration-files">Phase Configuration Files</h3>
 <p>You should also have three config files. These can be edited, but we recommend not
-blindly pasting another config in (e.g. ESL, CEVO). Configs that execute warmup commands (<code>mp_warmup_end</code>, for
-example) <strong>will</strong> cause problems. These must only include commands you would run in the console (such
+blindly pasting another config in (e.g. ESL, CEVO). These must only include commands you would run in the console (such
 as <code>mp_friendly_fire 1</code>) and should determine the rules for those three stage of your match. You can
-also <a href="#config-files">point to other files</a> by editing
-the main config file.</p>
+also <a href="#config-files">point to other files</a> by editing the main config file.</p>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/warmup.cfg</span><span class="w"> </span><span class="c1"># (1)</span><span class="w"></span>
 <a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/knife.cfg</span><span class="w"> </span><span class="c1"># (2)</span><span class="w"></span>
 <a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/live.cfg</span><span class="w"> </span><span class="c1"># (3)</span><span class="w"></span>
@@ -951,6 +1019,25 @@ the main config file.</p>
 <li>Executed when the knife-round starts.</li>
 <li>Executed when the game goes live.</li>
 </ol>
+<div class="admonition danger">
+<p class="admonition-title">Prohibited options</p>
+<p>You should avoid these commands in your live, knife and warmup configuration files, as all of these are handled by
+Get5 automatically. Introducing restarts, warmup changes or <a href="../gotv/">GOTV</a> delay modifications can cause problems.
+If you want to set your <code>tv_delay</code>, do it in the <code>cvars</code> section of your <a href="../match_schema/">match configuration</a>.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>mp_do_warmup_period
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>mp_restartgame
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>mp_warmup_end
+<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>mp_warmup_pausetimer   
+<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>mp_warmup_start
+<a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>mp_warmuptime
+<a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a>mp_warmuptime_all_players_connected
+<a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a>tv_delay
+<a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a>tv_delaymapchange
+<a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a>tv_enable
+<a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a>tv_record
+<a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a>tv_stoprecord
+</code></pre></div>
+</div>
 <h2 id="server-setup">Server Setup</h2>
 <p><strong>These options will generally not be directly presented to clients.</strong></p>
 <h4 id="get5_server_id"><code>get5_server_id</code></h4>
@@ -969,7 +1056,8 @@ the main config file.</p>
 </dl>
 <h4 id="get5_kick_when_no_match_loaded"><code>get5_kick_when_no_match_loaded</code></h4>
 <dl>
-<dd>Whether to kick all clients if no match is loaded. <strong><code>Default: 0</code></strong></dd>
+<dd>Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
+using <a href="../commands/#get5_endmatch"><code>get5_endmatch</code></a>. <strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_end_match_on_empty_server"><code>get5_end_match_on_empty_server</code></h4>
 <dl>
@@ -982,8 +1070,9 @@ disconnect even in warmup with the intention to reconnect!). <strong><code>Defau
 </dl>
 <h4 id="get5_check_auths"><code>get5_check_auths</code></h4>
 <dl>
-<dd>Whether the Steam IDs from a "players" section are used to force players onto teams, and will kick
-users if they are not in the auth list. <strong><code>Default: 1</code></strong></dd>
+<dd>Whether the Steam IDs from the <code>players</code> and <code>coaches</code> sections of a <a href="../match_schema/#schema">match configuration</a>
+are used to force players onto teams. Anyone not defined will be removed from the game, or if
+in <a href="../getting_started/#scrims">scrim mode</a>, put on <code>team2</code>. <strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_print_update_notice"><code>get5_print_update_notice</code></h4>
 <dl>
@@ -1060,17 +1149,37 @@ assists.</p>
 becomes a white dash.</p>
 </dd>
 </dl>
-<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>[Get5] Team A 1 - 0 Team B
-<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - killed this player, they assisted in killing you
-<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - killed by this player, flash assisted in killing them
-<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - no interaction, this player survived
-<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - assisted in killing this player
-<a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - dealt damage to this player, not enough for assist
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>[Get5] Team A 1 - 0 Team B
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a>- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - killed this player, they assisted in killing you
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a>- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - killed by this player, flash assisted in killing them
+<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a>- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - no interaction, this player survived
+<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a>- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - assisted in killing this player
+<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a>- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - dealt damage to this player, not enough for assist
 </code></pre></div>
+<h4 id="get5_phase_announcement_count"><code>get5_phase_announcement_count</code></h4>
+<dl>
+<dd>The number of times the "Knife" or "Match is LIVE" announcements will be printed in chat. Set to zero to disable.
+<strong><code>Default: 5</code></strong></dd>
+</dl>
 <h4 id="get5_message_prefix"><code>get5_message_prefix</code></h4>
 <dl>
-<dd>The tag applied before plugin messages. If you change this variable, <code>Powered by Get5</code> will be printed when the game
-goes live. <strong><code>Default: Get5</code></strong></dd>
+<dd>The tag applied before plugin messages. Note that at least one character must come before
+a <a href="#color-substitutes">color modifier</a>. <strong><code>Default: "[{YELLOW}Get5{NORMAL}]"</code></strong></dd>
+</dl>
+<h4 id="get5_team1_color"><code>get5_team1_color</code></h4>
+<dl>
+<dd>The <a href="#color-substitutes">color</a> to use when printing the name of <code>team1</code> in chat
+messages.<br/><strong><code>Default: "{LIGHT_GREEN}"</code></strong></dd>
+</dl>
+<h4 id="get5_team2_color"><code>get5_team2_color</code></h4>
+<dl>
+<dd>The <a href="#color-substitutes">color</a> to use when printing the name of <code>team2</code> in chat
+messages.<br/><strong><code>Default: "{PINK}"</code></strong></dd>
+</dl>
+<h4 id="get5_spec_color"><code>get5_spec_color</code></h4>
+<dl>
+<dd>The <a href="#color-substitutes">color</a> to use when printing the name of <code>spectators</code> in chat
+messages.<br/><strong><code>Default: "{NORMAL}"</code></strong></dd>
 </dl>
 <h2 id="pausing">Pausing</h2>
 <h4 id="get5_pausing_enabled"><code>get5_pausing_enabled</code></h4>
@@ -1091,9 +1200,8 @@ value. <strong><code>Default: 300 (5 minutes)</code></strong></dd>
 </dl>
 <h4 id="get5_fixed_pause_time"><code>get5_fixed_pause_time</code></h4>
 <dl>
-<dd>If non-zero, the fixed length in seconds all <a href="../pausing/#tactical"><code>tactical</code></a> pauses will be. Adjusting this to
-non-zero will use the in-game timeout counter, and the <a href="#get5_max_pause_time">get5_max_pause_time</a>
-parameter is ignored. <strong><code>Default: 0</code></strong></dd>
+<dd>If non-zero, the fixed length in seconds of all <a href="../pausing/#tactical"><code>tactical</code></a> pauses. This takes precedence
+over the <a href="#get5_max_pause_time">get5_max_pause_time</a> parameter, which will be ignored. <strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_allow_technical_pause"><code>get5_allow_technical_pause</code></h4>
 <dl>
@@ -1123,11 +1231,14 @@ must confirm. <strong><code>Default: 0</code></strong></dd>
 <h4 id="get5_time_format"><code>get5_time_format</code></h4>
 <dl>
 <dd>Time format string. This determines the <a href="#tag-time"><code>{TIME}</code></a> tag. <strong>Do not change this unless you know what you are
-doing! Avoid using spaces or colons.</strong> <strong><code>Default: %Y-%m-%d_%H</code></strong></dd>
+doing! Avoid using spaces or colons.</strong> <strong><code>Default: "%Y-%m-%d_%H-%M-%S"</code></strong></dd>
 </dl>
 <h4 id="get5_demo_name_format"><code>get5_demo_name_format</code></h4>
 <dl>
-<dd>Format to name demo files. Set to empty string to disable. <strong><code>Default: {MATCHID}_map{MAPNUMBER}_{MAPNAME}</code></strong></dd>
+<dd>Format to use for demo files when <a href="../gotv/">recording matches</a>. Do not include a file extension (<code>.dem</code> is added
+automatically). Set to empty string to disable. If you do not include the <a href="#tag-time"><code>{TIME}</code></a> tag, you will have
+problems with duplicate files if restoring a game from a backup.<br/>Note that the <a href="#tag-mapnumber"><code>{MAPNUMBER}</code></a>
+variable is not zero-indexed!<br/><strong><code>Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"</code></strong></dd>
 </dl>
 <h4 id="get5_event_log_format"><code>get5_event_log_format</code></h4>
 <dl>
@@ -1136,7 +1247,7 @@ doing! Avoid using spaces or colons.</strong> <strong><code>Default: %Y-%m-%d_%H
 <h4 id="get5_stats_path_format"><code>get5_stats_path_format</code></h4>
 <dl>
 <dd>Path where stats are output at each map end if it is set. Set to empty string to
-disable. <strong><code>Default: get5_matchstats_{MATCHID}.cfg</code></strong></dd>
+disable. <strong><code>Default: "get5_matchstats_{MATCHID}.cfg"</code></strong></dd>
 </dl>
 <h2 id="backup-system">Backup System</h2>
 <h4 id="get5_backup_system_enabled"><code>get5_backup_system_enabled</code></h4>
@@ -1146,22 +1257,42 @@ command as well as the <a href="../commands/#get5_loadbackup"><code>get5_loadbac
 </dl>
 <h4 id="get5_max_backup_age"><code>get5_max_backup_age</code></h4>
 <dl>
-<dd>Number of seconds before a Get5 backup file is automatically deleted. 0 to disable. <strong><code>Default: 160000</code></strong></dd>
+<dd>Number of seconds before a Get5 backup file is automatically deleted. 0 to disable. If you define
+<a href="#get5_backup_path"><code>get5_backup_path</code></a>, only files in that path will be deleted. <strong><code>Default: 160000</code></strong></dd>
 </dl>
+<h4 id="get5_backup_path"><code>get5_backup_path</code></h4>
+<dl>
+<dd>The folder of saved <a href="../commands/#get5_loadbackup">backup files</a>, relative to the <code>csgo</code> directory. You <strong>can</strong> use
+the <a href="#tag-matchid"><code>{MATCHID}</code></a> variable, i.e. <code>backups/{MATCHID}/</code>. <strong><code>Default: ""</code></strong></dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Slash, slash, hundred yard dash <span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m7 21 7.9-18H17L9.1 21H7Z"></path></svg></span></p>
+<p>It is very important that your backup path does <strong>not</strong> start with a slash but instead <strong>ends with a slash</strong>. If
+not, the last part of the path will be considered a prefix of the filename and things will not work correctly. Also
+note that if you use the <a href="#tag-matchid"><code>{MATCHID}</code></a> variable, <a href="#get5_max_backup_age">automatic deletion of backups</a>
+does not work.</p>
+<p><img alt="✅" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2705.svg" title=":white_check_mark:"/> <code>backups/</code></p>
+<p><img alt="✅" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2705.svg" title=":white_check_mark:"/> <code>backups/{MATCHID}/</code></p>
+<p><img alt="⛔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26d4.svg" title=":no_entry:"/> <code>/backups/</code></p>
+<p><img alt="⛔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26d4.svg" title=":no_entry:"/> <code>/backups/{MATCHID}</code></p>
+</div>
 <h2 id="config-files">Config Files</h2>
 <h4 id="get5_live_cfg"><code>get5_live_cfg</code></h4>
 <dl>
-<dd>Config file executed when the game goes live. <strong><code>Default: get5/live.cfg</code></strong></dd>
-</dl>
-<h4 id="get5_autoload_config"><code>get5_autoload_config</code></h4>
-<dl>
-<dd>A config file to autoload on map starts if no match is loaded, relative to the <code>csgo</code> directory. Set to empty
-string
-to disable. <strong><code>Default: ""</code></strong></dd>
+<dd>Config file executed when the game goes live, relative to <code>csgo/cfg</code>.<br/><strong><code>Default: "get5/live.cfg"</code></strong></dd>
 </dl>
 <h4 id="get5_warmup_cfg"><code>get5_warmup_cfg</code></h4>
 <dl>
-<dd>Config file executed in warmup periods. <strong><code>Default: get5/warmup.cfg</code></strong></dd>
+<dd>Config file executed in warmup periods, relative to <code>csgo/cfg</code>.<br/><strong><code>Default: "get5/warmup.cfg"</code></strong></dd>
+</dl>
+<h4 id="get5_knife_cfg"><code>get5_knife_cfg</code></h4>
+<dl>
+<dd>Config file executed for the knife round, relative to <code>csgo/cfg</code>.<br/><strong><code>Default: "get5/knife.cfg"</code></strong></dd>
+</dl>
+<h4 id="get5_autoload_config"><code>get5_autoload_config</code></h4>
+<dl>
+<dd>A <a href="../match_schema/#schema">match configuration</a> file, relative to the <code>csgo</code> directory, to autoload when a player
+joins the server if no match is loaded. Set to empty string to disable. <strong><code>Default: ""</code></strong></dd>
 </dl>
 <h2 id="substitution-variables">Substitution Variables</h2>
 <h3 id="state-substitutes">Match/State Substitutes</h3>
@@ -1205,7 +1336,7 @@ placeholder strings that will be replaced by meaningful values when printed.</p>
 </dl>
 <h3 id="color-substitutes">Colour Substitutes</h3>
 <p>These variables can be used to color text in the chat. You must return to <code>{NORMAL}</code> (white)
-after using a color variable. Note that a color prefix cannot be <em>followed by a space</em>.</p>
+after using a color variable.</p>
 <p>Example: <code>This text becomes {DARK_RED}red{NORMAL}, while {YELLOW}all of this will be yellow</code>.</p>
 <ul>
 <li><code>{NORMAL}</code></li>
@@ -1220,6 +1351,7 @@ after using a color variable. Note that a color prefix cannot be <em>followed by
 <li><code>{LIGHT_BLUE}</code></li>
 <li><code>{DARK_BLUE}</code></li>
 <li><code>{PURPLE}</code></li>
+<li><code>{GOLD}</code></li>
 </ul>
 </article>
 </div>

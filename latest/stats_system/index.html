@@ -7,7 +7,7 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/latest/stats_system/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.3.1, mkdocs-material-8.4.0" name="generator"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.4.2" name="generator"/>
 <title>Player Stats System - Get5</title>
 <link href="../assets/stylesheets/main.69437709.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
@@ -148,8 +148,18 @@
       </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../match_schema/">
+        Match Schema
+      </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../commands/">
         Commands
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../coaching/">
+        Coaching
       </a>
 </li>
 <li class="md-nav__item">
@@ -163,8 +173,8 @@
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../match_schema/">
-        Match Schema
+<a class="md-nav__link" href="../gotv/">
+        GOTV &amp; Demos
       </a>
 </li>
 </ul>
@@ -208,18 +218,13 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#sourcemod-forwards">
+<a class="md-nav__link" href="#forwards">
     SourceMod Forwards
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#stats-keyvalues-structure">
-    Stats KeyValues structure
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#what-stats-are-collected">
-    What Stats Are Collected
+<a class="md-nav__link" href="#keyvalue">
+    KeyValue System
   </a>
 </li>
 <li class="md-nav__item">
@@ -273,18 +278,13 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#sourcemod-forwards">
+<a class="md-nav__link" href="#forwards">
     SourceMod Forwards
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#stats-keyvalues-structure">
-    Stats KeyValues structure
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#what-stats-are-collected">
-    What Stats Are Collected
+<a class="md-nav__link" href="#keyvalue">
+    KeyValue System
   </a>
 </li>
 <li class="md-nav__item">
@@ -302,69 +302,124 @@
 <a class="md-content__button md-icon" href="https://github.com/splewis/get5/blob/master/documentation/docs/stats_system.md" title="Edit this page">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
 </a>
-<h1 id="player-stats-system">Player Stats System</h1>
-<p>When a get5 match is live, the plugin will automatically record match stats for each player, across each map in the
-match. These are recorded in an internal KeyValues structure, and are available at any time during the match (including
-the postgame waiting period) via the <code>Get5_GetMatchStats</code> native and
-the <a href="../commands/#serveradmin-commands"><code>get5_dumpstats</code></a> command.</p>
-<p>Note: the stats collection is not going to be reliable if
-using <a href="../configuration/#server-setup"><code>get5_check_auths 0</code></a>.</p>
-<h2 id="sourcemod-forwards">SourceMod Forwards</h2>
+<h1 id="player-stats-system"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22 21H2V3h2v16h2v-9h4v9h2V6h4v13h2v-5h4v7Z"></path></svg></span> Player Stats System</h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>None of the methods for collecting stats are going to be reliable if
+<a href="../configuration/#get5_check_auths"><code>get5_check_auths</code></a> is set to <code>0</code>.</p>
+</div>
+<h2 id="forwards">SourceMod Forwards</h2>
 <p>If you're writing your own plugin, you can collect stats from the game using the
 <a href="../events_and_forwards/">forwards</a> provided by Get5.</p>
-<h2 id="stats-keyvalues-structure">Stats KeyValues structure</h2>
-<p>The root level of the KV contains data for the full series: the series winner (if one exists yet) and the series type (
-bo1, bo2..., etc).</p>
-<p>Under that root level, there is a level for each map ("map1", "map2"), which contains the map winner (if one exists yet)
-, the mapname, and the demo file recording.</p>
-<p>Under the map level, there is a section for each team ("team1" and "team2) which contains the current team score (on
+<h2 id="keyvalue">KeyValue System</h2>
+<p>Get5 will automatically record basic stats for each player for each map in the match. These are stored in an internal
+KeyValues structure, and are available at any time during the match (including the postgame waiting period) via the
+<code>Get5_GetMatchStats</code> native and the <a href="../commands/#get5_dumpstats"><code>get5_dumpstats</code></a> command.</p>
+<p>The root level contains data for the full series; the series winner (if one exists yet) and the series type (
+bo1, bo3, etc).</p>
+<p>Under the root level is a level for each map (<code>map0</code>, <code>map1</code> etc.), which contains the map winner (if one exists yet),
+the map name and the demo file recording.</p>
+<p>Under the map level is a section for each team (<code>team1</code> and <code>team2</code>), which contains the current team score (on
 that map) and the team name.</p>
-<p>Each player has a section under the team level under the section name of their steam64id. It contains all the personal
+<p>Each player has a section under the team level under the section name of their SteamID 64. It contains all the personal
 level stats: name, kills, deaths, assists, etc.</p>
 <p>Partial Example:</p>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>"Stats"
 <a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>{
-<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>    "series_type"        "bo1"
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>    "series_type"       "bo1"
 <a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>    "team1_name"        "EnvyUs"
 <a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>    "team2_name"        "Fnatic"
 <a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>    "map0"
 <a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>    {
 <a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>        "mapname"       "de_mirage"
-<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>        "winner"        "team1"
-<a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a>        "team1"
-<a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a>        {
-<a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a>            "score"     "5"
-<a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a>            "73613643164646"
-<a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a>            {
-<a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a>                "name"      "xyz"
-<a href="#__codelineno-0-16" id="__codelineno-0-16" name="__codelineno-0-16"></a>                "kills"     "0"
-<a href="#__codelineno-0-17" id="__codelineno-0-17" name="__codelineno-0-17"></a>                "deaths"        "1"
-<a href="#__codelineno-0-18" id="__codelineno-0-18" name="__codelineno-0-18"></a>                "assists"       "5"
-<a href="#__codelineno-0-19" id="__codelineno-0-19" name="__codelineno-0-19"></a>                "damage"        "352"
-<a href="#__codelineno-0-20" id="__codelineno-0-20" name="__codelineno-0-20"></a>            }
-<a href="#__codelineno-0-21" id="__codelineno-0-21" name="__codelineno-0-21"></a>        }
-<a href="#__codelineno-0-22" id="__codelineno-0-22" name="__codelineno-0-22"></a>    }
-<a href="#__codelineno-0-23" id="__codelineno-0-23" name="__codelineno-0-23"></a>}
+<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>        "demo_filename" "304_map1_de_mirage.dem"
+<a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a>        "winner"        "team1"
+<a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a>        "team1"
+<a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a>        {
+<a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a>            "score"     "5"
+<a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a>            "73613643164646"
+<a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a>            {
+<a href="#__codelineno-0-16" id="__codelineno-0-16" name="__codelineno-0-16"></a>                "name"      "xyz"
+<a href="#__codelineno-0-17" id="__codelineno-0-17" name="__codelineno-0-17"></a>                "kills"     "0"
+<a href="#__codelineno-0-18" id="__codelineno-0-18" name="__codelineno-0-18"></a>                "deaths"    "1"
+<a href="#__codelineno-0-19" id="__codelineno-0-19" name="__codelineno-0-19"></a>                "assists"   "5"
+<a href="#__codelineno-0-20" id="__codelineno-0-20" name="__codelineno-0-20"></a>                "damage"    "352"
+<a href="#__codelineno-0-21" id="__codelineno-0-21" name="__codelineno-0-21"></a>            }
+<a href="#__codelineno-0-22" id="__codelineno-0-22" name="__codelineno-0-22"></a>        }
+<a href="#__codelineno-0-23" id="__codelineno-0-23" name="__codelineno-0-23"></a>    }
+<a href="#__codelineno-0-24" id="__codelineno-0-24" name="__codelineno-0-24"></a>}
 </code></pre></div>
-<h2 id="what-stats-are-collected">What Stats Are Collected</h2>
-<p>See the <a href="https://github.com/splewis/get5/blob/master/scripting/include/get5.inc#L1769">get5 include</a> for what stats will
-be recorded and what their key in the KeyValue structure is.</p>
+<div class="admonition question">
+<p class="admonition-title">What stats are collected?</p>
+<p>See the <a href="https://github.com/splewis/get5/blob/master/scripting/include/get5.inc#L1769">get5.inc include file</a> for
+what stats will be recorded and what their keys are in the KeyValue structure.</p>
+</div>
 <h2 id="mysql">MySQL Statistics</h2>
 <p>Get5 ships with a (disabled by default) plugin called <code>get5_mysqlstats</code> that will save many of the stats to a MySQL
-database. To use this:</p>
-<ul>
-<li>Create the tables using this <a href="https://github.com/splewis/get5/blob/master/misc/import_stats.sql">schema</a>, raw text
-  link can be found <a href="https://raw.githubusercontent.com/splewis/get5/master/misc/import_stats.sql">here</a>.</li>
-<li>Configure a <code>"get5"</code> database section in <code>addons/sourcemod/configs/databases.cfg</code>.</li>
-<li>Make sure the <code>get5_mysqlstats</code> plugin is enabled (moved up a directory from <code>addons/sourcemod/plugins/disabled</code>
-  directory).</li>
-</ul>
-<p><strong>Note</strong>: If you use this module, you can force the match ID used by setting it in your match config
-(the <a href="../match_schema/#optional-values">Match Schema</a> section). If you don't do this, the match ID will be set to the
-auto-incrementing integer (cast to a string) returned by inserting into the <code>get5_stats_matches</code> table. It is strongly
-recommended that you always leave the <code>matchid</code> blank, as MySQL will then manage the IDs for you.</p>
-<p>If you are using an external web panel, <strong>this plugin is not needed</strong> as most external applications record to their own
-match tables.</p>
+database. You can use the included plugin as a source of inspiration and build your own to collect even more stats, or
+even wrap a website around it for managing matches. The included plugin is meant as a proof-of-concept of this
+functionality, but can also be used as-is.</p>
+<div class="admonition danger">
+<p class="admonition-title">Fixed Match IDs</p>
+<p>If you use the MySQL extension, you should <strong>not</strong> set the <code>matchid</code> in your
+<a href="../match_schema/#schema">match configuration</a> (just leave it empty) or when creating scrims or matches using the
+<a href="../commands/#get5_scrim"><code>get5_scrim</code></a> or <a href="../commands/#get5_creatematch"><code>get5_creatematch</code></a> commands. The match
+ID will be set to the
+<a href="https://dev.mysql.com/doc/refman/8.0/en/example-auto-increment.html">auto-incrementing integer</a> (cast to a string)
+returned by inserting into the <code>get5_stats_matches</code> table.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Advanced users only</p>
+<p>You should have a basic understanding of MySQL if you wish to use this plugin. It is assumed you know what the
+commands below do.</p>
+</div>
+<ol>
+<li>
+<p>Make sure the <code>get5_mysqlstats.smx</code> plugin is enabled (moved up a directory from <code>addons/sourcemod/plugins/disabled</code>
+   directory).</p>
+</li>
+<li>
+<p>Have a MySQL server reachable from the game server's network. These commands are for MySQL 8 but should also work on
+MySQL 5.7.</p>
+</li>
+<li>
+<p>Create a schema/database for your tables:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="n n-Quoted">`get5`</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CHARACTER</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n n-Quoted">`utf8mb4`</span><span class="w"> </span><span class="k">COLLATE</span><span class="w"> </span><span class="n n-Quoted">`utf8mb4_0900_ai_ci`</span><span class="p">;</span><span class="w"></span>
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="k">USE</span><span class="w"> </span><span class="n n-Quoted">`get5`</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:"/> The <code>utf8mb4</code> part ensures that your database can handle all kinds of emojis and unicode characters. This is
+    the default in MySQL 8 but must be explicitly defined for MySQL 5.7.</p>
+</li>
+<li>
+<p>Configure a database user and grant it access to the database:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">'get5_db_user'</span><span class="nv">@'%'</span><span class="w"> </span><span class="k">IDENTIFIED</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">mysql_native_password</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">'super_secret_password'</span><span class="p">;</span><span class="w"></span>
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n n-Quoted">`get5`</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">'get5_db_user'</span><span class="nv">@'%'</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:"/> You <strong>can</strong> use the <code>root</code> database user instead if you wish. <code>@'%'</code> means that the user can log in from any
+    network location, and you can replace this with <code>@'localhost'</code> if your database is running on the same host as the
+    game server.</p>
+</li>
+<li>
+<p>Create the required tables using <a href="https://github.com/splewis/get5/blob/master/misc/import_stats.sql">these commands</a>.
+Raw text link can be found <a href="https://raw.githubusercontent.com/splewis/get5/master/misc/import_stats.sql">here</a>.</p>
+</li>
+<li>
+<p>Configure a <code>"get5"</code> database section in SourceMod and provide the parameters you used to configure your database:</p>
+</li>
+</ol>
+<div class="admonition example">
+<p class="admonition-title"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 2c-1.11 0-2 .89-2 2v16a2 2 0 0 0 2 2h6.68a7 7 0 0 1-.68-3 7 7 0 0 1 7-7 7 7 0 0 1 1 .08V8l-6-6H6m7 1.5L18.5 9H13V3.5M18 14a.26.26 0 0 0-.26.21l-.19 1.32c-.3.13-.59.29-.85.47l-1.24-.5c-.11 0-.24 0-.31.13l-1 1.73c-.06.11-.04.24.06.32l1.06.82a4.193 4.193 0 0 0 0 1l-1.06.82a.26.26 0 0 0-.06.32l1 1.73c.06.13.19.13.31.13l1.24-.5c.26.18.54.35.85.47l.19 1.32c.02.12.12.21.26.21h2c.11 0 .22-.09.24-.21l.19-1.32c.3-.13.57-.29.84-.47l1.23.5c.13 0 .26 0 .33-.13l1-1.73a.26.26 0 0 0-.06-.32l-1.07-.82c.02-.17.04-.33.04-.5 0-.17-.01-.33-.04-.5l1.06-.82a.26.26 0 0 0 .06-.32l-1-1.73c-.06-.13-.19-.13-.32-.13l-1.23.5c-.27-.18-.54-.35-.85-.47l-.19-1.32A.236.236 0 0 0 20 14h-2m1 3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5c-.84 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5Z"></path></svg></span> <code>addons/sourcemod/configs/databases.cfg</code></p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>"get5"
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a>{
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a>    "driver"            "mysql"
+<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a>    "host"              "127.0.0.1"
+<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a>    "database"          "get5"
+<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a>    "user"              "get5_db_user"
+<a href="#__codelineno-3-7" id="__codelineno-3-7" name="__codelineno-3-7"></a>    "pass"              "super_secret_password"
+<a href="#__codelineno-3-8" id="__codelineno-3-8" name="__codelineno-3-8"></a>    "port"              "3306"
+<a href="#__codelineno-3-9" id="__codelineno-3-9" name="__codelineno-3-9"></a>}
+</code></pre></div>
+</div>
 </article>
 </div>
 </div>

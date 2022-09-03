@@ -5,10 +5,10 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<link href="https://splewis.github.io/get5/latest/backup/" rel="canonical"/>
+<link href="https://splewis.github.io/get5/latest/gotv/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.3.1, mkdocs-material-8.4.2" name="generator"/>
-<title>Backup System - Get5</title>
+<title>GOTV &amp; Demos - Get5</title>
 <link href="../assets/stylesheets/main.69437709.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -22,7 +22,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#backup-system">
+<a class="md-skip" href="#gotv">
           Skip to content
         </a>
 </div>
@@ -48,7 +48,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Backup System
+              GOTV &amp; Demos
             
           </span>
 </div>
@@ -167,41 +167,14 @@
         Pausing
       </a>
 </li>
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
-          Backup System
-          <span class="md-nav__icon md-icon"></span>
-</label>
-<a class="md-nav__link md-nav__link--active" href="./">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../backup/">
         Backup System
       </a>
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#how-does-it-work">
-    How does it work?
-  </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#example">
-    Example
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#pauses-in-backups">
-    Pauses in backups
-  </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../gotv/">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<a class="md-nav__link md-nav__link--active" href="./">
         GOTV &amp; Demos
       </a>
 </li>
@@ -272,81 +245,45 @@
 <div class="md-sidebar__scrollwrap">
 <div class="md-sidebar__inner">
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#how-does-it-work">
-    How does it work?
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#example">
-    Example
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#pauses-in-backups">
-    Pauses in backups
-  </a>
-</li>
-</ul>
 </nav>
 </div>
 </div>
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<a class="md-content__button md-icon" href="https://github.com/splewis/get5/blob/master/documentation/docs/backup.md" title="Edit this page">
+<a class="md-content__button md-icon" href="https://github.com/splewis/get5/blob/master/documentation/docs/gotv.md" title="Edit this page">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
 </a>
-<h1 id="backup-system"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a9 9 0 0 0-9 9H0l4 4 4-4H5a7 7 0 0 1 7-7 7 7 0 0 1 7 7 7 7 0 0 1-7 7c-1.5 0-2.91-.5-4.06-1.3L6.5 19.14A9.115 9.115 0 0 0 12 21a9 9 0 0 0 9-9 9 9 0 0 0-9-9m2 9a2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2Z"></path></svg></span> Backup System</h1>
-<p>Get5 ships with a backup system built on top of
-CS:GO's <a href="https://totalcsgo.com/command/mpbackuprestoreloadfile">built-in round restore system</a>, which can be used to
-either replay a round using the <a href="../commands/#stop"><code>!stop</code></a> command, or to simply restore an entire match's state on
-any server using the <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a> command.</p>
-<p>As Get5's backup system sits on top of CS:GO's, it contains everything a normal CS:GO round backup would, but also
-the entire <a href="../match_schema">match configuration</a> and the match series score for already-played maps.</p>
-<p>The backup system must be <a href="../configuration/#get5_backup_system_enabled">enabled</a> for this to work.</p>
-<h3 id="how-does-it-work">How does it work?</h3>
-<p>Every time a round starts, CS:GO automatically writes a round backup file into the root of the <code>csgo</code> directory based on
-the value of <code>mp_backup_round_file</code>. The default value for this is <code>backup</code>. Get5 reads this file and copies it into its
-own file called <code>get5_backup_match%s_map%d_round%d.cfg</code>, where the arguments are <code>matchid</code>, <code>mapnumber</code>
-and <code>roundnumber</code>, respectively. A special backup called <code>get5_backup_match%s_map%d_prelive.cfg</code> is created and should
-be used if you want to restore to the beginning of the map, before the knife round.</p>
-<h3 id="example">Example</h3>
-<p>When in a match, you can call <a href="../commands/#get5_listbackups"><code>get5_listbackups</code></a> to view all backups for the current
-match. Note that all rounds and map numbers start at 0.</p>
-<p>They print in the format <code>filepath date time team1 team2 map team1_score team2_score</code>.</p>
-<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>&gt; get5_listbackups
-<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>get5_backup_match1844_map0_prelive.cfg 2022-07-26 18:51:25 "Team A" "Team B"
-<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>get5_backup_match1844_map0_round30.cfg 2022-07-26 19:13:41 "Team A" "Team B" de_dust2 2 28
-<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>get5_backup_match1844_map0_round4.cfg 2022-07-26 18:55:01 "Team A" "Team B" de_dust2 2 2
-<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>get5_backup_match1844_map0_round10.cfg 2022-07-26 18:59:25 "Team A" "Team B" de_dust2 2 8
-<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>get5_backup_match1844_map0_round23.cfg 2022-07-26 19:08:13 "Team A" "Team B" de_dust2 2 21
-<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>get5_backup_match1844_map0_round12.cfg 2022-07-26 19:00:26 "Team A" "Team B" de_dust2 2 10
-<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>get5_backup_match1844_map0_round17.cfg 2022-07-26 19:03:39 "Team A" "Team B" de_dust2 2 15
-<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>...
-</code></pre></div>
-<p>To load at the beginning of round 13 of the first map of match ID 1844, all players should be connected to the server,
-and you use the <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a> command:</p>
-<p><code>get5_loadbackup get5_backup_match1844_map0_round12.cfg</code>.</p>
-<p>The game should restore in a paused state and both teams must <a href="../commands/#unpause"><code>!unpause</code></a> to continue.</p>
-<h3 id="pauses-in-backups">Pauses in backups</h3>
-<p>When restoring from a backup, the <a href="../pausing/">consumed pauses</a> are reset to the state they were in at the beginning
-of the round you restore to, but only if the game state is not currently live. This means that using
-the <a href="../commands/#stop"><code>!stop</code></a> command or the <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a> command <strong>for the same
-match and map</strong> would retain the currently used pauses. If restarting the server or loading the backup from scratch, the
-pauses from the backup file will be used.</p>
+<h1 id="gotv"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 9h-2V7h2m0 6h-2v-2h2m0 6h-2v-2h2M8 9H6V7h2m0 6H6v-2h2m0 6H6v-2h2M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3h-2Z"></path></svg></span> GOTV &amp; Demos</h1>
+<p>Get5 can be configured to automatically record matches. This is enabled by default based on the state
+of <a href="../configuration/#get5_demo_name_format"><code>get5_demo_name_format</code></a> and can be disabled by setting that parameter to
+an empty string.</p>
+<p>Demo recording starts once all teams have readied up and ends shortly following a map result. When a demo file is
+written to disk, the <a href="../events_and_forwards/"><code>Get5_OnDemoFinished</code></a> forward is called, which you can use to move the
+file or upload it somewhere. The filename can also be found in the map-section of the
+<a href="../stats_system/#keyvalue">KeyValue stats system</a>.</p>
+<p>Get5 will automatically adjust the <a href="https://totalcsgo.com/command/mpmatchrestartdelay"><code>mp_match_restart_delay</code></a> when a
+map ends if GOTV is enabled to ensure that it won't be shorter than what is required for the GOTV broadcast to finish.
+Players will also not be <a href="../configuration/#get5_kick_when_no_match_loaded">kicked from the server</a> before this delay
+has passed.</p>
+<div class="admonition warning">
+<p class="admonition-title">Don't mess too much with the TV! <img alt="📺" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f4fa.svg" title=":tv:"/></p>
+<p>Changing <code>tv_delay</code> or <code>tv_enable</code> in <code>warmup.cfg</code>, <code>live.cfg</code> etc. is going to cause problems with your demos.
+We recommend you set <code>tv_delay</code> either on your server in general or only once in the <code>cvars</code> section of your
+<a href="../match_schema">match configuration</a>. You should also not set <code>tv_delaymapchange</code> as Get5 handles this
+automatically.</p>
+<p>We recommend that you <strong>do not</strong> set <code>tv_enable</code> in your match configuration, as it <strong>requires</strong> a map change for
+the GOTV bot to join the server. You should enable GOTV in your general server config and refrain from turning it on
+and off with Get5. Note that setting <code>tv_enable 1</code> won't allow people to join your server's GOTV. You must also set
+<code>tv_advertise_watchable 1</code>, so you don't have to worry about ghosting if this is disabled.</p>
+</div>
 </article>
 </div>
 </div>
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Pausing" class="md-footer__link md-footer__link--prev" href="../pausing/" rel="prev">
+<a aria-label="Previous: Backup System" class="md-footer__link md-footer__link--prev" href="../backup/" rel="prev">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -355,17 +292,17 @@ pauses from the backup file will be used.</p>
 <span class="md-footer__direction">
                 Previous
               </span>
-              Pausing
+              Backup System
             </div>
 </div>
 </a>
-<a aria-label="Next: GOTV &amp; Demos" class="md-footer__link md-footer__link--next" href="../gotv/" rel="next">
+<a aria-label="Next: Developer API" class="md-footer__link md-footer__link--next" href="../developer_api/" rel="next">
 <div class="md-footer__title">
 <div class="md-ellipsis">
 <span class="md-footer__direction">
                 Next
               </span>
-              GOTV &amp; Demos
+              Developer API
             </div>
 </div>
 <div class="md-footer__button md-icon">

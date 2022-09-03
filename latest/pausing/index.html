@@ -7,7 +7,7 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/latest/pausing/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.3.1, mkdocs-material-8.4.0" name="generator"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.4.2" name="generator"/>
 <title>Pausing - Get5</title>
 <link href="../assets/stylesheets/main.69437709.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
@@ -148,8 +148,18 @@
       </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../match_schema/">
+        Match Schema
+      </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../commands/">
         Commands
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../coaching/">
+        Coaching
       </a>
 </li>
 <li class="md-nav__item md-nav__item--active">
@@ -178,7 +188,12 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#dministrative">
+<a class="md-nav__link" href="#backup">
+     Backup
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#administrative">
      Administrative
   </a>
 </li>
@@ -191,8 +206,8 @@
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../match_schema/">
-        Match Schema
+<a class="md-nav__link" href="../gotv/">
+        GOTV &amp; Demos
       </a>
 </li>
 </ul>
@@ -278,7 +293,12 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#dministrative">
+<a class="md-nav__link" href="#backup">
+     Backup
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#administrative">
      Administrative
   </a>
 </li>
@@ -323,24 +343,22 @@ team (<em>either</em> the pausing or the opposing) must unpause. Technical pause
 Administrators
 cannot call technical pauses, as an administrative pause will be triggered instead. You can set <a href="../configuration/#get5_max_tech_pauses">the maximum number of
 technical pauses</a>.</p>
-<h2 id="dministrative"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 9c0 5.33-8 5.33-8 0h2c0 2.67 4 2.67 4 0m6 9v3H4v-3c0-2.67 5.33-4 8-4s8 1.33 8 4m-1.9 0c0-.64-3.13-2.1-6.1-2.1-2.97 0-6.1 1.46-6.1 2.1v1.1h12.2M12.5 2c.28 0 .5.22.5.5v3h1V3a3.89 3.89 0 0 1 2.25 3.75s.7.14.75 1.25H7c0-1.11.75-1.25.75-1.25A3.89 3.89 0 0 1 10 3v2.5h1v-3c0-.28.22-.5.5-.5"></path></svg></span> Administrative</h2>
-<p>As a <a href="../installation/#administrators">server admin</a>, you can pause the match at any time and with no time
+<h2 id="backup"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a9 9 0 0 0-9 9H0l4 4 4-4H5a7 7 0 0 1 7-7 7 7 0 0 1 7 7 7 7 0 0 1-7 7c-1.5 0-2.91-.5-4.06-1.3L6.5 19.14A9.115 9.115 0 0 0 12 21a9 9 0 0 0 9-9 9 9 0 0 0-9-9m2 9a2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2Z"></path></svg></span> Backup</h2>
+<p>If the game is <a href="../backup/">restored from a backup</a>, it will be so in a paused state. Both teams must
+<a href="../commands/#unpause"><code>!unpause</code></a> before the match can continue. Administrators can also unpause backup pauses, or even
+override them to an <a href="#administrative">administrative pause</a>.</p>
+<h2 id="administrative"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 9c0 5.33-8 5.33-8 0h2c0 2.67 4 2.67 4 0m6 9v3H4v-3c0-2.67 5.33-4 8-4s8 1.33 8 4m-1.9 0c0-.64-3.13-2.1-6.1-2.1-2.97 0-6.1 1.46-6.1 2.1v1.1h12.2M12.5 2c.28 0 .5.22.5.5v3h1V3a3.89 3.89 0 0 1 2.25 3.75s.7.14.75 1.25H7c0-1.11.75-1.25.75-1.25A3.89 3.89 0 0 1 10 3v2.5h1v-3c0-.28.22-.5.5-.5"></path></svg></span> Administrative</h2>
+<p>As a server admin, you can pause the match at any time and with no time
 restrictions, but you <strong>cannot</strong> use <a href="https://totalcsgo.com/command/mppausematch"><code>mp_pause_match</code></a> (or its unpause
 equivalent) at any stage. Due to the way Get5 handles pausing, you must use <code>sm_pause</code> in the console, since this will
 track all details and configurations related to pausing in the system. Similarly, <code>sm_unpause</code> must be used to unpause.
 Pauses initiated by administrators via console <strong>cannot</strong> be <a href="../commands/#unpause"><code>!unpause</code>'ed</a> by players. Also note
 that an <a href="../events_and_forwards/"><code>admin</code> pause event</a> is fired when the game is paused during veto (only
 if <a href="../configuration/#get5_pause_on_veto"><code>get5_pause_on_veto</code></a> is enabled).</p>
-<div class="admonition fail">
-<p class="admonition-title">I'm an admin on my server, but I cannot call admin pauses!</p>
+<div class="admonition question">
+<p class="admonition-title">I'm an admin on my server, but I cannot call admin pause?</p>
 <p>Only console/RCON is considered an administrator in pause-context. Having an admin flag as a user/player does not
 allow you to call administrative pauses.</p>
-</div>
-<div class="admonition help">
-<p class="admonition-title">But the <a href="../events_and_forwards/">event system</a> also hints at the existence of a <code>backup</code> pause type?</p>
-<p>Internally, Get5 uses the <code>backup</code> pause type when pausing due to loading backup configurations. To not confuse
-any program reaction to pauses, we added a special pause type in these cases, and you should probably just ignore
-these events. They still fire because <em>technically</em> the game is pausing.</p>
 </div>
 </article>
 </div>
@@ -348,7 +366,7 @@ these events. They still fire because <em>technically</em> the game is pausing.<
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Commands" class="md-footer__link md-footer__link--prev" href="../commands/" rel="prev">
+<a aria-label="Previous: Coaching" class="md-footer__link md-footer__link--prev" href="../coaching/" rel="prev">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -357,7 +375,7 @@ these events. They still fire because <em>technically</em> the game is pausing.<
 <span class="md-footer__direction">
                 Previous
               </span>
-              Commands
+              Coaching
             </div>
 </div>
 </a>

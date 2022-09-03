@@ -115,7 +115,7 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
   }
 }
 
-public void MatchInitCallback(Database dbObj, DBResultSet results, const char[] error, any data) {
+static void MatchInitCallback(Database dbObj, DBResultSet results, const char[] error, any data) {
   if (results == null) {
     LogError("Failed to get Match ID from match init query: %s.", error);
     g_DisableStats = true;
@@ -157,7 +157,7 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-public void UpdateRoundStats(const char[] matchId, int mapNumber) {
+static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
   // Update team scores
   int t1score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_1));
   int t2score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_2));
@@ -178,11 +178,11 @@ public void UpdateRoundStats(const char[] matchId, int mapNumber) {
   Format(mapKey, sizeof(mapKey), "map%d", mapNumber);
   if (kv.JumpToKey(mapKey)) {
     if (kv.JumpToKey("team1")) {
-      AddPlayerStats(matchId, kv, Get5Team_1);
+      AddPlayerStats(matchId, mapNumber, kv, Get5Team_1);
       kv.GoBack();
     }
     if (kv.JumpToKey("team2")) {
-      AddPlayerStats(matchId, kv, Get5Team_2);
+      AddPlayerStats(matchId, mapNumber, kv, Get5Team_2);
       kv.GoBack();
     }
     kv.GoBack();
@@ -223,18 +223,21 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-public void AddPlayerStats(const char[] matchId, KeyValues kv, Get5Team team) {
+static void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv,
+                           const Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
   char nameSz[MAX_NAME_LENGTH * 2 + 1];
   char authSz[AUTH_LENGTH * 2 + 1];
-  int mapNumber = Get5_GetMapNumber();
 
   char matchIdSz[64];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
   if (kv.GotoFirstSubKey()) {
     do {
+      if (kv.GetNum(STAT_COACHING, 0) > 0) {
+        continue;  // Don't update stats for coaches.
+      }
       kv.GetSectionName(auth, sizeof(auth));
       kv.GetString("name", name, sizeof(name));
       db.Escape(auth, authSz, sizeof(authSz));
@@ -371,7 +374,7 @@ public void Get5_OnSeriesResult(const Get5SeriesResultEvent event) {
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-public int SQLErrorCheckCallback(Handle owner, Handle hndl, const char[] error, int data) {
+static int SQLErrorCheckCallback(Handle owner, Handle hndl, const char[] error, int data) {
   if (!StrEqual("", error)) {
     LogError("Last Connect SQL Error: %s", error);
   }
@@ -381,6 +384,6 @@ public void Get5_OnRoundStatsUpdated(const Get5RoundStatsUpdatedEvent event) {
   if (Get5_GetGameState() == Get5State_Live && !g_DisableStats) {
     char matchId[64];
     event.GetMatchId(matchId, sizeof(matchId));
-    UpdateRoundStats(matchId, Get5_GetMapNumber());
+    UpdateRoundStats(matchId, event.MapNumber);
   }
 }

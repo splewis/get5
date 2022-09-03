@@ -72,7 +72,7 @@ public void OnPluginStart() {
   RegConsoleCmd("get5_web_available", Command_Available);
 }
 
-public Action Command_Available(int client, int args) {
+static Action Command_Available(int client, int args) {
   char versionString[64] = "unknown";
   ConVar versionCvar = FindConVar("get5_version");
   if (versionCvar != null) {
@@ -94,11 +94,11 @@ public Action Command_Available(int client, int args) {
   return Plugin_Handled;
 }
 
-public void LogoBasePathChanged(ConVar convar, const char[] oldValue, const char[] newValue) {
+void LogoBasePathChanged(ConVar convar, const char[] oldValue, const char[] newValue) {
   g_LogoBasePath = g_UseSVGCvar.BoolValue ? LOGO_DIR : LEGACY_LOGO_DIR;
 }
 
-public void ApiInfoChanged(ConVar convar, const char[] oldValue, const char[] newValue) {
+void ApiInfoChanged(ConVar convar, const char[] oldValue, const char[] newValue) {
   g_APIKeyCvar.GetString(g_APIKey, sizeof(g_APIKey));
   g_APIURLCvar.GetString(g_APIURL, sizeof(g_APIURL));
 
@@ -136,7 +136,7 @@ static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:
   }
 }
 
-public int RequestCallback(Handle request, bool failure, bool requestSuccessful,
+int RequestCallback(Handle request, bool failure, bool requestSuccessful,
                     EHTTPStatusCode statusCode) {
   if (failure || !requestSuccessful) {
     LogError("API request failed, HTTP status code = %d", statusCode);
@@ -163,7 +163,7 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
   CheckForLogo(logo2);
 }
 
-public void CheckForLogo(const char[] logo) {
+static void CheckForLogo(const char[] logo) {
   if (StrEqual(logo, "")) {
     return;
   }
@@ -196,7 +196,8 @@ public void CheckForLogo(const char[] logo) {
   }
 }
 
-public int LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status, int data) {
+static int LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status,
+                        int data) {
   if (failure || !successful) {
     LogError("Logo request failed, status code = %d", status);
     return;
@@ -235,7 +236,7 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
   Get5_AddLiveCvar("get5_web_api_url", g_APIURL);
 }
 
-public void UpdateRoundStats(const char[] matchId, int mapNumber) {
+static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
   int t1score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_1));
   int t2score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_2));
 
@@ -252,11 +253,11 @@ public void UpdateRoundStats(const char[] matchId, int mapNumber) {
   Format(mapKey, sizeof(mapKey), "map%d", mapNumber);
   if (kv.JumpToKey(mapKey)) {
     if (kv.JumpToKey("team1")) {
-      UpdatePlayerStats(matchId, kv, Get5Team_1);
+      UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_1);
       kv.GoBack();
     }
     if (kv.JumpToKey("team2")) {
-      UpdatePlayerStats(matchId, kv, Get5Team_2);
+      UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_2);
       kv.GoBack();
     }
     kv.GoBack();
@@ -284,10 +285,10 @@ static void AddIntStat(Handle req, KeyValues kv, const char[] field) {
   AddIntParam(req, field, kv.GetNum(field));
 }
 
-public void UpdatePlayerStats(const char[] matchId, KeyValues kv, Get5Team team) {
+static void UpdatePlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv,
+                              const Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
-  int mapNumber = Get5_GetMapNumber();
 
   if (kv.GotoFirstSubKey()) {
     do {
@@ -300,7 +301,7 @@ public void UpdatePlayerStats(const char[] matchId, KeyValues kv, Get5Team team)
                                  mapNumber, auth);
       if (req != INVALID_HANDLE) {
         AddStringParam(req, "team", teamString);
-        AddStringParam(req, "name", name);
+        AddStringParam(req, STAT_NAME, name);
         AddIntStat(req, kv, STAT_KILLS);
         AddIntStat(req, kv, STAT_DEATHS);
         AddIntStat(req, kv, STAT_ASSISTS);
@@ -308,6 +309,10 @@ public void UpdatePlayerStats(const char[] matchId, KeyValues kv, Get5Team team)
         AddIntStat(req, kv, STAT_TEAMKILLS);
         AddIntStat(req, kv, STAT_SUICIDES);
         AddIntStat(req, kv, STAT_DAMAGE);
+        AddIntStat(req, kv, STAT_UTILITY_DAMAGE);
+        AddIntStat(req, kv, STAT_ENEMIES_FLASHED);
+        AddIntStat(req, kv, STAT_FRIENDLIES_FLASHED);
+        AddIntStat(req, kv, STAT_KNIFE_KILLS);
         AddIntStat(req, kv, STAT_HEADSHOT_KILLS);
         AddIntStat(req, kv, STAT_ROUNDSPLAYED);
         AddIntStat(req, kv, STAT_BOMBPLANTS);
@@ -329,6 +334,7 @@ public void UpdatePlayerStats(const char[] matchId, KeyValues kv, Get5Team team)
         AddIntStat(req, kv, STAT_TRADEKILL);
         AddIntStat(req, kv, STAT_KAST);
         AddIntStat(req, kv, STAT_CONTRIBUTION_SCORE);
+        AddIntStat(req, kv, STAT_MVP);
         SteamWorks_SendHTTPRequest(req);
       }
 
@@ -377,6 +383,6 @@ public void Get5_OnRoundStatsUpdated(const Get5RoundStatsUpdatedEvent event) {
   if (Get5_GetGameState() == Get5State_Live) {
     char matchId[64];
     event.GetMatchId(matchId, sizeof(matchId));
-    UpdateRoundStats(matchId, Get5_GetMapNumber());
+    UpdateRoundStats(matchId, event.MapNumber);
   }
 }

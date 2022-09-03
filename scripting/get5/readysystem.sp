@@ -2,26 +2,27 @@
  * Ready System
  */
 
-public void ResetReadyStatus() {
+void ResetReadyStatus() {
   SetAllTeamsForcedReady(false);
   SetAllClientsReady(false);
 }
 
-public bool IsReadyGameState() {
-  return g_GameState == Get5State_PreVeto || g_GameState == Get5State_Warmup;
+static bool IsReadyGameState() {
+  return (g_GameState == Get5State_PreVeto || g_GameState == Get5State_Warmup) &&
+         !g_MapChangePending;
 }
 
 // Client ready status
 
-public bool IsClientReady(int client) {
+static bool IsClientReady(int client) {
   return g_ClientReady[client] == true;
 }
 
-public void SetClientReady(int client, bool ready) {
+void SetClientReady(int client, bool ready) {
   g_ClientReady[client] = ready;
 }
 
-public void SetAllClientsReady(bool ready) {
+static void SetAllClientsReady(bool ready) {
   LOOP_CLIENTS(i) {
     SetClientReady(i, ready);
   }
@@ -29,15 +30,15 @@ public void SetAllClientsReady(bool ready) {
 
 // Team ready override
 
-public bool IsTeamForcedReady(Get5Team team) {
+static bool IsTeamForcedReady(Get5Team team) {
   return g_TeamReadyOverride[team] == true;
 }
 
-public void SetTeamForcedReady(Get5Team team, bool ready) {
+static void SetTeamForcedReady(Get5Team team, bool ready) {
   g_TeamReadyOverride[team] = ready;
 }
 
-public void SetAllTeamsForcedReady(bool ready) {
+static void SetAllTeamsForcedReady(bool ready) {
   LOOP_TEAMS(team) {
     SetTeamForcedReady(team, ready);
   }
@@ -45,15 +46,15 @@ public void SetAllTeamsForcedReady(bool ready) {
 
 // Team ready status
 
-public bool IsTeamsReady() {
+bool IsTeamsReady() {
   return IsTeamReady(Get5Team_1) && IsTeamReady(Get5Team_2);
 }
 
-public bool IsSpectatorsReady() {
+bool IsSpectatorsReady() {
   return IsTeamReady(Get5Team_Spec);
 }
 
-public bool IsTeamReady(Get5Team team) {
+bool IsTeamReady(Get5Team team) {
   if (g_GameState == Get5State_Live) {
     return true;
   }
@@ -82,7 +83,7 @@ public bool IsTeamReady(Get5Team team) {
   return false;
 }
 
-public int GetTeamReadyCount(Get5Team team) {
+static int GetTeamReadyCount(Get5Team team) {
   int readyCount = 0;
   LOOP_CLIENTS(i) {
     if (IsPlayer(i) && GetClientMatchTeam(i) == team && !IsClientCoaching(i) && IsClientReady(i)) {
@@ -92,7 +93,7 @@ public int GetTeamReadyCount(Get5Team team) {
   return readyCount;
 }
 
-public int GetTeamPlayerCount(Get5Team team) {
+static int GetTeamPlayerCount(Get5Team team) {
   int playerCount = 0;
   LOOP_CLIENTS(i) {
     if (IsPlayer(i) && GetClientMatchTeam(i) == team && !IsClientCoaching(i)) {
@@ -102,7 +103,7 @@ public int GetTeamPlayerCount(Get5Team team) {
   return playerCount;
 }
 
-public int GetTeamMinReady(Get5Team team) {
+static int GetTeamMinReady(Get5Team team) {
   if (team == Get5Team_1 || team == Get5Team_2) {
     return g_MinPlayersToReady;
   } else if (team == Get5Team_Spec) {
@@ -112,7 +113,7 @@ public int GetTeamMinReady(Get5Team team) {
   }
 }
 
-public int GetPlayersPerTeam(Get5Team team) {
+static int GetPlayersPerTeam(Get5Team team) {
   if (team == Get5Team_1 || team == Get5Team_2) {
     return g_PlayersPerTeam;
   } else if (team == Get5Team_Spec) {
@@ -125,7 +126,7 @@ public int GetPlayersPerTeam(Get5Team team) {
 
 // Admin commands
 
-public Action Command_AdminForceReady(int client, int args) {
+Action Command_AdminForceReady(int client, int args) {
   if (!IsReadyGameState()) {
     return Plugin_Handled;
   }
@@ -140,7 +141,7 @@ public Action Command_AdminForceReady(int client, int args) {
 
 // Client commands
 // Re-used to automatically ready players on warmup-activity, hence the helper-method.
-public void HandleReadyCommand(int client, bool autoReady) {
+void HandleReadyCommand(int client, bool autoReady) {
   if (!IsReadyGameState()) {
     return;
   }
@@ -153,7 +154,8 @@ public void HandleReadyCommand(int client, bool autoReady) {
   Get5_Message(client, "%t", "YouAreReady");
 
   if (autoReady) {
-    PrintHintText(client, "%t", "YouAreReadyAuto");
+    // We cannot color text in hints, so no formatting the command.
+    PrintHintText(client, "%t", "YouAreReadyAuto", "!unready");
   }
 
   SetClientReady(client, true);
@@ -163,12 +165,12 @@ public void HandleReadyCommand(int client, bool autoReady) {
   }
 }
 
-public Action Command_Ready(int client, int args) {
+Action Command_Ready(int client, int args) {
   HandleReadyCommand(client, false);
   return Plugin_Handled;
 }
 
-public Action Command_NotReady(int client, int args) {
+Action Command_NotReady(int client, int args) {
   Get5Team team = GetClientMatchTeam(client);
   if (!IsReadyGameState() || team == Get5Team_None || !IsClientReady(client)) {
     return Plugin_Handled;
@@ -196,7 +198,7 @@ public Action Command_NotReady(int client, int args) {
   return Plugin_Handled;
 }
 
-public Action Command_ForceReadyClient(int client, int args) {
+Action Command_ForceReadyClient(int client, int args) {
   Get5Team team = GetClientMatchTeam(client);
   if (!IsReadyGameState() || team == Get5Team_None || IsTeamReady(team)) {
     return Plugin_Handled;
@@ -209,11 +211,12 @@ public Action Command_ForceReadyClient(int client, int args) {
     Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", minReady);
     return Plugin_Handled;
   }
-
+  char formattedClientName[MAX_NAME_LENGTH];
+  FormatPlayerName(formattedClientName, sizeof(formattedClientName), client, team);
   LOOP_CLIENTS(i) {
     if (IsPlayer(i) && GetClientMatchTeam(i) == team) {
       SetClientReady(i, true);
-      Get5_Message(i, "%t", "TeammateForceReadied", client);
+      Get5_Message(i, "%t", "TeammateForceReadied", formattedClientName);
     }
   }
   SetTeamForcedReady(team, true);
@@ -242,10 +245,9 @@ static void HandleReadyMessage(Get5Team team) {
   if (g_GameState == Get5State_PreVeto) {
     Get5_MessageToAll("%t", "TeamReadyToVetoInfoMessage", g_FormattedTeamNames[team]);
   } else if (g_GameState == Get5State_Warmup) {
-    SideChoice sides = view_as<SideChoice>(g_MapSides.Get(Get5_GetMapNumber()));
     if (g_WaitingForRoundBackup) {
       Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_FormattedTeamNames[team]);
-    } else if (sides == SideChoice_KnifeRound) {
+    } else if (view_as<SideChoice>(g_MapSides.Get(g_MapNumber)) == SideChoice_KnifeRound) {
       Get5_MessageToAll("%t", "TeamReadyToKnifeInfoMessage", g_FormattedTeamNames[team]);
     } else {
       Get5_MessageToAll("%t", "TeamReadyToBeginInfoMessage", g_FormattedTeamNames[team]);
@@ -253,13 +255,13 @@ static void HandleReadyMessage(Get5Team team) {
   }
 }
 
-public void MissingPlayerInfoMessage() {
+void MissingPlayerInfoMessage() {
   MissingPlayerInfoMessageTeam(Get5Team_1);
   MissingPlayerInfoMessageTeam(Get5Team_2);
   MissingPlayerInfoMessageTeam(Get5Team_Spec);
 }
 
-public void MissingPlayerInfoMessageTeam(Get5Team team) {
+static void MissingPlayerInfoMessageTeam(Get5Team team) {
   if (IsTeamForcedReady(team)) {
     return;
   }
@@ -269,14 +271,20 @@ public void MissingPlayerInfoMessageTeam(Get5Team team) {
   int playerCount = GetTeamPlayerCount(team);
   int readyCount = GetTeamReadyCount(team);
 
-  if (playerCount == readyCount && playerCount < minPlayers && readyCount >= minReady) {
-    Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", minPlayers);
+  if (playerCount == readyCount && playerCount < minPlayers && readyCount >= minReady &&
+      minPlayers > 1) {
+    char minPlayersFormatted[32];
+    Format(minPlayersFormatted, sizeof(minPlayersFormatted), "{GREEN}%d{NORMAL}", minPlayers);
+    char forceReadyFormatted[64];
+    FormatChatCommand(forceReadyFormatted, sizeof(forceReadyFormatted), "!forceready");
+    Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", forceReadyFormatted,
+                       minPlayersFormatted);
   }
 }
 
 // Helpers
 
-public void UpdateClanTags() {
+void UpdateClanTags() {
   if (!g_SetClientClanTagCvar.BoolValue) {
     LogDebug("Not setting client clan tags because get5_set_client_clan_tags is 0");
     return;

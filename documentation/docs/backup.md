@@ -10,19 +10,20 @@ the entire [match configuration](../match_schema) and the match series score for
 
 The backup system must be [enabled](../configuration/#get5_backup_system_enabled) for this to work.
 
-## How does it work?
+### How does it work?
 
 Every time a round starts, CS:GO automatically writes a round backup file into the root of the `csgo` directory based on
 the value of `mp_backup_round_file`. The default value for this is `backup`. Get5 reads this file and copies it into its
-own file called `get5_backup_match%s_map%d_round%d.cfg`, where the arguments are `matchid`, `mapnumber` and `roundnumber`,
-respectively. A special backup called `get5_backup_match%s_map%d_prelive.cfg` is created for the knife round.
+own file called `get5_backup_match%s_map%d_round%d.cfg`, where the arguments are `matchid`, `mapnumber`
+and `roundnumber`, respectively. A special backup called `get5_backup_match%s_map%d_prelive.cfg` is created and should
+be used if you want to restore to the beginning of the map, before the knife round.
 
-## Example
+### Example
 
 When in a match, you can call [`get5_listbackups`](../commands/#get5_listbackups) to view all backups for the current
 match. Note that all rounds and map numbers start at 0.
 
-They print in the format `filename date team1 team2 map team1_score team2_score`.
+They print in the format `filepath date time team1 team2 map team1_score team2_score`.
 
 ```
 > get5_listbackups
@@ -37,8 +38,16 @@ get5_backup_match1844_map0_round17.cfg 2022-07-26 19:03:39 "Team A" "Team B" de_
 ```
 
 To load at the beginning of round 13 of the first map of match ID 1844, all players should be connected to the server,
-and you can type:
+and you use the [`get5_loadbackup`](../commands/#get5_loadbackup) command:
 
-`get5_loadbackup get5_backup_match1844_map0_round12.cfg`. 
+`get5_loadbackup get5_backup_match1844_map0_round12.cfg`.
 
 The game should restore in a paused state and both teams must [`!unpause`](../commands/#unpause) to continue.
+
+### Pauses in backups
+
+When restoring from a backup, the [consumed pauses](pausing.md) are reset to the state they were in at the beginning
+of the round you restore to, but only if the game state is not currently live. This means that using
+the [`!stop`](../commands/#stop) command or the [`get5_loadbackup`](../commands/#get5_loadbackup) command **for the same
+match and map** would retain the currently used pauses. If restarting the server or loading the backup from scratch, the
+pauses from the backup file will be used.

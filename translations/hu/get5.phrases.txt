@@ -1,0 +1,375 @@
+"Phrases"
+{
+    "ReadyToVetoInfoMessage"
+    {
+        "hu"            "Írd be a {1} parancsot, ha a csapatod készen áll a vétóra."
+    }
+    "WaitingForCastersReadyInfoMessage"
+    {
+        "hu"            "A {1} várunk, hogy beírja a {2} parancsot a kezdéshez."
+    }
+    "ReadyToRestoreBackupInfoMessage"
+    {
+        "hu"            "Írd be a {1} parancsot, ha a készen állsz a mérkőzés visszatöltésre."
+    }
+    "ReadyToKnifeInfoMessage"
+    {
+        "hu"            "Írd be a {1} parancsot, ha készen állsz a késelésre."
+    }
+    "ReadyToStartInfoMessage"
+    {
+        "hu"            "Írd be a {1} parancsot, ha készenállsz a kezdésre."
+    }
+    "YouAreReady"
+    {
+        "hu"            "Készen állsz a mérkőzés megkezdésére."
+    }
+    "YouAreReadyAuto"
+    {
+        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által. Írd be, hogy {1} ha nem állsz még készen."
+    }
+    "YouAreNotReady"
+    {
+        "hu"            "Nem állsz készen a mérkőzés megkezdésére."
+    }
+    "WaitingForEnemySwapInfoMessage"
+    {
+        "hu"            "{1} nyerte meg a kés kört. Várakozunk, hogy kiválasszák a megfelelő oldalt. {2} vagy {3}."
+    }
+    "WaitingForGOTVBrodcastEndingInfoMessage"
+    {
+        "hu"            "A pálya akkor fog váltani, ha a GOTV adás befejeződött."
+    }
+    "WaitingForGOTVVetoInfoMessage"
+    {
+        "hu"            "A pálya akkor fog váltani, ha a GOTV adás megjelenítette a pálya vétókat."
+    }
+    "NoMatchSetupInfoMessage"
+    {
+        "hu"            "Nincs mérkőzés előkészítve"
+    }
+    "YouAreNotAPlayerInfoMessage"
+    {
+        "hu"            "Nem vagy játékos ezen a mérkőzésen"
+    }
+    "TeamIsFullInfoMessage"
+    {
+        "hu"            "A csapatod megtelt"
+    }
+    "TeamForfeitInfoMessage"
+    {
+        "hu"            "{1} nem sikerült időben felkészülni, ezért vesztettetek."
+    }
+    "MinutesToForfeitMessage"
+    {
+        "hu"            "{1} {2} perc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
+    }
+    "SecondsToForfeitInfoMessage"
+    {
+        "hu"            "{1} {2} másodperc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
+    }
+    "10SecondsToForfeitInfoMessage"
+    {
+        "hu"            "{1} 10 másodperc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
+    }
+    "MaxPausesUsedInfoMessage"
+    {
+        "hu"            "A {2} felhasználta a maximális ({1}) időkérést."
+    }
+    "MaxPausesTimeUsedInfoMessage"
+    {
+        "hu"            "A {2} felhasználta a maximális ({1}) időkérésre használható időt."
+    }
+    "MatchPausedByTeamMessage"
+    {
+        "hu"            "{1} taktikai időkérést kért."
+    }
+    "MatchTechPausedByTeamMessage"
+    {
+        "hu"            "{1} technikai időkérésért kért."
+    }
+    "PausesNotEnabled"
+    {
+        "hu"            "Az időkérések nincsenek engedélyezve."
+    }
+    "TechPausesNotEnabled"
+    {
+        "hu"            "A technikai időkérések nincsenek engedélyezve."
+    }
+    "TechnicalPauseMidSentence"
+    {
+        "hu"            "technikai szünet"
+    }
+    "TacticalPauseMidSentence"
+    {
+        "hu"            "taktikai szünet"
+    }
+    "TimeRemainingBeforeAnyoneCanUnpausePrefix"
+    {
+        "hu"            "Ennyi idő maradt, mielőtt bárki elindíthatja a mérkőzést"
+    }
+    "PauseTimeRemainingPrefix"
+    {
+        "hu"            "Hátralévő idő a szünetből"
+    }
+    "AwaitingUnpause"
+    {
+        "hu"            "Várakozás a folytatásra"
+    }
+    "PausedByAdministrator"
+    {
+        "hu"            "Egy admin leszünetelte a mérkőzést."
+    }
+    "PausedForBackup"
+    {
+        "hu"            "A játék vissza lett töltve a kör mentésből. Mindkét csapatnak be kell írnia az {1} parancsot a folytatáshoz."
+    }
+    "UserCannotUnpauseAdmin"
+    {
+        "hu"            "Egy admin kérte ezt az időkérést, ő is fogja tudni folytatni."
+    }
+    "PausingTeamCannotUnpauseUntilFreezeTime"
+    {
+        "hu"            "Az időkérést, nem lehet visszavonni."
+    }
+    "PauseRunoutInfoMessage"
+    {
+        "hu"            "{1} csapatnak, elfogyott a szüneteltetési ideje. Folytatódik a mérkőzés."
+    }
+    "TechPauseRunoutInfoMessage"
+    {
+        "hu"            "A technikai szünetre szánt idő, elfogyott. Bárki tudja folytatni a mérkőést."
+    }
+    "TechPauseNoTimeRemaining"
+    {
+        "hu"            "A {1} csapatnak, nem maradt több ideje technikai időkérésre. Használja a taktikai időkérést."
+    }
+    "TechPauseNoPausesRemaining"
+    {
+        "hu"            "A {1} csapatnak, nem maradt több technikai időkérése. Használja a taktikai időkérést."
+    }
+    "TechPausePausesRemaining"
+    {
+        "hu"            "Megmaradt technikai időkérések a {1} csapatnak: {2}"
+    }
+    "MatchUnpauseInfoMessage"
+    {
+        "hu"            "{1} elindította a mérkőzést."
+    }
+    "WaitingForUnpauseInfoMessage"
+    {
+        "hu"            "{1} szeretné folytatni. Várakozunk a {2} csapatra, hogy beírják a {3} parancsot."
+    }
+    "PausesLeftInfoMessage"
+    {
+        "hu"            "Megmaradt taktikai időkérések a {1} csapatnak: {2}"
+    }
+	"PrereleaseVersionWarning"
+    {
+        "hu"            "A Get5 ({1}) változatát futtatod, ami kifejezetten fejlesztésre és tesztelésre van. Ez az üzenet kikapcsolható a {2} parancs segítségével."
+    }
+    "NewVersionAvailable"
+    {
+        "hu"            "Egy új változat elérhető a Get5-ból. Látogasd meg a {1} a frissítéssel kapcsolatban."
+    }
+    "TeamFailToReadyMinPlayerCheck"
+    {
+        "hu"            "A szerveren legalább {1} játékosnak készen kell állnia a kezdéshez."
+    }
+    "TeamReadyToVetoInfoMessage"
+    {
+        "hu"            "{1} készenáll a vétó megkezdésére."
+    }
+    "TeamReadyToRestoreBackupInfoMessage"
+    {
+        "hu"            "{1} készen áll a mérkőzés visszaállítására."
+    }
+    "TeamReadyToKnifeInfoMessage"
+    {
+        "hu"            "{1} készenáll, hogy késeljen az oldalért."
+    }
+    "TeamReadyToBeginInfoMessage"
+    {
+        "hu"            "{1} készen áll a mérkőzés megkezdésére."
+    }
+    "TeamNotReadyInfoMessage"
+    {
+        "hu"            "{1} már nem áll készen."
+    }
+    "ForceReadyInfoMessage"
+    {
+        "hu"            "Beírhatod a {1} parancsot, ha fel szeretnéd készíteni a csapatod, ha kevesebb mint {2} játékosod van."
+    }
+    "TeammateForceReadied"
+    {
+        "hu"            "A csapatod felkészült {1} által."
+    }
+    "AdminForceReadyInfoMessage"
+    {
+        "hu"            "Egy admin, minden csapatot felkészített."
+    }
+    "AdminForceEndInfoMessage"
+    {
+        "hu"            "Egy admin, véget vetett a mérkőzésnek."
+    }
+    "AdminForcePauseInfoMessage"
+    {
+        "hu"            "Egy admin, szüneteli a mérkőzést."
+    }
+    "AdminForceUnPauseInfoMessage"
+    {
+        "hu"            "Egy admin, a mérkőzés folytatását hajtotta végre."
+    }
+    "TeamWantsToReloadCurrentRound"
+    {
+        "hu"            "{1} szeretne megállni és visszatölteni az előző kört. {2} el kell fogadni a {3} paranccsal."
+    }
+    "TeamWinningSeriesInfoMessage"
+    {
+        "hu"            "{1} áll nyerésre {2}-{3}."
+    }
+    "SeriesTiedInfoMessage"
+    {
+        "hu"            "Az állás döntetlen. {1}-{2}."
+    }
+    "NextSeriesMapInfoMessage"
+    {
+        "hu"            "A következő pálya a szériában {1}."
+    }
+    "TeamWonMatchInfoMessage"
+    {
+        "hu"            "{1} megnyerte a mérkőzést."
+    }
+    "TeamTiedMatchInfoMessage"
+    {
+        "hu"            "{1} és a {2} döntetlent játszott."
+    }
+    "TeamWonSeriesInfoMessage"
+    {
+        "hu"            "{1} nyerte a szériát. {2}-{3}."
+    }
+    "MatchFinishedInfoMessage"
+    {
+        "hu"            "A mérkőzés befejeződött"
+    }
+    "StopCommandNotEnabled"
+    {
+        "hu"            "A stop parancs nincs engedélyezve."
+    }
+    "BackupLoadedInfoMessage"
+    {
+        "hu"            "Sikeresen visszatöltődött a körmentés {1}."
+    }
+    "MatchBeginInSecondsInfoMessage"
+    {
+        "hu"            "A mérkőzés {1} másodperc múlva kezdődik."
+    }
+    "MatchIsLiveInfoMessage"
+    {
+        "hu"            "A mérkőzés {GREEN}ÉLES"
+    }
+    "KnifeIn5SecInfoMessage"
+    {
+        "hu"            "A kés kör 5 másodperc múlva kezdődik."
+    }
+    "KnifeInfoMessage"
+    {
+        "hu"            "Kés!"
+    }
+    "TeamDecidedToStayInfoMessage"
+    {
+        "hu"            "{1} úgy döntött, hogy maradnak."
+    }
+    "TeamDecidedToSwapInfoMessage"
+    {
+        "hu"            "{1} úgy döntött, hogy térfelet cserélnek."
+    }
+    "TeamLostTimeToDecideInfoMessage"
+    {
+        "hu"            "{1} maradnak, mivel idő letelte előtt, nem választottak."
+    }
+    "ChangingMapInfoMessage"
+    {
+        "hu"            "Pályaváltás a következőre {1}..."
+    }
+    "MapDecidedInfoMessage"
+    {
+        "hu"            "A pályák ellettek döntve:"
+    }
+    "MapIsInfoMessage"
+    {
+        "hu"            "{1}. Pálya: {2}"
+    }
+    "TeamPickedMapInfoMessage"
+    {
+        "hu"            "{1} választotta a {2} {3}. pályának."
+    }
+    "TeamSelectSideInfoMessage"
+    {
+        "hu"            "{1} választott, hogy kezd {2} oldalon a(z) {3}. pályán."
+    }
+    "TeamVetoedMapInfoMessage"
+    {
+        "hu"            "{1} szavazott {2}."
+    }
+    "CaptainLeftOnVetoInfoMessage"
+    {
+        "hu"            "A csapatkapitány kilépett a vétó során, a vétó szünetel."
+    }
+    "ReadyToResumeVetoInfoMessage"
+    {
+        "hu"            "Írd be a {1} parancsot ha készenállsz a vétó folytatására."
+    }
+    "MatchConfigLoadedInfoMessage"
+    {
+        "hu"            "Mérkőzés beállítás betöltödött."
+    }
+    "MoveToCoachInfoMessage"
+    {
+        "hu"            "Mivel a csapatod megtelt, így edzői poziccióba lettél átmozgatva."
+    }
+    "ReadyTag"
+    {
+        "hu"            "[FELKÉSZÜLT]"
+    }
+    "NotReadyTag"
+    {
+        "hu"            "[NEM ÁLL KÉSZEN]"
+    }
+    "MapVetoPickMenuText"
+    {
+        "hu"            "Válassz pályát, amin játszanál:"
+    }
+    "MapVetoPickConfirmMenuText"
+    {
+        "hu"            "Erősítse meg, hogy játszana {1}:"
+    }
+    "MapVetoBanMenuText"
+    {
+        "hu"            "Válaszon egy pályát amit vétózna:"
+    }
+    "MapVetoBanConfirmMenuText"
+    {
+        "hu"            "Erősítse meg, hogy vétózza a {1} pályát:"
+    }
+    "MapVetoSidePickMenuText"
+    {
+        "hu"            "Válasszon oldalt {1}:"
+    }
+    "MapVetoSidePickConfirmMenuText"
+    {
+        "hu"            "Erősítse meg, hogy {1}-ben kezd:"
+    }
+    "ConfirmPositiveOptionText"
+    {
+        "hu"            "Igen"
+    }
+    "ConfirmNegativeOptionText"
+    {
+        "hu"            "Nem"
+    }
+    "VetoCountdown"
+    {
+        "hu"            "Kezdődik a vétózás {1} másodperc múlva."
+    }
+}

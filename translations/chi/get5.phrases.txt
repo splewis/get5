@@ -2,23 +2,23 @@
 {
     "ReadyToVetoInfoMessage"
     {
-        "chi"            "当您的队伍准备好进行Veto(Ban图)时，请输入{GREEN}!ready{NORMAL}。"
+        "chi"            "当您的队伍准备好进行Veto(Ban图)时，请输入{1}。"
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "chi"            "正在等待裁判输入{GREEN}!ready{NORMAL}来开始比赛。"
+        "chi"            "正在等待裁判输入{2}来开始比赛。"
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "chi"            "当您准备好恢复比赛至备份档案时，请输入{GREEN}!ready{NORMAL}。"
+        "chi"            "当您准备好恢复比赛至备份档案时，请输入{1}。"
     }
     "ReadyToKnifeInfoMessage"
     {
-        "chi"            "当您准备好进行刀局时，请输入{GREEN}!ready{NORMAL}。"
+        "chi"            "当您准备好进行刀局时，请输入{1}。"
     }
     "ReadyToStartInfoMessage"
     {
-        "chi"            "当您准备好开始比赛时，请输入{GREEN}!ready{NORMAL}。"
+        "chi"            "当您准备好开始比赛时，请输入{1}。"
     }
     "YouAreReady"
     {
@@ -30,7 +30,7 @@
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "chi"            "{1}赢得刀局。等待他们输入!stay或是!swapwon来选择留下还是交换队伍。"
+        "chi"            "{1}赢得刀局。等待他们输入{2}或是{3}来选择留下还是交换队伍。"
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
@@ -86,11 +86,11 @@
     }
     "MatchUnpauseInfoMessage"
     {
-        "chi"            "{1:N}解除了比赛的暂停。"
+        "chi"            "{1}解除了比赛的暂停。"
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "chi"            "{1}想要取消暂停，正在等待{2}输入!unpause来取消暂停。"
+        "chi"            "{1}想要取消暂停，正在等待{2}输入{3}来取消暂停。"
     }
     "PausesLeftInfoMessage"
     {
@@ -122,11 +122,11 @@
     }
     "ForceReadyInfoMessage"
     {
-        "chi"            "如果您有不到{1}名玩家，您可以输入{GREEN}!forceready{NORMAL}来强制准备您的队伍。"
+        "chi"            "如果您有不到{1}名玩家，您可以输入{2}来强制准备您的队伍。"
     }
     "TeammateForceReadied"
     {
-        "chi"            "您的队伍已被{GREEN}{1}{NORMAL}强制准备就绪。"
+        "chi"            "您的队伍已被{1}强制准备就绪。"
     }
     "AdminForceReadyInfoMessage"
     {
@@ -144,13 +144,13 @@
     {
         "chi"            "一名管理员强制解除了比赛暂停。"
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
-        "chi"            "{1}想停止比赛并重新加载比赛至上一回合，需要{2}输入!stop来确认。"
+        "chi"            "{1}想停止比赛并重新加载比赛至上一回合，需要{2}输入{3}来确认。"
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "chi"            "{1}{NORMAL}在这系列比赛中正处于领先状态 {2}-{3}"
+        "chi"            "{1}在这系列比赛中正处于领先状态 {2}-{3}"
     }
     "SeriesTiedInfoMessage"
     {
@@ -158,7 +158,7 @@
     }
     "NextSeriesMapInfoMessage"
     {
-        "chi"            "下一张地图在此系列比赛中是{GREEN}{1}"
+        "chi"            "下一张地图在此系列比赛中是{1}"
     }
     "TeamWonMatchInfoMessage"
     {
@@ -168,21 +168,13 @@
     {
         "chi"            "{1}与{2}打成了平局。"
     }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "chi"            "{1}和{2}在此系列比赛中平局 1-1。"
-    }
     "TeamWonSeriesInfoMessage"
     {
-        "chi"            "{1}赢得了此系列比赛 {2}-{3}."
+        "chi"            "{1}赢得了此系列比赛 {2}-{3}"
     }
     "MatchFinishedInfoMessage"
     {
         "chi"            "这场比赛已完结。"
-    }
-    "CurrentScoreInfoMessage"
-    {
-        "chi"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
     }
     "BackupLoadedInfoMessage"
     {
@@ -218,7 +210,7 @@
     }
     "ChangingMapInfoMessage"
     {
-        "chi"            "切换地图至{GREEN}{1}......"
+        "chi"            "切换地图至{1}..."
     }
     "MapDecidedInfoMessage"
     {
@@ -226,19 +218,19 @@
     }
     "MapIsInfoMessage"
     {
-        "chi"            "地图 {1}： {GREEN}{2}"
+        "chi"            "地图 {1}： {2}"
     }
     "TeamPickedMapInfoMessage"
     {
-        "chi"            "{1}挑选了{GREEN}{2}{NORMAL}作为地图 {3}"
+        "chi"            "{1}挑选了{2}作为地图 {3}"
     }
     "TeamSelectSideInfoMessage"
     {
-        "chi"            "{1}已选择在{GREEN}{2}{NORMAL}开始 {3}"
+        "chi"            "{1}已选择在{2}开始 {3}"
     }
     "TeamVetoedMapInfoMessage"
     {
-        "chi"            "{1}vetoed(Ban掉)了{LIGHT_RED}{2}"
+        "chi"            "{1}vetoed(Ban掉)了{2}"
     }
     "CaptainLeftOnVetoInfoMessage"
     {
@@ -246,7 +238,7 @@
     }
     "ReadyToResumeVetoInfoMessage"
     {
-        "chi"            "当您准备好恢复Veto(Ban图)时，请输入{GREEN}!ready{NORMAL}。"
+        "chi"            "当您准备好恢复Veto(Ban图)时，请输入{1}。"
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -263,10 +255,6 @@
     "NotReadyTag"
     {
         "chi"            "[未准备]"
-    }
-    "MatchPoweredBy"
-    {
-        "chi"        "由{YELLOW}Get5{NORMAL}强力驱动"
     }
     "MapVetoPickMenuText"
     {
@@ -302,6 +290,6 @@
     }
     "VetoCountdown"
     {
-        "chi"        "Veto(Ban图)还剩{GREEN}{1}秒。"
+        "chi"        "Veto(Ban图)还剩{1}秒。"
     }
 }

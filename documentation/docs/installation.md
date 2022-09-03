@@ -8,23 +8,31 @@ You can get the latest versions here:
 
 [:material-download: Download MetaMod](https://www.sourcemm.net/downloads.php?branch=stable){ .md-button .md-button--primary } [:material-download: Download SourceMod](https://www.sourcemod.net/downloads.php?branch=stable){ .md-button .md-button--primary }
 
-!!! tip
+!!! info "OS is important"
 
     Remember to select the correct OS type (Windows/Linux/Mac) for **both** plugins. This should be the OS of the server.
 
-## Download Get5
+## Get5
 
-The latest release of Get5 can be found [here](https://github.com/splewis/get5/releases/latest). Older Releases of 
-Get5 can be found in the [Releases](https://github.com/splewis/get5/releases) section of the repo. Anything *not*
-marked as "Nightly" in the title are known to be stable, but may be lacking features that are currently in development. 
-If you would like to test new features, or be on the "bleeding edge", you can also download any of the latest 
-pre-releases found at the same link above that are marked in the title with "Nightly" or are marked as "Pre-release".
+### Latest version {: #latest }
+
+The latest version of Get5 can be found here. Older releases can be found in
+the [Releases](https://github.com/splewis/get5/releases) section of the repository on GitHub.
+
+[:material-download: Download Get5](https://github.com/splewis/get5/releases/latest){ .md-button .md-button--primary }
+
+### Test and development {: #development }
+
+If you would like to test new features, or be on the "bleeding edge", you can also download any of the releases found at
+the link above that are marked in the title with **Nightly** or as **Pre-release**. Please note that these versions are
+meant for testers and developers and should not be deployed to production servers unless you have a good reason to do
+so or can live with the potential consequences.
 
 !!! info
 
     Get5 itself is OS-agnostic, meaning the same file works on any OS.
 
-## Download SteamWorks (Recommended) {: #steamworks }
+## SteamWorks (Recommended) {: #steamworks }
 
 SteamWorks is not required for Get5 to work on your game server, however it is required if you wish to [load match
 configs remotely](../commands#get5_loadmatch_url) or if you want Get5 to [automatically
@@ -160,7 +168,7 @@ is just to indicate what the correct structure looks like.
     1. SourceMod error logs can be found in here. This directory is empty by default.
     2. This is the core Get5 plugin.
     3. This is the MySQL extension for collecting stats. If you want to use this extension, please see
-       the [guide](../stats_system/#mysql-statistics).
+       the [guide](../stats_system/#mysql).
     4. This is proof-of-concept integration called [get5 web panel](https://github.com/splewis/get5-web) that can be used to
        manage matches. **This is not supported and is probably very buggy. You should not use it.**
     5. This folder contains all the language files and translations for all the plugins.
@@ -170,10 +178,10 @@ is just to indicate what the correct structure looks like.
     8. Don't change anything in here. There are no editable files in the `metamod` folder. It's here because SourceMod
        depends on it.
     9. SourceMod binaries.
-    10. This a JSON-example of a [match configuration]. You should use this as a template for your own match configuration.
-        All JSON match configurations **must** end with `.json`.
-    11. The server's default scrim match configuration. This is loaded when using
-        the [`get5_scrim`](../commands/#get5_scrim) command.
+    10. This a JSON-example of a [match configuration](match_schema.md). You should use this as a template for your own
+        match configuration. All JSON match configurations **must** end with `.json`.
+    11. The server's default scrim [match configuration](match_schema.md). This is loaded when using the
+        [`get5_scrim`](../commands/#get5_scrim) command.
     12. Match configurations can be created in both JSON and
         SourceMod's [KeyValue](https://wiki.alliedmods.net/KeyValues_(SourceMod_Scripting)) format. We recommend JSON for
         all new users, but Get5 will continue to support reading `.cfg` files as well.

@@ -1,7 +1,7 @@
 // TODO: Also try to write the original match config file.
 // Also consider the last K lines from the most recent errors_* file?
 
-public Action Command_DebugInfo(int client, int args) {
+Action Command_DebugInfo(int client, int args) {
   char path[PLATFORM_MAX_PATH + 1];
 
   if (args == 0 || !GetCmdArg(1, path, sizeof(path))) {
@@ -94,13 +94,21 @@ static void AddGlobalStateInfo(File f) {
   f.WriteLine("g_MatchID = %s", g_MatchID);
   f.WriteLine("g_RoundNumber = %d", g_RoundNumber);
   f.WriteLine("g_MapsToWin = %d", g_MapsToWin);
-  f.WriteLine("g_BO2Match = %d", g_BO2Match);
   f.WriteLine("g_LastVetoTeam = %d", g_LastVetoTeam);
   WriteArrayList(f, "g_MapPoolList", g_MapPoolList);
   WriteArrayList(f, "g_MapsToPlay", g_MapsToPlay);
   WriteArrayList(f, "g_MapsLeftInVetoPool", g_MapsLeftInVetoPool);
-  // TODO: write g_MapSides (it's not a string so WriteArrayList doesn't work).
-
+  f.WriteLine("Defined map sides:");
+  for (int i = 0; i < g_MapSides.Length; i++) {
+    SideChoice c = g_MapSides.Get(i);
+    if (c == SideChoice_Team1CT) {
+      f.WriteLine("g_MapSides(%d) = team1_ct", i);
+    } else if (c == SideChoice_Team1T) {
+      f.WriteLine("g_MapSides(%d) = team1_t", i);
+    } else {
+      f.WriteLine("g_MapSides(%d) = knife", i);
+    }
+  }
   f.WriteLine("g_MatchTitle = %s", g_MatchTitle);
   f.WriteLine("g_PlayersPerTeam = %d", g_PlayersPerTeam);
   f.WriteLine("g_CoachesPerTeam = %d", g_CoachesPerTeam);
@@ -109,12 +117,12 @@ static void AddGlobalStateInfo(File f) {
   f.WriteLine("g_SkipVeto = %d", g_SkipVeto);
   f.WriteLine("g_MatchSideType = %d", g_MatchSideType);
   f.WriteLine("g_InScrimMode = %d", g_InScrimMode);
+  f.WriteLine("g_SeriesCanClinch = %d", g_SeriesCanClinch);
   f.WriteLine("g_HasKnifeRoundStarted = %d", g_HasKnifeRoundStarted);
 
   f.WriteLine("g_MapChangePending = %d", g_MapChangePending);
   f.WriteLine("g_PendingSideSwap = %d", g_PendingSideSwap);
   f.WriteLine("g_WaitingForRoundBackup = %d", g_WaitingForRoundBackup);
-  f.WriteLine("g_SavedValveBackup = %d", g_SavedValveBackup);
   f.WriteLine("g_DoingBackupRestoreNow = %d", g_DoingBackupRestoreNow);
   f.WriteLine("g_ReadyTimeWaitingUsed = %d", g_ReadyTimeWaitingUsed);
   f.WriteLine("g_PausingTeam = %d", g_PausingTeam);

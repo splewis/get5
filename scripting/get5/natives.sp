@@ -31,7 +31,7 @@ public int Native_GetGameState(Handle plugin, int numParams) {
 
 public int Native_Message(Handle plugin, int numParams) {
   int client = GetNativeCell(1);
-  if (client != 0 && (!IsClientConnected(client) || !IsClientInGame(client)))
+  if (client != 0 && !IsClientInGame(client))
     return;
 
   char buffer[1024];
@@ -49,9 +49,9 @@ public int Native_Message(Handle plugin, int numParams) {
     Format(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
 
   if (client == 0) {
-    Colorize(finalMsg, sizeof(finalMsg), false);
+    Colorize(finalMsg, sizeof(finalMsg), true);
     PrintToConsole(client, finalMsg);
-  } else if (IsClientInGame(client)) {
+  } else {
     Colorize(finalMsg, sizeof(finalMsg));
     PrintToChat(client, finalMsg);
   }
@@ -65,7 +65,7 @@ public int Native_MessageToTeam(Handle plugin, int numParams) {
   char buffer[1024];
   int bytesWritten = 0;
 
-  for (int i = 0; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (!IsPlayer(i) || GetClientMatchTeam(i) != team) {
       continue;
     }
@@ -90,9 +90,11 @@ public int Native_MessageToAll(Handle plugin, int numParams) {
   char buffer[1024];
   int bytesWritten = 0;
 
+  // Don't use LOOP_CLIENTS(i) because we need client 0 here.
   for (int i = 0; i <= MaxClients; i++) {
-    if (i != 0 && (!IsClientConnected(i) || !IsClientInGame(i)))
+    if (i != 0 && !IsClientInGame(i)) {
       continue;
+    }
 
     SetGlobalTransTarget(i);
     FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
@@ -103,12 +105,12 @@ public int Native_MessageToAll(Handle plugin, int numParams) {
     else
       Format(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
 
-    if (i != 0) {
+    if (i == 0) {
+      Colorize(finalMsg, sizeof(finalMsg), true);
+      PrintToConsole(i, finalMsg);
+    } else {
       Colorize(finalMsg, sizeof(finalMsg));
       PrintToChat(i, finalMsg);
-    } else {
-      Colorize(finalMsg, sizeof(finalMsg), false);
-      PrintToConsole(i, finalMsg);
     }
   }
 }
@@ -143,11 +145,13 @@ public int Native_SetPlayerName(Handle plugin, int numParams) {
   char name[MAX_NAME_LENGTH];
   GetNativeString(1, auth, sizeof(auth));
   GetNativeString(2, name, sizeof(name));
+  bool suppressPlayerNameLoad = GetNativeCell(3);
   char steam64[AUTH_LENGTH];
-  ConvertAuthToSteam64(auth, steam64);
-  if (strlen(name) > 0 && !StrEqual(name, KEYVALUE_STRING_PLACEHOLDER)) {
+  if (strlen(name) > 0 && ConvertAuthToSteam64(auth, steam64)) {
     g_PlayerNames.SetString(steam64, name);
-    LoadPlayerNames();
+    if (!suppressPlayerNameLoad) {
+      LoadPlayerNames();
+    }
   }
 }
 

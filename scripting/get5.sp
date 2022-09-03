@@ -23,11 +23,11 @@
 #include "include/restorecvars.inc"
 #include <cstrike>
 #include <json>  // github.com/clugg/sm-json
+#include <regex>
 #include <sdkhooks>
 #include <sdktools>
 #include <sourcemod>
 #include <testing>
-#include <regex>
 
 #undef REQUIRE_EXTENSIONS
 #include <SteamWorks>
@@ -38,17 +38,15 @@
 #define DEBUG_CVAR "get5_debug"
 #define MATCH_ID_LENGTH 64
 #define MAX_CVAR_LENGTH 128
-#define MATCH_END_DELAY_AFTER_TV 10
+#define MATCH_END_DELAY_AFTER_TV 15
 
-#define TEAM1_COLOR "{LIGHT_GREEN}"
-#define TEAM2_COLOR "{PINK}"
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T
-#define KNIFE_CONFIG "get5/knife.cfg"
 #define DEFAULT_TAG "[{YELLOW}Get5{NORMAL}]"
 
 #if !defined LATEST_VERSION_URL
-#define LATEST_VERSION_URL "https://raw.githubusercontent.com/splewis/get5/master/scripting/get5/version.sp"
+#define LATEST_VERSION_URL \
+  "https://raw.githubusercontent.com/splewis/get5/master/scripting/get5/version.sp"
 #endif
 
 #if !defined GET5_GITHUB_PAGE
@@ -77,6 +75,8 @@ ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunityCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
+ConVar g_WarmupCfgCvar;
+ConVar g_KnifeCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
 ConVar g_MaxBackupAgeCvar;
 ConVar g_MaxTacticalPausesCvar;
@@ -97,8 +97,12 @@ ConVar g_TeamTimeToStartCvar;
 ConVar g_TimeFormatCvar;
 ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
-ConVar g_WarmupCfgCvar;
 ConVar g_PrintUpdateNoticeCvar;
+ConVar g_RoundBackupPathCvar;
+ConVar g_PhaseAnnouncementCountCvar;
+ConVar g_Team1NameColorCvar;
+ConVar g_Team2NameColorCvar;
+ConVar g_SpecNameColorCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -110,11 +114,12 @@ ConVar g_CoachingEnabledCvar;
 
 /** Series config game-state **/
 int g_MapsToWin = 1;  // Maps needed to win the series.
-bool g_BO2Match = false;
+bool g_SeriesCanClinch = true;
 int g_RoundNumber = -1;  // The round number, 0-indexed. -1 if the match is not live.
 // The active map number, used by stats. Required as the calculated round number changes immediately
 // as a map ends, but before the map changes to the next.
-int g_MapNumber = 0;
+int g_MapNumber = 0;             // the current map number, starting at 0.
+int g_NumberOfMapsInSeries = 0;  // the number of maps to play in the series.
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
 ArrayList g_TeamAuths[MATCHTEAM_COUNT];
@@ -143,12 +148,19 @@ MatchSideType g_MatchSideType = MatchSideType_Standard;
 ArrayList g_CvarNames = null;
 ArrayList g_CvarValues = null;
 bool g_InScrimMode = false;
+
+/** Knife for sides **/
 bool g_HasKnifeRoundStarted = false;
+Get5Team g_KnifeWinnerTeam = Get5Team_None;
+Handle g_KnifeChangedCvars = INVALID_HANDLE;
+Handle g_KnifeDecisionTimer = INVALID_HANDLE;
+Handle g_KnifeCountdownTimer = INVALID_HANDLE;
 
 /** Pausing **/
-bool g_IsChangingPauseState = false; // Used to prevent mp_pause_match and mp_unpause_match from being called directly.
-Get5Team g_PausingTeam = Get5Team_None; // The team that last called for a pause.
-Get5PauseType g_PauseType = Get5PauseType_None; // The type of pause last initiated.
+bool g_IsChangingPauseState =
+    false;  // Used to prevent mp_pause_match and mp_unpause_match from being called directly.
+Get5Team g_PausingTeam = Get5Team_None;          // The team that last called for a pause.
+Get5PauseType g_PauseType = Get5PauseType_None;  // The type of pause last initiated.
 int g_LatestPauseDuration = 0;
 bool g_TeamReadyForUnpause[MATCHTEAM_COUNT];
 bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
@@ -166,23 +178,22 @@ Menu g_ActiveVetoMenu = null;
 
 /** Backup data **/
 bool g_WaitingForRoundBackup = false;
-bool g_SavedValveBackup = false;
 bool g_DoingBackupRestoreNow = false;
 
 // Stats values
 StringMap g_FlashbangContainer;  // Stores flashbang-entity-id -> Get5FlashbangDetonatedEvent.
-StringMap g_HEGrenadeContainer;  // Stores flashbang-entity-id -> Get5HEDetonatedEvent.
-StringMap g_MolotovContainer;    // Stores flashbang-entity-id -> Get5MolotovDetonatedEvent.
+StringMap g_HEGrenadeContainer;  // Stores he-entity-id -> Get5HEDetonatedEvent.
+StringMap g_MolotovContainer;    // Stores molotov-entity-id -> Get5MolotovDetonatedEvent.
 int g_LatestUserIdToDetonateMolotov =
     0;  // Molotov detonate and start-burning/extinguish are two separate events always fired right
         // after each other. We need this to bind them together as detonate does not have client id.
 int g_LatestMolotovToExtinguishBySmoke = 0;  //  Attributes extinguish booleans to smoke grenades.
+bool g_FirstKillDone = false;
+bool g_FirstDeathDone = false;
 bool g_SetTeamClutching[4];
 int g_RoundKills[MAXPLAYERS + 1];  // kills per round each client has gotten
 int g_RoundClutchingEnemyCount[MAXPLAYERS +
                                1];  // number of enemies left alive when last alive on your team
-bool g_TeamFirstKillDone[MATCHTEAM_COUNT];
-bool g_TeamFirstDeathDone[MATCHTEAM_COUNT];
 int g_PlayerKilledBy[MAXPLAYERS + 1];
 float g_PlayerKilledByTime[MAXPLAYERS + 1];
 int g_DamageDone[MAXPLAYERS + 1][MAXPLAYERS + 1];
@@ -204,17 +215,8 @@ bool g_ClientReady[MAXPLAYERS + 1];         // Whether clients are marked ready.
 int g_TeamSide[MATCHTEAM_COUNT];            // Current CS_TEAM_* side for the team.
 int g_TeamStartingSide[MATCHTEAM_COUNT];
 int g_ReadyTimeWaitingUsed = 0;
-char g_DefaultTeamColors[][] = {
-    TEAM1_COLOR,
-    TEAM2_COLOR,
-    "{NORMAL}",
-    "{NORMAL}",
-};
 
 char g_LastKickedPlayerAuth[64];
-
-bool g_ForceWinnerSignal = false;
-Get5Team g_ForcedWinner = Get5Team_None;
 
 /** Chat aliases loaded **/
 #define ALIAS_LENGTH 64
@@ -222,20 +224,15 @@ Get5Team g_ForcedWinner = Get5Team_None;
 ArrayList g_ChatAliases;
 ArrayList g_ChatAliasesCommands;
 
-/** Map game-state **/
-Get5Team g_KnifeWinnerTeam = Get5Team_None;
-
 /** Map-game state not related to the actual gameplay. **/
 char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
-bool g_MovingClientToCoach[MAXPLAYERS + 1];
 bool g_PendingSideSwap = false;
 
 // version check state
 bool g_RunningPrereleaseVersion = false;
 bool g_NewerVersionAvailable = false;
 
-Handle g_KnifeChangedCvars = INVALID_HANDLE;
 Handle g_MatchConfigChangedCvars = INVALID_HANDLE;
 
 /** Forwards **/
@@ -291,6 +288,7 @@ Handle g_OnSidePicked = INVALID_HANDLE;
 #include "get5/natives.sp"
 #include "get5/pausing.sp"
 #include "get5/readysystem.sp"
+#include "get5/recording.sp"
 #include "get5/stats.sp"
 #include "get5/teamlogic.sp"
 #include "get5/tests.sp"
@@ -298,7 +296,7 @@ Handle g_OnSidePicked = INVALID_HANDLE;
 // clang-format off
 public Plugin myinfo = {
   name = "Get5",
-  author = "splewis",
+  author = "splewis, nickdnk & PhlexPlexico",
   description = "",
   version = PLUGIN_VERSION,
   url = "https://github.com/splewis/get5"
@@ -313,8 +311,8 @@ public void OnPluginStart() {
   InitDebugLog(DEBUG_CVAR, "get5");
   LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
 
-  // Because we use SDKHooks for damage, we need to re-hook clients that are already on the server in case
-  // the plugin is reloaded. This includes bots.
+  // Because we use SDKHooks for damage, we need to re-hook clients that are already on the server
+  // in case the plugin is reloaded. This includes bots.
   LOOP_CLIENTS(i) {
     if (IsValidClient(i)) {
       Stats_HookDamageForClient(i);
@@ -354,8 +352,9 @@ public void OnPluginStart() {
   g_CheckAuthsCvar =
       CreateConVar("get5_check_auths", "1",
                    "If set to 0, get5 will not force players to the correct team based on steamid");
-  g_DemoNameFormatCvar = CreateConVar("get5_demo_name_format", "{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
-                                      "Format for demo file names, use \"\" to disable");
+  g_DemoNameFormatCvar = CreateConVar(
+      "get5_demo_name_format", "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
+      "Format for demo file names, use \"\" to disable. Do not remove the {TIME} placeholder if you use the backup system.");
   g_DisplayGotvVetoCvar =
       CreateConVar("get5_display_gotv_veto", "0",
                    "Whether to wait for map vetos to be printed to GOTV before changing map");
@@ -374,8 +373,12 @@ public void OnPluginStart() {
   g_KickClientsWithNoMatchCvar =
       CreateConVar("get5_kick_when_no_match_loaded", "0",
                    "Whether the plugin kicks new clients when no match is loaded");
-  g_LiveCfgCvar =
-      CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to exec when the game goes live");
+  g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg",
+                               "Config file to exec when the game goes live.");
+  g_WarmupCfgCvar =
+      CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods.");
+  g_KnifeCfgCvar =
+      CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to exec in knife periods.");
   g_LiveCountdownTimeCvar = CreateConVar(
       "get5_live_countdown_time", "10",
       "Number of seconds used to count down when a match is going live", 0, true, 5.0, true, 60.0);
@@ -421,7 +424,7 @@ public void OnPluginStart() {
       "get5_time_to_make_knife_decision", "60",
       "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited");
   g_TimeFormatCvar = CreateConVar(
-      "get5_time_format", "%Y-%m-%d_%H",
+      "get5_time_format", "%Y-%m-%d_%H-%M-%S",
       "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
   g_VetoConfirmationTimeCvar = CreateConVar(
       "get5_veto_confirmation_time", "2.0",
@@ -429,9 +432,21 @@ public void OnPluginStart() {
   g_VetoCountdownCvar =
       CreateConVar("get5_veto_countdown", "5",
                    "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
-  g_WarmupCfgCvar =
-      CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods");
-  g_PrintUpdateNoticeCvar = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
+  g_PrintUpdateNoticeCvar = CreateConVar(
+      "get5_print_update_notice", "1",
+      "Whether to print to chat when the game goes live if a new version of Get5 is available.");
+  g_RoundBackupPathCvar = CreateConVar(
+      "get5_backup_path", "",
+      "The folder to save backup files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
+  g_PhaseAnnouncementCountCvar = CreateConVar(
+      "get5_phase_announcement_count", "5",
+      "The number of times Get5 will print 'Knife' or 'Match is LIVE' when the game starts. Set to 0 to disable.");
+  g_Team1NameColorCvar = CreateConVar("get5_team1_color", "{LIGHT_GREEN}",
+                                      "The color used for the name of team 1 in chat messages.");
+  g_Team2NameColorCvar = CreateConVar("get5_team2_color", "{PINK}",
+                                      "The color used for the name of team 2 in chat messages.");
+  g_SpecNameColorCvar = CreateConVar("get5_spec_color", "{NORMAL}",
+                                     "The color used for the name of spectators in chat messages.");
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
@@ -445,6 +460,8 @@ public void OnPluginStart() {
   g_VersionCvar.SetString(PLUGIN_VERSION);
 
   g_CoachingEnabledCvar = FindConVar("sv_coaching_enabled");
+  g_CoachingEnabledCvar.AddChangeHook(
+      CoachingChangedHook);  // used to move people off coaching if it gets disabled.
 
   /** Client commands **/
   g_ChatAliases = new ArrayList(ByteCountToCells(ALIAS_LENGTH));
@@ -526,10 +543,11 @@ public void OnPluginStart() {
 
   /** Hooks **/
   HookEvent("cs_win_panel_match", Event_MatchOver);
+  HookEvent("cs_win_panel_round", Event_RoundWinPanel, EventHookMode_Pre);
   HookEvent("player_connect_full", Event_PlayerConnectFull);
   HookEvent("player_disconnect", Event_PlayerDisconnect);
   HookEvent("player_spawn", Event_PlayerSpawn);
-  HookEvent("round_end", Event_RoundEnd);
+  HookEvent("round_end", Event_RoundEnd, EventHookMode_Pre);
   HookEvent("round_freeze_end", Event_FreezeEnd);
   HookEvent("round_prestart", Event_RoundPreStart);
   HookEvent("round_start", Event_RoundStart);
@@ -610,51 +628,57 @@ public void OnPluginStart() {
   CheckForLatestVersion();
 }
 
-public Action Timer_InfoMessages(Handle timer) {
+static Action Timer_InfoMessages(Handle timer) {
+  if (g_GameState == Get5State_Live || g_GameState == Get5State_None) {
+    return Plugin_Continue;
+  }
+
+  char readyCommandFormatted[64];
+  FormatChatCommand(readyCommandFormatted, sizeof(readyCommandFormatted), "!ready");
+
   // Handle pre-veto messages
   if (g_GameState == Get5State_PreVeto) {
     if (IsTeamsReady() && !IsSpectatorsReady()) {
       Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
-                        g_FormattedTeamNames[Get5Team_Spec]);
+                        g_FormattedTeamNames[Get5Team_Spec], readyCommandFormatted);
     } else {
-      Get5_MessageToAll("%t", "ReadyToVetoInfoMessage");
+      Get5_MessageToAll("%t", "ReadyToVetoInfoMessage", readyCommandFormatted);
     }
     MissingPlayerInfoMessage();
-  }
-
-  // Handle warmup state, provided we're not waiting for a map change
-  if (g_GameState == Get5State_Warmup && !g_MapChangePending) {
+  } else if (g_GameState == Get5State_Warmup && !g_MapChangePending) {
+    // Handle warmup state, provided we're not waiting for a map change
     // Backups take priority
     if (!IsTeamsReady() && g_WaitingForRoundBackup) {
-      Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage");
+      Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage", readyCommandFormatted);
       return Plugin_Continue;
     }
 
     // Find out what we're waiting for
     if (IsTeamsReady() && !IsSpectatorsReady()) {
       Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
-                        g_FormattedTeamNames[Get5Team_Spec]);
+                        g_FormattedTeamNames[Get5Team_Spec], readyCommandFormatted);
     } else {
       if (g_MapSides.Get(Get5_GetMapNumber()) == SideChoice_KnifeRound) {
-        Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage");
+        Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage", readyCommandFormatted);
       } else {
-        Get5_MessageToAll("%t", "ReadyToStartInfoMessage");
+        Get5_MessageToAll("%t", "ReadyToStartInfoMessage", readyCommandFormatted);
       }
     }
     MissingPlayerInfoMessage();
   } else if (g_DisplayGotvVetoCvar.BoolValue && g_GameState == Get5State_Warmup &&
-             g_MapChangePending) {
+             g_MapChangePending && GetTvDelay() > 0) {
     Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
-  }
-
-  // Handle waiting for knife decision
-  if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
+  } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
+    // Handle waiting for knife decision
+    char formattedStayCommand[64];
+    FormatChatCommand(formattedStayCommand, sizeof(formattedStayCommand), "!stay");
+    char formattedSwapCommand[64];
+    FormatChatCommand(formattedSwapCommand, sizeof(formattedSwapCommand), "!swap");
     Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam]);
-  }
-
-  // Handle postgame
-  if (g_GameState == Get5State_PostGame) {
+                      g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand,
+                      formattedSwapCommand);
+  } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
+    // Handle postgame
     Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
   }
 
@@ -663,7 +687,6 @@ public Action Timer_InfoMessages(Handle timer) {
 
 public void OnClientAuthorized(int client, const char[] auth) {
   SetClientReady(client, false);
-  g_MovingClientToCoach[client] = false;
   if (StrEqual(auth, "BOT", false)) {
     return;
   }
@@ -672,35 +695,31 @@ public void OnClientAuthorized(int client, const char[] auth) {
     Get5Team team = GetClientMatchTeam(client);
     if (team == Get5Team_None) {
       RememberAndKickClient(client, "%t", "YouAreNotAPlayerInfoMessage");
-    } else {
-      int teamCount = CountPlayersOnMatchTeam(team, client);
-      if (teamCount >= g_PlayersPerTeam && !g_CoachingEnabledCvar.BoolValue) {
-        KickClient(client, "%t", "TeamIsFullInfoMessage");
-      }
+    } else if (CountPlayersOnTeam(team, client) >= g_PlayersPerTeam &&
+               (!g_CoachingEnabledCvar.BoolValue ||
+                CountCoachesOnTeam(team, client) >= g_CoachesPerTeam)) {
+      KickClient(client, "%t", "TeamIsFullInfoMessage");
     }
   }
 }
 
-public void RememberAndKickClient(int client, const char[] format, const char[] translationPhrase) {
+void RememberAndKickClient(int client, const char[] format, const char[] translationPhrase) {
   GetAuth(client, g_LastKickedPlayerAuth, sizeof(g_LastKickedPlayerAuth));
   KickClient(client, format, translationPhrase);
 }
 
 public void OnClientPutInServer(int client) {
-  Stats_HookDamageForClient(client);
+  LogDebug("OnClientPutInServer");
+  Stats_HookDamageForClient(client);  // Also needed for bots!
   if (IsFakeClient(client)) {
     return;
   }
-
-  CheckAutoLoadConfig();
-  if (g_GameState <= Get5State_Warmup && g_GameState != Get5State_None) {
-    if (GetRealClientCount() <= 1) {
-      ExecCfg(g_WarmupCfgCvar);
-      EnsureIndefiniteWarmup();
-    }
-  }
-
+  // If a player joins during freezetime, ensure their round stats are 0, as there will be no
+  // round-start event to do it. Maybe this could just be freezetime end?
   Stats_ResetClientRoundValues(client);
+  // Because OnConfigsExecuted may run before a client is on the server, we have to repeat the
+  // start-logic here when the first client connects.
+  SetServerStateOnStartup(false);
 }
 
 public void OnClientPostAdminCheck(int client) {
@@ -731,7 +750,7 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
       EventLogger_LogAndDeleteEvent(event);
     }
   }
-  CheckForChatAlias(client, command, sArgs);
+  CheckForChatAlias(client, sArgs);
 }
 
 /**
@@ -740,7 +759,7 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
  * if a player does not select a team but leaves their mouse over one, they are
  * put on that team and spawned, so we can't allow that.
  */
-public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontBroadcast) {
+static Action Event_PlayerConnectFull(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
   if (IsValidClient(client)) {
     char ipAddress[32];
@@ -761,7 +780,7 @@ public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
   }
 }
 
-public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
+static Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
 
   if (client > 0) {
@@ -782,50 +801,65 @@ public Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
       g_GameState < Get5State_PostGame && GetRealClientCount() == 0 && !g_MapChangePending) {
     g_TeamSeriesScores[Get5Team_1] = 0;
     g_TeamSeriesScores[Get5Team_2] = 0;
-    EndSeries();
+    StopRecording();
+    EndSeries(Get5Team_None, false, 0.0, false);
   }
 }
 
-public void OnMapStart() {
+// This runs every time a map starts *or* when the plugin is reloaded.
+public void OnConfigsExecuted() {
+  LogDebug("OnConfigsExecuted");
+  // If the server has hibernation enabled, running this without a delay will cause it to frequently
+  // fail with "Gamerules lookup failed" probably due to some odd internal race-condition where the
+  // game is not yet running when we attempt to determine its "is paused" or "is in warmup" state.
+  // Putting it on a 1 second callback seems to solve this problem.
+  CreateTimer(1.0, Timer_ConfigsExecutedCallback);
+}
+
+static Action Timer_ConfigsExecutedCallback(Handle timer) {
+  LogDebug("OnConfigsExecuted timer callback");
+
   g_MapChangePending = false;
+  g_DoingBackupRestoreNow = false;
+  g_ReadyTimeWaitingUsed = 0;
+  g_HasKnifeRoundStarted = false;
+  // Recording is always automatically stopped on map change, and
+  // since there are no hooks to detect tv_stoprecord, we reset
+  // our recording var if a map change is performed unexpectedly.
+  g_DemoFileName = "";
   DeleteOldBackups();
 
+  // Always reset ready status on map start
   ResetReadyStatus();
+
+  if (CheckAutoLoadConfig()) {
+    // If gamestate is none and a config was autoloaded, a match config will set all of the below
+    // state.
+    return;
+  }
+
   LOOP_TEAMS(team) {
     g_TeamGivenStopCommand[team] = false;
     g_TeamReadyForUnpause[team] = false;
-    g_TacticalPauseTimeUsed[team] = 0;
-    g_TacticalPausesUsed[team] = 0;
-    g_ReadyTimeWaitingUsed = 0;
-    g_TechnicalPausesUsed[team] = 0;
+    if (!g_WaitingForRoundBackup) {
+      g_TacticalPauseTimeUsed[team] = 0;
+      g_TacticalPausesUsed[team] = 0;
+      g_TechnicalPausesUsed[team] = 0;
+    }
   }
 
-  if (g_WaitingForRoundBackup) {
-    ChangeState(Get5State_Warmup);
-    ExecCfg(g_LiveCfgCvar);
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-    EnsureIndefiniteWarmup();
-  }
-}
-
-public void OnConfigsExecuted() {
-  SetStartingTeams();
-  CheckAutoLoadConfig();
-
-  if (g_GameState == Get5State_PostGame) {
-    ChangeState(Get5State_Warmup);
-  }
-
-  if (g_GameState == Get5State_Warmup || g_GameState == Get5State_Veto) {
-    ExecCfg(g_WarmupCfgCvar);
-    SetMatchTeamCvars();
-    ExecuteMatchConfigCvars();
-    EnsureIndefiniteWarmup();
+  // On map start, always put the game in warmup mode.
+  // When executing a backup load, the live config is loaded and warmup ends after players ready-up
+  // again.
+  SetServerStateOnStartup(true);
+  // This must not be called when waiting for a backup, as it will set the sides incorrectly if the
+  // team swapped in knife or if the backup target is the second half.
+  if (!g_WaitingForRoundBackup) {
+    SetStartingTeams();
   }
 }
 
-public Action Timer_CheckReady(Handle timer) {
+static Action Timer_CheckReady(Handle timer) {
   if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }
@@ -845,7 +879,7 @@ public Action Timer_CheckReady(Handle timer) {
       // We don't wait for spectators when initiating veto
       LogDebug("Timer_CheckReady: starting veto");
       ChangeState(Get5State_Veto);
-      ServerCommand("mp_restartgame 1");
+      RestartGame();
       CreateVeto();
     } else {
       CheckReadyWaitingTimes();
@@ -872,6 +906,7 @@ public Action Timer_CheckReady(Handle timer) {
         LogDebug("Timer_CheckReady: starting without a knife round");
         StartGame(false);
       }
+      StartRecording();
     } else {
       CheckReadyWaitingTimes();
     }
@@ -887,21 +922,21 @@ static void CheckReadyWaitingTimes() {
     bool team1Forfeited = CheckReadyWaitingTime(Get5Team_1);
     bool team2Forfeited = CheckReadyWaitingTime(Get5Team_2);
 
-    if (team1Forfeited && team2Forfeited) {
-      g_ForcedWinner = Get5Team_None;
-      Stats_Forfeit(Get5Team_None);
-    } else if (team1Forfeited) {
-      g_ForcedWinner = Get5Team_2;
-      Stats_Forfeit(Get5Team_1);
-    } else if (team2Forfeited) {
-      g_ForcedWinner = Get5Team_1;
-      Stats_Forfeit(Get5Team_2);
-    }
-
     if (team1Forfeited || team2Forfeited) {
-      g_ForceWinnerSignal = true;
-      ChangeState(Get5State_None);
-      EndSeries();
+      Stats_Forfeit();
+      float minDelay = 5.0;
+      StopRecording(minDelay);
+      float endDelay = float(GetTvDelay());
+      if (endDelay < minDelay) {
+        endDelay = minDelay;
+      }
+      if (team1Forfeited && team2Forfeited) {
+        EndSeries(Get5Team_None, false, endDelay);
+      } else if (team1Forfeited) {
+        EndSeries(Get5Team_2, false, endDelay);
+      } else {
+        EndSeries(Get5Team_1, false, endDelay);
+      }
     }
   }
 }
@@ -927,23 +962,47 @@ static bool CheckReadyWaitingTime(Get5Team team) {
   return false;
 }
 
-static void CheckAutoLoadConfig() {
-  if (g_GameState == Get5State_None) {
+bool CheckAutoLoadConfig() {
+  if (g_GameState == Get5State_None && !g_WaitingForRoundBackup) {
     char autoloadConfig[PLATFORM_MAX_PATH];
     g_AutoLoadConfigCvar.GetString(autoloadConfig, sizeof(autoloadConfig));
     if (!StrEqual(autoloadConfig, "")) {
-      LoadMatchConfig(autoloadConfig);
+      bool loaded = LoadMatchConfig(autoloadConfig);  // return false if match config load fails!
+      if (loaded) {
+        LogMessage("Match configuration was loaded via get5_autoload_config.");
+      }
+      return loaded;
     }
   }
+  return false;
 }
 
 /**
  * Client and server commands.
  */
 
-public Action Command_EndMatch(int client, int args) {
+static Action Command_EndMatch(int client, int args) {
   if (g_GameState == Get5State_None) {
-    return Plugin_Handled;
+    ReplyToCommand(client, "No match is configured; nothing to end.");
+    return;
+  }
+
+  Get5Team winningTeam = Get5Team_None;  // defaults to tie
+  if (args >= 1) {
+    char forcedWinningTeam[8];
+    GetCmdArg(1, forcedWinningTeam, sizeof(forcedWinningTeam));
+    if (StrEqual("team1", forcedWinningTeam, false)) {
+      winningTeam = Get5Team_1;
+    } else if (StrEqual("team2", forcedWinningTeam, false)) {
+      winningTeam = Get5Team_2;
+    } else {
+      ReplyToCommand(client, "Usage: get5_endmatch <team1|team2> (omit team for tie)");
+      return;
+    }
+  }
+
+  if (IsPaused()) {
+    UnpauseGame(Get5Team_None);
   }
 
   // Call game-ending forwards.
@@ -952,45 +1011,51 @@ public Action Command_EndMatch(int client, int args) {
   int team2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
 
   Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
-      g_MatchID, g_MapNumber, new Get5Winner(Get5Team_None, Get5Side_None), team1score, team2score);
+      g_MatchID, g_MapNumber,
+      new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), team1score,
+      team2score);
 
   LogDebug("Calling Get5_OnMapResult()");
-
   Call_StartForward(g_OnMapResult);
   Call_PushCell(mapResultEvent);
   Call_Finish();
-
   EventLogger_LogAndDeleteEvent(mapResultEvent);
 
-  Get5SeriesResultEvent resultEvent =
-      new Get5SeriesResultEvent(g_MatchID, new Get5Winner(Get5Team_None, Get5Side_None),
-                                g_TeamSeriesScores[Get5Team_1], g_TeamSeriesScores[Get5Team_2]);
+  StopRecording(1.0);  // must go before EndSeries as it depends on g_MatchID.
 
-  LogDebug("Calling Get5_OnSeriesResult()");
-  Call_StartForward(g_OnSeriesResult);
-  Call_PushCell(resultEvent);
-  Call_Finish();
+  // No delay required when not kicking players.
+  EndSeries(winningTeam, false, 0.0, false);
 
-  EventLogger_LogAndDeleteEvent(resultEvent);
-
-  ChangeState(Get5State_None);
   UpdateClanTags();
 
-  Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
-  RestoreCvars(g_MatchConfigChangedCvars);
-  StopRecording();
+  if (winningTeam == Get5Team_None) {
+    Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
+  } else {
+    Get5_MessageToAll("%t", "AdminForceEndWithWinnerInfoMessage",
+                      g_FormattedTeamNames[winningTeam]);
+  }
 
   if (g_ActiveVetoMenu != null) {
     g_ActiveVetoMenu.Cancel();
   }
 
-  return Plugin_Handled;
+  if (g_KnifeCountdownTimer != INVALID_HANDLE) {
+    LogDebug("Killing knife announce countdown timer.");
+    delete g_KnifeCountdownTimer;
+  }
+
+  if (g_KnifeDecisionTimer != INVALID_HANDLE) {
+    LogDebug("Killing knife decision timer.");
+    delete g_KnifeDecisionTimer;
+  }
+
+  RestartGame();
 }
 
-public Action Command_LoadMatch(int client, int args) {
+static Action Command_LoadMatch(int client, int args) {
   if (g_GameState != Get5State_None) {
-    ReplyToCommand(client, "Cannot load a match when a match is already loaded");
-    return Plugin_Handled;
+    ReplyToCommand(client, "Cannot load a match config when another is already loaded.");
+    return;
   }
 
   char arg[PLATFORM_MAX_PATH];
@@ -1001,14 +1066,12 @@ public Action Command_LoadMatch(int client, int args) {
   } else {
     ReplyToCommand(client, "Usage: get5_loadmatch <filename>");
   }
-
-  return Plugin_Handled;
 }
 
-public Action Command_LoadMatchUrl(int client, int args) {
+static Action Command_LoadMatchUrl(int client, int args) {
   if (g_GameState != Get5State_None) {
-    ReplyToCommand(client, "Cannot load a match config with another match already loaded");
-    return Plugin_Handled;
+    ReplyToCommand(client, "Cannot load a match config when another is already loaded.");
+    return;
   }
 
   bool steamWorksAvaliable = LibraryExists("SteamWorks");
@@ -1027,14 +1090,12 @@ public Action Command_LoadMatchUrl(int client, int args) {
       ReplyToCommand(client, "Usage: get5_loadmatch_url <url>");
     }
   }
-
-  return Plugin_Handled;
 }
 
-public Action Command_DumpStats(int client, int args) {
+static Action Command_DumpStats(int client, int args) {
   if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot dump match stats with no match existing");
-    return Plugin_Handled;
+    ReplyToCommand(client, "Cannot dump match stats when no match is loaded.");
+    return;
   }
 
   char arg[PLATFORM_MAX_PATH];
@@ -1050,11 +1111,9 @@ public Action Command_DumpStats(int client, int args) {
   } else {
     ReplyToCommand(client, "Failed to save match stats to %s", arg);
   }
-
-  return Plugin_Handled;
 }
 
-public Action Command_Stop(int client, int args) {
+static Action Command_Stop(int client, int args) {
   if (!g_StopCommandEnabledCvar.BoolValue) {
     Get5_MessageToAll("%t", "StopCommandNotEnabled");
     return Plugin_Handled;
@@ -1078,12 +1137,14 @@ public Action Command_Stop(int client, int args) {
   Get5Team team = GetClientMatchTeam(client);
   g_TeamGivenStopCommand[team] = true;
 
+  char stopCommandFormatted[64];
+  FormatChatCommand(stopCommandFormatted, sizeof(stopCommandFormatted), "!stop");
   if (g_TeamGivenStopCommand[Get5Team_1] && !g_TeamGivenStopCommand[Get5Team_2]) {
-    Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_FormattedTeamNames[Get5Team_1], g_FormattedTeamNames[Get5Team_2]);
+    Get5_MessageToAll("%t", "TeamWantsToReloadCurrentRound", g_FormattedTeamNames[Get5Team_1],
+                      g_FormattedTeamNames[Get5Team_2], stopCommandFormatted);
   } else if (!g_TeamGivenStopCommand[Get5Team_1] && g_TeamGivenStopCommand[Get5Team_2]) {
-    Get5_MessageToAll("%t", "TeamWantsToReloadLastRoundInfoMessage",
-                      g_FormattedTeamNames[Get5Team_2], g_FormattedTeamNames[Get5Team_1]);
+    Get5_MessageToAll("%t", "TeamWantsToReloadCurrentRound", g_FormattedTeamNames[Get5Team_2],
+                      g_FormattedTeamNames[Get5Team_1], stopCommandFormatted);
   } else if (g_TeamGivenStopCommand[Get5Team_1] && g_TeamGivenStopCommand[Get5Team_2]) {
     RestoreLastRound(client);
   }
@@ -1091,7 +1152,7 @@ public Action Command_Stop(int client, int args) {
   return Plugin_Handled;
 }
 
-public void RestoreLastRound(int client) {
+void RestoreLastRound(int client) {
   LOOP_TEAMS(x) {
     g_TeamGivenStopCommand[x] = false;
   }
@@ -1099,7 +1160,7 @@ public void RestoreLastRound(int client) {
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
   if (!StrEqual(lastBackup, "")) {
-    if (RestoreFromBackup(lastBackup)) {
+    if (RestoreFromBackup(lastBackup, false)) {
       Get5_MessageToAll("%t", "BackupLoadedInfoMessage", lastBackup);
       // Fix the last backup cvar since it gets reset.
       g_LastGet5BackupCvar.SetString(lastBackup);
@@ -1115,22 +1176,42 @@ public void RestoreLastRound(int client) {
  * Game Events *not* related to the stats tracking system.
  */
 
-public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
+static Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_None && g_GameState < Get5State_KnifeRound) {
     int client = GetClientOfUserId(event.GetInt("userid"));
     CreateTimer(0.1, Timer_ReplenishMoney, client, TIMER_FLAG_NO_MAPCHANGE);
   }
 }
 
-public Action Timer_ReplenishMoney(Handle timer, int client) {
+static Action Timer_ReplenishMoney(Handle timer, int client) {
   if (IsPlayer(client) && OnActiveTeam(client)) {
     SetEntProp(client, Prop_Send, "m_iAccount", GetCvarIntSafe("mp_maxmoney"));
   }
 }
 
-public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast) {
+static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_MatchOver");
+  if (g_GameState == Get5State_None) {
+    return;
+  }
+
+  // This ensures that the mp_match_restart_delay is not shorter
+  // than what is required for the GOTV recording to finish.
+  float restartDelay = GetCurrentMatchRestartDelay();
+  float requiredDelay = float(GetTvDelay() + MATCH_END_DELAY_AFTER_TV);
+  if (requiredDelay > restartDelay) {
+    LogDebug("Extended mp_match_restart_delay from %f to %f to ensure GOTV broadcast can finish.",
+             restartDelay, requiredDelay);
+    SetCurrentMatchRestartDelay(requiredDelay);
+    restartDelay = requiredDelay;  // reassigned because we reuse the variable below.
+  }
+  StopRecording(float(MATCH_END_DELAY_AFTER_TV));
+
   if (g_GameState == Get5State_Live) {
+    // If someone called for a pause in the last round; cancel it.
+    if (IsPaused()) {
+      UnpauseGame(Get5Team_None);
+    }
     // Figure out who won
     int t1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
     int t2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
@@ -1142,26 +1223,20 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     }
 
     // If the round ends because the match is over, we clear the grenade container immediately as
-    // there will be no RoundStart event to do it, and the sideSwap check in RoundEnd will not
-    // trigger it either.
+    // they will not fire on their own if the game state is not live.
     Stats_ResetGrenadeContainers();
-
-    // Write backup before series score increments
-    WriteBackup();
 
     // Update series scores
     Stats_UpdateMapScore(winningTeam);
-    AddMapScore();
     g_TeamSeriesScores[winningTeam]++;
 
-    // Handle map end
-    int team1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
-    int team2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
+    g_TeamScoresPerMap.Set(g_MapNumber, t1score, view_as<int>(Get5Team_1));
+    g_TeamScoresPerMap.Set(g_MapNumber, t2score, view_as<int>(Get5Team_2));
 
     Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
         g_MatchID, g_MapNumber,
-        new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), team1score,
-        team2score);
+        new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), t1score,
+        t2score);
 
     LogDebug("Calling Get5_OnMapResult()");
 
@@ -1174,128 +1249,92 @@ public Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     int t1maps = g_TeamSeriesScores[Get5Team_1];
     int t2maps = g_TeamSeriesScores[Get5Team_2];
     int tiedMaps = g_TeamSeriesScores[Get5Team_None];
+    int remainingMaps = g_MapsToPlay.Length - t1maps - t2maps - tiedMaps;
 
-    float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
+    if (t1maps == t2maps) {
+      // As long as team scores are equal, we play until there are no maps left, regardless of
+      // clinch config.
+      if (remainingMaps <= 0) {
+        EndSeries(Get5Team_None, true, restartDelay);
+        return;
+      }
+    } else if (g_SeriesCanClinch) {
+      // This adjusts for ties!
+      int actualMapsToWin = MapsToWin(g_MapsToPlay.Length - tiedMaps);
+      if (t1maps == actualMapsToWin) {
+        // Team 1 won
+        EndSeries(Get5Team_1, true, restartDelay);
+        return;
+      } else if (t2maps == actualMapsToWin) {
+        // Team 2 won
+        EndSeries(Get5Team_2, true, restartDelay);
+        return;
+      }
+    } else if (remainingMaps <= 0) {
+      EndSeries(t1maps > t2maps ? Get5Team_1 : Get5Team_2, true,
+                restartDelay);  // Tie handled in first if-block
+      return;
+    }
 
-    if (t1maps == g_MapsToWin) {
-      // Team 1 won
-      SeriesEndMessage(Get5Team_1);
-      DelayFunction(minDelay, EndSeries);
+    if (t1maps > t2maps) {
+      Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_1],
+                        t1maps, t2maps);
 
-    } else if (t2maps == g_MapsToWin) {
-      // Team 2 won
-      SeriesEndMessage(Get5Team_2);
-      DelayFunction(minDelay, EndSeries);
-
-    } else if (t1maps == t2maps && t1maps + tiedMaps == g_MapsToWin) {
-      // The whole series was a tie
-      SeriesEndMessage(Get5Team_None);
-      DelayFunction(minDelay, EndSeries);
-
-    } else if (g_BO2Match && Get5_GetMapNumber() == 2) {
-      // It was a bo2, and none of the teams got to 2
-      SeriesEndMessage(Get5Team_None);
-      DelayFunction(minDelay, EndSeries);
+    } else if (t2maps > t1maps) {
+      Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_2],
+                        t2maps, t1maps);
 
     } else {
-      if (t1maps > t2maps) {
-        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_1],
-                          t1maps, t2maps);
-
-      } else if (t2maps > t1maps) {
-        Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_2],
-                          t2maps, t1maps);
-
-      } else {
-        Get5_MessageToAll("%t", "SeriesTiedInfoMessage", t1maps, t2maps);
-      }
-
-      int index = Get5_GetMapNumber();
-      char nextMap[PLATFORM_MAX_PATH];
-      g_MapsToPlay.GetString(index, nextMap, sizeof(nextMap));
-
-      g_MapChangePending = true;
-      Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap);
-      ChangeState(Get5State_PostGame);
-      CreateTimer(minDelay, Timer_NextMatchMap);
+      Get5_MessageToAll("%t", "SeriesTiedInfoMessage", t1maps, t2maps);
     }
-  }
 
-  return Plugin_Continue;
+    char nextMap[PLATFORM_MAX_PATH];
+    g_MapsToPlay.GetString(Get5_GetMapNumber(), nextMap, sizeof(nextMap));
+
+    char timeToMapChangeFormatted[8];
+    convertSecondsToMinutesAndSeconds(RoundToFloor(restartDelay), timeToMapChangeFormatted,
+                                      sizeof(timeToMapChangeFormatted));
+
+    g_MapChangePending = true;
+    FormatMapName(nextMap, nextMap, sizeof(nextMap), true, true);
+    Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap, timeToMapChangeFormatted);
+    ChangeState(Get5State_PostGame);
+    // Subtracting 4 seconds makes the map change 1 second before the timer expires, as there is a 3
+    // second built-in delay in the ChangeMap function called by Timer_NextMatchMap.
+    CreateTimer(restartDelay - 4, Timer_NextMatchMap);
+  }
 }
 
-static void SeriesEndMessage(Get5Team team) {
-  if (g_MapsToWin == 1) {
-    if (team == Get5Team_None) {
+Action Timer_NextMatchMap(Handle timer) {
+  char map[PLATFORM_MAX_PATH];
+  g_MapsToPlay.GetString(Get5_GetMapNumber(), map, sizeof(map));
+  // If you change these 3 seconds for whatever reason, you must adjust the counter-offset in
+  // Event_MatchOver.
+  ChangeMap(map, 3.0);
+}
+
+static void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay,
+                      bool kickPlayers = true) {
+  Stats_SeriesEnd(winningTeam);
+
+  if (printWinnerMessage) {
+    if (winningTeam == Get5Team_None) {
       Get5_MessageToAll("%t", "TeamTiedMatchInfoMessage", g_FormattedTeamNames[Get5Team_1],
                         g_FormattedTeamNames[Get5Team_2]);
     } else {
-      Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[team]);
-    }
-  } else {
-    if (team == Get5Team_None) {
-      // BO2 split.
-      Get5_MessageToAll("%t", "TeamsSplitSeriesBO2InfoMessage", g_FormattedTeamNames[Get5Team_1],
-                        g_FormattedTeamNames[Get5Team_2]);
-
-    } else {
-      Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_FormattedTeamNames[team],
-                        g_TeamSeriesScores[team], g_TeamSeriesScores[OtherMatchTeam(team)]);
-    }
-  }
-}
-
-public Action Timer_NextMatchMap(Handle timer) {
-  if (g_GameState >= Get5State_Live)
-    StopRecording();
-
-  int index = Get5_GetMapNumber();
-  char map[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(index, map, sizeof(map));
-
-  if (!g_SkipVeto && g_DisplayGotvVetoCvar.BoolValue && index == 0) {
-    float minDelay = float(GetTvDelay()) + MATCH_END_DELAY_AFTER_TV;
-    ChangeMap(map, minDelay);
-  } else {
-    ChangeMap(map);
-  }
-}
-
-public void KickClientsOnEnd() {
-  if (g_KickClientsWithNoMatchCvar.BoolValue) {
-    for (int i = 1; i <= MaxClients; i++) {
-      if (IsPlayer(i) && !(g_KickClientImmunityCvar.BoolValue &&
-                           CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
-        KickClient(i, "%t", "MatchFinishedInfoMessage");
+      if (g_MapsToPlay.Length == 1) {
+        Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[winningTeam]);
+      } else {
+        Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_FormattedTeamNames[winningTeam],
+                          g_TeamSeriesScores[winningTeam],
+                          g_TeamSeriesScores[OtherMatchTeam(winningTeam)]);
       }
     }
   }
-}
-
-public void EndSeries() {
-  DelayFunction(10.0, KickClientsOnEnd);
-  StopRecording();
-
-  // Figure out who won
-  int t1maps = g_TeamSeriesScores[Get5Team_1];
-  int t2maps = g_TeamSeriesScores[Get5Team_2];
-
-  Get5Team winningTeam = Get5Team_None;
-  if (t1maps > t2maps) {
-    winningTeam = Get5Team_1;
-  } else if (t2maps > t1maps) {
-    winningTeam = Get5Team_2;
-  }
-
-  if (g_ForceWinnerSignal) {
-    winningTeam = g_ForcedWinner;
-  }
-
-  Stats_SeriesEnd(winningTeam);
 
   Get5SeriesResultEvent event = new Get5SeriesResultEvent(
       g_MatchID, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
-      t1maps, t2maps);
+      g_TeamSeriesScores[Get5Team_1], g_TeamSeriesScores[Get5Team_2]);
 
   LogDebug("Calling Get5_OnSeriesResult()");
 
@@ -1304,13 +1343,63 @@ public void EndSeries() {
   Call_Finish();
 
   EventLogger_LogAndDeleteEvent(event);
-
-  RestoreCvars(g_MatchConfigChangedCvars);
   ChangeState(Get5State_None);
+  g_MatchID = "";
+
+  // We don't want to kick players until after the specified delay, as it will kick casters
+  // potentially before GOTV ends.
+  if (kickPlayers && g_KickClientsWithNoMatchCvar.BoolValue) {
+    if (restoreDelay < 0.1) {
+      KickPlayers();
+    } else {
+      CreateTimer(restoreDelay, Timer_KickOnEnd, _, TIMER_FLAG_NO_MAPCHANGE);
+    }
+  }
+
+  if (restoreDelay < 0.1) {
+    // When force-ending the match there is no delay.
+    RestoreCvars(g_MatchConfigChangedCvars);
+  } else {
+    // If we restore cvars immediately, it might change the tv_ params or set the
+    // mp_match_restart_delay to something lower, which is noticed by the game and may trigger a map
+    // change before GOTV broadcast ends, so we don't do this until the current match restart delay
+    // has passed.
+    CreateTimer(restoreDelay, Timer_RestoreMatchCvars, _, TIMER_FLAG_NO_MAPCHANGE);
+  }
 }
 
-public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
+static Action Timer_KickOnEnd(Handle timer) {
+  if (g_GameState == Get5State_None) {
+    // If a match was started before this event is triggered, don't do anything.
+    KickPlayers();
+  }
+  return Plugin_Handled;
+}
+
+static void KickPlayers() {
+  bool kickImmunity = g_KickClientImmunityCvar.BoolValue;
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i) &&
+        !(kickImmunity && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
+      KickClient(i, "%t", "MatchFinishedInfoMessage");
+    }
+  }
+}
+
+static Action Timer_RestoreMatchCvars(Handle timer) {
+  if (g_GameState == Get5State_None) {
+    // Only reset if no game is running, otherwise a game started before the restart delay for
+    // another ends will mess this up.
+    RestoreCvars(g_MatchConfigChangedCvars);
+  }
+  return Plugin_Handled;
+}
+
+static Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundPreStart");
+  if (g_GameState == Get5State_None) {
+    return;
+  }
 
   if (g_GameState == Get5State_Live) {
     // End lingering grenade trackers from previous round.
@@ -1318,68 +1407,41 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
   }
 
   if (g_PendingSideSwap) {
-    g_PendingSideSwap = false;
     SwapSides();
   }
-
-  if (g_GameState == Get5State_GoingLive) {
-    ChangeState(Get5State_Live);
-  }
+  g_PendingSideSwap = false;
 
   Stats_ResetRoundValues();
 
-  if (g_GameState >= Get5State_Warmup && !g_DoingBackupRestoreNow) {
-    WriteBackup();
-  }
+  // We need this for events that fire after the map ends, such as grenades detonating (or someone
+  // dying in fire), to be correct. It's sort of an edge-case, but due to how Get5_GetMapNumber
+  // works, it will return +1 if called after a map has been decided, but before the game actually
+  // stops, which could lead to events having the wrong map number, so we set both of these here and
+  // not in round_end
+  g_MapNumber = Get5_GetMapNumber();
+  // Round number always -1 if not live.
+  g_RoundNumber = g_GameState != Get5State_Live ? -1 : GetRoundsPlayed();
 }
 
-public Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast) {
+static Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_FreezeEnd");
 
-  // If someone changes the map while in a pause, we have to make sure we reset this state, as the UnpauseGame function
-  // will not be called to do it. FreezeTimeEnd is always called when the map initially loads.
+  // If someone changes the map while in a pause, we have to make sure we reset this state, as the
+  // UnpauseGame function will not be called to do it. FreezeTimeEnd is always called when the map
+  // initially loads.
   g_LatestPauseDuration = 0;
   g_PauseType = Get5PauseType_None;
   g_PausingTeam = Get5Team_None;
 
   // We always want this to be correct, regardless of game state.
   g_RoundStartedTime = GetEngineTime();
-  if (g_GameState == Get5State_Live) {
+  if (g_GameState == Get5State_Live && !IsDoingRestoreOrMapChange()) {
     Stats_RoundStart();
   }
 }
 
-public void WriteBackup() {
-  if (!g_BackupSystemEnabledCvar.BoolValue) {
-    return;
-  }
-
-  char path[PLATFORM_MAX_PATH];
-  if (g_GameState == Get5State_Live) {
-    Format(path, sizeof(path), "get5_backup_match%s_map%d_round%d.cfg", g_MatchID,
-           GetMapStatsNumber(), GetRoundsPlayed());
-  } else {
-    Format(path, sizeof(path), "get5_backup_match%s_map%d_prelive.cfg", g_MatchID,
-           GetMapStatsNumber());
-  }
-
-  LogDebug("created path %s", path);
-
-  if (!g_DoingBackupRestoreNow) {
-    LogDebug("writing to %s", path);
-    WriteBackStructure(path);
-    g_LastGet5BackupCvar.SetString(path);
-  }
-}
-
-public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
+static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundStart");
-
-  // We need this for events that fire after the map ends, such as grenades detonating (or someone
-  // dying in fire), to be correct. It's sort of an edge-case, but due to how Get5_GetMapNumber
-  // works, it will return +1 if called after a map has been decided, but before the game actually
-  // stops, which could lead to events having the wrong map number.
-  g_MapNumber = Get5_GetMapNumber();
 
   // Always reset these on round start, regardless of game state.
   // This ensures that the functions that rely on these don't get messed up.
@@ -1387,42 +1449,73 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_BombPlantedTime = 0.0;
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
-  if (g_GameState != Get5State_Live) {
-    g_RoundNumber = -1;  // Round number always -1 if not yet live.
+  if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {
+    // Get5_OnRoundStart() is fired from within the backup event when loading the valve backup.
     return;
   }
 
-  // The same logic for tracking after-round-end events apply to g_RoundNumber, so that's set here
-  // as well.
-  g_RoundNumber = GetRoundsPlayed();
+  // We cannot do this during warmup, as sending users into warmup post-knife triggers a round start
+  // event. We add an extra restart to clear lingering state from the knife round, such as the round
+  // indicator in the middle of the scoreboard not being reset. This also tightly couples the
+  // live-announcement to the actual live start.
+  if (!InWarmup()) {
+    if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
+      // Ensures that round end after knife sends players directly into warmup.
+      // This immediately triggers another Event_RoundStart, so we can return here and avoid
+      // writing backup twice.
+      LogDebug("Changed to warmup post knife.");
+      ExecCfg(g_WarmupCfgCvar);
+      StartWarmup();
+      return;
+    }
+    if (g_GameState == Get5State_GoingLive) {
+      LogDebug("Changed to live.");
+      ChangeState(Get5State_Live);
+      RestartGame();
+      CreateTimer(3.0, Timer_MatchLive, _, TIMER_FLAG_NO_MAPCHANGE);
+      return;  // Next round start will take care of below, such as writing backup.
+    }
+  }
+
+  // Ensures that players who connect during halftime/team swap are placed in their correct slots as
+  // soon as the following round starts. Otherwise they could be left on the "no team" screen and
+  // potentially ghost, depending on where the camera drops them. Especially important for coaches.
+  // We do this step *before* we write the backup, so we don't have any lingering players in case of
+  // a restore.
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i) && GetClientTeam(i) == CS_TEAM_NONE) {
+      CheckClientTeam(i);
+    }
+  }
+
+  WriteBackup();
+
+  if (g_GameState != Get5State_Live) {
+    return;
+  }
 
   Get5RoundStartedEvent startEvent =
       new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
-
   LogDebug("Calling Get5_OnRoundStart()");
-
   Call_StartForward(g_OnRoundStart);
   Call_PushCell(startEvent);
   Call_Finish();
-
   EventLogger_LogAndDeleteEvent(startEvent);
 }
 
-public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
-  LogDebug("Event_RoundEnd");
-  if (g_DoingBackupRestoreNow) {
-    return;
-  }
-
+static Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroadcast) {
+  LogDebug("Event_RoundWinPanel");
   if (g_GameState == Get5State_KnifeRound && g_HasKnifeRoundStarted) {
     g_HasKnifeRoundStarted = false;
 
     ChangeState(Get5State_WaitingForKnifeRoundDecision);
-    CreateTimer(1.0, Timer_PostKnife);
+    if (g_KnifeChangedCvars != INVALID_HANDLE) {
+      RestoreCvars(g_KnifeChangedCvars, true);
+    }
 
     int ctAlive = CountAlivePlayersOnTeam(CS_TEAM_CT);
     int tAlive = CountAlivePlayersOnTeam(CS_TEAM_T);
-    int winningCSTeam = CS_TEAM_NONE;
+    int winningCSTeam;
     if (ctAlive > tAlive) {
       winningCSTeam = CS_TEAM_CT;
     } else if (tAlive > ctAlive) {
@@ -1435,30 +1528,82 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       } else if (tHealth > ctHealth) {
         winningCSTeam = CS_TEAM_T;
       } else {
-        if (GetRandomFloat(0.0, 1.0) < 0.5) {
-          winningCSTeam = CS_TEAM_CT;
-        } else {
-          winningCSTeam = CS_TEAM_T;
-        }
+        winningCSTeam = GetRandomFloat(0.0, 1.0) < 0.5 ? CS_TEAM_CT : CS_TEAM_T;
+        LogDebug("Randomized knife winner to side %d", winningCSTeam);
       }
     }
 
     g_KnifeWinnerTeam = CSTeamToGet5Team(winningCSTeam);
+    char formattedStayCommand[64];
+    FormatChatCommand(formattedStayCommand, sizeof(formattedStayCommand), "!stay");
+    char formattedSwapCommand[64];
+    FormatChatCommand(formattedSwapCommand, sizeof(formattedSwapCommand), "!swap");
     Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam]);
+                      g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand,
+                      formattedSwapCommand);
 
-    if (g_TeamTimeToKnifeDecisionCvar.FloatValue > 0)
-      CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision);
+    if (g_TeamTimeToKnifeDecisionCvar.FloatValue > 0) {
+      g_KnifeDecisionTimer =
+          CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision);
+    }
+
+    // This ensures that the correct graphic is displayed in-game for the winning team, as CTs will
+    // always win if the clock runs out. It also ensures that the fun fact displayed is correct;
+    // overriding to number of players killed by knife and no "CT won by running down the clock".
+    // MVP can still be on the losing team though. ran down".
+    int maxFrags = 0;
+    int topFragClient = 0;
+    int frags;
+    LOOP_CLIENTS(i) {
+      if (IsValidClient(i)) {
+        frags = GetClientFrags(i);
+        if (frags >= maxFrags) {
+          maxFrags = frags;
+          topFragClient = i;
+        }
+      }
+    }
+    if (topFragClient > 0) {
+      // Found here:
+      // https://github.com/SteamDatabase/GameTracking-CSGO/blob/master/csgo/bin/server_client_strings.txt
+      event.SetString("funfact_token", "#funfact_knife_kills");
+      event.SetInt("funfact_player", topFragClient);
+      event.SetInt("funfact_data1", maxFrags);
+    }
+    event.SetInt("final_event", ConvertCSTeamToDefaultWinReason(winningCSTeam));
+  }
+}
+
+static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
+  LogDebug("Event_RoundEnd");
+  if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {
+    return;
+  }
+
+  if (g_GameState == Get5State_WaitingForKnifeRoundDecision && g_KnifeWinnerTeam != Get5Team_None) {
+    int winningCSTeam = Get5TeamToCSTeam(g_KnifeWinnerTeam);
+    // Event_RoundWinPanel is called before Event_RoundEnd, so that event handles knife winner.
+    // We override this event only to have the correct audio callout in the game.
+    event.SetInt("winner", winningCSTeam);
+    event.SetInt("reason", ConvertCSTeamToDefaultWinReason(winningCSTeam));
+    return;
   }
 
   if (g_GameState == Get5State_Live) {
     int csTeamWinner = event.GetInt("winner");
 
-    Get5_MessageToAll("%t", "CurrentScoreInfoMessage", g_TeamNames[Get5Team_1],
+    Get5_MessageToAll("%s {GREEN}%d {NORMAL}- {GREEN}%d %s", g_FormattedTeamNames[Get5Team_1],
                       CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
-                      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)), g_TeamNames[Get5Team_2]);
+                      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)),
+                      g_FormattedTeamNames[Get5Team_2]);
 
     Stats_RoundEnd(csTeamWinner);
+
+    if (g_DamagePrintCvar.BoolValue) {
+      LOOP_CLIENTS(i) {
+        PrintDamageInfo(i);  // Checks valid client etc. on its own.
+      }
+    }
 
     Get5RoundStatsUpdatedEvent statsEvent =
         new Get5RoundStatsUpdatedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
@@ -1499,12 +1644,6 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       }
     }
 
-    if (g_PendingSideSwap) {
-      // Normally we would do this in RoundStart, but since there is a significant delay between
-      // round *actual end* and and RoundStart when swapping sides, we do it here instead.
-      Stats_ResetGrenadeContainers();
-    }
-
     // CSRoundEndReason is incorrect in CSGO compared to the enumerations defined here:
     // https://github.com/alliedmodders/sourcemod/blob/master/plugins/include/cstrike.inc#L53-L77
     // - which is why we subtract one.
@@ -1522,13 +1661,21 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     Call_Finish();
 
     EventLogger_LogAndDeleteEvent(roundEndEvent);
+
+    // Reset this when a round ends, as voting has no reference to which round the teams wanted to
+    // restore to, so votes to restore during one round should not carry over into the next round,
+    // as it would just restore that round instead.
+    LOOP_TEAMS(t) {
+      if (g_TeamGivenStopCommand[t]) {
+        Get5_MessageToAll("%t", "StopCommandVotingReset", g_FormattedTeamNames[t]);
+      }
+      g_TeamGivenStopCommand[t] = false;
+    }
   }
 }
 
-public void SwapSides() {
+static void SwapSides() {
   LogDebug("SwapSides");
-  // EventLogger_SideSwap(g_TeamSide[Get5Team_1], g_TeamSide[Get5Team_2]);
-
   int tmp = g_TeamSide[Get5Team_1];
   g_TeamSide[Get5Team_1] = g_TeamSide[Get5Team_2];
   g_TeamSide[Get5Team_2] = tmp;
@@ -1544,7 +1691,7 @@ public void SwapSides() {
 /**
  * Silences cvar changes when executing live/knife/warmup configs, *unless* it's sv_cheats.
  */
-public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadcast) {
+static Action Event_CvarChanged(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_None) {
     char cvarName[MAX_CVAR_LENGTH];
     event.GetString("cvarname", cvarName, sizeof(cvarName));
@@ -1552,57 +1699,59 @@ public Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
       event.BroadcastDisabled = true;
     }
   }
-
-  return Plugin_Continue;
 }
 
-public void StartGame(bool knifeRound) {
+static void StartGame(bool knifeRound) {
   LogDebug("StartGame");
-  if (!IsTVEnabled()) {
-    LogMessage("GOTV demo could not be recorded since tv_enable is not set to 1");
-    g_DemoFileName = "";
-  } else {
-    char demoName[PLATFORM_MAX_PATH + 1];
-    if (FormatCvarString(g_DemoNameFormatCvar, demoName, sizeof(demoName)) && Record(demoName)) {
-      Format(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);
-      LogMessage("Recording to %s", g_DemoFileName);
-    } else {
-      g_DemoFileName = "";
-    }
-  }
-
-  ExecCfg(g_LiveCfgCvar);
 
   if (knifeRound) {
+    ExecCfg(g_LiveCfgCvar);  // live first, then apply and save knife cvars below
     LogDebug("StartGame: about to begin knife round");
     ChangeState(Get5State_KnifeRound);
     if (g_KnifeChangedCvars != INVALID_HANDLE) {
       CloseCvarStorage(g_KnifeChangedCvars);
     }
-    g_KnifeChangedCvars = ExecuteAndSaveCvars(KNIFE_CONFIG);
+    char knifeConfig[PLATFORM_MAX_PATH];
+    g_KnifeCfgCvar.GetString(knifeConfig, sizeof(knifeConfig));
+    g_KnifeChangedCvars = ExecuteAndSaveCvars(knifeConfig);
     CreateTimer(1.0, StartKnifeRound);
   } else {
-    LogDebug("StartGame: about to go live");
-    ChangeState(Get5State_GoingLive);
-    CreateTimer(3.0, StartGoingLive, _, TIMER_FLAG_NO_MAPCHANGE);
+    // If there is no knife round, we go directly to live, which loads the live config etc. on its
+    // own.
+    StartGoingLive();
   }
 }
 
-public Action Timer_PostKnife(Handle timer) {
-  if (g_KnifeChangedCvars != INVALID_HANDLE) {
-    RestoreCvars(g_KnifeChangedCvars, true);
+static void SetServerStateOnStartup(bool force) {
+  if (g_GameState == Get5State_None) {
+    return;
   }
-
+  if (!force && GetRealClientCount() != 1) {
+    // Only run on first client connect or if forced (during OnConfigsExecuted).
+    return;
+  }
+  // It shouldn't really be possible to end up here, as the server *should* reload the map anyway when first player
+  // joins, but as a safeguard we don't want to move a live game that's not pending a backup or map change into warmup
+  // on player connect.
+  if (!force && g_GameState == Get5State_Live && !g_WaitingForRoundBackup && !g_MapChangePending) {
+    return;
+  }
+  // If the server is in preveto when someone joins or the configs exec, it should remain in
+  // that state. This would happen if the a config with veto is loaded before someone joins the
+  // server.
+  if (g_GameState != Get5State_PreVeto) {
+    ChangeState(Get5State_Warmup);
+  }
   ExecCfg(g_WarmupCfgCvar);
-  EnsureIndefiniteWarmup();
+  StartWarmup();
 }
 
-public Action StopDemo(Handle timer) {
-  StopRecording();
-  return Plugin_Handled;
-}
+void ChangeState(Get5State state) {
+  if (g_GameState == state) {
+    LogDebug("Ignoring request to change game state. Already in state %d.", state);
+    return;
+  }
 
-public void ChangeState(Get5State state) {
   g_GameStateCvar.IntValue = view_as<int>(state);
 
   Get5GameStateChangedEvent event = new Get5GameStateChangedEvent(state, g_GameState);
@@ -1618,7 +1767,7 @@ public void ChangeState(Get5State state) {
   g_GameState = state;
 }
 
-public Action Command_Status(int client, int args) {
+static Action Command_Status(int client, int args) {
   Get5Status status = new Get5Status(PLUGIN_VERSION, g_GameState, IsPaused());
 
   if (g_GameState != Get5State_None) {
@@ -1659,7 +1808,7 @@ static Get5StatusTeam GetTeamInfo(Get5Team team) {
                             IsTeamReady(team), view_as<Get5Side>(side), GetNumHumansOnTeam(side));
 }
 
-public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
+bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   cvar.GetString(buffer, len);
   if (StrEqual(buffer, "")) {
     return false;
@@ -1684,11 +1833,10 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   strcopy(team2Str, sizeof(team2Str), g_TeamNames[Get5Team_2]);
   ReplaceString(team2Str, sizeof(team2Str), " ", "_");
 
-  int mapNumber = g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2] + 1;
   // MATCHTITLE must go first as it can contain other placeholders
   ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle, false);
-  ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", mapNumber, false);
-  ReplaceStringWithInt(buffer, len, "{MAXMAPS}", MaxMapsToPlay(g_MapsToWin));
+  ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", Get5_GetMapNumber() + 1, false);
+  ReplaceStringWithInt(buffer, len, "{MAXMAPS}", g_NumberOfMapsInSeries, false);
   ReplaceString(buffer, len, "{MATCHID}", g_MatchID, false);
   ReplaceString(buffer, len, "{MAPNAME}", mapName, false);
   ReplaceStringWithInt(buffer, len, "{SERVERID}", g_ServerIdCvar.IntValue, false);
@@ -1701,11 +1849,11 @@ public bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
 
 // Formats a temp file path based ont he server id. The pattern parameter is expected to have a %d
 // token in it.
-public void GetTempFilePath(char[] path, int len, const char[] pattern) {
+void GetTempFilePath(char[] path, int len, const char[] pattern) {
   Format(path, len, pattern, g_ServerIdCvar.IntValue);
 }
 
-public int GetRoundTime() {
+int GetRoundTime() {
   int time = GetMilliSecondsPassedSince(g_RoundStartedTime);
   if (time < 0) {
     return 0;
@@ -1713,7 +1861,7 @@ public int GetRoundTime() {
   return time;
 }
 
-public void EventLogger_LogAndDeleteEvent(Get5Event event) {
+void EventLogger_LogAndDeleteEvent(Get5Event event) {
   int options = g_PrettyPrintJsonCvar.BoolValue ? JSON_ENCODE_PRETTY : 0;
   int bufferSize = event.EncodeSize(options);
 
@@ -1742,12 +1890,12 @@ public void EventLogger_LogAndDeleteEvent(Get5Event event) {
   json_cleanup_and_delete(event);
 }
 
-stock void CheckForLatestVersion() {
-
+static void CheckForLatestVersion() {
   // both x.y.z-dev and x.y.z-abcdef contain a single dash, so we can look for that.
   g_RunningPrereleaseVersion = StrContains(PLUGIN_VERSION, "-", true) > -1;
   if (g_RunningPrereleaseVersion) {
-    LogMessage("Non-official Get5 version detected. Skipping update check. You may see this if you compiled Get5 \
+    LogMessage(
+        "Non-official Get5 version detected. Skipping update check. You may see this if you compiled Get5 \
 yourself or if you downloaded a pre-release for testing. If you are done testing, please download an official \
 release version to remove this message.");
     return;
@@ -1761,12 +1909,10 @@ release version to remove this message.");
   Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, LATEST_VERSION_URL);
   SteamWorks_SetHTTPCallbacks(req, VersionCheckRequestCallback);
   SteamWorks_SendHTTPRequest(req);
-
 }
 
-stock int VersionCheckRequestCallback(Handle request, bool failure, bool requestSuccessful,
-                                               EHTTPStatusCode statusCode) {
-
+static int VersionCheckRequestCallback(Handle request, bool failure, bool requestSuccessful,
+                                       EHTTPStatusCode statusCode) {
   if (failure || !requestSuccessful) {
     LogError("Failed to check for Get5 update. HTTP error code: %d.", statusCode);
     delete request;
@@ -1779,9 +1925,9 @@ stock int VersionCheckRequestCallback(Handle request, bool failure, bool request
   SteamWorks_GetHTTPResponseBodyData(request, response, responseSize);
   delete request;
 
-  // Since we're comparing against master, which always contains a -dev tag, we extract the version substring
-  // *before* that -dev tag (or whatever it might be). This *should* have been removed by the CI flow, so that official
-  // releases don't contain the -dev tag.
+  // Since we're comparing against master, which always contains a -dev tag, we extract the version
+  // substring *before* that -dev tag (or whatever it might be). This *should* have been removed by
+  // the CI flow, so that official releases don't contain the -dev tag.
   Regex versionRegex = new Regex("#define PLUGIN_VERSION \"(.+)-.+\"");
 
   RegexError rError;
@@ -1805,12 +1951,13 @@ stock int VersionCheckRequestCallback(Handle request, bool failure, bool request
     LogDebug("Newest Get5 version from GitHub is: %s", newestVersionFound);
     g_NewerVersionAvailable = !StrEqual(PLUGIN_VERSION, newestVersionFound);
     if (g_NewerVersionAvailable) {
-      LogMessage("A newer version of Get5 is available. You are running %s while the latest version is %s.", PLUGIN_VERSION, newestVersionFound);
+      LogMessage(
+          "A newer version of Get5 is available. You are running %s while the latest version is %s.",
+          PLUGIN_VERSION, newestVersionFound);
     } else {
       LogMessage("Update check successful. Get5 is up-to-date (%s).", PLUGIN_VERSION);
     }
   }
 
   delete versionRegex;
-
 }

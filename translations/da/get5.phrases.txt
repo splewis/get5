@@ -2,23 +2,23 @@
 {
     "ReadyToVetoInfoMessage"
     {
-        "da"            "Skriv {GREEN}!ready{NORMAL} når dit hold er klar til at veto."
+        "da"            "Skriv {1} når dit hold er klar til at veto."
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "da"            "Venter på, at {1} skriver {GREEN}!ready {NORMAL}."
+        "da"            "Venter på, at {1} skriver {2}."
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "da"            "Skriv {GREEN}!ready {NORMAL}når du er klar til at genoprette match backup."
+        "da"            "Skriv {1} når du er klar til at genoprette match backup."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "da"            "Skriv {GREEN}!ready {NORMAL}når du er klar til at knife."
+        "da"            "Skriv {1} når du er klar til at knife."
     }
     "ReadyToStartInfoMessage"
     {
-        "da"            "Skriv {GREEN}!ready {NORMAL}når du er klar til at spille."
+        "da"            "Skriv {1} når du er klar til at spille."
     }
     "YouAreReady"
     {
@@ -26,7 +26,7 @@
     }
     "YouAreReadyAuto"
     {
-        "da"            "NOTE: Du er blevet markeret som klar grundet din spilaktivitet. Skriv !unready hvis du ikke er klar."
+        "da"            "NOTE: Du er blevet markeret som klar grundet spilaktivitet. Skriv {1} hvis du ikke er klar."
     }
     "YouAreNotReady"
     {
@@ -34,7 +34,7 @@
     }
     "WaitingForEnemySwapInfoMessage"
     {
-        "da"            "{1} vandt knife-runden. Venter på, at de skriver !stay eller !swap."
+        "da"            "{1} vandt knife-runden. Venter på, at de skriver {2} eller {3}."
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
@@ -138,7 +138,7 @@
     }
     "TechPauseRunoutInfoMessage"
     {
-        "da"            "Maksimal teknisk pauselængde er nået, og alle kan nu !unpause."
+        "da"            "Maksimal teknisk pauselængde er nået, og alle kan nu {1}."
     }
     "TechPauseNoTimeRemaining"
     {
@@ -158,7 +158,7 @@
     }
     "WaitingForUnpauseInfoMessage"
     {
-        "da"            "{1} vil gerne fortsætte kampen. Afventer !unpause fra {2}."
+        "da"            "{1} vil gerne fortsætte kampen. Afventer {3} fra {2}."
     }
     "PausesLeftInfoMessage"
     {
@@ -190,11 +190,11 @@
     }
     "ForceReadyInfoMessage"
     {
-        "da"            "Du kan skrive {GREEN}!forceready {NORMAL} for tvinge dit hold klar, hvis der er mindre end {GREEN}{1}{NORMAL} spillere."
+        "da"            "Du kan skrive {1} for tvinge dit hold klar, hvis der er mindre end {2} spillere."
     }
     "TeammateForceReadied"
     {
-        "da"            "Dit hold blev tvunget klar af {GREEN}{1}."
+        "da"            "Dit hold blev tvunget klar af {1}."
     }
     "AdminForceReadyInfoMessage"
     {
@@ -204,6 +204,10 @@
     {
         "da"            "En admin har tvunget kampen til at slutte."
     }
+    "AdminForceEndWithWinnerInfoMessage"
+    {
+        "da"            "En admin har tvunget kampen til at slutte med {1} som vinder."
+    }
     "AdminForcePauseInfoMessage"
     {
         "da"            "En admin har tvunget kampen til at pause."
@@ -212,21 +216,21 @@
     {
         "da"            "En admin har tvunget kampen til at fortsætte."
     }
-    "TeamWantsToReloadLastRoundInfoMessage"
+    "TeamWantsToReloadCurrentRound"
     {
-        "da"            "{1} vil stoppe og genindlæse sidste runde. Afventer !stop fra {2}."
+        "da"            "{1} vil stoppe og genindlæse til starten af denne runde. Afventer {3} fra {2}."
     }
     "TeamWinningSeriesInfoMessage"
     {
-        "da"            "{1}{NORMAL} vinder serien {2}-{3}"
+        "da"            "{1} fører serien {2}-{3}."
     }
     "SeriesTiedInfoMessage"
     {
-        "da"            "Serien er uafgjort {1}-{2}"
+        "da"            "Serien er uafgjort {1}-{2}."
     }
     "NextSeriesMapInfoMessage"
     {
-        "da"            "Det næste map i serien er{GREEN}{1}"
+        "da"            "Det næste map i serien er {1} og det starter om {2}."
     }
     "TeamWonMatchInfoMessage"
     {
@@ -234,11 +238,7 @@
     }
     "TeamTiedMatchInfoMessage"
     {
-        "da"            "{1} og {2} har spillet kampen uafgjort."
-    }
-    "TeamsSplitSeriesBO2InfoMessage"
-    {
-        "da"            "{1} og {2} har splittet serien 1-1."
+        "da"            "{1} og {2} har spillet uafgjort."
     }
     "TeamWonSeriesInfoMessage"
     {
@@ -248,13 +248,13 @@
     {
         "da"            "Kampen er afsluttet"
     }
-    "CurrentScoreInfoMessage"
-    {
-        "da"            "{LIGHT_GREEN}{1} {GREEN}{2} {NORMAL}- {GREEN}{3} {LIGHT_GREEN}{4}"
-    }
     "StopCommandNotEnabled"
     {
         "da"            "Stop-kommandoen er ikke aktiveret."
+    }
+    "StopCommandVotingReset"
+    {
+        "da"            "Anmodningen fra {1} om at stoppe spillet blev annulleret, da runden sluttede."
     }
     "BackupLoadedInfoMessage"
     {
@@ -290,7 +290,7 @@
     }
     "ChangingMapInfoMessage"
     {
-        "da"            "Skifter map til {GREEN}{1}..."
+        "da"            "Skifter map til {1}..."
     }
     "MapDecidedInfoMessage"
     {
@@ -298,19 +298,19 @@
     }
     "MapIsInfoMessage"
     {
-        "da"            "Map {1}: {GREEN}{2}"
+        "da"            "Map {1}: {2}"
     }
     "TeamPickedMapInfoMessage"
     {
-        "da"            "{1} valgte {GREEN}{2} {NORMAL}som deres map {3}"
+        "da"            "{1} valgte {2} som deres {3}. map."
     }
     "TeamSelectSideInfoMessage"
     {
-        "da"            "{1} har valgt at start som {GREEN}{2} {NORMAL}på {3}"
+        "da"            "{1} har valgt at start som {2} på {3}."
     }
     "TeamVetoedMapInfoMessage"
     {
-        "da"            "{1} vetoed {LIGHT_RED}{2}"
+        "da"            "{1} vetoed {2}."
     }
     "CaptainLeftOnVetoInfoMessage"
     {
@@ -318,7 +318,7 @@
     }
     "ReadyToResumeVetoInfoMessage"
     {
-        "da"            "Skriv {GREEN}!ready {NORMAL}når du er klar til at genoptage veto."
+        "da"            "Skriv {1}, når du er klar til at genoptage veto."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -326,7 +326,27 @@
     }
     "MoveToCoachInfoMessage"
     {
-        "da"            "Da dit hold er fuldt, blev du flyttet til trænerposition."
+        "da"            "Da dit hold er fyldt, blev du flyttet til trænerposition."
+    }
+    "CannotLeaveCoachingTeamIsFull"
+    {
+        "da"            "Du kan ikke forlade trænerpositionen, da dit hold er fyldt."
+    }
+    "CoachingNotEnabled"
+    {
+        "da"            "Trænerindstillingen er ikke aktiveret. {1} skal sættes til 1."
+    }
+    "PlayerIsCoachingTeam"
+    {
+        "da"            "{1} er træner for {2}."
+    }
+    "CanOnlyCoachDuringWarmup"
+    {
+        "da"            "Du kan kun skifte til og fra trænerposition under opvarmning,"
+    }
+    "AllCoachSlotsFilledForTeam"
+    {
+        "da"            "Alle trænerpositioner ({1}) for dit hold er fyldt."
     }
     "ReadyTag"
     {
@@ -335,10 +355,6 @@
     "NotReadyTag"
     {
         "da"            "[IKKE KLAR]"
-    }
-    "MatchPoweredBy"
-    {
-        "da"        "Drevet af {YELLOW}Get5"
     }
     "MapVetoPickMenuText"
     {
@@ -374,6 +390,14 @@
     }
     "VetoCountdown"
     {
-        "da"        "Veto begynder om {GREEN}{1} {NORMAL}sekunder."
+        "da"        "Veto begynder om {1} sekunder."
+    }
+    "NewVersionAvailable"
+    {
+        "da"        "En nyere version af Get5 er tilgængelig. Opdatering kan findes på {1}."
+    }
+    "PrereleaseVersionWarning"
+    {
+        "da"        "Serveren kører en uofficiel version af Get5 ({1}) designet til test og udvikling. Denne besked kan fjernes via {2}."
     }
 }

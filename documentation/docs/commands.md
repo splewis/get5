@@ -30,8 +30,8 @@ Please note that these can be typed by *all players* in chat.
 
 ####`!coach`
 
-:   Moves a client to coach for their team. Requires that
-the [`sv_coaching_enabled`](https://totalcsgo.com/command/svcoachingenabled) variable is set to `1`.
+:   Requests to become a [coach](coaching.md) for your team. If already coaching, this will move you back as a player
+if possible. Can only be used during warmup.
 
 ####`!stay`
 
@@ -51,13 +51,13 @@ the [get5_stop_command_enabled](../configuration/#get5_stop_command_enabled) is 
 
 :   Force-readies your team, marking all players on your team as ready.
 
-####`!ringer`
+####`!ringer <target>` {: #ringer }
 
-:   Adds/removes a ringer to/from the home scrim team.
+:   Alias for [`get5_ringer`](#get5_ringer).
 
 ####`!scrim`
 
-:   Shortcut for [`get5_scrim`](#get5_scrim).
+:   Alias for [`get5_scrim`](#get5_scrim).
 
 ####`!get5`
 
@@ -74,8 +74,9 @@ Please note that these are meant to be used by *admins* in console.
 :   Loads a [match configuration](../match_schema) file (JSON or KeyValue) relative from the `csgo` directory.
 
 ####`get5_loadbackup <filename>` {: #get5_loadbackup }
-:   Loads a match backup file (JSON or KeyValue) relative from the `csgo`
-directory. Only works if the [backup system is enabled](../configuration/#get5_backup_system_enabled).
+:   Loads a match backup, relative from the `csgo`
+directory. Only works if the [backup system is enabled](../configuration/#get5_backup_system_enabled). If you define
+[`get5_backup_path`](../configuration/#get5_backup_path), you must include the path in the filename.
 
 ####`get5_last_backup_file`
 :   Prints the name of the last match backup file Get5 wrote in the current series, this is automatically updated each
@@ -93,16 +94,18 @@ You should put the `url` argument inside quotation marks (`""`).
 
     Loading remote matches requires the [SteamWorks](../installation/#steamworks) extension.
 
-####`get5_endmatch`
-:   Force ends the current match. No winner is set (draw).
+####`get5_endmatch [team1|team2]` {: #get5_endmatch }
+:   Force-ends the current match. The team argument will force the winner of the series and the current map to be set
+to that team. Omitting the team argument sets no winner (tie).
 
-####`get5_creatematch`
-:   Creates a BO1 match with the current players on the server on the current map.
+####`get5_creatematch [map name] [matchid]` {: #get5_creatematch }
+:   Creates a BO1 match with the current players on the server. `map name` defaults to the current map and `matchid`
+defaults to `manual`. You should **not** provide a match ID if you use the [MySQL extension](../stats_system/#mysql).
 
 ####`get5_scrim [opposing team name] [map name] [matchid]` {: #get5_scrim }
-:   Creates a [scrim](../getting_started/#scrims) on the current map. For example, if you're
-    playing *fnatic* on `de_dust2` you might run `get5_scrim fnatic de_dust2`. The other team name defaults to "away"
-    and the map defaults to the current map. `matchid` defaults to an empty string.
+:   Creates a [scrim](../getting_started/#scrims) on the current map. The opposing team name defaults to `Away`
+and the map defaults to the current map. `matchid` defaults to `scrim`. You should **not** provide a match ID if
+you use the [MySQL extension](../stats_system/#mysql).
 
 ####`get5_addplayer <auth> <team1|team2|spec> [name]` {: #get5_addplayer }
 :   Adds a Steam ID to a team (can be any format for the Steam ID). The name parameter optionally locks the player's
@@ -112,8 +115,10 @@ name.
 :   Adds a Steam ID to a team as a coach. The name parameter optionally locks the player's
 name.
 
-####`get5_removeplayer <auth>`
-:   Removes a steam ID from all teams (can be any format for the Steam ID).
+####`get5_removeplayer <auth>` {: #get5_removeplayer}
+:   Removes a steam ID from all teams (can be any format for the Steam ID). This also removes the player as
+a [coach](coaching.md). If [`get5_check_auths`](../configuration/#get5_check_auths) is set, the player will be removed
+from the server immediately.
 
 ####`get5_addkickedplayer <team1|team2|spec> [name]` {: #get5_addkickedplayer }
 :   Adds the last kicked Steam ID to a team. The name parameter optionally locks the player's name.
@@ -123,9 +128,6 @@ name.
 
 ####`get5_forceready`
 :   Marks all teams as ready. `get5_forcestart` does the same thing.
-
-####`get5_dumpstats`
-:   Dumps current match stats to a file.
 
 ####`get5_status`
 :   Replies with JSON formatted match state (available to all clients).
@@ -220,14 +222,27 @@ name.
     ```
 
 ####`get5_listbackups [matchid]` {: #get5_listbackups }
-:   Lists backup files for the current match or a given match ID if provided.
+:   Lists backup files for the current match or a given match ID if provided. If you define
+[`get5_backup_path`](../configuration/#get5_backup_path), it will only list backups found under that prefix.
 
-####`get5_ringer <player>`
-:   Adds/removes a ringer to/from the home scrim team. `player` is the name of the player. Similar
-to [`!ringer`](../commands/#ringer)
+####`get5_ringer <target>` {: #get5_ringer }
+:   Adds/removes a ringer to/from the home scrim team. `target` is the name of the player, their user ID or their Steam
+ID. Similar to [`!ringer`](../commands/#ringer) in chat.
+
+!!! example "User ID vs client index"
+
+    To view user IDs, type `users` in console. In this example, `3` is the user ID and `1` is the client index:
+    ```
+    > users
+    1:3:"Quinn"
+    ```
 
 ####`get5_debuginfo [file]` {: #get5_debuginfo }
 :   Dumps debug info to a file (`addons/sourcemod/logs/get5_debuginfo.txt` if no file parameter is provided).
+
+####`get5_dumpstats [file]` {: #get5_dumpstats }
+:   Dumps [player stats](../stats_system/#keyvalue) to a file (`addons/sourcemod/get5_matchstats.cfg` if no file
+parameter is provided).
 
 ####`get5_test`
 :   Runs get5 tests. **This should not be used on a live match server since it will reload a match config to test**.

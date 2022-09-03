@@ -17,11 +17,9 @@ the explanation of the [match schema](../match_schema), that section will overri
 ### Phase Configuration Files
 
 You should also have three config files. These can be edited, but we recommend not
-blindly pasting another config in (e.g. ESL, CEVO). Configs that execute warmup commands (`mp_warmup_end`, for
-example) **will** cause problems. These must only include commands you would run in the console (such
+blindly pasting another config in (e.g. ESL, CEVO). These must only include commands you would run in the console (such
 as `mp_friendly_fire 1`) and should determine the rules for those three stage of your match. You can
-also [point to other files](#config-files) by editing
-the main config file.
+also [point to other files](#config-files) by editing the main config file.
 
 ```yaml
 cfg/get5/warmup.cfg # (1)
@@ -32,6 +30,27 @@ cfg/get5/live.cfg # (3)
 1. Executed when the warmup/veto phase begins.
 2. Executed when the knife-round starts.
 3. Executed when the game goes live.
+
+!!! danger "Prohibited options"
+
+    You should avoid these commands in your live, knife and warmup configuration files, as all of these are handled by
+    Get5 automatically. Introducing restarts, warmup changes or [GOTV](gotv.md) delay modifications can cause problems.
+    If you want to set your `tv_delay`, do it in the `cvars` section of your [match configuration](match_schema.md).
+
+    ```
+    mp_do_warmup_period
+    mp_restartgame
+    mp_warmup_end
+    mp_warmup_pausetimer   
+    mp_warmup_start
+    mp_warmuptime
+    mp_warmuptime_all_players_connected
+    tv_delay
+    tv_delaymapchange
+    tv_enable
+    tv_record
+    tv_stoprecord
+    ```
 
 ## Server Setup
 
@@ -49,7 +68,8 @@ cfg/get5/live.cfg # (3)
 :   Whether the [`!stop`](../commands/#stop) command is enabled. **`Default: 1`**
 
 ####`get5_kick_when_no_match_loaded`
-:   Whether to kick all clients if no match is loaded. **`Default: 0`**
+:   Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
+using [`get5_endmatch`](../commands/#get5_endmatch). **`Default: 0`**
 
 ####`get5_end_match_on_empty_server`
 :   Whether the match is ended with no winner if all players leave (note: this will happen even if all players
@@ -59,12 +79,13 @@ disconnect even in warmup with the intention to reconnect!). **`Default: 0`**
 :   Whether to wait for map vetoes to be printed to GOTV before changing map. **`Default: 0`**
 
 ####`get5_check_auths`
-:   Whether the Steam IDs from a "players" section are used to force players onto teams, and will kick
-users if they are not in the auth list. **`Default: 1`**
+:   Whether the Steam IDs from the `players` and `coaches` sections of a [match configuration](../match_schema/#schema)
+are used to force players onto teams. Anyone not defined will be removed from the game, or if
+in [scrim mode](../getting_started/#scrims), put on `team2`. **`Default: 1`**
 
 ####`get5_print_update_notice`
 :   Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if
-    [SteamWorks](../installation/#steamworks) has been installed. **`Default: 1`**
+[SteamWorks](../installation/#steamworks) has been installed. **`Default: 1`**
 
 ####`get5_pretty_print_json`
 :   Whether to pretty-print all JSON output. This also affects the output of JSON in the
@@ -134,9 +155,25 @@ if [`get5_print_damage`](#get5_print_damage) is disabled.
 - [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - dealt damage to this player, not enough for assist
 ```
 
+####`get5_phase_announcement_count`
+:   The number of times the "Knife" or "Match is LIVE" announcements will be printed in chat. Set to zero to disable.
+**`Default: 5`**
+
 ####`get5_message_prefix`
-:   The tag applied before plugin messages. If you change this variable, `Powered by Get5` will be printed when the game
-goes live. **`Default: Get5`**
+:   The tag applied before plugin messages. Note that at least one character must come before
+a [color modifier](#color-substitutes). **`Default: "[{YELLOW}Get5{NORMAL}]"`**
+
+####`get5_team1_color`
+:   The [color](#color-substitutes) to use when printing the name of `team1` in chat
+messages.<br>**`Default: "{LIGHT_GREEN}"`**
+
+####`get5_team2_color`
+:   The [color](#color-substitutes) to use when printing the name of `team2` in chat
+messages.<br>**`Default: "{PINK}"`**
+
+####`get5_spec_color`
+:   The [color](#color-substitutes) to use when printing the name of `spectators` in chat
+messages.<br>**`Default: "{NORMAL}"`**
 
 ## Pausing
 
@@ -154,9 +191,8 @@ if [get5_fixed_pause_time](#get5_fixed_pause_time) is set to a non-zero
 value. **`Default: 300 (5 minutes)`**
 
 ####`get5_fixed_pause_time`
-:   If non-zero, the fixed length in seconds all [`tactical`](../pausing/#tactical) pauses will be. Adjusting this to
-non-zero will use the in-game timeout counter, and the [get5_max_pause_time](#get5_max_pause_time)
-parameter is ignored. **`Default: 0`**
+:   If non-zero, the fixed length in seconds of all [`tactical`](../pausing/#tactical) pauses. This takes precedence
+over the [get5_max_pause_time](#get5_max_pause_time) parameter, which will be ignored. **`Default: 0`**
 
 ####`get5_allow_technical_pause`
 :   Whether [technical pauses](../pausing/#technical) are available to clients or not. **`Default: 1`**
@@ -182,17 +218,20 @@ must confirm. **`Default: 0`**
 
 ####`get5_time_format`
 :   Time format string. This determines the [`{TIME}`](#tag-time) tag. **Do not change this unless you know what you are
-doing! Avoid using spaces or colons.** **`Default: %Y-%m-%d_%H`**
+doing! Avoid using spaces or colons.** **`Default: "%Y-%m-%d_%H-%M-%S"`**
 
 ####`get5_demo_name_format`
-:   Format to name demo files. Set to empty string to disable. **`Default: {MATCHID}_map{MAPNUMBER}_{MAPNAME}`**
+:   Format to use for demo files when [recording matches](gotv.md). Do not include a file extension (`.dem` is added
+automatically). Set to empty string to disable. If you do not include the [`{TIME}`](#tag-time) tag, you will have
+problems with duplicate files if restoring a game from a backup.<br>Note that the [`{MAPNUMBER}`](#tag-mapnumber)
+variable is not zero-indexed!<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
 
 ####`get5_event_log_format`
 :   Format to write event logs to. Set to empty string to disable. **`Default: ""`**
 
 ####`get5_stats_path_format`
 :   Path where stats are output at each map end if it is set. Set to empty string to
-disable. **`Default: get5_matchstats_{MATCHID}.cfg`**
+disable. **`Default: "get5_matchstats_{MATCHID}.cfg"`**
 
 ## Backup System
 
@@ -201,20 +240,42 @@ disable. **`Default: get5_matchstats_{MATCHID}.cfg`**
 command as well as the [`get5_loadbackup`](../commands/#get5_loadbackup) command. **`Default: 1`**
 
 ####`get5_max_backup_age`
-:   Number of seconds before a Get5 backup file is automatically deleted. 0 to disable. **`Default: 160000`**
+:   Number of seconds before a Get5 backup file is automatically deleted. 0 to disable. If you define
+[`get5_backup_path`](#get5_backup_path), only files in that path will be deleted. **`Default: 160000`**
+
+####`get5_backup_path`
+:   The folder of saved [backup files](../commands/#get5_loadbackup), relative to the `csgo` directory. You **can** use
+the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`. **`Default: ""`**
+
+!!! warning "Slash, slash, hundred yard dash :material-slash-forward:"
+
+    It is very important that your backup path does **not** start with a slash but instead **ends with a slash**. If
+    not, the last part of the path will be considered a prefix of the filename and things will not work correctly. Also
+    note that if you use the [`{MATCHID}`](#tag-matchid) variable, [automatic deletion of backups](#get5_max_backup_age)
+    does not work.
+
+    :white_check_mark: `backups/`
+
+    :white_check_mark: `backups/{MATCHID}/`
+
+    :no_entry: `/backups/`
+
+    :no_entry: `/backups/{MATCHID}`
 
 ## Config Files
 
 ####`get5_live_cfg`
-:   Config file executed when the game goes live. **`Default: get5/live.cfg`**
-
-####`get5_autoload_config`
-:   A config file to autoload on map starts if no match is loaded, relative to the `csgo` directory. Set to empty
-string
-to disable. **`Default: ""`**
+:   Config file executed when the game goes live, relative to `csgo/cfg`.<br>**`Default: "get5/live.cfg"`**
 
 ####`get5_warmup_cfg`
-:   Config file executed in warmup periods. **`Default: get5/warmup.cfg`**
+:   Config file executed in warmup periods, relative to `csgo/cfg`.<br>**`Default: "get5/warmup.cfg"`**
+
+####`get5_knife_cfg`
+:   Config file executed for the knife round, relative to `csgo/cfg`.<br>**`Default: "get5/knife.cfg"`**
+
+####`get5_autoload_config`
+:  A [match configuration](../match_schema/#schema) file, relative to the `csgo` directory, to autoload when a player
+joins the server if no match is loaded. Set to empty string to disable. **`Default: ""`**
 
 ## Substitution Variables
 
@@ -253,7 +314,7 @@ placeholder strings that will be replaced by meaningful values when printed.
 ### Colour Substitutes {: #color-substitutes }
 
 These variables can be used to color text in the chat. You must return to `{NORMAL}` (white)
-after using a color variable. Note that a color prefix cannot be _followed by a space_.
+after using a color variable.
 
 Example: `This text becomes {DARK_RED}red{NORMAL}, while {YELLOW}all of this will be yellow`.
 
@@ -269,3 +330,4 @@ Example: `This text becomes {DARK_RED}red{NORMAL}, while {YELLOW}all of this wil
 - `{LIGHT_BLUE}`
 - `{DARK_BLUE}`
 - `{PURPLE}`
+- `{GOLD}`

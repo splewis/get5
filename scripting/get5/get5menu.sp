@@ -1,7 +1,7 @@
 // TODO: Add translations for this.
 // TODO: Add admin top menu integration.
 
-public Action Command_Get5AdminMenu(int client, int args) {
+Action Command_Get5AdminMenu(int client, int args) {
   Menu menu = new Menu(AdminMenuHandler);
   menu.SetTitle("Get5 Admin Menu");
 
@@ -33,7 +33,7 @@ static int EnabledIf(bool cond) {
   return cond ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED;
 }
 
-public int AdminMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
+static int AdminMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     int client = param1;
     char infoString[64];
@@ -52,13 +52,13 @@ public int AdminMenuHandler(Menu menu, MenuAction action, int param1, int param2
   }
 }
 
-public void GiveRingerMenu(int client) {
+static void GiveRingerMenu(int client) {
   Menu menu = new Menu(RingerMenuHandler);
   menu.SetTitle("Switch scrim team status");
   menu.ExitButton = true;
   menu.ExitBackButton = true;
 
-  for (int i = 1; i <= MaxClients; i++) {
+  LOOP_CLIENTS(i) {
     if (IsPlayer(i)) {
       char infoString[64];
       IntToString(GetClientSerial(i), infoString, sizeof(infoString));
@@ -70,7 +70,7 @@ public void GiveRingerMenu(int client) {
   menu.Display(client, MENU_TIME_FOREVER);
 }
 
-public int RingerMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
+static int RingerMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
   if (action == MenuAction_Select) {
     int client = param1;
     char infoString[64];

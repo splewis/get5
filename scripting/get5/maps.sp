@@ -1,5 +1,7 @@
-stock void ChangeMap(const char[] map, float delay = 3.0) {
-  Get5_MessageToAll("%t", "ChangingMapInfoMessage", map);
+void ChangeMap(const char[] map, float delay = 3.0) {
+  char formattedMapName[64];
+  FormatMapName(map, formattedMapName, sizeof(formattedMapName), true, true);
+  Get5_MessageToAll("%t", "ChangingMapInfoMessage", formattedMapName);
 
   // pass the "true" name to a timer to changelevel
   Handle data = CreateDataPack();
@@ -9,7 +11,7 @@ stock void ChangeMap(const char[] map, float delay = 3.0) {
   CreateTimer(delay, Timer_DelayedChangeMap, data);
 }
 
-public Action Timer_DelayedChangeMap(Handle timer, Handle pack) {
+static Action Timer_DelayedChangeMap(Handle timer, Handle pack) {
   char map[PLATFORM_MAX_PATH];
   ResetPack(pack);
   ReadPackString(pack, map, sizeof(map));

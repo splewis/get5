@@ -35,9 +35,15 @@ Administrators
 cannot call technical pauses, as an administrative pause will be triggered instead. You can set [the maximum number of
 technical pauses](../configuration/#get5_max_tech_pauses).
 
-## :material-account-hard-hat-outline: Administrative {: #dministrative }
+## :material-backup-restore: Backup {: #backup }
 
-As a [server admin](../installation/#administrators), you can pause the match at any time and with no time
+If the game is [restored from a backup](backup.md), it will be so in a paused state. Both teams must
+[`!unpause`](../commands/#unpause) before the match can continue. Administrators can also unpause backup pauses, or even
+override them to an [administrative pause](#administrative).
+
+## :material-account-hard-hat-outline: Administrative {: #administrative }
+
+As a server admin, you can pause the match at any time and with no time
 restrictions, but you **cannot** use [`mp_pause_match`](https://totalcsgo.com/command/mppausematch) (or its unpause
 equivalent) at any stage. Due to the way Get5 handles pausing, you must use `sm_pause` in the console, since this will
 track all details and configurations related to pausing in the system. Similarly, `sm_unpause` must be used to unpause.
@@ -45,13 +51,7 @@ Pauses initiated by administrators via console **cannot** be [`!unpause`'ed](../
 that an [`admin` pause event](events_and_forwards.md) is fired when the game is paused during veto (only
 if [`get5_pause_on_veto`](../configuration/#get5_pause_on_veto) is enabled).
 
-!!! fail "I'm an admin on my server, but I cannot call admin pauses!"
+!!! question "I'm an admin on my server, but I cannot call admin pause?"
 
     Only console/RCON is considered an administrator in pause-context. Having an admin flag as a user/player does not
     allow you to call administrative pauses.
-
-!!! help "But the [event system](events_and_forwards.md) also hints at the existence of a `backup` pause type?"
-
-    Internally, Get5 uses the `backup` pause type when pausing due to loading backup configurations. To not confuse
-    any program reaction to pauses, we added a special pause type in these cases, and you should probably just ignore
-    these events. They still fire because *technically* the game is pausing.

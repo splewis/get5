@@ -1730,16 +1730,20 @@ static void SetServerStateOnStartup(bool force) {
     // Only run on first client connect or if forced (during OnConfigsExecuted).
     return;
   }
-  if (g_GameState <= Get5State_Warmup || g_WaitingForRoundBackup) {
-    // If the server is in veto/preveto when someone joins or the configs exec, it should remain in
-    // that state. This would happen if the a config with veto is loaded before someone joins the
-    // server.
-    if (g_GameState != Get5State_Veto && g_GameState != Get5State_PreVeto) {
-      ChangeState(Get5State_Warmup);
-    }
-    ExecCfg(g_WarmupCfgCvar);
-    StartWarmup();
+  // It shouldn't really be possible to end up here, as the server *should* reload the map anyway when first player
+  // joins, but as a safeguard we don't want to move a live game that's not pending a backup or map change into warmup
+  // on player connect.
+  if (!force && g_GameState == Get5State_Live && !g_WaitingForRoundBackup && !g_MapChangePending) {
+    return;
   }
+  // If the server is in preveto when someone joins or the configs exec, it should remain in
+  // that state. This would happen if the a config with veto is loaded before someone joins the
+  // server.
+  if (g_GameState != Get5State_PreVeto) {
+    ChangeState(Get5State_Warmup);
+  }
+  ExecCfg(g_WarmupCfgCvar);
+  StartWarmup();
 }
 
 void ChangeState(Get5State state) {

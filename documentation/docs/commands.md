@@ -150,7 +150,7 @@ from the server immediately.
         "plugin_version": string, // (1)
         "gamestate": "none" | "pre_veto" | "veto" | "warmup"
             | "knife" | "waiting_for_knife_decision"
-            | "going_live" | "live" | "post_game", // (2)
+            | "going_live" | "live" | "pending_restore" | "post_game", // (2)
         "paused": boolean, // (3)
         "loaded_config_file": string | undefined, // (4)
         "matchid": string | undefined, // (5)
@@ -164,7 +164,7 @@ from the server immediately.
     ```
 
     1. The version of Get5 you are currently running, along with that version's commit. `Example: "0.8.1-8ef7ffa3"`
-    2. The current state of the game. The definition lists them in the order they occur.
+    2. The current state of the game. The definition lists them in the order they would typically occur.
     3. Whether the game is currently paused.
     4. The match configuration file currently loaded. `Example: "addons/sourcemod/configs/get5/match_config.json"`.
     5. The current match ID. Empty string if not defined or `scrim` or `manual` if using

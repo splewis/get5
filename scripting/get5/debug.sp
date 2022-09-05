@@ -122,7 +122,6 @@ static void AddGlobalStateInfo(File f) {
 
   f.WriteLine("g_MapChangePending = %d", g_MapChangePending);
   f.WriteLine("g_PendingSideSwap = %d", g_PendingSideSwap);
-  f.WriteLine("g_WaitingForRoundBackup = %d", g_WaitingForRoundBackup);
   f.WriteLine("g_DoingBackupRestoreNow = %d", g_DoingBackupRestoreNow);
   f.WriteLine("g_ReadyTimeWaitingUsed = %d", g_ReadyTimeWaitingUsed);
   f.WriteLine("g_PausingTeam = %d", g_PausingTeam);

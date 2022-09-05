@@ -238,16 +238,8 @@ static void WriteBackupStructure(const char[] path) {
   char mapName[PLATFORM_MAX_PATH];
   GetCurrentMap(mapName, sizeof(mapName));
 
-  if (g_GameState == Get5State_Veto) {
-    kv.SetNum("gamestate", view_as<int>(Get5State_PreVeto));
-  } else if (g_GameState == Get5State_Warmup ||
-             g_GameState == Get5State_WaitingForKnifeRoundDecision ||
-             g_GameState == Get5State_KnifeRound || g_GameState == Get5State_GoingLive ||
-             g_GameState == Get5State_PostGame) {
-    kv.SetNum("gamestate", view_as<int>(Get5State_Warmup));
-  } else if (g_GameState == Get5State_Live) {
-    kv.SetNum("gamestate", view_as<int>(Get5State_Live));
-  }
+  // Assume warmup; changed to live below if a valve backup exists.
+  kv.SetNum("gamestate", view_as<int>(Get5State_Warmup));
 
   kv.SetNum("team1_side", g_TeamSide[Get5Team_1]);
   kv.SetNum("team2_side", g_TeamSide[Get5Team_2]);
@@ -296,13 +288,14 @@ static void WriteBackupStructure(const char[] path) {
 
   if (g_GameState == Get5State_Live) {
     // Write valve's backup format into the file. This only applies to live rounds, as any pre-live
-    // backups should just restart the game to the knife round.
+    // backups should just restart the game to warmup (post-veto).
     char lastBackup[PLATFORM_MAX_PATH];
     ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
     if (lastBackupCvar != null) {
       lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
       KeyValues valveBackup = new KeyValues("valve_backup");
       if (valveBackup.ImportFromFile(lastBackup)) {
+        kv.SetNum("gamestate", view_as<int>(Get5State_Live));
         kv.JumpToKey("valve_backup", true);
         KvCopySubkeys(valveBackup, kv);
         kv.GoBack();
@@ -353,8 +346,8 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
 
   if (g_GameState != Get5State_Live) {
     // This isn't perfect, but it's better than resetting all pauses used to zero in cases of
-    // restore on a new server. If restoring while live, we just retain the current pauses used, as
-    // they should be the "most correct".
+    // restore on a new server or a different map. If restoring while live, we just retain the
+    // current pauses used, as they should be the "most correct".
     g_TacticalPausesUsed[Get5Team_1] = kv.GetNum("team1_tac_pauses_used", 0);
     g_TacticalPausesUsed[Get5Team_2] = kv.GetNum("team2_tac_pauses_used", 0);
     g_TechnicalPausesUsed[Get5Team_1] = kv.GetNum("team1_tech_pauses_used", 0);
@@ -422,10 +415,10 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
   }
 
   // When loading pre-live, there is no Valve backup, so we assume -1.
-  g_WaitingForRoundBackup = false;
+  bool valveBackup = false;
   int roundNumberRestoredTo = -1;
   if (kv.JumpToKey("valve_backup")) {
-    g_WaitingForRoundBackup = true;
+    valveBackup = true;
     char tempValveBackup[PLATFORM_MAX_PATH];
     GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
     kv.ExportToFile(tempValveBackup);
@@ -444,6 +437,7 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
     // If a map is to be changed, we want to suppress all stats events immediately, as the
     // Get5_OnBackupRestore is called now and we don't want events firing after this until the game
     // is live again.
+    ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
     ChangeMap(currentSeriesMap, 3.0);
   } else {
     // We must assign players to their teams. This is normally done inside LoadMatchConfig, but
@@ -455,9 +449,9 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
         }
       }
     }
-    if (g_WaitingForRoundBackup) {
+    if (valveBackup) {
       // Same map, but round restore with a Valve backup; do normal restore immediately with no
-      // ready-up.
+      // ready-up and no game-state change.
       RestoreGet5Backup(restartRecording);
     } else {
       // We are restarting to the same map for prelive; just go back into warmup and let players
@@ -498,7 +492,6 @@ void RestoreGet5Backup(bool restartRecording = true) {
   PauseGame(Get5Team_None, Get5PauseType_Backup);
   g_DoingBackupRestoreNow = true;  // reset after the backup has completed, suppresses various
                                    // events and hooks until then.
-  g_WaitingForRoundBackup = false;
   CreateTimer(1.5, Timer_StartRestore);
   if (restartRecording) {
     // Since a backup command forces the recording to stop, we restart it here once the backup has

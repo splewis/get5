@@ -177,7 +177,6 @@ Get5Team g_LastVetoTeam;
 Menu g_ActiveVetoMenu = null;
 
 /** Backup data **/
-bool g_WaitingForRoundBackup = false;
 bool g_DoingBackupRestoreNow = false;
 
 // Stats values
@@ -228,6 +227,7 @@ ArrayList g_ChatAliasesCommands;
 char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
 bool g_PendingSideSwap = false;
+Handle g_PendingMapChangeTimer = INVALID_HANDLE;
 
 // version check state
 bool g_RunningPrereleaseVersion = false;
@@ -630,14 +630,17 @@ public void OnPluginStart() {
 
 static Action Timer_InfoMessages(Handle timer) {
   if (g_GameState == Get5State_Live || g_GameState == Get5State_None) {
-    return Plugin_Continue;
+    return;
   }
 
   char readyCommandFormatted[64];
   FormatChatCommand(readyCommandFormatted, sizeof(readyCommandFormatted), "!ready");
 
-  // Handle pre-veto messages
-  if (g_GameState == Get5State_PreVeto) {
+  if (g_GameState == Get5State_PendingRestore) {
+    if (!IsTeamsReady() && !IsDoingRestoreOrMapChange()) {
+      Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage", readyCommandFormatted);
+    }
+  } else if (g_GameState == Get5State_PreVeto) {
     if (IsTeamsReady() && !IsSpectatorsReady()) {
       Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
                         g_FormattedTeamNames[Get5Team_Spec], readyCommandFormatted);
@@ -645,29 +648,21 @@ static Action Timer_InfoMessages(Handle timer) {
       Get5_MessageToAll("%t", "ReadyToVetoInfoMessage", readyCommandFormatted);
     }
     MissingPlayerInfoMessage();
-  } else if (g_GameState == Get5State_Warmup && !g_MapChangePending) {
-    // Handle warmup state, provided we're not waiting for a map change
-    // Backups take priority
-    if (!IsTeamsReady() && g_WaitingForRoundBackup) {
-      Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage", readyCommandFormatted);
-      return Plugin_Continue;
-    }
-
-    // Find out what we're waiting for
-    if (IsTeamsReady() && !IsSpectatorsReady()) {
-      Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
-                        g_FormattedTeamNames[Get5Team_Spec], readyCommandFormatted);
-    } else {
-      if (g_MapSides.Get(Get5_GetMapNumber()) == SideChoice_KnifeRound) {
-        Get5_MessageToAll("%t", "ReadyToKnifeInfoMessage", readyCommandFormatted);
+  } else if (g_GameState == Get5State_Warmup) {
+    if (!g_MapChangePending) {
+      // Find out what we're waiting for
+      if (IsTeamsReady() && !IsSpectatorsReady()) {
+        Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
+                          g_FormattedTeamNames[Get5Team_Spec], readyCommandFormatted);
       } else {
-        Get5_MessageToAll("%t", "ReadyToStartInfoMessage", readyCommandFormatted);
+        bool knifeRound = g_MapSides.Get(g_MapNumber) == SideChoice_KnifeRound;
+        Get5_MessageToAll("%t", knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage",
+                          readyCommandFormatted);
       }
+      MissingPlayerInfoMessage();
+    } else if (g_DisplayGotvVetoCvar.BoolValue && GetTvDelay() > 0) {
+      Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
     }
-    MissingPlayerInfoMessage();
-  } else if (g_DisplayGotvVetoCvar.BoolValue && g_GameState == Get5State_Warmup &&
-             g_MapChangePending && GetTvDelay() > 0) {
-    Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     if (g_KnifeWinnerTeam == Get5Team_None) {
       return Plugin_Continue;
@@ -685,8 +680,6 @@ static Action Timer_InfoMessages(Handle timer) {
     // Handle postgame
     Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
   }
-
-  return Plugin_Continue;
 }
 
 public void OnClientAuthorized(int client, const char[] auth) {
@@ -845,7 +838,7 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
   LOOP_TEAMS(team) {
     g_TeamGivenStopCommand[team] = false;
     g_TeamReadyForUnpause[team] = false;
-    if (!g_WaitingForRoundBackup) {
+    if (g_GameState != Get5State_PendingRestore) {
       g_TacticalPauseTimeUsed[team] = 0;
       g_TacticalPausesUsed[team] = 0;
       g_TechnicalPausesUsed[team] = 0;
@@ -858,21 +851,26 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
   SetServerStateOnStartup(true);
   // This must not be called when waiting for a backup, as it will set the sides incorrectly if the
   // team swapped in knife or if the backup target is the second half.
-  if (!g_WaitingForRoundBackup) {
+  if (g_GameState != Get5State_PendingRestore) {
     SetStartingTeams();
+  }
+
+  // If the map is changed while a map timer is counting down, kill the timer. This could happen if
+  // a too long mp_match_restart_delay was set and admins decide to manually intervene.
+  if (g_PendingMapChangeTimer != INVALID_HANDLE) {
+    delete g_PendingMapChangeTimer;
+    LogDebug("Killed g_PendingMapChangeTimer as map was changed.");
   }
 }
 
 static Action Timer_CheckReady(Handle timer) {
   if (g_GameState == Get5State_None) {
-    return Plugin_Continue;
+    return;
   }
-
-  if (g_DoingBackupRestoreNow) {
-    LogDebug("Timer_CheckReady: Waiting for restore");
-    return Plugin_Continue;
+  if (IsDoingRestoreOrMapChange()) {
+    LogDebug("Timer_CheckReady: Waiting for restore or map change");
+    return;
   }
-
   CheckTeamNameStatus(Get5Team_1);
   CheckTeamNameStatus(Get5Team_2);
   UpdateClanTags();
@@ -888,35 +886,23 @@ static Action Timer_CheckReady(Handle timer) {
     } else {
       CheckReadyWaitingTimes();
     }
-  }
-
-  // Handle ready checks for warmup, provided we are not waiting for a map change
-  if (g_GameState == Get5State_Warmup && !g_MapChangePending) {
+  } else if (g_GameState == Get5State_PendingRestore) {
     // We don't wait for spectators when restoring backups
-    if (IsTeamsReady() && g_WaitingForRoundBackup) {
+    if (IsTeamsReady()) {
       LogDebug("Timer_CheckReady: restoring from backup");
-      g_WaitingForRoundBackup = false;
       RestoreGet5Backup();
-      return Plugin_Continue;
     }
-
+  } else if (g_GameState == Get5State_Warmup) {
+    // Handle ready checks for warmup, provided we are not waiting for a map change
     // Wait for both players and spectators before going live
     if (IsTeamsReady() && IsSpectatorsReady()) {
       LogDebug("Timer_CheckReady: all teams ready to start");
-      if (g_MapSides.Get(Get5_GetMapNumber()) == SideChoice_KnifeRound) {
-        LogDebug("Timer_CheckReady: starting with a knife round");
-        StartGame(true);
-      } else {
-        LogDebug("Timer_CheckReady: starting without a knife round");
-        StartGame(false);
-      }
+      StartGame(g_MapSides.Get(g_MapNumber) == SideChoice_KnifeRound);
       StartRecording();
     } else {
       CheckReadyWaitingTimes();
     }
   }
-
-  return Plugin_Continue;
 }
 
 static void CheckReadyWaitingTimes() {
@@ -967,7 +953,7 @@ static bool CheckReadyWaitingTime(Get5Team team) {
 }
 
 bool CheckAutoLoadConfig() {
-  if (g_GameState == Get5State_None && !g_WaitingForRoundBackup) {
+  if (g_GameState == Get5State_None) {
     char autoloadConfig[PLATFORM_MAX_PATH];
     g_AutoLoadConfigCvar.GetString(autoloadConfig, sizeof(autoloadConfig));
     if (!StrEqual(autoloadConfig, "")) {
@@ -1010,7 +996,6 @@ static Action Command_EndMatch(int client, int args) {
   }
 
   // Call game-ending forwards.
-  g_MapChangePending = false;
   int team1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
   int team2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
 
@@ -1037,20 +1022,6 @@ static Action Command_EndMatch(int client, int args) {
   } else {
     Get5_MessageToAll("%t", "AdminForceEndWithWinnerInfoMessage",
                       g_FormattedTeamNames[winningTeam]);
-  }
-
-  if (g_ActiveVetoMenu != null) {
-    g_ActiveVetoMenu.Cancel();
-  }
-
-  if (g_KnifeCountdownTimer != INVALID_HANDLE) {
-    LogDebug("Killing knife announce countdown timer.");
-    delete g_KnifeCountdownTimer;
-  }
-
-  if (g_KnifeDecisionTimer != INVALID_HANDLE) {
-    LogDebug("Killing knife decision timer.");
-    delete g_KnifeDecisionTimer;
   }
 
   RestartGame();
@@ -1299,17 +1270,23 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     convertSecondsToMinutesAndSeconds(RoundToFloor(restartDelay), timeToMapChangeFormatted,
                                       sizeof(timeToMapChangeFormatted));
 
+    // g_MapChangePending is set in ChangeMap, but since we want to announce now and change the
+    // state immediately while waiting for the restartDelay, we set it here also.
     g_MapChangePending = true;
     FormatMapName(nextMap, nextMap, sizeof(nextMap), true, true);
     Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap, timeToMapChangeFormatted);
     ChangeState(Get5State_PostGame);
     // Subtracting 4 seconds makes the map change 1 second before the timer expires, as there is a 3
     // second built-in delay in the ChangeMap function called by Timer_NextMatchMap.
-    CreateTimer(restartDelay - 4, Timer_NextMatchMap);
+    g_PendingMapChangeTimer = CreateTimer(restartDelay - 4, Timer_NextMatchMap);
   }
 }
 
 Action Timer_NextMatchMap(Handle timer) {
+  g_PendingMapChangeTimer = INVALID_HANDLE;
+  if (g_GameState == Get5State_None) {
+    return;
+  }
   char map[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(Get5_GetMapNumber(), map, sizeof(map));
   // If you change these 3 seconds for whatever reason, you must adjust the counter-offset in
@@ -1369,6 +1346,30 @@ static void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float resto
     // change before GOTV broadcast ends, so we don't do this until the current match restart delay
     // has passed.
     CreateTimer(restoreDelay, Timer_RestoreMatchCvars, _, TIMER_FLAG_NO_MAPCHANGE);
+  }
+
+  // If the match is ended during pending map change;
+  if (g_PendingMapChangeTimer != INVALID_HANDLE) {
+    LogDebug("Killing g_PendingMapChangeTimer as match was ended.");
+    delete g_PendingMapChangeTimer;
+  }
+
+  // If the match is ended during knife countdown;
+  if (g_KnifeCountdownTimer != INVALID_HANDLE) {
+    LogDebug("Killing g_KnifeCountdownTimer as match was ended.");
+    delete g_KnifeCountdownTimer;
+  }
+
+  // If the match is ended during knife decision countdown;
+  if (g_KnifeDecisionTimer != INVALID_HANDLE) {
+    LogDebug("Killing g_KnifeDecisionTimer as match was ended.");
+    delete g_KnifeDecisionTimer;
+  }
+
+  // If a veto menu was open when the match ended, close it;
+  if (g_ActiveVetoMenu != null) {
+    LogDebug("Deleted g_ActiveVetoMenu.");
+    g_ActiveVetoMenu.Cancel();
   }
 }
 
@@ -1738,15 +1739,15 @@ static void SetServerStateOnStartup(bool force) {
     return;
   }
   // It shouldn't really be possible to end up here, as the server *should* reload the map anyway
-  // when first player joins, but as a safeguard we don't want to move a live game that's not
-  // pending a backup or map change into warmup on player connect.
-  if (!force && g_GameState == Get5State_Live && !g_WaitingForRoundBackup && !g_MapChangePending) {
+  // when first player joins, but as a safeguard we don't want to move a live game into warmup on
+  // player connect.
+  if (!force && g_GameState == Get5State_Live) {
     return;
   }
-  // If the server is in preveto when someone joins or the configs exec, it should remain in
-  // that state. This would happen if the a config with veto is loaded before someone joins the
-  // server.
-  if (g_GameState != Get5State_PreVeto) {
+  // If the server is in preveto or pending backup when someone joins or the configs exec, it should
+  // remain in that state. This would happen if the a config with veto is loaded before someone
+  // joins the server.
+  if (g_GameState != Get5State_PreVeto && g_GameState != Get5State_PendingRestore) {
     ChangeState(Get5State_Warmup);
   }
   ExecCfg(g_WarmupCfgCvar);

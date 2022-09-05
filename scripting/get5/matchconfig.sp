@@ -52,7 +52,6 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   g_CvarValues.Clear();
   g_TeamScoresPerMap.Clear();
 
-  g_WaitingForRoundBackup = false;
   g_LastGet5BackupCvar.SetString("");
 
   CloseCvarStorage(g_KnifeChangedCvars);
@@ -820,7 +819,7 @@ Action Command_AddPlayer(int client, int args) {
         client,
         "Cannot use get5_addplayer in scrim mode. Use get5_ringer to swap a player's team.");
     return Plugin_Handled;
-  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  } else if (g_DoingBackupRestoreNow || g_GameState == Get5State_PendingRestore) {
     ReplyToCommand(client, "Cannot add players while waiting for round backup.");
     return Plugin_Handled;
   } else if (g_PendingSideSwap || InHalftimePhase()) {
@@ -876,7 +875,7 @@ Action Command_AddCoach(int client, int args) {
     ReplyToCommand(client,
                    "Coaches cannot be added in scrim mode. Use the !coach command in chat.");
     return Plugin_Handled;
-  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  } else if (g_DoingBackupRestoreNow || g_GameState == Get5State_PendingRestore) {
     ReplyToCommand(client, "Cannot add coaches while waiting for round backup.");
     return Plugin_Handled;
   } else if (g_PendingSideSwap || InHalftimePhase()) {
@@ -951,7 +950,7 @@ Action Command_AddKickedPlayer(int client, int args) {
         client,
         "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a player's team.");
     return Plugin_Handled;
-  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  } else if (g_DoingBackupRestoreNow || g_GameState == Get5State_PendingRestore) {
     ReplyToCommand(client, "Cannot add players while waiting for round backup.");
     return Plugin_Handled;
   } else if (g_PendingSideSwap || InHalftimePhase()) {

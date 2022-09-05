@@ -369,7 +369,7 @@ static void EndMolotovEvent(const char[] molotovKey) {
 
   Get5MolotovDetonatedEvent molotovObject;
   if (g_MolotovContainer.GetValue(molotovKey, molotovObject)) {
-    if (IsDoingRestoreOrMapChange()) {
+    if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
       delete molotovObject;
     } else {
       molotovObject.EndTime = GetRoundTime();
@@ -386,7 +386,7 @@ static void EndMolotovEvent(const char[] molotovKey) {
 static void EndHEEvent(const char[] grenadeKey) {
   Get5HEDetonatedEvent heObject;
   if (g_HEGrenadeContainer.GetValue(grenadeKey, heObject)) {
-    if (IsDoingRestoreOrMapChange()) {
+    if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
       delete heObject;
     } else {
       LogDebug("Calling Get5_OnHEGrenadeDetonated()");
@@ -402,7 +402,7 @@ static void EndHEEvent(const char[] grenadeKey) {
 static void EndFlashbangEvent(const char[] flashKey) {
   Get5FlashbangDetonatedEvent flashEvent;
   if (g_FlashbangContainer.GetValue(flashKey, flashEvent)) {
-    if (IsDoingRestoreOrMapChange()) {
+    if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
       delete flashEvent;
     } else {
       LogDebug("Calling Get5_OnFlashbangDetonated()");
@@ -505,12 +505,6 @@ static Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, boo
 }
 
 static Action Stats_MolotovEndedEvent(Event event, const char[] name, bool dontBroadcast) {
-  // No backup check; the event is deleted in EndMolotovEvent to prevent leaks, as this function
-  // works like the the HE/flash timer callbacks which also do not check for backup state.
-  if (g_GameState != Get5State_Live) {
-    return;
-  }
-
   int entityId = event.GetInt("entityid");
 
   LogDebug("Molotov Event: %s, %d", name, entityId);

@@ -38,6 +38,7 @@ enum Get5State {
   Get5State_WaitingForKnifeRoundDecision,  // waiting for a .stay/.swap command after the knife
   Get5State_GoingLive,                     // in the lo3 process
   Get5State_Live,                          // the match is live
+  Get5State_PendingRestore,                // pending restore to a live match
   Get5State_PostGame,                      // postgame screen + waiting for GOTV to finish broadcast
 };
 
@@ -1603,23 +1604,25 @@ methodmap Get5BombDefusedEvent < Get5PlayerBombEvent {
 stock void GameStateString(const Get5State state, char[] buffer, const int length) {
   switch (state) {
     case Get5State_None:
-      Format(buffer, length, "none");
+      FormatEx(buffer, length, "none");
     case Get5State_PreVeto:
-      Format(buffer, length, "pre_veto");
+      FormatEx(buffer, length, "pre_veto");
     case Get5State_Veto:
-      Format(buffer, length, "veto");
+      FormatEx(buffer, length, "veto");
     case Get5State_Warmup:
-      Format(buffer, length, "warmup");
+      FormatEx(buffer, length, "warmup");
     case Get5State_KnifeRound:
-      Format(buffer, length, "knife");
+      FormatEx(buffer, length, "knife");
     case Get5State_WaitingForKnifeRoundDecision:
-      Format(buffer, length, "waiting_for_knife_decision");
+      FormatEx(buffer, length, "waiting_for_knife_decision");
     case Get5State_GoingLive:
-      Format(buffer, length, "going_live");
+      FormatEx(buffer, length, "going_live");
     case Get5State_Live:
-      Format(buffer, length, "live");
+      FormatEx(buffer, length, "live");
+    case Get5State_PendingRestore:
+      FormatEx(buffer, length, "pending_restore");
     case Get5State_PostGame:
-      Format(buffer, length, "post_game");
+      FormatEx(buffer, length, "post_game");
   }
 }
 

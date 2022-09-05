@@ -226,8 +226,7 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
   // Add Ready/Not ready tags to team name if in warmup.
   char taggedName[MAX_CVAR_LENGTH];
   if (g_ReadyTeamTagCvar.BoolValue) {
-    if ((g_GameState == Get5State_Warmup || g_GameState == Get5State_PreVeto) &&
-        !g_DoingBackupRestoreNow) {
+    if (IsReadyGameState()) {
       Get5Team matchTeam = CSTeamToGet5Team(csTeam);
       if (IsTeamReady(matchTeam)) {
         Format(taggedName, sizeof(taggedName), "%s %T", name, "ReadyTag", LANG_SERVER);
@@ -714,5 +713,5 @@ stock void convertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer,
 }
 
 stock bool IsDoingRestoreOrMapChange() {
-  return g_DoingBackupRestoreNow || g_WaitingForRoundBackup || g_MapChangePending;
+  return g_DoingBackupRestoreNow || g_MapChangePending;
 }

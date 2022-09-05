@@ -7,9 +7,10 @@ void ResetReadyStatus() {
   SetAllClientsReady(false);
 }
 
-static bool IsReadyGameState() {
-  return (g_GameState == Get5State_PreVeto || g_GameState == Get5State_Warmup) &&
-         !g_MapChangePending;
+bool IsReadyGameState() {
+  return (g_GameState == Get5State_PreVeto || g_GameState == Get5State_Warmup ||
+          g_GameState == Get5State_PendingRestore) &&
+         !IsDoingRestoreOrMapChange();
 }
 
 // Client ready status
@@ -244,14 +245,13 @@ static void HandleReadyMessage(Get5Team team) {
 
   if (g_GameState == Get5State_PreVeto) {
     Get5_MessageToAll("%t", "TeamReadyToVetoInfoMessage", g_FormattedTeamNames[team]);
+  } else if (g_GameState == Get5State_PendingRestore) {
+    Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_FormattedTeamNames[team]);
   } else if (g_GameState == Get5State_Warmup) {
-    if (g_WaitingForRoundBackup) {
-      Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_FormattedTeamNames[team]);
-    } else if (view_as<SideChoice>(g_MapSides.Get(g_MapNumber)) == SideChoice_KnifeRound) {
-      Get5_MessageToAll("%t", "TeamReadyToKnifeInfoMessage", g_FormattedTeamNames[team]);
-    } else {
-      Get5_MessageToAll("%t", "TeamReadyToBeginInfoMessage", g_FormattedTeamNames[team]);
-    }
+    bool knifeRound = view_as<SideChoice>(g_MapSides.Get(g_MapNumber)) == SideChoice_KnifeRound;
+    Get5_MessageToAll("%t",
+                      knifeRound ? "TeamReadyToKnifeInfoMessage" : "TeamReadyToBeginInfoMessage",
+                      g_FormattedTeamNames[team]);
   }
 }
 

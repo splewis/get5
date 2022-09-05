@@ -17,6 +17,9 @@ Action StartKnifeRound(Handle timer) {
 
 static Action Timer_AnnounceKnife(Handle timer) {
   g_KnifeCountdownTimer = INVALID_HANDLE;
+  if (g_GameState == Get5State_None) {
+    return;
+  }
   AnnouncePhaseChange("{GREEN}%t", "KnifeInfoMessage");
 
   Get5KnifeRoundStartedEvent knifeEvent = new Get5KnifeRoundStartedEvent(g_MatchID, g_MapNumber);
@@ -30,7 +33,6 @@ static Action Timer_AnnounceKnife(Handle timer) {
   EventLogger_LogAndDeleteEvent(knifeEvent);
 
   g_HasKnifeRoundStarted = true;
-  return Plugin_Handled;
 }
 
 static void PerformSideSwap(bool swap) {

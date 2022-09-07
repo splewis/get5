@@ -274,7 +274,7 @@ static void MissingPlayerInfoMessageTeam(Get5Team team) {
   if (playerCount == readyCount && playerCount < minPlayers && readyCount >= minReady &&
       minPlayers > 1) {
     char minPlayersFormatted[32];
-    Format(minPlayersFormatted, sizeof(minPlayersFormatted), "{GREEN}%d{NORMAL}", minPlayers);
+    FormatEx(minPlayersFormatted, sizeof(minPlayersFormatted), "{GREEN}%d{NORMAL}", minPlayers);
     char forceReadyFormatted[64];
     FormatChatCommand(forceReadyFormatted, sizeof(forceReadyFormatted), "!forceready");
     Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", forceReadyFormatted,
@@ -291,8 +291,8 @@ void UpdateClanTags() {
   }
 
   char readyTag[32], notReadyTag[32];
-  Format(readyTag, sizeof(readyTag), "%T", "ReadyTag", LANG_SERVER);
-  Format(notReadyTag, sizeof(notReadyTag), "%T", "NotReadyTag", LANG_SERVER);
+  FormatEx(readyTag, sizeof(readyTag), "%T", "ReadyTag", LANG_SERVER);
+  FormatEx(notReadyTag, sizeof(notReadyTag), "%T", "NotReadyTag", LANG_SERVER);
 
   LOOP_CLIENTS(i) {
     if (IsPlayer(i)) {

@@ -1,17 +1,17 @@
 stock void json_string_type(JSONCellType type, char[] output, int maxlength) {
   switch (type) {
     case JSON_Type_Invalid:
-      Format(output, maxlength, "invalid");
+      FormatEx(output, maxlength, "invalid");
     case JSON_Type_String:
-      Format(output, maxlength, "string");
+      FormatEx(output, maxlength, "string");
     case JSON_Type_Int:
-      Format(output, maxlength, "int");
+      FormatEx(output, maxlength, "int");
     case JSON_Type_Float:
-      Format(output, maxlength, "float");
+      FormatEx(output, maxlength, "float");
     case JSON_Type_Bool:
-      Format(output, maxlength, "bool");
+      FormatEx(output, maxlength, "bool");
     case JSON_Type_Object:
-      Format(output, maxlength, "object");
+      FormatEx(output, maxlength, "object");
   }
 }
 

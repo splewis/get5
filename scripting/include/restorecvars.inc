@@ -73,7 +73,7 @@ stock bool __firstWord(const char[] line, char[] buffer, int len) {
     splitIndex = StrContains(line, "\t");
 
   if (splitIndex == -1) {
-    Format(buffer, len, "");
+    FormatEx(buffer, len, "");
     return false;
   }
 
@@ -92,7 +92,7 @@ stock Handle ExecuteAndSaveCvars(const char[] cfgFile) {
   char nameBuffer[CVAR_NAME_MAX_LENGTH];
 
   char filePath[PLATFORM_MAX_PATH];
-  Format(filePath, sizeof(filePath), "cfg/%s", cfgFile);
+  FormatEx(filePath, sizeof(filePath), "cfg/%s", cfgFile);
 
   File file = OpenFile(filePath, "r");
   if (file != null) {

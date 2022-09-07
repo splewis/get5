@@ -662,7 +662,7 @@ static void FormatTeamName(const Get5Team team) {
   } else {
     color = "{NORMAL}";
   }
-  Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color, g_TeamNames[team]);
+  FormatEx(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color, g_TeamNames[team]);
 }
 
 static void LoadDefaultMapList(ArrayList list) {
@@ -703,8 +703,8 @@ void SetMatchTeamCvars() {
   // Update mp_teammatchstat_txt with the match title.
   char mapstat[MAX_CVAR_LENGTH];
   strcopy(mapstat, sizeof(mapstat), g_MatchTitle);
-  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAPNUMBER}", Get5_GetMapNumber() + 1, false);
-  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAXMAPS}", g_NumberOfMapsInSeries, false);
+  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAPNUMBER}", Get5_GetMapNumber() + 1);
+  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAXMAPS}", g_NumberOfMapsInSeries);
   SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
 
   if (g_MapsToWin >= 3) {
@@ -1065,7 +1065,7 @@ Action Command_CreateMatch(int client, int args) {
   }
 
   char path[PLATFORM_MAX_PATH];
-  Format(path, sizeof(path), "get5_%s.cfg", matchid);
+  FormatEx(path, sizeof(path), "get5_%s.cfg", matchid);
   DeleteFileIfExists(path);
 
   KeyValues kv = new KeyValues("Match");
@@ -1137,7 +1137,7 @@ Action Command_CreateScrim(int client, int args) {
   }
 
   char path[PLATFORM_MAX_PATH];
-  Format(path, sizeof(path), "get5_%s.cfg", matchid);
+  FormatEx(path, sizeof(path), "get5_%s.cfg", matchid);
   DeleteFileIfExists(path);
 
   KeyValues kv = new KeyValues("Match");
@@ -1236,9 +1236,7 @@ static int AddPlayersToAuthKv(KeyValues kv, Get5Team team, char teamName[MAX_CVA
       if (t == team) {
         if (!gotClientName) {
           gotClientName = true;
-          char clientName[MAX_NAME_LENGTH];
-          GetClientName(i, clientName, sizeof(clientName));
-          Format(teamName, sizeof(teamName), "team_%s", clientName);
+          FormatEx(teamName, sizeof(teamName), "team_%N", i);
         }
 
         count++;
@@ -1274,13 +1272,13 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
     return;
 
   char logoPath[PLATFORM_MAX_PATH + 1];
-  Format(logoPath, sizeof(logoPath), "materials/panorama/images/tournaments/teams/%s.svg",
+  FormatEx(logoPath, sizeof(logoPath), "materials/panorama/images/tournaments/teams/%s.svg",
          logoName);
   if (FileExists(logoPath)) {
     LogDebug("Adding file %s to download table", logoName);
     AddFileToDownloadsTable(logoPath);
   } else {
-    Format(logoPath, sizeof(logoPath), "resource/flash/econ/tournaments/teams/%s.png", logoName);
+    FormatEx(logoPath, sizeof(logoPath), "resource/flash/econ/tournaments/teams/%s.png", logoName);
     if (FileExists(logoPath)) {
       LogDebug("Adding file %s to download table", logoName);
       AddFileToDownloadsTable(logoPath);
@@ -1296,9 +1294,7 @@ void CheckTeamNameStatus(Get5Team team) {
     LOOP_CLIENTS(i) {
       if (IsAuthedPlayer(i)) {
         if (GetClientMatchTeam(i) == team) {
-          char clientName[MAX_NAME_LENGTH];
-          GetClientName(i, clientName, sizeof(clientName));
-          Format(g_TeamNames[team], MAX_CVAR_LENGTH, "team_%s", clientName);
+          FormatEx(g_TeamNames[team], MAX_CVAR_LENGTH, "team_%N", i);
           break;
         }
       }

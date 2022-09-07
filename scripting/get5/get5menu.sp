@@ -63,7 +63,7 @@ static void GiveRingerMenu(int client) {
       char infoString[64];
       IntToString(GetClientSerial(i), infoString, sizeof(infoString));
       char displayString[64];
-      Format(displayString, sizeof(displayString), "%N", i);
+      FormatEx(displayString, sizeof(displayString), "%N", i);
       menu.AddItem(infoString, displayString);
     }
   }

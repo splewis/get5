@@ -1,6 +1,6 @@
 #tryinclude "manual_version.sp"
 #if !defined PLUGIN_VERSION
-#define PLUGIN_VERSION "0.10.1-dev"
+#define PLUGIN_VERSION "0.11.0-dev"
 #endif
 
 // This MUST be the latest version in x.y.z semver format followed by -dev.

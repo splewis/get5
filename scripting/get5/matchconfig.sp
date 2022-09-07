@@ -10,6 +10,7 @@
 #define CONFIG_SPECTATORSNAME_DEFAULT "casters"
 #define CONFIG_NUM_MAPSDEFAULT 3
 #define CONFIG_SKIPVETO_DEFAULT false
+#define CONFIG_COACHES_MUST_READY_DEFAULT false
 #define CONFIG_CLINCH_SERIES_DEFAULT true
 #define CONFIG_VETOFIRST_DEFAULT "team1"
 #define CONFIG_SIDETYPE_DEFAULT "standard"
@@ -323,6 +324,7 @@ void WriteMatchToKv(KeyValues kv) {
   kv.SetNum("num_maps", g_NumberOfMapsInSeries);
   kv.SetNum("players_per_team", g_PlayersPerTeam);
   kv.SetNum("coaches_per_team", g_CoachesPerTeam);
+  kv.SetNum("coaches_must_ready", g_CoachesMustReady);
   kv.SetNum("min_players_to_ready", g_MinPlayersToReady);
   kv.SetNum("min_spectators_to_ready", g_MinSpectatorsToReady);
   kv.SetString("match_title", g_MatchTitle);
@@ -408,6 +410,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
   g_MinSpectatorsToReady =
       kv.GetNum("min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
   g_SkipVeto = kv.GetNum("skip_veto", CONFIG_SKIPVETO_DEFAULT) != 0;
+  g_CoachesMustReady = kv.GetNum("coaches_must_ready", CONFIG_COACHES_MUST_READY_DEFAULT) != 0;
 
   g_NumberOfMapsInSeries = kv.GetNum("num_maps", CONFIG_NUM_MAPSDEFAULT);
   g_MapsToWin = MapsToWin(g_NumberOfMapsInSeries);
@@ -507,6 +510,7 @@ static bool LoadMatchFromJson(JSON_Object json) {
   g_MinSpectatorsToReady = json_object_get_int_safe(json, "min_spectators_to_ready",
                                                     CONFIG_MINSPECTATORSTOREADY_DEFAULT);
   g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
+  g_CoachesMustReady = json_object_get_bool_safe(json, "coaches_must_ready", CONFIG_COACHES_MUST_READY_DEFAULT);
 
   g_NumberOfMapsInSeries = json_object_get_int_safe(json, "num_maps", CONFIG_NUM_MAPSDEFAULT);
   g_MapsToWin = MapsToWin(g_NumberOfMapsInSeries);

@@ -137,6 +137,7 @@ char g_FavoredTeamText[MAX_CVAR_LENGTH];
 int g_PlayersPerTeam = 5;
 int g_CoachesPerTeam = 2;
 int g_MinPlayersToReady = 1;
+bool g_CoachesMustReady = false;
 int g_MinSpectatorsToReady = 0;
 float g_RoundStartedTime = 0.0;
 float g_BombPlantedTime = 0.0;

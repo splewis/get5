@@ -359,7 +359,7 @@ void WriteMatchToKv(KeyValues kv) {
     char cvarValue[MAX_CVAR_LENGTH];
     g_CvarNames.GetString(i, cvarName, sizeof(cvarName));
     g_CvarValues.GetString(i, cvarValue, sizeof(cvarValue));
-    kv.SetString(cvarName, cvarValue);
+    kv.SetString(cvarName, strlen(cvarValue) == 0 ? KEYVALUE_STRING_PLACEHOLDER : cvarValue);
   }
   kv.GoBack();
 }
@@ -389,7 +389,7 @@ static void AddTeamBackupData(KeyValues kv, Get5Team team) {
       if (!g_PlayerNames.GetString(auth, name, sizeof(name))) {
         strcopy(name, sizeof(name), KEYVALUE_STRING_PLACEHOLDER);
       }
-      kv.SetString(auth, KEYVALUE_STRING_PLACEHOLDER);
+      kv.SetString(auth, name);
     }
     kv.GoBack();
   }
@@ -582,7 +582,6 @@ static bool LoadMatchFromJson(JSON_Object json) {
       key_length = cvars.GetKeySize(i);
       char[] cvarName = new char[key_length];
       cvars.GetKey(i, cvarName, key_length);
-
       cvars.GetString(cvarName, cvarValue, sizeof(cvarValue));
       g_CvarNames.PushString(cvarName);
       g_CvarValues.PushString(cvarValue);

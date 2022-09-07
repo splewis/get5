@@ -152,11 +152,6 @@
         Match Schema
       </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../veto/">
-        Map Veto
-      </a>
-</li>
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
 <label class="md-nav__link md-nav__link--active" for="__toc">
@@ -338,13 +333,13 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_dumpstats">
-    get5_dumpstats [file]
+<a class="md-nav__link" href="#get5_debuginfo">
+    get5_debuginfo [file]
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_debuginfo">
-    get5_debuginfo [file]
+<a class="md-nav__link" href="#get5_dumpstats">
+    get5_dumpstats [file]
   </a>
 </li>
 <li class="md-nav__item">
@@ -399,8 +394,8 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../developers/">
-        Developers
+<a class="md-nav__link" href="../developer_api/">
+        Developer API
       </a>
 </li>
 <li class="md-nav__item">
@@ -621,13 +616,13 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_dumpstats">
-    get5_dumpstats [file]
+<a class="md-nav__link" href="#get5_debuginfo">
+    get5_debuginfo [file]
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_debuginfo">
-    get5_debuginfo [file]
+<a class="md-nav__link" href="#get5_dumpstats">
+    get5_dumpstats [file]
   </a>
 </li>
 <li class="md-nav__item">
@@ -720,12 +715,12 @@ file.</dd>
 <p>Please note that these are meant to be used by <em>admins</em> in console.</p>
 <h4 id="get5_loadmatch"><code>get5_loadmatch &lt;filename&gt;</code></h4>
 <dl>
-<dd>Loads a <a href="../match_schema">match configuration</a> file (JSON or KeyValue) relative to the <code>csgo</code> directory.</dd>
+<dd>Loads a <a href="../match_schema">match configuration</a> file (JSON or KeyValue) relative from the <code>csgo</code> directory.</dd>
 </dl>
 <h4 id="get5_loadbackup"><code>get5_loadbackup &lt;filename&gt;</code></h4>
 <dl>
-<dd>Loads a match backup, relative to the <code>csgo</code>
-directory. Requires that the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a>. If you define
+<dd>Loads a match backup, relative from the <code>csgo</code>
+directory. Only works if the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a>. If you define
 <a href="../configuration/#get5_backup_path"><code>get5_backup_path</code></a>, you must include the path in the filename.</dd>
 </dl>
 <h4 id="get5_last_backup_file"><code>get5_last_backup_file</code></h4>
@@ -735,7 +730,7 @@ time a backup file is written. Empty string if no backup was written.</dd>
 </dl>
 <h4 id="get5_loadteam"><code>get5_loadteam &lt;team1|team2|spec&gt; &lt;filename&gt;</code></h4>
 <dl>
-<dd>Loads a <a href="../match_schema">team section of a match configuration</a> from a file into a team relative to the <code>csgo</code>
+<dd>Loads a <a href="../match_schema">team section of a match configuration</a> from a file into a team relative from the <code>csgo</code>
 directory. The file must contain a <code>Get5MatchTeam</code> object.</dd>
 </dl>
 <h4 id="get5_loadmatch_url"><code>get5_loadmatch_url &lt;url&gt;</code></h4>
@@ -795,8 +790,8 @@ from the server immediately.</dd>
 <dl>
 <dd>Replies with JSON formatted match state (available to all clients).</dd>
 </dl>
-<div class="admonition abstract">
-<p class="admonition-title">Definition</p>
+<details class="abstract">
+<summary>Definition</summary>
 <p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:"/> Properties marked as <code>undefined</code> are only present if a match configuration has been loaded.</p>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">StatusTeam</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">    </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="c1">// (11)</span><span class="w"></span>
@@ -825,24 +820,8 @@ from the server immediately.</dd>
 </code></pre></div>
 <ol>
 <li>The version of Get5 you are currently running, along with that version's commit. <code>Example: "0.8.1-8ef7ffa3"</code></li>
-<li>The current state of the game. The definition lists them in the order they would typically occur.
-   <br/><br/><strong><code>none</code></strong><br/>No Get5 configuration was loaded and Get5 will only interfere if
-   <a href="../configuration/#get5_autoload_config"><code>get5_autoload_config</code></a> is defined.
-   <br/><br/><strong><code>pre_veto</code></strong><br/>The game is in warmup, waiting for players to <a href="../commands/#ready"><code>!ready</code></a> for
-   <a href="../veto/">vetoing</a>.
-   <br/><br/><strong><code>veto</code></strong><br/>The game is in warmup with the <a href="../veto/">veto</a> phase currently ongoing.
-   <br/><br/><strong><code>warmup</code></strong><br/>The game is in warmup, waiting for players to <a href="../commands/#ready"><code>!ready</code></a> for either
-   the knife-round or live.
-   <br/><br/><strong><code>knife</code></strong><br/>The knife-round is ongoing.
-   <br/><br/><strong><code>waiting_for_knife_decision</code></strong><br/>The knife-round has ended and a decision to
-   <a href="../commands/#stay"><code>!stay</code></a> or <a href="../commands/#swap"><code>!swap</code></a> is pending.
-   <br/><br/><strong><code>going_live</code></strong><br/>The countdown to live has begun.
-   <br/><br/><strong><code>live</code></strong><br/>The game is live.
-   <br/><br/><strong><code>pending_restore</code></strong><br/>A <a href="../backup/">backup</a> for a different map was loaded and the game is either
-   pending a map change or waiting for users to <a href="../commands/#ready"><code>!ready</code></a> to restore to a live round.
-   <br/><br/><strong><code>post_game</code></strong><br/>The map has ended and the countdown to the next map is ongoing. This stage will only
-   occur in multi-map series, as single-map matches end immediately.</li>
-<li>Whether the game is currently <a href="../pausing/">paused</a>.</li>
+<li>The current state of the game. The definition lists them in the order they would typically occur.</li>
+<li>Whether the game is currently paused.</li>
 <li>The match configuration file currently loaded. <code>Example: "addons/sourcemod/configs/get5/match_config.json"</code>.</li>
 <li>The current match ID. Empty string if not defined or <code>scrim</code> or <code>manual</code> if using
    <a href="../commands/#get5_scrim"><code>get5_scrim</code></a> or <a href="../commands/#get5_creatematch"><code>get5_creatematch</code></a>.</li>
@@ -862,7 +841,7 @@ from the server immediately.</dd>
     appear in this array. <code>map_number</code> is the array index of the current map. <strong>Note:</strong> <code>maps</code> is only present if the
     maps have been decided (i.e. after <code>veto</code>).</li>
 </ol>
-</div>
+</details>
 <details class="example">
 <summary>Example</summary>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="p">{</span><span class="w"></span>
@@ -915,14 +894,14 @@ ID. Similar to <a href="../commands/#ringer"><code>!ringer</code></a> in chat.</
 <a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>1:3:"Quinn"
 </code></pre></div></p>
 </div>
+<h4 id="get5_debuginfo"><code>get5_debuginfo [file]</code></h4>
+<dl>
+<dd>Dumps debug info to a file (<code>addons/sourcemod/logs/get5_debuginfo.txt</code> if no file parameter is provided).</dd>
+</dl>
 <h4 id="get5_dumpstats"><code>get5_dumpstats [file]</code></h4>
 <dl>
 <dd>Dumps <a href="../stats_system/#keyvalue">player stats</a> to a file (<code>addons/sourcemod/get5_matchstats.cfg</code> if no file
 parameter is provided).</dd>
-</dl>
-<h4 id="get5_debuginfo"><code>get5_debuginfo [file]</code></h4>
-<dl>
-<dd>Dumps debug info to a file (<code>addons/sourcemod/logs/get5_debuginfo.txt</code> if no file parameter is provided).</dd>
 </dl>
 <h4 id="get5_test"><code>get5_test</code></h4>
 <dl>
@@ -938,7 +917,7 @@ parameter is provided).</dd>
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Map Veto" class="md-footer__link md-footer__link--prev" href="../veto/" rel="prev">
+<a aria-label="Previous: Match Schema" class="md-footer__link md-footer__link--prev" href="../match_schema/" rel="prev">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -947,7 +926,7 @@ parameter is provided).</dd>
 <span class="md-footer__direction">
                 Previous
               </span>
-              Map Veto
+              Match Schema
             </div>
 </div>
 </a>

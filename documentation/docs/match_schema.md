@@ -41,9 +41,10 @@ interface Get5Match {
     "num_maps": number // (2)
     "players_per_team": number // (3)
     "coaches_per_team": number // (4)
+    "coaches_must_ready": boolean // (33)
     "min_players_to_ready": number // (5)
     "min_spectators_to_ready": number // (6)
-    "skip_veto": boolean // (7),
+    "skip_veto": boolean // (7)
     "veto_first": "team1" | "team2" | "random" // (11)
     "side_type": "standard" | "always_knife" | "never_knife" // (12)
     "map_sides": ["team1_ct" | "team1_t" | "knife"] // (31)
@@ -135,6 +136,7 @@ interface Get5Match {
     <br><br>**`Default: undefined`**
 32. _Optional_<br>If `false`, the entire map list will be played, regardless of score. If `true`, a series will be won
     when the series score for a team exceeds the number of maps divided by two.<br><br>**`Default: true`**
+33. _Optional_<br>Determines if coaches must also [`!ready`](../commands/#ready).<br><br>**`Default: false`**
 
 ## Examples {: #example }
 
@@ -154,6 +156,7 @@ These examples are identical in the way they would work if loaded.
       "num_maps": 3,
       "players_per_team": 5,
       "coaches_per_team": 2,
+      "coaches_must_ready": true,
       "min_players_to_ready": 2,
       "min_spectators_to_ready": 0,
       "skip_veto": false,
@@ -236,6 +239,7 @@ These examples are identical in the way they would work if loaded.
         "num_maps": 3,
         "players_per_team": 5,
         "coaches_per_team": 2,
+        "coaches_must_ready": true,
         "min_players_to_ready": 2,
         "min_spectators_to_ready": 0,
         "skip_veto": false,
@@ -298,6 +302,7 @@ These examples are identical in the way they would work if loaded.
     	"num_maps"		            "3"
     	"players_per_team"          "5"
     	"coaches_per_team"          "2"
+        "coaches_must_ready"        "1"
     	"min_players_to_ready"      "2"
     	"min_spectators_to_ready"   "0"
     	"skip_veto"		            "0"

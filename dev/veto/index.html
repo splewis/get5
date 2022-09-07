@@ -5,10 +5,10 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<link href="https://splewis.github.io/get5/dev/developer_api/" rel="canonical"/>
+<link href="https://splewis.github.io/get5/dev/veto/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.3.1, mkdocs-material-8.4.2" name="generator"/>
-<title>Developer API - Get5</title>
+<title>Map Veto - Get5</title>
 <link href="../assets/stylesheets/main.69437709.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -22,7 +22,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#developer-api">
+<a class="md-skip" href="#map-veto">
           Skip to content
         </a>
 </div>
@@ -48,7 +48,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Developer API
+              Map Veto
             
           </span>
 </div>
@@ -130,8 +130,8 @@
 </ul>
 </nav>
 </li>
-<li class="md-nav__item md-nav__item--section md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" id="__nav_3" type="checkbox"/>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" id="__nav_3" type="checkbox"/>
 <label class="md-nav__link" for="__nav_3">
           Basics
           <span class="md-nav__icon md-icon"></span>
@@ -151,6 +151,58 @@
 <a class="md-nav__link" href="../match_schema/">
         Match Schema
       </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Map Veto
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Map Veto
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#captains">
+    Team Captains
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#types">
+    Veto types
+  </a>
+<nav aria-label="Veto types" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bo1">
+    Single map (Bo1)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bo2">
+    Double (Bo2)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bo3">
+    Best-of-three (Bo3)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bo5">
+    Best-of-five (Bo5)
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../commands/">
@@ -180,8 +232,8 @@
 </ul>
 </nav>
 </li>
-<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" id="__nav_4" type="checkbox"/>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" id="__nav_4" type="checkbox"/>
 <label class="md-nav__link" for="__nav_4">
           Advanced
           <span class="md-nav__icon md-icon"></span>
@@ -192,10 +244,9 @@
           Advanced
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
-<a class="md-nav__link md-nav__link--active" href="./">
-        Developer API
+<li class="md-nav__item">
+<a class="md-nav__link" href="../developers/">
+        Developers
       </a>
 </li>
 <li class="md-nav__item">
@@ -245,50 +296,96 @@
 <div class="md-sidebar__scrollwrap">
 <div class="md-sidebar__inner">
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#captains">
+    Team Captains
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#types">
+    Veto types
+  </a>
+<nav aria-label="Veto types" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bo1">
+    Single map (Bo1)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bo2">
+    Double (Bo2)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bo3">
+    Best-of-three (Bo3)
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bo5">
+    Best-of-five (Bo5)
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
 </nav>
 </div>
 </div>
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<a class="md-content__button md-icon" href="https://github.com/splewis/get5/blob/master/documentation/docs/developer_api.md" title="Edit this page">
+<a class="md-content__button md-icon" href="https://github.com/splewis/get5/blob/master/documentation/docs/veto.md" title="Edit this page">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
 </a>
-<h1 id="developer-api"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 3a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2H3v2h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h2v-2H8v-5a2 2 0 0 0-2-2 2 2 0 0 0 2-2V5h2V3m6 0a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1v2h-1a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-2v-2h2v-5a2 2 0 0 1 2-2 2 2 0 0 1-2-2V5h-2V3h2Z"></path></svg></span> Developer API</h1>
-<p>Get5 can be interacted with in several ways. At a glance:</p>
-<ol>
-<li>
-<p>You can write another SourceMod plugin that uses
-   the <a href="https://github.com/splewis/get5/blob/master/scripting/include/get5.inc">Get5 natives and forwards</a>. This is
-   exactly what the <a href="https://github.com/splewis/get5/blob/master/scripting/get5_apistats.sp">get5_apistats</a>
-   and <a href="https://github.com/splewis/get5/blob/master/scripting/get5_mysqlstats.sp">get5_mysqlstats</a> plugins do. Please
-   use these as a general guide/starting point. Don't fork this repository to make changes to these plugins alone, but
-   use these as a template and create a new repository for your plugin! All the events and forwards
-   are <a href="../events_and_forwards/">thoroughly documented</a>.</p>
-</li>
-<li>
-<p>You can read <a href="../events_and_forwards/">event logs</a> from a file on disk (set
-   by <a href="../configuration/#get5_event_log_format"><code>get5_event_log_format</code></a>), through a RCON connection to the server
-   console since they are output there, or through another SourceMod plugin (see #1).</p>
-</li>
-<li>
-<p>You can read the <a href="../stats_system/">stats</a> Get5 collects from a file on disk (set
-   by <a href="../configuration/#get5_stats_path_format"><code>get5_stats_path_format</code></a>), or through another SourceMod plugin (
-   see #1).</p>
-</li>
-<li>
-<p>You can execute the <a href="../commands/#get5_loadmatch"><code>get5_loadmatch</code></a> command
-   or <a href="../commands/#get5_loadmatch_url"><code>get5_loadmatch_url</code></a> commands via another plugin or via a RCON
-   to begin matches. Of course, you could execute any get5 command you want as well.</p>
-</li>
-</ol>
+<h1 id="map-veto"><span class="twemoji"><svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.1.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M512 256c0 141.4-114.6 256-256 256S0 397.4 0 256 114.6 0 256 0s256 114.6 256 256zM99.5 144.8C77.15 176.1 64 214.5 64 256c0 106 85.1 192 192 192 41.5 0 79.9-13.1 111.2-35.5L99.5 144.8zM448 256c0-106.9-86-192-192-192-41.5 0-79.9 13.15-111.2 35.5l267.7 267.7C434.9 335.9 448 297.5 448 256z"></path></svg></span> Map Veto</h1>
+<p>If your match is configured to include a veto-phase (setting <a href="../match_schema/#schema"><code>skip_veto</code></a> to <code>false</code>), each
+team's captain will ban or pick maps to play using in-game menus. The veto system behaves slightly differently depending
+on the number of maps to play (Bo3, Bo5 etc.).</p>
+<div class="admonition warning">
+<p class="admonition-title">Lucky number seven</p>
+<p>The veto-system assumes the <a href="../match_schema/#schema"><code>maplist</code></a> has 7 maps, similarly to the competitive map pool,
+and it may not function properly if this is not the case. We also assume that <a href="../match_schema/#schema"><code>side_type</code></a>
+is set to <code>standard</code> when describing side choices.</p>
+</div>
+<h2 id="captains">Team Captains</h2>
+<p>Get5 will give veto menus to a player on each team. The player it gives it to will be the first player listed
+in the <a href="../match_schema/#schema"><code>players</code></a> section of a match configuration, or a random player on the away-team
+when in <a href="../getting_started/#scrims">scrim mode</a>.</p>
+<p><code>team1</code> vetoes first by default, but you can change this in the match configuration via
+the <a href="../match_schema/#schema"><code>veto_first</code></a> parameter, which also supports <code>random</code>.</p>
+<h2 id="types">Veto types</h2>
+<h3 id="bo1">Single map (Bo1)</h3>
+<p>Each team alternates vetoing, vetoing 3 maps each. The last map standing will be played. A knife round will be used to
+decide starting sides.</p>
+<p><code>ban/ban/ban/ban/ban/ban/last map played</code></p>
+<h3 id="bo2">Double (Bo2)</h3>
+<p>Each team alternates vetoing, vetoing 2 maps each. After those vetoes, each team picks a map, letting the other team
+choose a starting side on it. The last map standing will <strong>not</strong> be played.</p>
+<p><code>ban/ban/ban/ban/pick/pick/last map unused</code></p>
+<h3 id="bo3">Best-of-three (Bo3)</h3>
+<p>Each team vetoes 1 map, then each team picks 1 map. The team that did not pick a map gets the side choice on it. After
+this, each team will veto another map until only 1 map is left. The last map standing will be the 3rd map in the series,
+and a knife round will be used to decide starting sides.</p>
+<p><code>ban/ban/pick/pick/ban/ban/last map is 3rd map in series</code></p>
+<h3 id="bo5">Best-of-five (Bo5)</h3>
+<p>Each team vetoes 1 map, then alternate picking the maps. When a team picks a map, the other team will get the side
+choice. The last map standing will be the 5th map in the series and a knife round will be used to decide starting sides.</p>
+<p><code>ban/ban/pick/pick/pick/pick/last map is 5th map in series</code></p>
 </article>
 </div>
 </div>
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: GOTV &amp; Demos" class="md-footer__link md-footer__link--prev" href="../gotv/" rel="prev">
+<a aria-label="Previous: Match Schema" class="md-footer__link md-footer__link--prev" href="../match_schema/" rel="prev">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -297,17 +394,17 @@
 <span class="md-footer__direction">
                 Previous
               </span>
-              GOTV &amp; Demos
+              Match Schema
             </div>
 </div>
 </a>
-<a aria-label="Next: Events &amp; Forwards" class="md-footer__link md-footer__link--next" href="../events_and_forwards/" rel="next">
+<a aria-label="Next: Commands" class="md-footer__link md-footer__link--next" href="../commands/" rel="next">
 <div class="md-footer__title">
 <div class="md-ellipsis">
 <span class="md-footer__direction">
                 Next
               </span>
-              Events &amp; Forwards
+              Commands
             </div>
 </div>
 <div class="md-footer__button md-icon">

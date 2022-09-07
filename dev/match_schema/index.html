@@ -181,6 +181,11 @@
 </nav>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../veto/">
+        Map Veto
+      </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../commands/">
         Commands
       </a>
@@ -221,8 +226,8 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../developer_api/">
-        Developer API
+<a class="md-nav__link" href="../developers/">
+        Developers
       </a>
 </li>
 <li class="md-nav__item">
@@ -373,8 +378,8 @@ better support in various programming languages than Valve's KeyValue format (wh
    themselves.<br/><br/><strong><code>Default: 0</code></strong></li>
 <li><em>Optional</em><br/>The minimum number of spectators that must be <a href="../commands/#ready"><code>!ready</code></a> for the game to
    begin.<br/><br/><strong><code>Default: 0</code></strong></li>
-<li><em>Optional</em><br/>Whether to skip the veto phase. When skipping veto, <code>map_sides</code> determines sides, and if <code>map_sides</code> is
-   not set, sides are determined by <code>side_type</code>.<br/><br/><strong><code>Default: false</code></strong></li>
+<li><em>Optional</em><br/>Whether to skip the <a href="../veto/">veto</a> phase. When skipping veto, <code>map_sides</code> determines sides, and
+   if <code>map_sides</code> is not set, sides are determined by <code>side_type</code>.<br/><br/><strong><code>Default: false</code></strong></li>
 <li>A player's <span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10c-4.6 0-8.45-3.08-9.64-7.27l3.83 1.58a2.843 2.843 0 0 0 2.78 2.27c1.56 0 2.83-1.27 2.83-2.83v-.13l3.4-2.43h.08c2.08 0 3.77-1.69 3.77-3.77s-1.69-3.77-3.77-3.77-3.78 1.69-3.78 3.77v.05l-2.37 3.46-.16-.01c-.59 0-1.14.18-1.59.49L2 11.2C2.43 6.05 6.73 2 12 2M8.28 17.17c.8.33 1.72-.04 2.05-.84.33-.8-.05-1.71-.83-2.04l-1.28-.53c.49-.18 1.04-.19 1.56.03.53.21.94.62 1.15 1.15.22.52.22 1.1 0 1.62-.43 1.08-1.7 1.6-2.78 1.15-.5-.21-.88-.59-1.09-1.04l1.22.5m9.52-7.75c0 1.39-1.13 2.52-2.52 2.52a2.52 2.52 0 0 1-2.51-2.52 2.5 2.5 0 0 1 2.51-2.51 2.52 2.52 0 0 1 2.52 2.51m-4.4 0c0 1.04.84 1.89 1.89 1.89 1.04 0 1.88-.85 1.88-1.89s-.84-1.89-1.88-1.89c-1.05 0-1.89.85-1.89 1.89Z"></path></svg></span> Steam ID. This can be in any format, but we recommend a string representation of SteamID
    64, i.e. <code>"76561197987713664"</code>.</li>
 <li>Players are represented each with a mapping of <code>SteamID -&gt; PlayerName</code> as a key-value dictionary. The name
@@ -382,15 +387,15 @@ better support in various programming languages than Valve's KeyValue format (wh
    string array of <code>SteamID</code> disable name-locking.</li>
 <li><em>Optional</em><br/>The spectators to allow into the game. If not defined, spectators cannot join the
     game.<br/><br/><strong><code>Default: undefined</code></strong></li>
-<li><em>Optional</em><br/>The team that vetoes first.<br/><br/><strong><code>Default: "team1"</code></strong></li>
-<li><em>Optional</em><br/>The method used to determine sides when vetoing <strong>or</strong> if veto is disabled and <code>map_sides</code> are not
-    set.<br/><br/><code>standard</code> means that the team that doesn't pick a map gets the side choice (only if <code>skip_veto</code>
+<li><em>Optional</em><br/>The team that <a href="../veto/">vetoes</a> first.<br/><br/><strong><code>Default: "team1"</code></strong></li>
+<li><em>Optional</em><br/>The method used to determine sides when <a href="../veto/">vetoing</a> <strong>or</strong> if veto is disabled and <code>map_sides</code>
+    are not set.<br/><br/><code>standard</code> means that the team that doesn't pick a map gets the side choice (only if <code>skip_veto</code>
     is <code>false</code>).<br/><br/><code>always_knife</code> means that sides are always determined by a knife-round.<br/><br/><code>never_knife</code>
     means that <code>team1</code> always starts on CT.<br/><br/>This parameter is ignored if <code>map_sides</code> is set for all
     maps. <code>standard</code> and <code>always_knife</code> behave similarly when <code>skip_veto</code> is <code>true</code>.<br/><br/><strong><code>Default: "standard"</code></strong></li>
 <li><em>Required</em><br/>The map pool to pick from, as an array of strings (<code>["de_dust2", "de_nuke"]</code> etc.), or if <code>skip_veto</code>
     is <code>true</code>, the order of maps played (limited by <code>num_maps</code>). <strong>This should always be odd-sized if using the in-game
-    veto system.</strong></li>
+    <a href="../veto/">veto system</a>.</strong></li>
 <li><em>Optional</em><br/>Wrapper for the server's <code>mp_teamprediction_pct</code>. This determines the chances of <code>team1</code>
     winning.<br/><br/><strong><code>Default: 0</code></strong></li>
 <li><em>Optional</em><br/>Wrapper for the server's <code>mp_teamprediction_txt</code>.<br/><br/><strong><code>Default: ""</code></strong></li>
@@ -695,13 +700,13 @@ empty strings as values in dictionaries (<code>maplist</code> and <code>map_side
             </div>
 </div>
 </a>
-<a aria-label="Next: Commands" class="md-footer__link md-footer__link--next" href="../commands/" rel="next">
+<a aria-label="Next: Map Veto" class="md-footer__link md-footer__link--next" href="../veto/" rel="next">
 <div class="md-footer__title">
 <div class="md-ellipsis">
 <span class="md-footer__direction">
                 Next
               </span>
-              Commands
+              Map Veto
             </div>
 </div>
 <div class="md-footer__button md-icon">

@@ -66,8 +66,8 @@ bool IsTeamReady(Get5Team team) {
 
   int minPlayers = GetPlayersPerTeam(team);
   int minReady = GetTeamMinReady(team);
-  int playerCount = GetTeamPlayerCount(team);
-  int readyCount = GetTeamReadyCount(team);
+  int playerCount = GetTeamPlayerCount(team, g_CoachesMustReady);
+  int readyCount = GetTeamReadyCount(team, g_CoachesMustReady);
 
   if (team == Get5Team_Spec && minReady == 0) {
     return true;
@@ -84,20 +84,20 @@ bool IsTeamReady(Get5Team team) {
   return false;
 }
 
-static int GetTeamReadyCount(Get5Team team) {
+static int GetTeamReadyCount(Get5Team team, bool includeCoaches = false) {
   int readyCount = 0;
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && GetClientMatchTeam(i) == team && !IsClientCoaching(i) && IsClientReady(i)) {
+    if (IsPlayer(i) && GetClientMatchTeam(i) == team && (includeCoaches || !IsClientCoaching(i)) && IsClientReady(i)) {
       readyCount++;
     }
   }
   return readyCount;
 }
 
-static int GetTeamPlayerCount(Get5Team team) {
+static int GetTeamPlayerCount(Get5Team team, bool includeCoaches = false) {
   int playerCount = 0;
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && GetClientMatchTeam(i) == team && !IsClientCoaching(i)) {
+    if (IsPlayer(i) && GetClientMatchTeam(i) == team && (includeCoaches || !IsClientCoaching(i))) {
       playerCount++;
     }
   }
@@ -206,7 +206,7 @@ Action Command_ForceReadyClient(int client, int args) {
   }
 
   int minReady = GetTeamMinReady(team);
-  int playerCount = GetTeamPlayerCount(team);
+  int playerCount = GetTeamPlayerCount(team, g_CoachesMustReady);
 
   if (playerCount < minReady) {
     Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", minReady);
@@ -268,8 +268,8 @@ static void MissingPlayerInfoMessageTeam(Get5Team team) {
 
   int minPlayers = GetPlayersPerTeam(team);
   int minReady = GetTeamMinReady(team);
-  int playerCount = GetTeamPlayerCount(team);
-  int readyCount = GetTeamReadyCount(team);
+  int playerCount = GetTeamPlayerCount(team, g_CoachesMustReady);
+  int readyCount = GetTeamReadyCount(team, g_CoachesMustReady);
 
   if (playerCount == readyCount && playerCount < minPlayers && readyCount >= minReady &&
       minPlayers > 1) {
@@ -291,24 +291,34 @@ void UpdateClanTags() {
   }
 
   char readyTag[32], notReadyTag[32];
-  FormatEx(readyTag, sizeof(readyTag), "%T", "ReadyTag", LANG_SERVER);
-  FormatEx(notReadyTag, sizeof(notReadyTag), "%T", "NotReadyTag", LANG_SERVER);
+  bool readyGameState = IsReadyGameState();
+  if (readyGameState) {
+    // These are only used in ready state, no need to format them otherwise.
+    FormatEx(readyTag, sizeof(readyTag), "%T", "ReadyTag", LANG_SERVER);
+    FormatEx(notReadyTag, sizeof(notReadyTag), "%T", "NotReadyTag", LANG_SERVER);
+  }
 
+  int team;
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i)) {
-      if (GetClientTeam(i) == CS_TEAM_SPECTATOR) {
-        if (GetTeamMinReady(Get5Team_Spec) > 0 && IsReadyGameState()) {
-          CS_SetClientClanTag(i, IsClientReady(i) ? readyTag : notReadyTag);
-        } else {
-          CS_SetClientClanTag(i, "");
-        }
+    if (!IsPlayer(i)) {
+      continue;
+    }
+    team = GetClientTeam(i);
+    if (team == CS_TEAM_NONE) {
+      continue;
+    }
+    if (readyGameState) {
+      if (team == CS_TEAM_SPECTATOR && IsClientCoaching(i)) { // No need to check for coach if not on team spec!
+        CS_SetClientClanTag(i, g_CoachesMustReady ? (IsClientReady(i) ? readyTag : notReadyTag) : "");
+      } else if (team == CS_TEAM_SPECTATOR) { // spectator but not coaching
+        CS_SetClientClanTag(i, GetTeamMinReady(Get5Team_Spec) > 0 ? (IsClientReady(i) ? readyTag : notReadyTag) : "");
       } else {
-        if (IsReadyGameState()) {
-          CS_SetClientClanTag(i, IsClientReady(i) ? readyTag : notReadyTag);
-        } else {
-          CS_SetClientClanTag(i, g_TeamTags[GetClientMatchTeam(i)]);
-        }
+        CS_SetClientClanTag(i, IsClientReady(i) ? readyTag : notReadyTag);
       }
+    } else if (team == CS_TEAM_SPECTATOR) { // covers coaches and spectators.
+      CS_SetClientClanTag(i, "");
+    } else {
+      CS_SetClientClanTag(i, g_TeamTags[GetClientMatchTeam(i)]);
     }
   }
 }

@@ -44,9 +44,9 @@ public int Native_Message(Handle plugin, int numParams) {
 
   char finalMsg[1024];
   if (StrEqual(prefix, ""))
-    Format(finalMsg, sizeof(finalMsg), " %s", buffer);
+    FormatEx(finalMsg, sizeof(finalMsg), " %s", buffer);
   else
-    Format(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
+    FormatEx(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
 
   if (client == 0) {
     Colorize(finalMsg, sizeof(finalMsg), true);
@@ -75,9 +75,9 @@ public int Native_MessageToTeam(Handle plugin, int numParams) {
 
     char finalMsg[1024];
     if (StrEqual(prefix, ""))
-      Format(finalMsg, sizeof(finalMsg), " %s", buffer);
+      FormatEx(finalMsg, sizeof(finalMsg), " %s", buffer);
     else
-      Format(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
+      FormatEx(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
 
     Colorize(finalMsg, sizeof(finalMsg));
     PrintToChat(i, finalMsg);
@@ -101,9 +101,9 @@ public int Native_MessageToAll(Handle plugin, int numParams) {
 
     char finalMsg[1024];
     if (StrEqual(prefix, ""))
-      Format(finalMsg, sizeof(finalMsg), " %s", buffer);
+      FormatEx(finalMsg, sizeof(finalMsg), " %s", buffer);
     else
-      Format(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
+      FormatEx(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
 
     if (i == 0) {
       Colorize(finalMsg, sizeof(finalMsg), true);

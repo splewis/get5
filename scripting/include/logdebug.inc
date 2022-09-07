@@ -71,7 +71,7 @@ stock void InitDebugLog(const char[] convarName, const char[] debugTag,
   g_DebugAdminFlags = adminFlags;
 
   char convarDescription[512];
-  Format(
+  FormatEx(
       convarDescription, sizeof(convarDescription),
       "Add up values to enable debug logging to those locations\n  1 = server console\n  2 = all clients' consoles\n  4 = consoles of admins with '%s' flag%s or access to '%s' override\n  8 = all clients' chat\n  16 = chat of admins with '%s' flag%s or access to '%s' override\n  32 = debug log file %s",
       flagChars, flagChars[1] == '\0' ? "" : "s", convarName, flagChars,

@@ -1842,15 +1842,15 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   ReplaceString(team2Str, sizeof(team2Str), " ", "_");
 
   // MATCHTITLE must go first as it can contain other placeholders
-  ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle, false);
-  ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", Get5_GetMapNumber() + 1, false);
-  ReplaceStringWithInt(buffer, len, "{MAXMAPS}", g_NumberOfMapsInSeries, false);
-  ReplaceString(buffer, len, "{MATCHID}", g_MatchID, false);
-  ReplaceString(buffer, len, "{MAPNAME}", mapName, false);
-  ReplaceStringWithInt(buffer, len, "{SERVERID}", g_ServerIdCvar.IntValue, false);
-  ReplaceString(buffer, len, "{TIME}", formattedTime, false);
-  ReplaceString(buffer, len, "{TEAM1}", team1Str, false);
-  ReplaceString(buffer, len, "{TEAM2}", team2Str, false);
+  ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle);
+  ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", Get5_GetMapNumber() + 1);
+  ReplaceStringWithInt(buffer, len, "{MAXMAPS}", g_NumberOfMapsInSeries);
+  ReplaceString(buffer, len, "{MATCHID}", g_MatchID);
+  ReplaceString(buffer, len, "{MAPNAME}", mapName);
+  ReplaceStringWithInt(buffer, len, "{SERVERID}", g_ServerIdCvar.IntValue);
+  ReplaceString(buffer, len, "{TIME}", formattedTime);
+  ReplaceString(buffer, len, "{TEAM1}", team1Str);
+  ReplaceString(buffer, len, "{TEAM2}", team2Str);
 
   return true;
 }
@@ -1858,7 +1858,7 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
 // Formats a temp file path based ont he server id. The pattern parameter is expected to have a %d
 // token in it.
 void GetTempFilePath(char[] path, int len, const char[] pattern) {
-  Format(path, len, pattern, g_ServerIdCvar.IntValue);
+  FormatEx(path, len, pattern, g_ServerIdCvar.IntValue);
 }
 
 int GetRoundTime() {

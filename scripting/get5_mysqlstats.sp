@@ -98,7 +98,7 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
     char matchIdSz[64];
     db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
-    Format(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
+    FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
             (matchid, series_type, team1_name, team2_name, start_time, server_id) VALUES \
             ('%s', '%s', '%s', '%s', NOW(), %d)",
            matchIdSz, seriesTypeSz, team1NameSz, team2NameSz, serverId);
@@ -106,7 +106,7 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
     db.Query(SQLErrorCheckCallback, queryBuffer);
     LogMessage("Starting match with preset ID: %s", matchId);
   } else {
-    Format(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
+    FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
             (series_type, team1_name, team2_name, start_time, server_id) VALUES \
             ('%s', '%s', '%s', NOW(), %d)",
            seriesTypeSz, team1NameSz, team2NameSz, serverId);
@@ -148,7 +148,7 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
   char matchIdSz[64];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
-  Format(queryBuffer, sizeof(queryBuffer), "INSERT IGNORE INTO `get5_stats_maps` \
+  FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT IGNORE INTO `get5_stats_maps` \
         (matchid, mapnumber, mapname, start_time) VALUES \
         ('%s', %d, '%s', NOW())",
          matchIdSz, event.MapNumber, mapNameSz);
@@ -165,7 +165,7 @@ static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
   char matchIdSz[64];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
-  Format(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_maps` \
+  FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_maps` \
         SET team1_score = %d, team2_score = %d WHERE matchid = '%s' and mapnumber = %d",
          t1score, t2score, matchIdSz, mapNumber);
   LogDebug(queryBuffer);
@@ -175,7 +175,7 @@ static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
   KeyValues kv = new KeyValues("Stats");
   Get5_GetMatchStats(kv);
   char mapKey[32];
-  Format(mapKey, sizeof(mapKey), "map%d", mapNumber);
+  FormatEx(mapKey, sizeof(mapKey), "map%d", mapNumber);
   if (kv.JumpToKey(mapKey)) {
     if (kv.JumpToKey("team1")) {
       AddPlayerStats(matchId, mapNumber, kv, Get5Team_1);
@@ -204,7 +204,7 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
   // Update the map winner
   char winnerString[64];
   GetTeamString(event.Winner.Team, winnerString, sizeof(winnerString));
-  Format(queryBuffer, sizeof(queryBuffer),
+  FormatEx(queryBuffer, sizeof(queryBuffer),
          "UPDATE `get5_stats_maps` SET winner = '%s', end_time = NOW() \
         WHERE matchid = '%s' and mapnumber = %d",
          winnerString, matchIdSz, event.MapNumber);
@@ -216,7 +216,7 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
   Get5_GetTeamScores(Get5Team_1, t1_seriesscore, tmp);
   Get5_GetTeamScores(Get5Team_2, t2_seriesscore, tmp);
 
-  Format(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_matches` \
+  FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_matches` \
         SET team1_score = %d, team2_score = %d WHERE matchid = '%s'",
          t1_seriesscore, t2_seriesscore, matchIdSz);
   LogDebug(queryBuffer);
@@ -281,7 +281,7 @@ static void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyV
       // Note that Format() has a 127 argument limit. See SP_MAX_CALL_ARGUMENTS in sourcepawn.
       // At this time we're at around 33, so this should not be a problem in the foreseeable future.
       // clang-format off
-      Format(queryBuffer, sizeof(queryBuffer),
+      FormatEx(queryBuffer, sizeof(queryBuffer),
                 "INSERT INTO `get5_stats_players` \
                 (`matchid`, `mapnumber`, `steamid64`, `team`, \
                 `rounds_played`, `name`, `kills`, `deaths`, `flashbang_assists`, \
@@ -366,7 +366,7 @@ public void Get5_OnSeriesResult(const Get5SeriesResultEvent event) {
   char matchIdSz[64];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
-  Format(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_matches` \
+  FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_matches` \
         SET winner = '%s', team1_score = %d, team2_score = %d, end_time = NOW() \
         WHERE matchid = '%s'",
          winnerString, event.Team1SeriesScore, event.Team2SeriesScore, matchIdSz);

@@ -1,10 +1,10 @@
 void AddAliasedCommand(const char[] command, ConCmd callback, const char[] description) {
   char smCommandBuffer[COMMAND_LENGTH];
-  Format(smCommandBuffer, sizeof(smCommandBuffer), "sm_%s", command);
+  FormatEx(smCommandBuffer, sizeof(smCommandBuffer), "sm_%s", command);
   RegConsoleCmd(smCommandBuffer, callback, description);
 
   char dotCommandBuffer[ALIAS_LENGTH];
-  Format(dotCommandBuffer, sizeof(dotCommandBuffer), ".%s", command);
+  FormatEx(dotCommandBuffer, sizeof(dotCommandBuffer), ".%s", command);
   AddChatAlias(dotCommandBuffer, smCommandBuffer);
 }
 
@@ -55,7 +55,7 @@ static bool CheckChatAlias(const char[] alias, const char[] command, const char[
     ReplySource replySource = GetCmdReplySource();
     SetCmdReplySource(SM_REPLY_TO_CHAT);
     char fakeCommand[256];
-    Format(fakeCommand, sizeof(fakeCommand), "%s %s", command, chatArgs);
+    FormatEx(fakeCommand, sizeof(fakeCommand), "%s %s", command, chatArgs);
     FakeClientCommand(client, fakeCommand);
     SetCmdReplySource(replySource);
     return true;

@@ -78,6 +78,7 @@ static void KV_Test() {
   AssertEq("num_maps", g_NumberOfMapsInSeries, 3);
   AssertEq("skip_veto", g_SkipVeto, false);
   AssertEq("players_per_team", g_PlayersPerTeam, 5);
+  AssertEq("coaches_must_ready", g_CoachesMustReady, false);
   AssertEq("favored_percentage_team1", g_FavoredTeamPercentage, 65);
 
   AssertTrue("team1.name", StrEqual(g_TeamNames[Get5Team_1], "EnvyUs", false));

@@ -1237,8 +1237,12 @@ static int AddPlayersToAuthKv(KeyValues kv, Get5Team team, char teamName[MAX_CVA
         if (!gotClientName) {
           gotClientName = true;
           FormatEx(teamName, sizeof(teamName), "team_%N", i);
+          if (t == Get5Team_1) {
+            g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, teamName);
+          } else if (t == Get5Team_2) {
+            g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, teamName);
+          }
         }
-
         count++;
         if (GetAuth(i, auth, sizeof(auth))) {
           kv.SetString(auth, KEYVALUE_STRING_PLACEHOLDER);
@@ -1295,6 +1299,11 @@ void CheckTeamNameStatus(Get5Team team) {
       if (IsAuthedPlayer(i)) {
         if (GetClientMatchTeam(i) == team) {
           FormatEx(g_TeamNames[team], MAX_CVAR_LENGTH, "team_%N", i);
+          if (team == Get5Team_1) {
+            g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamNames[team]);
+          } else if (team == Get5Team_2) {
+            g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[team]);
+          }
           break;
         }
       }

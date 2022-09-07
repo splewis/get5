@@ -1866,10 +1866,12 @@ int GetRoundTime() {
 
 void EventLogger_LogAndDeleteEvent(Get5Event event) {
   int options = g_PrettyPrintJsonCvar.BoolValue ? JSON_ENCODE_PRETTY : 0;
-  int bufferSize = event.EncodeSize(options);
 
-  char[] buffer = new char[bufferSize];
-  event.Encode(buffer, bufferSize, options);
+  // We could use json_encode_size here from sm-json, but since we fire events *all the time*
+  // and the function to calculate the buffer size is a lot of code, we just statically allocate
+  // a 16k buffer here and reuse that.
+  static char buffer[16384];
+  event.Encode(buffer, 16384, options);
 
   char logPath[PLATFORM_MAX_PATH];
   if (FormatCvarString(g_EventLogFormatCvar, logPath, sizeof(logPath))) {

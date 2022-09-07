@@ -35,7 +35,7 @@ static Action Timer_VetoCountdown(Handle timer) {
     warningsPrinted++;
     int secondsRemaining = g_VetoCountdownCvar.IntValue - warningsPrinted + 1;
     char secondsFormatted[32];
-    Format(secondsFormatted, sizeof(secondsFormatted), "{GREEN}%d{NORMAL}", secondsRemaining);
+    FormatEx(secondsFormatted, sizeof(secondsFormatted), "{GREEN}%d{NORMAL}", secondsRemaining);
     Get5_MessageToAll("%t", "VetoCountdown", secondsFormatted);
     return Plugin_Continue;
   }
@@ -213,8 +213,8 @@ static void GiveConfirmationMenu(int client, MenuHandler handler, const char[] t
                                  const char[] confirmChoice) {
   // Figure out text for positive and negative values
   char positiveBuffer[1024], negativeBuffer[1024];
-  Format(positiveBuffer, sizeof(positiveBuffer), "%T", "ConfirmPositiveOptionText", client);
-  Format(negativeBuffer, sizeof(negativeBuffer), "%T", "ConfirmNegativeOptionText", client);
+  FormatEx(positiveBuffer, sizeof(positiveBuffer), "%T", "ConfirmPositiveOptionText", client);
+  FormatEx(negativeBuffer, sizeof(negativeBuffer), "%T", "ConfirmNegativeOptionText", client);
 
   // Create menu
   Menu menu = new Menu(handler);

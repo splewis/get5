@@ -282,7 +282,8 @@ joins the server if no match is loaded. Set to empty string to disable. **`Defau
 ### Match/State Substitutes {: #state-substitutes }
 
 Various configuration parameters, such as the file format parameters or the `get5_hostname_format` option, take
-placeholder strings that will be replaced by meaningful values when printed.
+placeholder strings that will be replaced by meaningful values when printed. Note that these are **case-sensitive**, so
+`{Mapname}` would not work.
 
 ####`{TIME}` {: #tag-time}
 :   The current time, determined by [`get5_time_format`](#get5_time_format).

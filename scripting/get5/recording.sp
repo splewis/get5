@@ -20,7 +20,7 @@ bool StartRecording() {
     return false;
   }
 
-  Format(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);
+  FormatEx(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);
   LogMessage("Recording to %s", g_DemoFileName);
 
   // Escape unsafe characters and start recording. .dem is appended to the filename automatically.

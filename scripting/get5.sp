@@ -69,7 +69,6 @@ ConVar g_DamagePrintExcessCvar;
 ConVar g_DamagePrintFormatCvar;
 ConVar g_DemoNameFormatCvar;
 ConVar g_DisplayGotvVetoCvar;
-ConVar g_EndMatchOnEmptyServerCvar;
 ConVar g_EventLogFormatCvar;
 ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunityCvar;
@@ -103,6 +102,12 @@ ConVar g_PhaseAnnouncementCountCvar;
 ConVar g_Team1NameColorCvar;
 ConVar g_Team2NameColorCvar;
 ConVar g_SpecNameColorCvar;
+ConVar g_SurrenderEnabledCvar;
+ConVar g_MinimumRoundDeficitForSurrenderCvar;
+ConVar g_VotesRequiredForSurrenderCvar;
+ConVar g_SurrenderVoteTimeLimitCvar;
+ConVar g_SurrenderCooldownCvar;
+ConVar g_SurrenderTimeToRejoinCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -168,6 +173,14 @@ bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
 int g_TacticalPauseTimeUsed[MATCHTEAM_COUNT];
 int g_TacticalPausesUsed[MATCHTEAM_COUNT];
 int g_TechnicalPausesUsed[MATCHTEAM_COUNT];
+
+/** Surrender **/
+int g_SurrenderVotes[MATCHTEAM_COUNT];
+float g_SurrenderFailedAt[MATCHTEAM_COUNT];
+bool g_SurrenderedPlayers[MAXPLAYERS + 1];
+Handle g_SurrenderTimers[MATCHTEAM_COUNT];
+Get5Team g_PendingSurrenderTeam = Get5Team_None;
+Handle g_EndMatchOnEmptyServerTimer = INVALID_HANDLE;
 
 /** Other state **/
 Get5State g_GameState = Get5State_None;
@@ -291,6 +304,7 @@ Handle g_OnSidePicked = INVALID_HANDLE;
 #include "get5/readysystem.sp"
 #include "get5/recording.sp"
 #include "get5/stats.sp"
+#include "get5/surrender.sp"
 #include "get5/teamlogic.sp"
 #include "get5/tests.sp"
 
@@ -359,9 +373,6 @@ public void OnPluginStart() {
   g_DisplayGotvVetoCvar =
       CreateConVar("get5_display_gotv_veto", "0",
                    "Whether to wait for map vetos to be printed to GOTV before changing map");
-  g_EndMatchOnEmptyServerCvar = CreateConVar(
-      "get5_end_match_on_empty_server", "0",
-      "Whether to end the match if all players disconnect before ending. No winner is set if this happens.");
   g_EventLogFormatCvar =
       CreateConVar("get5_event_log_format", "",
                    "Path to use when writing match event logs, use \"\" to disable");
@@ -448,6 +459,19 @@ public void OnPluginStart() {
                                       "The color used for the name of team 2 in chat messages.");
   g_SpecNameColorCvar = CreateConVar("get5_spec_color", "{NORMAL}",
                                      "The color used for the name of spectators in chat messages.");
+  g_SurrenderEnabledCvar =
+      CreateConVar("get5_surrender_enabled", "0", "Whether the surrender command is enabled.");
+  g_MinimumRoundDeficitForSurrenderCvar =
+      CreateConVar("get5_surrender_minimum_round_deficit", "8", "The minimum number of rounds a team must be behind in order to surrender.", 0, true, 0.0);
+  g_VotesRequiredForSurrenderCvar =
+        CreateConVar("get5_surrender_required_votes", "3", "The number of votes required for a team to surrender.", 0, true, 1.0);
+  g_SurrenderVoteTimeLimitCvar =
+        CreateConVar("get5_surrender_time_limit", "15", "The number of seconds before a vote to surrender fails.", 0, true, 10.0);
+  g_SurrenderCooldownCvar =
+        CreateConVar("get5_surrender_cooldown", "60", "The number of seconds before a vote to surrender can be retried if it fails.");
+  g_SurrenderTimeToRejoinCvar = CreateConVar(
+      "get5_surrender_time_to_rejoin", "60",
+      "This determines how many seconds a team has to rejoin the game before they surrender the match. Cannot be set lower than 30 seconds.", 0, true, 30.0);
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
@@ -486,6 +510,8 @@ public void OnPluginStart() {
   AddAliasedCommand("t", Command_T, "Elects to start on T side after winning a knife round");
   AddAliasedCommand("ct", Command_Ct, "Elects to start on CT side after winning a knife round");
   AddAliasedCommand("stop", Command_Stop, "Elects to stop the game to reload a backup file");
+  AddAliasedCommand("surrender", Command_Surrender, "Starts a vote for surrendering for your team.");
+  AddAliasedCommand("gg", Command_Surrender, "Alias for surrender.");
 
   /** Admin/server commands **/
   RegAdminCmd(
@@ -759,7 +785,7 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
  */
 static Action Event_PlayerConnectFull(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
-  if (IsValidClient(client)) {
+  if (IsPlayer(client)) {
     char ipAddress[32];
     GetClientIP(client, ipAddress, sizeof(ipAddress));
 
@@ -767,41 +793,37 @@ static Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
         new Get5PlayerConnectedEvent(GetPlayerObject(client), ipAddress);
 
     LogDebug("Calling Get5_OnPlayerConnected()");
-
     Call_StartForward(g_OnPlayerConnected);
     Call_PushCell(connectEvent);
     Call_Finish();
-
     EventLogger_LogAndDeleteEvent(connectEvent);
 
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
+
+    CheckSurrenderStateOnConnect();
   }
 }
 
 static Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
-
-  if (client > 0) {
+  if (IsPlayer(client)) {
     Get5PlayerDisconnectedEvent disconnectEvent =
         new Get5PlayerDisconnectedEvent(GetPlayerObject(client));
 
     LogDebug("Calling Get5_OnPlayerDisconnected()");
-
     Call_StartForward(g_OnPlayerDisconnected);
     Call_PushCell(disconnectEvent);
     Call_Finish();
-
     EventLogger_LogAndDeleteEvent(disconnectEvent);
-  }
 
-  // TODO: consider adding a forfeit if a full team disconnects.
-  if (g_EndMatchOnEmptyServerCvar.BoolValue && g_GameState >= Get5State_Warmup &&
-      g_GameState < Get5State_PostGame && GetRealClientCount() == 0 && !g_MapChangePending) {
-    g_TeamSeriesScores[Get5Team_1] = 0;
-    g_TeamSeriesScores[Get5Team_2] = 0;
-    StopRecording();
-    EndSeries(Get5Team_None, false, 0.0, false);
+    // Because the disconnect event fires before the user leaves the server, we have to put this on a short callback
+    // to get the right "number of players per team" in CheckForSurrenderOnDisconnect().
+    CreateTimer(0.1, Timer_DisconnectCheck, _, TIMER_FLAG_NO_MAPCHANGE);
   }
+}
+
+static Action Timer_DisconnectCheck(Handle timer) {
+  CheckForSurrenderOnDisconnect();
 }
 
 // This runs every time a map starts *or* when the plugin is reloaded.
@@ -817,6 +839,18 @@ public void OnConfigsExecuted() {
 static Action Timer_ConfigsExecutedCallback(Handle timer) {
   LogDebug("OnConfigsExecuted timer callback");
 
+  // This is a defensive solution that ensures we don't have lingering surrender-timers. If everyone leaves and a player
+  // then joins the server again, the server may change the map, which triggers this. If this happens, we cannot
+  // recover the game state and must force the series to end.
+  if (g_EndMatchOnEmptyServerTimer != INVALID_HANDLE) {
+    if (g_GameState != Get5State_None) {
+      LogDebug("Triggering surrender timer immediately as map was changed.");
+      TriggerTimer(g_EndMatchOnEmptyServerTimer);
+    } else {
+      delete g_EndMatchOnEmptyServerTimer;
+    }
+  }
+
   g_MapChangePending = false;
   g_DoingBackupRestoreNow = false;
   g_ReadyTimeWaitingUsed = 0;
@@ -827,6 +861,8 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
   g_DemoFileName = "";
   DeleteOldBackups();
 
+  EndSurrenderTimers();
+  g_PendingSurrenderTeam = Get5Team_None;
   // Always reset ready status on map start
   ResetReadyStatus();
 
@@ -1295,7 +1331,7 @@ Action Timer_NextMatchMap(Handle timer) {
   ChangeMap(map, 3.0);
 }
 
-static void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay,
+void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay,
                       bool kickPlayers = true) {
   Stats_SeriesEnd(winningTeam);
 
@@ -1371,6 +1407,14 @@ static void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float resto
   if (g_ActiveVetoMenu != null) {
     LogDebug("Deleted g_ActiveVetoMenu.");
     g_ActiveVetoMenu.Cancel();
+  }
+
+  // If a forfeit by disconnect is counting down and the match ends, either by force or because a team leaves in the last
+  // round and loses the match, ensure that no timer is running so a new game won't be forfeited if it is started before
+  // the timer runs out.
+  if (g_EndMatchOnEmptyServerTimer != INVALID_HANDLE) {
+    LogDebug("Killing g_EndMatchOnEmptyServerTimer as match was ended.");
+    delete g_EndMatchOnEmptyServerTimer;
   }
 }
 
@@ -1503,6 +1547,12 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
     return;
   }
 
+  if (g_PendingSurrenderTeam != Get5Team_None) {
+    SurrenderMap(g_PendingSurrenderTeam);
+    g_PendingSurrenderTeam = Get5Team_None;
+    return;
+  }
+
   Get5RoundStartedEvent startEvent =
       new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
   LogDebug("Calling Get5_OnRoundStart()");
@@ -1601,10 +1651,19 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
   if (g_GameState == Get5State_Live) {
     int csTeamWinner = event.GetInt("winner");
 
+    int team1Score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
+    int team2Score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
+
+    if (team1Score == team2Score) {
+      // If a vote is started and the game proceeds to a tie; stop the timers as surrender can now not be performed.
+      EndSurrenderTimers();
+    }
+
     Get5_MessageToAll("%s {GREEN}%d {NORMAL}- {GREEN}%d %s", g_FormattedTeamNames[Get5Team_1],
-                      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
-                      CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)),
-                      g_FormattedTeamNames[Get5Team_2]);
+      team1Score,
+      team2Score,
+      g_FormattedTeamNames[Get5Team_2]
+    );
 
     Stats_RoundEnd(csTeamWinner);
 
@@ -1657,18 +1716,17 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     // https://github.com/alliedmodders/sourcemod/blob/master/plugins/include/cstrike.inc#L53-L77
     // - which is why we subtract one.
     Get5RoundEndedEvent roundEndEvent = new Get5RoundEndedEvent(
-        g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
-        view_as<CSRoundEndReason>(event.GetInt("reason") - 1),
-        new Get5Winner(CSTeamToGet5Team(csTeamWinner), view_as<Get5Side>(csTeamWinner)),
-        CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)),
-        CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)));
+      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
+      view_as<CSRoundEndReason>(event.GetInt("reason") - 1),
+      new Get5Winner(CSTeamToGet5Team(csTeamWinner), view_as<Get5Side>(csTeamWinner)),
+      team1Score,
+      team2Score
+    );
 
     LogDebug("Calling Get5_OnRoundEnd()");
-
     Call_StartForward(g_OnRoundEnd);
     Call_PushCell(roundEndEvent);
     Call_Finish();
-
     EventLogger_LogAndDeleteEvent(roundEndEvent);
 
     // Reset this when a round ends, as voting has no reference to which round the teams wanted to

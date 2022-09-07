@@ -127,6 +127,7 @@ static void AddGlobalStateInfo(File f) {
   f.WriteLine("g_PausingTeam = %d", g_PausingTeam);
   f.WriteLine("g_PauseType = %d", g_PauseType);
   f.WriteLine("g_LatestPauseDuration = %d", g_LatestPauseDuration);
+  f.WriteLine("g_PendingSurrenderTeam = %d", g_PendingSurrenderTeam);
 
   LOOP_TEAMS(team) {
     GetTeamString(team, buffer, sizeof(buffer));
@@ -138,6 +139,7 @@ static void AddGlobalStateInfo(File f) {
     f.WriteLine("g_TeamFlags = %s", g_TeamFlags[team]);
     f.WriteLine("g_TeamLogos = %s", g_TeamLogos[team]);
     f.WriteLine("g_TeamMatchTexts = %s", g_TeamMatchTexts[team]);
+    f.WriteLine("g_SurrenderVotes = %d", g_SurrenderVotes[team]);
 
     CSTeamString(g_TeamSide[team], buffer, sizeof(buffer));
     f.WriteLine("g_TeamSide = %s (%d)", buffer, g_TeamSide[team]);

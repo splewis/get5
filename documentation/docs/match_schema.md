@@ -204,7 +204,6 @@ These examples are identical in the way they would work if loaded.
       "cvars": {
         "hostname": "Get5 Match #3123",
         "mp_friendly_fire": "0",
-        "get5_end_match_on_empty_server": "0",
         "get5_stop_command_enabled": "0",
         "sm_practicemode_can_be_started": "0"
       }
@@ -275,7 +274,6 @@ These examples are identical in the way they would work if loaded.
         "cvars": {
             "hostname": "Get5 Match #3123",
             "mp_friendly_fire": "0",
-            "get5_end_match_on_empty_server": "0",
             "get5_stop_command_enabled": "0",
             "sm_practicemode_can_be_started": "0"
         }
@@ -359,7 +357,6 @@ These examples are identical in the way they would work if loaded.
     	{
             "hostname"                       "Get5 Match #3123"
             "mp_friendly_fire"               "0"
-            "get5_end_match_on_empty_server" "0"
             "get5_stop_command_enabled"      "0"
             "sm_practicemode_can_be_started" "0"
     	}

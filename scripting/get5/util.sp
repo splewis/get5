@@ -430,7 +430,7 @@ stock bool ReadEmptyStringInsteadOfPlaceholder(const KeyValues kv, char[] buffer
                                                const int bufferSize) {
   kv.GetString(NULL_STRING, buffer, bufferSize);
   if (StrEqual(KEYVALUE_STRING_PLACEHOLDER, buffer)) {
-    Format(buffer, bufferSize, "");
+    FormatEx(buffer, bufferSize, "");
     return true;
   }
   return false;

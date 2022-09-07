@@ -1297,7 +1297,8 @@ joins the server if no match is loaded. Set to empty string to disable. <strong>
 <h2 id="substitution-variables">Substitution Variables</h2>
 <h3 id="state-substitutes">Match/State Substitutes</h3>
 <p>Various configuration parameters, such as the file format parameters or the <code>get5_hostname_format</code> option, take
-placeholder strings that will be replaced by meaningful values when printed.</p>
+placeholder strings that will be replaced by meaningful values when printed. Note that these are <strong>case-sensitive</strong>, so
+<code>{Mapname}</code> would not work.</p>
 <h4 id="tag-time"><code>{TIME}</code></h4>
 <dl>
 <dd>The current time, determined by <a href="#get5_time_format"><code>get5_time_format</code></a>.</dd>

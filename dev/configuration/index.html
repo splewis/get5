@@ -174,11 +174,6 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_end_match_on_empty_server">
-    get5_end_match_on_empty_server
-  </a>
-</li>
-<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_display_gotv_veto">
     get5_display_gotv_veto
   </a>
@@ -344,6 +339,45 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_reset_pauses_each_half">
     get5_reset_pauses_each_half
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#surrender">
+    Surrender
+  </a>
+<nav aria-label="Surrender" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_enabled">
+    get5_surrender_enabled
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_minimum_round_deficit">
+    get5_surrender_minimum_round_deficit
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_required_votes">
+    get5_surrender_required_votes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_time_limit">
+    get5_surrender_time_limit
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_cooldown">
+    get5_surrender_cooldown
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_time_to_rejoin">
+    get5_surrender_time_to_rejoin
   </a>
 </li>
 </ul>
@@ -661,11 +695,6 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_end_match_on_empty_server">
-    get5_end_match_on_empty_server
-  </a>
-</li>
-<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_display_gotv_veto">
     get5_display_gotv_veto
   </a>
@@ -831,6 +860,45 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_reset_pauses_each_half">
     get5_reset_pauses_each_half
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#surrender">
+    Surrender
+  </a>
+<nav aria-label="Surrender" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_enabled">
+    get5_surrender_enabled
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_minimum_round_deficit">
+    get5_surrender_minimum_round_deficit
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_required_votes">
+    get5_surrender_required_votes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_time_limit">
+    get5_surrender_time_limit
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_cooldown">
+    get5_surrender_cooldown
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_time_to_rejoin">
+    get5_surrender_time_to_rejoin
   </a>
 </li>
 </ul>
@@ -1059,11 +1127,6 @@ If you want to set your <code>tv_delay</code>, do it in the <code>cvars</code> s
 <dd>Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
 using <a href="../commands/#get5_endmatch"><code>get5_endmatch</code></a>. <strong><code>Default: 0</code></strong></dd>
 </dl>
-<h4 id="get5_end_match_on_empty_server"><code>get5_end_match_on_empty_server</code></h4>
-<dl>
-<dd>Whether the match is ended with no winner if all players leave (note: this will happen even if all players
-disconnect even in warmup with the intention to reconnect!). <strong><code>Default: 0</code></strong></dd>
-</dl>
 <h4 id="get5_display_gotv_veto"><code>get5_display_gotv_veto</code></h4>
 <dl>
 <dd>Whether to wait for map vetoes to be printed to GOTV before changing map. <strong><code>Default: 0</code></strong></dd>
@@ -1226,6 +1289,38 @@ must confirm. <strong><code>Default: 0</code></strong></dd>
 <dd>Whether <a href="../pausing/#tactical">tactical pause</a> limits (time used and count) are reset each halftime period.
 <a href="../pausing/#technical">Technical pauses</a> are not reset. <strong><code>Default: 1</code></strong></dd>
 </dl>
+<h2 id="surrender">Surrender</h2>
+<h4 id="get5_surrender_enabled"><code>get5_surrender_enabled</code></h4>
+<dl>
+<dd>Whether the <a href="../commands/#surrender"><code>!surrender</code></a> command is available. <strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_surrender_minimum_round_deficit"><code>get5_surrender_minimum_round_deficit</code></h4>
+<dl>
+<dd>The minimum number of rounds a team must be behind in order to initiate a vote to surrender. This cannot be set
+lower than <code>1</code>. <strong><code>Default: 8</code></strong></dd>
+</dl>
+<h4 id="get5_surrender_required_votes"><code>get5_surrender_required_votes</code></h4>
+<dl>
+<dd>The number of votes required to surrender as a team. If set to <code>1</code> or below, any attempt to surrender will
+immediately succeed. <strong><code>Default: 3</code></strong></dd>
+</dl>
+<h4 id="get5_surrender_time_limit"><code>get5_surrender_time_limit</code></h4>
+<dl>
+<dd>The number of seconds a team has to vote to surrender after the first vote is cast. This cannot be set lower
+than <code>10</code>. <strong><code>Default: 15</code></strong></dd>
+</dl>
+<h4 id="get5_surrender_cooldown"><code>get5_surrender_cooldown</code></h4>
+<dl>
+<dd>The minimum number of seconds a team must wait before they can initiate a surrender vote following a failed
+vote. Set to zero to disable. <strong><code>Default: 60</code></strong></dd>
+</dl>
+<h4 id="get5_surrender_time_to_rejoin"><code>get5_surrender_time_to_rejoin</code></h4>
+<dl>
+<dd>If a full team disconnects, this determines the number of seconds a player from the disconnecting team has to rejoin
+the server before they forfeit the match. If both teams disconnect, this determines how long any player from any team
+has to rejoin the match before it is ended in a tie. This cannot be set lower than 30 and applies even
+if <a href="#get5_surrender_enabled"><code>get5_surrender_enabled</code></a> is disabled. <strong><code>Default: 60</code></strong></dd>
+</dl>
 <h2 id="formats">Formats</h2>
 <p><strong>Note: for these, setting the cvar to an empty string ("") will disable the file writing entirely.</strong></p>
 <h4 id="get5_time_format"><code>get5_time_format</code></h4>
@@ -1266,7 +1361,7 @@ command as well as the <a href="../commands/#get5_loadbackup"><code>get5_loadbac
 the <a href="#tag-matchid"><code>{MATCHID}</code></a> variable, i.e. <code>backups/{MATCHID}/</code>. <strong><code>Default: ""</code></strong></dd>
 </dl>
 <div class="admonition warning">
-<p class="admonition-title">Slash, slash, hundred yard dash <span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m7 21 7.9-18H17L9.1 21H7Z"></path></svg></span></p>
+<p class="admonition-title">Slash, slash, hundred-yard dash <span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m7 21 7.9-18H17L9.1 21H7Z"></path></svg></span></p>
 <p>It is very important that your backup path does <strong>not</strong> start with a slash but instead <strong>ends with a slash</strong>. If
 not, the last part of the path will be considered a prefix of the filename and things will not work correctly. Also
 note that if you use the <a href="#tag-matchid"><code>{MATCHID}</code></a> variable, <a href="#get5_max_backup_age">automatic deletion of backups</a>

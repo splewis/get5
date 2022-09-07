@@ -234,6 +234,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#surrender">
+    !surrender or !gg
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5">
     !get5
   </a>
@@ -517,6 +522,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#surrender">
+    !surrender or !gg
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5">
     !get5
   </a>
@@ -704,6 +714,14 @@ the <a href="../configuration/#get5_stop_command_enabled">get5_stop_command_enab
 <h4 id="scrim"><code>!scrim</code></h4>
 <dl>
 <dd>Alias for <a href="#get5_scrim"><code>get5_scrim</code></a>.</dd>
+</dl>
+<h4 id="surrender"><code>!surrender</code> or <code>!gg</code></h4>
+<dl>
+<dd>If the surrender features is <a href="../configuration/#get5_surrender_enabled">enabled</a>, this initiates a vote to surrender
+the <strong>current map</strong>. After the first vote is cast,
+a <a href="../configuration/#get5_surrender_required_votes">minimum number of votes</a> must be cast be other team members
+within <a href="../configuration/#get5_surrender_time_limit">the defined time limit</a>. You can only vote to surrender if you
+are <a href="../configuration/#get5_surrender_minimum_round_deficit">sufficiently behind on points</a>.</dd>
 </dl>
 <h4 id="get5"><code>!get5</code></h4>
 <dl>

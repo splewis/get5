@@ -653,16 +653,19 @@ static void LoadTeamData(KeyValues kv, Get5Team matchTeam) {
 
 static void FormatTeamName(const Get5Team team) {
   char color[32];
+  char teamName[MAX_CVAR_LENGTH];
+  bool hasTeamName = strlen(g_TeamNames[team]) > 0;
   if (team == Get5Team_1) {
     g_Team1NameColorCvar.GetString(color, sizeof(color));
+    teamName = hasTeamName ? g_TeamNames[team] : "team1";
   } else if (team == Get5Team_2) {
     g_Team2NameColorCvar.GetString(color, sizeof(color));
+    teamName = hasTeamName ? g_TeamNames[team] : "team2";
   } else if (team == Get5Team_Spec) {
     g_SpecNameColorCvar.GetString(color, sizeof(color));
-  } else {
-    color = "{NORMAL}";
+    teamName = hasTeamName ? g_TeamNames[team] : CONFIG_SPECTATORSNAME_DEFAULT;
   }
-  FormatEx(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color, g_TeamNames[team]);
+  FormatEx(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color, teamName);
 }
 
 static void LoadDefaultMapList(ArrayList list) {
@@ -1219,7 +1222,6 @@ Action Command_Ringer(int client, int args) {
 static int AddPlayersToAuthKv(KeyValues kv, Get5Team team, char teamName[MAX_CVAR_LENGTH]) {
   int count = 0;
   kv.JumpToKey("players", true);
-  bool gotClientName = false;
   char auth[AUTH_LENGTH];
   LOOP_CLIENTS(i) {
     if (IsAuthedPlayer(i)) {
@@ -1234,14 +1236,8 @@ static int AddPlayersToAuthKv(KeyValues kv, Get5Team team, char teamName[MAX_CVA
       }
 
       if (t == team) {
-        if (!gotClientName) {
-          gotClientName = true;
+        if (count == 0) {
           FormatEx(teamName, sizeof(teamName), "team_%N", i);
-          if (t == Get5Team_1) {
-            g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, teamName);
-          } else if (t == Get5Team_2) {
-            g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, teamName);
-          }
         }
         count++;
         if (GetAuth(i, auth, sizeof(auth))) {

@@ -278,7 +278,7 @@ static void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyV
       char teamString[16];
       GetTeamString(team, teamString, sizeof(teamString));
 
-      // Note that Format() has a 127 argument limit. See SP_MAX_CALL_ARGUMENTS in sourcepawn.
+      // Note that FormatEx() has a 127 argument limit. See SP_MAX_CALL_ARGUMENTS in sourcepawn.
       // At this time we're at around 33, so this should not be a problem in the foreseeable future.
       // clang-format off
       FormatEx(queryBuffer, sizeof(queryBuffer),

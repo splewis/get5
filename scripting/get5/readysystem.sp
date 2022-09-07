@@ -94,7 +94,8 @@ static int GetTeamReadyCount(Get5Team team, bool includeCoaches = false) {
   return readyCount;
 }
 
-static int GetTeamPlayerCount(Get5Team team, bool includeCoaches = false) {
+// TODO: this is practically duplicated in teamlogic.sp? Maybe we merge them?
+int GetTeamPlayerCount(Get5Team team, bool includeCoaches = false) {
   int playerCount = 0;
   LOOP_CLIENTS(i) {
     if (IsPlayer(i) && GetClientMatchTeam(i) == team && (includeCoaches || !IsClientCoaching(i))) {

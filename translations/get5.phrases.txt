@@ -461,4 +461,56 @@
         "#format"   "{1:s}"
         "en"        "Veto commencing in {1} seconds."
     }
+    "SurrenderCommandNotEnabled"
+    {
+        "en"        "The surrender command is not enabled."
+    }
+    "SurrenderMinimumRoundDeficit"
+    {
+        "#format"   "{1:d}"
+        "en"        "You must be behind by at least {1} round(s) in order to surrender."
+    }
+    "SurrenderInitiated"
+    {
+        "#format"   "{1:s},{2:d},{3:d}"
+        "en"        "A vote to surrender was initiated by {1}. Your team must reach {2} votes within {3} seconds."
+    }
+    "SurrenderVoteStatus"
+    {
+        "#format"   "{1:d},{2:d}"
+        "en"        "{1} of {2} required surrender votes have been cast."
+    }
+    "SurrenderSuccessful"
+    {
+        "#format"   "{1:s}"
+        "en"        "{1} has surrendered."
+    }
+    "SurrenderVoteFailed"
+    {
+        "en"        "Not enough players on your team voted to surrender."
+    }
+    "SurrenderOnCooldown"
+    {
+        "#format"   "{1:s}"
+        "en"        "You must wait {1} to initiate a new vote to surrender."
+    }
+    "SurrenderTeamMustRejoin"
+    {
+        "#format"   "{1:s},{2:s},{3:s}"
+        "en"        "{1} left the server and must rejoin within {2} seconds or {3} will win."
+    }
+    "SurrenderRejoinCountdownCanceled"
+    {
+        "en"        "Surrender countdown was canceled."
+    }
+    "AllPlayersLeftTieCountdown"
+    {
+        "#format"   "{1:s}"
+        "en"        "Both teams have left the server. At least one player must rejoin within {1} seconds or the match will end in a tie."
+    }
+    "SurrenderTeamAppearsToLeaveWarning"
+    {
+        "#format"   "{1:s},{2:s}"
+        "en"        "{1} appears to be leaving the server. Nobody from {2} can leave before the surrender timer has started, or the match will end in a tie."
+    }
 }

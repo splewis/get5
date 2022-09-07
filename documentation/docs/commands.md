@@ -59,6 +59,14 @@ the [get5_stop_command_enabled](../configuration/#get5_stop_command_enabled) is 
 
 :   Alias for [`get5_scrim`](#get5_scrim).
 
+####`!surrender` or `!gg` {: #surrender }
+
+:   If the surrender features is [enabled](../configuration/#get5_surrender_enabled), this initiates a vote to surrender
+the **current map**. After the first vote is cast,
+a [minimum number of votes](../configuration/#get5_surrender_required_votes) must be cast be other team members
+within [the defined time limit](../configuration/#get5_surrender_time_limit). You can only vote to surrender if you
+are [sufficiently behind on points](../configuration/#get5_surrender_minimum_round_deficit).
+
 ####`!get5`
 
 :   Opens a menu that wraps some common commands. It's mostly intended for people using scrim settings, and has

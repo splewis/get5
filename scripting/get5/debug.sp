@@ -43,7 +43,7 @@ static void AddSpacing(File f) {
 static bool GetCvar(const char[] name, char[] value, int len) {
   ConVar cvar = FindConVar(name);
   if (cvar == null) {
-    Format(value, len, "NULL CVAR");
+    FormatEx(value, len, "NULL CVAR");
     return false;
   } else {
     cvar.GetString(value, len);
@@ -206,7 +206,7 @@ static void AddLogLines(File f, const char[] pattern, int maxLines) {
   while (dir.GetNext(filename, sizeof(filename), type)) {
     if (type == FileType_File && StrContains(filename, pattern) >= 0) {
       char fullPath[PLATFORM_MAX_PATH];
-      Format(fullPath, sizeof(fullPath), "%s/%s", logsDir, filename);
+      FormatEx(fullPath, sizeof(fullPath), "%s/%s", logsDir, filename);
       logFilenames.PushString(fullPath);
     }
   }

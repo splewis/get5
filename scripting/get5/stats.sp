@@ -141,12 +141,12 @@ Get5Player GetPlayerObject(int client) {
   int userId = GetClientUserId(client);
 
   if (IsAuthedPlayer(client)) {
-    char auth[20];
+    char auth[AUTH_LENGTH];
     GetAuth(client, auth, sizeof(auth));
     return new Get5Player(userId, auth, side, name, false);
   } else {
-    char botId[10];
-    Format(botId, sizeof(botId), "BOT-%d", userId);
+    char botId[16];
+    FormatEx(botId, sizeof(botId), "BOT-%d", userId);
     return new Get5Player(userId, botId, side, name, true);
   }
 }
@@ -166,7 +166,7 @@ void Stats_Reset() {
 void Stats_InitSeries() {
   Stats_Reset();
   char seriesType[32];
-  Format(seriesType, sizeof(seriesType), "bo%d", g_NumberOfMapsInSeries);
+  FormatEx(seriesType, sizeof(seriesType), "bo%d", g_NumberOfMapsInSeries);
   g_StatsKv.SetString(STAT_SERIESTYPE, seriesType);
   g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamNames[Get5Team_1]);
   g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[Get5Team_2]);
@@ -323,12 +323,7 @@ void Stats_RoundEnd(int csTeamWinner) {
         }
 
         GoToPlayer(i);
-        char name[MAX_NAME_LENGTH];
-        GetClientName(i, name, sizeof(name));
-        g_StatsKv.SetString(STAT_NAME, name);
-
         g_StatsKv.SetNum(STAT_CONTRIBUTION_SCORE, CS_GetClientContributionScore(i));
-
         GoBackFromPlayer();
       }
     }
@@ -1013,7 +1008,7 @@ static int IncrementPlayerStat(int client, const char[] field) {
 
 static void GoToMap() {
   char mapNumberString[32];
-  Format(mapNumberString, sizeof(mapNumberString), "map%d", g_MapNumber);
+  FormatEx(mapNumberString, sizeof(mapNumberString), "map%d", g_MapNumber);
   g_StatsKv.JumpToKey(mapNumberString, true);
 }
 
@@ -1156,51 +1151,54 @@ void PrintDamageInfo(int client) {
 
   char message[256];
   int msgSize = sizeof(message);
-
+  int replacedNameIndex;
   int otherTeam = (team == CS_TEAM_T) ? CS_TEAM_CT : CS_TEAM_T;
 
   LOOP_CLIENTS(i) {
     if (IsValidClient(i) && GetClientTeam(i) == otherTeam) {
       int health = IsPlayerAlive(i) ? GetClientHealth(i) : 0;
-      char name[64];
-      GetClientName(i, name, sizeof(name));
 
       g_DamagePrintFormatCvar.GetString(message, msgSize);
-      ReplaceStringWithInt(message, msgSize, "{DMG_TO}", g_DamageDone[client][i], false);
-      ReplaceStringWithInt(message, msgSize, "{HITS_TO}", g_DamageDoneHits[client][i], false);
+      ReplaceStringWithInt(message, msgSize, "{DMG_TO}", g_DamageDone[client][i]);
+      ReplaceStringWithInt(message, msgSize, "{HITS_TO}", g_DamageDoneHits[client][i]);
 
       if (g_DamageDoneKill[client][i]) {
-        ReplaceString(message, msgSize, "{KILL_TO}", "{GREEN}X{NORMAL}", false);
+        ReplaceStringEx(message, msgSize, "{KILL_TO}", "{GREEN}X{NORMAL}");
       } else if (g_DamageDoneAssist[client][i]) {
-        ReplaceString(message, msgSize, "{KILL_TO}", "{YELLOW}A{NORMAL}", false);
+        ReplaceStringEx(message, msgSize, "{KILL_TO}", "{YELLOW}A{NORMAL}");
       } else if (g_DamageDoneFlashAssist[client][i]) {
-        ReplaceString(message, msgSize, "{KILL_TO}", "{YELLOW}F{NORMAL}", false);
+        ReplaceStringEx(message, msgSize, "{KILL_TO}", "{YELLOW}F{NORMAL}");
       } else {
-        ReplaceString(message, msgSize, "{KILL_TO}", "–", false);
+        ReplaceStringEx(message, msgSize, "{KILL_TO}", "–");
       }
 
-      ReplaceStringWithInt(message, msgSize, "{DMG_FROM}", g_DamageDone[i][client], false);
-      ReplaceStringWithInt(message, msgSize, "{HITS_FROM}", g_DamageDoneHits[i][client], false);
+      ReplaceStringWithInt(message, msgSize, "{DMG_FROM}", g_DamageDone[i][client]);
+      ReplaceStringWithInt(message, msgSize, "{HITS_FROM}", g_DamageDoneHits[i][client]);
 
       if (g_DamageDoneKill[i][client]) {
-        ReplaceString(message, msgSize, "{KILL_FROM}", "{DARK_RED}X{NORMAL}", false);
+        ReplaceStringEx(message, msgSize, "{KILL_FROM}", "{DARK_RED}X{NORMAL}");
       } else if (g_DamageDoneAssist[i][client]) {
-        ReplaceString(message, msgSize, "{KILL_FROM}", "{YELLOW}A{NORMAL}", false);
+        ReplaceStringEx(message, msgSize, "{KILL_FROM}", "{YELLOW}A{NORMAL}");
       } else if (g_DamageDoneFlashAssist[i][client]) {
-        ReplaceString(message, msgSize, "{KILL_FROM}", "{YELLOW}F{NORMAL}", false);
+        ReplaceStringEx(message, msgSize, "{KILL_FROM}", "{YELLOW}F{NORMAL}");
       } else {
-        ReplaceString(message, msgSize, "{KILL_FROM}", "–", false);
+        ReplaceStringEx(message, msgSize, "{KILL_FROM}", "–");
       }
 
       if (IsFakeClient(i)) {
-        ReplaceString(message, msgSize, "{NAME}", "BOT {NAME}", false);
+        replacedNameIndex = ReplaceStringEx(message, msgSize, "{NAME}", "BOT %N");
+      } else {
+        replacedNameIndex = ReplaceStringEx(message, msgSize, "{NAME}", "%N");
       }
 
-      ReplaceString(message, msgSize, "{NAME}", name, false);
-      ReplaceStringWithInt(message, msgSize, "{HEALTH}", health, false);
+      ReplaceStringWithInt(message, msgSize, "{HEALTH}", health);
 
       Colorize(message, msgSize);
-      PrintToChat(client, message);
+      if (replacedNameIndex != -1) {
+        PrintToChat(client, message, i); // Replaces %N with player name.
+      } else {
+        PrintToChat(client, message); // {NAME} was not part of the string.
+      }
     }
   }
 }

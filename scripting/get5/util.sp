@@ -123,11 +123,11 @@ stock void Colorize(char[] msg, int size, bool stripColor = false) {
 }
 
 stock void FormatChatCommand(char[] buffer, const int bufferLength, const char[] command) {
-  Format(buffer, bufferLength, "{GREEN}%s{NORMAL}", command);
+  FormatEx(buffer, bufferLength, "{GREEN}%s{NORMAL}", command);
 }
 
 stock void FormatCvarName(char[] buffer, const int bufferLength, const char[] cVar) {
-  Format(buffer, bufferLength, "{GRAY}%s{NORMAL}", cVar);
+  FormatEx(buffer, bufferLength, "{GRAY}%s{NORMAL}", cVar);
 }
 
 stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client,
@@ -135,16 +135,16 @@ stock void FormatPlayerName(char[] buffer, const int bufferLength, const int cli
   // Used when injecting the team for coaching players, who are always on team spectator.
   Get5Side side = view_as<Get5Side>(Get5_Get5TeamToCSTeam(team));
   if (side == Get5Side_CT) {
-    Format(buffer, bufferLength, "{LIGHT_BLUE}%N{NORMAL}", client);
+    FormatEx(buffer, bufferLength, "{LIGHT_BLUE}%N{NORMAL}", client);
   } else if (side == Get5Side_T) {
-    Format(buffer, bufferLength, "{GOLD}%N{NORMAL}", client);
+    FormatEx(buffer, bufferLength, "{GOLD}%N{NORMAL}", client);
   } else {
-    Format(buffer, bufferLength, "{PURPLE}%N{NORMAL}", client);
+    FormatEx(buffer, bufferLength, "{PURPLE}%N{NORMAL}", client);
   }
 }
 
 stock void ReplaceStringWithInt(char[] buffer, int len, const char[] replace, int value,
-                                bool caseSensitive = false) {
+                                bool caseSensitive = true) {
   char intString[MAX_INTEGER_STRING_LENGTH];
   IntToString(value, intString, sizeof(intString));
   ReplaceString(buffer, len, replace, intString, caseSensitive);
@@ -217,11 +217,11 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
   char logoCvarName[MAX_CVAR_LENGTH];
   char textCvarName[MAX_CVAR_LENGTH];
   char scoreCvarName[MAX_CVAR_LENGTH];
-  Format(teamCvarName, sizeof(teamCvarName), "mp_teamname_%d", team_int);
-  Format(flagCvarName, sizeof(flagCvarName), "mp_teamflag_%d", team_int);
-  Format(logoCvarName, sizeof(logoCvarName), "mp_teamlogo_%d", team_int);
-  Format(textCvarName, sizeof(textCvarName), "mp_teammatchstat_%d", team_int);
-  Format(scoreCvarName, sizeof(scoreCvarName), "mp_teamscore_%d", team_int);
+  FormatEx(teamCvarName, sizeof(teamCvarName), "mp_teamname_%d", team_int);
+  FormatEx(flagCvarName, sizeof(flagCvarName), "mp_teamflag_%d", team_int);
+  FormatEx(logoCvarName, sizeof(logoCvarName), "mp_teamlogo_%d", team_int);
+  FormatEx(textCvarName, sizeof(textCvarName), "mp_teammatchstat_%d", team_int);
+  FormatEx(scoreCvarName, sizeof(scoreCvarName), "mp_teamscore_%d", team_int);
 
   // Add Ready/Not ready tags to team name if in warmup.
   char taggedName[MAX_CVAR_LENGTH];
@@ -229,9 +229,9 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
     if (IsReadyGameState()) {
       Get5Team matchTeam = CSTeamToGet5Team(csTeam);
       if (IsTeamReady(matchTeam)) {
-        Format(taggedName, sizeof(taggedName), "%s %T", name, "ReadyTag", LANG_SERVER);
+        FormatEx(taggedName, sizeof(taggedName), "%s %T", name, "ReadyTag", LANG_SERVER);
       } else {
-        Format(taggedName, sizeof(taggedName), "%s %T", name, "NotReadyTag", LANG_SERVER);
+        FormatEx(taggedName, sizeof(taggedName), "%s %T", name, "NotReadyTag", LANG_SERVER);
       }
     } else {
       strcopy(taggedName, sizeof(taggedName), name);
@@ -439,7 +439,7 @@ stock bool ReadEmptyStringInsteadOfPlaceholder(const KeyValues kv, char[] buffer
 stock bool WritePlaceholderInsteadOfEmptyString(const KeyValues kv, char[] buffer,
                                                 const int bufferSize) {
   kv.GetString(NULL_STRING, buffer, bufferSize);
-  if (StrEqual("", buffer)) {
+  if (strlen(buffer) == 0) {
     kv.SetString(NULL_STRING, KEYVALUE_STRING_PLACEHOLDER);
     return true;
   }
@@ -512,23 +512,23 @@ stock int MapsToWin(int numberOfMaps) {
 
 stock void CSTeamString(int csTeam, char[] buffer, int len) {
   if (csTeam == CS_TEAM_CT) {
-    Format(buffer, len, "CT");
+    FormatEx(buffer, len, "CT");
   } else if (csTeam == CS_TEAM_T) {
-    Format(buffer, len, "T");
+    FormatEx(buffer, len, "T");
   } else {
-    Format(buffer, len, "none");
+    FormatEx(buffer, len, "none");
   }
 }
 
 stock void GetTeamString(Get5Team team, char[] buffer, int len) {
   if (team == Get5Team_1) {
-    Format(buffer, len, "team1");
+    FormatEx(buffer, len, "team1");
   } else if (team == Get5Team_2) {
-    Format(buffer, len, "team2");
+    FormatEx(buffer, len, "team2");
   } else if (team == Get5Team_Spec) {
-    Format(buffer, len, "spec");
+    FormatEx(buffer, len, "spec");
   } else {
-    Format(buffer, len, "none");
+    FormatEx(buffer, len, "none");
   }
 }
 
@@ -544,11 +544,11 @@ stock MatchSideType MatchSideTypeFromString(const char[] str) {
 
 stock void MatchSideTypeToString(MatchSideType type, char[] str, int len) {
   if (type == MatchSideType_Standard) {
-    Format(str, len, "standard");
+    FormatEx(str, len, "standard");
   } else if (type == MatchSideType_NeverKnife) {
-    Format(str, len, "never_knife");
+    FormatEx(str, len, "never_knife");
   } else {
-    Format(str, len, "always_knife");
+    FormatEx(str, len, "always_knife");
   }
 }
 
@@ -602,7 +602,7 @@ stock bool ConvertSteam3ToSteam2(const char[] steam3Auth, char[] steam2Auth, int
   int a = (x % 2);
   int b = (x - a) / 2;
 
-  Format(steam2Auth, size, "STEAM_0:%d:%d", a, b);
+  FormatEx(steam2Auth, size, "STEAM_0:%d:%d", a, b);
   return true;
 }
 
@@ -709,7 +709,7 @@ stock void convertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer,
     minutes = timeAsSeconds / 60;
     seconds = timeAsSeconds % 60;
   }
-  Format(buffer, bufferSize, seconds < 10 ? "%d:0%d" : "%d:%d", minutes, seconds);
+  FormatEx(buffer, bufferSize, seconds < 10 ? "%d:0%d" : "%d:%d", minutes, seconds);
 }
 
 stock bool IsDoingRestoreOrMapChange() {

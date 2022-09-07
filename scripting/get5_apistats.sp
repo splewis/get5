@@ -113,7 +113,7 @@ void ApiInfoChanged(ConVar convar, const char[] oldValue, const char[] newValue)
 
 static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:...) {
   char url[1024];
-  Format(url, sizeof(url), "%s%s", g_APIURL, apiMethod);
+  FormatEx(url, sizeof(url), "%s%s", g_APIURL, apiMethod);
 
   char formattedUrl[1024];
   VFormat(formattedUrl, sizeof(formattedUrl), url, 3);
@@ -171,9 +171,9 @@ static void CheckForLogo(const char[] logo) {
   char logoPath[PLATFORM_MAX_PATH + 1];
   // change png to svg because it's better supported
   if (g_UseSVGCvar.BoolValue) {
-    Format(logoPath, sizeof(logoPath), "%s/%s.svg", g_LogoBasePath, logo);
+    FormatEx(logoPath, sizeof(logoPath), "%s/%s.svg", g_LogoBasePath, logo);
   } else {
-    Format(logoPath, sizeof(logoPath), "%s/%s.png", g_LogoBasePath, logo);
+    FormatEx(logoPath, sizeof(logoPath), "%s/%s.png", g_LogoBasePath, logo);
   }
 
   // Try to fetch the file if we don't have it.
@@ -210,9 +210,9 @@ static int LogoCallback(Handle request, bool failure, bool successful, EHTTPStat
 
   char logoPath[PLATFORM_MAX_PATH + 1];
   if (g_UseSVGCvar.BoolValue) {
-    Format(logoPath, sizeof(logoPath), "%s/%s.svg", g_LogoBasePath, logo);
+    FormatEx(logoPath, sizeof(logoPath), "%s/%s.svg", g_LogoBasePath, logo);
   } else {
-    Format(logoPath, sizeof(logoPath), "%s/%s.png", g_LogoBasePath, logo);
+    FormatEx(logoPath, sizeof(logoPath), "%s/%s.png", g_LogoBasePath, logo);
   }
 
   LogMessage("Saved logo for %s to %s", logo, logoPath);
@@ -250,7 +250,7 @@ static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
   KeyValues kv = new KeyValues("Stats");
   Get5_GetMatchStats(kv);
   char mapKey[32];
-  Format(mapKey, sizeof(mapKey), "map%d", mapNumber);
+  FormatEx(mapKey, sizeof(mapKey), "map%d", mapNumber);
   if (kv.JumpToKey(mapKey)) {
     if (kv.JumpToKey("team1")) {
       UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_1);

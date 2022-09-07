@@ -50,7 +50,7 @@ Action Command_ListBackups(int client, int args) {
   if (files != null) {
     char backupInfo[256];
     char pattern[PLATFORM_MAX_PATH];
-    Format(pattern, sizeof(pattern), "get5_backup_match%s", matchID);
+    FormatEx(pattern, sizeof(pattern), "get5_backup_match%s", matchID);
 
     char filename[PLATFORM_MAX_PATH];
     while (files.GetNext(filename, sizeof(filename))) {
@@ -109,7 +109,7 @@ static bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
 
   // Try entering Valve's backup section (it doesn't always exist).
   if (!kv.JumpToKey("valve_backup")) {
-    Format(info, maxlength, "%s %s \"%s\" \"%s\"", path, timestamp, team1Name, team2Name);
+    FormatEx(info, maxlength, "%s %s \"%s\" \"%s\"", path, timestamp, team1Name, team2Name);
     delete kv;
     return true;
   }
@@ -119,7 +119,7 @@ static bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
 
   // Try entering FirstHalfScore section.
   if (!kv.JumpToKey("FirstHalfScore")) {
-    Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
+    FormatEx(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
            map, 0, 0);
     delete kv;
     return true;
@@ -133,7 +133,7 @@ static bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
 
   // Try entering SecondHalfScore section.
   if (!kv.JumpToKey("SecondHalfScore")) {
-    Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
+    FormatEx(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
            map, team1Score, team2Score);
     delete kv;
     return true;
@@ -146,7 +146,7 @@ static bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
   kv.GoBack();
   delete kv;
 
-  Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
+  FormatEx(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
          map, team1Score, team2Score);
   return true;
 }
@@ -181,10 +181,10 @@ void WriteBackup() {
 
   char path[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
-    Format(path, sizeof(path), "%sget5_backup_match%s_map%d_round%d.cfg", folder, g_MatchID,
+    FormatEx(path, sizeof(path), "%sget5_backup_match%s_map%d_round%d.cfg", folder, g_MatchID,
            g_MapNumber, g_RoundNumber);
   } else {
-    Format(path, sizeof(path), "%sget5_backup_match%s_map%d_prelive.cfg", folder, g_MatchID,
+    FormatEx(path, sizeof(path), "%sget5_backup_match%s_map%d_prelive.cfg", folder, g_MatchID,
            g_MapNumber);
   }
   LogDebug("Writing backup to %s", path);

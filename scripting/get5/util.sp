@@ -123,11 +123,11 @@ stock void Colorize(char[] msg, int size, bool stripColor = false) {
 }
 
 stock void FormatChatCommand(char[] buffer, const int bufferLength, const char[] command) {
-  FormatEx(buffer, bufferLength, "{GREEN}%s{NORMAL}", command);
+  Format(buffer, bufferLength, "{GREEN}%s{NORMAL}", command);
 }
 
 stock void FormatCvarName(char[] buffer, const int bufferLength, const char[] cVar) {
-  FormatEx(buffer, bufferLength, "{GRAY}%s{NORMAL}", cVar);
+  Format(buffer, bufferLength, "{GRAY}%s{NORMAL}", cVar);
 }
 
 stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client,

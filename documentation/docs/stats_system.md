@@ -1,10 +1,5 @@
 # :material-chart-bar: Player Stats System
 
-!!! warning
-
-    None of the methods for collecting stats are going to be reliable if
-    [`get5_check_auths`](../configuration/#get5_check_auths) is set to `0`.
-
 ## SourceMod Forwards {: #forwards }
 
 If you're writing your own plugin, you can collect stats from the game using the

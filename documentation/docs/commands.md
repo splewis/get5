@@ -112,19 +112,18 @@ you use the [MySQL extension](../stats_system/#mysql).
 name.
 
 ####`get5_addcoach <auth> <team1|team2> [name]` {: #get5_addcoach }
-:   Adds a Steam ID to a team as a coach. The name parameter optionally locks the player's
-name.
+:   Adds a Steam ID to a team as a coach. The name parameter optionally locks the player's name.
 
 ####`get5_removeplayer <auth>` {: #get5_removeplayer}
 :   Removes a steam ID from all teams (can be any format for the Steam ID). This also removes the player as
-a [coach](coaching.md). If [`get5_check_auths`](../configuration/#get5_check_auths) is set, the player will be removed
-from the server immediately.
+a [coach](coaching.md). If the player is present on the server, they will be kicked immediately. In scrim mode, you
+must use [`get5_ringer`](#get5_ringer) instead.
 
 ####`get5_addkickedplayer <team1|team2|spec> [name]` {: #get5_addkickedplayer }
 :   Adds the last kicked Steam ID to a team. The name parameter optionally locks the player's name.
 
 ####`get5_removekickedplayer <team1|team2|spec>` {: #get5_removekickedplayer }
-:   Removes the last kicked Steam ID from all teams. Cannot be used in scrim mode.
+:   Shortcut for [`get5_removeplayer`](#get5_removeplayer), targeting the last kicked player.
 
 ####`get5_forceready`
 :   Marks all teams as ready. `get5_forcestart` does the same thing.
@@ -227,7 +226,8 @@ from the server immediately.
 
 ####`get5_ringer <target>` {: #get5_ringer }
 :   Adds/removes a ringer to/from the home scrim team. `target` is the name of the player, their user ID or their Steam
-ID. Similar to [`!ringer`](../commands/#ringer) in chat.
+ID. Similar to [`!ringer`](../commands/#ringer) in chat. This command only works in
+[scrim mode](../getting_started/#scrims).
 
 !!! example "User ID vs client index"
 

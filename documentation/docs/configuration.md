@@ -35,7 +35,8 @@ cfg/get5/live.cfg # (3)
 
     You should avoid these commands in your live, knife and warmup configuration files, as all of these are handled by
     Get5 automatically. Introducing restarts, warmup changes or [GOTV](gotv.md) delay modifications can cause problems.
-    If you want to set your `tv_delay`, do it in the `cvars` section of your [match configuration](match_schema.md).
+    If you want to set your `tv_delay` or `tv_delay1`, do it in the `cvars` section of your
+    [match configuration](match_schema.md).
 
     ```
     mp_do_warmup_period
@@ -46,8 +47,10 @@ cfg/get5/live.cfg # (3)
     mp_warmuptime
     mp_warmuptime_all_players_connected
     tv_delay
+    tv_delay1
     tv_delaymapchange
     tv_enable
+    tv_enable1
     tv_record
     tv_stoprecord
     ```
@@ -79,9 +82,19 @@ disconnect even in warmup with the intention to reconnect!). **`Default: 0`**
 :   Whether to wait for map vetoes to be printed to GOTV before changing map. **`Default: 0`**
 
 ####`get5_check_auths`
-:   Whether the Steam IDs from the `players` and `coaches` sections of a [match configuration](../match_schema/#schema)
-are used to force players onto teams. Anyone not defined will be removed from the game, or if
-in [scrim mode](../getting_started/#scrims), put on `team2`. **`Default: 1`**
+:   Whether the Steam IDs from the `players`, `coaches` and `spectators` sections of a
+[match configuration](../match_schema/#schema) are used to force players onto teams. Anyone not defined will be removed
+from the game. This is automatically enabled when a match configuration is loaded.<br>**`Default: 1`**
+
+!!! warning "Team locking is required for Get5 to work"
+
+    You cannot disable `get5_check_auths` in the [`cvars`](../match_schema/#schema) section of your match configuration,
+    and you **must not** disable it in your [live, warmup or knife config files](#phase-configuration-files). Get5 does
+    not work properly if this is disabled during a match, and it should only be disabled on a server expecting to use
+    the [`get5_creatematch`](../commands/#get5_creatematch) or [`get5_scrim`](../commands/#get5_scrim) command to create
+    a match. If you require player replacements during a match, see [`get5_addplayer`](../commands/#get5_addplayer), 
+    [`get5_addcoach`](../commands/#get5_addcoach), [`get5_removeplayer`](../commands/#get5_removeplayer) and
+    [`get5_ringer`](../commands/#get5_ringer).
 
 ####`get5_print_update_notice`
 :   Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if

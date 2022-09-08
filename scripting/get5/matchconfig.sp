@@ -148,15 +148,8 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
     EventLogger_LogAndDeleteEvent(startEvent);
 
-    if (!g_CheckAuthsCvar.BoolValue &&
-        (GetTeamAuths(Get5Team_1).Length != 0 || GetTeamAuths(Get5Team_2).Length != 0 ||
-         GetTeamCoaches(Get5Team_1).Length != 0 || GetTeamCoaches(Get5Team_2).Length != 0)) {
-      LogError(
-          "Setting player auths in the \"players\" or \"coaches\" section has no impact with get5_check_auths 0");
-    }
-
-    // ExecuteMatchConfigCvars must be executed before we place players, as it might have
-    // get5_check_auths 1. We must also have called SetStartingTeams to get the sides right. When
+    // ExecuteMatchConfigCvars must be executed before we place players, as it sets get5_check_auths 1.
+    // We must also have called SetStartingTeams to get the sides right. When
     // restoring from backup, assigning to teams is done after loading the match config as it
     // depends on the sides being set correctly by the backup, so we put it inside this "if" here.
     // When the match is loaded, we do not want to assign players on no team, as they may be in the
@@ -234,6 +227,10 @@ static bool LoadMatchFile(const char[] config) {
     delete kv;
   }
 
+  // This makes sure that all configurations loaded, either directly, from a backup, from get5_creatematch or
+  // get5_scrim have get5_check_auths enabled in their cvars section.
+  g_CvarNames.PushString("get5_check_auths");
+  g_CvarValues.PushString("1");
   return true;
 }
 
@@ -359,6 +356,10 @@ void WriteMatchToKv(KeyValues kv) {
     char cvarName[MAX_CVAR_LENGTH];
     char cvarValue[MAX_CVAR_LENGTH];
     g_CvarNames.GetString(i, cvarName, sizeof(cvarName));
+    if (StrEqual(cvarName, "get5_check_auths", false)) {
+      // Don't write get5_check_auths to backup files, as it won't be loaded anyway.
+      continue;
+    }
     g_CvarValues.GetString(i, cvarValue, sizeof(cvarValue));
     kv.SetString(cvarName, cvarValue);
   }
@@ -477,6 +478,10 @@ static bool LoadMatchFromKv(KeyValues kv) {
       char value[MAX_CVAR_LENGTH];
       do {
         kv.GetSectionName(name, sizeof(name));
+        if (StrEqual(name, "get5_check_auths", false)) {
+          LogMessage("get5_check_auths cannot be set in a match configuration. You should remove it.");
+          continue;
+        }
         ReadEmptyStringInsteadOfPlaceholder(kv, value, sizeof(value));
         g_CvarNames.PushString(name);
         g_CvarValues.PushString(value);
@@ -583,7 +588,10 @@ static bool LoadMatchFromJson(JSON_Object json) {
       key_length = cvars.GetKeySize(i);
       char[] cvarName = new char[key_length];
       cvars.GetKey(i, cvarName, key_length);
-
+      if (StrEqual(cvarName, "get5_check_auths", false)) {
+        LogMessage("get5_check_auths cannot be set in a match configuration. You should remove it.");
+        continue;
+      }
       cvars.GetString(cvarName, cvarValue, sizeof(cvarValue));
       g_CvarNames.PushString(cvarName);
       g_CvarValues.PushString(cvarValue);
@@ -993,7 +1001,7 @@ Action Command_AddKickedPlayer(int client, int args) {
 
 Action Command_RemovePlayer(int client, int args) {
   if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
+    ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
   }
 
@@ -1020,7 +1028,7 @@ Action Command_RemovePlayer(int client, int args) {
 
 Action Command_RemoveKickedPlayer(int client, int args) {
   if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot change player lists when there is no match to modify.");
+    ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
   }
 
@@ -1115,7 +1123,7 @@ Action Command_CreateMatch(int client, int args) {
 
 Action Command_CreateScrim(int client, int args) {
   if (g_GameState != Get5State_None) {
-    ReplyToCommand(client, "Cannot create a match when a match is already loaded");
+    ReplyToCommand(client, "Cannot create a match when a match is already loaded.");
     return Plugin_Handled;
   }
 

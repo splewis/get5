@@ -26,11 +26,6 @@ name and optionally flag and logo as well as any spectators/casters. Once you've
 using the [`get5_loadmatch`](../commands/#get5_loadmatch) command or configure your server to automatically load the
 file as soon as a player joins by setting [`get5_autoload_config`](../configuration/#get5_autoload_config).
 
-!!! tip "Lock it down"
-
-    When loading match configurations, ensure that [`get5_check_auths`](../configuration/#get5_check_auths) is enabled.
-    This ensures that people are locked to the correct teams and that nobody else can join the server.
-
 ## Scrims {: #scrims }
 
 While Get5 is intended for matches (league matches, LANs, cups, etc.), it can be used for everyday

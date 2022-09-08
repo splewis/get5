@@ -448,9 +448,11 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
   } else {
     // We must assign players to their teams. This is normally done inside LoadMatchConfig, but
     // since we need the team sides to be applied from the backup, we skip it then and do it here.
-    LOOP_CLIENTS(i) {
-      if (IsPlayer(i)) {
-        CheckClientTeam(i);
+    if (g_CheckAuthsCvar.BoolValue) {
+      LOOP_CLIENTS(i) {
+        if (IsPlayer(i)) {
+          CheckClientTeam(i);
+        }
       }
     }
     if (g_WaitingForRoundBackup) {
@@ -486,10 +488,10 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
 
 void RestoreGet5Backup(bool restartRecording = true) {
   // If you load a backup during a live round, the game might get stuck if there are only bots
-  // remaining and no players are alive. Other stuff will probably also go wrong, so we just reset
-  // the game before loading the backup to avoid any weird edge-cases.
+  // remaining and no players are alive. Other stuff will probably also go wrong, so we put the game into
+  // warmup. We **cannot** restart the game as that causes problems for tournaments using the logging system.
   if (!InWarmup()) {
-    RestartGame();
+    StartWarmup();
   }
   ExecCfg(g_LiveCfgCvar);
   PauseGame(Get5Team_None, Get5PauseType_Backup);
@@ -537,9 +539,11 @@ static Action Timer_StartRestore(Handle timer) {
 
 static Action Timer_FinishBackup(Handle timer) {
   // This ensures that coaches are moved to their slots.
-  LOOP_CLIENTS(i) {
-    if (IsPlayer(i)) {
-      CheckClientTeam(i);
+  if (g_CheckAuthsCvar.BoolValue) {
+    LOOP_CLIENTS(i) {
+      if (IsPlayer(i)) {
+        CheckClientTeam(i);
+      }
     }
   }
   g_DoingBackupRestoreNow = false;

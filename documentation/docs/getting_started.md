@@ -7,12 +7,11 @@
 
 ## Quick Start {: #quick-start }
 
-If you want to create a match quickly without modifying anything, you must set two properties:
+If you want to create a match quickly without modifying anything, you must set:
 
-1. [`get5_check_auths 0`](../configuration/#get5_check_auths)
-2. [`get5_kick_when_no_match_loaded 0`](../configuration/#get5_kick_when_no_match_loaded)
+[`get5_kick_when_no_match_loaded 0`](../configuration/#get5_kick_when_no_match_loaded)
 
-Once these are disabled, anyone can join the server and they will not be kicked for not being a part of a match.
+Once this is disabled, anyone can join the server without being kicked for not being a part of a match.
 Once all players are connected to the server and on correct teams, just
 call [`get5_creatematch`](../commands/#get5_creatematch). There is also a simple menu that you can call this command
 from by typing [`!get5`](../commands/#get5) in the game chat. Note that you must

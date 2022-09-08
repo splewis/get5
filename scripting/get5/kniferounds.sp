@@ -39,15 +39,21 @@ static void PerformSideSwap(bool swap) {
     g_TeamSide[Get5Team_2] = g_TeamSide[Get5Team_1];
     g_TeamSide[Get5Team_1] = tmp;
 
+    Get5Side currentSide;
+    Get5Side coachingSide;
     LOOP_CLIENTS(i) {
-      if (IsValidClient(i) && !IsClientSourceTV(i)) {
-        if (IsFakeClient(i)) {
-          // Because bots never have an assigned team, they won't be moved around by
-          // CheckClientTeam. We kick them to prevent one team from having too many players. They
-          // will rejoin if defined in the live config.
-          KickClient(i);
-        } else {
-          CheckClientTeam(i, false);
+      if (!IsPlayer(i)) {
+        continue;
+      }
+      currentSide = view_as<Get5Side>(GetClientTeam(i));
+      if (currentSide == Get5Side_T) {
+        SwitchPlayerTeam(i, Get5Side_CT, false);
+      } else if (currentSide == Get5Side_CT) {
+        SwitchPlayerTeam(i, Get5Side_T, false);
+      } else {
+        coachingSide = GetClientCoachingSide(i);
+        if (coachingSide != Get5Side_None) {
+          SetClientCoaching(i, coachingSide == Get5Side_CT ? Get5Side_T : Get5Side_CT, false);
         }
       }
     }

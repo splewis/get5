@@ -166,12 +166,14 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     // skip team none, as players may also just be on the team selection menu when the match is
     // loaded, meaning they will never have a joingame hook, as it already happened, and we still
     // want those players placed.
-    LOOP_CLIENTS(i) {
-      if (IsPlayer(i)) {
-        if (GetClientTeam(i) == CS_TEAM_NONE) {
-          CreateTimer(1.0, Timer_PlacePlayerFromTeamNone, i, TIMER_FLAG_NO_MAPCHANGE);
-        } else {
-          CheckClientTeam(i);
+    if (g_CheckAuthsCvar.BoolValue) {
+      LOOP_CLIENTS(i) {
+        if (IsPlayer(i)) {
+          if (GetClientTeam(i) == CS_TEAM_NONE) {
+            CreateTimer(1.0, Timer_PlacePlayerFromTeamNone, i, TIMER_FLAG_NO_MAPCHANGE);
+          } else {
+            CheckClientTeam(i);
+          }
         }
       }
     }

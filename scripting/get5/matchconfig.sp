@@ -657,16 +657,20 @@ static void LoadTeamData(KeyValues kv, Get5Team matchTeam) {
 
 static void FormatTeamName(const Get5Team team) {
   char color[32];
+  char teamNameFallback[MAX_CVAR_LENGTH];
   if (team == Get5Team_1) {
     g_Team1NameColorCvar.GetString(color, sizeof(color));
+    teamNameFallback = "team1";
   } else if (team == Get5Team_2) {
     g_Team2NameColorCvar.GetString(color, sizeof(color));
+    teamNameFallback = "team2";
   } else if (team == Get5Team_Spec) {
     g_SpecNameColorCvar.GetString(color, sizeof(color));
   } else {
     color = "{NORMAL}";
   }
-  Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color, g_TeamNames[team]);
+  Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color,
+         strlen(g_TeamNames[team]) > 0 ? g_TeamNames[team] : teamNameFallback);
 }
 
 static void LoadDefaultMapList(ArrayList list) {

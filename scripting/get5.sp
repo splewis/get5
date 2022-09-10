@@ -1732,9 +1732,9 @@ static void SetServerStateOnStartup(bool force) {
     // Only run on first client connect or if forced (during OnConfigsExecuted).
     return;
   }
-  // It shouldn't really be possible to end up here, as the server *should* reload the map anyway when first player
-  // joins, but as a safeguard we don't want to move a live game that's not pending a backup or map change into warmup
-  // on player connect.
+  // It shouldn't really be possible to end up here, as the server *should* reload the map anyway
+  // when first player joins, but as a safeguard we don't want to move a live game that's not
+  // pending a backup or map change into warmup on player connect.
   if (!force && g_GameState == Get5State_Live && !g_WaitingForRoundBackup && !g_MapChangePending) {
     return;
   }

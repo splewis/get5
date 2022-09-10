@@ -488,8 +488,9 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
 
 void RestoreGet5Backup(bool restartRecording = true) {
   // If you load a backup during a live round, the game might get stuck if there are only bots
-  // remaining and no players are alive. Other stuff will probably also go wrong, so we put the game into
-  // warmup. We **cannot** restart the game as that causes problems for tournaments using the logging system.
+  // remaining and no players are alive. Other stuff will probably also go wrong, so we put the game
+  // into warmup. We **cannot** restart the game as that causes problems for tournaments using the
+  // logging system.
   if (!InWarmup()) {
     StartWarmup();
   }

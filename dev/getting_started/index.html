@@ -362,12 +362,9 @@
 <a href="../match_schema">match schema</a> sections of the documentation to understand what Get5 can do.</p>
 </div>
 <h2 id="quick-start">Quick Start</h2>
-<p>If you want to create a match quickly without modifying anything, you must set two properties:</p>
-<ol>
-<li><a href="../configuration/#get5_check_auths"><code>get5_check_auths 0</code></a></li>
-<li><a href="../configuration/#get5_kick_when_no_match_loaded"><code>get5_kick_when_no_match_loaded 0</code></a></li>
-</ol>
-<p>Once these are disabled, anyone can join the server and they will not be kicked for not being a part of a match.
+<p>If you want to create a match quickly without modifying anything, you must set:</p>
+<p><a href="../configuration/#get5_kick_when_no_match_loaded"><code>get5_kick_when_no_match_loaded 0</code></a></p>
+<p>Once this is disabled, anyone can join the server without being kicked for not being a part of a match.
 Once all players are connected to the server and on correct teams, just
 call <a href="../commands/#get5_creatematch"><code>get5_creatematch</code></a>. There is also a simple menu that you can call this command
 from by typing <a href="../commands/#get5"><code>!get5</code></a> in the game chat. Note that you must

@@ -671,7 +671,6 @@ static void FormatTeamName(const Get5Team team) {
     teamNameFallback = "team2";
   } else if (team == Get5Team_Spec) {
     g_SpecNameColorCvar.GetString(color, sizeof(color));
-    teamName = hasTeamName ? g_TeamNames[team] : CONFIG_SPECTATORSNAME_DEFAULT;
   }
   FormatEx(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color,
          strlen(g_TeamNames[team]) > 0 ? g_TeamNames[team] : teamNameFallback);

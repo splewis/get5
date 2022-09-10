@@ -9,12 +9,8 @@ Action Command_JoinGame(int client, const char[] command, int argc) {
   }
 }
 
-void CheckClientTeam(int client, bool useDefaultTeamSelection = true) {
-  if (!g_CheckAuthsCvar.BoolValue || IsFakeClient(client)) {
-    // Teams are not enforced; do nothing.
-    return;
-  }
-
+// Assumes client IsPlayer().
+void CheckClientTeam(int client) {
   Get5Team correctTeam = GetClientMatchTeam(client);
   if (correctTeam == Get5Team_None) {
     RememberAndKickClient(client, "%t", "YouAreNotAPlayerInfoMessage");
@@ -44,7 +40,7 @@ void CheckClientTeam(int client, bool useDefaultTeamSelection = true) {
   // If player was not locked to coaching, check if their team's current size -self is less than the
   // max.
   if (CountPlayersOnTeam(correctTeam, client) < g_PlayersPerTeam) {
-    SwitchPlayerTeam(client, correctSide, useDefaultTeamSelection);
+    SwitchPlayerTeam(client, correctSide);
     return;
   }
 
@@ -92,7 +88,7 @@ static bool IsClientCoachForTeam(int client, Get5Team team) {
   return GetAuth(client, clientAuth64, AUTH_LENGTH) && IsAuthOnTeamCoach(clientAuth64, team);
 }
 
-void SetClientCoaching(int client, Get5Side side) {
+void SetClientCoaching(int client, Get5Side side, bool broadcast = true) {
   if (GetClientCoachingSide(client) == side) {
     return;
   }
@@ -103,6 +99,9 @@ void SetClientCoaching(int client, Get5Side side) {
   SetEntProp(client, Prop_Send, "m_iAccount",
              0);  // Ensures coaches have no money if they were to rejoin the game.
 
+  if (!broadcast) {
+    return;
+  }
   char formattedPlayerName[MAX_NAME_LENGTH];
   Get5Team team = GetClientMatchTeam(client);
   FormatPlayerName(formattedPlayerName, sizeof(formattedPlayerName), client, team);
@@ -110,7 +109,7 @@ void SetClientCoaching(int client, Get5Side side) {
 }
 
 void CoachingChangedHook(ConVar convar, const char[] oldValue, const char[] newValue) {
-  if (g_GameState == Get5State_None) {
+  if (g_GameState == Get5State_None || !g_CheckAuthsCvar.BoolValue) {
     return;
   }
   // If disabling coaching, make sure we swap coaches to team or kick them, as they are now regular
@@ -126,7 +125,17 @@ void CoachingChangedHook(ConVar convar, const char[] oldValue, const char[] newV
 }
 
 Action Command_SmCoach(int client, int args) {
-  if (g_GameState == Get5State_None) {
+  if (g_GameState == Get5State_None || !IsPlayer(client)) {
+    return Plugin_Continue;
+  }
+
+  if (!g_CheckAuthsCvar.BoolValue) {
+    Get5Side side = view_as<Get5Side>(GetClientTeam(client));
+    if (side == Get5Side_CT) {
+      FakeClientCommand(client, "coach ct");
+    } else if (side == Get5Side_T) {
+      FakeClientCommand(client, "coach t");
+    }
     return Plugin_Continue;
   }
 
@@ -220,7 +229,7 @@ static void MoveCoachToPlayerInConfig(const int client, const Get5Team team) {
 }
 
 Action Command_Coach(int client, const char[] command, int argc) {
-  if (g_GameState == Get5State_None) {
+  if (g_GameState == Get5State_None || !g_CheckAuthsCvar.BoolValue) {
     return Plugin_Continue;
   }
   ReplyToCommand(
@@ -330,7 +339,7 @@ bool IsClientCoaching(int client) {
   return GetClientCoachingSide(client) != Get5Side_None;
 }
 
-static Get5Side GetClientCoachingSide(int client) {
+Get5Side GetClientCoachingSide(int client) {
   if (GetClientTeam(client) != CS_TEAM_SPECTATOR) {
     return Get5Side_None;
   }

@@ -166,12 +166,14 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     // skip team none, as players may also just be on the team selection menu when the match is
     // loaded, meaning they will never have a joingame hook, as it already happened, and we still
     // want those players placed.
-    LOOP_CLIENTS(i) {
-      if (IsPlayer(i)) {
-        if (GetClientTeam(i) == CS_TEAM_NONE) {
-          CreateTimer(1.0, Timer_PlacePlayerFromTeamNone, i, TIMER_FLAG_NO_MAPCHANGE);
-        } else {
-          CheckClientTeam(i);
+    if (g_CheckAuthsCvar.BoolValue) {
+      LOOP_CLIENTS(i) {
+        if (IsPlayer(i)) {
+          if (GetClientTeam(i) == CS_TEAM_NONE) {
+            CreateTimer(1.0, Timer_PlacePlayerFromTeamNone, i, TIMER_FLAG_NO_MAPCHANGE);
+          } else {
+            CheckClientTeam(i);
+          }
         }
       }
     }
@@ -655,16 +657,20 @@ static void LoadTeamData(KeyValues kv, Get5Team matchTeam) {
 
 static void FormatTeamName(const Get5Team team) {
   char color[32];
+  char teamNameFallback[MAX_CVAR_LENGTH];
   if (team == Get5Team_1) {
     g_Team1NameColorCvar.GetString(color, sizeof(color));
+    teamNameFallback = "team1";
   } else if (team == Get5Team_2) {
     g_Team2NameColorCvar.GetString(color, sizeof(color));
+    teamNameFallback = "team2";
   } else if (team == Get5Team_Spec) {
     g_SpecNameColorCvar.GetString(color, sizeof(color));
   } else {
     color = "{NORMAL}";
   }
-  Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color, g_TeamNames[team]);
+  Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color,
+         strlen(g_TeamNames[team]) > 0 ? g_TeamNames[team] : teamNameFallback);
 }
 
 static void LoadDefaultMapList(ArrayList list) {

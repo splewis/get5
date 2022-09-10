@@ -1482,9 +1482,11 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   // potentially ghost, depending on where the camera drops them. Especially important for coaches.
   // We do this step *before* we write the backup, so we don't have any lingering players in case of
   // a restore.
-  LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && GetClientTeam(i) == CS_TEAM_NONE) {
-      CheckClientTeam(i);
+  if (g_CheckAuthsCvar.BoolValue) {
+    LOOP_CLIENTS(i) {
+      if (IsPlayer(i) && GetClientTeam(i) == CS_TEAM_NONE) {
+        CheckClientTeam(i);
+      }
     }
   }
 
@@ -1730,9 +1732,9 @@ static void SetServerStateOnStartup(bool force) {
     // Only run on first client connect or if forced (during OnConfigsExecuted).
     return;
   }
-  // It shouldn't really be possible to end up here, as the server *should* reload the map anyway when first player
-  // joins, but as a safeguard we don't want to move a live game that's not pending a backup or map change into warmup
-  // on player connect.
+  // It shouldn't really be possible to end up here, as the server *should* reload the map anyway
+  // when first player joins, but as a safeguard we don't want to move a live game that's not
+  // pending a backup or map change into warmup on player connect.
   if (!force && g_GameState == Get5State_Live && !g_WaitingForRoundBackup && !g_MapChangePending) {
     return;
   }

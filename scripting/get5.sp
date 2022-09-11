@@ -837,10 +837,12 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
 
   // This is a defensive solution that ensures we don't have lingering surrender-timers. If everyone leaves and a player
   // then joins the server again, the server may change the map, which triggers this. If this happens, we cannot
-  // recover the game state and must force the series to end.
+  // recover the game state and must force the series to end if the game has progressed past warmup. If we trigger the
+  // timer during warmup, it might abruptly end the series when the first player connects to the server due to reloading
+  // of the map because of "force client reconnect" from the server.
   if (g_EndMatchOnEmptyServerTimer != INVALID_HANDLE) {
-    if (g_GameState != Get5State_None) {
-      LogDebug("Triggering surrender timer immediately as map was changed.");
+    if (g_GameState > Get5State_Warmup && g_GameState < Get5State_PendingRestore && !g_MapChangePending) {
+      LogDebug("Triggering surrender timer immediately as map was changed post-warmup.");
       TriggerTimer(g_EndMatchOnEmptyServerTimer);
     } else {
       delete g_EndMatchOnEmptyServerTimer;

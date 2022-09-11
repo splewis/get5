@@ -2,7 +2,7 @@
 {
     "ReadyToVetoInfoMessage"
     {
-        "ru"            "Напишите {1} когда ваша команда будет готова к голосованию."
+        "ru"            "Напиши {1} когда ваша команда будет готова к голосованию."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -20,6 +20,18 @@
     {
         "ru"            "Напиши {1} когда твоя команда будет готова начать."
     }
+    "YouAreReady"
+    {
+        "ru"            "ГОТОВ!"
+    }
+    "YouAreReadyAuto"
+    {
+        "ru"            "ВНИМАНИЕ: Присвоен статус 'ГОТОВ!' из-за игровой активности. Напиши {1} если не готов."
+    }
+    "YouAreNotReady"
+    {
+        "ru"            "НЕ ГОТОВ!"
+    }
     "WaitingForEnemySwapInfoMessage"
     {
         "ru"            "{1} выиграла раунд. Ожидаем, пока они напишут {2} или {3}."
@@ -27,6 +39,10 @@
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
         "ru"            "Карта будет изменена, когда закончится трансляция на GOTV."
+    }
+    "WaitingForGOTVVetoInfoMessage"
+    {
+        "ru"            "Карта сменится, как только в трансляции GOTV будет показан результат голосования."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -68,9 +84,73 @@
     {
         "ru"            "{1} поставил матч на паузу."
     }
+    "MatchTechPausedByTeamMessage"
+    {
+        "ru"            "{1} запрашивает техническую паузу."
+    }
+    "PausesNotEnabled"
+    {
+        "ru"            "Паузы недоступны."
+    }
+    "TechPausesNotEnabled"
+    {
+        "ru"            "Технические паузы недоступны."
+    }
+    "TechnicalPauseMidSentence"
+    {
+        "ru"            "техническая пауза"
+    }
+    "TacticalPauseMidSentence"
+    {
+        "ru"            "тактическая пауза"
+    }
+    "TimeRemainingBeforeAnyoneCanUnpausePrefix"
+    {
+        "ru"            "Время, оставшееся до отмены паузы любым игроком"
+    }
+    "PauseTimeRemainingPrefix"
+    {
+        "ru"            "Осталось до конца паузы"
+    }
+    "AwaitingUnpause"
+    {
+        "ru"            "Ждем отмены паузы"
+    }
+    "PausedByAdministrator"
+    {
+        "ru"            "Администратор поставил матч на паузу."
+    }
+    "PausedForBackup"
+    {
+        "ru"            "Игра была восстановлена из резервной копии. Обе команды должны снять с паузы, чтобы продолжить."
+    }
+    "UserCannotUnpauseAdmin"
+    {
+        "ru"            "Администратор поставил матч на паузу, только он может ее отменить."
+    }
+    "PausingTeamCannotUnpauseUntilFreezeTime"
+    {
+        "ru"            "Вы не можете отменить паузу до ее начала. Запросы на паузу не могут быть отменены."
+    }
     "PauseRunoutInfoMessage"
     {
         "ru"            "Для {1} время паузы вышло, матч снимается с паузы."
+    }
+    "TechPauseRunoutInfoMessage"
+    {
+        "ru"            "Время технинческой паузы закончилось. Любой игрок может {1} сейчас."
+    }
+    "TechPauseNoTimeRemaining"
+    {
+        "ru"            "Для {1} больше нет времени для технических пауз. Используйте тактические паузы."
+    }
+    "TechPauseNoPausesRemaining"
+    {
+        "ru"            "Для {1} больше нет технических пауз. Используйте тактические паузы."
+    }
+    "TechPausePausesRemaining"
+    {
+        "ru"            "Доступно технических пауз для {1}: {2}"
     }
     "MatchUnpauseInfoMessage"
     {
@@ -79,6 +159,22 @@
     "WaitingForUnpauseInfoMessage"
     {
         "ru"            "{1} желает снять паузу, ожидаем когда {2} напишут {3}."
+    }
+    "PausesLeftInfoMessage"
+    {
+        "ru"            "Доступно тактических пауз для {1}: {2}"
+    }
+    "PrereleaseVersionWarning"
+    {
+        "ru"            "Загружена неофициальная версия Get5 ({1}) используемая только для тестов."
+    }
+    "NewVersionAvailable"
+    {
+        "ru"            "Доступна новая версия Get5. Пожалуйста, перейдите {1} для обновления."
+    }
+    "TeamFailToReadyMinPlayerCheck"
+    {
+        "ru"            "Должно быть как минимум {1} игрока(ов) на сервере для готовности."
     }
     "TeamReadyToVetoInfoMessage"
     {
@@ -100,6 +196,14 @@
     {
         "ru"            "{1} пока не готовы."
     }
+    "ForceReadyInfoMessage"
+    {
+        "ru"            "Напиши {1} для готовности команды, если у вас меньше {2} игроков."
+    }
+    "TeammateForceReadied"
+    {
+        "ru"            "Готовность команды установлена игроком {1}."
+    }
     "AdminForceReadyInfoMessage"
     {
         "ru"            "Админ, в общем, сказал, что все готовы. Поехали."
@@ -112,9 +216,13 @@
     {
         "ru"            "Администратор сила сделала паузу игра."
     }
+    "AdminForceEndWithWinnerInfoMessage"
+    {
+        "ru"            "Админ завершил матч, установив победителем {1}."
+    }
     "AdminForceUnPauseInfoMessage"
     {
-        "ru"            "Администратор силы возобновленная игра."
+        "ru"            "Админ пролдолжил матч."
     }
     "TeamWantsToReloadCurrentRound"
     {
@@ -136,6 +244,10 @@
     {
         "ru"            "{1} выиграл матч."
     }
+    "TeamTiedMatchInfoMessage"
+    {
+        "ru"            "{1} и {2} сыграли вничью."
+    }
     "TeamWonSeriesInfoMessage"
     {
         "ru"            "{1} выиграли серию {2}-{3}."
@@ -143,6 +255,14 @@
     "MatchFinishedInfoMessage"
     {
         "ru"            "Матч уже завершен"
+    }
+    "StopCommandNotEnabled"
+    {
+        "ru"            "Команда !stop не включена."
+    }
+    "StopCommandVotingReset"
+    {
+        "ru"            "Запрос {1} на остановку матча был отменен до окончания раунда."
     }
     "BackupLoadedInfoMessage"
     {
@@ -215,5 +335,113 @@
     "MoveToCoachInfoMessage"
     {
         "ru"            "Так как твоя команда заполнена, ты был перемещен на позицию тренера."
+    }
+    "CannotLeaveCoachingTeamIsFull"
+    {
+        "ru"            "Вы не можете выйти из роли тренера, так как ваша команда заполнена."
+    }
+    "CoachingNotEnabled"
+    {
+        "ru"            "Тренеры не включены. Вы должны установить для {1} значение 1."
+    }
+    "PlayerIsCoachingTeam"
+    {
+        "ru"            "{1} тренер в {2}."
+    }
+    "CanOnlyCoachDuringWarmup"
+    {
+        "ru"            "Вы можете переключиться на тренера или обратно только во время разминки."
+    }
+    "AllCoachSlotsFilledForTeam"
+    {
+        "ru"            "Все места тренеров ({1}) в вашей команде заполнены."
+    }
+    "ReadyTag"
+    {
+        "ru"            "[ГОТОВ]"
+    }
+    "NotReadyTag"
+    {
+        "ru"            "[НЕ ГОТОВ]"
+    }
+    "MapVetoPickMenuText"
+    {
+        "ru"        "Пикаем карту:"
+    }
+    "MapVetoPickConfirmMenuText"
+    {
+        "ru"        "Подтвердите пик карты {1}:"
+    }
+    "MapVetoBanMenuText"
+    {
+        "ru"        "Баним карту:"
+    }
+    "MapVetoBanConfirmMenuText"
+    {
+        "ru"        "Подтвердите бан карты {1}:"
+    }
+    "MapVetoSidePickMenuText"
+    {
+        "ru"        "Выбор стороны для {1}:"
+    }
+    "MapVetoSidePickConfirmMenuText"
+    {
+        "ru"        "Подтвердите выбор стороны {1}:"
+    }
+    "ConfirmPositiveOptionText"
+    {
+        "ru"        "Да"
+    }
+    "ConfirmNegativeOptionText"
+    {
+        "ru"        "Нет"
+    }
+    "VetoCountdown"
+    {
+        "ru"        "Голосование начнется через {1} секунд."
+    }
+    "SurrenderCommandNotEnabled"
+    {
+        "ru"        "Команда "Сдаться" не включена."
+    }
+    "SurrenderMinimumRoundDeficit"
+    {
+        "ru"        "Вы должны отставать по крайней мере на {1} раунд(ов), чтобы сдаться."
+    }
+    "SurrenderInitiated"
+    {
+        "ru"        "Голосование за проигрыш было предложено {1}. Ваша команда должна набрать {2} голосов в течение {3} секунд."
+    }
+    "SurrenderVoteStatus"
+    {
+        "ru"        "Проголосовало {1} из {2} необходимых для проигрыша."
+    }
+    "SurrenderSuccessful"
+    {
+        "ru"        "{1} сдались."
+    }
+    "SurrenderVoteFailed"
+    {
+        "ru"        "Недостаточно игроков проголосовало за проигрыш."
+    }
+    "SurrenderOnCooldown"
+    {
+        "ru"        "Подождите {1} для нового голосования за проигрыш."
+    }
+    "SurrenderTeamMustRejoin"
+    {
+        "ru"        "{1} вышли с сарвера и должны подключиться в течение {2} секунд или {3} выигрывают."
+    }
+    "SurrenderRejoinCountdownCanceled"
+    {
+        "ru"        "Обратный отсчет капитуляции был отменен."
+    }
+    "AllPlayersLeftTieCountdown"
+    {
+        "ru"        "Обе команды вышли с сервера. Как минимум один игрок должен подключиться в течение {1} секунд или матч закончится вничью."
+    }
+    "SurrenderTeamAppearsToLeaveWarning"
+    {
+        "ru"        "{1} похоже, выходят с сервера. Никто из {2} не может выйти до старта таймера капитуляции, иначе матч закончится вничью."
     }
 }

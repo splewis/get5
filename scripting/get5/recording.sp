@@ -14,20 +14,26 @@ bool StartRecording() {
   }
 
   char demoName[PLATFORM_MAX_PATH + 1];
+
   if (!FormatCvarString(g_DemoNameFormatCvar, demoName, sizeof(demoName))) {
     LogError("Failed to format demo filename. Please check your demo file format convar.");
     g_DemoFileName = "";
     return false;
   }
 
-  FormatEx(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);
+  char demoFolder[PLATFORM_MAX_PATH];
+  char variableSubstitutes[][] = {"{MATCHID}", "{DATE}"};
+  CheckAndCreateFolderPath(g_DemoPathCvar, variableSubstitutes, 2, demoFolder,
+                           sizeof(demoFolder));
+
+  char demoPath[PLATFORM_MAX_PATH];
+  FormatEx(demoPath, sizeof(demoPath), "%s%s", demoFolder, demoName);
+  FormatEx(g_DemoFileName, sizeof(g_DemoFileName), "%s%s.dem", demoFolder, demoName);
   LogMessage("Recording to %s", g_DemoFileName);
 
   // Escape unsafe characters and start recording. .dem is appended to the filename automatically.
-  char szDemoName[PLATFORM_MAX_PATH + 1];
-  strcopy(szDemoName, sizeof(szDemoName), demoName);
-  ReplaceString(szDemoName, sizeof(szDemoName), "\"", "\\\"");
-  ServerCommand("tv_record \"%s\"", szDemoName);
+  ReplaceString(demoPath, sizeof(demoPath), "\"", "\\\"");
+  ServerCommand("tv_record \"%s\"", demoPath);
   Stats_SetDemoName(g_DemoFileName);
   return true;
 }
@@ -95,7 +101,99 @@ static Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
   Call_PushCell(event);
   Call_Finish();
   EventLogger_LogAndDeleteEvent(event);
+
+  UploadDemoToServer(demoFileName, matchId, mapNumber);
   return Plugin_Handled;
+}
+
+static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, int mapNumber) {
+  char demoUrl[1024];
+  char demoAuthKey[1024];
+  char demoAuthValue[1024];
+
+  g_DemoUploadUrlCvar.GetString(demoUrl, sizeof(demoUrl));
+  g_DemoUploadAuthKeyCvar.GetString(demoAuthKey, sizeof(demoAuthKey));
+  g_DemoUploadAuthValueCvar.GetString(demoAuthValue, sizeof(demoAuthValue));
+
+  if (StrEqual(demoUrl, "")) {
+    LogDebug("Will not upload any demos as upload URL is not set.");
+    return;
+  }
+
+  if (!LibraryExists("SteamWorks")) {
+    LogDebug("Cannot upload demos to a web server without the SteamWorks extension running.");
+    return;
+  }
+
+  char userAgent[1024];
+  char strMapNumber[5];
+  ReplaceString(demoUrl, sizeof(demoUrl), "\"", "");
+  FormatEx(userAgent, sizeof(userAgent), "SourceMod Get5 %s+https://%s", PLUGIN_VERSION,
+         GET5_GITHUB_PAGE);
+  FormatEx(strMapNumber, sizeof(strMapNumber), "%d", mapNumber);
+  // Add the protocol strings if missing (only http).
+  if (StrContains(demoUrl, "http", false) != 0) {
+    Format(demoUrl, sizeof(demoUrl), "http://%s", demoUrl);
+  }
+
+  LogDebug("UploadDemoToServer: demoUrl (SteamWorks) = %s", demoUrl);
+  Handle demoRequest = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, demoUrl);
+
+  if (demoRequest == INVALID_HANDLE) {
+    LogDebug("Failed to create request %s", demoUrl);
+    return;
+  }
+
+  // Set the auth keys only if they are defined. If not, we can still technically POST
+  // to an end point that has no authentication.
+  if (!StrEqual(demoAuthKey, "") && !StrEqual(demoAuthValue, "")) {
+    if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, demoAuthKey, demoAuthValue)) {
+      LogError("Failed to add auth key and token to call. Will end request here.");
+      delete demoRequest;
+      return;
+    }
+  }
+
+  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, "Get5-Demoname", demoFileName)) {
+    LogError("Failed to add filename content header to call. Will end request here.");
+    delete demoRequest;
+    return;
+  }
+
+  if (!SteamWorks_SetHTTPRequestUserAgentInfo(demoRequest, userAgent)) {
+    LogError("Failed to add user-agent header to call. Will end request here.");
+    delete demoRequest;
+    return;
+  }
+  
+  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, "Get5-MatchId", matchId)) {
+    LogError("Failed to add match id content header to call. Will end request here.");
+    delete demoRequest;
+    return;
+  }
+  
+  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, "Get5-MapNumber", strMapNumber)) {
+    LogError("Failed to add map number content header to call. Will end request here.");
+    delete demoRequest;
+    return;
+  }
+
+  if (!SteamWorks_SetHTTPRequestNetworkActivityTimeout(demoRequest, 180)) {
+    LogError("Failed to change request timeout to 180 seconds. Will end request here.");
+    delete demoRequest;
+    return;
+  }
+
+  if (!SteamWorks_SetHTTPRequestRawPostBodyFromFile(demoRequest, "application/octet-stream",
+                                                    demoFileName)) {
+    LogError("Failed to append raw POST body, perhaps the file %s is missing?", demoFileName);
+    delete demoRequest;
+    return;
+  }
+  SteamWorks_SetHTTPCallbacks(demoRequest, DemoRequestCallback);
+  SteamWorks_SendHTTPRequest(demoRequest);
+  // Store the filename of the demo for the callback.
+  FormatEx(g_DemoFileNameLastStartedUpload, sizeof(g_DemoFileNameLastStartedUpload), demoFileName);
 }
 
 static bool IsTVEnabled() {
@@ -136,4 +234,37 @@ void SetCurrentMatchRestartDelay(float delay) {
   if (mp_match_restart_delay != INVALID_HANDLE) {
     mp_match_restart_delay.FloatValue = delay;
   }
+}
+
+static int DemoRequestCallback(Handle request, bool failure, bool requestSuccessful,
+                               EHTTPStatusCode statusCode) {
+  if (failure || !requestSuccessful) {
+    LogError("Failed to upload demo %s.", g_DemoFileNameLastStartedUpload);
+    delete request;
+    return;
+  }
+  int status = view_as<int>(statusCode);
+  if (status >= 300 || status < 200) {
+    LogError("Demo request failed with HTTP status code: %d.", statusCode);
+    int responseSize;
+    SteamWorks_GetHTTPResponseBodySize(request, responseSize);
+    char[] response = new char[responseSize];
+    if (SteamWorks_GetHTTPResponseBodyData(request, response, responseSize)) {
+      LogError("Response body: %s", response);
+    } else {
+      LogError("Failed to read response body.");
+    }
+    delete request;
+    return;
+  }
+  LogDebug("Demo request succeeded. HTTP status code: %d.", statusCode);
+  if (g_DemoUploadDeleteAfterCvar.BoolValue && !StrEqual(g_DemoFileNameLastStartedUpload, "")) {
+    LogDebug("get5_demo_delete_after_upload set to true; deleting the file from the game server.");
+    if (FileExists(g_DemoFileNameLastStartedUpload)) {
+      if (!DeleteFile(g_DemoFileNameLastStartedUpload)) {
+        LogError("Unable to delete demo file %s.", g_DemoFileNameLastStartedUpload);
+      }
+    }
+  }
+  delete request;
 }

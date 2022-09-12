@@ -25,3 +25,11 @@ has passed.
     the GOTV bot to join the server. You should enable GOTV in your general server config and refrain from turning it on
     and off with Get5. Note that setting `tv_enable 1` won't allow people to join your server's GOTV. You must also set
     `tv_advertise_watchable 1`, so you don't have to worry about ghosting if this is disabled.
+
+### Automatic Uploads {: #upload }
+If you have configured [`get5_demo_upload_url`](../configuration/#get5_demo_upload_url), 
+[`get5_demo_upload_header_key`](../configuration/#get5_demo_upload_header_key) and
+[`get5_demo_upload_header_value`](../configuration/#get5_demo_upload_header_value), Get5 will
+automatically upload the demo file to the given URL. You can also set
+[`get5_demo_delete_after_upload`](../configuration/#get5_demo_delete_after_upload)
+in order to delete the file from the game server after successful upload.

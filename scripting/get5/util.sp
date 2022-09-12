@@ -670,6 +670,80 @@ stock bool IsJSONPath(const char[] path) {
   }
 }
 
+stock bool CreateDirectoryWithPermissions(const char[] directory) {
+  LogDebug("Creating directory: %s", directory);
+  return CreateDirectory(directory,  // sets 777 permissions.
+                         FPERM_U_READ | FPERM_U_WRITE | FPERM_U_EXEC | FPERM_G_READ |
+                             FPERM_G_WRITE | FPERM_G_EXEC | FPERM_O_READ | FPERM_O_WRITE |
+                             FPERM_O_EXEC);
+}
+
+stock bool CreateFolderStructure(const char[] path) {
+  if (strlen(path) == 0 || DirExists(path)) {
+    return true;
+  }
+
+  LogDebug("Creating directory %s because it does not exist.", path);
+  char folders[16][PLATFORM_MAX_PATH];  // {folder1, folder2, etc}
+  char fullFolderPath[PLATFORM_MAX_PATH] =
+      "";  // initially empty, but we append every time a folder is created/verified
+  char currentFolder[PLATFORM_MAX_PATH];  // shorthand for folders[i]
+
+  ExplodeString(path, "/", folders, sizeof(folders), PLATFORM_MAX_PATH, true);
+  for (int i = 0; i < sizeof(folders); i++) {
+    currentFolder = folders[i];
+    if (strlen(currentFolder) ==
+        0) {  // as the loop is a fixed size, we stop when there are no more pieces.
+      break;
+    }
+    // Append the current folder to the full path
+    Format(fullFolderPath, sizeof(fullFolderPath), "%s%s/", fullFolderPath, currentFolder);
+    if (!DirExists(fullFolderPath) && !CreateDirectoryWithPermissions(fullFolderPath)) {
+      LogError("Failed to create or verify existence of directory: %s", fullFolderPath);
+      return false;
+    }
+  }
+  return true;
+}
+
+stock void CheckAndCreateFolderPath(const ConVar cvar, const char[][] varsToReplace,
+                                    const int varListSize, char outputFolder[PLATFORM_MAX_PATH],
+                                    const int outputFolderSize) {
+  char path[PLATFORM_MAX_PATH];
+  char cvarName[MAX_CVAR_LENGTH];
+
+  cvar.GetName(cvarName, sizeof(cvarName));
+  cvar.GetString(path, sizeof(path));
+
+  for (int i = 0; i < varListSize; i++) {
+    if (StrEqual("{MATCHID}", varsToReplace[i])) {
+      ReplaceString(path, sizeof(path), varsToReplace[i], g_MatchID);
+    } else if (StrEqual("{DATE}", varsToReplace[i])) {
+      char dateFormat[64];
+      char formattedDate[64];
+      int timeStamp = GetTime();
+      g_DateFormatCvar.GetString(dateFormat, sizeof(dateFormat));
+
+      FormatTime(formattedDate, sizeof(formattedDate), dateFormat, timeStamp);
+      ReplaceString(path, sizeof(path), varsToReplace[i], formattedDate);
+    }
+  }
+
+  int folderLength = strlen(path);
+
+  if (folderLength > 0 && (path[0] == '/' || path[0] == '.' || path[folderLength - 1] != '/' ||
+                           StrContains(path, "//") != -1)) {
+    LogError(
+        "%s must end with a slash and must not start with a slash or dot. It will be reset to an empty string! Current value: %s",
+        cvarName, path);
+    path = "";
+    cvar.SetString(path, false, false);
+  } else {
+    CreateFolderStructure(path);
+  }
+  Format(outputFolder, outputFolderSize, "%s", path);
+}
+
 stock int GetMilliSecondsPassedSince(float timestamp) {
   return RoundToFloor((GetEngineTime() - timestamp) * 1000);
 }

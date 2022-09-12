@@ -279,7 +279,7 @@
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_loadmatch_url">
-    get5_loadmatch_url &lt;url&gt;
+    get5_loadmatch_url &lt;url&gt; [headername] [headervalue]
   </a>
 </li>
 <li class="md-nav__item">
@@ -567,7 +567,7 @@
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_loadmatch_url">
-    get5_loadmatch_url &lt;url&gt;
+    get5_loadmatch_url &lt;url&gt; [headername] [headervalue]
   </a>
 </li>
 <li class="md-nav__item">
@@ -756,10 +756,12 @@ time a backup file is written. Empty string if no backup was written.</dd>
 <dd>Loads a <a href="../match_schema">team section of a match configuration</a> from a file into a team relative to the <code>csgo</code>
 directory. The file must contain a <code>Get5MatchTeam</code> object.</dd>
 </dl>
-<h4 id="get5_loadmatch_url"><code>get5_loadmatch_url &lt;url&gt;</code></h4>
+<h4 id="get5_loadmatch_url"><code>get5_loadmatch_url &lt;url&gt; [headername] [headervalue]</code></h4>
 <dl>
 <dd>Loads a remote (JSON-formatted) <a href="../match_schema">match configuration</a> by sending an HTTP(S) <code>GET</code> to the given URL.
-You should put the <code>url</code> argument inside quotation marks (<code>""</code>).</dd>
+You should put the <code>url</code> argument inside quotation marks (<code>""</code>). You may optionally provide an HTTP header and value
+pair using the <code>headername</code> and <code>headervalue</code> arguments. For example, if you wanted to authenticate your request with a
+Bearer token, you could do: <code>get5_loadmatch_url "https://example.com" "Authorization" "Bearer &lt;token&gt;"</code>.</dd>
 </dl>
 <div class="admonition warning">
 <p class="admonition-title">SteamWorks required</p>

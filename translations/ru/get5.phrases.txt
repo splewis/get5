@@ -46,7 +46,7 @@
     }
     "NoMatchSetupInfoMessage"
     {
-        "ru"            "На данном сервере не настроен матч."
+        "ru"            "На данном сервере не настроен матч"
     }
     "YouAreNotAPlayerInfoMessage"
     {

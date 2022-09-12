@@ -38,15 +38,15 @@
     }
     "NoMatchSetupInfoMessage"
     {
-        "pt"			"Não existe configuração de partida."
+        "pt"			"Não existe configuração de partida"
     }
     "YouAreNotAPlayerInfoMessage"
     {
-        "pt"            "Você não é um jogador dessa partida."
+        "pt"            "Você não é um jogador dessa partida"
     }
     "TeamIsFullInfoMessage"
     {
-        "pt"            "Seu time está cheio."
+        "pt"            "Seu time está cheio"
     }
     "TeamForfeitInfoMessage"
     {

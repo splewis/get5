@@ -250,19 +250,15 @@ the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`.<br>**`Defau
 ####`get5_time_format`
 :   Date and time format string. This determines the [`{TIME}`](#tag-time) tag.<br>**`Default: "%Y-%m-%d_%H-%M-%S"`**
 
+####`get5_date_format`
+:   Date format string. This determines the [`{DATE}`](#tag-date) tag.<br>**`Default: "%Y-%m-%d"`**
+
 !!! danger "Advanced users only"
 
     Do not change the time format unless you know what you are doing. Please always include a component of hours,
     minutes and seconds so that [demo files](#get5_demo_name_format) will not be overwritten. You can find the reference
     for formatting a time string [here](https://cplusplus.com/reference/ctime/strftime/). The default example above
     prints time in this format: `2022-06-12_13-15-45`.
-
-####`get5_demo_name_format`
-:   Format to use for demo files when [recording matches](gotv.md). Do not include a file extension (`.dem` is added
-automatically). If you do not include the [`{TIME}`](#tag-time) tag, you will have
-problems with duplicate files if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber)
-variable is not zero-indexed. Set to empty string to disable recording
-demos.<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
 
 ####`get5_event_log_format`
 :   Format to write event logs to. Set to empty string to disable writing event logs.<br>**`Default: ""`**
@@ -315,6 +311,41 @@ if [`get5_print_damage`](#get5_print_damage) is disabled.<br>
 ####`get5_knife_cfg`
 :   Config file executed for the knife round, relative to `csgo/cfg`.<br>**`Default: "get5/knife.cfg"`**
 
+## Demos
+
+####`get5_demo_upload_url`
+:   If defined, it is the URL at which a server resides to accept connections to upload demos. Requires
+[SteamWorks](../installation/#steamworks) extension. If no protocol is provided, the plugin will prepend
+`http://` to this value. **`Default: ""`**
+
+####`get5_demo_upload_header_key`
+:   If defined, it is the authorization key that is appended to the HTTP request. Requires
+[SteamWorks](../installation/#steamworks) extension. **`Default: Authorization`**
+
+####`get5_demo_upload_header_value`
+:   If defined, it is the authorization value that is appended to the HTTP request. Requires
+[SteamWorks](../installation/#steamworks) extension. This is where your API *key* would
+be set. **`Default: ""`**
+
+####`get5_demo_delete_after_upload`
+:   Whether or not to delete the demo from the game server after successfully uploading
+it to a web server. Requires [`get5_demo_upload_url`](./#get5_demo_upload_url) to be set.
+**`Default: 0`**
+
+####`get5_demo_path`
+:   The folder of saved [demo files](../gotv), relative to the `csgo` directory. You **can** use
+the [`{MATCHID}`](#tag-matchid) and [`{DATE}`](#tag-date) variable, i.e. `demos/{DATE}/{MATCHID}/`.
+Much like [`get5_backup_path`](./#get5_backup_path), the path must **not** start with a slash, and
+must **end with a slash**.
+**`Default: ""`**
+
+####`get5_demo_name_format`
+:   Format to use for demo files when [recording matches](gotv.md). Do not include a file extension (`.dem` is added
+automatically). If you do not include the [`{TIME}`](#tag-time) tag, you will have
+problems with duplicate files if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber)
+variable is not zero-indexed. Set to empty string to disable recording
+demos.<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
+
 ## Substitution Variables
 
 ### Match/State Substitutes {: #state-substitutes }
@@ -325,6 +356,9 @@ placeholder strings that will be replaced by meaningful values when printed. Not
 
 ####`{TIME}` {: #tag-time}
 :   The current time, determined by [`get5_time_format`](#get5_time_format).
+
+####`{DATE}` {: #tag-date}
+:   The current date, determined by [`get5_date_format`](#get5_date_format).
 
 ####`{MAPNAME}` {: #tag-mapname}
 :   The pretty-printed name of the map, i.e. **Dust II** for `de_dust2`.

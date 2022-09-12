@@ -64,6 +64,7 @@ ConVar g_AutoLoadConfigCvar;
 ConVar g_AutoReadyActivePlayersCvar;
 ConVar g_BackupSystemEnabledCvar;
 ConVar g_CheckAuthsCvar;
+ConVar g_DateFormatCvar;
 ConVar g_DamagePrintCvar;
 ConVar g_DamagePrintExcessCvar;
 ConVar g_DamagePrintFormatCvar;
@@ -108,6 +109,11 @@ ConVar g_VotesRequiredForSurrenderCvar;
 ConVar g_SurrenderVoteTimeLimitCvar;
 ConVar g_SurrenderCooldownCvar;
 ConVar g_SurrenderTimeToRejoinCvar;
+ConVar g_DemoUploadUrlCvar;
+ConVar g_DemoUploadAuthKeyCvar;
+ConVar g_DemoUploadAuthValueCvar;
+ConVar g_DemoUploadDeleteAfterCvar;
+ConVar g_DemoPathCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -239,6 +245,7 @@ ArrayList g_ChatAliasesCommands;
 
 /** Map-game state not related to the actual gameplay. **/
 char g_DemoFileName[PLATFORM_MAX_PATH];
+char g_DemoFileNameLastStartedUpload[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
 bool g_PendingSideSwap = false;
 Handle g_PendingMapChangeTimer = INVALID_HANDLE;
@@ -364,12 +371,30 @@ public void OnPluginStart() {
   g_DamagePrintExcessCvar = CreateConVar(
       "get5_print_damage_excess", "0",
       "Prints full damage given in the damage report on round end. With this disabled (default), a player cannot take more than 100 damage.");
+  g_DateFormatCvar = CreateConVar(
+      "get5_date_format", "%Y-%m-%d",
+      "Date format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
   g_CheckAuthsCvar =
       CreateConVar("get5_check_auths", "1",
                    "If set to 0, get5 will not force players to the correct team based on steamid");
   g_DemoNameFormatCvar = CreateConVar(
       "get5_demo_name_format", "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
       "Format for demo file names, use \"\" to disable. Do not remove the {TIME} placeholder if you use the backup system.");
+  g_DemoPathCvar = CreateConVar(
+      "get5_demo_path", "",
+      "The folder to save demo files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
+  g_DemoUploadAuthKeyCvar = CreateConVar(
+      "get5_demo_upload_header_value", "",
+      "If defined, it is the authorization value that is appended to the HTTP request. Requires SteamWorks.");
+  g_DemoUploadAuthValueCvar = CreateConVar(
+      "get5_demo_upload_header_key", "Authorization",
+      "If defined, it is the authorization key that is appended to the HTTP request. Requires SteamWorks.");
+  g_DemoUploadDeleteAfterCvar = CreateConVar(
+      "get5_demo_delete_after_upload", "0",
+      "Whether to delete the demo from the game server after a successful upload.");
+  g_DemoUploadUrlCvar = CreateConVar(
+      "get5_demo_upload_url", "",
+      "If defined, it is the URL at which a server resides to accept connections to upload demos. Requires SteamWorks extension. If no protocol is provided, the plugin will prepend http:// to this value.");
   g_DisplayGotvVetoCvar =
       CreateConVar("get5_display_gotv_veto", "0",
                    "Whether to wait for map vetos to be printed to GOTV before changing map");
@@ -1888,10 +1913,14 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
 
   // Get the time, this is {TIME} in the format string.
   char timeFormat[64];
+  char dateFormat[64];
   g_TimeFormatCvar.GetString(timeFormat, sizeof(timeFormat));
+  g_DateFormatCvar.GetString(dateFormat, sizeof(dateFormat));
   int timeStamp = GetTime();
   char formattedTime[64];
+  char formattedDate[64];
   FormatTime(formattedTime, sizeof(formattedTime), timeFormat, timeStamp);
+  FormatTime(formattedDate, sizeof(formattedDate), dateFormat, timeStamp);
 
   // Get team names with spaces removed.
   char team1Str[MAX_CVAR_LENGTH];
@@ -1904,6 +1933,7 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
 
   // MATCHTITLE must go first as it can contain other placeholders
   ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle);
+  ReplaceString(buffer, len, "{DATE}", formattedDate);
   ReplaceStringWithInt(buffer, len, "{MAPNUMBER}", Get5_GetMapNumber() + 1);
   ReplaceStringWithInt(buffer, len, "{MAXMAPS}", g_NumberOfMapsInSeries);
   ReplaceString(buffer, len, "{MATCHID}", g_MatchID);

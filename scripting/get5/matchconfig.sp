@@ -259,7 +259,8 @@ static void MatchConfigFail(const char[] reason, any...) {
 }
 
 stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
-                            ArrayList paramValues = null) {
+                            ArrayList paramValues = null, ArrayList headerNames = null,
+                            ArrayList headerValues = null) {
   bool steamWorksAvaliable = LibraryExists("SteamWorks");
 
   char cleanedUrl[1024];
@@ -279,9 +280,26 @@ stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
       return false;
     }
 
+    if (headerNames != null && headerValues != null) {
+      if (headerNames.Length != headerValues.Length) {
+        MatchConfigFail("request headerNames and headerValues size mismatch");
+        delete request;
+        return false;
+      }
+
+      char headerparam[128];
+      char headervalue[1024];
+      for (int i = 0; i < headerNames.Length; i++) {
+        headerNames.GetString(i, headerparam, sizeof(headerparam));
+        headerValues.GetString(i, headervalue, sizeof(headervalue));
+        SteamWorks_SetHTTPRequestHeaderValue(request, headerparam, headervalue);
+      }
+    }
+
     if (paramNames != null && paramValues != null) {
       if (paramNames.Length != paramValues.Length) {
         MatchConfigFail("request paramNames and paramValues size mismatch");
+        delete request;
         return false;
       }
 
@@ -309,13 +327,33 @@ static int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
                                             EHTTPStatusCode statusCode, Handle data) {
   if (failure || !requestSuccessful) {
     MatchConfigFail("Steamworks GET request failed, HTTP status code = %d", statusCode);
+    delete request;
+    return;
+  }
+
+  int status = view_as<int>(statusCode);
+  if (status >= 300 || status < 200) {
+    LogError("Steamworks GET request failed with HTTP status code: %d.", statusCode);
+    int responseSize;
+    SteamWorks_GetHTTPResponseBodySize(request, responseSize);
+    char[] response = new char[responseSize];
+    if (SteamWorks_GetHTTPResponseBodyData(request, response, responseSize)) {
+      LogError("Response body: %s", response);
+    } else {
+      LogError("Failed to read response body.");
+    }
+    delete request;
     return;
   }
 
   char remoteConfig[PLATFORM_MAX_PATH];
   GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
-  SteamWorks_WriteHTTPResponseBodyToFile(request, remoteConfig);
-  LoadMatchConfig(remoteConfig);
+  if (SteamWorks_WriteHTTPResponseBodyToFile(request, remoteConfig)) {
+    LoadMatchConfig(remoteConfig);
+  } else {
+    LogError("Failed to write match configuration to file.");
+  }
+  delete request;
 
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), g_LoadedConfigUrl);
 }

@@ -81,7 +81,8 @@ native bool Get5_LoadMatchConfig(const char[] filename);
 // Loads a match config by downloading a remote config via a HTTP GET request.
 // Request parameters should be left out of the url and put into the optional ArrayLists parameters.
 native bool Get5_LoadMatchConfigFromURL(const char[] url, ArrayList paramNames = null,
-                                        ArrayList paramValues = null);
+                                        ArrayList paramValues = null, ArrayList headerNames = null,
+                                        ArrayList headerValues = null);
 
 // Adds a player to a match team. You can optionally force set a player name here as well.
 // Returns if they were successfully added.

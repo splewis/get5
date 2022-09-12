@@ -30,7 +30,7 @@
     }
     "NoMatchSetupInfoMessage"
     {
-        "ru"            "На этом сервере нет матча."
+        "ru"            "На этом сервере нет матча"
     }
     "YouAreNotAPlayerInfoMessage"
     {

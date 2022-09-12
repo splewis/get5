@@ -7,7 +7,7 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/dev/gotv/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.3.1, mkdocs-material-8.4.3" name="generator"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.4.4" name="generator"/>
 <title>GOTV &amp; Demos - Get5</title>
 <link href="../assets/stylesheets/main.6b80c2a2.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
@@ -179,9 +179,26 @@
 </li>
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          GOTV &amp; Demos
+          <span class="md-nav__icon md-icon"></span>
+</label>
 <a class="md-nav__link md-nav__link--active" href="./">
         GOTV &amp; Demos
       </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#upload">
+    Automatic Uploads
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -250,6 +267,17 @@
 <div class="md-sidebar__scrollwrap">
 <div class="md-sidebar__inner">
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#upload">
+    Automatic Uploads
+  </a>
+</li>
+</ul>
 </nav>
 </div>
 </div>
@@ -282,6 +310,13 @@ the GOTV bot to join the server. You should enable GOTV in your general server c
 and off with Get5. Note that setting <code>tv_enable 1</code> won't allow people to join your server's GOTV. You must also set
 <code>tv_advertise_watchable 1</code>, so you don't have to worry about ghosting if this is disabled.</p>
 </div>
+<h3 id="upload">Automatic Uploads</h3>
+<p>If you have configured <a href="../configuration/#get5_demo_upload_url"><code>get5_demo_upload_url</code></a>, 
+<a href="../configuration/#get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></a> and
+<a href="../configuration/#get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></a>, Get5 will
+automatically upload the demo file to the given URL. You can also set
+<a href="../configuration/#get5_demo_delete_after_upload"><code>get5_demo_delete_after_upload</code></a>
+in order to delete the file from the game server after successful upload.</p>
 </article>
 </div>
 </div>

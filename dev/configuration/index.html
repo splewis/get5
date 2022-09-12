@@ -7,7 +7,7 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/dev/configuration/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.3.1, mkdocs-material-8.4.3" name="generator"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.4.4" name="generator"/>
 <title>Configuration - Get5</title>
 <link href="../assets/stylesheets/main.6b80c2a2.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
@@ -414,8 +414,8 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_demo_name_format">
-    get5_demo_name_format
+<a class="md-nav__link" href="#get5_date_format">
+    get5_date_format
   </a>
 </li>
 <li class="md-nav__item">
@@ -471,6 +471,45 @@
 </nav>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#demos">
+    Demos
+  </a>
+<nav aria-label="Demos" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_url">
+    get5_demo_upload_url
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_header_key">
+    get5_demo_upload_header_key
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_header_value">
+    get5_demo_upload_header_value
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_delete_after_upload">
+    get5_demo_delete_after_upload
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_path">
+    get5_demo_path
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_name_format">
+    get5_demo_name_format
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#substitution-variables">
     Substitution Variables
   </a>
@@ -485,6 +524,11 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#tag-time">
     {TIME}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-date">
+    {DATE}
   </a>
 </li>
 <li class="md-nav__item">
@@ -945,8 +989,8 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_demo_name_format">
-    get5_demo_name_format
+<a class="md-nav__link" href="#get5_date_format">
+    get5_date_format
   </a>
 </li>
 <li class="md-nav__item">
@@ -1002,6 +1046,45 @@
 </nav>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#demos">
+    Demos
+  </a>
+<nav aria-label="Demos" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_url">
+    get5_demo_upload_url
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_header_key">
+    get5_demo_upload_header_key
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_header_value">
+    get5_demo_upload_header_value
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_delete_after_upload">
+    get5_demo_delete_after_upload
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_path">
+    get5_demo_path
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_name_format">
+    get5_demo_name_format
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#substitution-variables">
     Substitution Variables
   </a>
@@ -1016,6 +1099,11 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#tag-time">
     {TIME}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-date">
+    {DATE}
   </a>
 </li>
 <li class="md-nav__item">
@@ -1352,6 +1440,10 @@ does not work.</p>
 <dl>
 <dd>Date and time format string. This determines the <a href="#tag-time"><code>{TIME}</code></a> tag.<br/><strong><code>Default: "%Y-%m-%d_%H-%M-%S"</code></strong></dd>
 </dl>
+<h4 id="get5_date_format"><code>get5_date_format</code></h4>
+<dl>
+<dd>Date format string. This determines the <a href="#tag-date"><code>{DATE}</code></a> tag.<br/><strong><code>Default: "%Y-%m-%d"</code></strong></dd>
+</dl>
 <div class="admonition danger">
 <p class="admonition-title">Advanced users only</p>
 <p>Do not change the time format unless you know what you are doing. Please always include a component of hours,
@@ -1359,14 +1451,6 @@ minutes and seconds so that <a href="#get5_demo_name_format">demo files</a> will
 for formatting a time string <a href="https://cplusplus.com/reference/ctime/strftime/">here</a>. The default example above
 prints time in this format: <code>2022-06-12_13-15-45</code>.</p>
 </div>
-<h4 id="get5_demo_name_format"><code>get5_demo_name_format</code></h4>
-<dl>
-<dd>Format to use for demo files when <a href="../gotv/">recording matches</a>. Do not include a file extension (<code>.dem</code> is added
-automatically). If you do not include the <a href="#tag-time"><code>{TIME}</code></a> tag, you will have
-problems with duplicate files if restoring a game from a backup. Note that the <a href="#tag-mapnumber"><code>{MAPNUMBER}</code></a>
-variable is not zero-indexed. Set to empty string to disable recording
-demos.<br/><strong><code>Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"</code></strong></dd>
-</dl>
 <h4 id="get5_event_log_format"><code>get5_event_log_format</code></h4>
 <dl>
 <dd>Format to write event logs to. Set to empty string to disable writing event logs.<br/><strong><code>Default: ""</code></strong></dd>
@@ -1421,6 +1505,46 @@ assists and flash assists.</p>
 <dl>
 <dd>Config file executed for the knife round, relative to <code>csgo/cfg</code>.<br/><strong><code>Default: "get5/knife.cfg"</code></strong></dd>
 </dl>
+<h2 id="demos">Demos</h2>
+<h4 id="get5_demo_upload_url"><code>get5_demo_upload_url</code></h4>
+<dl>
+<dd>If defined, it is the URL at which a server resides to accept connections to upload demos. Requires
+<a href="../installation/#steamworks">SteamWorks</a> extension. If no protocol is provided, the plugin will prepend
+<code>http://</code> to this value. <strong><code>Default: ""</code></strong></dd>
+</dl>
+<h4 id="get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></h4>
+<dl>
+<dd>If defined, it is the authorization key that is appended to the HTTP request. Requires
+<a href="../installation/#steamworks">SteamWorks</a> extension. <strong><code>Default: Authorization</code></strong></dd>
+</dl>
+<h4 id="get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></h4>
+<dl>
+<dd>If defined, it is the authorization value that is appended to the HTTP request. Requires
+<a href="../installation/#steamworks">SteamWorks</a> extension. This is where your API <em>key</em> would
+be set. <strong><code>Default: ""</code></strong></dd>
+</dl>
+<h4 id="get5_demo_delete_after_upload"><code>get5_demo_delete_after_upload</code></h4>
+<dl>
+<dd>Whether or not to delete the demo from the game server after successfully uploading
+it to a web server. Requires <a href="./#get5_demo_upload_url"><code>get5_demo_upload_url</code></a> to be set.
+<strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_demo_path"><code>get5_demo_path</code></h4>
+<dl>
+<dd>The folder of saved <a href="../gotv">demo files</a>, relative to the <code>csgo</code> directory. You <strong>can</strong> use
+the <a href="#tag-matchid"><code>{MATCHID}</code></a> and <a href="#tag-date"><code>{DATE}</code></a> variable, i.e. <code>demos/{DATE}/{MATCHID}/</code>.
+Much like <a href="./#get5_backup_path"><code>get5_backup_path</code></a>, the path must <strong>not</strong> start with a slash, and
+must <strong>end with a slash</strong>.
+<strong><code>Default: ""</code></strong></dd>
+</dl>
+<h4 id="get5_demo_name_format"><code>get5_demo_name_format</code></h4>
+<dl>
+<dd>Format to use for demo files when <a href="../gotv/">recording matches</a>. Do not include a file extension (<code>.dem</code> is added
+automatically). If you do not include the <a href="#tag-time"><code>{TIME}</code></a> tag, you will have
+problems with duplicate files if restoring a game from a backup. Note that the <a href="#tag-mapnumber"><code>{MAPNUMBER}</code></a>
+variable is not zero-indexed. Set to empty string to disable recording
+demos.<br/><strong><code>Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"</code></strong></dd>
+</dl>
 <h2 id="substitution-variables">Substitution Variables</h2>
 <h3 id="state-substitutes">Match/State Substitutes</h3>
 <p>Various configuration parameters, such as the file format parameters or the <code>get5_hostname_format</code> option, take
@@ -1429,6 +1553,10 @@ placeholder strings that will be replaced by meaningful values when printed. Not
 <h4 id="tag-time"><code>{TIME}</code></h4>
 <dl>
 <dd>The current time, determined by <a href="#get5_time_format"><code>get5_time_format</code></a>.</dd>
+</dl>
+<h4 id="tag-date"><code>{DATE}</code></h4>
+<dl>
+<dd>The current date, determined by <a href="#get5_date_format"><code>get5_date_format</code></a>.</dd>
 </dl>
 <h4 id="tag-mapname"><code>{MAPNAME}</code></h4>
 <dl>

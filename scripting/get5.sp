@@ -1118,15 +1118,32 @@ static Action Command_LoadMatchUrl(int client, int args) {
     ReplyToCommand(client,
                    "Cannot load matches from a url without the SteamWorks extension running");
   } else {
-    char arg[PLATFORM_MAX_PATH];
-    if (args >= 1 && GetCmdArgString(arg, sizeof(arg))) {
-      if (!LoadMatchFromUrl(arg)) {
+    char url[PLATFORM_MAX_PATH];
+    if (args >= 1 && GetCmdArg(1, url, sizeof(url))) {
+      ArrayList headerNames;
+      ArrayList headerValues;
+      if (args == 2) {
+        ReplyToCommand(client, "This command accepts either one or three parameters.");
+        return;
+      }
+      if (args == 3) {
+        char headerbuffer[PLATFORM_MAX_PATH];
+        GetCmdArg(2, headerbuffer, sizeof(headerbuffer));
+        headerNames = new ArrayList(PLATFORM_MAX_PATH); 
+        headerNames.PushString(headerbuffer);
+        GetCmdArg(3, headerbuffer, sizeof(headerbuffer));
+        headerValues = new ArrayList(PLATFORM_MAX_PATH); 
+        headerValues.PushString(headerbuffer);
+      }
+      if (!LoadMatchFromUrl(url, _, _, headerNames, headerValues)) {
         ReplyToCommand(client, "Failed to load match config.");
       } else {
         ReplyToCommand(client, "Match config loading initialized.");
       }
+      delete headerNames;
+      delete headerValues;
     } else {
-      ReplyToCommand(client, "Usage: get5_loadmatch_url <url>");
+      ReplyToCommand(client, "Usage: get5_loadmatch_url <url> [headername] [headervalue]");
     }
   }
 }

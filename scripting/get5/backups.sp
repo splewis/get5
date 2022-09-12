@@ -168,21 +168,9 @@ void WriteBackup() {
   }
 
   char folder[PLATFORM_MAX_PATH];
-  g_RoundBackupPathCvar.GetString(folder, sizeof(folder));
-  ReplaceString(folder, sizeof(folder), "{MATCHID}", g_MatchID);
-
-  int backupFolderLength = strlen(folder);
-  if (backupFolderLength > 0 &&
-      (folder[0] == '/' || folder[0] == '.' || folder[backupFolderLength - 1] != '/' ||
-       StrContains(folder, "//") != -1)) {
-    LogError(
-        "get5_backup_path must end with a slash and must not start with a slash or dot. It will be reset to an empty string! Current value: %s",
-        folder);
-    folder = "";
-    g_RoundBackupPathCvar.SetString(folder, false, false);
-  } else {
-    CreateBackupFolderStructure(folder);
-  }
+  char variableSubstitutes[][] = {"{MATCHID}"};
+  CheckAndCreateFolderPath(g_RoundBackupPathCvar, variableSubstitutes, 1, folder,
+                           sizeof(folder));
 
   char path[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
@@ -195,42 +183,6 @@ void WriteBackup() {
   LogDebug("Writing backup to %s", path);
   WriteBackupStructure(path);
   g_LastGet5BackupCvar.SetString(path);
-}
-
-static bool CreateDirectoryWithPermissions(const char[] directory) {
-  LogDebug("Creating directory: %s", directory);
-  return CreateDirectory(directory,  // sets 777 permissions.
-                         FPERM_U_READ | FPERM_U_WRITE | FPERM_U_EXEC | FPERM_G_READ |
-                             FPERM_G_WRITE | FPERM_G_EXEC | FPERM_O_READ | FPERM_O_WRITE |
-                             FPERM_O_EXEC);
-}
-
-static bool CreateBackupFolderStructure(const char[] path) {
-  if (strlen(path) == 0 || DirExists(path)) {
-    return true;
-  }
-
-  LogDebug("Creating backup directory %s because it does not exist.", path);
-  char folders[16][PLATFORM_MAX_PATH];  // {folder1, folder2, etc}
-  char fullFolderPath[PLATFORM_MAX_PATH] =
-      "";  // initially empty, but we append every time a folder is created/verified
-  char currentFolder[PLATFORM_MAX_PATH];  // shorthand for folders[i]
-
-  ExplodeString(path, "/", folders, sizeof(folders), PLATFORM_MAX_PATH, true);
-  for (int i = 0; i < sizeof(folders); i++) {
-    currentFolder = folders[i];
-    if (strlen(currentFolder) ==
-        0) {  // as the loop is a fixed size, we stop when there are no more pieces.
-      break;
-    }
-    // Append the current folder to the full path
-    Format(fullFolderPath, sizeof(fullFolderPath), "%s%s/", fullFolderPath, currentFolder);
-    if (!DirExists(fullFolderPath) && !CreateDirectoryWithPermissions(fullFolderPath)) {
-      LogError("Failed to create or verify existence of directory: %s", fullFolderPath);
-      return false;
-    }
-  }
-  return true;
 }
 
 static void WriteBackupStructure(const char[] path) {

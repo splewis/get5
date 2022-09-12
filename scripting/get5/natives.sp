@@ -126,7 +126,9 @@ public int Native_LoadMatchConfigFromURL(Handle plugin, int numParams) {
   GetNativeString(1, url, sizeof(url));
   ArrayList paramNames = view_as<ArrayList>(GetNativeCell(2));
   ArrayList paramValues = view_as<ArrayList>(GetNativeCell(3));
-  return LoadMatchFromUrl(url, paramNames, paramValues);
+  ArrayList headerNames = view_as<ArrayList>(GetNativeCell(4));
+  ArrayList headerValues = view_as<ArrayList>(GetNativeCell(5));
+  return LoadMatchFromUrl(url, paramNames, paramValues, headerNames, headerValues);
 }
 
 public int Native_AddPlayerToTeam(Handle plugin, int numParams) {

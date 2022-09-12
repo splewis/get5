@@ -94,9 +94,11 @@ time a backup file is written. Empty string if no backup was written.
 :   Loads a [team section of a match configuration](../match_schema) from a file into a team relative to the `csgo`
 directory. The file must contain a `Get5MatchTeam` object.
 
-####`get5_loadmatch_url <url>` {: #get5_loadmatch_url }
+####`get5_loadmatch_url <url> [headername] [headervalue]` {: #get5_loadmatch_url }
 :   Loads a remote (JSON-formatted) [match configuration](../match_schema) by sending an HTTP(S) `GET` to the given URL.
-You should put the `url` argument inside quotation marks (`""`).
+You should put the `url` argument inside quotation marks (`""`). You may optionally provide an HTTP header and value
+pair using the `headername` and `headervalue` arguments. For example, if you wanted to authenticate your request with a
+Bearer token, you could do: `get5_loadmatch_url "https://example.com" "Authorization" "Bearer <token>"`.
 
 !!! warning "SteamWorks required"
 

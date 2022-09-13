@@ -7,9 +7,9 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/dev/commands/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.3.1, mkdocs-material-8.4.4" name="generator"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.5.0" name="generator"/>
 <title>Commands - Get5</title>
-<link href="../assets/stylesheets/main.6b80c2a2.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/main.2e8b5541.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
@@ -705,13 +705,14 @@ if possible. Can only be used during warmup.</dd>
 </dl>
 <h4 id="stop"><code>!stop</code></h4>
 <dl>
-<dd>Asks to reload the last match backup file. The opposing team must confirm. Only works if
-the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a> and
-the <a href="../configuration/#get5_stop_command_enabled">get5_stop_command_enabled</a> is set to <code>1</code>.</dd>
+<dd>Asks to reload the last match backup file, i.e. restart the current round. The opposing team must confirm before the
+round ends. Only works if the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a>
+and <a href="../configuration/#get5_stop_command_enabled">get5_stop_command_enabled</a> is set to <code>1</code>.</dd>
 </dl>
 <h4 id="forceready"><code>!forceready</code></h4>
 <dl>
-<dd>Force-readies your team, marking all players on your team as ready.</dd>
+<dd>Force-readies your team, marking all players on your team as ready. This requires that your team has at
+least <a href="../match_schema/#schema"><code>min_players_to_ready</code></a> number of players.</dd>
 </dl>
 <h4 id="ringer"><code>!ringer &lt;target&gt;</code></h4>
 <dl>
@@ -743,9 +744,10 @@ file.</dd>
 </dl>
 <h4 id="get5_loadbackup"><code>get5_loadbackup &lt;filename&gt;</code></h4>
 <dl>
-<dd>Loads a match backup, relative to the <code>csgo</code>
-directory. Requires that the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a>. If you define
-<a href="../configuration/#get5_backup_path"><code>get5_backup_path</code></a>, you must include the path in the filename.</dd>
+<dd>Loads a match backup, relative to the <code>csgo</code> directory. Requires that
+the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a>. If you
+define <a href="../configuration/#get5_backup_path"><code>get5_backup_path</code></a>, you must include the path in the filename. Note that
+loading a backup stops and restarts any ongoing <a href="../gotv/#demos">demo recordings</a>.</dd>
 </dl>
 <h4 id="get5_last_backup_file"><code>get5_last_backup_file</code></h4>
 <dl>
@@ -1004,7 +1006,7 @@ parameter is provided).</dd>
 <div class="md-dialog__inner md-typeset"></div>
 </div>
 <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
-<script src="../assets/javascripts/bundle.2ab50757.min.js"></script>
+<script src="../assets/javascripts/bundle.48f2be22.min.js"></script>
 <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
 <script src="../javascripts/tablesort.js"></script>
 </body>

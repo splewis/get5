@@ -14,6 +14,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
 <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../stylesheets/extra.css" rel="stylesheet"/>
 <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 </head>
 <body data-md-color-accent="" data-md-color-primary="" data-md-color-scheme="default" dir="ltr">
@@ -55,11 +56,11 @@
 </div>
 </div>
 <form class="md-header__option" data-md-component="palette">
-<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="" data-md-color-media="" data-md-color-primary="" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
 <label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
 </label>
-<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="" data-md-color-media="" data-md-color-primary="" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
 <label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
 </label>
@@ -193,9 +194,42 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#upload">
-    Automatic Uploads
+<a class="md-nav__link" href="#broadcast">
+    GOTV Broadcast
   </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#demos">
+    Recording Demos
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#upload">
+    Automatic Upload
+  </a>
+<nav aria-label="Automatic Upload" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#headers">
+    Headers
+  </a>
+<nav aria-label="Headers" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#authorization">
+    Authorization
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cleanup">
+    Cleanup
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -273,9 +307,42 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#upload">
-    Automatic Uploads
+<a class="md-nav__link" href="#broadcast">
+    GOTV Broadcast
   </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#demos">
+    Recording Demos
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#upload">
+    Automatic Upload
+  </a>
+<nav aria-label="Automatic Upload" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#headers">
+    Headers
+  </a>
+<nav aria-label="Headers" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#authorization">
+    Authorization
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cleanup">
+    Cleanup
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -288,17 +355,11 @@
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
 </a>
 <h1 id="gotv"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 9h-2V7h2m0 6h-2v-2h2m0 6h-2v-2h2M8 9H6V7h2m0 6H6v-2h2m0 6H6v-2h2M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3h-2Z"></path></svg></span> GOTV &amp; Demos</h1>
-<p>Get5 can be configured to automatically record matches. This is enabled by default based on the state
-of <a href="../configuration/#get5_demo_name_format"><code>get5_demo_name_format</code></a> and can be disabled by setting that parameter to
-an empty string.</p>
-<p>Demo recording starts once all teams have readied up and ends shortly following a map result. When a demo file is
-written to disk, the <a href="../events_and_forwards/"><code>Get5_OnDemoFinished</code></a> forward is called, which you can use to move the
-file or upload it somewhere. The filename can also be found in the map-section of the
-<a href="../stats_system/#keyvalue">KeyValue stats system</a>.</p>
-<p>Get5 will automatically adjust the <a href="https://totalcsgo.com/command/mpmatchrestartdelay"><code>mp_match_restart_delay</code></a> when a
-map ends if GOTV is enabled to ensure that it won't be shorter than what is required for the GOTV broadcast to finish.
-Players will also not be <a href="../configuration/#get5_kick_when_no_match_loaded">kicked from the server</a> before this delay
-has passed.</p>
+<h2 id="broadcast">GOTV Broadcast</h2>
+<p>Get5 makes no changes to the broadcasting part of the GOTV, but will automatically adjust the
+<a href="https://totalcsgo.com/command/mpmatchrestartdelay"><code>mp_match_restart_delay</code></a> when a map ends if GOTV is enabled to
+ensure that it won't be shorter than what is required for the GOTV broadcast to finish. Players will also not
+be <a href="../configuration/#get5_kick_when_no_match_loaded">kicked from the server</a> before this delay has passed.</p>
 <div class="admonition warning">
 <p class="admonition-title">Don't mess too much with the TV! <img alt="📺" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f4fa.svg" title=":tv:"/></p>
 <p>Changing <code>tv_delay</code> or <code>tv_enable</code> in <code>warmup.cfg</code>, <code>live.cfg</code> etc. is going to cause problems with your demos.
@@ -310,13 +371,35 @@ the GOTV bot to join the server. You should enable GOTV in your general server c
 and off with Get5. Note that setting <code>tv_enable 1</code> won't allow people to join your server's GOTV. You must also set
 <code>tv_advertise_watchable 1</code>, so you don't have to worry about ghosting if this is disabled.</p>
 </div>
-<h3 id="upload">Automatic Uploads</h3>
-<p>If you have configured <a href="../configuration/#get5_demo_upload_url"><code>get5_demo_upload_url</code></a>, 
+<h2 id="demos">Recording Demos</h2>
+<p>Get5 can be configured to automatically record matches. This is enabled by default based on the state
+of <a href="../configuration/#get5_demo_name_format"><code>get5_demo_name_format</code></a> and can be disabled by setting that parameter to
+an empty string.</p>
+<p>Demo recording starts once all teams have readied up and ends shortly following a map result. When a demo file is
+written to disk, the <a href="../events_and_forwards/"><code>Get5_OnDemoFinished</code></a> forward is called. The filename can also be found
+in the map-section of the <a href="../stats_system/#keyvalue">KeyValue stats system</a>.</p>
+<h2 id="upload">Automatic Upload</h2>
+<p>In addition to recording demos, Get5 can also upload them to a URL when the series ends. To enable this feature, you
+must have the <a href="../installation/#steamworks">SteamWorks</a> extension installed and define the URL with
+<a href="../configuration/#get5_demo_upload_url"><code>get5_demo_upload_url</code></a>. The HTTP body will be the raw demo file, and you can
+read the <a href="#headers">headers</a> for file metadata.</p>
+<h3 id="headers">Headers</h3>
+<p>Get5 will always add these three HTTP headers to its demo upload request:</p>
+<ol>
+<li><code>Get5-Demoname</code> is the name of the file as defined
+   by <a href="../configuration/#get5_demo_name_format"><code>get5_demo_name_format</code></a>,
+   i.e. <code>2022-09-11_20-49-49_1564_map1_de_vertigo.dem</code>.</li>
+<li><code>Get5-MatchId</code> is the <a href="../match_schema/#schema">match ID</a> of the series.</li>
+<li><code>Get5-MapNumber</code> is the zero-indexed map number in the series.</li>
+</ol>
+<h4 id="authorization">Authorization</h4>
+<p>If you wish to authenticate your upload request, you can define both
 <a href="../configuration/#get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></a> and
-<a href="../configuration/#get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></a>, Get5 will
-automatically upload the demo file to the given URL. You can also set
-<a href="../configuration/#get5_demo_delete_after_upload"><code>get5_demo_delete_after_upload</code></a>
-in order to delete the file from the game server after successful upload.</p>
+<a href="../configuration/#get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></a> as a header key-value pair which
+Get5 will add to the request.</p>
+<h3 id="cleanup">Cleanup</h3>
+<p>If you set <a href="../configuration/#get5_demo_delete_after_upload"><code>get5_demo_delete_after_upload</code></a>,
+the <a href="../configuration/#get5_demo_name_format">demo file</a> will be removed from the game server after successful upload.</p>
 </article>
 </div>
 </div>

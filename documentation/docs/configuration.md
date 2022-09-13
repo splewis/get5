@@ -259,9 +259,9 @@ the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`.<br>**`Defau
 !!! danger "Advanced users only"
 
     Do not change the time format unless you know what you are doing. Please always include a component of hours,
-    minutes and seconds so that [demo files](#get5_demo_name_format) will not be overwritten. You can find the reference
-    for formatting a time string [here](https://cplusplus.com/reference/ctime/strftime/). The default example above
-    prints time in this format: `2022-06-12_13-15-45`.
+    minutes and seconds in your `get5_time_format` so that [demo files](#get5_demo_name_format) will not be overwritten.
+    You can find the reference for formatting a time string [here](https://cplusplus.com/reference/ctime/strftime/). The
+    default example above prints time in this format: `2022-06-12_13-15-45`.
 
 ####`get5_event_log_format`
 :   Format to write event logs to. Set to empty string to disable writing event logs.<br>**`Default: ""`**
@@ -318,7 +318,7 @@ if [`get5_print_damage`](#get5_print_damage) is disabled.<br>
 
 ####`get5_demo_upload_url`
 :   If defined, Get5 will [automatically send a recorded demo](gotv.md#upload) to this URL in an HTTP `POST` request
-once a series ends. If no protocol is provided, `http://` will be prepended to this value. Requires the
+once a recording stops. If no protocol is provided, `http://` will be prepended to this value. Requires the
 [SteamWorks](../installation/#steamworks) extension.<br>**`Default: ""`**
 
 ####`get5_demo_upload_header_key`

@@ -25,13 +25,14 @@ Get5 can be configured to automatically record matches. This is enabled by defau
 of [`get5_demo_name_format`](../configuration/#get5_demo_name_format) and can be disabled by setting that parameter to
 an empty string.
 
-Demo recording starts once all teams have readied up and ends shortly following a map result. When a demo file is
-written to disk, the [`Get5_OnDemoFinished`](events_and_forwards.md) forward is called. The filename can also be found
-in the map-section of the [KeyValue stats system](../stats_system/#keyvalue).
+Demo recording starts once all teams have readied up and ends shortly following a map result or when
+the [`get5_loadbackup`](../commands/#get5_loadbackup) command is issued, which starts a new recording. When a demo file
+is written to disk, the [`Get5_OnDemoFinished`](events_and_forwards.md) forward is called. The filename can also be
+found in the map-section of the [KeyValue stats system](../stats_system/#keyvalue).
 
 ## Automatic Upload {: #upload }
 
-In addition to recording demos, Get5 can also upload them to a URL when the series ends. To enable this feature, you
+In addition to recording demos, Get5 can also upload them to a URL when the recording stops. To enable this feature, you
 must have the [SteamWorks](../installation/#steamworks) extension installed and define the URL with
 [`get5_demo_upload_url`](../configuration/#get5_demo_upload_url). The HTTP body will be the raw demo file, and you can
 read the [headers](#headers) for file metadata.

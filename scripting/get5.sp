@@ -383,10 +383,10 @@ public void OnPluginStart() {
   g_DemoPathCvar = CreateConVar(
       "get5_demo_path", "",
       "The folder to save demo files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
-  g_DemoUploadAuthKeyCvar = CreateConVar(
+  g_DemoUploadAuthValueCvar = CreateConVar(
       "get5_demo_upload_header_value", "",
       "If defined, it is the authorization value that is appended to the HTTP request. Requires SteamWorks.");
-  g_DemoUploadAuthValueCvar = CreateConVar(
+  g_DemoUploadAuthKeyCvar = CreateConVar(
       "get5_demo_upload_header_key", "Authorization",
       "If defined, it is the authorization key that is appended to the HTTP request. Requires SteamWorks.");
   g_DemoUploadDeleteAfterCvar = CreateConVar(

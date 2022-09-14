@@ -932,15 +932,10 @@ static Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroad
   }
 }
 
-static int GetPlayerStat(int client, const char[] field) {
+static int IncrementPlayerStatByValue(int client, const char[] field, int incrementBy) {
   GoToPlayer(client);
-  int value = g_StatsKv.GetNum(field);
-  GoBackFromPlayer();
-  return value;
-}
-
-static int SetPlayerStat(int client, const char[] field, int newValue) {
-  GoToPlayer(client);
+  int current = g_StatsKv.GetNum(field, 0);
+  int newValue = current + incrementBy;
   g_StatsKv.SetNum(field, newValue);
   GoBackFromPlayer();
   return newValue;
@@ -1015,8 +1010,7 @@ int AddToPlayerStat(int client, const char[] field, int delta) {
     return 0;
   }
   LogDebug("Updating player stat %s for %L", field, client);
-  int value = GetPlayerStat(client, field);
-  return SetPlayerStat(client, field, value + delta);
+  return IncrementPlayerStatByValue(client, field, delta);
 }
 
 static int IncrementPlayerStat(int client, const char[] field) {

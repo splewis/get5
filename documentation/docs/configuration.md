@@ -35,7 +35,8 @@ cfg/get5/live.cfg # (3)
 
     You should avoid these commands in your live, knife and warmup configuration files, as all of these are handled by
     Get5 automatically. Introducing restarts, warmup changes or [GOTV](gotv.md) delay modifications can cause problems.
-    If you want to set your `tv_delay`, do it in the `cvars` section of your [match configuration](match_schema.md).
+    If you want to set your `tv_delay` or `tv_delay1`, do it in the `cvars` section of your
+    [match configuration](match_schema.md).
 
     ```
     mp_do_warmup_period
@@ -46,8 +47,10 @@ cfg/get5/live.cfg # (3)
     mp_warmuptime
     mp_warmuptime_all_players_connected
     tv_delay
+    tv_delay1
     tv_delaymapchange
     tv_enable
+    tv_enable1
     tv_record
     tv_stoprecord
     ```
@@ -256,9 +259,9 @@ the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`.<br>**`Defau
 !!! danger "Advanced users only"
 
     Do not change the time format unless you know what you are doing. Please always include a component of hours,
-    minutes and seconds so that [demo files](#get5_demo_name_format) will not be overwritten. You can find the reference
-    for formatting a time string [here](https://cplusplus.com/reference/ctime/strftime/). The default example above
-    prints time in this format: `2022-06-12_13-15-45`.
+    minutes and seconds in your `get5_time_format` so that [demo files](#get5_demo_name_format) will not be overwritten.
+    You can find the reference for formatting a time string [here](https://cplusplus.com/reference/ctime/strftime/). The
+    default example above prints time in this format: `2022-06-12_13-15-45`.
 
 ####`get5_event_log_format`
 :   Format to write event logs to. Set to empty string to disable writing event logs.<br>**`Default: ""`**
@@ -314,37 +317,35 @@ if [`get5_print_damage`](#get5_print_damage) is disabled.<br>
 ## Demos
 
 ####`get5_demo_upload_url`
-:   If defined, it is the URL at which a server resides to accept connections to upload demos. Requires
-[SteamWorks](../installation/#steamworks) extension. If no protocol is provided, the plugin will prepend
-`http://` to this value. **`Default: ""`**
+:   If defined, Get5 will [automatically send a recorded demo](gotv.md#upload) to this URL in an HTTP `POST` request
+once a recording stops. If no protocol is provided, `http://` will be prepended to this value. Requires the
+[SteamWorks](../installation/#steamworks) extension.<br>**`Default: ""`**
 
 ####`get5_demo_upload_header_key`
-:   If defined, it is the authorization key that is appended to the HTTP request. Requires
-[SteamWorks](../installation/#steamworks) extension. **`Default: Authorization`**
+:   If this **and** [`get5_demo_upload_header_value`](#get5_demo_upload_header_value) is defined, this header name and
+value will be used for your [demo upload HTTP request](#get5_demo_upload_url). Requires
+the [SteamWorks](../installation/#steamworks) extension.<br>**`Default: "Authorization"`**
 
 ####`get5_demo_upload_header_value`
-:   If defined, it is the authorization value that is appended to the HTTP request. Requires
-[SteamWorks](../installation/#steamworks) extension. This is where your API *key* would
-be set. **`Default: ""`**
+:   If this **and** [`get5_demo_upload_header_key`](#get5_demo_upload_header_key) is defined, this header name and value
+will be used for your [demo upload HTTP request](#get5_demo_upload_url). Requires
+the [SteamWorks](../installation/#steamworks) extension.<br>**`Default: ""`**
 
 ####`get5_demo_delete_after_upload`
-:   Whether or not to delete the demo from the game server after successfully uploading
-it to a web server. Requires [`get5_demo_upload_url`](./#get5_demo_upload_url) to be set.
-**`Default: 0`**
+:   Whether to delete the demo file from the game server after
+successfully [uploading it to a web server](gotv.md#upload).<br>**`Default: 0`**
 
 ####`get5_demo_path`
-:   The folder of saved [demo files](../gotv), relative to the `csgo` directory. You **can** use
+:   The folder of saved [demo files](../gotv#demos), relative to the `csgo` directory. You **can** use
 the [`{MATCHID}`](#tag-matchid) and [`{DATE}`](#tag-date) variable, i.e. `demos/{DATE}/{MATCHID}/`.
-Much like [`get5_backup_path`](./#get5_backup_path), the path must **not** start with a slash, and
-must **end with a slash**.
-**`Default: ""`**
+Much like [`get5_backup_path`](#get5_backup_path), the path must **not** start with a slash, and
+must **end with a slash**.<br>**`Default: ""`**
 
 ####`get5_demo_name_format`
-:   Format to use for demo files when [recording matches](gotv.md). Do not include a file extension (`.dem` is added
-automatically). If you do not include the [`{TIME}`](#tag-time) tag, you will have
-problems with duplicate files if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber)
-variable is not zero-indexed. Set to empty string to disable recording
-demos.<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
+:   Format to use for demo files when [recording matches](gotv.md#demos). Do not include a file extension (`.dem` is
+added automatically). If you do not include the [`{TIME}`](#tag-time) tag, you will have problems with duplicate files
+if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber)variable is not zero-indexed. Set to
+empty string to disable recording demos.<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
 
 ## Substitution Variables
 

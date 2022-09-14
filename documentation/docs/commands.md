@@ -43,13 +43,14 @@ if possible. Can only be used during warmup.
 
 ####`!stop`
 
-:   Asks to reload the last match backup file. The opposing team must confirm. Only works if
-the [backup system is enabled](../configuration/#get5_backup_system_enabled) and
-the [get5_stop_command_enabled](../configuration/#get5_stop_command_enabled) is set to `1`.
+:   Asks to reload the last match backup file, i.e. restart the current round. The opposing team must confirm before the
+round ends. Only works if the [backup system is enabled](../configuration/#get5_backup_system_enabled)
+and [get5_stop_command_enabled](../configuration/#get5_stop_command_enabled) is set to `1`.
 
 ####`!forceready`
 
-:   Force-readies your team, marking all players on your team as ready.
+:   Force-readies your team, marking all players on your team as ready. This requires that your team has at
+least [`min_players_to_ready`](../match_schema/#schema) number of players.
 
 ####`!ringer <target>` {: #ringer }
 
@@ -82,9 +83,10 @@ Please note that these are meant to be used by *admins* in console.
 :   Loads a [match configuration](../match_schema) file (JSON or KeyValue) relative to the `csgo` directory.
 
 ####`get5_loadbackup <filename>` {: #get5_loadbackup }
-:   Loads a match backup, relative to the `csgo`
-directory. Requires that the [backup system is enabled](../configuration/#get5_backup_system_enabled). If you define
-[`get5_backup_path`](../configuration/#get5_backup_path), you must include the path in the filename.
+:   Loads a match backup, relative to the `csgo` directory. Requires that
+the [backup system is enabled](../configuration/#get5_backup_system_enabled). If you
+define [`get5_backup_path`](../configuration/#get5_backup_path), you must include the path in the filename. Note that
+loading a backup stops and restarts any ongoing [demo recordings](../gotv/#demos).
 
 ####`get5_last_backup_file`
 :   Prints the name of the last match backup file Get5 wrote in the current series, this is automatically updated each

@@ -154,7 +154,7 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
     }
   }
 
-  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, "Get5-Demoname", demoFileName)) {
+  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, "Get5-DemoName", demoFileName)) {
     LogError("Failed to add filename content header to call. Will end request here.");
     delete demoRequest;
     return;

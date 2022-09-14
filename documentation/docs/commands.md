@@ -227,14 +227,16 @@ from the server immediately.
 
 ####`get5_ringer <target>` {: #get5_ringer }
 :   Adds/removes a ringer to/from the home scrim team. `target` is the name of the player, their user ID or their Steam
-ID. Similar to [`!ringer`](../commands/#ringer) in chat.
+ID. Similar to [`!ringer`](../commands/#ringer) in chat. To target a user or Steam ID, prefix it with a `#`, i.e.
+`get5_ringer #43` to target user ID 43.
+See [this article](https://wiki.alliedmods.net/Admin_Commands_(SourceMod)#How_to_Target) for details.
 
 !!! example "User ID vs client index"
 
-    To view user IDs, type `users` in console. In this example, `3` is the user ID and `1` is the client index:
+    To view user IDs, type `users` in console. In this example, `43` is the user ID and `1` is the client index:
     ```
     > users
-    1:3:"Quinn"
+    1:43:"Quinn"
     ```
 
 ####`get5_debuginfo [file]` {: #get5_debuginfo }

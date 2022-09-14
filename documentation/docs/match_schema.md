@@ -129,12 +129,28 @@ interface Get5Match {
     point to must be in the same format as the main file, so pointing to a `.cfg` file when the main file is `.json`
     will **not** work.
 29. _Optional_<br>The name of the spectator team.<br><br>**`Default: "casters"`**
-30. _Optional_<br>The spectator/caster Steam IDs and names.
+30. _Optional_<br>The spectator/caster Steam IDs and names. Setting a Steam ID as spectator takes precedence over being
+    set as a player or coach.
 31. _Optional_<br>Determines the starting sides for each map. If this array is shorter than `num_maps`, `side_type` will
     determine the side-behavior of the remaining maps. Ignored if `skip_veto` is `false`.
     <br><br>**`Default: undefined`**
 32. _Optional_<br>If `false`, the entire map list will be played, regardless of score. If `true`, a series will be won
     when the series score for a team exceeds the number of maps divided by two.<br><br>**`Default: true`**
+
+!!! info "Team assignment priority"
+
+    If you define a Steam ID in more than one location in your match configuration, it will be evaluated in this order
+    to determine where to put the player:
+
+    1. Spectator
+    2. Coach for `team1`
+    3. Coach for `team2`
+    4. Player for `team1`
+    5. Player for `team2`
+
+    If a player's Steam ID was not found in any of these locations, they will be
+    [removed from the server](../configuration/#get5_check_auths) unless you are
+    in [scrim mode](../getting_started/#scrims).
 
 ## Examples {: #example }
 

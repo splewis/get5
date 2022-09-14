@@ -166,11 +166,11 @@ public int Native_GetPlayerTeam(Handle plugin, int numParams) {
   GetNativeString(1, auth, sizeof(auth));
 
   char steam64Auth[AUTH_LENGTH];
+  Get5Team team = Get5Team_None;
   if (ConvertAuthToSteam64(auth, steam64Auth, false)) {
-    return view_as<int>(GetAuthMatchTeam(steam64Auth));
-  } else {
-    return view_as<int>(Get5Team_None);
+    team = GetAuthMatchTeam(steam64Auth);
   }
+  return view_as<int>(team);
 }
 
 public int Native_CSTeamToGet5Team(Handle plugin, int numParams) {

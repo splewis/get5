@@ -168,7 +168,7 @@ public int Native_GetPlayerTeam(Handle plugin, int numParams) {
   char steam64Auth[AUTH_LENGTH];
   Get5Team team = Get5Team_None;
   if (ConvertAuthToSteam64(auth, steam64Auth, false)) {
-    team = GetAuthMatchTeam(steam64Auth);
+    team = GetMatchTeamFromAuth(steam64Auth);
   }
   return view_as<int>(team);
 }

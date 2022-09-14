@@ -252,7 +252,7 @@ Get5Team GetClientMatchTeam(int client) {
   } else {
     char auth[AUTH_LENGTH];
     if (GetAuth(client, auth, sizeof(auth))) {
-      return GetAuthMatchTeam(auth);
+      return GetMatchTeamFromAuth(auth);
     } else {
       return Get5Team_None;
     }
@@ -283,7 +283,7 @@ Get5Team CSTeamToGet5Team(int csTeam) {
   }
 }
 
-Get5Team GetAuthMatchTeam(const char[] steam64, bool includeCoaches = true, bool includePlayers = true) {
+Get5Team GetMatchTeamFromAuth(const char[] steam64, bool includeCoaches = true, bool includePlayers = true) {
   // Spectator always takes priority.
   if (IsAuthOnTeamPlayer(steam64, Get5Team_Spec)) {
     return Get5Team_Spec;
@@ -431,7 +431,7 @@ bool AddPlayerToTeam(const char[] auth, Get5Team team, const char[] name) {
     return false;
   }
 
-  if (GetAuthMatchTeam(steam64, false, true) == Get5Team_None) {
+  if (GetMatchTeamFromAuth(steam64, false, true) == Get5Team_None) {
     GetTeamPlayers(team).PushString(steam64);
     Get5_SetPlayerName(auth, name);
     return true;
@@ -446,7 +446,7 @@ bool AddCoachToTeam(const char[] auth, Get5Team team, const char[] name) {
     return false;
   }
 
-  if (GetAuthMatchTeam(steam64, true, false) == Get5Team_None) {
+  if (GetMatchTeamFromAuth(steam64, true, false) == Get5Team_None) {
     GetTeamCoaches(team).PushString(steam64);
     Get5_SetPlayerName(auth, name);
     return true;

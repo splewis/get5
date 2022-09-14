@@ -246,7 +246,6 @@
     }
     "TeamTiedMatchInfoMessage"
     {
-        "#format"       "{1:s},{2:s}"
         "ru"            "{1} и {2} сыграли вничью."
     }
     "TeamWonSeriesInfoMessage"

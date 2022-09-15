@@ -434,7 +434,8 @@ better support in various programming languages than Valve's KeyValue format (wh
     point to must be in the same format as the main file, so pointing to a <code>.cfg</code> file when the main file is <code>.json</code>
     will <strong>not</strong> work.</li>
 <li><em>Optional</em><br/>The name of the spectator team.<br/><br/><strong><code>Default: "casters"</code></strong></li>
-<li><em>Optional</em><br/>The spectator/caster Steam IDs and names.</li>
+<li><em>Optional</em><br/>The spectator/caster Steam IDs and names. Setting a Steam ID as spectator takes precedence over being
+    set as a player or coach.</li>
 <li><em>Optional</em><br/>Determines the starting sides for each map. If this array is shorter than <code>num_maps</code>, <code>side_type</code> will
     determine the side-behavior of the remaining maps. Ignored if <code>skip_veto</code> is <code>false</code>.
     <br/><br/><strong><code>Default: undefined</code></strong></li>
@@ -442,6 +443,21 @@ better support in various programming languages than Valve's KeyValue format (wh
     when the series score for a team exceeds the number of maps divided by two.<br/><br/><strong><code>Default: true</code></strong></li>
 <li><em>Optional</em><br/>Determines if coaches must also <a href="../commands/#ready"><code>!ready</code></a>.<br/><br/><strong><code>Default: false</code></strong></li>
 </ol>
+<div class="admonition info">
+<p class="admonition-title">Team assignment priority</p>
+<p>If you define a Steam ID in more than one location in your match configuration, it will be evaluated in this order
+to determine where to put the player:</p>
+<ol>
+<li>Spectator</li>
+<li>Coach for <code>team1</code></li>
+<li>Coach for <code>team2</code></li>
+<li>Player for <code>team1</code></li>
+<li>Player for <code>team2</code></li>
+</ol>
+<p>If a player's Steam ID was not found in any of these locations, they will be
+<a href="../configuration/#get5_check_auths">removed from the server</a> unless you are
+in <a href="../getting_started/#scrims">scrim mode</a>.</p>
+</div>
 <h2 id="example">Examples</h2>
 <p>These examples are identical in the way they would work if loaded.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">JSON (recommended)</label><label for="__tabbed_1_2">KeyValue</label></div>

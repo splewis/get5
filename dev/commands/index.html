@@ -929,13 +929,15 @@ from the server immediately.</dd>
 <h4 id="get5_ringer"><code>get5_ringer &lt;target&gt;</code></h4>
 <dl>
 <dd>Adds/removes a ringer to/from the home scrim team. <code>target</code> is the name of the player, their user ID or their Steam
-ID. Similar to <a href="../commands/#ringer"><code>!ringer</code></a> in chat.</dd>
+ID. Similar to <a href="../commands/#ringer"><code>!ringer</code></a> in chat. To target a user or Steam ID, prefix it with a <code>#</code>, i.e.
+<code>get5_ringer #43</code> to target user ID 43.
+See <a href="https://wiki.alliedmods.net/Admin_Commands_(SourceMod)#How_to_Target">this article</a> for details.</dd>
 </dl>
 <div class="admonition example">
 <p class="admonition-title">User ID vs client index</p>
-<p>To view user IDs, type <code>users</code> in console. In this example, <code>3</code> is the user ID and <code>1</code> is the client index:
+<p>To view user IDs, type <code>users</code> in console. In this example, <code>43</code> is the user ID and <code>1</code> is the client index:
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>&gt; users
-<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>1:3:"Quinn"
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>1:43:"Quinn"
 </code></pre></div></p>
 </div>
 <h4 id="get5_dumpstats"><code>get5_dumpstats [file]</code></h4>

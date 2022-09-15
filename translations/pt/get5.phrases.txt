@@ -6,7 +6,7 @@
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "pt"            "Esperando pelos streamers digitar {2} pra começar."
+        "pt"            "Aguardando {1} digitar {2} pra começar."
     }
     "ReadyToRestoreBackupInfoMessage"
     {
@@ -238,7 +238,7 @@
     }
     "NextSeriesMapInfoMessage"
     {
-        "pt"            "O próximo mapa da série será {1}."
+        "pt"            "O próximo mapa da série é {1} e começará em {2}."
     }
     "TeamWonMatchInfoMessage"
     {

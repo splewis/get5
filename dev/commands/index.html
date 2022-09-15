@@ -940,12 +940,14 @@ ID. Similar to <a href="../commands/#ringer"><code>!ringer</code></a> in chat.</
 </div>
 <h4 id="get5_dumpstats"><code>get5_dumpstats [file]</code></h4>
 <dl>
-<dd>Dumps <a href="../stats_system/#keyvalue">player stats</a> to a file (<code>addons/sourcemod/get5_matchstats.cfg</code> if no file
-parameter is provided).</dd>
+<dd>Dumps <a href="../stats_system/#keyvalue">player stats</a> to a file, relative to the <code>csgo</code> directory, defaulting
+to <code>get5_matchstats.cfg</code> if no file parameter is provided. If you provide a <code>.json</code> filename, the stats data will be
+output in JSON format.</dd>
 </dl>
 <h4 id="get5_debuginfo"><code>get5_debuginfo [file]</code></h4>
 <dl>
-<dd>Dumps debug info to a file (<code>addons/sourcemod/logs/get5_debuginfo.txt</code> if no file parameter is provided).</dd>
+<dd>Dumps debug info to a file, relative to the <code>csgo</code> directory, defaulting
+to <code>addons/sourcemod/logs/get5_debuginfo.txt</code> if no file parameter is provided.</dd>
 </dl>
 <h4 id="get5_test"><code>get5_test</code></h4>
 <dl>

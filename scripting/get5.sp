@@ -122,7 +122,7 @@ int g_MapNumber = 0;             // the current map number, starting at 0.
 int g_NumberOfMapsInSeries = 0;  // the number of maps to play in the series.
 char g_MatchID[MATCH_ID_LENGTH];
 ArrayList g_MapPoolList = null;
-ArrayList g_TeamAuths[MATCHTEAM_COUNT];
+ArrayList g_TeamPlayers[MATCHTEAM_COUNT];
 ArrayList g_TeamCoaches[MATCHTEAM_COUNT];
 StringMap g_PlayerNames;
 char g_TeamNames[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
@@ -571,8 +571,8 @@ public void OnPluginStart() {
   g_CvarValues = new ArrayList(MAX_CVAR_LENGTH);
   g_TeamScoresPerMap = new ArrayList(MATCHTEAM_COUNT);
 
-  for (int i = 0; i < sizeof(g_TeamAuths); i++) {
-    g_TeamAuths[i] = new ArrayList(AUTH_LENGTH);
+  for (int i = 0; i < sizeof(g_TeamPlayers); i++) {
+    g_TeamPlayers[i] = new ArrayList(AUTH_LENGTH);
     // Same length.
     g_TeamCoaches[i] = new ArrayList(AUTH_LENGTH);
   }

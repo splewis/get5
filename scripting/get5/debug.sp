@@ -133,7 +133,7 @@ static void AddGlobalStateInfo(File f) {
     GetTeamString(team, buffer, sizeof(buffer));
     f.WriteLine("Team info for %s (%d):", buffer, team);
     f.WriteLine("g_TeamNames = %s", g_TeamNames[team]);
-    WriteArrayList(f, "g_TeamAuths", g_TeamAuths[team]);
+    WriteArrayList(f, "g_TeamPlayers", g_TeamPlayers[team]);
     f.WriteLine("g_TeamTags = %s", g_TeamTags[team]);
     f.WriteLine("g_FormattedTeamNames = %s", g_FormattedTeamNames[team]);
     f.WriteLine("g_TeamFlags = %s", g_TeamFlags[team]);

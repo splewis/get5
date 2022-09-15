@@ -33,7 +33,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
       g_TechnicalPausesUsed[team] = 0;
     }
     ClearArray(GetTeamCoaches(team));
-    ClearArray(GetTeamAuths(team));
+    ClearArray(GetTeamPlayers(team));
   }
 
   g_MatchID = "";
@@ -149,7 +149,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     EventLogger_LogAndDeleteEvent(startEvent);
 
     if (!g_CheckAuthsCvar.BoolValue &&
-        (GetTeamAuths(Get5Team_1).Length != 0 || GetTeamAuths(Get5Team_2).Length != 0 ||
+        (GetTeamPlayers(Get5Team_1).Length != 0 || GetTeamPlayers(Get5Team_2).Length != 0 ||
          GetTeamCoaches(Get5Team_1).Length != 0 || GetTeamCoaches(Get5Team_2).Length != 0)) {
       LogError(
           "Setting player auths in the \"players\" or \"coaches\" section has no impact with get5_check_auths 0");
@@ -371,8 +371,8 @@ static void AddTeamBackupData(KeyValues kv, Get5Team team) {
   kv.JumpToKey("players", true);
   char auth[AUTH_LENGTH];
   char name[MAX_NAME_LENGTH];
-  for (int i = 0; i < GetTeamAuths(team).Length; i++) {
-    GetTeamAuths(team).GetString(i, auth, sizeof(auth));
+  for (int i = 0; i < GetTeamPlayers(team).Length; i++) {
+    GetTeamPlayers(team).GetString(i, auth, sizeof(auth));
     if (!g_PlayerNames.GetString(auth, name, sizeof(name))) {
       strcopy(name, sizeof(name), KEYVALUE_STRING_PLACEHOLDER);
     }
@@ -429,9 +429,9 @@ static bool LoadMatchFromKv(KeyValues kv) {
   g_FavoredTeamPercentage = kv.GetNum("favored_percentage_team1", 0);
   kv.GetString("favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText));
 
-  GetTeamAuths(Get5Team_Spec).Clear();
+  GetTeamPlayers(Get5Team_Spec).Clear();
   if (kv.JumpToKey("spectators")) {
-    AddSubsectionAuthsToList(kv, "players", GetTeamAuths(Get5Team_Spec));
+    AddSubsectionAuthsToList(kv, "players", GetTeamPlayers(Get5Team_Spec));
     kv.GetString("name", g_TeamNames[Get5Team_Spec], MAX_CVAR_LENGTH,
                  CONFIG_SPECTATORSNAME_DEFAULT);
     kv.GoBack();
@@ -531,11 +531,12 @@ static bool LoadMatchFromJson(JSON_Object json) {
                               sizeof(g_FavoredTeamText));
   g_FavoredTeamPercentage = json_object_get_int_safe(json, "favored_percentage_team1", 0);
 
+  GetTeamPlayers(Get5Team_Spec).Clear();
   JSON_Object spec = json.GetObject("spectators");
   if (spec != null) {
     json_object_get_string_safe(spec, "name", g_TeamNames[Get5Team_Spec], MAX_CVAR_LENGTH,
                                 CONFIG_SPECTATORSNAME_DEFAULT);
-    AddJsonAuthsToList(spec, "players", GetTeamAuths(Get5Team_Spec), AUTH_LENGTH);
+    AddJsonAuthsToList(spec, "players", GetTeamPlayers(Get5Team_Spec), AUTH_LENGTH);
     FormatTeamName(Get5Team_Spec);
   }
 
@@ -596,7 +597,8 @@ static bool LoadMatchFromJson(JSON_Object json) {
 }
 
 static void LoadTeamDataJson(JSON_Object json, Get5Team matchTeam) {
-  GetTeamAuths(matchTeam).Clear();
+  GetTeamPlayers(matchTeam).Clear();
+  GetTeamCoaches(matchTeam).Clear();
 
   char fromfile[PLATFORM_MAX_PATH];
   json_object_get_string_safe(json, "fromfile", fromfile, sizeof(fromfile));
@@ -604,7 +606,7 @@ static void LoadTeamDataJson(JSON_Object json, Get5Team matchTeam) {
   if (StrEqual(fromfile, "")) {
     // TODO: this needs to support both an array and a dictionary
     // For now, it only supports an array
-    AddJsonAuthsToList(json, "players", GetTeamAuths(matchTeam), AUTH_LENGTH);
+    AddJsonAuthsToList(json, "players", GetTeamPlayers(matchTeam), AUTH_LENGTH);
     JSON_Object coaches = json.GetObject("coaches");
     if (coaches != null) {
       AddJsonAuthsToList(json, "coaches", GetTeamCoaches(matchTeam), AUTH_LENGTH);
@@ -629,12 +631,13 @@ static void LoadTeamDataJson(JSON_Object json, Get5Team matchTeam) {
 }
 
 static void LoadTeamData(KeyValues kv, Get5Team matchTeam) {
-  GetTeamAuths(matchTeam).Clear();
+  GetTeamPlayers(matchTeam).Clear();
+  GetTeamCoaches(matchTeam).Clear();
   char fromfile[PLATFORM_MAX_PATH];
   kv.GetString("fromfile", fromfile, sizeof(fromfile));
 
   if (StrEqual(fromfile, "")) {
-    AddSubsectionAuthsToList(kv, "players", GetTeamAuths(matchTeam));
+    AddSubsectionAuthsToList(kv, "players", GetTeamPlayers(matchTeam));
     AddSubsectionAuthsToList(kv, "coaches", GetTeamCoaches(matchTeam));
     kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, "");
     kv.GetString("tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH, "");
@@ -909,9 +912,9 @@ Action Command_AddCoach(int client, int args) {
     if (AddCoachToTeam(auth, team, name)) {
       // If the player is already on the team as a regular player, remove them when adding to
       // coaches.
-      int index = GetTeamAuths(team).FindString(auth);
+      int index = GetTeamPlayers(team).FindString(auth);
       if (index >= 0) {
-        GetTeamAuths(team).Erase(index);
+        GetTeamPlayers(team).Erase(index);
       }
 
       ReplyToCommand(client, "Successfully added player %s as coach for %s.", auth, teamString);
@@ -1174,6 +1177,15 @@ Action Command_CreateScrim(int client, int args) {
     delete kv;
     MatchConfigFail("You must add players to team1 on your scrim template!");
     return Plugin_Handled;
+  }
+
+  // Allow spectators in scrim template.
+  if (kv.JumpToKey("spectators") && kv.JumpToKey("players") && kv.GotoFirstSubKey(false)) {
+    char name[MAX_NAME_LENGTH];
+    do {
+      WritePlaceholderInsteadOfEmptyString(kv, name, sizeof(name));
+    } while (kv.GotoNextKey(false));
+    kv.Rewind();
   }
 
   // Also ensure empty string values in cvars get printed to the match config.

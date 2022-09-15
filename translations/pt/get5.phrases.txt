@@ -6,11 +6,11 @@
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "pt"            "Esperando pelos streammers para digitar {2} pra começar."
+        "pt"            "Esperando pelos streamers digitar {2} pra começar."
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "pt"            "Digite {1} quando vocês estiver pronto para restaurar o backup da partida."
+        "pt"            "Digite {1} quando vocês estiverem prontos para restaurar o backup da partida."
     }
     "ReadyToKnifeInfoMessage"
     {
@@ -54,15 +54,15 @@
     }
     "MinutesToForfeitMessage"
     {
-        "pt"            "{1} tem {2} minutos para ficar prontos ou eles se renderão."
+        "pt"            "{1} tem {2} minutos para ficarem prontos ou eles se renderão."
     }
     "SecondsToForfeitInfoMessage"
     {
-        "pt"            "{1} tem {2} segundos para ficar prontos ou eles se renderão."
+        "pt"            "{1} tem {2} segundos para ficarem prontos ou eles se renderão."
     }
     "10SecondsToForfeitInfoMessage"
     {
-        "pt"            "{1} tem 10 segundos para fica prontos ou se render."
+        "pt"            "{1} tem 10 segundos para ficarem prontos ou se render."
     }
     "MaxPausesUsedInfoMessage"
     {
@@ -70,7 +70,7 @@
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "pt"            "Seu time já usou o máximo de {1} pausa."
+        "pt"            "Seu time já usou o máximo de {1} pausas."
     }
     "MatchPausedByTeamMessage"
     {
@@ -78,7 +78,7 @@
     }
     "PauseRunoutInfoMessage"
     {
-        "pt"            "{1} chegou ao fim do tmepo de pause, resumindo a partida."
+        "pt"            "{1} chegou ao fim do tempo de pausa, resumindo a partida."
     }
     "MatchUnpauseInfoMessage"
     {
@@ -90,11 +90,11 @@
     }
     "PausesLeftInfoMessage"
     {
-        "pt"            "{1} tem {2} pauses sobrando."
+        "pt"            "{1} tem {2} pausas sobrando."
     }
     "TeamFailToReadyMinPlayerCheck"
     {
-        "pt"            "Você precisa ter pelo menos {1} jogadores conectados no server para ficar pronto."
+        "pt"            "Você precisa ter pelo menos {1} jogadores conectados no servidor para ficar pronto."
     }
     "TeamReadyToVetoInfoMessage"
     {
@@ -134,7 +134,7 @@
     }
     "AdminForcePauseInfoMessage"
     {
-        "pt"            "O administrador forçou um pause na partida."
+        "pt"            "O administrador forçou uma pausa na partida."
     }
     "AdminForceUnPauseInfoMessage"
     {
@@ -166,7 +166,7 @@
     }
     "MatchFinishedInfoMessage"
     {
-        "pt"            "A partida foi fnializada"
+        "pt"            "A partida foi finalizada"
     }
     "BackupLoadedInfoMessage"
     {
@@ -178,7 +178,7 @@
     }
     "MatchIsLiveInfoMessage"
     {
-        "pt"            "A partida é {GREEN}LIVE"
+        "pt"            "A partida {GREEN}COMEÇOU"
     }
     "KnifeIn5SecInfoMessage"
     {

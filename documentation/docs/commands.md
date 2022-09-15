@@ -268,11 +268,13 @@ See [this article](https://wiki.alliedmods.net/Admin_Commands_(SourceMod)#How_to
     ```
 
 ####`get5_dumpstats [file]` {: #get5_dumpstats }
-:   Dumps [player stats](../stats_system/#keyvalue) to a file (`addons/sourcemod/get5_matchstats.cfg` if no file
-parameter is provided).
+:   Dumps [player stats](../stats_system/#keyvalue) to a file, relative to the `csgo` directory, defaulting
+to `get5_matchstats.cfg` if no file parameter is provided. If you provide a `.json` filename, the stats data will be
+output in JSON format.
 
 ####`get5_debuginfo [file]` {: #get5_debuginfo }
-:   Dumps debug info to a file (`addons/sourcemod/logs/get5_debuginfo.txt` if no file parameter is provided).
+:   Dumps debug info to a file, relative to the `csgo` directory, defaulting
+to `addons/sourcemod/logs/get5_debuginfo.txt` if no file parameter is provided.
 
 ####`get5_test`
 :   Runs get5 tests. **This should not be used on a live match server since it will reload a match config to test**.

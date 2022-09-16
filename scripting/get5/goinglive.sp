@@ -1,41 +1,40 @@
 void StartGoingLive() {
   LogDebug("StartGoingLive");
   ExecCfg(g_LiveCfgCvar);
-
-  Get5GoingLiveEvent liveEvent = new Get5GoingLiveEvent(g_MatchID, g_MapNumber);
-
-  LogDebug("Calling Get5_OnGoingLive()");
-
-  Call_StartForward(g_OnGoingLive);
-  Call_PushCell(liveEvent);
-  Call_Finish();
-
-  EventLogger_LogAndDeleteEvent(liveEvent);
-
-  ChangeState(Get5State_GoingLive);
-
   // This ensures that we can send send the game to warmup and count down *even if* someone had put
   // "mp_warmup_end", or something else that would mess up warmup, in their live config, which they
   // shouldn't. But we can't be sure.
-  CreateTimer(1.0, Timer_GoToLiveAfterWarmupCountdown, _, TIMER_FLAG_NO_MAPCHANGE);
+  CreateTimer(1.0, Timer_GoToLive, _, TIMER_FLAG_NO_MAPCHANGE);
 }
 
-static Action Timer_GoToLiveAfterWarmupCountdown(Handle timer) {
-  if (g_GameState != Get5State_GoingLive) {
-    return Plugin_Handled;  // super defensive race-condition check.
+static Action Timer_GoToLive(Handle timer) {
+  if (g_GameState != Get5State_Warmup && g_GameState != Get5State_WaitingForKnifeRoundDecision) {
+    // super defensive race-condition check. These are the only two allowed states
+    // for this callback, so if the game had been canceled during this time, do nothing.
+    return;
   }
   // Always disable sv_cheats!
   ServerCommand("sv_cheats 0");
   // Ensure we're in warmup and counting down to live. Round_PreStart handles the rest.
   int countdown = g_LiveCountdownTimeCvar.IntValue;
   if (countdown < 5) {
-    countdown =
-        5;  // ensures that a cvar countdown value of 0 does not leave the game forever in warmup.
+    // ensures that a cvar countdown value of 0 does not leave the game forever in warmup.
+    countdown = 5;
   }
   Get5_MessageToAll("%t", "MatchBeginInSecondsInfoMessage", countdown);
   StartWarmup(countdown);
   LogDebug("Started warmup countdown to live in %d seconds.", countdown);
-  return Plugin_Handled;
+
+  // Change state as we're now counting down to live from warmup.
+  ChangeState(Get5State_GoingLive);
+
+  // Going live event
+  Get5GoingLiveEvent liveEvent = new Get5GoingLiveEvent(g_MatchID, g_MapNumber);
+  LogDebug("Calling Get5_OnGoingLive()");
+  Call_StartForward(g_OnGoingLive);
+  Call_PushCell(liveEvent);
+  Call_Finish();
+  EventLogger_LogAndDeleteEvent(liveEvent);
 }
 
 Action Timer_MatchLive(Handle timer) {

@@ -669,7 +669,11 @@ static Action Timer_InfoMessages(Handle timer) {
              g_MapChangePending && GetTvDelay() > 0) {
     Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
-    // Handle waiting for knife decision
+    if (g_KnifeWinnerTeam == Get5Team_None) {
+      return Plugin_Continue;
+    }
+    // Handle waiting for knife decision. Also check g_KnifeWinnerTeam as there is a small delay between
+    // selecting a side and the game state changing, during which this message should not be printed.
     char formattedStayCommand[64];
     FormatChatCommand(formattedStayCommand, sizeof(formattedStayCommand), "!stay");
     char formattedSwapCommand[64];
@@ -1455,9 +1459,7 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   }
 
   // We cannot do this during warmup, as sending users into warmup post-knife triggers a round start
-  // event. We add an extra restart to clear lingering state from the knife round, such as the round
-  // indicator in the middle of the scoreboard not being reset. This also tightly couples the
-  // live-announcement to the actual live start.
+  // event.
   if (!InWarmup()) {
     if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
       // Ensures that round end after knife sends players directly into warmup.
@@ -1471,6 +1473,9 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
     if (g_GameState == Get5State_GoingLive) {
       LogDebug("Changed to live.");
       ChangeState(Get5State_Live);
+      // We add an extra restart to clear lingering state from the knife round, such as the round
+      // indicator in the middle of the scoreboard not being reset. This also tightly couples the
+      // live-announcement to the actual live start.
       RestartGame();
       CreateTimer(3.0, Timer_MatchLive, _, TIMER_FLAG_NO_MAPCHANGE);
       return;  // Next round start will take care of below, such as writing backup.

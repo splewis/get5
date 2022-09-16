@@ -256,6 +256,7 @@ static void WriteBackupStructure(const char[] path) {
         kv.JumpToKey("valve_backup", true);
         KvCopySubkeys(valveBackup, kv);
         kv.GoBack();
+        DeleteFile(lastBackup);
       }
       delete valveBackup;
     }

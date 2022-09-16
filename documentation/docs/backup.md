@@ -14,10 +14,12 @@ with [`get5_backup_system_enabled`](../configuration/#get5_backup_system_enabled
 ### How does it work? {: #how-to }
 
 Every time a round starts, CS:GO automatically writes a round backup file into the root of the `csgo` directory based on
-the value of `mp_backup_round_file`. The default value for this is `backup`. Get5 reads this file and copies it into its
+the value of `mp_backup_round_file`, which Get5 will automatically adjust
+to [prevent file collisions](../configuration/#get5_server_id). Get5 reads this file, copies it into its
 own file called `get5_backup_match%s_map%d_round%d.cfg`, where the arguments are `matchid`, `mapnumber`
-and `roundnumber`, respectively. A special backup called `get5_backup_match%s_map%d_prelive.cfg` is created and should
-be used if you want to restore to the beginning of the map, before the knife round.
+and `roundnumber`, respectively, and then deletes the original backup file. A special backup
+called `get5_backup_match%s_map%d_prelive.cfg` is created and should be used if you want to restore to the beginning of
+the map, before the knife round.
 
 ### Example
 

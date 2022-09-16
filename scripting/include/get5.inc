@@ -36,7 +36,7 @@ enum Get5State {
   Get5State_Warmup,                        // setup done, waiting for players to ready up
   Get5State_KnifeRound,                    // in the knife round
   Get5State_WaitingForKnifeRoundDecision,  // waiting for a .stay/.swap command after the knife
-  Get5State_GoingLive,                     // in the lo3 process
+  Get5State_GoingLive,                     // counting down to live
   Get5State_Live,                          // the match is live
   Get5State_PostGame,                      // postgame screen + waiting for GOTV to finish broadcast
 };

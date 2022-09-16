@@ -98,10 +98,11 @@ static void EndKnifeRound(bool swap) {
 }
 
 static bool AwaitingKnifeDecision(int client) {
-  bool waiting = g_GameState == Get5State_WaitingForKnifeRoundDecision;
+  if (g_GameState != Get5State_WaitingForKnifeRoundDecision || g_KnifeWinnerTeam == Get5Team_None) {
+    return false;
+  }
   bool onWinningTeam = IsPlayer(client) && GetClientMatchTeam(client) == g_KnifeWinnerTeam;
-  bool admin = (client == 0);
-  return waiting && (onWinningTeam || admin);
+  return onWinningTeam || (client == 0);
 }
 
 Action Command_Stay(int client, int args) {
@@ -152,7 +153,7 @@ Action Command_T(int client, int args) {
 
 Action Timer_ForceKnifeDecision(Handle timer) {
   g_KnifeDecisionTimer = INVALID_HANDLE;
-  if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
+  if (g_GameState == Get5State_WaitingForKnifeRoundDecision && g_KnifeWinnerTeam != Get5Team_None) {
     Get5_MessageToAll("%t", "TeamLostTimeToDecideInfoMessage",
                       g_FormattedTeamNames[g_KnifeWinnerTeam]);
     EndKnifeRound(false);

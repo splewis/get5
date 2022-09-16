@@ -50,7 +50,7 @@ Action Command_ListBackups(int client, int args) {
   if (files != null) {
     char backupInfo[256];
     char pattern[PLATFORM_MAX_PATH];
-    FormatEx(pattern, sizeof(pattern), "get5_backup_match%s", matchID);
+    FormatEx(pattern, sizeof(pattern), "get5_backup%d_match%s", Get5_GetServerID(), matchID);
 
     char filename[PLATFORM_MAX_PATH];
     while (files.GetNext(filename, sizeof(filename))) {
@@ -174,10 +174,10 @@ void WriteBackup() {
 
   char path[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
-    FormatEx(path, sizeof(path), "%sget5_backup_match%s_map%d_round%d.cfg", folder, g_MatchID,
+    FormatEx(path, sizeof(path), "%sget5_backup%d_match%s_map%d_round%d.cfg", folder, Get5_GetServerID(), g_MatchID,
            g_MapNumber, g_RoundNumber);
   } else {
-    FormatEx(path, sizeof(path), "%sget5_backup_match%s_map%d_prelive.cfg", folder, g_MatchID,
+    FormatEx(path, sizeof(path), "%sget5_backup%d_match%s_map%d_prelive.cfg", folder, Get5_GetServerID(), g_MatchID,
            g_MapNumber);
   }
   LogDebug("Writing backup to %s", path);
@@ -538,8 +538,10 @@ void DeleteOldBackups() {
   if (files != null) {
     LogDebug("Searching '%s' for expired backups...", path);
     char filename[PLATFORM_MAX_PATH];
+    char searchPattern[PLATFORM_MAX_PATH];
+    FormatEx(searchPattern, sizeof(searchPattern), "get5_backup%d_", Get5_GetServerID());
     while (files.GetNext(filename, sizeof(filename))) {
-      if (StrContains(filename, "get5_backup_") == 0) {
+      if (StrContains(filename, searchPattern) == 0) {
         Format(filename, sizeof(filename), "%s%s", path, filename);
         if (GetTime() - GetFileTime(filename, FileTime_LastChange) >= maxTimeDifference) {
           if (DeleteFileIfExists(filename)) {

@@ -1,6 +1,23 @@
 # :material-folder-cog: Installation
 
-## SourceMod & MetaMod
+## Game Server {: #server }
+
+Get5 can run on any
+official [CS:GO Dedicated Server](https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive_Dedicated_Servers)
+on both Windows and Linux. Setting up a server is outside the scope of this documentation. It is assumed that you have
+already done this and have a good grasp on how to manage your server.
+
+
+
+!!! warning "Online-only :material-cable-data:"
+
+    You **cannot** use Get5 for completely-offline events. Internet access is required on both the server and clients in
+    order for Get5 to perform most of its basic functions, such as locking players based on their Steam ID.
+
+    Your server must have a valid [Game Server Token](https://steamcommunity.com/dev/managegameservers) and must **not** run
+    with [`sv_lan 1`](https://totalcsgo.com/command/svlan).
+
+## SourceMod & MetaMod {: #sourcemod }
 
 You must have [SourceMod](https://www.sourcemod.net/) installed on your server. Please note that Get5
 requires **SourceMod version 1.10** or higher. SourceMod requires MetaMod, so you must install both plugins.

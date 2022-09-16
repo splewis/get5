@@ -113,7 +113,9 @@ interface Get5Match {
     i.e. `{"hostname": "Match #3123 - Astralis vs. NaVi"}`.<br><br>**`Default: undefined`**
 23. _Optional_<br>Similarly to `players`, this object maps [coaches](coaching.md) using their Steam ID and
     name, locking them to the coach slot unless removed using [`get5_removeplayer`](../commands/#get5_removeplayer).
-    Setting a Steam ID as coach takes precedence over being set as a player.<br><br>**`Default: undefined`**
+    Setting a Steam ID as coach takes precedence over being set as a player.<br><br>Note that
+    if [`sv_coaching_enabled`](https://totalcsgo.com/command/svcoachingenabled) is disabled, anyone defined as a coach
+    will be considered a regular player for the team instead.<br><br>**`Default: undefined`**
 24. _Required_<br>The players on the team.
 25. _Optional_<br>Wrapper of the server's `mp_teammatchstat_txt` cvar, but can use `{MAPNUMBER}` and `{MAXMAPS}` as
     variables that get replaced with their integer values. In a BoX series, you probably don't want to set this since

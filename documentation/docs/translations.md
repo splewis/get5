@@ -46,7 +46,7 @@ this: `Team A picked de_dust2 as map 2.` The French translation file for this st
     }
     ```
 
-## Types of strings
+## Types of Strings
 
 ####`Chat`
 

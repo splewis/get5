@@ -33,7 +33,7 @@ unless the pausing team [runs out of tech pause time](../configuration/#get5_tec
 team (*either* the pausing or the opposing) must unpause. Technical pauses never end without intervention.
 Administrators
 cannot call technical pauses, as an administrative pause will be triggered instead. You can set [the maximum number of
-technical pauses](../configuration/#get5_max_tech_pauses).
+technical pauses](../configuration/#get5_max_tech_pauses). Technical pauses are never reset on halftime.
 
 ## :material-backup-restore: Backup {: #backup }
 
@@ -48,8 +48,8 @@ restrictions, but you **cannot** use [`mp_pause_match`](https://totalcsgo.com/co
 equivalent) at any stage. Due to the way Get5 handles pausing, you must use `sm_pause` in the console, since this will
 track all details and configurations related to pausing in the system. Similarly, `sm_unpause` must be used to unpause.
 Pauses initiated by administrators via console **cannot** be [`!unpause`'ed](../commands/#unpause) by players. Also note
-that an [`admin` pause event](events_and_forwards.md) is fired when the game is paused during [veto](veto.md) (only
-if [`get5_pause_on_veto`](../configuration/#get5_pause_on_veto) is enabled).
+that an [`admin` pause event](events_and_forwards.md) is fired when the game
+is [paused during veto](../configuration/#get5_pause_on_veto).
 
 !!! question "I'm an admin on my server, but I cannot call admin pause?"
 

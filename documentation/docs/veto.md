@@ -19,7 +19,7 @@ when in [scrim mode](../getting_started/#scrims).
 `team1` vetoes first by default, but you can change this in the match configuration via
 the [`veto_first`](../match_schema/#schema) parameter, which also supports `random`.
 
-## Veto types {: #types }
+## Veto Types {: #types }
 
 ### Single map (Bo1) {: #bo1 }
 

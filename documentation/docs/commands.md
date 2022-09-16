@@ -1,6 +1,6 @@
 # :material-apple-keyboard-command: Commands
 
-Generally admin commands will have a `get5_` prefix and must be used in console. Commands intended for general player
+Admin commands will have a `get5_` prefix and must be used in console. Commands intended for general player
 usage are created with `sm_` prefixes, which means SourceMod automatically registers a `!` and `.` chat version of the
 command. (For example: `sm_ready` in console is equivalent to `!ready` or `.ready` in chat).
 
@@ -76,7 +76,9 @@ file.
 
 ## Server/Admin Commands
 
-Please note that these are meant to be used by *admins* in console.
+Please note that these are meant to be used by *admins* in console. The definition is:
+
+**`command <required parameter> [optional parameter]`**
 
 ####`get5_loadmatch <filename>` {: #get5_loadmatch }
 
@@ -125,7 +127,8 @@ name.
 
 ####`get5_addcoach <auth> <team1|team2> [name]` {: #get5_addcoach }
 :   Adds a Steam ID to a team as a coach. The name parameter optionally locks the player's
-name.
+name. This requires that [`sv_coaching_enabled`](https://totalcsgo.com/command/svcoachingenabled) is enabled and cannot
+be used in [scrim mode](../getting_started/#scrims).
 
 ####`get5_removeplayer <auth>` {: #get5_removeplayer}
 :   Removes a steam ID from all teams (can be any format for the Steam ID). This also removes the player as

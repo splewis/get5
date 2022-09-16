@@ -38,8 +38,10 @@ the series and can only stop coaching if the game is still in warmup.
 This behavior allows you to define as many coaches and players in the match configuration as you want: As long as the
 number of players and coaches on the server don't exceed [`players_per_team`](../match_schema/#schema)
 and [`coaches_per_team`](../match_schema/#schema), respectively, Get5 will fill the
-game's slots with the appropriate number of players and coaches and kick the rest. Being in
-the [`coaches`](../match_schema/#schema) section takes precedence over [`players`](../match_schema/#schema).
+game's slots with the appropriate number of players and coaches and kick the rest. Being defined
+in [`coaches`](../match_schema/#schema) takes precedence over being defined
+in [`players`](../match_schema/#schema). If [`sv_coaching_enabled`](https://totalcsgo.com/command/svcoachingenabled) is
+disabled, anyone defined as a coach will be considered a regular player for the team instead.
 
 !!! note "Decreasing the number of players"
 

@@ -8,9 +8,10 @@ any server using the [`get5_loadbackup`](../commands/#get5_loadbackup) command.
 As Get5's backup system sits on top of CS:GO's, it contains everything a normal CS:GO round backup would, but also
 the entire [match configuration](../match_schema) and the match series score for already-played maps.
 
-The backup system must be [enabled](../configuration/#get5_backup_system_enabled) for this to work.
+The backup system can be enabled or disabled
+with [`get5_backup_system_enabled`](../configuration/#get5_backup_system_enabled).
 
-### How does it work?
+### How does it work? {: #how-to }
 
 Every time a round starts, CS:GO automatically writes a round backup file into the root of the `csgo` directory based on
 the value of `mp_backup_round_file`. The default value for this is `backup`. Get5 reads this file and copies it into its
@@ -37,17 +38,20 @@ get5_backup_match1844_map0_round17.cfg 2022-07-26 19:03:39 "Team A" "Team B" de_
 ...
 ```
 
-To load at the beginning of round 13 of the first map of match ID 1844, all players should be connected to the server,
-and you use the [`get5_loadbackup`](../commands/#get5_loadbackup) command:
+!!! example
 
-`get5_loadbackup get5_backup_match1844_map0_round12.cfg`.
+    To load at the beginning of round 13 of the first map of match ID 1844,
+    run [`get5_loadbackup`](../commands/#get5_loadbackup):
 
-The game should restore in a paused state and both teams must [`!unpause`](../commands/#unpause) to continue.
+    `get5_loadbackup get5_backup_match1844_map0_round12.cfg`.
 
-### Pauses in backups
+After loading a backup, the game state is restored and the game is [paused](../pausing/#backup). Both teams
+must [`!unpause`](../commands/#unpause) to continue.
+
+### Consumed pauses in backups {: #pauses }
 
 When restoring from a backup, the [consumed pauses](pausing.md) are reset to the state they were in at the beginning
 of the round you restore to, but only if the game state is not currently live. This means that using
 the [`!stop`](../commands/#stop) command or the [`get5_loadbackup`](../commands/#get5_loadbackup) command **for the same
-match and map** would retain the currently used pauses. If restarting the server or loading the backup from scratch, the
-pauses from the backup file will be used.
+match and map while the game is live** will retain the currently used pauses. If restarting the server or loading the
+backup from scratch, the consumed pauses defined in the backup file will be set.

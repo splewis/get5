@@ -16,8 +16,8 @@ Get5 will automatically record basic stats for each player for each map in the m
 KeyValues structure, and are available at any time during the match (including the postgame waiting period) via the
 `Get5_GetMatchStats` native and the [`get5_dumpstats`](../commands/#get5_dumpstats) command.
 
-The root level contains data for the full series; the series winner (if one exists yet) and the series type (
-bo1, bo3, etc).
+The root level contains data for the full series; the series winner (if one exists yet) and the series type (bo1, bo3,
+etc).
 
 Under the root level is a level for each map (`map0`, `map1` etc.), which contains the map winner (if one exists yet),
 the map name and the demo file recording.

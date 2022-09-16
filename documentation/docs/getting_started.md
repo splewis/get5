@@ -11,24 +11,23 @@ If you want to create a match quickly without modifying anything, you must set:
 
 [`get5_kick_when_no_match_loaded 0`](../configuration/#get5_kick_when_no_match_loaded)
 
-Once this is disabled, anyone can join the server without being kicked for not being a part of a match.
-Once all players are connected to the server and on correct teams, just
-call [`get5_creatematch`](../commands/#get5_creatematch). There is also a simple menu that you can call this command
-from by typing [`!get5`](../commands/#get5) in the game chat. Note that you must
-be [a server administrator](../installation/#administrators) to do this.
+Once this is disabled, anyone can join the server without being kicked for not being a part of a match. Once all players
+are connected to the server and on correct teams, just call [`get5_creatematch`](../commands/#get5_creatematch). There
+is also a simple menu that you can call this command from by typing [`!get5`](../commands/#get5) in the game chat. Note
+that you must be [a server administrator](../installation/#administrators) to do this.
 
 ## Match Configuration {: #match-configuration }
 
-The default operation mode for Get5 is the configuration and loading of
-a [match configuration file](../match_schema). This file should contain all the players and coaches, their team
-name and optionally flag and logo as well as any spectators/casters. Once you've created your file you can load it
-using the [`get5_loadmatch`](../commands/#get5_loadmatch) command or configure your server to automatically load the
-file as soon as a player joins by setting [`get5_autoload_config`](../configuration/#get5_autoload_config).
+The default operation mode for Get5 is the configuration and loading of a [match configuration file](../match_schema).
+This file should contain all the players and coaches, their team name and optionally flag and logo as well as any
+spectators/casters. Once you've created your file you can load it using
+the [`get5_loadmatch`](../commands/#get5_loadmatch) command or configure your server to automatically load the file as
+soon as a player joins by setting [`get5_autoload_config`](../configuration/#get5_autoload_config).
 
 !!! tip "Lock it down"
 
     When loading match configurations, ensure that [`get5_check_auths`](../configuration/#get5_check_auths) is enabled.
-    This ensures that people are locked to the correct teams and that nobody else can join the server.
+    This locks and auto-assigns players to their teams and prevents anyone else from joining the server.
 
 ## Scrims {: #scrims }
 
@@ -56,7 +55,7 @@ You can list however many players you want. Add all your coaches, analysts, ring
 ends up being on the other team in a scrim, you can use the [`!ringer`](../commands/#ringer) command to temporarily swap
 them (similarly, you can use it to put someone not in the list on your team temporarily).
 
-### Letting the opposing team in {: #opposing-team }
+### Joining the server {: #joining }
 
 Get5 can be configured to kick all players from the server if no match is loaded. You should disable this for a scrim
 server. To do so, edit [`cfg/sourcemod/get5.cfg`](../configuration/#main-config) and make sure that

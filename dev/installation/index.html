@@ -134,7 +134,12 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#sourcemod-metamod">
+<a class="md-nav__link" href="#server">
+    Game Server
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sourcemod">
     SourceMod &amp; MetaMod
   </a>
 </li>
@@ -308,7 +313,12 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#sourcemod-metamod">
+<a class="md-nav__link" href="#server">
+    Game Server
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sourcemod">
     SourceMod &amp; MetaMod
   </a>
 </li>
@@ -357,7 +367,19 @@
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
 </a>
 <h1 id="installation"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h8.08a7 7 0 0 1-.08-1 7 7 0 0 1 7-7 7 7 0 0 1 3 .69V8a2 2 0 0 0-2-2h-8l-2-2H4m14 10a.26.26 0 0 0-.26.21l-.19 1.32c-.3.13-.59.29-.85.47l-1.24-.5c-.11 0-.24 0-.31.13l-1 1.73c-.06.11-.04.24.06.32l1.06.82a4.193 4.193 0 0 0 0 1l-1.06.82a.26.26 0 0 0-.06.32l1 1.73c.06.13.19.13.31.13l1.24-.5c.26.18.54.35.85.47l.19 1.32c.02.12.12.21.26.21h2c.11 0 .22-.09.24-.21l.19-1.32c.3-.13.57-.29.84-.47l1.23.5c.13 0 .26 0 .33-.13l1-1.73a.26.26 0 0 0-.06-.32l-1.07-.82c.02-.17.04-.33.04-.5 0-.17-.01-.33-.04-.5l1.06-.82a.26.26 0 0 0 .06-.32l-1-1.73c-.06-.13-.19-.13-.32-.13l-1.23.5c-.27-.18-.54-.35-.85-.47l-.19-1.32A.236.236 0 0 0 20 14h-2m1 3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5c-.84 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5Z"></path></svg></span> Installation</h1>
-<h2 id="sourcemod-metamod">SourceMod &amp; MetaMod</h2>
+<h2 id="server">Game Server</h2>
+<p>Get5 can run on any
+official <a href="https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive_Dedicated_Servers">CS:GO Dedicated Server</a>
+on both Windows and Linux. Setting up a server is outside the scope of this documentation. It is assumed that you have
+already done this and have a good grasp on how to manage your server.</p>
+<div class="admonition warning">
+<p class="admonition-title">Online-only <span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.05 3.5a3.519 3.519 0 0 0 0 4.97l8.49 8.48c.58.59.58 1.55 0 2.12-.59.59-1.54.59-2.13 0l-4.24-4.24 1.06-1.06-3.53-3.54-.36.36-1.41-1.42a1.02 1.02 0 0 0-1.43 0l-1.4 1.42c-.39.41-.39 1.02 0 1.41l1.4 1.41-.34.36L6.7 17.3l1.06-1.06L12 20.5a3.531 3.531 0 0 0 4.95 0c1.37-1.38 1.37-3.6 0-4.96L8.46 7.05c-.58-.59-.58-1.55 0-2.12.59-.59 1.54-.59 2.13 0l4.24 4.24-1.06 1.06 3.53 3.54.36-.36 1.41 1.42c.39.39 1.03.39 1.43 0l1.4-1.42c.39-.41.39-1.02 0-1.41l-1.4-1.41.34-.36L17.3 6.7l-1.06 1.06L12 3.5a3.531 3.531 0 0 0-4.95 0m-4.24 7.79 1.41-1.41 1.42 1.41-1.42 1.42m14.14 0 1.42-1.42 1.41 1.42-1.41 1.41Z"></path></svg></span></p>
+<p>You <strong>cannot</strong> use Get5 for completely-offline events. Internet access is required on both the server and clients in
+order for Get5 to perform most of its basic functions, such as locking players based on their Steam ID.</p>
+<p>Your server must have a valid <a href="https://steamcommunity.com/dev/managegameservers">Game Server Token</a> and must <strong>not</strong> run
+with <a href="https://totalcsgo.com/command/svlan"><code>sv_lan 1</code></a>.</p>
+</div>
+<h2 id="sourcemod">SourceMod &amp; MetaMod</h2>
 <p>You must have <a href="https://www.sourcemod.net/">SourceMod</a> installed on your server. Please note that Get5
 requires <strong>SourceMod version 1.10</strong> or higher. SourceMod requires MetaMod, so you must install both plugins.
 You can get the latest versions here:</p>

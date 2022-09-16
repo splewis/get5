@@ -717,7 +717,7 @@ static Action Timer_InfoMessages(Handle timer) {
     }
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     if (g_KnifeWinnerTeam == Get5Team_None) {
-      return Plugin_Continue;
+      return;
     }
     // Handle waiting for knife decision. Also check g_KnifeWinnerTeam as there is a small delay between
     // selecting a side and the game state changing, during which this message should not be printed.

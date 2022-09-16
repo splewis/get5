@@ -189,7 +189,7 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#how-does-it-work">
+<a class="md-nav__link" href="#how-to">
     How does it work?
   </a>
 </li>
@@ -199,8 +199,8 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#pauses-in-backups">
-    Pauses in backups
+<a class="md-nav__link" href="#pauses">
+    Consumed pauses in backups
   </a>
 </li>
 </ul>
@@ -284,7 +284,7 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#how-does-it-work">
+<a class="md-nav__link" href="#how-to">
     How does it work?
   </a>
 </li>
@@ -294,8 +294,8 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#pauses-in-backups">
-    Pauses in backups
+<a class="md-nav__link" href="#pauses">
+    Consumed pauses in backups
   </a>
 </li>
 </ul>
@@ -315,8 +315,9 @@ either replay a round using the <a href="../commands/#stop"><code>!stop</code></
 any server using the <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a> command.</p>
 <p>As Get5's backup system sits on top of CS:GO's, it contains everything a normal CS:GO round backup would, but also
 the entire <a href="../match_schema">match configuration</a> and the match series score for already-played maps.</p>
-<p>The backup system must be <a href="../configuration/#get5_backup_system_enabled">enabled</a> for this to work.</p>
-<h3 id="how-does-it-work">How does it work?</h3>
+<p>The backup system can be enabled or disabled
+with <a href="../configuration/#get5_backup_system_enabled"><code>get5_backup_system_enabled</code></a>.</p>
+<h3 id="how-to">How does it work?</h3>
 <p>Every time a round starts, CS:GO automatically writes a round backup file into the root of the <code>csgo</code> directory based on
 the value of <code>mp_backup_round_file</code>. The default value for this is <code>backup</code>. Get5 reads this file and copies it into its
 own file called <code>get5_backup_match%s_map%d_round%d.cfg</code>, where the arguments are <code>matchid</code>, <code>mapnumber</code>
@@ -336,16 +337,20 @@ match. Note that all rounds and map numbers start at 0.</p>
 <a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>get5_backup_match1844_map0_round17.cfg 2022-07-26 19:03:39 "Team A" "Team B" de_dust2 2 15
 <a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>...
 </code></pre></div>
-<p>To load at the beginning of round 13 of the first map of match ID 1844, all players should be connected to the server,
-and you use the <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a> command:</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>To load at the beginning of round 13 of the first map of match ID 1844,
+run <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a>:</p>
 <p><code>get5_loadbackup get5_backup_match1844_map0_round12.cfg</code>.</p>
-<p>The game should restore in a paused state and both teams must <a href="../commands/#unpause"><code>!unpause</code></a> to continue.</p>
-<h3 id="pauses-in-backups">Pauses in backups</h3>
+</div>
+<p>After loading a backup, the game state is restored and the game is <a href="../pausing/#backup">paused</a>. Both teams
+must <a href="../commands/#unpause"><code>!unpause</code></a> to continue.</p>
+<h3 id="pauses">Consumed pauses in backups</h3>
 <p>When restoring from a backup, the <a href="../pausing/">consumed pauses</a> are reset to the state they were in at the beginning
 of the round you restore to, but only if the game state is not currently live. This means that using
 the <a href="../commands/#stop"><code>!stop</code></a> command or the <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a> command <strong>for the same
-match and map</strong> would retain the currently used pauses. If restarting the server or loading the backup from scratch, the
-pauses from the backup file will be used.</p>
+match and map while the game is live</strong> will retain the currently used pauses. If restarting the server or loading the
+backup from scratch, the consumed pauses defined in the backup file will be set.</p>
 </article>
 </div>
 </div>

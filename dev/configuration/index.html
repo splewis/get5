@@ -1236,9 +1236,9 @@ map.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_check_auths"><code>get5_check_auths</code></h4>
 <dl>
-<dd>Whether the Steam IDs from the <code>players</code> and <code>coaches</code> sections of a <a href="../match_schema/#schema">match configuration</a>
-are used to force players onto teams. Anyone not defined will be removed from the game, or if
-in <a href="../getting_started/#scrims">scrim mode</a>, put on <code>team2</code>.<br/><strong><code>Default: 1</code></strong></dd>
+<dd>Whether the Steam IDs from the <code>players</code>, <code>coaches</code> and <code>spectators</code> sections of
+a <a href="../match_schema/#schema">match configuration</a> are used to force players onto teams. Anyone not defined will be
+removed from the game, or if in <a href="../getting_started/#scrims">scrim mode</a>, put on <code>team2</code>.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_print_update_notice"><code>get5_print_update_notice</code></h4>
 <dl>
@@ -1354,7 +1354,8 @@ over the <a href="#get5_max_pause_time">get5_max_pause_time</a> parameter, which
 </dl>
 <h4 id="get5_allow_technical_pause"><code>get5_allow_technical_pause</code></h4>
 <dl>
-<dd>Whether <a href="../pausing/#technical">technical pauses</a> are available to clients or not.<br/><strong><code>Default: 1</code></strong></dd>
+<dd>Whether <a href="../pausing/#technical">technical pauses</a> are available to clients or not. Note that this depends
+on <a href="#get5_pausing_enabled"><code>get5_pausing_enabled</code></a> being enabled as well.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_max_tech_pauses"><code>get5_max_tech_pauses</code></h4>
 <dl>
@@ -1379,34 +1380,34 @@ limit.<br/><strong><code>Default: 0</code></strong></dd>
 <h2 id="surrender">Surrender</h2>
 <h4 id="get5_surrender_enabled"><code>get5_surrender_enabled</code></h4>
 <dl>
-<dd>Whether the <a href="../commands/#surrender"><code>!surrender</code></a> command is available. <strong><code>Default: 0</code></strong></dd>
+<dd>Whether the <a href="../commands/#surrender"><code>!surrender</code></a> command is available.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_surrender_minimum_round_deficit"><code>get5_surrender_minimum_round_deficit</code></h4>
 <dl>
 <dd>The minimum number of rounds a team must be behind in order to initiate a vote to surrender. This cannot be set
-lower than <code>1</code>. <strong><code>Default: 8</code></strong></dd>
+lower than <code>1</code>.<br/><strong><code>Default: 8</code></strong></dd>
 </dl>
 <h4 id="get5_surrender_required_votes"><code>get5_surrender_required_votes</code></h4>
 <dl>
 <dd>The number of votes required to surrender as a team. If set to <code>1</code> or below, any attempt to surrender will
-immediately succeed. <strong><code>Default: 3</code></strong></dd>
+immediately succeed.<br/><strong><code>Default: 3</code></strong></dd>
 </dl>
 <h4 id="get5_surrender_time_limit"><code>get5_surrender_time_limit</code></h4>
 <dl>
 <dd>The number of seconds a team has to vote to surrender after the first vote is cast. This cannot be set lower
-than <code>10</code>. <strong><code>Default: 15</code></strong></dd>
+than <code>10</code>.<br/><strong><code>Default: 15</code></strong></dd>
 </dl>
 <h4 id="get5_surrender_cooldown"><code>get5_surrender_cooldown</code></h4>
 <dl>
 <dd>The minimum number of seconds a team must wait before they can initiate a surrender vote following a failed
-vote. Set to zero to disable. <strong><code>Default: 60</code></strong></dd>
+vote. Set to zero to disable.<br/><strong><code>Default: 60</code></strong></dd>
 </dl>
 <h4 id="get5_surrender_time_to_rejoin"><code>get5_surrender_time_to_rejoin</code></h4>
 <dl>
 <dd>If a full team disconnects, this determines the number of seconds a player from the disconnecting team has to rejoin
 the server before they forfeit the match. If both teams disconnect, this determines how long any player from any team
 has to rejoin the match before it is ended in a tie. This cannot be set lower than 30 and applies even
-if <a href="#get5_surrender_enabled"><code>get5_surrender_enabled</code></a> is disabled. <strong><code>Default: 60</code></strong></dd>
+if <a href="#get5_surrender_enabled"><code>get5_surrender_enabled</code></a> is disabled.<br/><strong><code>Default: 60</code></strong></dd>
 </dl>
 <h2 id="backup-system">Backup System</h2>
 <h4 id="get5_backup_system_enabled"><code>get5_backup_system_enabled</code></h4>
@@ -1420,8 +1421,9 @@ command as well as the <a href="../commands/#get5_loadbackup"><code>get5_loadbac
 </dl>
 <h4 id="get5_max_backup_age"><code>get5_max_backup_age</code></h4>
 <dl>
-<dd>Number of seconds before a Get5 backup file is automatically deleted. 0 to disable. If you define
-<a href="#get5_backup_path"><code>get5_backup_path</code></a>, only files in that path will be deleted.<br/><strong><code>Default: 160000</code></strong></dd>
+<dd>Number of seconds before a Get5 backup file is automatically deleted. If you define
+<a href="#get5_backup_path"><code>get5_backup_path</code></a>, only files in that path will be deleted. Set to zero to
+disable.<br/><strong><code>Default: 160000</code></strong></dd>
 </dl>
 <h4 id="get5_backup_path"><code>get5_backup_path</code></h4>
 <dl>
@@ -1519,14 +1521,12 @@ once a recording stops. If no protocol is provided, <code>http://</code> will be
 <h4 id="get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></a> is defined, this header name and
-value will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>. Requires
-the <a href="../installation/#steamworks">SteamWorks</a> extension.<br/><strong><code>Default: "Authorization"</code></strong></dd>
+value will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>.<br/><strong><code>Default: "Authorization"</code></strong></dd>
 </dl>
 <h4 id="get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></a> is defined, this header name and value
-will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>. Requires
-the <a href="../installation/#steamworks">SteamWorks</a> extension.<br/><strong><code>Default: ""</code></strong></dd>
+will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>.<br/><strong><code>Default: ""</code></strong></dd>
 </dl>
 <h4 id="get5_demo_delete_after_upload"><code>get5_demo_delete_after_upload</code></h4>
 <dl>
@@ -1536,7 +1536,7 @@ successfully <a href="../gotv/#upload">uploading it to a web server</a>.<br/><st
 <h4 id="get5_demo_path"><code>get5_demo_path</code></h4>
 <dl>
 <dd>The folder of saved <a href="../gotv#demos">demo files</a>, relative to the <code>csgo</code> directory. You <strong>can</strong> use
-the <a href="#tag-matchid"><code>{MATCHID}</code></a> and <a href="#tag-date"><code>{DATE}</code></a> variable, i.e. <code>demos/{DATE}/{MATCHID}/</code>.
+the <a href="#tag-matchid"><code>{MATCHID}</code></a> and <a href="#tag-date"><code>{DATE}</code></a> variables, i.e. <code>demos/{DATE}/{MATCHID}/</code>.
 Much like <a href="#get5_backup_path"><code>get5_backup_path</code></a>, the path must <strong>not</strong> start with a slash, and
 must <strong>end with a slash</strong>.<br/><strong><code>Default: ""</code></strong></dd>
 </dl>

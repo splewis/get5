@@ -348,7 +348,7 @@ unless the pausing team <a href="../configuration/#get5_tech_pause_time">runs ou
 team (<em>either</em> the pausing or the opposing) must unpause. Technical pauses never end without intervention.
 Administrators
 cannot call technical pauses, as an administrative pause will be triggered instead. You can set <a href="../configuration/#get5_max_tech_pauses">the maximum number of
-technical pauses</a>.</p>
+technical pauses</a>. Technical pauses are never reset on halftime.</p>
 <h2 id="backup"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a9 9 0 0 0-9 9H0l4 4 4-4H5a7 7 0 0 1 7-7 7 7 0 0 1 7 7 7 7 0 0 1-7 7c-1.5 0-2.91-.5-4.06-1.3L6.5 19.14A9.115 9.115 0 0 0 12 21a9 9 0 0 0 9-9 9 9 0 0 0-9-9m2 9a2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2Z"></path></svg></span> Backup</h2>
 <p>If the game is <a href="../backup/">restored from a backup</a>, it will be so in a paused state. Both teams must
 <a href="../commands/#unpause"><code>!unpause</code></a> before the match can continue. Administrators can also unpause backup pauses, or even
@@ -359,8 +359,8 @@ restrictions, but you <strong>cannot</strong> use <a href="https://totalcsgo.com
 equivalent) at any stage. Due to the way Get5 handles pausing, you must use <code>sm_pause</code> in the console, since this will
 track all details and configurations related to pausing in the system. Similarly, <code>sm_unpause</code> must be used to unpause.
 Pauses initiated by administrators via console <strong>cannot</strong> be <a href="../commands/#unpause"><code>!unpause</code>'ed</a> by players. Also note
-that an <a href="../events_and_forwards/"><code>admin</code> pause event</a> is fired when the game is paused during <a href="../veto/">veto</a> (only
-if <a href="../configuration/#get5_pause_on_veto"><code>get5_pause_on_veto</code></a> is enabled).</p>
+that an <a href="../events_and_forwards/"><code>admin</code> pause event</a> is fired when the game
+is <a href="../configuration/#get5_pause_on_veto">paused during veto</a>.</p>
 <div class="admonition question">
 <p class="admonition-title">I'm an admin on my server, but I cannot call admin pause?</p>
 <p>Only console/RCON is considered an administrator in pause-context. Having an admin flag as a user/player does not

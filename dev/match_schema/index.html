@@ -417,7 +417,9 @@ better support in various programming languages than Valve's KeyValue format (wh
     i.e. <code>{"hostname": "Match #3123 - Astralis vs. NaVi"}</code>.<br/><br/><strong><code>Default: undefined</code></strong></li>
 <li><em>Optional</em><br/>Similarly to <code>players</code>, this object maps <a href="../coaching/">coaches</a> using their Steam ID and
     name, locking them to the coach slot unless removed using <a href="../commands/#get5_removeplayer"><code>get5_removeplayer</code></a>.
-    Setting a Steam ID as coach takes precedence over being set as a player.<br/><br/><strong><code>Default: undefined</code></strong></li>
+    Setting a Steam ID as coach takes precedence over being set as a player.<br/><br/>Note that
+    if <a href="https://totalcsgo.com/command/svcoachingenabled"><code>sv_coaching_enabled</code></a> is disabled, anyone defined as a coach
+    will be considered a regular player for the team instead.<br/><br/><strong><code>Default: undefined</code></strong></li>
 <li><em>Required</em><br/>The players on the team.</li>
 <li><em>Optional</em><br/>Wrapper of the server's <code>mp_teammatchstat_txt</code> cvar, but can use <code>{MAPNUMBER}</code> and <code>{MAXMAPS}</code> as
     variables that get replaced with their integer values. In a BoX series, you probably don't want to set this since

@@ -31,13 +31,13 @@ They print in the format `filepath timestamp team1 team2 map team1_score team2_s
 
 ```
 > get5_listbackups
-get5_backup_4_match1844_map0_prelive.cfg 2022-07-26 18:51:25 "Team A" "Team B"
-get5_backup_4_match1844_map0_round30.cfg 2022-07-26 19:13:41 "Team A" "Team B" de_dust2 2 28
-get5_backup_4_match1844_map0_round4.cfg 2022-07-26 18:55:01 "Team A" "Team B" de_dust2 2 2
-get5_backup_4_match1844_map0_round10.cfg 2022-07-26 18:59:25 "Team A" "Team B" de_dust2 2 8
-get5_backup_4_match1844_map0_round23.cfg 2022-07-26 19:08:13 "Team A" "Team B" de_dust2 2 21
-get5_backup_4_match1844_map0_round12.cfg 2022-07-26 19:00:26 "Team A" "Team B" de_dust2 2 10
-get5_backup_4_match1844_map0_round17.cfg 2022-07-26 19:03:39 "Team A" "Team B" de_dust2 2 15
+get5_backup4_match1844_map0_prelive.cfg 2022-07-26 18:51:25 "Team A" "Team B"
+get5_backup4_match1844_map0_round30.cfg 2022-07-26 19:13:41 "Team A" "Team B" de_dust2 2 28
+get5_backup4_match1844_map0_round4.cfg 2022-07-26 18:55:01 "Team A" "Team B" de_dust2 2 2
+get5_backup4_match1844_map0_round10.cfg 2022-07-26 18:59:25 "Team A" "Team B" de_dust2 2 8
+get5_backup4_match1844_map0_round23.cfg 2022-07-26 19:08:13 "Team A" "Team B" de_dust2 2 21
+get5_backup4_match1844_map0_round12.cfg 2022-07-26 19:00:26 "Team A" "Team B" de_dust2 2 10
+get5_backup4_match1844_map0_round17.cfg 2022-07-26 19:03:39 "Team A" "Team B" de_dust2 2 15
 ...
 ```
 
@@ -46,7 +46,7 @@ get5_backup_4_match1844_map0_round17.cfg 2022-07-26 19:03:39 "Team A" "Team B" d
     To load at the beginning of round 13 of the first map of match ID 1844 from a backup created on a
     [server with ID 4](../configuration/#get5_server_id), run [`get5_loadbackup`](../commands/#get5_loadbackup):
 
-    `get5_loadbackup get5_backup_4_match1844_map0_round12.cfg`
+    `get5_loadbackup get5_backup4_match1844_map0_round12.cfg`
 
 After loading a backup, the game state is restored and the game is [paused](../pausing/#backup). Both teams
 must [`!unpause`](../commands/#unpause) to continue.

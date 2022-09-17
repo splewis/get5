@@ -538,10 +538,8 @@ void DeleteOldBackups() {
   if (files != null) {
     LogDebug("Searching '%s' for expired backups...", path);
     char filename[PLATFORM_MAX_PATH];
-    char searchPattern[PLATFORM_MAX_PATH];
-    FormatEx(searchPattern, sizeof(searchPattern), "get5_backup%d_", Get5_GetServerID());
     while (files.GetNext(filename, sizeof(filename))) {
-      if (StrContains(filename, searchPattern) == 0) {
+      if (StrContains(filename, "get5_backup") == 0) {
         Format(filename, sizeof(filename), "%s%s", path, filename);
         if (GetTime() - GetFileTime(filename, FileTime_LastChange) >= maxTimeDifference) {
           if (DeleteFileIfExists(filename)) {

@@ -201,9 +201,20 @@ Action Command_NotReady(int client, int args) {
 }
 
 Action Command_ForceReadyClient(int client, int args) {
+  if (!IsReadyGameState() || client == 0) {
+    return;
+  }
   Get5Team team = GetClientMatchTeam(client);
-  if (!IsReadyGameState() || team == Get5Team_None || IsTeamReady(team)) {
-    return Plugin_Handled;
+  if (team == Get5Team_None || IsTeamReady(team)) {
+    return;
+  }
+
+  if (!g_AllowForceReadyCvar.BoolValue) {
+    char cVarName[MAX_CVAR_LENGTH];
+    g_AllowForceReadyCvar.GetName(cVarName, sizeof(cVarName));
+    FormatCvarName(cVarName, sizeof(cVarName), cVarName);
+    Get5_Message(client, "%t", "ForceReadyDisabled", cVarName);
+    return;
   }
 
   int minReady = GetTeamMinReady(team);
@@ -211,7 +222,7 @@ Action Command_ForceReadyClient(int client, int args) {
 
   if (playerCount < minReady) {
     Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", minReady);
-    return Plugin_Handled;
+    return;
   }
   char formattedClientName[MAX_NAME_LENGTH];
   FormatPlayerName(formattedClientName, sizeof(formattedClientName), client, team);
@@ -224,8 +235,6 @@ Action Command_ForceReadyClient(int client, int args) {
   SetTeamForcedReady(team, true);
   SetMatchTeamCvars();
   HandleReadyMessage(team);
-
-  return Plugin_Handled;
 }
 
 // Messages
@@ -263,7 +272,7 @@ void MissingPlayerInfoMessage() {
 }
 
 static void MissingPlayerInfoMessageTeam(Get5Team team) {
-  if (IsTeamForcedReady(team)) {
+  if (!g_AllowForceReadyCvar.BoolValue || IsTeamForcedReady(team)) {
     return;
   }
 
@@ -274,12 +283,9 @@ static void MissingPlayerInfoMessageTeam(Get5Team team) {
 
   if (playerCount == readyCount && playerCount < minPlayers && readyCount >= minReady &&
       minPlayers > 1) {
-    char minPlayersFormatted[32];
-    FormatEx(minPlayersFormatted, sizeof(minPlayersFormatted), "{GREEN}%d{NORMAL}", minPlayers);
     char forceReadyFormatted[64];
     FormatChatCommand(forceReadyFormatted, sizeof(forceReadyFormatted), "!forceready");
-    Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", forceReadyFormatted,
-                       minPlayersFormatted);
+    Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", forceReadyFormatted);
   }
 }
 

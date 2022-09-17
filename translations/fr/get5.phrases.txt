@@ -126,7 +126,7 @@
     }
     "ForceReadyInfoMessage"
     {
-        "fr"            "Vous pouvez entrer {1} pour forcer le statut de votre équipe si vous avez moins de {2} joueurs."
+        "fr"            "Vous pouvez entrer {1} pour forcer le statut de votre équipe."
     }
     "TeammateForceReadied"
     {

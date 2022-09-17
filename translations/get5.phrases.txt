@@ -229,8 +229,13 @@
     }
     "ForceReadyInfoMessage"
     {
-        "#format"       "{1:s},{2:s}"
-        "en"            "You may type {1} to force-ready your team if you have less than {2} players."
+        "#format"       "{1:s}"
+        "en"            "You may type {1} to force-ready your team."
+    }
+    "ForceReadyDisabled"
+    {
+        "#format"       "{1:s}"
+        "en"            "The force-ready command is disabled, but can enabled with {1}."
     }
     "TeammateForceReadied"
     {

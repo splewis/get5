@@ -198,7 +198,7 @@
     }
     "ForceReadyInfoMessage"
     {
-        "pt"            "Você pode digitar {1} para forçar seu time a ficar pronto se você tiver menos de {2} jogador."
+        "pt"            "Você pode digitar {1} para forçar seu time a ficar pronto."
     }
     "TeammateForceReadied"
     {

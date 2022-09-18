@@ -23,7 +23,7 @@
     "YouAreReady"
     {
         "pt"            "Você foi marcado como pronto."
-    },
+    }
     "YouAreReadyAuto"
     {
         "pt"            "OBSERVAÇÃO: Você foi marcado como pronto devido à atividade do jogo. Digite {1} se você não estiver pronto."
@@ -83,7 +83,7 @@
     "MatchPausedByTeamMessage"
     {
         "pt"            "{1} pausou a partida."
-    },
+    }
     "MatchTechPausedByTeamMessage"
     {
         "pt"            "{1} pediu uma pausa técnica."

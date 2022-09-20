@@ -118,7 +118,8 @@ public int Native_MessageToAll(Handle plugin, int numParams) {
 public int Native_LoadMatchConfig(Handle plugin, int numParams) {
   char filename[PLATFORM_MAX_PATH];
   GetNativeString(1, filename, sizeof(filename));
-  return LoadMatchConfig(filename);
+  char error[PLATFORM_MAX_PATH];
+  return LoadMatchConfig(filename, error);
 }
 
 public int Native_LoadMatchConfigFromURL(Handle plugin, int numParams) {

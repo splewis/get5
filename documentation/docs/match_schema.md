@@ -118,15 +118,13 @@ interface Get5Match {
     if [`sv_coaching_enabled`](https://totalcsgo.com/command/svcoachingenabled) is disabled, anyone defined as a coach
     will be considered a regular player for the team instead.<br><br>**`Default: undefined`**
 24. _Required_<br>The players on the team.
-25. _Optional_<br>Wrapper of the server's `mp_teammatchstat_txt` cvar, but can use `{MAPNUMBER}` and `{MAXMAPS}` as
-    variables that get replaced with their integer values. In a BoX series, you probably don't want to set this since
-    Get5 automatically sets `mp_teamscore` cvars for the current series score, and take the place of
-    the `mp_teammatchstat` cvars.<br><br>**`Default: "Map {MAPNUMBER} of {MAXMAPS}"`**
+25. _Optional_<br>Sets the server's `mp_teammatchstat_txt` ConVar, but lets you use `{MAPNUMBER}` and `{MAXMAPS}` as
+    variables that get replaced with their integer values. You should **not** set `mp_teammatchstat_txt` yourself, as it
+    will be overridden by this parameter.<br><br>**`Default: "Map {MAPNUMBER} of {MAXMAPS}"`**
 26. _Optional_<br>The current score in the series, this can be used to give a team a map advantage or used as a manual
     backup method.<br><br>**`Default: 0`**
-27. _Optional_<br>Wraps `mp_teammatchstat_1` and `mp_teammatchstat_2`. You probably don't want to set this, in BoX
-    series, `mp_teamscore` cvars are automatically set and take the place of the `mp_teammatchstat_x`
-    cvars.<br><br>**`Default: ""`**
+27. _Optional_<br>Assigns values to `mp_teammatchstat_1` and `mp_teammatchstat_2`, respectively. If you don't set this
+    value in a BoX series, it is set to each team's map series score automatically.<br><br>**`Default: ""`**
 28. Match teams can also be loaded from a separate file, allowing you to easily re-use a match configuration for
     different sets of teams. A `fromfile` value could be `"addons/sourcemod/configs/get5/team_nip.json"`, and is always
     relative to the `csgo` directory. The file should contain a valid `Get5MatchTeam` object. You **are** allowed to mix
@@ -383,7 +381,7 @@ These examples are identical in the way they would work if loaded.
     ```
     `fromfile` example:
     ```cfg title="addons/sourcemod/get5/team_navi.cfg"
-    Team
+    "Team"
     { 
         "name"		"Natus Vincere"
     	"tag"		"NaVi"

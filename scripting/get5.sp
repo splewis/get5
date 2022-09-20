@@ -143,7 +143,7 @@ int g_RoundNumber = -1;  // The round number, 0-indexed. -1 if the match is not 
 int g_MapNumber = 0;             // the current map number, starting at 0.
 int g_NumberOfMapsInSeries = 0;  // the number of maps to play in the series.
 char g_MatchID[MATCH_ID_LENGTH];
-ArrayList g_MapPoolList = null;
+ArrayList g_MapPoolList;
 ArrayList g_TeamPlayers[MATCHTEAM_COUNT];
 ArrayList g_TeamCoaches[MATCHTEAM_COUNT];
 StringMap g_PlayerNames;
@@ -169,8 +169,8 @@ Get5BombSite g_BombSiteLastPlanted = Get5BombSite_Unknown;
 bool g_SkipVeto = false;
 float g_VetoMenuTime = 0.0;
 MatchSideType g_MatchSideType = MatchSideType_Standard;
-ArrayList g_CvarNames = null;
-ArrayList g_CvarValues = null;
+ArrayList g_CvarNames;
+ArrayList g_CvarValues;
 bool g_InScrimMode = false;
 
 /** Knife for sides **/
@@ -184,6 +184,7 @@ Handle g_KnifeCountdownTimer = INVALID_HANDLE;
 bool g_IsChangingPauseState = false;  // Used to prevent mp_pause_match and mp_unpause_match from being called directly.
 Get5Team g_PausingTeam = Get5Team_None;          // The team that last called for a pause.
 Get5PauseType g_PauseType = Get5PauseType_None;  // The type of pause last initiated.
+Handle g_PauseTimer = INVALID_HANDLE;
 int g_LatestPauseDuration = 0;
 bool g_TeamReadyForUnpause[MATCHTEAM_COUNT];
 bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
@@ -203,12 +204,13 @@ Get5Team g_ForfeitingTeam = Get5Team_None;
 
 /** Other state **/
 Get5State g_GameState = Get5State_None;
-ArrayList g_MapsToPlay = null;
-ArrayList g_MapSides = null;
-ArrayList g_MapsLeftInVetoPool = null;
+ArrayList g_MapsToPlay;
+ArrayList g_MapSides;
+ArrayList g_MapsLeftInVetoPool;
 Get5Team g_LastVetoTeam;
-Menu g_ActiveVetoMenu = null;
+Menu g_ActiveVetoMenu;
 Handle g_InfoTimer = INVALID_HANDLE;
+Handle g_MatchConfigExecTimer = INVALID_HANDLE;
 
 /** Backup data **/
 bool g_DoingBackupRestoreNow = false;
@@ -967,7 +969,8 @@ bool CheckAutoLoadConfig() {
     char autoloadConfig[PLATFORM_MAX_PATH];
     g_AutoLoadConfigCvar.GetString(autoloadConfig, sizeof(autoloadConfig));
     if (!StrEqual(autoloadConfig, "")) {
-      bool loaded = LoadMatchConfig(autoloadConfig);  // return false if match config load fails!
+      char error[PLATFORM_MAX_PATH];
+      bool loaded = LoadMatchConfig(autoloadConfig, error);  // return false if match config load fails!
       if (loaded) {
         LogMessage("Match configuration was loaded via get5_autoload_config.");
       }
@@ -1038,17 +1041,19 @@ static Action Command_EndMatch(int client, int args) {
 static Action Command_LoadMatch(int client, int args) {
   if (g_GameState != Get5State_None) {
     ReplyToCommand(client, "Cannot load a match config when another is already loaded.");
-    return;
+    return Plugin_Handled;
   }
 
   char arg[PLATFORM_MAX_PATH];
   if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {
-    if (!LoadMatchConfig(arg)) {
-      ReplyToCommand(client, "Failed to load match config.");
+    char error[PLATFORM_MAX_PATH];
+    if (!LoadMatchConfig(arg, error)) {
+      ReplyToCommand(client, error);
     }
   } else {
     ReplyToCommand(client, "Usage: get5_loadmatch <filename>");
   }
+  return Plugin_Handled;
 }
 
 static Action Command_LoadMatchUrl(int client, int args) {
@@ -1166,7 +1171,9 @@ void RestoreLastRound(int client) {
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
   if (!StrEqual(lastBackup, "")) {
     if (RestoreFromBackup(lastBackup)) {
-      Get5_MessageToAll("%t", "BackupLoadedInfoMessage", lastBackup);
+      char fileFormatted[PLATFORM_MAX_PATH];
+      FormatCvarName(fileFormatted, sizeof(fileFormatted), lastBackup);
+      Get5_MessageToAll("%t", "BackupLoadedInfoMessage", fileFormatted);
       // Fix the last backup cvar since it gets reset.
       g_LastGet5BackupCvar.SetString(lastBackup);
     } else {
@@ -1362,7 +1369,6 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
 
   EventLogger_LogAndDeleteEvent(event);
   ChangeState(Get5State_None);
-  g_MatchID = "";
 
   // We don't want to kick players until after the specified delay, as it will kick casters
   // potentially before GOTV ends.
@@ -1410,11 +1416,80 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
     g_ActiveVetoMenu.Cancel();
   }
 
+  // If a config exec callback is in progress, stop it;
+  if (g_MatchConfigExecTimer != INVALID_HANDLE) {
+    LogDebug("Killing g_MatchConfigExecTimer as match was ended.");
+    delete g_MatchConfigExecTimer;
+  }
+
   // If a forfeit by disconnect is counting down and the match ends, ensure that no timer is running so a new game
   // won't be forfeited if it is started before the timer runs out.
   // Also end vote-to-surrender timers.
   ResetForfeitTimer();
   EndSurrenderTimers();
+  if (IsPaused()) {
+    UnpauseGame(Get5Team_None);
+  }
+  ResetMatchConfigVariables(false);
+}
+
+void ResetMatchConfigVariables(bool backup = false) {
+  // Resets all match config variables and parameter used to track game state when Get5 is running.
+  g_InScrimMode = false;
+  g_MatchID = "";
+  g_SkipVeto = false;
+  g_MatchSideType = MatchSideType_Standard;
+  g_MapsToWin = 1;
+  g_SeriesCanClinch = true;
+  g_LastVetoTeam = Get5Team_2;
+  g_NumberOfMapsInSeries = 0;
+  g_MapPoolList.Clear();
+  g_PlayerNames.Clear();
+  g_MapsToPlay.Clear();
+  g_MapSides.Clear();
+  g_MapsLeftInVetoPool.Clear();
+  g_TeamScoresPerMap.Clear();
+  for (int i = 0; i < MATCHTEAM_COUNT; i++) {
+    g_TeamNames[i] = "";
+    g_TeamTags[i] = "";
+    g_FormattedTeamNames[i] = "";
+    g_TeamFlags[i] = "";
+    g_TeamLogos[i] = "";
+    g_TeamMatchTexts[i] = "";
+    g_TeamPlayers[i].Clear();
+    g_TeamCoaches[i].Clear();
+    g_TeamSeriesScores[i] = 0;
+    g_TeamReadyForUnpause[i] = false;
+    g_TeamGivenStopCommand[i] = false;
+    if (!backup) {
+      g_TacticalPauseTimeUsed[i] = 0;
+      g_TacticalPausesUsed[i] = 0;
+      g_TechnicalPausesUsed[i] = 0;
+    }
+  }
+  g_FavoredTeamPercentage = 0;
+  g_FavoredTeamText = "";
+  g_PlayersPerTeam = 5;
+  g_CoachesPerTeam = 2;
+  g_MinPlayersToReady = 1;
+  g_CoachesMustReady = false;
+  g_MinSpectatorsToReady = 0;
+  g_ReadyTimeWaitingUsed = 0;
+  g_HasKnifeRoundStarted = false;
+  g_KnifeWinnerTeam = Get5Team_None;
+  g_RoundStartedTime = 0.0;
+  g_BombPlantedTime = 0.0;
+  g_BombSiteLastPlanted = Get5BombSite_Unknown;
+  g_RoundNumber = -1;
+  g_MapNumber = 0;
+  g_PausingTeam = Get5Team_None;
+  g_LatestPauseDuration = 0;
+  g_PauseType = Get5PauseType_None;
+  if (!backup) {
+    // All hell breaks loose if these are reset during a backup.
+    g_DoingBackupRestoreNow = false;
+    g_MapChangePending = false;
+  }
 }
 
 static Action Timer_KickOnEnd(Handle timer) {

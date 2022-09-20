@@ -23,11 +23,10 @@ void PauseGame(Get5Team team, Get5PauseType type) {
 
   EventLogger_LogAndDeleteEvent(event);
 
-  // Only create a pause timer if a pause is not already ongoing.
-  if (g_PauseType == Get5PauseType_None) {
-    CreateTimer(1.0, Timer_PauseTimeCheck, _, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
-  }
-
+  // Stop existing pause timer and restart it.
+  delete g_PauseTimer;
+  g_PauseTimer = CreateTimer(1.0, Timer_PauseTimeCheck, _, TIMER_REPEAT);
+  g_LatestPauseDuration = 0;
   g_PauseType = type;
   g_PausingTeam = team;
   g_IsChangingPauseState = true;
@@ -50,6 +49,7 @@ void UnpauseGame(Get5Team team) {
 
   EventLogger_LogAndDeleteEvent(event);
 
+  delete g_PauseTimer; // Immediately stop pause timer if running.
   g_PauseType = Get5PauseType_None;
   g_PausingTeam = Get5Team_None;
   g_LatestPauseDuration = 0;
@@ -267,8 +267,13 @@ Action Command_Unpause(int client, int args) {
 }
 
 static Action Timer_PauseTimeCheck(Handle timer) {
+  if (timer != g_PauseTimer) {
+    LogDebug("Stopping pause timer as handle was incorrect.");
+    return Plugin_Stop;
+  }
   if (g_PauseType == Get5PauseType_None || !IsPaused()) {
     LogDebug("Stopping pause timer as game is not paused.");
+    g_PauseTimer = INVALID_HANDLE;
     return Plugin_Stop;
   }
 
@@ -303,6 +308,7 @@ static Action Timer_PauseTimeCheck(Handle timer) {
     if (fixedPauseTime > 0) {
       timeLeft = fixedPauseTime - g_LatestPauseDuration;
       if (timeLeft <= 0) {
+        g_PauseTimer = INVALID_HANDLE;
         UnpauseGame(team);
         return Plugin_Stop;
       }
@@ -311,6 +317,7 @@ static Action Timer_PauseTimeCheck(Handle timer) {
       // pauses while a pause is active. Kind of a weird edge-case, but it should be handled
       // gracefully.
       Get5_MessageToAll("%t", "MaxPausesUsedInfoMessage", maxTacticalPauses, g_FormattedTeamNames[g_PausingTeam]);
+      g_PauseTimer = INVALID_HANDLE;
       UnpauseGame(team);
       return Plugin_Stop;
     } else if (!g_TeamReadyForUnpause[team]) {
@@ -324,6 +331,7 @@ static Action Timer_PauseTimeCheck(Handle timer) {
         timeLeft = maxTacticalPauseTime - g_TacticalPauseTimeUsed[team];
         if (timeLeft <= 0) {
           Get5_MessageToAll("%t", "PauseRunoutInfoMessage", g_FormattedTeamNames[team]);
+          g_PauseTimer = INVALID_HANDLE;
           UnpauseGame(team);
           return Plugin_Stop;
         }

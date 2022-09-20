@@ -21,7 +21,9 @@ Action Command_LoadBackup(int client, int args) {
   char path[PLATFORM_MAX_PATH];
   if (args >= 1 && GetCmdArg(1, path, sizeof(path))) {
     if (RestoreFromBackup(path)) {
-      Get5_MessageToAll("%t", "BackupLoadedInfoMessage", path);
+      char fileFormatted[PLATFORM_MAX_PATH];
+      FormatCvarName(fileFormatted, sizeof(fileFormatted), path);
+      Get5_MessageToAll("%t", "BackupLoadedInfoMessage", fileFormatted);
       g_LastGet5BackupCvar.SetString(path);
     } else {
       ReplyToCommand(client, "Failed to load backup %s - check error logs", path);
@@ -246,26 +248,32 @@ static void WriteBackupStructure(const char[] path) {
   WriteMatchToKv(kv);
   kv.GoBack();
 
-  ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
-  if (lastBackupCvar != null) {
+  if (g_GameState == Get5State_Live) {
     char lastBackup[PLATFORM_MAX_PATH];
+    ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
     lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
-    if (strlen(lastBackup) > 0) {
-      if (g_GameState == Get5State_Live) {
-        // Write valve's backup format into the file. This only applies to live rounds, as any pre-live
-        // backups should just restart the game to warmup (post-veto).
-        KeyValues valveBackup = new KeyValues("valve_backup");
-        if (valveBackup.ImportFromFile(lastBackup)) {
-          kv.SetNum("gamestate", view_as<int>(Get5State_Live));
-          kv.JumpToKey("valve_backup", true);
-          KvCopySubkeys(valveBackup, kv);
-          kv.GoBack();
-        }
-        delete valveBackup;
-      }
-      if (DeleteFile(lastBackup)) {
-        lastBackupCvar.SetString("");
-      }
+    if (strlen(lastBackup) == 0) {
+      LogError("Found no Valve backup when attempting to write a backup during the live state. This is a bug!");
+      delete kv;
+      return;
+    }
+    // Write valve's backup format into the file. This only applies to live rounds, as any pre-live
+    // backups should just restart the game to warmup (post-veto).
+    KeyValues valveBackup = new KeyValues("valve_backup");
+    bool success = valveBackup.ImportFromFile(lastBackup);
+    if (success) {
+      kv.SetNum("gamestate", view_as<int>(Get5State_Live));
+      kv.JumpToKey("valve_backup", true);
+      KvCopySubkeys(valveBackup, kv);
+      kv.GoBack();
+    }
+    delete valveBackup;
+    if (!success) {
+      LogError("Failed to import Valve backup into Get5 backup.");
+      delete kv;
+    }
+    if (DeleteFile(lastBackup)) {
+      lastBackupCvar.SetString("");
     }
   }
 
@@ -274,7 +282,9 @@ static void WriteBackupStructure(const char[] path) {
   KvCopySubkeys(g_StatsKv, kv);
   kv.GoBack();
 
-  kv.ExportToFile(path);
+  if (!kv.ExportToFile(path)) {
+    LogError("Failed to write Get5 backup to file \"%s\".", path);
+  }
   delete kv;
 }
 
@@ -338,9 +348,9 @@ bool RestoreFromBackup(const char[] path) {
     char tempBackupFile[PLATFORM_MAX_PATH];
     GetTempFilePath(tempBackupFile, sizeof(tempBackupFile), TEMP_MATCHCONFIG_BACKUP_PATTERN);
     kv.ExportToFile(tempBackupFile);
-    if (!LoadMatchConfig(tempBackupFile, true)) {
+    char error[PLATFORM_MAX_PATH];
+    if (!LoadMatchConfig(tempBackupFile, error, true)) {
       delete kv;
-      LogError("Could not restore from match config \"%s\"", tempBackupFile);
       // If the backup load fails, all the game configs will have been reset by LoadMatchConfig,
       // but the game state won't. This ensures we don't end up a in a "live" state with no get5
       // variables set, which would prevent a call to load a new match.
@@ -440,18 +450,9 @@ bool RestoreFromBackup(const char[] path) {
     ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
     ChangeMap(loadedMapName, 3.0);
   } else {
-    // We must assign players to their teams. This is normally done inside LoadMatchConfig, but
-    // since we need the team sides to be applied from the backup, we skip it then and do it here.
-    if (g_CheckAuthsCvar.BoolValue) {
-      LOOP_CLIENTS(i) {
-        if (IsPlayer(i)) {
-          CheckClientTeam(i);
-        }
-      }
-    }
     if (valveBackup) {
       // Same map, but round restore with a Valve backup; do normal restore immediately with no
-      // ready-up and no game-state change.
+      // ready-up and no game-state change. Players' teams are checked after the backup file is loaded.
       RestoreGet5Backup(shouldRestartRecording);
     } else {
       // We are restarting to the same map for prelive; just go back into warmup and let players
@@ -461,6 +462,18 @@ bool RestoreFromBackup(const char[] path) {
       ChangeState(Get5State_Warmup);
       ExecCfg(g_WarmupCfgCvar);
       StartWarmup();
+      // We must assign players to their teams. This is normally done inside LoadMatchConfig, but
+      // since we need the team sides to be applied from the backup, we skip it then and do it here.
+      // We *do not* do this before loading from a valve backup, as it will kill every player on the wrong
+      // team and cause various events to misbehave. This is also why it comes after the Get5State_Warmup
+      // state change above, to suppress all live events.
+      if (g_CheckAuthsCvar.BoolValue) {
+        LOOP_CLIENTS(i) {
+          if (IsPlayer(i)) {
+            CheckClientTeam(i);
+          }
+        }
+      }
     }
   }
 
@@ -479,6 +492,8 @@ bool RestoreFromBackup(const char[] path) {
 }
 
 void RestoreGet5Backup(bool restartRecording) {
+  g_DoingBackupRestoreNow = true;  // reset after the backup has completed, suppresses various
+                                   // events and hooks until then.
   // If you load a backup during a live round, the game might get stuck if there are only bots
   // remaining and no players are alive. Other stuff will probably also go wrong, so we put the game
   // into warmup. We **cannot** restart the game as that causes problems for tournaments using the
@@ -488,8 +503,6 @@ void RestoreGet5Backup(bool restartRecording) {
   }
   ExecCfg(g_LiveCfgCvar);
   PauseGame(Get5Team_None, Get5PauseType_Backup);
-  g_DoingBackupRestoreNow = true;  // reset after the backup has completed, suppresses various
-                                   // events and hooks until then.
   // We add a 2 second delay here to give the server time to
   // flush the current GOTV recording *if* one is running.
   CreateTimer(2.0, Timer_StartRestore, restartRecording, TIMER_FLAG_NO_MAPCHANGE);

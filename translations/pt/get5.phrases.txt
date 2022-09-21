@@ -200,6 +200,10 @@
     {
         "pt"            "Você pode digitar {1} para forçar seu time a ficar pronto."
     }
+    "ForceReadyDisabled"
+    {
+        "pt"            "O comando {1} está desativado, mas pode ser ativado com {2}."
+    }
     "TeammateForceReadied"
     {
         "pt"            "Seu time foi forçado a ficar pronto pelo jogador {1}."

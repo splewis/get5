@@ -39,13 +39,14 @@ read the [headers](#headers) for file metadata.
 
 ### Headers {: #headers }
 
-Get5 will always add these three HTTP headers to its demo upload request:
+Get5 will add these HTTP headers to its demo upload request:
 
 1. `Get5-DemoName` is the name of the file as defined
    by [`get5_demo_name_format`](../configuration/#get5_demo_name_format),
    i.e. `2022-09-11_20-49-49_1564_map1_de_vertigo.dem`.
-2. `Get5-MatchId` is the [match ID](../match_schema/#schema) of the series.
-3. `Get5-MapNumber` is the zero-indexed map number in the series.
+2. `Get5-MapNumber` is the zero-indexed map number in the series.
+3. `Get5-MatchId` **if** the [match ID](../match_schema/#schema) is not an empty string.
+4. `Get5-ServerId` **if** [`get5_server_id`](configuration.md#get5_server_id) is set to a positive integer.
 
 #### Authorization {: #authorization }
 
@@ -70,16 +71,16 @@ read the demo upload request sent by Get5.
     and is only meant to demonstrate the key aspects of reading a potentially large POST request.
 
 ```js title="Node.js example"
-const express = require('express')
+const express = require('express');
 const fs = require('fs');
 const path = require("path");
-const app = express()
+const app = express();
 
 // Accept POST requests at http://domain.tld/upload-file
 app.post('/upload-file', function (req, res) {
 
    // Check that the authorization header configured in Get5 matches.
-   // Note that headers names are not case-sensitive.
+   // Note that header names are not case-sensitive.
    const authorization = req.header('Authorization');
    
    if (authorization !== 'super_secret_key') {
@@ -88,9 +89,11 @@ app.post('/upload-file', function (req, res) {
        return;
    }
 
-   // Read the Get5 headers to know what to do with the file.
+   // Read the Get5 headers to know what to do with the file and potentially identify the server.
    const filename = req.header('Get5-DemoName');
    const matchId = req.header('Get5-MatchId');
+   const mapNumber = req.header('Get5-MapNumber');
+   const serverId = req.header('Get5-ServerId');
 
    // Put all demos for the same match in a folder.
    const folder = path.join(__dirname, 'demos', matchId);

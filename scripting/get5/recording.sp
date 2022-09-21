@@ -108,12 +108,12 @@ static Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
 
 static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, int mapNumber) {
   char demoUrl[1024];
-  char demoAuthKey[1024];
-  char demoAuthValue[1024];
+  char demoHeaderKey[1024];
+  char demoHeaderValue[1024];
 
-  g_DemoUploadUrlCvar.GetString(demoUrl, sizeof(demoUrl));
-  g_DemoUploadAuthKeyCvar.GetString(demoAuthKey, sizeof(demoAuthKey));
-  g_DemoUploadAuthValueCvar.GetString(demoAuthValue, sizeof(demoAuthValue));
+  g_DemoUploadURLCvar.GetString(demoUrl, sizeof(demoUrl));
+  g_DemoUploadHeaderKeyCvar.GetString(demoHeaderKey, sizeof(demoHeaderKey));
+  g_DemoUploadHeaderValueCvar.GetString(demoHeaderValue, sizeof(demoHeaderValue));
 
   if (StrEqual(demoUrl, "")) {
     LogDebug("Will not upload any demos as upload URL is not set.");
@@ -125,68 +125,55 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
     return;
   }
 
-  char userAgent[1024];
-  char strMapNumber[5];
-  ReplaceString(demoUrl, sizeof(demoUrl), "\"", "");
-  FormatEx(userAgent, sizeof(userAgent), "SourceMod Get5 %s+https://%s", PLUGIN_VERSION,
-         GET5_GITHUB_PAGE);
-  FormatEx(strMapNumber, sizeof(strMapNumber), "%d", mapNumber);
-  // Add the protocol strings if missing (only http).
-  if (StrContains(demoUrl, "http", false) != 0) {
-    Format(demoUrl, sizeof(demoUrl), "http://%s", demoUrl);
-  }
-
   LogDebug("UploadDemoToServer: demoUrl (SteamWorks) = %s", demoUrl);
-  Handle demoRequest = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, demoUrl);
+  Handle demoRequest = CreateGet5HTTPRequest(k_EHTTPMethodPOST, demoUrl);
 
   if (demoRequest == INVALID_HANDLE) {
-    LogDebug("Failed to create request %s", demoUrl);
     return;
   }
 
   // Set the auth keys only if they are defined. If not, we can still technically POST
   // to an end point that has no authentication.
-  if (!StrEqual(demoAuthKey, "") && !StrEqual(demoAuthValue, "")) {
-    if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, demoAuthKey, demoAuthValue)) {
-      LogError("Failed to add auth key and token to call. Will end request here.");
+  if (!StrEqual(demoHeaderKey, "") && !StrEqual(demoHeaderValue, "")) {
+    if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, demoHeaderKey, demoHeaderValue)) {
+      LogError("Failed to add custom header '%s' with value '%s' to demo upload request.", demoHeaderKey, demoHeaderValue);
       delete demoRequest;
       return;
     }
   }
 
-  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, "Get5-DemoName", demoFileName)) {
-    LogError("Failed to add filename content header to call. Will end request here.");
+  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, GET5_HEADER_DEMONAME, demoFileName)) {
+    LogError("Failed to add filename header with value '%s' to demo upload request.", demoFileName);
     delete demoRequest;
     return;
   }
 
-  if (!SteamWorks_SetHTTPRequestUserAgentInfo(demoRequest, userAgent)) {
-    LogError("Failed to add user-agent header to call. Will end request here.");
-    delete demoRequest;
-    return;
+  if (strlen(matchId) > 0) {
+   if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, GET5_HEADER_MATCHID, matchId)) {
+      LogError("Failed to add match ID header with value '%s' to demo upload request.", matchId);
+      delete demoRequest;
+      return;
+    }
   }
-  
-  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, "Get5-MatchId", matchId)) {
-    LogError("Failed to add match id content header to call. Will end request here.");
-    delete demoRequest;
-    return;
-  }
-  
-  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, "Get5-MapNumber", strMapNumber)) {
-    LogError("Failed to add map number content header to call. Will end request here.");
+
+  char strMapNumber[5];
+  IntToString(mapNumber, strMapNumber, sizeof(strMapNumber));
+  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, GET5_HEADER_MAPNUMBER, strMapNumber)) {
+    LogError("Failed to add map number header with value '%s' to demo upload request.", strMapNumber);
     delete demoRequest;
     return;
   }
 
-  if (!SteamWorks_SetHTTPRequestNetworkActivityTimeout(demoRequest, 180)) {
-    LogError("Failed to change request timeout to 180 seconds. Will end request here.");
+  const timeout = 180;
+  if (!SteamWorks_SetHTTPRequestNetworkActivityTimeout(demoRequest, timeout)) {
+    LogError("Failed to change demo upload request timeout to %d seconds.", timeout);
     delete demoRequest;
     return;
   }
 
   if (!SteamWorks_SetHTTPRequestRawPostBodyFromFile(demoRequest, "application/octet-stream",
                                                     demoFileName)) {
-    LogError("Failed to append raw POST body, perhaps the file %s is missing?", demoFileName);
+    LogError("Failed to add file '%s' as POST body for demo upload request.", demoFileName);
     delete demoRequest;
     return;
   }

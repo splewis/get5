@@ -188,7 +188,8 @@ is just to indicate what the correct structure looks like.
     4. This is proof-of-concept integration called [get5 web panel](https://github.com/splewis/get5-web) that can be used to
        manage matches. **This is not supported and is probably very buggy. You should not use it.**
     5. This folder contains all the language files and translations for all the plugins.
-    6. Each language has its own folder with translation files.
+    6. Each language has its own folder with translation files. If you remove a language folder, Get5 will simply fall
+       back to English for the missing language.
     7. This is the source code for the plugins. These *cannot* be executed by the server, as they must be compiled first, so
        you cannot simply edit these to change plugin behavior.
     8. Don't change anything in here. There are no editable files in the `metamod` folder. It's here because SourceMod

@@ -50,7 +50,8 @@ and [get5_stop_command_enabled](../configuration/#get5_stop_command_enabled) is 
 ####`!forceready`
 
 :   Force-readies your team, marking all players on your team as ready. This requires that your team has at
-least [`min_players_to_ready`](../match_schema/#schema) number of players.
+least [`min_players_to_ready`](../match_schema/#schema) number of players. Access to this command can be disabled
+with [`get5_allow_force_ready`](../configuration/#get5_allow_force_ready).
 
 ####`!ringer <target>` {: #ringer }
 

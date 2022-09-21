@@ -126,7 +126,7 @@
     }
     "ForceReadyInfoMessage"
     {
-        "es"            "Puede teclear {1} para forzar su equipo a estar listo si tienen {2} jugadores"
+        "es"            "Puede teclear {1} para forzar su equipo a estar listo."
     }
     "TeammateForceReadied"
     {

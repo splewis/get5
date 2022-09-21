@@ -86,6 +86,7 @@ ConVar g_PauseOnVetoCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_PrettyPrintJsonCvar;
 ConVar g_ReadyTeamTagCvar;
+ConVar g_AllowForceReadyCvar;
 ConVar g_ResetPausesEachHalfCvar;
 ConVar g_ServerIdCvar;
 ConVar g_SetClientClanTagCvar;
@@ -440,6 +441,8 @@ public void OnPluginStart() {
   g_ReadyTeamTagCvar =
       CreateConVar("get5_ready_team_tag", "1",
                    "Adds [READY] [NOT READY] Tags before Team Names. 0 to disable it.");
+  g_AllowForceReadyCvar =
+      CreateConVar("get5_allow_force_ready", "1", "Allows players to use the !forceready command. Turning this off does not disable get5_forceready.");
   g_ServerIdCvar = CreateConVar(
       "get5_server_id", "0",
       "Integer that identifies your server. This is used in temp files to prevent collisions.");

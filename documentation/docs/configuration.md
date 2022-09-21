@@ -107,6 +107,10 @@ only.<br>**`Default: 0`**
 :   Whether to automatically mark players as ready if they kill anyone in the warmup or [veto](veto.md)
 phase.<br>**`Default: 0`**
 
+####`get5_allow_force_ready`
+:   Whether the [`!forceready`](../commands/#forceready) command is accessible to players. This does not
+affect the availability of [`get5_forceready`](../commands/#get5_forceready) to admins.<br>**`Default: 1`**
+
 ####`get5_set_client_clan_tags`
 :   Whether to set client clan tags to player ready status.<br>**`Default: 1`**
 

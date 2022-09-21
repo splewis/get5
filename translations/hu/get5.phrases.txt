@@ -198,7 +198,11 @@
     }
     "ForceReadyInfoMessage"
     {
-        "hu"            "Beírhatod a {1} parancsot, ha fel szeretnéd készíteni a csapatod, ha kevesebb mint {2} játékosod van."
+        "hu"            "Beírhatod a {1} parancsot, ha fel szeretnéd készíteni a csapatod."
+    }
+    "ForceReadyDisabled"
+    {
+        "hu"            "A {1} parancs ki van kapcsolva, de engedélyezheted a {2} paranccsal."
     }
     "TeammateForceReadied"
     {

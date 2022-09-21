@@ -190,7 +190,11 @@
     }
     "ForceReadyInfoMessage"
     {
-        "da"            "Du kan skrive {1} for tvinge dit hold klar, hvis der er mindre end {2} spillere."
+        "da"            "Du kan skrive {1} for tvinge dit hold klar."
+    }
+    "ForceReadyDisabled"
+    {
+        "da"            "{1}-kommandoen er deaktiveret, men kan aktiveres via {2}."
     }
     "TeammateForceReadied"
     {

@@ -234,8 +234,8 @@
     }
     "ForceReadyDisabled"
     {
-        "#format"       "{1:s}"
-        "en"            "The force-ready command is disabled, but can enabled with {1}."
+        "#format"       "{1:s},{2:s}"
+        "en"            "The {1} command is disabled, but can be enabled with {2}."
     }
     "TeammateForceReadied"
     {

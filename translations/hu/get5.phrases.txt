@@ -200,6 +200,10 @@
     {
         "hu"            "Beírhatod a {1} parancsot, ha fel szeretnéd készíteni a csapatod."
     }
+    "ForceReadyDisabled"
+    {
+        "hu"            "A {1} parancs ki van kapcsolva, de engedélyezheted a {2} paranccsal."
+    }
     "TeammateForceReadied"
     {
         "hu"            "A csapatod felkészült {1} által."

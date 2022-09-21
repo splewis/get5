@@ -194,7 +194,7 @@
     }
     "ForceReadyDisabled"
     {
-        "da"            "Force-ready kommandoen er deaktiveret, men kan aktiveres via {1}."
+        "da"            "{1}-kommandoen er deaktiveret, men kan aktiveres via {2}."
     }
     "TeammateForceReadied"
     {

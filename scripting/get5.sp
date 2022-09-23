@@ -71,6 +71,9 @@ ConVar g_DamagePrintFormatCvar;
 ConVar g_DemoNameFormatCvar;
 ConVar g_DisplayGotvVetoCvar;
 ConVar g_EventLogFormatCvar;
+ConVar g_EventLogRemoteURLCvar;
+ConVar g_EventLogRemoteHeaderKeyCvar;
+ConVar g_EventLogRemoteHeaderValueCvar;
 ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunityCvar;
 ConVar g_KickClientsWithNoMatchCvar;
@@ -110,9 +113,9 @@ ConVar g_VotesRequiredForSurrenderCvar;
 ConVar g_SurrenderVoteTimeLimitCvar;
 ConVar g_SurrenderCooldownCvar;
 ConVar g_SurrenderTimeToRejoinCvar;
-ConVar g_DemoUploadUrlCvar;
-ConVar g_DemoUploadAuthKeyCvar;
-ConVar g_DemoUploadAuthValueCvar;
+ConVar g_DemoUploadURLCvar;
+ConVar g_DemoUploadHeaderKeyCvar;
+ConVar g_DemoUploadHeaderValueCvar;
 ConVar g_DemoUploadDeleteAfterCvar;
 ConVar g_DemoPathCvar;
 
@@ -300,8 +303,10 @@ Handle g_OnSidePicked = INVALID_HANDLE;
 #include "get5/backups.sp"
 #include "get5/chatcommands.sp"
 #include "get5/debug.sp"
+#include "get5/events.sp"
 #include "get5/get5menu.sp"
 #include "get5/goinglive.sp"
+#include "get5/http.sp"
 #include "get5/jsonhelpers.sp"
 #include "get5/kniferounds.sp"
 #include "get5/maps.sp"
@@ -384,16 +389,16 @@ public void OnPluginStart() {
   g_DemoPathCvar = CreateConVar(
       "get5_demo_path", "",
       "The folder to save demo files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
-  g_DemoUploadAuthValueCvar = CreateConVar(
+  g_DemoUploadHeaderValueCvar = CreateConVar(
       "get5_demo_upload_header_value", "",
       "If defined, it is the authorization value that is appended to the HTTP request. Requires SteamWorks.");
-  g_DemoUploadAuthKeyCvar = CreateConVar(
+  g_DemoUploadHeaderKeyCvar = CreateConVar(
       "get5_demo_upload_header_key", "Authorization",
       "If defined, it is the authorization key that is appended to the HTTP request. Requires SteamWorks.");
   g_DemoUploadDeleteAfterCvar = CreateConVar(
       "get5_demo_delete_after_upload", "0",
       "Whether to delete the demo from the game server after a successful upload.");
-  g_DemoUploadUrlCvar = CreateConVar(
+  g_DemoUploadURLCvar = CreateConVar(
       "get5_demo_upload_url", "",
       "If defined, it is the URL at which a server resides to accept connections to upload demos. Requires SteamWorks extension. If no protocol is provided, the plugin will prepend http:// to this value.");
   g_DisplayGotvVetoCvar =
@@ -402,6 +407,12 @@ public void OnPluginStart() {
   g_EventLogFormatCvar =
       CreateConVar("get5_event_log_format", "",
                    "Path to use when writing match event logs, use \"\" to disable");
+  g_EventLogRemoteURLCvar =
+      CreateConVar("get5_remote_log_url", "", "URL to send event logs as JSON objects to. http:// will be prepended if no protocol is provided.");
+  g_EventLogRemoteHeaderKeyCvar =
+      CreateConVar("get5_remote_log_header_key", "Authorization", "Custom header key to add to event log HTTP requests.");
+  g_EventLogRemoteHeaderValueCvar =
+      CreateConVar("get5_remote_log_header_value", "", "Value to assign to get5_remote_log_header_key.");
   g_FixedPauseTimeCvar =
       CreateConVar("get5_fixed_pause_time", "0",
                    "If set to non-zero, this will be the fixed length of any pause");
@@ -2000,6 +2011,8 @@ void EventLogger_LogAndDeleteEvent(Get5Event event) {
       LogError("Could not open file \"%s\"", logPath);
     }
   }
+
+  SendEventJSONToURL(buffer);
 
   LogDebug("Calling Get5_OnEvent(data=%s)", buffer);
 

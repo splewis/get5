@@ -58,9 +58,10 @@ cfg/get5/live.cfg # (3)
 ## Server Setup
 
 ####`get5_server_id`
-:   Integer that identifies your server. This is used in temporary and backup files to prevent collisions. You should
-set this if you run multiple servers off the same storage, such as if using [Docker](https://www.docker.com/). This also
-defines the [`{SERVERID}`](#tag-serverid) substitution and the return value of the `Get5_GetServerID`
+:   Integer that identifies your server. This is used in temporary and backup files to prevent collisions and added as a
+header to [demo uploads](gotv.md#upload) and [event requests](events_and_forwards.md#http). You should set this if you
+run multiple servers off the same storage, such as if using [Docker](https://www.docker.com/). This also defines
+the [`{SERVERID}`](#tag-serverid) substitution and the return value of the `Get5_GetServerID`
 native.<br>**`Default: 0`**
 
 !!! tip "Server ID could be port number"
@@ -335,12 +336,12 @@ once a recording stops. If no protocol is provided, `http://` will be prepended 
 [SteamWorks](../installation/#steamworks) extension.<br>**`Default: ""`**
 
 ####`get5_demo_upload_header_key`
-:   If this **and** [`get5_demo_upload_header_value`](#get5_demo_upload_header_value) is defined, this header name and
+:   If this **and** [`get5_demo_upload_header_value`](#get5_demo_upload_header_value) are defined, this header name and
 value will be used for your [demo upload HTTP request](#get5_demo_upload_url).<br>**`Default: "Authorization"`**
 
 ####`get5_demo_upload_header_value`
-:   If this **and** [`get5_demo_upload_header_key`](#get5_demo_upload_header_key) is defined, this header name and value
-will be used for your [demo upload HTTP request](#get5_demo_upload_url).<br>**`Default: ""`**
+:   If this **and** [`get5_demo_upload_header_key`](#get5_demo_upload_header_key) are defined, this header name and
+value will be used for your [demo upload HTTP request](#get5_demo_upload_url).<br>**`Default: ""`**
 
 ####`get5_demo_delete_after_upload`
 :   Whether to delete the demo file from the game server after
@@ -357,6 +358,20 @@ must **end with a slash**.<br>**`Default: ""`**
 added automatically). If you do not include the [`{TIME}`](#tag-time) tag, you will have problems with duplicate files
 if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber)variable is not zero-indexed. Set to
 empty string to disable recording demos.<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
+
+## Events
+
+####`get5_remote_log_url`
+:   The URL to send all [events](events_and_forwards.md#http) to. Requires the [SteamWorks](../installation/#steamworks)
+extension. Set to empty string to disable.<br>**`Default: ""`**
+
+####`get5_remote_log_header_key`
+:   If this **and** [`get5_remote_log_header_value`](#get5_remote_log_header_value) are defined, this
+header name and value will be used for your [event HTTP requests](events_and_forwards.md#http).<br>**`Default: "Authorization"`**
+
+####`get5_remote_log_header_value`
+:   If this **and** [`get5_remote_log_header_key`](#get5_remote_log_header_key) are defined, this header
+name and value will be used for your [event HTTP requests](events_and_forwards.md#http).<br>**`Default: ""`**
 
 ## Substitution Variables
 

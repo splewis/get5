@@ -50,9 +50,8 @@ so or can live with the potential consequences.
 ## SteamWorks (Recommended) {: #steamworks }
 
 SteamWorks is not required for Get5 to work on your game server, but it is required if you wish
-to [load match configs remotely](../commands#get5_loadmatch_url)
-, [automatically check for updates](../configuration#get5_print_update_notice) or [upload demos](../gotv/#upload) to a
-web server.
+to [load match configurations remotely](../commands#get5_loadmatch_url), [send events to a remote URL](../configuration#get5_remote_log_url), [check for updates](../configuration#get5_print_update_notice)
+or [upload demos](../gotv/#upload) to a web server.
 
 [:material-steam: Download SteamWorks](https://github.com/KyleSanderson/SteamWorks/releases/){ .md-button .md-button--primary }
 

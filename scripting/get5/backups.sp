@@ -50,7 +50,7 @@ Action Command_ListBackups(int client, int args) {
   if (files != null) {
     char backupInfo[256];
     char pattern[PLATFORM_MAX_PATH];
-    FormatEx(pattern, sizeof(pattern), "get5_backup_match%s", matchID);
+    FormatEx(pattern, sizeof(pattern), "get5_backup%d_match%s", Get5_GetServerID(), matchID);
 
     char filename[PLATFORM_MAX_PATH];
     while (files.GetNext(filename, sizeof(filename))) {
@@ -174,10 +174,10 @@ void WriteBackup() {
 
   char path[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
-    FormatEx(path, sizeof(path), "%sget5_backup_match%s_map%d_round%d.cfg", folder, g_MatchID,
+    FormatEx(path, sizeof(path), "%sget5_backup%d_match%s_map%d_round%d.cfg", folder, Get5_GetServerID(), g_MatchID,
            g_MapNumber, g_RoundNumber);
   } else {
-    FormatEx(path, sizeof(path), "%sget5_backup_match%s_map%d_prelive.cfg", folder, g_MatchID,
+    FormatEx(path, sizeof(path), "%sget5_backup%d_match%s_map%d_prelive.cfg", folder, Get5_GetServerID(), g_MatchID,
            g_MapNumber);
   }
   LogDebug("Writing backup to %s", path);
@@ -243,21 +243,26 @@ static void WriteBackupStructure(const char[] path) {
   WriteMatchToKv(kv);
   kv.GoBack();
 
-  if (g_GameState == Get5State_Live) {
-    // Write valve's backup format into the file. This only applies to live rounds, as any pre-live
-    // backups should just restart the game to warmup (post-veto).
+  ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
+  if (lastBackupCvar != null) {
     char lastBackup[PLATFORM_MAX_PATH];
-    ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
-    if (lastBackupCvar != null) {
-      lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
-      KeyValues valveBackup = new KeyValues("valve_backup");
-      if (valveBackup.ImportFromFile(lastBackup)) {
-        kv.SetNum("gamestate", view_as<int>(Get5State_Live));
-        kv.JumpToKey("valve_backup", true);
-        KvCopySubkeys(valveBackup, kv);
-        kv.GoBack();
+    lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
+    if (strlen(lastBackup) > 0) {
+      if (g_GameState == Get5State_Live) {
+        // Write valve's backup format into the file. This only applies to live rounds, as any pre-live
+        // backups should just restart the game to warmup (post-veto).
+        KeyValues valveBackup = new KeyValues("valve_backup");
+        if (valveBackup.ImportFromFile(lastBackup)) {
+          kv.SetNum("gamestate", view_as<int>(Get5State_Live));
+          kv.JumpToKey("valve_backup", true);
+          KvCopySubkeys(valveBackup, kv);
+          kv.GoBack();
+        }
+        delete valveBackup;
       }
-      delete valveBackup;
+      if (DeleteFile(lastBackup)) {
+        lastBackupCvar.SetString("");
+      }
     }
   }
 
@@ -534,7 +539,7 @@ void DeleteOldBackups() {
     LogDebug("Searching '%s' for expired backups...", path);
     char filename[PLATFORM_MAX_PATH];
     while (files.GetNext(filename, sizeof(filename))) {
-      if (StrContains(filename, "get5_backup_") == 0) {
+      if (StrContains(filename, "get5_backup") == 0) {
         Format(filename, sizeof(filename), "%s%s", path, filename);
         if (GetTime() - GetFileTime(filename, FileTime_LastChange) >= maxTimeDifference) {
           if (DeleteFileIfExists(filename)) {

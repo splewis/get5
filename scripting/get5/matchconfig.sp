@@ -130,6 +130,9 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   AddTeamLogosToDownloadTable();
   SetStartingTeams();
 
+  // Set mp_backup_round_file to prevent backup file collisions
+  ServerCommand("mp_backup_round_file backup_%d", Get5_GetServerID());
+
   if (!restoreBackup) {
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();

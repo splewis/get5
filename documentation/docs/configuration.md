@@ -58,8 +58,15 @@ cfg/get5/live.cfg # (3)
 ## Server Setup
 
 ####`get5_server_id`
-:   Integer that identifies your server. This is used in temp files to prevent collisions. Defines the
-[`{SERVERID}`](#tag-serverid) substitution and the return value of the `Get5_GetServerID` native.<br>**`Default: 0`**
+:   Integer that identifies your server. This is used in temporary and backup files to prevent collisions. You should
+set this if you run multiple servers off the same storage, such as if using [Docker](https://www.docker.com/). This also
+defines the [`{SERVERID}`](#tag-serverid) substitution and the return value of the `Get5_GetServerID`
+native.<br>**`Default: 0`**
+
+!!! tip "Server ID could be port number"
+
+    A good candidate for `get5_server_id` would be the port number the server is bound to, since it uniquely identifies
+    a server instance on a host and ensures that no two instances run with the same server ID at the same time.
 
 ####`get5_kick_immunity`
 :   Whether [admins](../installation/#administrators) will be immune to kicks from

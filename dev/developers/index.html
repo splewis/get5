@@ -305,25 +305,24 @@
 <p>You can write another SourceMod plugin that uses
    the <a href="https://github.com/splewis/get5/blob/master/scripting/include/get5.inc">Get5 natives and forwards</a>. This is
    exactly what the <a href="https://github.com/splewis/get5/blob/master/scripting/get5_apistats.sp">get5_apistats</a>
-   and <a href="https://github.com/splewis/get5/blob/master/scripting/get5_mysqlstats.sp">get5_mysqlstats</a> plugins do. Please
-   use these as a general guide/starting point. Don't fork this repository to make changes to these plugins alone, but
-   use these as a template and create a new repository for your plugin. All the events and forwards
-   are <a href="../events_and_forwards/">thoroughly documented</a>.</p>
+   and <a href="https://github.com/splewis/get5/blob/master/scripting/get5_mysqlstats.sp">get5_mysqlstats</a> plugins do.</p>
 </li>
 <li>
 <p>You can read <a href="../events_and_forwards/">event logs</a> from a file on disk (set
    by <a href="../configuration/#get5_event_log_format"><code>get5_event_log_format</code></a>), through a RCON connection to the server
-   console since they are output there, or through another SourceMod plugin (see #1).</p>
+   console since they are output there, or through another SourceMod plugin.</p>
+</li>
+<li>
+<p>You can <a href="../events_and_forwards/#http">send all events to a web server over HTTP</a>.</p>
 </li>
 <li>
 <p>You can read the <a href="../stats_system/">stats</a> Get5 collects from a file on disk (set
-   by <a href="../configuration/#get5_stats_path_format"><code>get5_stats_path_format</code></a>), or through another SourceMod plugin (
-   see #1).</p>
+   by <a href="../configuration/#get5_stats_path_format"><code>get5_stats_path_format</code></a>).</p>
 </li>
 <li>
-<p>You can execute the <a href="../commands/#get5_loadmatch"><code>get5_loadmatch</code></a> command
-   or <a href="../commands/#get5_loadmatch_url"><code>get5_loadmatch_url</code></a> commands via another plugin or via a RCON
-   to begin matches. Of course, you could execute any get5 command you want as well.</p>
+<p>You can execute any <a href="../commands/">command</a>, such as <a href="../commands/#get5_loadmatch"><code>get5_loadmatch</code></a>
+   or <a href="../commands/#get5_loadmatch_url"><code>get5_loadmatch_url</code></a> via another plugin or
+   via <a href="https://developer.valvesoftware.com/wiki/Source_RCON_Protocol">RCON</a>.</p>
 </li>
 </ol>
 <h2 id="build">Building Get5 from source</h2>

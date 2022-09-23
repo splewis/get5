@@ -205,9 +205,36 @@
 </li>
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Events &amp; Forwards
+          <span class="md-nav__icon md-icon"></span>
+</label>
 <a class="md-nav__link md-nav__link--active" href="./">
         Events &amp; Forwards
       </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#http">
+    HTTP
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sourcemod-forwards">
+    SourceMod Forwards
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#events">
+    Events
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../stats_system/">
@@ -251,6 +278,27 @@
 <div class="md-sidebar__scrollwrap">
 <div class="md-sidebar__inner">
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#http">
+    HTTP
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#sourcemod-forwards">
+    SourceMod Forwards
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#events">
+    Events
+  </a>
+</li>
+</ul>
 </nav>
 </div>
 </div>
@@ -263,17 +311,27 @@
 <h1 id="events-forwards"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.6 5.29c-1.1-.1-2.07.71-2.17 1.82L13.18 10H16v2h-3l-.44 5.07a3.986 3.986 0 0 1-4.33 3.63 4.007 4.007 0 0 1-3.06-1.87l1.5-1.5c.24.74.9 1.31 1.73 1.38 1.1.1 2.07-.71 2.17-1.82L11 12H8v-2h3.17l.27-3.07c.19-2.2 2.13-3.83 4.33-3.63 1.31.11 2.41.84 3.06 1.87l-1.5 1.5c-.24-.74-.9-1.31-1.73-1.38Z"></path></svg></span> Events &amp; Forwards</h1>
 <p>Get5 contains an event-logging system that logs many client actions and what is happening in the game. These supplement
 the logs CS:GO makes on its own, but add a lot of additional information about the ongoing match.</p>
-<p>You should hook onto these forwards if creating extensions to Get5, such as a plugin to collect stats. You can also
-implement something similar to the <code>get5_apistats</code> plugin, which sends the data
-somewhere via HTTP or logs the events to a file.</p>
-<div class="admonition help">
-<p class="admonition-title">Why are there HTTP methods?</p>
-<p>The HTTP methods displayed here must be defined for the OpenAPI swagger documentation tool and have <strong>no meaning</strong>.
-We use swagger because it allows us to document the structure of the
-<a href="https://github.com/splewis/get5/blob/master/scripting/include/get5.inc">event objects</a> and their inheritance 1:1 to
-the JSON output you would see from each forward/event.</p>
+<h2 id="http">HTTP</h2>
+<p>To receive Get5 <a href="#events">events</a> on a web server, define
+a <a href="../configuration/#get5_remote_log_url">URL for event logging</a>. Get5 will send all events to the URL as JSON over
+HTTP. You may add a <a href="../configuration/#get5_remote_log_header_key">custom HTTP header</a> to authenticate your request.
+Get5 will also add a header called <code>Get5-ServerId</code> with the value of <a href="../configuration/#get5_server_id"><code>get5_server_id</code></a>
+<strong>if</strong> it is set to a positive integer.</p>
+<div class="admonition warning">
+<p class="admonition-title">Simple HTTP</p>
+<p>There is no deduplication or retry-logic for failed requests. It is assumed that a stable connection can be made
+between your game server and the URL at all times.
+HTTP <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Keep-Alive">Keep-Alive</a> is <strong>not</strong> supported. HTTPS
+<strong>is</strong> supported and encouraged if connection is made over a public network. Logging over HTTP requires
+the <a href="../installation/#steamworks">SteamWorks</a> extension on your server.</p>
 </div>
-<p><iframe frameborder="0" id="ec34cbb8" src="swagger-ec34cbb8.html" style="overflow:hidden;width:100%;" width="100%"></iframe></p>
+<h2 id="sourcemod-forwards">SourceMod Forwards</h2>
+<p>If you are writing your own SourceMod plugin, you can hook onto
+the Get5 <a href="https://github.com/splewis/get5/blob/master/scripting/include/get5.inc">forwards</a>. This is
+what <code>get5_apistats</code> and <a href="../stats_system/#mysql"><code>get5_mysqlstats</code></a> both do. The paths of the <code>POST</code> endpoints in the
+table below indicate the name of the forward in SourceMod.</p>
+<h2 id="events">Events</h2>
+<p><iframe frameborder="0" id="10bd2a5d" src="swagger-10bd2a5d.html" style="overflow:hidden;width:100%;" width="100%"></iframe></p>
 </article>
 </div>
 </div>
@@ -348,7 +406,7 @@ the JSON output you would see from each forward/event.</p>
                     characterDataOldValue: false
                 };
             
-                const iframe_id_list = ["ec34cbb8"]
+                const iframe_id_list = ["10bd2a5d"]
             
                 function color_scheme_callback(mutations) {
                     for (let mutation of mutations) {

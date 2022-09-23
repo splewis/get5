@@ -5,7 +5,7 @@ info:
   version: ""
 paths:
   "/Get_OnEvent":
-    put:
+    post:
       tags:
         - All Events
       description: |
@@ -418,7 +418,7 @@ paths:
   "/Get5_OnRoundStart":
     post:
       tags:
-        - Map Flow
+        - Live
       description: |
         Fired when a round starts (when freezetime begins).
       requestBody:
@@ -436,7 +436,7 @@ paths:
   "/Get5_OnRoundEnd":
     post:
       tags:
-        - Map Flow
+        - Live
       description: |
         Fired when a round ends - when the result is in; not when the round stops. Game activity can occur after this.
       requestBody:
@@ -469,7 +469,7 @@ paths:
   "/Get5_OnRoundStatsUpdated":
     post:
       tags:
-        - Map Flow
+        - Live
       description: |
         Fired after the stats update on round end.
       requestBody:
@@ -534,7 +534,7 @@ paths:
   "/Get5_OnPlayerBecameMVP":
     post:
       tags:
-        - Map Flow
+        - Live
       description: |
         Fired when a player is elected the MVP of the round.
       requestBody:
@@ -556,7 +556,7 @@ paths:
   "/Get5_OnGrenadeThrown":
     post:
       tags:
-        - Client Actions
+        - Live
       description: |
         Fired whenever a grenade is thrown by a player. The `weapon` property reflects the grenade used.
       requestBody:
@@ -574,7 +574,7 @@ paths:
   "/Get5_OnPlayerDeath":
     post:
       tags:
-        - Client Actions
+        - Live
       description: |
         Fired when a player dies.
       requestBody:
@@ -664,7 +664,7 @@ paths:
   "/Get5_OnHEGrenadeDetonated":
     post:
       tags:
-        - Client Actions
+        - Live
       description: |
         Fired when an HE grenade detonates. `player` describes who threw the HE and `victims` who were affected.
         `weapon` is always an HE grenade.
@@ -683,7 +683,7 @@ paths:
   "/Get5_OnMolotovDetonated":
     post:
       tags:
-        - Client Actions
+        - Live
       description: |
         Fired when a molotov grenade expires. `player` describes
         who threw the molotov and `victims` who were affected. `weapon` is
@@ -704,7 +704,7 @@ paths:
   "/Get5_OnFlashbangDetonated":
     post:
       tags:
-        - Client Actions
+        - Live
       description: |
         Fired when a flash bang grenade detonates. `player` describes
         who threw the flash bang and `victims` who were affected. `weapon`
@@ -724,7 +724,7 @@ paths:
   "/Get5_OnSmokeGrenadeDetonated":
     post:
       tags:
-        - Client Actions
+        - Live
       description: |
         Fired when an smoke grenade expires. `player` describes
         who threw the grenade. `weapon` is always a smoke grenade.
@@ -747,7 +747,7 @@ paths:
   "/Get5_OnDecoyStarted":
     post:
       tags:
-        - Client Actions
+        - Live
       description: |
         Fired when a decoy starts making noise. `player` describes
         who threw the grenade. `weapon` is always a decoy grenade.
@@ -766,7 +766,7 @@ paths:
   "/Get5_OnBombPlanted":
     post:
       tags:
-        - Client Actions
+        - Live
       description: |
         Fired when the bomb is planted. `player` describes who planted the bomb.
       requestBody:
@@ -784,7 +784,7 @@ paths:
   "/Get5_OnBombDefused":
     post:
       tags:
-        - Client Actions
+        - Live
       description: |
         Fired when the bomb is defused. `player` describes who defused the bomb.
       requestBody:
@@ -808,7 +808,7 @@ paths:
   "/Get5_OnBombExploded":
     post:
       tags:
-        - Client Actions
+        - Live
       description: |
         Fired when the bomb explodes.
       requestBody:
@@ -1115,7 +1115,8 @@ tags:
   - name: Series Flow
     description: Events the occur in relation to setting up a match or series.
   - name: Map Flow
-    description: Events the occur in relation to a map pick or match-events on a map (pausing).
+    description: Events the occur in relation to a map pick or match-events on a map.
+  - name: Live
+    description: Events that only occur during live rounds (not during knife, veto or warmup).
   - name: Client Actions
-    description: Events that occur based on players' in-game activity.
-
+    description: Events that occur based on players' chat or connection activity.

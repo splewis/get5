@@ -1226,9 +1226,16 @@ If you want to set your <code>tv_delay</code> or <code>tv_delay1</code>, do it i
 <h2 id="server-setup">Server Setup</h2>
 <h4 id="get5_server_id"><code>get5_server_id</code></h4>
 <dl>
-<dd>Integer that identifies your server. This is used in temp files to prevent collisions. Defines the
-<a href="#tag-serverid"><code>{SERVERID}</code></a> substitution and the return value of the <code>Get5_GetServerID</code> native.<br/><strong><code>Default: 0</code></strong></dd>
+<dd>Integer that identifies your server. This is used in temporary and backup files to prevent collisions. You should
+set this if you run multiple servers off the same storage, such as if using <a href="https://www.docker.com/">Docker</a>. This also
+defines the <a href="#tag-serverid"><code>{SERVERID}</code></a> substitution and the return value of the <code>Get5_GetServerID</code>
+native.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
+<div class="admonition tip">
+<p class="admonition-title">Server ID could be port number</p>
+<p>A good candidate for <code>get5_server_id</code> would be the port number the server is bound to, since it uniquely identifies
+a server instance on a host and ensures that no two instances run with the same server ID at the same time.</p>
+</div>
 <h4 id="get5_kick_immunity"><code>get5_kick_immunity</code></h4>
 <dl>
 <dd>Whether <a href="../installation/#administrators">admins</a> will be immune to kicks from

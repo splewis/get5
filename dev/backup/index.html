@@ -319,29 +319,32 @@ the entire <a href="../match_schema">match configuration</a> and the match serie
 with <a href="../configuration/#get5_backup_system_enabled"><code>get5_backup_system_enabled</code></a>.</p>
 <h3 id="how-to">How does it work?</h3>
 <p>Every time a round starts, CS:GO automatically writes a round backup file into the root of the <code>csgo</code> directory based on
-the value of <code>mp_backup_round_file</code>. The default value for this is <code>backup</code>. Get5 reads this file and copies it into its
-own file called <code>get5_backup_match%s_map%d_round%d.cfg</code>, where the arguments are <code>matchid</code>, <code>mapnumber</code>
-and <code>roundnumber</code>, respectively. A special backup called <code>get5_backup_match%s_map%d_prelive.cfg</code> is created and should
-be used if you want to restore to the beginning of the map, before the knife round.</p>
+the value of <a href="https://totalcsgo.com/command/mpbackuproundfile"><code>mp_backup_round_file</code></a>, which Get5 will <a href="../configuration/#get5_server_id">automatically
+adjust to prevent file collisions</a>. Get5 reads this file, copies it into its
+own file called <code>get5_backup%d_match%s_map%d_round%d.cfg</code>, where the arguments
+are <a href="..configuration/#get5_server_id"><code>get5_server_id</code></a>, <code>matchid</code>, <code>mapnumber</code> and <code>roundnumber</code>, respectively, and
+then deletes the original backup file. A special backup
+called <code>get5_backup%d_match%s_map%d_prelive.cfg</code> is created and should be used if you want to restore to the beginning
+of the map, before the knife round.</p>
 <h3 id="example">Example</h3>
 <p>When in a match, you can call <a href="../commands/#get5_listbackups"><code>get5_listbackups</code></a> to view all backups for the current
 match. Note that all rounds and map numbers start at 0.</p>
-<p>They print in the format <code>filepath date time team1 team2 map team1_score team2_score</code>.</p>
+<p>They print in the format <code>filepath timestamp team1 team2 map team1_score team2_score</code>.</p>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>&gt; get5_listbackups
-<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>get5_backup_match1844_map0_prelive.cfg 2022-07-26 18:51:25 "Team A" "Team B"
-<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>get5_backup_match1844_map0_round30.cfg 2022-07-26 19:13:41 "Team A" "Team B" de_dust2 2 28
-<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>get5_backup_match1844_map0_round4.cfg 2022-07-26 18:55:01 "Team A" "Team B" de_dust2 2 2
-<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>get5_backup_match1844_map0_round10.cfg 2022-07-26 18:59:25 "Team A" "Team B" de_dust2 2 8
-<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>get5_backup_match1844_map0_round23.cfg 2022-07-26 19:08:13 "Team A" "Team B" de_dust2 2 21
-<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>get5_backup_match1844_map0_round12.cfg 2022-07-26 19:00:26 "Team A" "Team B" de_dust2 2 10
-<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>get5_backup_match1844_map0_round17.cfg 2022-07-26 19:03:39 "Team A" "Team B" de_dust2 2 15
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>get5_backup4_match1844_map0_prelive.cfg 2022-07-26 18:51:25 "Team A" "Team B"
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>get5_backup4_match1844_map0_round30.cfg 2022-07-26 19:13:41 "Team A" "Team B" de_dust2 2 28
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>get5_backup4_match1844_map0_round4.cfg 2022-07-26 18:55:01 "Team A" "Team B" de_dust2 2 2
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>get5_backup4_match1844_map0_round10.cfg 2022-07-26 18:59:25 "Team A" "Team B" de_dust2 2 8
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>get5_backup4_match1844_map0_round23.cfg 2022-07-26 19:08:13 "Team A" "Team B" de_dust2 2 21
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>get5_backup4_match1844_map0_round12.cfg 2022-07-26 19:00:26 "Team A" "Team B" de_dust2 2 10
+<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>get5_backup4_match1844_map0_round17.cfg 2022-07-26 19:03:39 "Team A" "Team B" de_dust2 2 15
 <a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>...
 </code></pre></div>
 <div class="admonition example">
-<p class="admonition-title">Example</p>
-<p>To load at the beginning of round 13 of the first map of match ID 1844,
-run <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a>:</p>
-<p><code>get5_loadbackup get5_backup_match1844_map0_round12.cfg</code>.</p>
+<p class="admonition-title">Loading a backup</p>
+<p>To load at the beginning of round 13 of the first map of match ID 1844 from a backup created on a
+<a href="../configuration/#get5_server_id">server with ID 4</a>, run <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a>:</p>
+<p><code>get5_loadbackup get5_backup4_match1844_map0_round12.cfg</code></p>
 </div>
 <p>After loading a backup, the game state is restored and the game is <a href="../pausing/#backup">paused</a>. Both teams
 must <a href="../commands/#unpause"><code>!unpause</code></a> to continue.</p>

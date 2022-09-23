@@ -336,12 +336,12 @@
     "TeamDecidedToStayInfoMessage"
     {
         "#format"       "{1:s}"
-        "en"            "{1} has decided to stay."
+        "en"            "{1} decided to stay."
     }
     "TeamDecidedToSwapInfoMessage"
     {
         "#format"       "{1:s}"
-        "en"            "{1} has decided to swap."
+        "en"            "{1} decided to swap."
     }
     "TeamLostTimeToDecideInfoMessage"
     {
@@ -499,23 +499,41 @@
         "#format"   "{1:s}"
         "en"        "You must wait {1} to initiate a new vote to surrender."
     }
-    "SurrenderTeamMustRejoin"
+    "WinByForfeitAvailable"
     {
         "#format"   "{1:s},{2:s},{3:s}"
-        "en"        "{1} left the server and must rejoin within {2} seconds or {3} will win."
+        "en"        "{1} left the server. {2} can now type {3} to initiate a countdown to win as long as their team is full."
     }
-    "SurrenderRejoinCountdownCanceled"
+    "WinByForfeitRequiresFullTeam"
     {
-        "en"        "Surrender countdown was canceled."
+        "en"        "You must have a full team in order to request or cancel a win by forfeit."
+    }
+    "WinByForfeitAlreadyRequested"
+    {
+        "en"        "A request to win by forfeit is already pending."
+    }
+    "WinByForfeitCountdownStarted"
+    {
+        "#format"   "{1:s},{2:s},{3:s},{4:s}"
+        "en"        "{1} will win in {2} unless a player from {3} rejoins the game. This request can be canceled with {4}."
+    }
+    "WinByForfeitCountdownCanceled"
+    {
+        "#format"   "{1:s}"
+        "en"        "The request from {1} to win by forfeit was canceled."
+    }
+    "TeamForfeited"
+    {
+        "#format"   "{1:s}"
+        "en"        "{1} forfeited the series."
     }
     "AllPlayersLeftTieCountdown"
     {
         "#format"   "{1:s}"
-        "en"        "Both teams have left the server. At least one player must rejoin within {1} seconds or the match will end in a tie."
+        "en"        "Both teams left the server. At least one player from each team must rejoin within {1} or the series will end in a tie."
     }
-    "SurrenderTeamAppearsToLeaveWarning"
+    "TieCountdownCanceled"
     {
-        "#format"   "{1:s},{2:s}"
-        "en"        "{1} appears to be leaving the server. Nobody from {2} can leave before the surrender timer has started, or the match will end in a tie."
+        "en"        "The countdown to a tie was canceled as both teams now have players."
     }
 }

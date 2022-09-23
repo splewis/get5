@@ -424,20 +424,8 @@
     {
         "pt"        "Você deve esperar {1} para iniciar uma nova votação para se render."
     }
-    "SurrenderTeamMustRejoin"
-    {
-        "pt"        "{1} saiu do servidor e deve voltar dentro de {2} segundos ou {3} vencerá."
-    }
-    "SurrenderRejoinCountdownCanceled"
-    {
-        "pt"        "A contagem regressiva para se render foi cancelada."
-    }
     "AllPlayersLeftTieCountdown"
     {
         "pt"        "Ambas as equipes deixaram o servidor. Pelo menos um jogador deve retornar dentro de {1} segundos ou a partida terminará em empate."
-    }
-    "SurrenderTeamAppearsToLeaveWarning"
-    {
-        "pt"        "{1} parece estar saindo do servidor. Ninguém de {2} pode sair antes que o tempo para se render tenha começado, ou a partida terminará em empate."
     }
 }

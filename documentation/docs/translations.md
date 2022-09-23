@@ -185,10 +185,14 @@ end with a full stop as this is added automatically.
 | `SurrenderSuccessful`                       | _Team A_ has surrendered.                                                                                                                                                | Chat       |
 | `SurrenderVoteFailed`                       | Not enough players on your team voted to surrender.                                                                                                                      | Chat       |
 | `SurrenderOnCooldown`                       | You must wait _1:30_ to initiate a new vote to surrender.                                                                                                                | Chat       |
-| `SurrenderTeamMustRejoin`                   | _Team A_ left the server and must rejoin within _60_ seconds or _Team 2_ will win.                                                                                       | Chat       |
-| `SurrenderRejoinCountdownCanceled`          | Surrender countdown was canceled.                                                                                                                                        | Chat       |
-| `AllPlayersLeftTieCountdown`                | Both teams have left the server. At least one player must rejoin within _60_ seconds or the match will end in a tie.                                                     | Chat       |
-| `SurrenderTeamAppearsToLeaveWarning`        | _Team A_ appears to be leaving the server. Nobody from _Team B_ can leave before the surrender timer has started, or the match will end in a tie.                        | Chat       |
+| `WinByForfeitAvailable`                     | _Team A_ left the server. _Team B_ can now type _!win_ to initiate a countdown to win as long as their team is full.                                                     | Chat       |
+| `WinByForfeitRequiresFullTeam`              | You must have a full team in order to request or cancel a win by forfeit.                                                                                                | Chat       |
+| `WinByForfeitAlreadyRequested`              | A request to win by forfeit is already pending.                                                                                                                          | Chat       |
+| `WinByForfeitCountdownStarted`              | _Team B_ will win in _0:45_ unless a player from _Team A_ rejoins the game. This request can be canceled with _!cancelwin_.                                              | Chat       |
+| `WinByForfeitCountdownCanceled`             | The request from _Team B_ to win by forfeit was canceled.                                                                                                                | Chat       |
+| `TeamForfeited`                             | _Team A_ forfeited the series.                                                                                                                                           | Chat       |
+| `AllPlayersLeftTieCountdown`                | Both teams have left the server. At least one player from each team must rejoin within _0:45_ or the series will end in a tie.                                           | Chat       |
+| `TieCountdownCanceled`                      | The countdown to a tie was canceled as both teams now have players.                                                                                                      | Chat       |
 
 ## Supported Languages {: #supported-languages }
 

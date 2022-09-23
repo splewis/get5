@@ -167,7 +167,7 @@ Action Command_Pause(int client, int args) {
     int maxPauseTime = g_MaxPauseTimeCvar.IntValue;
     if (maxPauseTime > 0 && g_TacticalPauseTimeUsed[team] >= maxPauseTime) {
       char maxPauseTimeFormatted[16];
-      convertSecondsToMinutesAndSeconds(maxPauseTime, maxPauseTimeFormatted,
+      ConvertSecondsToMinutesAndSeconds(maxPauseTime, maxPauseTimeFormatted,
                                         sizeof(maxPauseTimeFormatted));
       Get5_Message(client, "%t", "MaxPausesTimeUsedInfoMessage", maxPauseTimeFormatted,
                    g_FormattedTeamNames[team]);
@@ -331,12 +331,12 @@ static Action Timer_PauseTimeCheck(Handle timer) {
     char timeLeftFormatted[16] = "";
     if (timeLeft >= 0) {
       // Only format the string once; not inside the loop.
-      convertSecondsToMinutesAndSeconds(timeLeft, timeLeftFormatted, sizeof(timeLeftFormatted));
+      ConvertSecondsToMinutesAndSeconds(timeLeft, timeLeftFormatted, sizeof(timeLeftFormatted));
     }
 
     char pauseTimeMaxFormatted[16] = "";
     if (timeLeft >= 0) {
-      convertSecondsToMinutesAndSeconds(maxTacticalPauseTime, pauseTimeMaxFormatted,
+      ConvertSecondsToMinutesAndSeconds(maxTacticalPauseTime, pauseTimeMaxFormatted,
                                         sizeof(pauseTimeMaxFormatted));
     }
 
@@ -413,7 +413,7 @@ static Action Timer_PauseTimeCheck(Handle timer) {
     char timeLeftFormatted[16] = "";
     if (timeLeft >= 0) {
       // Only format the string once; not inside the loop.
-      convertSecondsToMinutesAndSeconds(timeLeft, timeLeftFormatted, sizeof(timeLeftFormatted));
+      ConvertSecondsToMinutesAndSeconds(timeLeft, timeLeftFormatted, sizeof(timeLeftFormatted));
     }
 
     LOOP_CLIENTS(i) {

@@ -33,7 +33,7 @@
 #include <SteamWorks>
 
 #define CHECK_READY_TIMER_INTERVAL 1.0
-#define INFO_MESSAGE_TIMER_INTERVAL 29.0
+#define INFO_MESSAGE_TIMER_INTERVAL 20.0
 
 #define DEBUG_CVAR "get5_debug"
 #define MATCH_ID_LENGTH 64
@@ -175,6 +175,7 @@ ArrayList g_MapSides = null;
 ArrayList g_MapsLeftInVetoPool = null;
 Get5Team g_LastVetoTeam;
 Menu g_ActiveVetoMenu = null;
+Handle g_InfoTimer = INVALID_HANDLE;
 
 /** Backup data **/
 bool g_WaitingForRoundBackup = false;
@@ -623,8 +624,7 @@ public void OnPluginStart() {
 
   /** Start any repeating timers **/
   CreateTimer(CHECK_READY_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
-  CreateTimer(INFO_MESSAGE_TIMER_INTERVAL, Timer_InfoMessages, _, TIMER_REPEAT);
-
+  RestartInfoTimer();
   CheckForLatestVersion();
 }
 
@@ -669,18 +669,7 @@ static Action Timer_InfoMessages(Handle timer) {
              g_MapChangePending && GetTvDelay() > 0) {
     Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
-    if (g_KnifeWinnerTeam == Get5Team_None) {
-      return Plugin_Continue;
-    }
-    // Handle waiting for knife decision. Also check g_KnifeWinnerTeam as there is a small delay between
-    // selecting a side and the game state changing, during which this message should not be printed.
-    char formattedStayCommand[64];
-    FormatChatCommand(formattedStayCommand, sizeof(formattedStayCommand), "!stay");
-    char formattedSwapCommand[64];
-    FormatChatCommand(formattedSwapCommand, sizeof(formattedSwapCommand), "!swap");
-    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand,
-                      formattedSwapCommand);
+     PromptForKnifeDecision();
   } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
     // Handle postgame
     Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
@@ -826,6 +815,7 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
   g_MapChangePending = false;
   g_DoingBackupRestoreNow = false;
   g_ReadyTimeWaitingUsed = 0;
+  g_KnifeWinnerTeam = Get5Team_None;
   g_HasKnifeRoundStarted = false;
   // Recording is always automatically stopped on map change, and
   // since there are no hooks to detect tv_stoprecord, we reset
@@ -1450,6 +1440,15 @@ static Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
   }
 }
 
+static void RestartInfoTimer() {
+  // We restart this on each round start to make sure we don't double-print info messages
+  // right on top of manually printed messages, such as "waiting for knife decision".
+  if (g_InfoTimer != INVALID_HANDLE) {
+    delete g_InfoTimer;
+  }
+  g_InfoTimer = CreateTimer(INFO_MESSAGE_TIMER_INTERVAL, Timer_InfoMessages, _, TIMER_REPEAT);
+}
+
 static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundStart");
 
@@ -1458,6 +1457,7 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_RoundStartedTime = 0.0;
   g_BombPlantedTime = 0.0;
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
+  RestartInfoTimer();
 
   if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {
     // Get5_OnRoundStart() is fired from within the backup event when loading the valve backup.
@@ -1467,13 +1467,26 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   // We cannot do this during warmup, as sending users into warmup post-knife triggers a round start
   // event.
   if (!InWarmup()) {
-    if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
+    if (g_GameState == Get5State_KnifeRound && g_HasKnifeRoundStarted) {
+      // Knife-round decision cannot be made until the round has completely ended and a new round starts.
+      // Letting players choose a side in after-round-time sometimes causes weird problems, such as going
+      // directly to live and missing the countdown if done at the *exact* wrong time.
+      g_HasKnifeRoundStarted = false;
+
       // Ensures that round end after knife sends players directly into warmup.
       // This immediately triggers another Event_RoundStart, so we can return here and avoid
       // writing backup twice.
       LogDebug("Changed to warmup post knife.");
+      if (g_KnifeChangedCvars != INVALID_HANDLE) {
+        RestoreCvars(g_KnifeChangedCvars, true);
+      }
       ExecCfg(g_WarmupCfgCvar);
       StartWarmup();
+
+      // Change state *after* starting the warmup just to reduce !swap/!stay race condition windows.
+      ChangeState(Get5State_WaitingForKnifeRoundDecision);
+      PromptForKnifeDecision();
+      StartKnifeTimer();
       return;
     }
     if (g_GameState == Get5State_GoingLive) {
@@ -1519,13 +1532,6 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
 static Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundWinPanel");
   if (g_GameState == Get5State_KnifeRound && g_HasKnifeRoundStarted) {
-    g_HasKnifeRoundStarted = false;
-
-    ChangeState(Get5State_WaitingForKnifeRoundDecision);
-    if (g_KnifeChangedCvars != INVALID_HANDLE) {
-      RestoreCvars(g_KnifeChangedCvars, true);
-    }
-
     int ctAlive = CountAlivePlayersOnTeam(CS_TEAM_CT);
     int tAlive = CountAlivePlayersOnTeam(CS_TEAM_T);
     int winningCSTeam;
@@ -1545,44 +1551,15 @@ static Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroad
         LogDebug("Randomized knife winner to side %d", winningCSTeam);
       }
     }
-
     g_KnifeWinnerTeam = CSTeamToGet5Team(winningCSTeam);
-    char formattedStayCommand[64];
-    FormatChatCommand(formattedStayCommand, sizeof(formattedStayCommand), "!stay");
-    char formattedSwapCommand[64];
-    FormatChatCommand(formattedSwapCommand, sizeof(formattedSwapCommand), "!swap");
-    Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
-                      g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand,
-                      formattedSwapCommand);
 
-    if (g_TeamTimeToKnifeDecisionCvar.FloatValue > 0) {
-      g_KnifeDecisionTimer =
-          CreateTimer(g_TeamTimeToKnifeDecisionCvar.FloatValue, Timer_ForceKnifeDecision);
-    }
-
-    // This ensures that the correct graphic is displayed in-game for the winning team, as CTs will
-    // always win if the clock runs out. It also ensures that the fun fact displayed is correct;
-    // overriding to number of players killed by knife and no "CT won by running down the clock".
-    // MVP can still be on the losing team though. ran down".
-    int maxFrags = 0;
-    int topFragClient = 0;
-    int frags;
-    LOOP_CLIENTS(i) {
-      if (IsValidClient(i)) {
-        frags = GetClientFrags(i);
-        if (frags >= maxFrags) {
-          maxFrags = frags;
-          topFragClient = i;
-        }
-      }
-    }
-    if (topFragClient > 0) {
-      // Found here:
-      // https://github.com/SteamDatabase/GameTracking-CSGO/blob/master/csgo/bin/server_client_strings.txt
-      event.SetString("funfact_token", "#funfact_knife_kills");
-      event.SetInt("funfact_player", topFragClient);
-      event.SetInt("funfact_data1", maxFrags);
-    }
+    // Adjust fun-fact to nothing and make sure the correct team is announced as winner.
+    // This prevents things like "CTs won by running down the clock"
+    event.SetString("funfact_token", "");
+    event.SetInt("funfact_player", 0);
+    event.SetInt("funfact_data1", 0);
+    event.SetInt("funfact_data2", 0);
+    event.SetInt("funfact_data3", 0);
     event.SetInt("final_event", ConvertCSTeamToDefaultWinReason(winningCSTeam));
   }
 }
@@ -1593,7 +1570,7 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     return;
   }
 
-  if (g_GameState == Get5State_WaitingForKnifeRoundDecision && g_KnifeWinnerTeam != Get5Team_None) {
+  if (g_GameState == Get5State_KnifeRound && g_KnifeWinnerTeam != Get5Team_None) {
     int winningCSTeam = Get5TeamToCSTeam(g_KnifeWinnerTeam);
     // Event_RoundWinPanel is called before Event_RoundEnd, so that event handles knife winner.
     // We override this event only to have the correct audio callout in the game.
@@ -1718,16 +1695,10 @@ static void StartGame(bool knifeRound) {
   LogDebug("StartGame");
 
   if (knifeRound) {
-    ExecCfg(g_LiveCfgCvar);  // live first, then apply and save knife cvars below
+    ExecCfg(g_LiveCfgCvar);  // live first, then apply and save knife cvars in callback
     LogDebug("StartGame: about to begin knife round");
     ChangeState(Get5State_KnifeRound);
-    if (g_KnifeChangedCvars != INVALID_HANDLE) {
-      CloseCvarStorage(g_KnifeChangedCvars);
-    }
-    char knifeConfig[PLATFORM_MAX_PATH];
-    g_KnifeCfgCvar.GetString(knifeConfig, sizeof(knifeConfig));
-    g_KnifeChangedCvars = ExecuteAndSaveCvars(knifeConfig);
-    CreateTimer(1.0, StartKnifeRound);
+    CreateTimer(0.5, StartKnifeRound);
   } else {
     // If there is no knife round, we go directly to live, which loads the live config etc. on its
     // own.

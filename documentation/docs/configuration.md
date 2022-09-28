@@ -117,7 +117,8 @@ in [scrim mode](../getting_started/#scrims), put on `team2`. **`Default: 1`**
 
 ####`get5_time_to_make_knife_decision`
 :   Time (in seconds) a team has to make a [`!stay`](../commands/#stay) or [`!swap`](../commands/#swap)
-decision after winning knife round, 0 = unlimited. **`Default: 60`**
+decision after winning knife round. Cannot be set lower than 10 if non-zero. Set to zero to remove
+limit.<br>**`Default: 60`**
 
 ####`get5_veto_countdown`
 :   Time (in seconds) to countdown before veto process commences. **`Default: 5`**

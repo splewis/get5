@@ -249,7 +249,6 @@ ArrayList g_ChatAliasesCommands;
 
 /** Map-game state not related to the actual gameplay. **/
 char g_DemoFileName[PLATFORM_MAX_PATH];
-char g_DemoFileNameLastStartedUpload[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
 bool g_PendingSideSwap = false;
 Handle g_PendingMapChangeTimer = INVALID_HANDLE;

@@ -128,7 +128,6 @@ static void AddGlobalStateInfo(File f) {
   f.WriteLine("g_PauseType = %d", g_PauseType);
   f.WriteLine("g_LatestPauseDuration = %d", g_LatestPauseDuration);
   f.WriteLine("g_PendingSurrenderTeam = %d", g_PendingSurrenderTeam);
-  f.WriteLine("g_DemoFileNameLastStartedUpload = %s", g_DemoFileNameLastStartedUpload);
 
   LOOP_TEAMS(team) {
     GetTeamString(team, buffer, sizeof(buffer));

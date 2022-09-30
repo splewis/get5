@@ -171,16 +171,18 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
     return;
   }
 
-  if (!SteamWorks_SetHTTPRequestRawPostBodyFromFile(demoRequest, "application/octet-stream",
-                                                    demoFileName)) {
+  if (!FileExists(demoFileName) || !SteamWorks_SetHTTPRequestRawPostBodyFromFile(
+    demoRequest, "application/octet-stream", demoFileName)) {
     LogError("Failed to add file '%s' as POST body for demo upload request.", demoFileName);
     delete demoRequest;
     return;
   }
+
+  DataPack pack = new DataPack();
+  pack.WriteString(demoFileName);
+  SteamWorks_SetHTTPRequestContextValue(demoRequest, pack);
   SteamWorks_SetHTTPCallbacks(demoRequest, DemoRequestCallback);
   SteamWorks_SendHTTPRequest(demoRequest);
-  // Store the filename of the demo for the callback.
-  FormatEx(g_DemoFileNameLastStartedUpload, sizeof(g_DemoFileNameLastStartedUpload), demoFileName);
 }
 
 static bool IsTVEnabled() {
@@ -224,12 +226,18 @@ void SetCurrentMatchRestartDelay(float delay) {
 }
 
 static int DemoRequestCallback(Handle request, bool failure, bool requestSuccessful,
-                               EHTTPStatusCode statusCode) {
+                               EHTTPStatusCode statusCode, DataPack pack) {
+  char demoFileName[PLATFORM_MAX_PATH];
+  pack.Reset();
+  pack.ReadString(demoFileName, sizeof(demoFileName));
+  delete pack;
+
   if (failure || !requestSuccessful) {
-    LogError("Failed to upload demo %s.", g_DemoFileNameLastStartedUpload);
+    LogError("Failed to upload demo %s.", demoFileName);
     delete request;
     return;
   }
+
   int status = view_as<int>(statusCode);
   if (status >= 300 || status < 200) {
     LogError("Demo request failed with HTTP status code: %d.", statusCode);
@@ -244,12 +252,13 @@ static int DemoRequestCallback(Handle request, bool failure, bool requestSuccess
     delete request;
     return;
   }
+
   LogDebug("Demo request succeeded. HTTP status code: %d.", statusCode);
-  if (g_DemoUploadDeleteAfterCvar.BoolValue && !StrEqual(g_DemoFileNameLastStartedUpload, "")) {
+  if (g_DemoUploadDeleteAfterCvar.BoolValue) {
     LogDebug("get5_demo_delete_after_upload set to true; deleting the file from the game server.");
-    if (FileExists(g_DemoFileNameLastStartedUpload)) {
-      if (!DeleteFile(g_DemoFileNameLastStartedUpload)) {
-        LogError("Unable to delete demo file %s.", g_DemoFileNameLastStartedUpload);
+    if (FileExists(demoFileName)) {
+      if (!DeleteFile(demoFileName)) {
+        LogError("Unable to delete demo file %s.", demoFileName);
       }
     }
   }

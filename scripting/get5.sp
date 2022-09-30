@@ -1189,7 +1189,10 @@ static Action Command_Stop(int client, int args) {
     return Plugin_Handled;
   }
 
-  if (g_GameState != Get5State_Live || g_PendingSideSwap == true) {
+  // Because a live restore to the same match does not change get5 state to warmup, we have to make sure
+  // that successive calls to !stop (spammed by players) does not reload multiple backups.
+  if (g_GameState != Get5State_Live || InHalftimePhase() || g_DoingBackupRestoreNow
+    || g_PauseType == Get5PauseType_Backup) {
     return Plugin_Handled;
   }
 
@@ -1205,6 +1208,9 @@ static Action Command_Stop(int client, int args) {
   }
 
   Get5Team team = GetClientMatchTeam(client);
+  if (!IsPlayerTeam(team)) {
+    return Plugin_Handled;
+  }
   g_TeamGivenStopCommand[team] = true;
 
   char stopCommandFormatted[64];

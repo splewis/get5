@@ -1,8 +1,11 @@
 Action StartKnifeRound(Handle timer) {
   g_HasKnifeRoundStarted = false;
-
-  // Removes ready tags
-  SetMatchTeamCvars();
+  if (g_KnifeChangedCvars != INVALID_HANDLE) {
+    CloseCvarStorage(g_KnifeChangedCvars);
+  }
+  char knifeConfig[PLATFORM_MAX_PATH];
+  g_KnifeCfgCvar.GetString(knifeConfig, sizeof(knifeConfig));
+  g_KnifeChangedCvars = ExecuteAndSaveCvars(knifeConfig);
 
   Get5_MessageToAll("%t", "KnifeIn5SecInfoMessage");
   if (InWarmup()) {
@@ -33,6 +36,30 @@ static Action Timer_AnnounceKnife(Handle timer) {
   EventLogger_LogAndDeleteEvent(knifeEvent);
 
   g_HasKnifeRoundStarted = true;
+}
+
+void StartKnifeTimer() {
+  float knifeDecisionTime = g_TeamTimeToKnifeDecisionCvar.FloatValue;
+  if (knifeDecisionTime > 0.0) {
+    if (knifeDecisionTime < 10.0) {
+      knifeDecisionTime = 10.0;
+    }
+    g_KnifeDecisionTimer = CreateTimer(knifeDecisionTime, Timer_ForceKnifeDecision);
+  }
+}
+
+void PromptForKnifeDecision() {
+  if (g_KnifeWinnerTeam == Get5Team_None) {
+    // Handle waiting for knife decision. Also check g_KnifeWinnerTeam as there is a small delay between
+    // selecting a side and the game state changing, during which this message should not be printed.
+    return;
+  }
+  char formattedStayCommand[64];
+  FormatChatCommand(formattedStayCommand, sizeof(formattedStayCommand), "!stay");
+  char formattedSwapCommand[64];
+  FormatChatCommand(formattedSwapCommand, sizeof(formattedSwapCommand), "!swap");
+  Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage",
+    g_FormattedTeamNames[g_KnifeWinnerTeam], formattedStayCommand, formattedSwapCommand);
 }
 
 static void PerformSideSwap(bool swap) {
@@ -153,7 +180,7 @@ Action Command_T(int client, int args) {
   return Plugin_Handled;
 }
 
-Action Timer_ForceKnifeDecision(Handle timer) {
+static Action Timer_ForceKnifeDecision(Handle timer) {
   g_KnifeDecisionTimer = INVALID_HANDLE;
   if (g_GameState == Get5State_WaitingForKnifeRoundDecision && g_KnifeWinnerTeam != Get5Team_None) {
     Get5_MessageToAll("%t", "TeamLostTimeToDecideInfoMessage",

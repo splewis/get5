@@ -128,7 +128,8 @@ limit.<br>**`Default: 0`**
 
 ####`get5_time_to_make_knife_decision`
 :   Time (in seconds) a team has to make a [`!stay`](../commands/#stay) or [`!swap`](../commands/#swap)
-decision after winning knife round. Set to zero to remove limit.<br>**`Default: 60`**
+decision after winning knife round. Cannot be set lower than 10 if non-zero. Set to zero to remove
+limit.<br>**`Default: 60`**
 
 ####`get5_veto_countdown`
 :   Time (in seconds) to countdown before the [veto](veto.md) process commences. Set to zero to move to veto without a

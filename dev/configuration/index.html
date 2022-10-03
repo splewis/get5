@@ -7,9 +7,9 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/dev/configuration/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.4.0, mkdocs-material-8.5.4" name="generator"/>
+<meta content="mkdocs-1.4.0, mkdocs-material-8.5.6" name="generator"/>
 <title>Configuration - Get5</title>
-<link href="../assets/stylesheets/main.80dcb947.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/main.20d9efc8.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
@@ -1358,7 +1358,8 @@ limit.<br/><strong><code>Default: 0</code></strong></dd>
 <h4 id="get5_time_to_make_knife_decision"><code>get5_time_to_make_knife_decision</code></h4>
 <dl>
 <dd>Time (in seconds) a team has to make a <a href="../commands/#stay"><code>!stay</code></a> or <a href="../commands/#swap"><code>!swap</code></a>
-decision after winning knife round. Set to zero to remove limit.<br/><strong><code>Default: 60</code></strong></dd>
+decision after winning knife round. Cannot be set lower than 10 if non-zero. Set to zero to remove
+limit.<br/><strong><code>Default: 60</code></strong></dd>
 </dl>
 <h4 id="get5_veto_countdown"><code>get5_veto_countdown</code></h4>
 <dl>

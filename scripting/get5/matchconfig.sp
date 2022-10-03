@@ -39,6 +39,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   g_MatchID = "";
   g_ReadyTimeWaitingUsed = 0;
   g_HasKnifeRoundStarted = false;
+  g_KnifeWinnerTeam = Get5Team_None;
   g_MapChangePending = false;
   g_MapNumber = 0;
   g_NumberOfMapsInSeries = 0;

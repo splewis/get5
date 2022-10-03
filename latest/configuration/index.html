@@ -7,9 +7,9 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/latest/configuration/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.4.0, mkdocs-material-8.5.3" name="generator"/>
+<meta content="mkdocs-1.4.0, mkdocs-material-8.5.6" name="generator"/>
 <title>Configuration - Get5</title>
-<link href="../assets/stylesheets/main.7a952b86.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/main.20d9efc8.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
@@ -1115,7 +1115,8 @@ in <a href="../getting_started/#scrims">scrim mode</a>, put on <code>team2</code
 <h4 id="get5_time_to_make_knife_decision"><code>get5_time_to_make_knife_decision</code></h4>
 <dl>
 <dd>Time (in seconds) a team has to make a <a href="../commands/#stay"><code>!stay</code></a> or <a href="../commands/#swap"><code>!swap</code></a>
-decision after winning knife round, 0 = unlimited. <strong><code>Default: 60</code></strong></dd>
+decision after winning knife round. Cannot be set lower than 10 if non-zero. Set to zero to remove
+limit.<br/><strong><code>Default: 60</code></strong></dd>
 </dl>
 <h4 id="get5_veto_countdown"><code>get5_veto_countdown</code></h4>
 <dl>
@@ -1404,7 +1405,7 @@ after using a color variable.</p>
 <div class="md-dialog__inner md-typeset"></div>
 </div>
 <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
-<script src="../assets/javascripts/bundle.37e9125f.min.js"></script>
+<script src="../assets/javascripts/bundle.078830c0.min.js"></script>
 <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
 <script src="../javascripts/tablesort.js"></script>
 </body>

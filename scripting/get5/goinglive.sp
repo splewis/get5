@@ -28,6 +28,11 @@ static Action Timer_GoToLive(Handle timer) {
   // Change state as we're now counting down to live from warmup.
   ChangeState(Get5State_GoingLive);
 
+  // Remove team ready tags if there was no knife-round to do it.
+  // The ExecCfg for the live config finished before the game state changes
+  // to Get5State_GoingLive above, so it won't be set then.
+  SetMatchTeamCvars();
+
   // Going live event
   Get5GoingLiveEvent liveEvent = new Get5GoingLiveEvent(g_MatchID, g_MapNumber);
   LogDebug("Calling Get5_OnGoingLive()");

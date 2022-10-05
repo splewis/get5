@@ -9,7 +9,7 @@ To receive Get5 [events](#events) on a web server, define
 a [URL for event logging](../configuration#get5_remote_log_url). Get5 will send all events to the URL as JSON over
 HTTP. You may add a [custom HTTP header](../configuration#get5_remote_log_header_key) to authenticate your request.
 Get5 will also add a header called `Get5-ServerId` with the value of [`get5_server_id`](../configuration#get5_server_id)
-**if** it is set to a positive integer.
+**if** it is not an empty string.
 
 !!! warning "Simple HTTP"
 

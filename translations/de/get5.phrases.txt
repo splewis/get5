@@ -130,7 +130,7 @@
     }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {
-        "de"            "Du kannst nicht die Pause beenden bevor sie gestartet hat. Anfragen zum pausieren können nicht abgebrochen werden."
+        "de"            "Du kannst nicht die Pause beenden bevor sie gestartet hat."
     }
     "PauseRunoutInfoMessage"
     {
@@ -148,10 +148,6 @@
     {
         "de"            "{1} hat die maximale Anzahl an technischen Pausen bereits verbraucht. Bitte nutzt taktische Pausen."
     }
-    "TechPausePausesRemaining"
-    {
-        "de"            "Für {1} verfügbare technische Pausen: {2}"
-    }
     "TechPauseAutomaticallyStarted"
     {
         "de"            "Eine technische Pause wurde für {1} automatisch gestartet."
@@ -164,13 +160,9 @@
     {
         "de"            "{1} möchte fortfahren, zum zuzustimmen muss {2} {3} schreiben."
     }
-    "PausesLeftInfoMessage"
-    {
-        "de"            "Für {1} verfügbare taktische Pausen: {2}"
-    }
     "PrereleaseVersionWarning"
     {
-        "de"            "Es wird eine unoffizielle Version von Get5 ({1}) verwendet, die nur für Entwicklung und Testzwecke gedacht ist. Diese Meldung kann mit {2} deaktiviert werden." 
+        "de"            "Es wird eine unoffizielle Version von Get5 ({1}) verwendet, die nur für Entwicklung und Testzwecke gedacht ist. Diese Meldung kann mit {2} deaktiviert werden."
     }
     "NewVersionAvailable"
     {
@@ -483,5 +475,5 @@
     "TieCountdownCanceled"
     {
         "de"            "Der Countdown für das automatische Unentschieden wurde unterbrochen, da nun Spieler von beiden Teams verbunden sind."
-    }    
+    }
 }

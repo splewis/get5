@@ -61,7 +61,7 @@ static void AbortVeto() {
     g_ActiveVetoMenu.Cancel();
   }
   if (IsPaused()) {
-    UnpauseGame(Get5Team_None);
+    UnpauseGame();
   }
 }
 
@@ -70,7 +70,7 @@ static void VetoFinished() {
   g_MapsLeftInVetoPool.Clear();
 
   if (IsPaused()) {
-    UnpauseGame(Get5Team_None);
+    UnpauseGame();
   }
 
   // If a team has a map advantage, don't print that map.

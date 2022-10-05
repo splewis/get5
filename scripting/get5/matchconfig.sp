@@ -121,12 +121,12 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   ServerCommand("mp_backup_round_file backup_%s", serverId);
 
   if (!restoreBackup) {
-    StopRecording(); // Ensure no recording is running when starting a match, as that prevents Get5 from starting one.
+    StopRecording();  // Ensure no recording is running when starting a match, as that prevents Get5 from starting one.
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();
     if (IsPaused()) {
       LogDebug("Match was paused when loading match config. Unpausing.");
-      UnpauseGame(Get5Team_None);
+      UnpauseGame();
     }
 
     Stats_InitSeries();

@@ -148,10 +148,6 @@
     {
         "hu"            "A {1} csapatnak, nem maradt több technikai időkérése. Használja a taktikai időkérést."
     }
-    "TechPausePausesRemaining"
-    {
-        "hu"            "Megmaradt technikai időkérések a {1} csapatnak: {2}"
-    }
     "MatchUnpauseInfoMessage"
     {
         "hu"            "{1} elindította a mérkőzést."
@@ -159,10 +155,6 @@
     "WaitingForUnpauseInfoMessage"
     {
         "hu"            "{1} szeretné folytatni. Várakozunk a {2} csapatra, hogy beírják a {3} parancsot."
-    }
-    "PausesLeftInfoMessage"
-    {
-        "hu"            "Megmaradt taktikai időkérések a {1} csapatnak: {2}"
     }
 	"PrereleaseVersionWarning"
     {

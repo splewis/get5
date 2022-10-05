@@ -142,9 +142,14 @@
     {
         "en"            "As an admin has called for this pause, it must also be unpaused by an admin."
     }
+    "PauseRequestCanceled"
+    {
+        "#format"       "{1:s}"
+        "en"            "{1} canceled their request for a pause."
+    }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {
-        "en"            "You cannot unpause before your pause has started. Pause requests cannot be canceled."
+        "en"            "You cannot unpause before your pause has started."
     }
     "PauseRunoutInfoMessage"
     {
@@ -166,11 +171,6 @@
         "#format"       "{1:s}"
         "en"            "{1} has no more tech pauses. Please use tactical pauses."
     }
-    "TechPausePausesRemaining"
-    {
-        "#format"       "{1:s},{2:d}"
-        "en"            "Technical pauses remaining for {1}: {2}"
-    }
     "TechPauseAutomaticallyStarted"
     {
         "#format"       "{1:s}"
@@ -185,11 +185,6 @@
     {
         "#format"       "{1:s},{2:s},{3:s}"
         "en"            "{1} wants to unpause, waiting for {2} to type {3}."
-    }
-    "PausesLeftInfoMessage"
-    {
-        "#format"       "{1:s},{2:d}"
-        "en"            "Tactical pauses remaining for {1}: {2}"
     }
     "PrereleaseVersionWarning"
     {
@@ -309,6 +304,10 @@
     "StopCommandNotEnabled"
     {
         "en"            "The stop command is not enabled."
+    }
+    "StopCommandOnlyAfterRoundStart"
+    {
+        "en"            "A request to restart the round cannot be given before the round has started."
     }
     "StopCommandVotingReset"
     {

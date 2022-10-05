@@ -194,7 +194,7 @@ messages.<br>**`Default: "{NORMAL}"`**
 ## Pausing
 
 ####`get5_pausing_enabled`
-:   Whether [pauses](../pausing) are available to clients or not.<br>**`Default: 1`**
+:   Whether [tactical pauses](../pausing) are available to clients or not.<br>**`Default: 1`**
 
 ####`get5_max_pauses`
 :   Number of [tactical pauses](../pausing#tactical) a team can use. Set to zero to remove limit.<br>**`Default: 0`**
@@ -204,16 +204,23 @@ messages.<br>**`Default: "{NORMAL}"`**
 unlimited and when [`get5_fixed_pause_time`](#get5_fixed_pause_time) is zero, both teams
 must call [`!unpause`](../commands#unpause) to continue the match. This parameter is ignored
 if [`get5_fixed_pause_time`](#get5_fixed_pause_time) is set to a non-zero
-value. Set to zero to remove limit.<br>**`Default: 300`**
+value. Set to zero to remove limit.<br>**`Default: 0`**
 
 ####`get5_fixed_pause_time`
 :   If non-zero, the fixed length in seconds of all [tactical pauses](../pausing#tactical). This takes precedence over
 the [`get5_max_pause_time`](#get5_max_pause_time) parameter, which will be ignored. Cannot be set lower than 15
-seconds if non-zero.<br>**`Default: 0`**
+seconds if non-zero.<br>**`Default: 60`**
+
+####`get5_allow_unpausing_fixed_pauses`
+:   Whether fixed-duration [tactical pauses](../pausing#tactical) can be stopped early if both teams choose
+to [`!unpause`](../commands#unpause).<br>**`Default: 1`**
 
 ####`get5_allow_technical_pause`
-:   Whether [technical pauses](../pausing#technical) are available to clients or not. Note that this depends
-on [`get5_pausing_enabled`](#get5_pausing_enabled) being enabled as well.<br>**`Default: 1`**
+:   Whether [technical pauses](../pausing#technical) are available to clients or not.<br>**`Default: 1`**
+
+####`get5_allow_pause_cancellation`
+:   Whether a pending pause can be canceled by the pausing team using [`!unpause`](../commands#unpause) before
+freezetime begins.<br>**`Default: 1`**
 
 ####`get5_max_tech_pauses`
 :   Number of [technical pauses](../pausing#technical) a team is allowed to have. Set to zero to remove

@@ -165,7 +165,8 @@ paths:
       tags:
         - Map Flow
       description: |
-        Fired when the match is paused.
+        Fired when a request for a match pause is granted. If you need to know when a pause begins, see
+        `Get5_OnPauseBegan`.
       requestBody:
         content:
           application/json:
@@ -195,6 +196,25 @@ paths:
                 event:
                   enum:
                     - game_unpaused
+      responses: { }
+  "/Get5_OnPauseBegan":
+    post:
+      tags:
+        - Map Flow
+      description: |
+        Fired when a pause begins. This forward is only fired during freeze-time. If a pause is called during
+        freezetime, this and `Get5_OnMatchPaused` are called at the same time.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5MatchPauseBeganEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5MatchPauseEvent"
+              properties:
+                event:
+                  enum:
+                    - pause_began
       responses: { }
   "/Get5_OnMapResult":
     post:

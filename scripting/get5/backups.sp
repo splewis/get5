@@ -583,7 +583,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
       // We are restarting to the same map for prelive or loading from a none-live state; just go back into
       // warmup and let players ready-up again, either for a restore or for knife/live.
       // Ready status is reset when loading a match config.
-      UnpauseGame(Get5Team_None);
+      UnpauseGame();
       // If we load a valve backup in non-live, we have to go to ready-up, otherwise it's a prelive and we go to warmup.
       ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
       ExecCfg(g_WarmupCfgCvar);

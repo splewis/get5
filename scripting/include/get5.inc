@@ -946,6 +946,19 @@ methodmap Get5MatchPauseEvent < Get5MapTeamEvent {
   }
 }
 
+methodmap Get5MatchPauseBeganEvent < Get5MatchPauseEvent {
+
+  public Get5MatchPauseBeganEvent(const char[] matchId, const int mapNumber, const Get5Team team, const Get5PauseType pauseType) {
+    Get5MatchPauseBeganEvent self = view_as<Get5MatchPauseBeganEvent>(new JSON_Object());
+    self.SetEvent("pause_began");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.Team = team;
+    self.PauseType = pauseType;
+    return self;
+  }
+}
+
 methodmap Get5MatchPausedEvent < Get5MatchPauseEvent {
 
   public Get5MatchPausedEvent(const char[] matchId, const int mapNumber, const Get5Team team, const Get5PauseType pauseType) {
@@ -1843,6 +1856,9 @@ forward void Get5_OnMatchPaused(const Get5MatchPausedEvent event);
 
 // Called when a match is unpaused.
 forward void Get5_OnMatchUnpaused(const Get5MatchUnpausedEvent event);
+
+// Called when a pause begins.
+forward void Get5_OnPauseBegan(const Get5MatchPauseBeganEvent event);
 
 // Called when a match backup is restored.
 // Note that the match ID, map number and round number is the one being restored *to*, not the current game state at the

@@ -628,6 +628,9 @@ public void OnPluginStart() {
   AddCommandListener(Command_PauseOrUnpauseMatch, "mp_pause_match");
   AddCommandListener(Command_PauseOrUnpauseMatch, "mp_unpause_match");
 
+  AddCommandListener(Command_BlockSuicide, "explode");
+  AddCommandListener(Command_BlockSuicide, "kill");
+
   /** Setup data structures **/
   g_MapPoolList = new ArrayList(PLATFORM_MAX_PATH);
   g_MapsLeftInVetoPool = new ArrayList(PLATFORM_MAX_PATH);
@@ -1215,6 +1218,14 @@ static Action Command_Stop(int client, int args) {
   }
 
   return Plugin_Handled;
+}
+
+static Action Command_BlockSuicide(int client, const char[] command, int argc) {
+  if (g_GameState == Get5State_None) {
+    return Plugin_Continue;
+  }
+  ReplyToCommand(client, "You cannot kill yourself while Get5 is running.");
+  return Plugin_Stop;
 }
 
 void RestoreLastRound(int client) {

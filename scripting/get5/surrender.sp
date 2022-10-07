@@ -254,7 +254,7 @@ void CheckForForfeitOnDisconnect() {
   int team1Count = GetTeamPlayerCount(Get5Team_1);
   int team2Count = GetTeamPlayerCount(Get5Team_2);
 
-  Get5Team forfeitingTeam = Get5Team_None;
+  Get5Team forfeitingTeam;
 
   if (g_GameState <= Get5State_Warmup && g_TeamTimeToStartCvar.IntValue > 0) {
     // If we're in warmup or veto and a "time to ready" value is defined; let that handle it.
@@ -268,19 +268,16 @@ void CheckForForfeitOnDisconnect() {
   } else if (team2Count == g_PlayersPerTeam) {
     // team1 has no players, team2 is full
     forfeitingTeam = Get5Team_1;
-  } else if (team1Count > 0 || team2Count > 0) {
-    // The server still has some players on either team, but none are full or empty.
-    return;
-  }
-
-  if (forfeitingTeam == Get5Team_None) {
-    // End here if no players are left and we're not in warmup/veto with time to ready.
+  } else {
+    // End here if no players are left or one team is partially full
+    // and we're not in warmup/veto with time to ready.
     AnnounceRemainingForfeitTime(GetForfeitGracePeriod(), Get5Team_None);
     StartForfeitTimer(Get5Team_None);
     return;
   }
 
   if (g_GameState != Get5State_Live) {
+    // !win can only be used in live.
     return;
   }
   // One team is full, the other team left; announce that they can request to !win

@@ -71,7 +71,7 @@ Action Command_Surrender(int client, int args) {
       char playerNameFormatted[MAX_NAME_LENGTH];
       FormatPlayerName(playerNameFormatted, sizeof(playerNameFormatted), client, team);
       Get5_MessageToTeam(team, "%t", "SurrenderInitiated", playerNameFormatted, g_VotesRequiredForSurrenderCvar.IntValue, surrenderTimeLimit);
-      g_SurrenderTimers[team] = CreateTimer(float(surrenderTimeLimit), Timer_SurrenderFailed, team, TIMER_FLAG_NO_MAPCHANGE);
+      g_SurrenderTimers[team] = CreateTimer(float(surrenderTimeLimit), Timer_SurrenderFailed, team);
     }
   } else {
     Get5_MessageToTeam(team, "%t", "SurrenderVoteStatus", g_SurrenderVotes[team], g_VotesRequiredForSurrenderCvar.IntValue);
@@ -154,7 +154,7 @@ void ResetForfeitTimer() {
 static void StartForfeitTimer(const Get5Team forfeitingTeam) {
   g_ForfeitSecondsPassed = 0;
   g_ForfeitingTeam = forfeitingTeam;
-  g_ForfeitTimer = CreateTimer(1.0, Timer_ForfeitCountdownCheck, _, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
+  g_ForfeitTimer = CreateTimer(1.0, Timer_ForfeitCountdownCheck, _, TIMER_REPEAT);
   LogDebug("Started timer to forfeit for team %d in %d seconds.", forfeitingTeam, GetForfeitGracePeriod());
 }
 

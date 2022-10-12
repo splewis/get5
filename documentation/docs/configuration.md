@@ -197,6 +197,23 @@ limit.<br>**`Default: 0`**
 a [technical pause](../pausing/#technical) without confirmation from the pausing team. Set to zero to remove
 limit.<br>**`Default: 0`**
 
+####`get5_auto_tech_pause`
+:   Determines the behavior of automatic [technical pauses](../pausing/#technical) triggered by players disconnecting
+during the live phase of a match.<br>
+`0`: Disabled; no automatic pausing.<br>
+`1`: If any player disconnects (evaluated via [`players_per_team`](../match_schema#schema)).<br>
+`2`: If a full team disconnects.<br>**`Default: 0`**
+
+!!! warning "Auto-pausing is always enabled"
+
+    If you set `get5_auto_tech_pause` to a non-zero value, a technical pause will be started regardless of the
+    configuration of [`get5_pausing_enabled`](#get5_pausing_enabled) or
+    [`get5_allow_technical_pause`](#get5_allow_technical_pause). This allows you to automatically enable technical
+    pauses without letting players initiate them on their own.
+
+    Automatic tech pauses are still limited by [`get5_max_tech_pauses`](#get5_max_tech_pauses), so you can set that to a
+    non-zero value to prevent abuse.
+
 ####`get5_pause_on_veto`
 :   Whether to freeze players during the [veto](veto.md) phase.<br>**`Default: 0`**
 

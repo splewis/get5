@@ -60,6 +60,7 @@
 ConVar g_AllowTechPauseCvar;
 ConVar g_MaxTechPauseDurationCvar;
 ConVar g_MaxTechPausesCvar;
+ConVar g_AutoTechPauseCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_AutoReadyActivePlayersCvar;
 ConVar g_BackupSystemEnabledCvar;
@@ -362,6 +363,9 @@ public void OnPluginStart() {
   g_MaxTechPausesCvar =
       CreateConVar("get5_max_tech_pauses", "0",
                    "Number of technical pauses a team is allowed to have, 0=unlimited");
+  g_AutoTechPauseCvar =
+      CreateConVar("get5_auto_tech_pause", "0",
+                   "Behavior for automatic tech pauses triggered by disconnecting. 0 = disabled, 1 = pause if any player from a team leaves, 2 = pause if all players from a team leave.");
   g_AutoLoadConfigCvar =
       CreateConVar("get5_autoload_config", "",
                    "Name of a match config file to automatically load when the server loads");

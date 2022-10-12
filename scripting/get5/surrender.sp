@@ -260,7 +260,14 @@ void CheckForForfeitOnDisconnect() {
     // If we're in warmup or veto and a "time to ready" value is defined; let that handle it.
     return;
   } else if (team1Count > 0 && team2Count > 0) {
-    // If both teams still have at least one player; do nothing.
+    // If both teams still have at least one player; check for single-disconnect tech trigger.
+    if (g_GameState == Get5State_Live && g_AutoTechPauseCvar.IntValue == view_as<int>(Get5AutoTechPauseType_AnyPlayer)) {
+      if (team1Count < g_PlayersPerTeam) {
+        TriggerAutomaticTechPause(Get5Team_1);
+      } else if (team2Count < g_PlayersPerTeam) {
+        TriggerAutomaticTechPause(Get5Team_2);
+      }
+    }
     return;
   } else if (team1Count == g_PlayersPerTeam) {
     // team2 has no players, team1 is full
@@ -279,6 +286,9 @@ void CheckForForfeitOnDisconnect() {
   if (g_GameState != Get5State_Live) {
     // !win can only be used in live.
     return;
+  }
+  if (g_AutoTechPauseCvar.IntValue == view_as<int>(Get5AutoTechPauseType_AllPlayers)) {
+    TriggerAutomaticTechPause(forfeitingTeam);
   }
   // One team is full, the other team left; announce that they can request to !win
   char winCommandFormatted[32];

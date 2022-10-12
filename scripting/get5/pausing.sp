@@ -60,8 +60,18 @@ void UnpauseGame(Get5Team team) {
   CreateTimer(0.1, Timer_ResetPauseRestriction);
 }
 
+bool TriggerAutomaticTechPause(Get5Team team) {
+  int maxPauses = g_MaxTechPausesCvar.IntValue;
+  if (g_PauseType == Get5PauseType_None && (maxPauses == 0 || maxPauses - g_TechnicalPausesUsed[team] > 0)) {
+    PauseGame(team, Get5PauseType_Tech);
+    Get5_MessageToAll("%t", "TechPauseAutomaticallyConsumed", g_FormattedTeamNames[team]);
+    return true;
+  }
+  return false;
+}
+
 Action Command_PauseOrUnpauseMatch(int client, const char[] command, int argc) {
-  if (g_GameState == Get5State_None || g_IsChangingPauseState) {
+  if (g_GameState == Get5State_None || (g_IsChangingPauseState && client == 0)) {
     return Plugin_Continue;
   }
   ReplyToCommand(

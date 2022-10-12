@@ -152,6 +152,10 @@
     {
         "da"            "Tekniske pauser tilbage for {1}: {2}"
     }
+    "TechPauseAutomaticallyStarted"
+    {
+        "da"            "En teknisk pause blev automatisk startet for {1}."
+    }
     "MatchUnpauseInfoMessage"
     {
         "da"            "{1} fortsatte kampen."

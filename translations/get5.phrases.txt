@@ -172,10 +172,10 @@
         "#format"       "{1:s},{2:d}"
         "en"            "Technical pauses remaining for {1}: {2}"
     }
-    "TechPauseAutomaticallyConsumed"
+    "TechPauseAutomaticallyStarted"
     {
         "#format"       "{1:s}"
-        "en"            "A technical pause was automatically consumed for {1}."
+        "en"            "A technical pause was automatically started for {1}."
     }
     "MatchUnpauseInfoMessage"
     {

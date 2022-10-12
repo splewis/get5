@@ -64,7 +64,7 @@ bool TriggerAutomaticTechPause(Get5Team team) {
   int maxPauses = g_MaxTechPausesCvar.IntValue;
   if (g_PauseType == Get5PauseType_None && (maxPauses == 0 || maxPauses - g_TechnicalPausesUsed[team] > 0)) {
     PauseGame(team, Get5PauseType_Tech);
-    Get5_MessageToAll("%t", "TechPauseAutomaticallyConsumed", g_FormattedTeamNames[team]);
+    Get5_MessageToAll("%t", "TechPauseAutomaticallyStarted", g_FormattedTeamNames[team]);
     return true;
   }
   return false;

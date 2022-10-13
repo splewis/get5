@@ -124,7 +124,8 @@ affect the availability of [`get5_forceready`](../commands/#get5_forceready) to 
 
 ####`get5_time_to_start`
 :   Time (in seconds) teams have to ready up before forfeiting the match. Set to zero to remove
-limit.<br>**`Default: 0`**
+limit. If set to a non-zero value, [`get5_forfeit_countdown`](#get5_forfeit_countdown) behaves differently
+during warmup or veto. If neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
 
 ####`get5_time_to_make_knife_decision`
 :   Time (in seconds) a team has to make a [`!stay`](../commands/#stay) or [`!swap`](../commands/#swap)
@@ -196,6 +197,23 @@ limit.<br>**`Default: 0`**
 a [technical pause](../pausing/#technical) without confirmation from the pausing team. Set to zero to remove
 limit.<br>**`Default: 0`**
 
+####`get5_auto_tech_pause`
+:   Determines the behavior of automatic [technical pauses](../pausing/#technical) triggered by players disconnecting
+during the live phase of a match.<br>
+`0`: Disabled; no automatic pausing.<br>
+`1`: If any player disconnects (evaluated via [`players_per_team`](../match_schema#schema)).<br>
+`2`: If a full team disconnects.<br>**`Default: 0`**
+
+!!! warning "Auto-pausing is always enabled"
+
+    If you set `get5_auto_tech_pause` to a non-zero value, a technical pause will be started regardless of the
+    configuration of [`get5_pausing_enabled`](#get5_pausing_enabled) or
+    [`get5_allow_technical_pause`](#get5_allow_technical_pause). This allows you to automatically enable technical
+    pauses without letting players initiate them on their own.
+
+    Automatic tech pauses are still limited by [`get5_max_tech_pauses`](#get5_max_tech_pauses), so you can set that to a
+    non-zero value to prevent abuse.
+
 ####`get5_pause_on_veto`
 :   Whether to freeze players during the [veto](veto.md) phase.<br>**`Default: 0`**
 
@@ -224,11 +242,24 @@ than `10`.<br>**`Default: 15`**
 :   The minimum number of seconds a team must wait before they can initiate a surrender vote following a failed
 vote. Set to zero to disable.<br>**`Default: 60`**
 
-####`get5_surrender_time_to_rejoin`
-:   If a full team disconnects, this determines the number of seconds a player from the disconnecting team has to rejoin
-the server before they forfeit the match. If both teams disconnect, this determines how long any player from any team
-has to rejoin the match before it is ended in a tie. This cannot be set lower than 30 and applies even
-if [`get5_surrender_enabled`](#get5_surrender_enabled) is disabled.<br>**`Default: 60`**
+####`get5_forfeit_countdown`
+:   If a full team disconnects during the live phase, the [`!win`](../commands/#win) command becomes available to the
+opposing team, and this then determines the number of seconds a player from the disconnecting team has to rejoin the
+server before the opposing team wins. If both teams disconnect (at any stage), this determines how long at least one
+player from both teams have to rejoin the server before the series is ended in a tie. This value cannot be set lower
+than 30.<br>**`Default: 60`**
+
+!!! info "Ready-up logic takes precedence"
+
+    If [`get5_time_to_start`](#get5_time_to_start) is larger than 0 and the game is in the warmup or veto phase, the
+    ready-up surrender logic takes precedence and there will be no forfeit-countdown when players leave the server.
+
+!!! warning "Empty server ends the series"
+
+    If there are no players at all (no spectators, coaches or players) and someone rejoins the server during the live
+    phase, a pending forfeit timer will immediately trigger a series end, as the game will restart which causes a loss
+    of game state. If this happens, you must [restore the game state from a backup](../commands/#get5_loadbackup) to
+    continue.
 
 ## Backup System
 

@@ -50,6 +50,12 @@ enum Get5PauseType {
   Get5PauseType_Backup     // Special type for match pausing during backups.
 };
 
+enum Get5AutoTechPauseType {
+  Get5AutoTechPauseType_Disabled,
+  Get5AutoTechPauseType_AnyPlayer,
+  Get5AutoTechPauseType_AllPlayers
+};
+
 enum MatchSideType {
   MatchSideType_Standard,     // Team that doesn't pick map gets side choice, leftovers go to knife rounds
   MatchSideType_AlwaysKnife,  // All maps use a knife round to pick sides

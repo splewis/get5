@@ -126,6 +126,10 @@ stock void FormatChatCommand(char[] buffer, const int bufferLength, const char[]
   Format(buffer, bufferLength, "{GREEN}%s{NORMAL}", command);
 }
 
+stock void FormatTimeString(char[] buffer, const int bufferLength, const char[] formattedTime) {
+  Format(buffer, bufferLength, "{GREEN}%s{NORMAL}", formattedTime);
+}
+
 stock void FormatCvarName(char[] buffer, const int bufferLength, const char[] cVar) {
   Format(buffer, bufferLength, "{GRAY}%s{NORMAL}", cVar);
 }
@@ -775,7 +779,7 @@ stock Get5BombSite GetNearestBombsite(int client) {
   return (aDist < bDist) ? Get5BombSite_A : Get5BombSite_B;
 }
 
-stock void convertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer,
+stock void ConvertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer,
                                              const int bufferSize) {
   int minutes = 0;
   int seconds = timeAsSeconds;

@@ -290,11 +290,6 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
     StopRecording();
   }
 
-  if (g_EndMatchOnEmptyServerTimer != INVALID_HANDLE) {
-    LogDebug("Killing surrender/empty server timer as backup was requested.");
-    delete g_EndMatchOnEmptyServerTimer;
-  }
-
   if (kv.JumpToKey("Match")) {
     char tempBackupFile[PLATFORM_MAX_PATH];
     GetTempFilePath(tempBackupFile, sizeof(tempBackupFile), TEMP_MATCHCONFIG_BACKUP_PATTERN);

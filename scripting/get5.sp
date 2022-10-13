@@ -60,6 +60,7 @@
 ConVar g_AllowTechPauseCvar;
 ConVar g_MaxTechPauseDurationCvar;
 ConVar g_MaxTechPausesCvar;
+ConVar g_AutoTechPauseCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_AutoReadyActivePlayersCvar;
 ConVar g_BackupSystemEnabledCvar;
@@ -112,7 +113,7 @@ ConVar g_MinimumRoundDeficitForSurrenderCvar;
 ConVar g_VotesRequiredForSurrenderCvar;
 ConVar g_SurrenderVoteTimeLimitCvar;
 ConVar g_SurrenderCooldownCvar;
-ConVar g_SurrenderTimeToRejoinCvar;
+ConVar g_ForfeitCountdownTimeCvar;
 ConVar g_DemoUploadURLCvar;
 ConVar g_DemoUploadHeaderKeyCvar;
 ConVar g_DemoUploadHeaderValueCvar;
@@ -184,13 +185,15 @@ int g_TacticalPauseTimeUsed[MATCHTEAM_COUNT];
 int g_TacticalPausesUsed[MATCHTEAM_COUNT];
 int g_TechnicalPausesUsed[MATCHTEAM_COUNT];
 
-/** Surrender **/
+/** Surrender/forfeit **/
 int g_SurrenderVotes[MATCHTEAM_COUNT];
 float g_SurrenderFailedAt[MATCHTEAM_COUNT];
 bool g_SurrenderedPlayers[MAXPLAYERS + 1];
 Handle g_SurrenderTimers[MATCHTEAM_COUNT];
 Get5Team g_PendingSurrenderTeam = Get5Team_None;
-Handle g_EndMatchOnEmptyServerTimer = INVALID_HANDLE;
+Handle g_ForfeitTimer = INVALID_HANDLE;
+int g_ForfeitSecondsPassed = 0;
+Get5Team g_ForfeitingTeam = Get5Team_None;
 
 /** Other state **/
 Get5State g_GameState = Get5State_None;
@@ -360,6 +363,9 @@ public void OnPluginStart() {
   g_MaxTechPausesCvar =
       CreateConVar("get5_max_tech_pauses", "0",
                    "Number of technical pauses a team is allowed to have, 0=unlimited");
+  g_AutoTechPauseCvar =
+      CreateConVar("get5_auto_tech_pause", "0",
+                   "Behavior for automatic tech pauses triggered by disconnecting. 0 = disabled, 1 = pause if any player from a team leaves, 2 = pause if all players from a team leave.");
   g_AutoLoadConfigCvar =
       CreateConVar("get5_autoload_config", "",
                    "Name of a match config file to automatically load when the server loads");
@@ -508,9 +514,9 @@ public void OnPluginStart() {
         CreateConVar("get5_surrender_time_limit", "15", "The number of seconds before a vote to surrender fails.", 0, true, 10.0);
   g_SurrenderCooldownCvar =
         CreateConVar("get5_surrender_cooldown", "60", "The number of seconds before a vote to surrender can be retried if it fails.");
-  g_SurrenderTimeToRejoinCvar = CreateConVar(
-      "get5_surrender_time_to_rejoin", "60",
-      "This determines how many seconds a team has to rejoin the game before they surrender the match. Cannot be set lower than 30 seconds.", 0, true, 30.0);
+  g_ForfeitCountdownTimeCvar = CreateConVar(
+      "get5_forfeit_countdown", "60",
+      "This determines the grace-period for rejoining the server to avoid a loss by forfeit. Cannot be set lower than 30 seconds.", 0, true, 30.0);
 
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
@@ -551,6 +557,8 @@ public void OnPluginStart() {
   AddAliasedCommand("stop", Command_Stop, "Elects to stop the game to reload a backup file");
   AddAliasedCommand("surrender", Command_Surrender, "Starts a vote for surrendering for your team.");
   AddAliasedCommand("gg", Command_Surrender, "Alias for surrender.");
+  AddAliasedCommand("win", Command_Win, "Starts a countdown to win if a full team disconnects from the server.");
+  AddAliasedCommand("cancelwin", Command_CancelWin, "Cancels a request to win by forfeit initiated with !win.");
 
   /** Admin/server commands **/
   RegAdminCmd(
@@ -830,7 +838,7 @@ static Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
 
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
 
-    CheckSurrenderStateOnConnect();
+    CheckForfeitStateOnConnect();
   }
 }
 
@@ -847,13 +855,13 @@ static Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
     EventLogger_LogAndDeleteEvent(disconnectEvent);
 
     // Because the disconnect event fires before the user leaves the server, we have to put this on a short callback
-    // to get the right "number of players per team" in CheckForSurrenderOnDisconnect().
+    // to get the right "number of players per team" in CheckForForfeitOnDisconnect().
     CreateTimer(0.1, Timer_DisconnectCheck, _, TIMER_FLAG_NO_MAPCHANGE);
   }
 }
 
 static Action Timer_DisconnectCheck(Handle timer) {
-  CheckForSurrenderOnDisconnect();
+  CheckForForfeitOnDisconnect();
 }
 
 // This runs every time a map starts *or* when the plugin is reloaded.
@@ -869,17 +877,18 @@ public void OnConfigsExecuted() {
 static Action Timer_ConfigsExecutedCallback(Handle timer) {
   LogDebug("OnConfigsExecuted timer callback");
 
-  // This is a defensive solution that ensures we don't have lingering surrender-timers. If everyone leaves and a player
+  // This is a defensive solution that ensures we don't have lingering forfeit-timers. If everyone leaves and a player
   // then joins the server again, the server may change the map, which triggers this. If this happens, we cannot
   // recover the game state and must force the series to end if the game has progressed past warmup. If we trigger the
   // timer during warmup, it might abruptly end the series when the first player connects to the server due to reloading
   // of the map because of "force client reconnect" from the server.
-  if (g_EndMatchOnEmptyServerTimer != INVALID_HANDLE) {
+  if (g_ForfeitTimer != INVALID_HANDLE) {
     if (g_GameState > Get5State_Warmup && g_GameState < Get5State_PendingRestore && !g_MapChangePending) {
-      LogDebug("Triggering surrender timer immediately as map was changed post-warmup.");
-      TriggerTimer(g_EndMatchOnEmptyServerTimer);
+      LogDebug("Triggering forfeit timer immediately as map was changed post-warmup.");
+      TriggerTimer(g_ForfeitTimer);
     } else {
-      delete g_EndMatchOnEmptyServerTimer;
+      LogDebug("Stopped forfeit timer as the map was changed in non-live state.");
+      ResetForfeitTimer();
     }
   }
 
@@ -895,7 +904,6 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
   DeleteOldBackups();
 
   EndSurrenderTimers();
-  g_PendingSurrenderTeam = Get5Team_None;
   // Always reset ready status on map start
   ResetReadyStatus();
 
@@ -1364,11 +1372,14 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       Get5_MessageToAll("%t", "SeriesTiedInfoMessage", t1maps, t2maps);
     }
 
+    EndSurrenderTimers();
+    ResetForfeitTimer();
+
     char nextMap[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(Get5_GetMapNumber(), nextMap, sizeof(nextMap));
 
     char timeToMapChangeFormatted[8];
-    convertSecondsToMinutesAndSeconds(RoundToFloor(restartDelay), timeToMapChangeFormatted,
+    ConvertSecondsToMinutesAndSeconds(RoundToFloor(restartDelay), timeToMapChangeFormatted,
                                       sizeof(timeToMapChangeFormatted));
 
     // g_MapChangePending is set in ChangeMap, but since we want to announce now and change the
@@ -1473,13 +1484,11 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
     g_ActiveVetoMenu.Cancel();
   }
 
-  // If a forfeit by disconnect is counting down and the match ends, either by force or because a team leaves in the last
-  // round and loses the match, ensure that no timer is running so a new game won't be forfeited if it is started before
-  // the timer runs out.
-  if (g_EndMatchOnEmptyServerTimer != INVALID_HANDLE) {
-    LogDebug("Killing g_EndMatchOnEmptyServerTimer as match was ended.");
-    delete g_EndMatchOnEmptyServerTimer;
-  }
+  // If a forfeit by disconnect is counting down and the match ends, ensure that no timer is running so a new game
+  // won't be forfeited if it is started before the timer runs out.
+  // Also end vote-to-surrender timers.
+  ResetForfeitTimer();
+  EndSurrenderTimers();
 }
 
 static Action Timer_KickOnEnd(Handle timer) {

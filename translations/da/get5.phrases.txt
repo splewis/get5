@@ -152,6 +152,10 @@
     {
         "da"            "Tekniske pauser tilbage for {1}: {2}"
     }
+    "TechPauseAutomaticallyStarted"
+    {
+        "da"            "En teknisk pause blev automatisk startet for {1}."
+    }
     "MatchUnpauseInfoMessage"
     {
         "da"            "{1} fortsatte kampen."
@@ -163,6 +167,14 @@
     "PausesLeftInfoMessage"
     {
         "da"            "Taktiske pauser tilbage for {1}: {2}"
+    }
+    "PrereleaseVersionWarning"
+    {
+        "da"        "Serveren kører en uofficiel version af Get5 ({1}) designet til test og udvikling. Denne besked kan fjernes via {2}."
+    }
+    "NewVersionAvailable"
+    {
+        "da"        "En nyere version af Get5 er tilgængelig. Opdatering kan findes på {1}."
     }
     "TeamFailToReadyMinPlayerCheck"
     {
@@ -396,12 +408,64 @@
     {
         "da"        "Veto begynder om {1} sekunder."
     }
-    "NewVersionAvailable"
+    "SurrenderCommandNotEnabled"
     {
-        "da"        "En nyere version af Get5 er tilgængelig. Opdatering kan findes på {1}."
+        "da"        "Kommandoen til at overgive sig er ikke aktiveret."
     }
-    "PrereleaseVersionWarning"
+    "SurrenderMinimumRoundDeficit"
     {
-        "da"        "Serveren kører en uofficiel version af Get5 ({1}) designet til test og udvikling. Denne besked kan fjernes via {2}."
+        "da"        "I skal være bagud med mindst {1} runde(r) for at kunne overgive jer."
+    }
+    "SurrenderInitiated"
+    {
+        "da"        "{1} har startet en afstemning om overgivelse. Jeres hold skal opnå {2} stemmer inden {3} sekunder."
+    }
+    "SurrenderVoteStatus"
+    {
+        "da"        "{1} af {2} påkrævede stemmer for overgivelse er afgivet."
+    }
+    "SurrenderSuccessful"
+    {
+        "da"        "{1} har overgivet sig."
+    }
+    "SurrenderVoteFailed"
+    {
+        "da"        "Der var ikke nok spillere fra jeres hold, der stemte for overgivelse."
+    }
+    "SurrenderOnCooldown"
+    {
+        "da"        "I skal vente mindst {1}, før I kan stemme om overgivelse igen."
+    }
+    "WinByForfeitAvailable"
+    {
+        "da"        "{1} har forladt serveren. {2} kan nu skrive {3} for at påbegynde nedtælling til sejr via opgivelse, så længe deres hold er fyldt."
+    }
+    "WinByForfeitRequiresFullTeam"
+    {
+        "da"        "I skal have et fyldt hold for at kunne anmode om eller annullere sejr via opgivelse."
+    }
+    "WinByForfeitAlreadyRequested"
+    {
+        "da"        "En nedtælling til sejr via opgivelse er allerede igang."
+    }
+    "WinByForfeitCountdownStarted"
+    {
+        "da"        "{1} vinder om {2} med mindre en spiller fra {3} vender tilbage til serveren. Dette kan annulleres via {4}."
+    }
+    "WinByForfeitCountdownCanceled"
+    {
+        "da"        "Anmodningen fra {1} om at vinde via opgivelse er annulleret."
+    }
+    "TeamForfeited"
+    {
+        "da"        "{1} har opgivet kampen."
+    }
+    "AllPlayersLeftTieCountdown"
+    {
+        "da"        "Begge hold har forladt serveren. Mindst én spiller fra hvert hold skal vende tilbage inden {1} for at undgå at kampen afsluttes uafgjort."
+    }
+    "TieCountdownCanceled"
+    {
+        "da"        "Nedtællingen til ufafgjort er annulleret, da begge hold nu har spillere."
     }
 }

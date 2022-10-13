@@ -328,6 +328,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_auto_tech_pause">
+    get5_auto_tech_pause
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_pause_on_veto">
     get5_pause_on_veto
   </a>
@@ -372,8 +377,8 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_surrender_time_to_rejoin">
-    get5_surrender_time_to_rejoin
+<a class="md-nav__link" href="#get5_forfeit_countdown">
+    get5_forfeit_countdown
   </a>
 </li>
 </ul>
@@ -932,6 +937,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_auto_tech_pause">
+    get5_auto_tech_pause
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_pause_on_veto">
     get5_pause_on_veto
   </a>
@@ -976,8 +986,8 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_surrender_time_to_rejoin">
-    get5_surrender_time_to_rejoin
+<a class="md-nav__link" href="#get5_forfeit_countdown">
+    get5_forfeit_countdown
   </a>
 </li>
 </ul>
@@ -1353,7 +1363,8 @@ affect the availability of <a href="../commands/#get5_forceready"><code>get5_for
 <h4 id="get5_time_to_start"><code>get5_time_to_start</code></h4>
 <dl>
 <dd>Time (in seconds) teams have to ready up before forfeiting the match. Set to zero to remove
-limit.<br/><strong><code>Default: 0</code></strong></dd>
+limit. If set to a non-zero value, <a href="#get5_forfeit_countdown"><code>get5_forfeit_countdown</code></a> behaves differently
+during warmup or veto. If neither team becomes ready in time, the series is ended in a tie.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_time_to_make_knife_decision"><code>get5_time_to_make_knife_decision</code></h4>
 <dl>
@@ -1440,6 +1451,23 @@ limit.<br/><strong><code>Default: 0</code></strong></dd>
 a <a href="../pausing/#technical">technical pause</a> without confirmation from the pausing team. Set to zero to remove
 limit.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
+<h4 id="get5_auto_tech_pause"><code>get5_auto_tech_pause</code></h4>
+<dl>
+<dd>Determines the behavior of automatic <a href="../pausing/#technical">technical pauses</a> triggered by players disconnecting
+during the live phase of a match.<br/>
+<code>0</code>: Disabled; no automatic pausing.<br/>
+<code>1</code>: If any player disconnects (evaluated via <a href="../match_schema#schema"><code>players_per_team</code></a>).<br/>
+<code>2</code>: If a full team disconnects.<br/><strong><code>Default: 0</code></strong></dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Auto-pausing is always enabled</p>
+<p>If you set <code>get5_auto_tech_pause</code> to a non-zero value, a technical pause will be started regardless of the
+configuration of <a href="#get5_pausing_enabled"><code>get5_pausing_enabled</code></a> or
+<a href="#get5_allow_technical_pause"><code>get5_allow_technical_pause</code></a>. This allows you to automatically enable technical
+pauses without letting players initiate them on their own.</p>
+<p>Automatic tech pauses are still limited by <a href="#get5_max_tech_pauses"><code>get5_max_tech_pauses</code></a>, so you can set that to a
+non-zero value to prevent abuse.</p>
+</div>
 <h4 id="get5_pause_on_veto"><code>get5_pause_on_veto</code></h4>
 <dl>
 <dd>Whether to freeze players during the <a href="../veto/">veto</a> phase.<br/><strong><code>Default: 0</code></strong></dd>
@@ -1474,13 +1502,26 @@ than <code>10</code>.<br/><strong><code>Default: 15</code></strong></dd>
 <dd>The minimum number of seconds a team must wait before they can initiate a surrender vote following a failed
 vote. Set to zero to disable.<br/><strong><code>Default: 60</code></strong></dd>
 </dl>
-<h4 id="get5_surrender_time_to_rejoin"><code>get5_surrender_time_to_rejoin</code></h4>
+<h4 id="get5_forfeit_countdown"><code>get5_forfeit_countdown</code></h4>
 <dl>
-<dd>If a full team disconnects, this determines the number of seconds a player from the disconnecting team has to rejoin
-the server before they forfeit the match. If both teams disconnect, this determines how long any player from any team
-has to rejoin the match before it is ended in a tie. This cannot be set lower than 30 and applies even
-if <a href="#get5_surrender_enabled"><code>get5_surrender_enabled</code></a> is disabled.<br/><strong><code>Default: 60</code></strong></dd>
+<dd>If a full team disconnects during the live phase, the <a href="../commands/#win"><code>!win</code></a> command becomes available to the
+opposing team, and this then determines the number of seconds a player from the disconnecting team has to rejoin the
+server before the opposing team wins. If both teams disconnect (at any stage), this determines how long at least one
+player from both teams have to rejoin the server before the series is ended in a tie. This value cannot be set lower
+than 30.<br/><strong><code>Default: 60</code></strong></dd>
 </dl>
+<div class="admonition info">
+<p class="admonition-title">Ready-up logic takes precedence</p>
+<p>If <a href="#get5_time_to_start"><code>get5_time_to_start</code></a> is larger than 0 and the game is in the warmup or veto phase, the
+ready-up surrender logic takes precedence and there will be no forfeit-countdown when players leave the server.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Empty server ends the series</p>
+<p>If there are no players at all (no spectators, coaches or players) and someone rejoins the server during the live
+phase, a pending forfeit timer will immediately trigger a series end, as the game will restart which causes a loss
+of game state. If this happens, you must <a href="../commands/#get5_loadbackup">restore the game state from a backup</a> to
+continue.</p>
+</div>
 <h2 id="backup-system">Backup System</h2>
 <h4 id="get5_backup_system_enabled"><code>get5_backup_system_enabled</code></h4>
 <dl>

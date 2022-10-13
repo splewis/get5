@@ -757,6 +757,11 @@ which case you are only expected to provide the bolded part of the sentence in t
 <td>Chat</td>
 </tr>
 <tr>
+<td><code>TechPauseAutomaticallyStarted</code></td>
+<td>A technical pause was automatically started for <em>Team A</em>.</td>
+<td>Chat</td>
+</tr>
+<tr>
 <td><code>MatchUnpauseInfoMessage</code></td>
 <td><em>PlayerName</em> unpaused the match.</td>
 <td>Chat</td>
@@ -1097,23 +1102,43 @@ which case you are only expected to provide the bolded part of the sentence in t
 <td>Chat</td>
 </tr>
 <tr>
-<td><code>SurrenderTeamMustRejoin</code></td>
-<td><em>Team A</em> left the server and must rejoin within <em>60</em> seconds or <em>Team 2</em> will win.</td>
+<td><code>WinByForfeitAvailable</code></td>
+<td><em>Team A</em> left the server. <em>Team B</em> can now type <em>!win</em> to initiate a countdown to win as long as their team is full.</td>
 <td>Chat</td>
 </tr>
 <tr>
-<td><code>SurrenderRejoinCountdownCanceled</code></td>
-<td>Surrender countdown was canceled.</td>
+<td><code>WinByForfeitRequiresFullTeam</code></td>
+<td>You must have a full team in order to request or cancel a win by forfeit.</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>WinByForfeitAlreadyRequested</code></td>
+<td>A request to win by forfeit is already pending.</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>WinByForfeitCountdownStarted</code></td>
+<td><em>Team B</em> will win in <em>0:45</em> unless a player from <em>Team A</em> rejoins the game. This request can be canceled with <em>!cancelwin</em>.</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>WinByForfeitCountdownCanceled</code></td>
+<td>The request from <em>Team B</em> to win by forfeit was canceled.</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>TeamForfeited</code></td>
+<td><em>Team A</em> forfeited the series.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>AllPlayersLeftTieCountdown</code></td>
-<td>Both teams have left the server. At least one player must rejoin within <em>60</em> seconds or the match will end in a tie.</td>
+<td>Both teams have left the server. At least one player from each team must rejoin within <em>0:45</em> or the series will end in a tie.</td>
 <td>Chat</td>
 </tr>
 <tr>
-<td><code>SurrenderTeamAppearsToLeaveWarning</code></td>
-<td><em>Team A</em> appears to be leaving the server. Nobody from <em>Team B</em> can leave before the surrender timer has started, or the match will end in a tie.</td>
+<td><code>TieCountdownCanceled</code></td>
+<td>The countdown to a tie was canceled as both teams now have players.</td>
 <td>Chat</td>
 </tr>
 </tbody>

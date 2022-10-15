@@ -969,7 +969,7 @@ static Action Timer_CheckReady(Handle timer) {
     // We don't wait for spectators when restoring backups
     if (IsTeamsReady()) {
       LogDebug("Timer_CheckReady: restoring from backup");
-      RestoreGet5Backup();
+      RestoreGet5Backup(true);
     }
   } else if (g_GameState == Get5State_Warmup) {
     // Handle ready checks for warmup, provided we are not waiting for a map change
@@ -1236,7 +1236,7 @@ void RestoreLastRound(int client) {
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
   if (!StrEqual(lastBackup, "")) {
-    if (RestoreFromBackup(lastBackup, false)) {
+    if (RestoreFromBackup(lastBackup)) {
       Get5_MessageToAll("%t", "BackupLoadedInfoMessage", lastBackup);
       // Fix the last backup cvar since it gets reset.
       g_LastGet5BackupCvar.SetString(lastBackup);

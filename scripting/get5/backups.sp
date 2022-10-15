@@ -13,6 +13,11 @@ Action Command_LoadBackup(int client, int args) {
     return Plugin_Handled;
   }
 
+  if (IsDoingRestoreOrMapChange()) {
+    ReplyToCommand(client, "A map change or backup restore is in progress. You cannot load a backup right now.");
+    return Plugin_Handled;
+  }
+
   char path[PLATFORM_MAX_PATH];
   if (args >= 1 && GetCmdArg(1, path, sizeof(path))) {
     if (RestoreFromBackup(path)) {
@@ -24,7 +29,6 @@ Action Command_LoadBackup(int client, int args) {
   } else {
     ReplyToCommand(client, "Usage: get5_loadbackup <file>");
   }
-
   return Plugin_Handled;
 }
 
@@ -216,6 +220,8 @@ static void WriteBackupStructure(const char[] path) {
   kv.SetNum("team1_pause_time_used", g_TacticalPauseTimeUsed[Get5Team_1]);
   kv.SetNum("team2_pause_time_used", g_TacticalPauseTimeUsed[Get5Team_2]);
 
+  kv.SetNum("mapnumber", g_MapNumber);
+
   // Write original maplist.
   kv.JumpToKey("maps", true);
   for (int i = 0; i < g_MapsToPlay.Length; i++) {
@@ -275,7 +281,7 @@ static void WriteBackupStructure(const char[] path) {
   delete kv;
 }
 
-bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
+bool RestoreFromBackup(const char[] path) {
   KeyValues kv = new KeyValues("Backup");
   if (!kv.ImportFromFile(path)) {
     LogError("Failed to read backup file \"%s\"", path);
@@ -283,10 +289,53 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
     return false;
   }
 
-  if (restartRecording) {
-    // We must stop recording when loading a backup, and we must do it before we load the match
-    // config, or the g_MatchID variable will be incorrect. This is suppressed when using the !stop
-    // command.
+  int loadedMapNumber = kv.GetNum("mapnumber", -1);
+  if (loadedMapNumber == -1) {
+    LogError("The backup was created with an earlier version of Get5 and is not compatible.");
+    delete kv;
+    return false;
+  }
+
+  char currentMap[PLATFORM_MAX_PATH];
+  GetCurrentMap(currentMap, sizeof(currentMap));
+
+  char loadedMatchId[MATCH_ID_LENGTH];
+  kv.GetString("matchid", loadedMatchId, sizeof(loadedMatchId));
+  char loadedMapName[PLATFORM_MAX_PATH];
+
+  // These gymnastics are required to determine if the backup we are trying to load is for a different
+  // map than the one the server is currently on, in which case the StopRecording() call should always
+  // be made. We have to loop "maps" twice because:
+  // 1. You cannot access KeyValue keys on index, so we can't just grab index "loadedMapNumber"
+  // 2. We need to determine if we should stop recording **before** we change the global variables,
+  // which the second loop below does.
+  if (kv.JumpToKey("maps")) {
+    if (kv.GotoFirstSubKey(false)) {
+      int index = 0;
+      do {
+        if (index == loadedMapNumber) {
+          kv.GetSectionName(loadedMapName, sizeof(loadedMapName));
+          break;
+        }
+        index++;
+      } while (kv.GotoNextKey(false));
+      kv.GoBack();
+    }
+    kv.GoBack();
+  }
+
+  bool backupIsForDifferentMap = !StrEqual(currentMap, loadedMapName, false);
+
+  bool shouldRestartRecording = g_GameState != Get5State_Live
+      || g_MapNumber != loadedMapNumber
+      || backupIsForDifferentMap
+      || !StrEqual(loadedMatchId, g_MatchID);
+
+  if (shouldRestartRecording) {
+    // We must stop recording to fire the Get5_OnDemoFinished event when loading a backup to another match or map, and
+    // we must do it before we load the match config, or the g_MatchID, g_MapNumber and g_DemoFileName variables will be
+    // incorrect. This is suppressed if we load to the same match and map ID during a live match, either via
+    // get5_loadbackup or the !stop-command, as we want only 1 demo file in those cases.
     StopRecording();
   }
 
@@ -334,8 +383,7 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
   // draws.
   g_TeamSeriesScores[Get5Team_None] = kv.GetNum("series_draw", 0);
 
-  // Immediately set map number global var to ensure anything below doesn't break.
-  g_MapNumber = Get5_GetMapNumber();
+  g_MapNumber = loadedMapNumber;
 
   char mapName[PLATFORM_MAX_PATH];
   if (kv.JumpToKey("maps")) {
@@ -387,20 +435,15 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
     roundNumberRestoredTo = kv.GetNum("round", 0);
     kv.GoBack();
   }
+  delete kv;
 
-  char currentMap[PLATFORM_MAX_PATH];
-  GetCurrentMap(currentMap, sizeof(currentMap));
-
-  char currentSeriesMap[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(g_MapNumber, currentSeriesMap, sizeof(currentSeriesMap));
-
-  if (!StrEqual(currentMap, currentSeriesMap)) {
+  if (backupIsForDifferentMap) {
     // We don't need to assign players if changing map; this will be done when the players rejoin.
     // If a map is to be changed, we want to suppress all stats events immediately, as the
     // Get5_OnBackupRestore is called now and we don't want events firing after this until the game
     // is live again.
     ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
-    ChangeMap(currentSeriesMap, 3.0);
+    ChangeMap(loadedMapName, 3.0);
   } else {
     // We must assign players to their teams. This is normally done inside LoadMatchConfig, but
     // since we need the team sides to be applied from the backup, we skip it then and do it here.
@@ -414,7 +457,7 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
     if (valveBackup) {
       // Same map, but round restore with a Valve backup; do normal restore immediately with no
       // ready-up and no game-state change.
-      RestoreGet5Backup(restartRecording);
+      RestoreGet5Backup(shouldRestartRecording);
     } else {
       // We are restarting to the same map for prelive; just go back into warmup and let players
       // ready-up again.
@@ -425,8 +468,6 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
       StartWarmup();
     }
   }
-
-  delete kv;
 
   LogDebug("Calling Get5_OnBackupRestore()");
 
@@ -442,7 +483,7 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
   return true;
 }
 
-void RestoreGet5Backup(bool restartRecording = true) {
+void RestoreGet5Backup(bool restartRecording) {
   // If you load a backup during a live round, the game might get stuck if there are only bots
   // remaining and no players are alive. Other stuff will probably also go wrong, so we put the game
   // into warmup. We **cannot** restart the game as that causes problems for tournaments using the
@@ -454,29 +495,22 @@ void RestoreGet5Backup(bool restartRecording = true) {
   PauseGame(Get5Team_None, Get5PauseType_Backup);
   g_DoingBackupRestoreNow = true;  // reset after the backup has completed, suppresses various
                                    // events and hooks until then.
-  CreateTimer(1.5, Timer_StartRestore);
-  if (restartRecording) {
-    // Since a backup command forces the recording to stop, we restart it here once the backup has
-    // completed. We have to do this on a delay, as when loading from a live game, the backup will
-    // already be recording and must flush before a new record command can be issued. This is
-    // suppressed when using the !stop command!
-    CreateTimer(3.0, Timer_StartRecordingAfterBackup, _, TIMER_FLAG_NO_MAPCHANGE);
-  }
+  // We add a 2 second delay here to give the server time to
+  // flush the current GOTV recording *if* one is running.
+  CreateTimer(2.0, Timer_StartRestore, restartRecording, TIMER_FLAG_NO_MAPCHANGE);
 }
 
-static Action Timer_StartRecordingAfterBackup(Handle timer) {
-  if (g_GameState != Get5State_Live) {
-    return;
+static Action Timer_StartRestore(Handle timer, bool restartRecording) {
+  if (!g_DoingBackupRestoreNow) {
+    return Plugin_Handled;
   }
-  StartRecording();
-}
-
-static Action Timer_StartRestore(Handle timer) {
   ChangeState(Get5State_Live);
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
-  CreateTimer(0.5, Timer_FinishBackup);
+
+  // Small delay here as mp_backup_restore_load_file is async.
+  CreateTimer(0.5, Timer_FinishBackup, restartRecording, TIMER_FLAG_NO_MAPCHANGE);
 
   // We need to fire the OnRoundStarted event manually, as it will be suppressed during backups and
   // won't fire while g_DoingBackupRestoreNow is true.
@@ -491,9 +525,13 @@ static Action Timer_StartRestore(Handle timer) {
     EventLogger_LogAndDeleteEvent(startEvent);
   }
   delete kv;
+  return Plugin_Handled;
 }
 
-static Action Timer_FinishBackup(Handle timer) {
+static Action Timer_FinishBackup(Handle timer, bool restartRecording) {
+  if (!g_DoingBackupRestoreNow) {
+    return Plugin_Handled;
+  }
   // This ensures that coaches are moved to their slots.
   if (g_CheckAuthsCvar.BoolValue) {
     LOOP_CLIENTS(i) {
@@ -511,6 +549,10 @@ static Action Timer_FinishBackup(Handle timer) {
   } else {
     LogDebug("Failed to delete temp valve backup file: %s", tempValveBackup);
   }
+  if (restartRecording) {
+    StartRecording();
+  }
+  return Plugin_Handled;
 }
 
 void DeleteOldBackups() {

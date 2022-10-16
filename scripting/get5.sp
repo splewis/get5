@@ -269,6 +269,7 @@ Handle g_OnBombDefused = INVALID_HANDLE;
 Handle g_OnBombExploded = INVALID_HANDLE;
 Handle g_OnBombPlanted = INVALID_HANDLE;
 Handle g_OnDemoFinished = INVALID_HANDLE;
+Handle g_OnDemoUploadEnded = INVALID_HANDLE;
 Handle g_OnEvent = INVALID_HANDLE;
 Handle g_OnFlashbangDetonated = INVALID_HANDLE;
 Handle g_OnHEGrenadeDetonated = INVALID_HANDLE;
@@ -661,6 +662,7 @@ public void OnPluginStart() {
   /** Create forwards **/
   g_OnBackupRestore = CreateGlobalForward("Get5_OnBackupRestore", ET_Ignore, Param_Cell);
   g_OnDemoFinished = CreateGlobalForward("Get5_OnDemoFinished", ET_Ignore, Param_Cell);
+  g_OnDemoUploadEnded = CreateGlobalForward("Get5_OnDemoUploadEnded", ET_Ignore, Param_Cell);
   g_OnEvent = CreateGlobalForward("Get5_OnEvent", ET_Ignore, Param_Cell, Param_String);
   g_OnFlashbangDetonated = CreateGlobalForward("Get5_OnFlashbangDetonated", ET_Ignore, Param_Cell);
   g_OnHEGrenadeDetonated = CreateGlobalForward("Get5_OnHEGrenadeDetonated", ET_Ignore, Param_Cell);
@@ -1427,7 +1429,7 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
 
   Get5SeriesResultEvent event = new Get5SeriesResultEvent(
       g_MatchID, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
-      g_TeamSeriesScores[Get5Team_1], g_TeamSeriesScores[Get5Team_2]);
+      g_TeamSeriesScores[Get5Team_1], g_TeamSeriesScores[Get5Team_2], RoundToFloor(restoreDelay));
 
   LogDebug("Calling Get5_OnSeriesResult()");
 

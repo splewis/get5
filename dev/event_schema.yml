@@ -261,6 +261,14 @@ paths:
                     SourceMod.
                 winner:
                   $ref: "#/components/schemas/Get5Winner"
+                time_until_restore:
+                  type: integer
+                  minimum: 0
+                  example: 45
+                  description: |
+                    The number of seconds until Get5 restores any changed ConVars after the series has ended. This is
+                    the GOTV broadcast delay plus a few seconds. If you use this event to relinquish a server instance,
+                    you should wait until this time has passed before starting a new match or shutting down the server.
       responses: { }
   "/Get5_OnKnifeRoundStarted":
     post:
@@ -519,17 +527,33 @@ paths:
             schema:
               title: Get5DemoFinishedEvent
               allOf:
-                - "$ref": "#/components/schemas/Get5MapEvent"
+                - "$ref": "#/components/schemas/Get5DemoFileEvent"
               properties:
                 event:
                   enum:
                     - demo_finished
-                filename:
-                  type: string
-                  example: "1324_map_0_de_nuke.dem"
-                  description: |
-                    The name of the file containing the GOTV recording of the map. The format is determined by the
-                    `get5_demo_name_format` parameter.
+      responses: { }
+  "/Get5_OnDemoUploadEnded":
+    post:
+      tags:
+        - Series Flow
+      description: |
+        Fired when the request to upload a demo ends, regardless if it succeeds or fails. If you upload demos, you
+        should not shut down a server until this event has fired.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Get5DemoUploadEndedEvent
+              allOf:
+                - "$ref": "#/components/schemas/Get5DemoFileEvent"
+              properties:
+                event:
+                  enum:
+                    - demo_upload_ended
+                success:
+                  type: boolean
+                  description: Whether the upload was successful. `Success` in SourceMod.
       responses: { }
   "/Get5_OnPlayerBecameMVP":
     post:
@@ -869,6 +893,16 @@ components:
           example: 0
           description: The map number in the series, starting at 0. `MapNumber` in
             SourceMod.
+    Get5DemoFileEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5MapEvent"
+      properties:
+        filename:
+          type: string
+          example: "1324_map_0_de_nuke.dem"
+          description: |
+            The name of the file containing the GOTV recording of the map. The format is determined by the
+            `get5_demo_name_format` parameter.
     Get5MapSelectionEvent:
       allOf:
         - "$ref": "#/components/schemas/Get5MatchTeamEvent"

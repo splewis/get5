@@ -550,6 +550,15 @@ methodmap Get5PlayerTimedRoundEvent < Get5TimedRoundEvent {
 
 methodmap Get5SeriesResultEvent < Get5MatchEvent {
 
+  property int TimeUntilRestore {
+    public get() {
+      return this.GetInt("time_until_restore");
+    }
+    public set(int time) {
+      this.SetInt("time_until_restore", time);
+    }
+  }
+
   property Get5Winner Winner {
     public get() {
       return view_as<Get5Winner>(this.GetObject("winner"));
@@ -577,13 +586,14 @@ methodmap Get5SeriesResultEvent < Get5MatchEvent {
     }
   }
 
-  public Get5SeriesResultEvent(const char[] matchId, const Get5Winner winner, const int team1Score, const int team2Score) {
+  public Get5SeriesResultEvent(const char[] matchId, const Get5Winner winner, const int team1Score, const int team2Score, const int timeUntilRestore) {
     Get5SeriesResultEvent self = view_as<Get5SeriesResultEvent>(new JSON_Object());
     self.SetEvent("series_end");
     self.SetMatchId(matchId);
     self.Winner = winner;
     self.Team1SeriesScore = team1Score;
     self.Team2SeriesScore = team2Score;
+    self.TimeUntilRestore = timeUntilRestore;
     return self;
   }
 }
@@ -820,7 +830,7 @@ methodmap Get5RoundStatsUpdatedEvent < Get5RoundEvent {
   }
 }
 
-methodmap Get5DemoFinishedEvent < Get5MapEvent {
+methodmap Get5DemoFileEvent < Get5MapEvent {
 
   public bool SetFileName(const char[] filename) {
     return this.SetString("filename", filename);
@@ -828,6 +838,9 @@ methodmap Get5DemoFinishedEvent < Get5MapEvent {
   public bool GetFileName(char[] buffer, const int maxSize) {
     return this.GetString("filename", buffer, maxSize);
   }
+}
+
+methodmap Get5DemoFinishedEvent < Get5DemoFileEvent {
 
   public Get5DemoFinishedEvent(const char[] matchId, const int mapNumber, const char[] filename) {
     Get5DemoFinishedEvent self = view_as<Get5DemoFinishedEvent>(new JSON_Object());
@@ -835,6 +848,28 @@ methodmap Get5DemoFinishedEvent < Get5MapEvent {
     self.SetMatchId(matchId);
     self.MapNumber = mapNumber;
     self.SetFileName(filename);
+    return self;
+  }
+}
+
+methodmap Get5DemoUploadEndedEvent < Get5DemoFileEvent {
+
+  property bool Success {
+    public get() {
+      return this.GetBool("success");
+    }
+    public set(bool success) {
+      this.SetBool("success", success);
+    }
+  }
+
+  public Get5DemoUploadEndedEvent(const char[] matchId, const int mapNumber, const char[] filename, const bool success) {
+    Get5DemoUploadEndedEvent self = view_as<Get5DemoUploadEndedEvent>(new JSON_Object());
+    self.SetEvent("demo_upload_ended");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.SetFileName(filename);
+    self.Success = success;
     return self;
   }
 }
@@ -1787,6 +1822,9 @@ forward void Get5_OnSidePicked(const Get5SidePickedEvent event);
 
 // Called when a demo finishes recording.
 forward void Get5_OnDemoFinished(const Get5DemoFinishedEvent event);
+
+// Called when a demo upload attempt ends.
+forward void Get5_OnDemoUploadEnded(const Get5DemoUploadEndedEvent event);
 
 // Called when a match is paused.
 forward void Get5_OnMatchPaused(const Get5MatchPausedEvent event);

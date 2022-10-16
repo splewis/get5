@@ -129,6 +129,7 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
   Handle demoRequest = CreateGet5HTTPRequest(k_EHTTPMethodPOST, demoUrl);
 
   if (demoRequest == INVALID_HANDLE) {
+    CallUploadEvent(matchId, mapNumber, demoFileName, false);
     return;
   }
 
@@ -138,6 +139,7 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
     if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, demoHeaderKey, demoHeaderValue)) {
       LogError("Failed to add custom header '%s' with value '%s' to demo upload request.", demoHeaderKey, demoHeaderValue);
       delete demoRequest;
+      CallUploadEvent(matchId, mapNumber, demoFileName, false);
       return;
     }
   }
@@ -145,6 +147,7 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
   if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, GET5_HEADER_DEMONAME, demoFileName)) {
     LogError("Failed to add filename header with value '%s' to demo upload request.", demoFileName);
     delete demoRequest;
+    CallUploadEvent(matchId, mapNumber, demoFileName, false);
     return;
   }
 
@@ -152,6 +155,7 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
    if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, GET5_HEADER_MATCHID, matchId)) {
       LogError("Failed to add match ID header with value '%s' to demo upload request.", matchId);
       delete demoRequest;
+      CallUploadEvent(matchId, mapNumber, demoFileName, false);
       return;
     }
   }
@@ -161,6 +165,7 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
   if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, GET5_HEADER_MAPNUMBER, strMapNumber)) {
     LogError("Failed to add map number header with value '%s' to demo upload request.", strMapNumber);
     delete demoRequest;
+    CallUploadEvent(matchId, mapNumber, demoFileName, false);
     return;
   }
 
@@ -168,6 +173,7 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
   if (!SteamWorks_SetHTTPRequestNetworkActivityTimeout(demoRequest, timeout)) {
     LogError("Failed to change demo upload request timeout to %d seconds.", timeout);
     delete demoRequest;
+    CallUploadEvent(matchId, mapNumber, demoFileName, false);
     return;
   }
 
@@ -175,12 +181,11 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
     demoRequest, "application/octet-stream", demoFileName)) {
     LogError("Failed to add file '%s' as POST body for demo upload request.", demoFileName);
     delete demoRequest;
+    CallUploadEvent(matchId, mapNumber, demoFileName, false);
     return;
   }
 
-  DataPack pack = new DataPack();
-  pack.WriteString(demoFileName);
-  SteamWorks_SetHTTPRequestContextValue(demoRequest, pack);
+  SteamWorks_SetHTTPRequestContextValue(demoRequest, GetDemoInfoDataPack(matchId, mapNumber, demoFileName));
   SteamWorks_SetHTTPCallbacks(demoRequest, DemoRequestCallback);
   SteamWorks_SendHTTPRequest(demoRequest);
 }
@@ -227,14 +232,15 @@ void SetCurrentMatchRestartDelay(float delay) {
 
 static int DemoRequestCallback(Handle request, bool failure, bool requestSuccessful,
                                EHTTPStatusCode statusCode, DataPack pack) {
+  int mapNumber;
+  char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];
-  pack.Reset();
-  pack.ReadString(demoFileName, sizeof(demoFileName));
-  delete pack;
+  ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, demoFileName, sizeof(demoFileName));
 
   if (failure || !requestSuccessful) {
     LogError("Failed to upload demo %s.", demoFileName);
     delete request;
+    CallUploadEvent(matchId, mapNumber, demoFileName, false);
     return;
   }
 
@@ -250,6 +256,7 @@ static int DemoRequestCallback(Handle request, bool failure, bool requestSuccess
       LogError("Failed to read response body.");
     }
     delete request;
+    CallUploadEvent(matchId, mapNumber, demoFileName, false);
     return;
   }
 
@@ -263,4 +270,14 @@ static int DemoRequestCallback(Handle request, bool failure, bool requestSuccess
     }
   }
   delete request;
+  CallUploadEvent(matchId, mapNumber, demoFileName, true);
+}
+
+static void CallUploadEvent(const char[] matchId, const int mapNumber, const char[] demoFileName, const bool success) {
+  Get5DemoUploadEndedEvent event = new Get5DemoUploadEndedEvent(matchId, mapNumber, demoFileName, success);
+  LogDebug("Calling Get5_OnDemoUploadEnded()");
+  Call_StartForward(g_OnDemoUploadEnded);
+  Call_PushCell(event);
+  Call_Finish();
+  EventLogger_LogAndDeleteEvent(event);
 }

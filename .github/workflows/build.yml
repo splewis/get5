@@ -16,7 +16,7 @@ jobs:
       SM_JSON_INC_PATH: get5/dependencies/sm-json/addons/sourcemod/scripting/include
       STEAMWORKS_URL: https://raw.githubusercontent.com/PhlexPlexico/SteamWorks/master/Pawn/includes/SteamWorks.inc
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           path: 'get5'
           submodules: true
@@ -30,21 +30,22 @@ jobs:
         run: |
           sha_short=$(echo ${{ github.sha }} | cut -c1-7)
           get5_version=$(cat get5/scripting/get5/version.sp | grep -Eo '#define PLUGIN_VERSION "[0-9]+\.[0-9]+\.[0-9]+' | sed 's/#define PLUGIN_VERSION "//')
-          echo "::set-output name=sha_short::${sha_short}"
-          echo "::set-output name=get5_version::${get5_version}"
+          echo "last_nightly=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_ENV
+          echo "sha_short=${sha_short}" >> $GITHUB_ENV
+          echo "get5_version=${get5_version}" >> $GITHUB_ENV
           if [ ${{ github.ref }} == 'refs/heads/master' ]
           then
-            echo "::set-output name=get5_build_filename::get5-v${get5_version}"
-            echo "::set-output name=get5_version_sp_tag::${get5_version}"
+            echo "get5_build_filename=get5-v${get5_version}" >> $GITHUB_ENV
+            echo "get5_version_sp_tag=${get5_version}" >> $GITHUB_ENV
           else 
-            echo "::set-output name=get5_build_filename::get5-v${get5_version}-${sha_short}"
-            echo "::set-output name=get5_version_sp_tag::${get5_version}-${sha_short}"
+            echo "get5_build_filename=get5-v${get5_version}-${sha_short}" >> $GITHUB_ENV
+            echo "get5_version_sp_tag=${get5_version}-${sha_short}" >> $GITHUB_ENV
           fi
 
       - run: |
           wget $STEAMWORKS_URL -P steamworks
           mkdir -p $OUTPUT_SM_PATH/plugins/disabled
-          sed -i -r "s#\#define PLUGIN_VERSION \"[0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+#\#define PLUGIN_VERSION \"${{ steps.vars.outputs.get5_version_sp_tag }}#g" get5/scripting/get5/version.sp
+          sed -i -r "s#\#define PLUGIN_VERSION \"[0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+#\#define PLUGIN_VERSION \"${{ env.get5_version_sp_tag }}#g" get5/scripting/get5/version.sp
           cp -R get5/cfg $OUTPUT_PATH
           cp -R get5/translations $OUTPUT_SM_PATH
           cp -R get5/configs $OUTPUT_SM_PATH
@@ -55,18 +56,18 @@ jobs:
           spcomp get5/scripting/get5_apistats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_apistats.smx -E
           spcomp get5/scripting/get5_mysqlstats.sp -i steamworks -i $SM_JSON_INC_PATH -o $OUTPUT_SM_PATH/plugins/disabled/get5_mysqlstats.smx -E
           mkdir -p artifacts
-          cd $OUTPUT_PATH/ && tar -zcvf ../../artifacts/${{ steps.vars.outputs.get5_build_filename }}.tar.gz * && cd ../../
-          cd $OUTPUT_PATH/ && zip -r ../../artifacts/${{ steps.vars.outputs.get5_build_filename }}.zip . && cd ../../
+          cd $OUTPUT_PATH/ && tar -zcvf ../../artifacts/${{ env.get5_build_filename }}.tar.gz * && cd ../../
+          cd $OUTPUT_PATH/ && zip -r ../../artifacts/${{ env.get5_build_filename }}.zip . && cd ../../
 
       - name: Store Artifacts For Tagging Release Or Nightly
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.vars.outputs.get5_build_filename }}
+          name: ${{ env.get5_build_filename }}
           path: artifacts
     outputs:
-      get5-version: ${{ steps.vars.outputs.get5_version }}
-      sha-short: ${{ steps.vars.outputs.sha_short }}
-      filename: ${{ steps.vars.outputs.get5_build_filename }}
+      get5-version: ${{ env.get5_version }}
+      sha-short: ${{ env.sha_short }}
+      filename: ${{ env.get5_build_filename }}
 
   deploy-nightly:
     needs: [ build ]
@@ -74,7 +75,7 @@ jobs:
     if: github.ref == 'refs/heads/development'
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
           name: ${{ needs.build.outputs.filename }}
@@ -109,7 +110,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Generate changelog
         id: changelog

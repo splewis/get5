@@ -262,82 +262,84 @@ static void MatchConfigFail(const char[] reason, any...) {
   EventLogger_LogAndDeleteEvent(event);
 }
 
-stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
-                            ArrayList paramValues = null, ArrayList headerNames = null,
-                            ArrayList headerValues = null) {
-  bool steamWorksAvaliable = LibraryExists("SteamWorks");
+bool LoadMatchFromUrl(const char[] url, const ArrayList paramNames = null,
+                            const ArrayList paramValues = null, const ArrayList headerNames = null,
+                            const ArrayList headerValues = null) {
+  if (!LibraryExists("SteamWorks")) {
+    MatchConfigFail("The SteamWorks extension is required in order to load match configurations over HTTP.");
+    return false;
+  }
 
-  char cleanedUrl[1024];
-  strcopy(cleanedUrl, sizeof(cleanedUrl), url);
-  ReplaceString(cleanedUrl, sizeof(cleanedUrl), "\"", "");
-  strcopy(g_LoadedConfigUrl, sizeof(g_LoadedConfigUrl), cleanedUrl);
+  Handle request = CreateGet5HTTPRequest(k_EHTTPMethodGET, url);
+  if (request == INVALID_HANDLE) {
+    MatchConfigFail("Failed to create remote match load request for URL '%s'.", url);
+    return false;
+  }
 
-  if (steamWorksAvaliable) {
-    // Add the protocol strings if missing (only http).
-    if (StrContains(cleanedUrl, "http://") == -1 && StrContains(cleanedUrl, "https://") == -1) {
-      Format(cleanedUrl, sizeof(cleanedUrl), "http://%s", cleanedUrl);
-    }
-    LogDebug("cleanedUrl (SteamWorks) = %s", cleanedUrl);
-    Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, cleanedUrl);
-    if (request == INVALID_HANDLE) {
-      MatchConfigFail("Failed to create HTTP GET request");
+  char key[1024];
+  char value[1024];
+  if (headerNames != null && headerValues != null) {
+    if (headerNames.Length != headerValues.Length) {
+      MatchConfigFail("The number of header keys and values must be identical.");
+      delete request;
       return false;
     }
 
-    if (headerNames != null && headerValues != null) {
-      if (headerNames.Length != headerValues.Length) {
-        MatchConfigFail("request headerNames and headerValues size mismatch");
+    for (int i = 0; i < headerNames.Length; i++) {
+      headerNames.GetString(i, key, sizeof(key));
+      headerValues.GetString(i, value, sizeof(value));
+      if (!SteamWorks_SetHTTPRequestHeaderValue(request, key, value)) {
+        MatchConfigFail("Failed to set HTTP header '%s' with value '%s'.", key, value);
         delete request;
         return false;
       }
-
-      char headerparam[128];
-      char headervalue[1024];
-      for (int i = 0; i < headerNames.Length; i++) {
-        headerNames.GetString(i, headerparam, sizeof(headerparam));
-        headerValues.GetString(i, headervalue, sizeof(headervalue));
-        SteamWorks_SetHTTPRequestHeaderValue(request, headerparam, headervalue);
-      }
     }
-
-    if (paramNames != null && paramValues != null) {
-      if (paramNames.Length != paramValues.Length) {
-        MatchConfigFail("request paramNames and paramValues size mismatch");
-        delete request;
-        return false;
-      }
-
-      char param[128];
-      char value[128];
-      for (int i = 0; i < paramNames.Length; i++) {
-        paramNames.GetString(i, param, sizeof(param));
-        paramValues.GetString(i, value, sizeof(value));
-        SteamWorks_SetHTTPRequestGetOrPostParameter(request, param, value);
-      }
-    }
-
-    SteamWorks_SetHTTPCallbacks(request, SteamWorks_OnMatchConfigReceived);
-    SteamWorks_SendHTTPRequest(request);
-    return true;
-
-  } else {
-    MatchConfigFail("SteamWorks extension is not available");
-    return false;
   }
+
+  if (paramNames != null && paramValues != null) {
+    if (paramNames.Length != paramValues.Length) {
+      MatchConfigFail("The number of query parameter keys and values must be identical.");
+      delete request;
+      return false;
+    }
+
+    for (int i = 0; i < paramNames.Length; i++) {
+      paramNames.GetString(i, key, sizeof(key));
+      paramValues.GetString(i, value, sizeof(value));
+      if (!SteamWorks_SetHTTPRequestGetOrPostParameter(request, key, value)) {
+        MatchConfigFail("Failed to set HTTP query parameter '%s' with value '%s'.", key, value);
+        delete request;
+        return false;
+      }
+    }
+  }
+
+  DataPack pack = new DataPack();
+  pack.WriteString(url);
+
+  SteamWorks_SetHTTPRequestContextValue(request, pack);
+  SteamWorks_SetHTTPCallbacks(request, SteamWorks_OnMatchConfigReceived);
+  SteamWorks_SendHTTPRequest(request);
+  return true;
 }
 
-// SteamWorks HTTP callback for fetching a workshop collection
 static int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful,
-                                            EHTTPStatusCode statusCode, Handle data) {
+                                            EHTTPStatusCode statusCode, DataPack pack) {
+
+  char loadedUrl[PLATFORM_MAX_PATH];
+  pack.Reset();
+  pack.ReadString(loadedUrl, sizeof(loadedUrl));
+  delete pack;
+
   if (failure || !requestSuccessful) {
-    MatchConfigFail("Steamworks GET request failed, HTTP status code = %d", statusCode);
+    MatchConfigFail("Match config HTTP request for '%s' failed due to a network or configuration error. Make sure you have enclosed your URL in quotes.", loadedUrl);
     delete request;
     return;
   }
 
   int status = view_as<int>(statusCode);
   if (status >= 300 || status < 200) {
-    LogError("Steamworks GET request failed with HTTP status code: %d.", statusCode);
+    MatchConfigFail("Match config HTTP request for '%s' failed with HTTP status code: %d.", loadedUrl, statusCode);
     int responseSize;
     SteamWorks_GetHTTPResponseBodySize(request, responseSize);
     char[] response = new char[responseSize];
@@ -353,13 +355,19 @@ static int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
   char remoteConfig[PLATFORM_MAX_PATH];
   GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
   if (SteamWorks_WriteHTTPResponseBodyToFile(request, remoteConfig)) {
-    LoadMatchConfig(remoteConfig);
+    if (LoadMatchConfig(remoteConfig)) {
+      // LoadMatchConfig prints its own error via MatchConfigFail.
+      // Override g_LoadedConfigFile to point to the URL instead of the local temp file.
+      strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), loadedUrl);
+      // We only delete the file if it loads successfully, as it may be used for debugging otherwise.
+      if (FileExists(remoteConfig) && !DeleteFile(remoteConfig)) {
+        LogError("Unable to delete temporary match config file '%s'.", remoteConfig);
+      }
+    }
   } else {
-    LogError("Failed to write match configuration to file.");
+    MatchConfigFail("Failed to write match configuration to file '%s'.", remoteConfig);
   }
   delete request;
-
-  strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), g_LoadedConfigUrl);
 }
 
 void WriteMatchToKv(KeyValues kv) {

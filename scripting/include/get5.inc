@@ -5,6 +5,7 @@
 
 #include <json>  // github.com/clugg/sm-json
 #include <cstrike>
+#include <SteamWorks>
 
 enum Get5Side {
   Get5Side_None = CS_TEAM_NONE,
@@ -135,6 +136,8 @@ native bool Get5_GetMatchStats(KeyValues kv);
 // Increases an (integer-typed) player statistic in the plugin's stats keyvalue structure.
 native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount = 1);
 
+// Creates a Steamworks http(s) request with the get5 headers
+native Handle Get5_CreateGet5HTTPRequest(const EHTTPMethod method, const char[] url);
 
 methodmap Get5StatusTeam < JSON_Object {
 

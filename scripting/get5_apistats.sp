@@ -112,21 +112,20 @@ void ApiInfoChanged(ConVar convar, const char[] oldValue, const char[] newValue)
 }
 
 static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:...) {
-  char url[1024];
-  FormatEx(url, sizeof(url), "%s%s", g_APIURL, apiMethod);
 
-  char formattedUrl[1024];
-  VFormat(formattedUrl, sizeof(formattedUrl), url, 3);
-
-  LogDebug("Trying to create request to url %s", formattedUrl);
-
-  Handle req = SteamWorks_CreateHTTPRequest(httpMethod, formattedUrl);
   if (StrEqual(g_APIKey, "")) {
     // Not using a web interface.
+    LogError("Failed to create request because get5_web_api_key was not provided");
     return INVALID_HANDLE;
+  }
 
-  } else if (req == INVALID_HANDLE) {
-    LogError("Failed to create request to %s", formattedUrl);
+  char url[1024];
+  char formattedUrl[1024];
+  FormatEx(url, sizeof(url), "%s%s", g_APIURL, apiMethod);
+  VFormat(formattedUrl, sizeof(formattedUrl), url, 3);
+  LogDebug("Trying to create request to url %s", formattedUrl);
+  Handle req = Get5_CreateGet5HTTPRequest(httpMethod, formattedUrl);
+  if (req == INVALID_HANDLE) {
     return INVALID_HANDLE;
 
   } else {
@@ -136,15 +135,28 @@ static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:
   }
 }
 
-int RequestCallback(Handle request, bool failure, bool requestSuccessful,
+static int RequestCallback(Handle request, bool failure, bool requestSuccessful,
                     EHTTPStatusCode statusCode) {
+
   if (failure || !requestSuccessful) {
-    LogError("API request failed, HTTP status code = %d", statusCode);
-    char response[1024];
-    SteamWorks_GetHTTPResponseBodyData(request, response, sizeof(response));
-    LogError(response);
+    LogError("Network connection failed for the API request");
+    delete request;
     return;
   }
+
+  int status = view_as<int>(statusCode);
+  if (status >= 300 || status < 200) {
+    LogError("API request failed with HTTP status code: %d.", statusCode);
+    int responseSize;
+    SteamWorks_GetHTTPResponseBodySize(request, responseSize);
+    char[] response = new char[responseSize];
+    if (SteamWorks_GetHTTPResponseBodyData(request, response, responseSize)) {
+      LogError("Response body: %s", response);
+    } else {
+      LogError("Failed to read response body.");
+    }
+  }
+  delete request;
 }
 
 public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
@@ -196,17 +208,31 @@ static void CheckForLogo(const char[] logo) {
   }
 }
 
-static int LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status,
-                        int data) {
+static int LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode statusCode,
+                        DataPack data) {
   if (failure || !successful) {
-    LogError("Logo request failed, status code = %d", status);
+    LogError("Network connection failed for the logo request");
+    delete request;
     return;
   }
 
-  DataPack pack = view_as<DataPack>(data);
-  pack.Reset();
+  int status = view_as<int>(statusCode);
+  if (status >= 300 || status < 200) {
+    LogError("Logo request failed with HTTP status code: %d.", statusCode);
+    int responseSize;
+    SteamWorks_GetHTTPResponseBodySize(request, responseSize);
+    char[] response = new char[responseSize];
+    if (SteamWorks_GetHTTPResponseBodyData(request, response, responseSize)) {
+      LogError("Response body: %s", response);
+    } else {
+      LogError("Failed to read response body.");
+    }
+    delete request;
+  }
+
+  data.Reset();
   char logo[32];
-  pack.ReadString(logo, sizeof(logo));
+  data.ReadString(logo, sizeof(logo));
 
   char logoPath[PLATFORM_MAX_PATH + 1];
   if (g_UseSVGCvar.BoolValue) {
@@ -215,8 +241,12 @@ static int LogoCallback(Handle request, bool failure, bool successful, EHTTPStat
     FormatEx(logoPath, sizeof(logoPath), "%s/%s.png", g_LogoBasePath, logo);
   }
 
-  LogMessage("Saved logo for %s to %s", logo, logoPath);
-  SteamWorks_WriteHTTPResponseBodyToFile(request, logoPath);
+  if (SteamWorks_WriteHTTPResponseBodyToFile(request, logoPath)) {
+    LogMessage("Saved logo for %s to %s", logo, logoPath);
+  } else {
+    LogError("Failed to write logo %s to file %s.", logo, logoPath);
+  }
+  delete request;
 }
 
 public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {

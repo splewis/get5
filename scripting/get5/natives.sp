@@ -21,6 +21,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
   CreateNative("Get5_AddLiveCvar", Native_AddLiveCvar);
   CreateNative("Get5_IncreasePlayerStat", Native_IncreasePlayerStat);
   CreateNative("Get5_GetMatchStats", Native_GetMatchStats);
+  CreateNative("Get5_CreateGet5HTTPRequest", Native_CreateGet5HTTPRequest);
   RegPluginLibrary("get5");
   return APLRes_Success;
 }
@@ -250,4 +251,11 @@ public int Native_GetMatchStats(Handle plugin, int numParams) {
     g_StatsKv.Rewind();
     return view_as<int>(true);
   }
+}
+
+public int Native_CreateGet5HTTPRequest(Handle plugin, int numParams) {
+  EHTTPMethod method = view_as<EHTTPMethod>(GetNativeCell(1));
+  char url[1024];
+  GetNativeString(2, url, sizeof(url));
+  return view_as<int>(CreateGet5HTTPRequest(method, url));
 }

@@ -17,7 +17,7 @@ jobs:
       SM_JSON_INC_PATH: get5/dependencies/sm-json/addons/sourcemod/scripting/include
       STEAMWORKS_URL: https://raw.githubusercontent.com/PhlexPlexico/SteamWorks/master/Pawn/includes/SteamWorks.inc
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           path: 'get5'
           submodules: true

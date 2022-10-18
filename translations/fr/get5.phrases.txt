@@ -10,7 +10,7 @@
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "fr"            "Entrez {1} quand vous êtes prêt(e) à restorer la sauvegarde du match."
+        "fr"            "Entrez {1} quand vous êtes prêt(e) à restaurer la sauvegarde du match."
     }
     "ReadyToKnifeInfoMessage"
     {
@@ -26,7 +26,7 @@
     }
     "YouArereadyAuto"
     {
-        "fr"            "NOTE: Vous avez été marqué(e) comme prêt(e). Entrez {1} si vous n'êtes pas prêt(e)."
+        "fr"            "Vous avez été marqué(e) comme prêt(e). Entrez {1} si vous n'êtes pas prêt(e)."
     }
     "YouAreNotReady"
     {
@@ -106,11 +106,11 @@
     }
     "TimeRemainingBeforeAnyoneCanUnpausePrefix"
     {
-        "fr"            "Temps restant avant de pouvoir mettre fin à la pause "
+        "fr"            "Temps restant avant de pouvoir mettre fin à la pause"
     }
     "PauseTimeRemainingPrefix"
     {
-        "fr"            "Temps de pause restant "
+        "fr"            "Temps de pause restante"
     }
     "AwaitingUnpause"
     {
@@ -166,7 +166,7 @@
     }
     "PausesLeftInfoMessage"
     {
-        "fr"            "{1} dispose encore de {2} pauses."
+        "fr"            "{1} dispose encore de {2} pause(s)."
     }
      "PrereleaseVersionWarning"
     {
@@ -262,7 +262,7 @@
     }
     "MatchFinishedInfoMessage"
     {
-        "fr"            "Le match est terminé"
+        "fr"            "Le match est terminé."
     }
     "StopCommandNotEnabled"
     {
@@ -310,7 +310,7 @@
     }
     "MapDecidedInfoMessage"
     {
-        "fr"            "Les maps ont été décidées :"
+        "fr"            "Les maps ont été décidées : "
     }
     "MapIsInfoMessage"
     {
@@ -374,19 +374,19 @@
     }
     "MapVetoPickMenuText"
     {
-        "fr"        "Selectionnez une map à JOUER :"
+        "fr"        "Selectionnez une map à JOUER : "
     }
     "MapVetoPickConfirmMenuText"
     {
-        "fr"        "Confirmez que vous souhaitez la jouer {1} :"
+        "fr"        "Confirmez que vous souhaitez la jouer {1} : "
     }
     "MapVetoBanMenuText"
     {
-        "fr"        "Selectionnez une map à BANNIR :"
+        "fr"        "Selectionnez une map à BANNIR : "
     }
     "MapVetoBanConfirmMenuText"
     {
-        "fr"        "Confirmez que vous souhaitez la bannir {1} :"
+        "fr"        "Confirmez que vous souhaitez la bannir {1} : "
     }
     "MapVetoSidePickMenuText"
     {
@@ -394,7 +394,7 @@
     }
     "MapVetoSidePickConfirmMenuText"
     {
-        "fr"        "Confirmez que vous voulez commencer {1} :"
+        "fr"        "Confirmez que vous voulez commencer {1} : "
     }
     "ConfirmPositiveOptionText"
     {
@@ -406,35 +406,35 @@
     }
     "VetoCountdown"
     {
-        "fr"        "Le veto commencera dans {1} secondes."
+        "fr"        "Le veto commencera dans {1} seconde(s)."
     }
     "SurrenderCommandNotEnabled"
     {
-        "fr"        "La commande de capitulation n'est pas acctivée."
+        "fr"        "La commande de abandonner n'est pas activée."
     }
     "SurrenderMinimumRoundDeficit"
     {
-        "fr"        "Vous devez avoir terminé {1} manche(s) pour pouvoir capituler."
+        "fr"        "Vous devez avoir terminé {1} manche(s) pour pouvoir abandonner."
     }
     "SurrenderInitiated"
     {
-        "fr"        "A vote to surrender was initiated by {1}. Your team must reach {2} votes within {3} seconds."
+        "fr"        "Un vote pour abandonner à été initié par {1}. Votre équipes doivent avoir {2} votes dans les {3} secondes."
     }
     "SurrenderVoteStatus"
     {
-        "fr"        "{1} des {2} votes de capitulation requis ont été exprimés."
+        "fr"        "{1} des {2} votes d'abandons requis ont été exprimés."
     }
     "SurrenderSuccessful"
     {
-        "fr"        "{1} a capitulé."
+        "fr"        "{1} à abandonner."
     }
     "SurrenderVoteFailed"
     {
-        "fr"        "Trop peu de joueurs de votre équipe ont voté pour capituler."
+        "fr"        "Trop peu de joueurs de votre équipe ont voté pour abandonner."
     }
     "SurrenderOnCooldown"
     {
-        "fr"        "Vous devez attendre {1} pour lancer un nouveau vote de capitulation."
+        "fr"        "Vous devez attendre {1} pour lancer un nouveau vote d'abandons."
     }
     "WinByForfeitAvailable"
     {
@@ -442,11 +442,11 @@
     }
     "WinByForfeitRequiresFullTeam"
     {
-        "fr"        "Votre équipe doit être complète pour pouvoir demander ou annuler une victoire par forfait."
+        "fr"        "Votre équipe doit être complète pour pouvoir demander ou annuler une victoire par abandons."
     }
     "WinByForfeitAlreadyRequested"
     {
-        "fr"        "Une demande de victoire par forfait est déjà en cours."
+        "fr"        "Une demande de victoire par abandons est déjà en cours."
     }
     "WinByForfeitCountdownStarted"
     {
@@ -454,11 +454,11 @@
     }
     "WinByForfeitCountdownCanceled"
     {
-        "fr"        "La demande de {1} de gagner par forfait a été annulée."
+        "fr"        "La demande de {1} de gagner par abandons a été annulée."
     }
     "TeamForfeited"
     {
-        "fr"        "{1} a déclaré forfait."
+        "fr"        "{1} a déclaré abandon."
     }
     "AllPlayersLeftTieCountdown"
     {

@@ -106,7 +106,7 @@
     }
     "TimeRemainingBeforeAnyoneCanUnpausePrefix"
     {
-        "fr"            "Temps restant avant de pouvoir mettre fin à la pause"
+        "fr"            "Temps restant avant de pouvoir mettre fin à la pause : "
     }
     "PauseTimeRemainingPrefix"
     {
@@ -262,7 +262,7 @@
     }
     "MatchFinishedInfoMessage"
     {
-        "fr"            "Le match est terminé."
+        "fr"            "Le match est terminé"
     }
     "StopCommandNotEnabled"
     {

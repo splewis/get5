@@ -234,7 +234,6 @@ KeyValues g_StatsKv;
 
 ArrayList g_TeamScoresPerMap = null;
 char g_LoadedConfigFile[PLATFORM_MAX_PATH];
-char g_LoadedConfigUrl[PLATFORM_MAX_PATH];
 int g_VetoCaptains[MATCHTEAM_COUNT];        // Clients doing the map vetos.
 int g_TeamSeriesScores[MATCHTEAM_COUNT];    // Current number of maps won per-team.
 bool g_TeamReadyOverride[MATCHTEAM_COUNT];  // Whether a team has been voluntarily force readied.
@@ -1124,44 +1123,35 @@ static Action Command_LoadMatch(int client, int args) {
 }
 
 static Action Command_LoadMatchUrl(int client, int args) {
+  char url[PLATFORM_MAX_PATH];
+  if ((args != 1 && args != 3) || !GetCmdArg(1, url, sizeof(url))) {
+    ReplyToCommand(client, "Usage: get5_loadmatch_url <url> [header name] [header value]");
+    return Plugin_Handled;
+  }
   if (g_GameState != Get5State_None) {
     ReplyToCommand(client, "Cannot load a match config when another is already loaded.");
-    return;
+    return Plugin_Handled;
   }
 
-  bool steamWorksAvaliable = LibraryExists("SteamWorks");
-  if (!steamWorksAvaliable) {
-    ReplyToCommand(client,
-                   "Cannot load matches from a url without the SteamWorks extension running");
-  } else {
-    char url[PLATFORM_MAX_PATH];
-    if (args >= 1 && GetCmdArg(1, url, sizeof(url))) {
-      ArrayList headerNames;
-      ArrayList headerValues;
-      if (args == 2) {
-        ReplyToCommand(client, "This command accepts either one or three parameters.");
-        return;
-      }
-      if (args == 3) {
-        char headerbuffer[PLATFORM_MAX_PATH];
-        GetCmdArg(2, headerbuffer, sizeof(headerbuffer));
-        headerNames = new ArrayList(PLATFORM_MAX_PATH);
-        headerNames.PushString(headerbuffer);
-        GetCmdArg(3, headerbuffer, sizeof(headerbuffer));
-        headerValues = new ArrayList(PLATFORM_MAX_PATH);
-        headerValues.PushString(headerbuffer);
-      }
-      if (!LoadMatchFromUrl(url, _, _, headerNames, headerValues)) {
-        ReplyToCommand(client, "Failed to load match config.");
-      } else {
-        ReplyToCommand(client, "Match config loading initialized.");
-      }
-      delete headerNames;
-      delete headerValues;
-    } else {
-      ReplyToCommand(client, "Usage: get5_loadmatch_url <url> [headername] [headervalue]");
-    }
+  ArrayList headerNames;
+  ArrayList headerValues;
+  if (args == 3) {
+    headerNames = new ArrayList(PLATFORM_MAX_PATH);
+    headerValues = new ArrayList(PLATFORM_MAX_PATH);
+    char headerBuffer[PLATFORM_MAX_PATH];
+    GetCmdArg(2, headerBuffer, sizeof(headerBuffer));
+    headerNames.PushString(headerBuffer);
+    GetCmdArg(3, headerBuffer, sizeof(headerBuffer));
+    headerValues.PushString(headerBuffer);
   }
+  if (!LoadMatchFromUrl(url, _, _, headerNames, headerValues)) {
+    ReplyToCommand(client, "Failed to initiate request for remote match config. Please see error logs for details.");
+  } else {
+    ReplyToCommand(client, "Loading match configuration...");
+  }
+  delete headerNames;
+  delete headerValues;
+  return Plugin_Handled;
 }
 
 static Action Command_DumpStats(int client, int args) {

@@ -652,16 +652,13 @@ stock SideChoice SideTypeFromString(const char[] input) {
   }
 }
 
-// Deletes a file if it exists. Returns true if the
-// file existed AND there was an error deleting it.
+// Deletes a file if it exists. Returns false if the
+// file exists AND there was an error deleting it.
 stock bool DeleteFileIfExists(const char[] path) {
-  if (FileExists(path)) {
-    if (!DeleteFile(path)) {
-      LogError("Failed to delete file %s", path);
-      return false;
-    }
+  if (FileExists(path) && !DeleteFile(path)) {
+    LogError("Failed to delete file %s", path);
+    return false;
   }
-
   return true;
 }
 

@@ -2,11 +2,27 @@ Action Command_JoinGame(int client, const char[] command, int argc) {
   LogDebug("Client %d sent joingame command.", client);
   if (CheckAutoLoadConfig()) {
     // Autoload places players on teams.
-    return;
+    return Plugin_Handled;
   }
-  if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue && IsPlayer(client)) {
+  if (g_GameState == Get5State_None) {
+    // Don't spawn timers if Get5 is not loaded.
+    return Plugin_Handled;
+  }
+  // It seems a delay may be required in some edge cases. It does work most of the time without one,
+  // but we've had issues with players ending up in really odd locations on the map without this delay.
+  CreateTimer(0.5, Timer_PlacePlayerOnJoin, GetClientUserId(client), TIMER_FLAG_NO_MAPCHANGE);
+  return Plugin_Handled;
+}
+
+static Action Timer_PlacePlayerOnJoin(Handle timer, int userId) {
+  if (g_GameState == Get5State_None || !g_CheckAuthsCvar.BoolValue) {
+    return Plugin_Handled;
+  }
+  int client = GetClientOfUserId(userId);
+  if (IsPlayer(client)) {
     PlacePlayerOnTeam(client);
   }
+  return Plugin_Handled;
 }
 
 // Assumes client IsPlayer().

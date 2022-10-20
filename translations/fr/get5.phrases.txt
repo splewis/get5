@@ -244,6 +244,10 @@
     {
         "fr"            "Configuration du match chargée."
     }
+    "CoachingExitInfo"
+    {
+        "fr"            "Taper {1} pour sortir du mode coach."
+    }
     "MoveToCoachInfoMessage"
     {
         "fr"            "Vous avez bougé à la position de coach, car votre équipe est complète."

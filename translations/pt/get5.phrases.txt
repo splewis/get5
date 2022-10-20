@@ -324,6 +324,10 @@
     {
         "pt"            "A configuração da partida foi carregada com sucesso."
     }
+    "CoachingExitInfo"
+    {
+        "pt"            "Digite {1} para sair da vaga de coach."
+    }
     "MoveToCoachInfoMessage"
     {
         "pt"            "Você foi movido para a posição de Coach pois seu time está cheio."

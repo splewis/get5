@@ -170,7 +170,7 @@
     }
      "PrereleaseVersionWarning"
     {
-        "fr"            "la version de Get5 que vous utilisez ({1}) est une version test à destination des développeurs. Ce message peut être désactivé avec {2}."
+        "fr"            "La version de Get5 que vous utilisez ({1}) est une version test à destination des développeurs. Ce message peut être désactivé avec {2}."
     }
     "NewVersionAvailable"
     {

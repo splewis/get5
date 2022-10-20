@@ -63,22 +63,27 @@ with [`get5_allow_force_ready`](../configuration/#get5_allow_force_ready).
 
 ####`!surrender` or `!gg` {: #surrender }
 
-:   If the surrender features is [enabled](../configuration/#get5_surrender_enabled), this initiates a vote to surrender
+:   If the [surrender feature is enabled](../configuration/#get5_surrender_enabled), this initiates a vote to surrender
 the **current map**. After the first vote is cast,
 a [minimum number of votes](../configuration/#get5_surrender_required_votes) must be cast be other team members
 within [the defined time limit](../configuration/#get5_surrender_time_limit). You can only vote to surrender if you
 are [sufficiently behind on points](../configuration/#get5_surrender_minimum_round_deficit).
 
-####`!win`
-:   When the entire opposing team has left the server in the live phase of a map, this initiates a countdown to win the
-series unless a player from the opposing team rejoins the server
-within [the grace period](../configuration/#get5_forfeit_countdown). This command can only be used if
-the issuing team is full, which is determined by [`players_per_team`](../match_schema/#schema).
+####`!ffw`
+:   If the [forfeit feature is enabled](../configuration/#get5_forfeit_enabled), this initiates a countdown to win the
+series by forfeit (forfeit-win) if the entire opposing team has left the server during the live phase of a map. The
+countdown is canceled if a player from the leaving team rejoins the server
+within [the grace period](../configuration/#get5_forfeit_countdown).
 
-####`!cancelwin`
+####`!cancelffw`
 :   If a [timer to win by forfeit](../configuration/#get5_forfeit_countdown) was started after a team left the
-server, this stops that timer. This command can only be used if the issuing team is full, which is determined
-by [`players_per_team`](../match_schema/#schema).
+server, this stops that timer.
+
+!!! info "All aboard!"
+
+    The [`!ffw`](#ffw) and [`!cancelffw`](#cancelffw) commands can only be issued by a full team, which is evaluated via
+    [`players_per_team`](../match_schema/#schema). This prevents a player from reversing a team's decision to request or
+    cancel a forfeit win if the rest of the team left.
 
 ####`!get5`
 

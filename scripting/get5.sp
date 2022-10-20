@@ -60,7 +60,7 @@
 ConVar g_AllowTechPauseCvar;
 ConVar g_MaxTechPauseDurationCvar;
 ConVar g_MaxTechPausesCvar;
-ConVar g_AutoTechPauseCvar;
+ConVar g_AutoTechPauseMissingPlayersCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_AutoReadyActivePlayersCvar;
 ConVar g_BackupSystemEnabledCvar;
@@ -113,6 +113,7 @@ ConVar g_MinimumRoundDeficitForSurrenderCvar;
 ConVar g_VotesRequiredForSurrenderCvar;
 ConVar g_SurrenderVoteTimeLimitCvar;
 ConVar g_SurrenderCooldownCvar;
+ConVar g_ForfeitEnabledCvar;
 ConVar g_ForfeitCountdownTimeCvar;
 ConVar g_DemoUploadURLCvar;
 ConVar g_DemoUploadHeaderKeyCvar;
@@ -365,9 +366,9 @@ public void OnPluginStart() {
   g_MaxTechPausesCvar =
       CreateConVar("get5_max_tech_pauses", "0",
                    "Number of technical pauses a team is allowed to have, 0=unlimited");
-  g_AutoTechPauseCvar =
-      CreateConVar("get5_auto_tech_pause", "0",
-                   "Behavior for automatic tech pauses triggered by disconnecting. 0 = disabled, 1 = pause if any player from a team leaves, 2 = pause if all players from a team leave.");
+  g_AutoTechPauseMissingPlayersCvar =
+      CreateConVar("get5_auto_tech_pause_missing_players", "0",
+                   "The number of players that must leave a team to trigger an automatic technical pause. Set to 0 to disable.");
   g_AutoLoadConfigCvar =
       CreateConVar("get5_autoload_config", "",
                    "Name of a match config file to automatically load when the server loads");
@@ -519,8 +520,11 @@ public void OnPluginStart() {
         CreateConVar("get5_surrender_time_limit", "15", "The number of seconds before a vote to surrender fails.", 0, true, 10.0);
   g_SurrenderCooldownCvar =
         CreateConVar("get5_surrender_cooldown", "60", "The number of seconds before a vote to surrender can be retried if it fails.");
+  g_ForfeitEnabledCvar = CreateConVar(
+      "get5_forfeit_enabled", "1",
+      "Whether the forfeit feature is enabled. Not to be confused with the surrender feature.");
   g_ForfeitCountdownTimeCvar = CreateConVar(
-      "get5_forfeit_countdown", "60",
+      "get5_forfeit_countdown", "180",
       "This determines the grace-period for rejoining the server to avoid a loss by forfeit. Cannot be set lower than 30 seconds.", 0, true, 30.0);
 
   /** Create and exec plugin's configuration file **/
@@ -562,8 +566,8 @@ public void OnPluginStart() {
   AddAliasedCommand("stop", Command_Stop, "Elects to stop the game to reload a backup file");
   AddAliasedCommand("surrender", Command_Surrender, "Starts a vote for surrendering for your team.");
   AddAliasedCommand("gg", Command_Surrender, "Alias for surrender.");
-  AddAliasedCommand("win", Command_Win, "Starts a countdown to win if a full team disconnects from the server.");
-  AddAliasedCommand("cancelwin", Command_CancelWin, "Cancels a request to win by forfeit initiated with !win.");
+  AddAliasedCommand("ffw", Command_FFW, "Starts a countdown to win if a full team disconnects from the server.");
+  AddAliasedCommand("cancelffw", Command_CancelFFW, "Cancels a request to win by forfeit initiated with !ffw.");
 
   /** Admin/server commands **/
   RegAdminCmd(
@@ -843,8 +847,6 @@ static Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
     EventLogger_LogAndDeleteEvent(connectEvent);
 
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
-
-    CheckForfeitStateOnConnect();
   }
 }
 
@@ -865,10 +867,6 @@ static Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
     // to get the right "number of players per team" in CheckForForfeitOnDisconnect().
     CreateTimer(0.1, Timer_DisconnectCheck, _, TIMER_FLAG_NO_MAPCHANGE);
   }
-}
-
-static Action Timer_DisconnectCheck(Handle timer) {
-  CheckForForfeitOnDisconnect();
 }
 
 // This runs every time a map starts *or* when the plugin is reloaded.

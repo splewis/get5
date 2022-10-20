@@ -197,18 +197,24 @@ limit.<br>**`Default: 0`**
 a [technical pause](../pausing/#technical) without confirmation from the pausing team. Set to zero to remove
 limit.<br>**`Default: 0`**
 
-####`get5_auto_tech_pause`
-:   Determines the behavior of automatic [technical pauses](../pausing/#technical) triggered by players disconnecting
-during the live phase of a match.<br>
-`0`: Disabled; no automatic pausing.<br>
-`1`: If any player disconnects (evaluated via [`players_per_team`](../match_schema#schema)).<br>
-`2`: If a full team disconnects.<br>**`Default: 0`**
+####`get5_auto_tech_pause_missing_players`
+:   The number of players that must disconnect from a team during the live phase of a game in order to trigger an
+automatic [technical pause](../pausing/#technical). [`players_per_team`](../match_schema#schema) is used to determine
+what is considered a full team, so if these parameters are equal (typically 5), a pause is triggered if an entire team
+leaves. Set to zero to disable.<br>**`Default: 0`**
+
+!!! question "If I just want to pause if a team is empty?"
+
+    If you always want the pause to trigger if an entire team disconnects, regardless of team size, you can
+    set [`get5_auto_tech_pause_missing_players`](#get5_auto_tech_pause_missing_players) to a large value, as setting it
+    to a value larger than [`players_per_team`](../match_schema#schema) behaves as if it was set to that value.
+    
 
 !!! warning "Auto-pausing is always enabled"
 
-    If you set `get5_auto_tech_pause` to a non-zero value, a technical pause will be started regardless of the
-    configuration of [`get5_pausing_enabled`](#get5_pausing_enabled) or
-    [`get5_allow_technical_pause`](#get5_allow_technical_pause). This allows you to automatically enable technical
+    If you set [`get5_auto_tech_pause_missing_players`](#get5_auto_tech_pause_missing_players) to a non-zero value, a
+    technical pause will be started regardless of the configuration of [`get5_pausing_enabled`](#get5_pausing_enabled)
+    or [`get5_allow_technical_pause`](#get5_allow_technical_pause). This allows you to automatically enable technical
     pauses without letting players initiate them on their own.
 
     Automatic tech pauses are still limited by [`get5_max_tech_pauses`](#get5_max_tech_pauses), so you can set that to a
@@ -221,7 +227,17 @@ during the live phase of a match.<br>
 :   Whether [tactical pause](../pausing/#tactical) limits (time used and count) are reset each halftime period.
 [Technical pauses](../pausing/#technical) are not reset.<br>**`Default: 1`**
 
-## Surrender
+## Surrender & Forfeit
+
+!!! info "Surrender vs. Forfeit"
+
+    While forfeit and surrender may sound the same, they are in fact not.
+
+    The surrender feature allows for a team to call [`!surrender`](../commands/#surrender) if they do not want to
+    continue playing.
+
+    The forfeit feature allows for the use of the [`!ffw`](../commands/#ffw) command in case **one** team leaves *or*
+    triggers an automatic tie if **both** teams leave.
 
 ####`get5_surrender_enabled`
 :   Whether the [`!surrender`](../commands/#surrender) command is available.<br>**`Default: 0`**
@@ -242,22 +258,31 @@ than `10`.<br>**`Default: 15`**
 :   The minimum number of seconds a team must wait before they can initiate a surrender vote following a failed
 vote. Set to zero to disable.<br>**`Default: 60`**
 
+####`get5_forfeit_enabled`
+:   Whether the [`!ffw`](../commands/#ffw) command is available if one team leaves and whether an automatic forfeit is
+triggered if both teams leave.<br>**`Default: 1`**
+
+!!! tip "Automatic technical pause"
+
+    If you want to trigger a technical pause if a team leaves the server,
+    see [`get5_auto_tech_pause_missing_players`](#get5_auto_tech_pause_missing_players).
+
 ####`get5_forfeit_countdown`
-:   If a full team disconnects during the live phase, the [`!win`](../commands/#win) command becomes available to the
-opposing team, and this then determines the number of seconds a player from the disconnecting team has to rejoin the
-server before the opposing team wins. If both teams disconnect (at any stage), this determines how long at least one
-player from both teams have to rejoin the server before the series is ended in a tie. This value cannot be set lower
-than 30.<br>**`Default: 60`**
+:   If a full team disconnects during the live phase and [`get5_forfeit_enabled`](#get5_forfeit_enabled) is non-zero,
+the [`!ffw`](../commands/#ffw) command becomes available to the opposing team, and this then determines the number of
+seconds a player from the disconnecting team has to rejoin the server before the opposing team wins. If both teams
+disconnect (during live **or** knife), this determines how long at least one player from **both** teams have to rejoin
+the server before the series is ended in a tie. This value cannot be set lower than 30.<br>**`Default: 180`**
 
-!!! info "Ready-up logic takes precedence"
+!!! info "No forfeit during ready-phases"
 
-    If [`get5_time_to_start`](#get5_time_to_start) is larger than 0 and the game is in the warmup or veto phase, the
-    ready-up surrender logic takes precedence and there will be no forfeit-countdown when players leave the server.
+    The forfeit system is not available during warmup/veto or when waiting for a backup restore. If you want the
+    warmup/veto-phase to be limited in duration, set [`get5_time_to_start`](#get5_time_to_start) to a non-zero value.
 
 !!! warning "Empty server ends the series"
 
     If there are no players at all (no spectators, coaches or players) and someone rejoins the server during the live
-    phase, a pending forfeit timer will immediately trigger a series end, as the game will restart which causes a loss
+    phase, a pending forfeit timer may immediately trigger a series end, as the game may restart, which causes a loss
     of game state. If this happens, you must [restore the game state from a backup](../commands/#get5_loadbackup) to
     continue.
 

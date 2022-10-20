@@ -336,6 +336,10 @@
     {
         "de"            "Spiel Konfiguration geladen."
     }
+    "CoachingExitInfo"
+    {
+        "de"            "Gebe {1} ein um die Rolle des Trainers abzulegen."
+    }
     "MoveToCoachInfoMessage"
     {
         "de"            "Das Team ist voll, daher wurdest du als Trainer hinzugefügt."

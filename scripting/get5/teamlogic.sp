@@ -27,6 +27,7 @@ static Action Timer_PlacePlayerOnJoin(Handle timer, int userId) {
 
 // Assumes client IsPlayer().
 void CheckClientTeam(int client) {
+  g_ClientPendingTeamCheck[client] = false;
   Get5Team correctTeam = GetClientMatchTeam(client);
   if (correctTeam == Get5Team_None) {
     RememberAndKickClient(client, "%t", "YouAreNotAPlayerInfoMessage");
@@ -88,7 +89,8 @@ void CheckClientTeam(int client) {
 
 static void PlacePlayerOnTeam(int client) {
   if (g_PendingSideSwap || InHalftimePhase()) {
-    LogDebug("Blocking attempt to join a team due to halftime or pending team swap.");
+    LogDebug("Blocking attempt to join a team for client %d due to halftime or pending team swap.", client);
+    g_ClientPendingTeamCheck[client] = true;
     return;
   }
   CheckClientTeam(client);

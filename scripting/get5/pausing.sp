@@ -247,7 +247,7 @@ Action Command_Unpause(int client, int args) {
   }
 
   char formattedUnpauseCommand[64];
-  FormatChatCommand(formattedUnpauseCommand, sizeof(formattedUnpauseCommand), "!unpause");
+  GetChatAliasForCommand(Get5ChatCommand_Unpause, formattedUnpauseCommand, sizeof(formattedUnpauseCommand), true);
   if (g_TeamReadyForUnpause[Get5Team_1] && g_TeamReadyForUnpause[Get5Team_2]) {
     UnpauseGame(team);
     if (IsPlayer(client)) {
@@ -410,7 +410,7 @@ static Action Timer_PauseTimeCheck(Handle timer) {
           // unpause on their own. The PrintHintText below will inform users that they can now
           // unpause.
           char formattedUnpauseCommand[64];
-          FormatChatCommand(formattedUnpauseCommand, sizeof(formattedUnpauseCommand), "!unpause");
+          GetChatAliasForCommand(Get5ChatCommand_Unpause, formattedUnpauseCommand, sizeof(formattedUnpauseCommand), true);
           Get5_MessageToAll("%t", "TechPauseRunoutInfoMessage", formattedUnpauseCommand);
         }
       }

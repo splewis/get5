@@ -775,3 +775,110 @@ stock void ConvertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer, c
 stock bool IsDoingRestoreOrMapChange() {
   return g_DoingBackupRestoreNow || g_MapChangePending;
 }
+
+stock void ChatCommandToString(const Get5ChatCommand command, char[] buffer, const int bufferSize) {
+  switch (command)
+  {
+    case Get5ChatCommand_Ready:
+    {
+      FormatEx(buffer, bufferSize, "ready");
+    }
+    case Get5ChatCommand_Unready:
+    {
+      FormatEx(buffer, bufferSize, "unready");
+    }
+    case Get5ChatCommand_ForceReady:
+    {
+      FormatEx(buffer, bufferSize, "forceready");
+    }
+    case Get5ChatCommand_Tech:
+    {
+      FormatEx(buffer, bufferSize, "tech");
+    }
+    case Get5ChatCommand_Pause:
+    {
+      FormatEx(buffer, bufferSize, "pause");
+    }
+    case Get5ChatCommand_Unpause:
+    {
+      FormatEx(buffer, bufferSize, "unpause");
+    }
+    case Get5ChatCommand_Coach:
+    {
+      FormatEx(buffer, bufferSize, "coach");
+    }
+    case Get5ChatCommand_Stay:
+    {
+      FormatEx(buffer, bufferSize, "stay");
+    }
+    case Get5ChatCommand_Swap:
+    {
+      FormatEx(buffer, bufferSize, "swap");
+    }
+    case Get5ChatCommand_T:
+    {
+      FormatEx(buffer, bufferSize, "t");
+    }
+    case Get5ChatCommand_CT:
+    {
+      FormatEx(buffer, bufferSize, "ct");
+    }
+    case Get5ChatCommand_Stop:
+    {
+      FormatEx(buffer, bufferSize, "stop");
+    }
+    case Get5ChatCommand_Surrender:
+    {
+      FormatEx(buffer, bufferSize, "surrender");
+    }
+    case Get5ChatCommand_FFW:
+    {
+      FormatEx(buffer, bufferSize, "ffw");
+    }
+    case Get5ChatCommand_CancelFFW:
+    {
+      FormatEx(buffer, bufferSize, "cancelffw");
+    }
+    default:
+    {
+      LogError("Failed to map Get5ChatCommand with value %d to a string. It is missing from ChatCommandToString.", command);
+    }
+  }
+}
+
+stock Get5ChatCommand StringToChatCommand(const char[] string) {
+  if (strcmp(string, "ready") == 0) {
+    return Get5ChatCommand_Ready;
+  } else if (strcmp(string, "unready") == 0) {
+    return Get5ChatCommand_Unready;
+  } else if (strcmp(string, "forceready") == 0) {
+    return Get5ChatCommand_ForceReady;
+  } else if (strcmp(string, "tech") == 0) {
+    return Get5ChatCommand_Tech;
+  } else if (strcmp(string, "pause") == 0) {
+    return Get5ChatCommand_Pause;
+  } else if (strcmp(string, "unpause") == 0) {
+    return Get5ChatCommand_Unpause;
+  } else if (strcmp(string, "coach") == 0) {
+    return Get5ChatCommand_Coach;
+  } else if (strcmp(string, "stay") == 0) {
+    return Get5ChatCommand_Stay;
+  } else if (strcmp(string, "swap") == 0) {
+    return Get5ChatCommand_Swap;
+  } else if (strcmp(string, "t") == 0) {
+    return Get5ChatCommand_T;
+  } else if (strcmp(string, "ct") == 0) {
+    return Get5ChatCommand_CT;
+  } else if (strcmp(string, "stop") == 0) {
+    return Get5ChatCommand_Stop;
+  } else if (strcmp(string, "surrender") == 0) {
+    return Get5ChatCommand_Surrender;
+  } else if (strcmp(string, "ffw") == 0) {
+    return Get5ChatCommand_FFW;
+  } else if (strcmp(string, "cancelffw") == 0) {
+    return Get5ChatCommand_CancelFFW;
+  } else {
+    return Get5ChatCommand_Unknown;
+  }
+}
+

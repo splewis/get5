@@ -153,6 +153,7 @@ ArrayList g_MapPoolList;
 ArrayList g_TeamPlayers[MATCHTEAM_COUNT];
 ArrayList g_TeamCoaches[MATCHTEAM_COUNT];
 StringMap g_PlayerNames;
+StringMap g_ChatCommands;
 char g_TeamNames[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
 char g_TeamTags[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
 char g_FormattedTeamNames[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
@@ -483,26 +484,30 @@ public void OnPluginStart() {
   /** Client commands **/
   g_ChatAliases = new ArrayList(ByteCountToCells(ALIAS_LENGTH));
   g_ChatAliasesCommands = new ArrayList(ByteCountToCells(COMMAND_LENGTH));
-  AddAliasedCommand("r", Command_Ready, "Marks the client as ready");
-  AddAliasedCommand("ready", Command_Ready, "Marks the client as ready");
-  AddAliasedCommand("unready", Command_NotReady, "Marks the client as not ready");
-  AddAliasedCommand("notready", Command_NotReady, "Marks the client as not ready");
-  AddAliasedCommand("forceready", Command_ForceReadyClient, "Force marks clients team as ready");
-  AddAliasedCommand("tech", Command_TechPause, "Calls for a tech pause");
-  AddAliasedCommand("pause", Command_Pause, "Calls for a tactical pause");
-  AddAliasedCommand("tac", Command_Pause, "Alias of pause");
-  AddAliasedCommand("unpause", Command_Unpause, "Unpauses the game");
-  AddAliasedCommand("coach", Command_SmCoach, "Marks a client as a coach for their team");
-  AddAliasedCommand("stay", Command_Stay, "Elects to stay on the current team after winning a knife round");
-  AddAliasedCommand("swap", Command_Swap, "Elects to swap the current teams after winning a knife round");
-  AddAliasedCommand("switch", Command_Swap, "Elects to swap the current teams after winning a knife round");
-  AddAliasedCommand("t", Command_T, "Elects to start on T side after winning a knife round");
-  AddAliasedCommand("ct", Command_Ct, "Elects to start on CT side after winning a knife round");
-  AddAliasedCommand("stop", Command_Stop, "Elects to stop the game to reload a backup file");
-  AddAliasedCommand("surrender", Command_Surrender, "Starts a vote for surrendering for your team.");
-  AddAliasedCommand("gg", Command_Surrender, "Alias for surrender.");
-  AddAliasedCommand("ffw", Command_FFW, "Starts a countdown to win if a full team disconnects from the server.");
-  AddAliasedCommand("cancelffw", Command_CancelFFW, "Cancels a request to win by forfeit initiated with !ffw.");
+  g_ChatCommands = new StringMap();
+
+  // Default chat mappings.
+  MapChatCommand(Get5ChatCommand_Ready, "r");
+  MapChatCommand(Get5ChatCommand_Ready, "ready");
+  MapChatCommand(Get5ChatCommand_Unready, "notready");
+  MapChatCommand(Get5ChatCommand_Unready, "unready");
+  MapChatCommand(Get5ChatCommand_ForceReady, "forceready");
+  MapChatCommand(Get5ChatCommand_Pause, "tac");
+  MapChatCommand(Get5ChatCommand_Pause, "pause");
+  MapChatCommand(Get5ChatCommand_Unpause, "unpause");
+  MapChatCommand(Get5ChatCommand_Coach, "coach");
+  MapChatCommand(Get5ChatCommand_Stay, "stay");
+  MapChatCommand(Get5ChatCommand_Swap, "switch");
+  MapChatCommand(Get5ChatCommand_Swap, "swap");
+  MapChatCommand(Get5ChatCommand_T, "t");
+  MapChatCommand(Get5ChatCommand_CT, "ct");
+  MapChatCommand(Get5ChatCommand_Stop, "stop");
+  MapChatCommand(Get5ChatCommand_Surrender, "gg");
+  MapChatCommand(Get5ChatCommand_Surrender, "surrender");
+  MapChatCommand(Get5ChatCommand_FFW, "ffw");
+  MapChatCommand(Get5ChatCommand_CancelFFW, "cancelffw");
+
+  LoadCustomChatAliases("addons/sourcemod/configs/get5/commands.cfg");
 
   /** Admin/server commands **/
   RegAdminCmd("get5_loadmatch", Command_LoadMatch, ADMFLAG_CHANGEMAP,
@@ -640,11 +645,11 @@ static Action Timer_InfoMessages(Handle timer) {
   }
 
   char readyCommandFormatted[64];
-  FormatChatCommand(readyCommandFormatted, sizeof(readyCommandFormatted), "!ready");
+  GetChatAliasForCommand(Get5ChatCommand_Ready, readyCommandFormatted, sizeof(readyCommandFormatted), true);
   char unreadyCommandFormatted[64];
-  FormatChatCommand(unreadyCommandFormatted, sizeof(unreadyCommandFormatted), "!unready");
+  GetChatAliasForCommand(Get5ChatCommand_Unready, unreadyCommandFormatted, sizeof(unreadyCommandFormatted), true);
   char coachCommandFormatted[64];
-  FormatChatCommand(coachCommandFormatted, sizeof(coachCommandFormatted), "!coach");
+  GetChatAliasForCommand(Get5ChatCommand_Coach, coachCommandFormatted, sizeof(coachCommandFormatted), true);
 
   if (g_GameState == Get5State_PendingRestore) {
     if (!IsTeamsReady() && !IsDoingRestoreOrMapChange()) {
@@ -1129,7 +1134,7 @@ static Action Command_DumpStats(int client, int args) {
   }
 }
 
-static Action Command_Stop(int client, int args) {
+Action Command_Stop(int client, int args) {
   if (!g_StopCommandEnabledCvar.BoolValue) {
     Get5_MessageToAll("%t", "StopCommandNotEnabled");
     return Plugin_Handled;
@@ -1175,7 +1180,7 @@ static Action Command_Stop(int client, int args) {
   g_TeamGivenStopCommand[team] = true;
 
   char stopCommandFormatted[64];
-  FormatChatCommand(stopCommandFormatted, sizeof(stopCommandFormatted), "!stop");
+  GetChatAliasForCommand(Get5ChatCommand_Stop, stopCommandFormatted, sizeof(stopCommandFormatted), true);
   if (g_TeamGivenStopCommand[Get5Team_1] && !g_TeamGivenStopCommand[Get5Team_2]) {
     Get5_MessageToAll("%t", "TeamWantsToReloadCurrentRound", g_FormattedTeamNames[Get5Team_1],
                       g_FormattedTeamNames[Get5Team_2], stopCommandFormatted);

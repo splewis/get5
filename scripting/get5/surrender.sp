@@ -176,8 +176,8 @@ Action Timer_DisconnectCheck(Handle timer) {
   }
 
   // One team is full, the other team left; announce that they can request to !ffw
-  char winCommandFormatted[32];
-  FormatChatCommand(winCommandFormatted, sizeof(winCommandFormatted), "!ffw");
+  char winCommandFormatted[64];
+  GetChatAliasForCommand(Get5ChatCommand_FFW, winCommandFormatted, sizeof(winCommandFormatted), true);
   Get5_MessageToAll("%t", "WinByForfeitAvailable", g_FormattedTeamNames[forfeitingTeam],
                     g_FormattedTeamNames[OtherMatchTeam(forfeitingTeam)], winCommandFormatted);
   return Plugin_Handled;
@@ -190,8 +190,7 @@ static void AnnounceRemainingForfeitTime(const int remainingSeconds, const Get5T
 
   if (forfeitingTeam != Get5Team_None) {
     char formattedCancelFFWCommand[64];
-    FormatChatCommand(formattedCancelFFWCommand, sizeof(formattedCancelFFWCommand), "!cancelffw");
-
+    GetChatAliasForCommand(Get5ChatCommand_CancelFFW, formattedCancelFFWCommand, sizeof(formattedCancelFFWCommand), true);
     Get5_MessageToAll("%t", "WinByForfeitCountdownStarted", g_FormattedTeamNames[OtherMatchTeam(forfeitingTeam)],
                       formattedTimeRemaining, g_FormattedTeamNames[forfeitingTeam], formattedCancelFFWCommand);
   } else {

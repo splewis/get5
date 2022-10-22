@@ -60,6 +60,14 @@
     {
         "da"            "{1} var ikke i stand til at gøre sig klar i tide og har opgivet."
     }
+    "TeamMustBeReadyOrForfeit"
+    {
+        "da"            "{1} opgiver kampen, hvis de ikke er klar inden {2}."
+    }
+    "TeamsMustBeReadyOrTie"
+    {
+        "da"            "Kampen ender uafgjort, hvis holdene ikke er klar inden {1}."
+    }
     "MaxPausesUsedInfoMessage"
     {
         "da"            "{2} har brugt alle deres taktiske pauser ({1})."

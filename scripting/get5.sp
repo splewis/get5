@@ -1006,7 +1006,7 @@ static void CheckReadyWaitingTimes() {
         || (timeLeft < 300 && timeLeft % 30 == 0)
         || (timeLeft == 10)
       ) {
-        char formattedTimeLeft[32]
+        char formattedTimeLeft[32];
         ConvertSecondsToMinutesAndSeconds(timeLeft, formattedTimeLeft, sizeof(formattedTimeLeft));
         FormatTimeString(formattedTimeLeft, sizeof(formattedTimeLeft), formattedTimeLeft);
 

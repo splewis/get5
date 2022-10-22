@@ -56,18 +56,6 @@
     {
         "fr"            "{1} ne s'est pas déclarée prête à temps et a été déclarée forfait."
     }
-    "MinutesToForfeitMessage"
-    {
-        "fr"            "{1} dispose encore de {2} minutes pour se déclarer prête, sinon elle sera déclarée forfait."
-    }
-    "SecondsToForfeitInfoMessage"
-    {
-        "fr"            "{1} dispose encore de {2} secondes pour se déclarer prête, sinon elle sera déclarée forfait."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "fr"            "{1} a 10 secondes pour se déclarer prêt(e), sinon elle sera déclarée forfait."
-    }
     "MaxPausesUsedInfoMessage"
     {
         "fr"            "Votre équipe a déjà utilisé son maximum de {1} pauses."

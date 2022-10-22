@@ -68,20 +68,15 @@
         "#format"       "{1:s}"
         "en"            "{1} failed to ready up in time and has forfeit."
     }
-    "MinutesToForfeitMessage"
+    "TeamMustBeReadyOrForfeit"
     {
-        "#format"       "{1:s},{2:d}"
-        "en"            "{1} has {2} minutes left to ready up or they will forfeit the match."
+        "#format"       "{1:s},{2:s}"
+        "en"            "{1} must be ready within {2} or they will forfeit the match."
     }
-    "SecondsToForfeitInfoMessage"
-    {
-        "#format"       "{1:s},{2:d}"
-        "en"            "{1} has {2} seconds left to ready up or they will forfeit the match."
-    }
-    "10SecondsToForfeitInfoMessage"
+    "TeamsMustBeReadyOrTie"
     {
         "#format"       "{1:s}"
-        "en"            "{1} has 10 seconds to ready up or forfeit the match."
+        "en"            "Teams must be ready within {1} or the match will end in a tie."
     }
     "MaxPausesUsedInfoMessage"
     {

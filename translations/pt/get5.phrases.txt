@@ -60,18 +60,6 @@
     {
         "pt"            "{1} não ficou pronto a tempo e se rendeu."
     }
-    "MinutesToForfeitMessage"
-    {
-        "pt"            "{1} tem {2} minutos para ficarem prontos ou eles se renderão."
-    }
-    "SecondsToForfeitInfoMessage"
-    {
-        "pt"            "{1} tem {2} segundos para ficarem prontos ou eles se renderão."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "pt"            "{1} tem 10 segundos para ficarem prontos ou se render."
-    }
     "MaxPausesUsedInfoMessage"
     {
         "pt"            "Seu time já utilizou o máximo de {1} pausas."

@@ -60,18 +60,6 @@
     {
         "da"            "{1} var ikke i stand til at gøre sig klar i tide og har opgivet."
     }
-    "MinutesToForfeitMessage"
-    {
-        "da"            "{1} har {2} minutter til at gøre sig klar før de opgiver kampen."
-    }
-    "SecondsToForfeitInfoMessage"
-    {
-        "da"            "{1} har {2} sekunder til at gøre sig klar før de opgiver kampen."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "da"            "{1} har 10 sekunder til at gøre sig klar før de opgiver kampen."
-    }
     "MaxPausesUsedInfoMessage"
     {
         "da"            "{2} har brugt alle deres taktiske pauser ({1})."

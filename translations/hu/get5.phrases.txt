@@ -60,18 +60,6 @@
     {
         "hu"            "{1} nem sikerült időben felkészülni, ezért vesztettetek."
     }
-    "MinutesToForfeitMessage"
-    {
-        "hu"            "{1} {2} perc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
-    }
-    "SecondsToForfeitInfoMessage"
-    {
-        "hu"            "{1} {2} másodperc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "hu"            "{1} 10 másodperc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
-    }
     "MaxPausesUsedInfoMessage"
     {
         "hu"            "A {2} felhasználta a maximális ({1}) időkérést."

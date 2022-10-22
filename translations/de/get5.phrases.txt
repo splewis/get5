@@ -60,18 +60,6 @@
     {
         "de"            "{1} schaffte es nicht sich rechtzeitig als bereit zu markieren und gab auf."
     }
-    "MinutesToForfeitMessage"
-    {
-        "de"            "{1} hat {2} Minuten um sich als bereit zu markieren oder wird automatisch aufgeben."
-    }
-    "SecondsToForfeitInfoMessage"
-    {
-        "de"            "{1} hat {2} Sekunden um sich als bereit zu markieren oder wird automatisch aufgeben."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "de"            "{1} hat 10 Sekunden um sich als bereit zu markieren oder wird automatisch aufgeben."
-    }
     "MaxPausesUsedInfoMessage"
     {
         "de"            "Dein Team hat bereits die maximal zulässigen Pausen ({1}) genutzt."

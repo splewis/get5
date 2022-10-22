@@ -60,6 +60,14 @@
     {
         "pt"            "{1} não ficou pronto a tempo e se rendeu."
     }
+    "TeamMustBeReadyOrForfeit"
+    {
+        "pt"            "{1} deve estar pronta dentro de {2} ou perderá a partida."
+    }
+    "TeamsMustBeReadyOrTie"
+    {
+        "pt"            "As equipes devem estar prontas em {1} ou a partida terminará em empate."
+    }
     "MaxPausesUsedInfoMessage"
     {
         "pt"            "Seu time já utilizou o máximo de {1} pausas."

@@ -56,6 +56,14 @@
     {
         "fr"            "{1} ne s'est pas déclarée prête à temps et a été déclarée forfait."
     }
+    "TeamMustBeReadyOrForfeit"
+    {
+        "fr"            "{1} doit être prête avant {2} ou ils perdront le match."
+    }
+    "TeamsMustBeReadyOrTie"
+    {
+        "fr"            "Les équipes doivent être prêtes avant {1} ou le match se terminera à égalité."
+    }
     "MaxPausesUsedInfoMessage"
     {
         "fr"            "Votre équipe a déjà utilisé son maximum de {1} pauses."

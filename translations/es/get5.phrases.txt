@@ -56,6 +56,14 @@
     {
         "es"            "{1} no se manifesto durante el tiempo impartido y ha sido descalificado."
     }
+    "TeamMustBeReadyOrForfeit"
+    {
+        "es"            "{1} debe estar listo en {2}, de lo contrario perderá el partido."
+    }
+    "TeamsMustBeReadyOrTie"
+    {
+        "es"            "Los equipos deben estar listos en {1} o el partido terminará en empate."
+    }
     "MaxPausesUsedInfoMessage"
     {
         "es"            "Su equipo ya utilizó su maximo de {1} pausa(s)."

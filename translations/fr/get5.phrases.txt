@@ -58,7 +58,7 @@
     }
     "TeamMustBeReadyOrForfeit"
     {
-        "fr"            "{1} doit être prête avant {2} ou ils perdront le match."
+        "fr"            "{1} doit être prête avant {2} ou il perdra le match."
     }
     "TeamsMustBeReadyOrTie"
     {

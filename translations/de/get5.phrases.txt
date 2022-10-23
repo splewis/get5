@@ -462,7 +462,7 @@
     }
     "AllPlayersLeftTieCountdown"
     {
-        "de"            "Beide Teams haben den Server verlassen. Mindestens ein Spieler eines Teams muss dem Spiel innerhalb {1} erneut beitreten oder die Serie endet Unentschieden."
+        "de"            "Beide Teams haben den Server verlassen. Mindestens ein Spieler eines Teams muss dem Spiel innerhalb {1} erneut beitreten oder die Serie endet unentschieden."
     }
     "TieCountdownCanceled"
     {

@@ -60,6 +60,14 @@
     {
         "de"            "{1} schaffte es nicht sich rechtzeitig als bereit zu markieren und gab auf."
     }
+    "TeamMustBeReadyOrForfeit"
+    {
+        "de"            "{1} muss sich innerhalb von {2} als bereit markieren oder wird automatisch aufgeben."
+    }
+    "TeamsMustBeReadyOrTie"
+    {
+        "de"            "Die Teams müssen sich innerhalb von {1} als bereit markieren oder das Spiel endet unentschieden."
+    }
     "MaxPausesUsedInfoMessage"
     {
         "de"            "Dein Team hat bereits die maximal zulässigen Pausen ({1}) genutzt."

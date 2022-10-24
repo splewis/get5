@@ -179,9 +179,7 @@ stock bool InFreezeTime() {
 stock void StartWarmup(int warmupTime = 0) {
   ServerCommand("mp_do_warmup_period 1");
   ServerCommand("mp_warmuptime_all_players_connected 0");
-  if (!InWarmup()) {
-    ServerCommand("mp_warmup_start");
-  }
+  ServerCommand("mp_warmup_start");
   if (warmupTime < 1) {
     LogDebug("Setting indefinite warmup.");
     // Setting mp_warmuptime to anything less than 7 triggers the countdown to restart regardless of
@@ -191,15 +189,6 @@ stock void StartWarmup(int warmupTime = 0) {
     ServerCommand("mp_warmup_pausetimer 1");
   } else {
     ServerCommand("mp_warmuptime %d", warmupTime);
-    ServerCommand("mp_warmup_pausetimer 0");
-  }
-}
-
-stock void EndWarmup(int time = 0) {
-  if (time == 0) {
-    ServerCommand("mp_warmup_end");
-  } else {
-    ServerCommand("mp_warmuptime %d", time);
     ServerCommand("mp_warmup_pausetimer 0");
   }
 }

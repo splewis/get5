@@ -255,6 +255,7 @@ char g_DemoFileName[PLATFORM_MAX_PATH];
 bool g_MapChangePending = false;
 bool g_PendingSideSwap = false;
 Handle g_PendingMapChangeTimer = INVALID_HANDLE;
+bool g_ClientPendingTeamCheck[MAXPLAYERS + 1];
 
 // version check state
 bool g_RunningPrereleaseVersion = false;
@@ -845,6 +846,7 @@ static Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
 
 static Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
+  g_ClientPendingTeamCheck[client] = false;
   if (IsPlayer(client)) {
     Get5PlayerDisconnectedEvent disconnectEvent =
         new Get5PlayerDisconnectedEvent(GetPlayerObject(client));
@@ -1616,20 +1618,21 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
     }
   }
 
+  WriteBackup();
+
   // Ensures that players who connect during halftime/team swap are placed in their correct slots as
   // soon as the following round starts. Otherwise they could be left on the "no team" screen and
   // potentially ghost, depending on where the camera drops them. Especially important for coaches.
-  // We do this step *before* we write the backup, so we don't have any lingering players in case of
-  // a restore.
+  // We do this step *after* we write the backup, as the Valve-backup has already been written for
+  // this round at this point and we shouldn't change it (if someone is promoted coach) until next round.
   if (g_CheckAuthsCvar.BoolValue) {
     LOOP_CLIENTS(i) {
-      if (IsPlayer(i) && GetClientTeam(i) == CS_TEAM_NONE) {
+      if (IsPlayer(i) && g_ClientPendingTeamCheck[i] && GetClientTeam(i) == CS_TEAM_NONE) {
+        LogDebug("Client %d is pending team assignment; placing them.", i);
         CheckClientTeam(i);
       }
     }
   }
-
-  WriteBackup();
 
   if (g_GameState != Get5State_Live) {
     return;

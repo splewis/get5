@@ -169,7 +169,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     // When the match is loaded, we do not want to assign players on no team, as they may be in the
     // process of joining the server, which is the reason for the timer callback. This has caused
     // problems with players getting stuck on no team when using match config autoload, essentially
-    // recreating the "coaching bug". Adding a second seems to solve this problem. We cannot just
+    // recreating the "coaching bug". Adding a few seconds seems to solve this problem. We cannot just
     // skip team none, as players may also just be on the team selection menu when the match is
     // loaded, meaning they will never have a joingame hook, as it already happened, and we still
     // want those players placed.
@@ -177,7 +177,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
       LOOP_CLIENTS(i) {
         if (IsPlayer(i)) {
           if (GetClientTeam(i) == CS_TEAM_NONE) {
-            CreateTimer(1.0, Timer_PlacePlayerFromTeamNone, i, TIMER_FLAG_NO_MAPCHANGE);
+            CreateTimer(2.0, Timer_PlacePlayerFromTeamNone, i, TIMER_FLAG_NO_MAPCHANGE);
           } else {
             CheckClientTeam(i);
           }

@@ -8,13 +8,8 @@ Action StartKnifeRound(Handle timer) {
   g_KnifeChangedCvars = ExecuteAndSaveCvars(knifeConfig);
 
   Get5_MessageToAll("%t", "KnifeIn5SecInfoMessage");
-  if (InWarmup()) {
-    EndWarmup(5);
-  } else {
-    RestartGame(5);
-  }
-
-  g_KnifeCountdownTimer = CreateTimer(10.0, Timer_AnnounceKnife);
+  StartWarmup(5);
+  g_KnifeCountdownTimer = CreateTimer(15.0, Timer_AnnounceKnife);
   return Plugin_Handled;
 }
 

@@ -960,14 +960,12 @@ static Action Timer_CheckReady(Handle timer) {
 
   // Handle ready checks for pre-veto state
   if (g_GameState == Get5State_PreVeto) {
-    if (IsTeamsReady()) {
+    if (CheckReadyWaitingTimes()) {
       // We don't wait for spectators when initiating veto
       LogDebug("Timer_CheckReady: starting veto");
       ChangeState(Get5State_Veto);
       RestartGame();
       CreateVeto();
-    } else {
-      CheckReadyWaitingTimes();
     }
   } else if (g_GameState == Get5State_PendingRestore) {
     // We don't wait for spectators when restoring backups
@@ -977,72 +975,66 @@ static Action Timer_CheckReady(Handle timer) {
     }
   } else if (g_GameState == Get5State_Warmup) {
     // Wait for both players and spectators before going live
-    if (IsTeamsReady() && IsSpectatorsReady()) {
+    if (CheckReadyWaitingTimes() && IsSpectatorsReady()) {
       LogDebug("Timer_CheckReady: all teams ready to start");
       StartGame(g_MapSides.Get(g_MapNumber) == SideChoice_KnifeRound);
       StartRecording();
-    } else {
-      CheckReadyWaitingTimes();
     }
   }
 }
 
-static void CheckReadyWaitingTimes() {
-  if (g_TeamTimeToStartCvar.IntValue > 0) {
-    g_ReadyTimeWaitingUsed++;
+// Returns true if the teams are ready and then does not print anything.
+static bool CheckReadyWaitingTimes() {
+  g_ReadyTimeWaitingUsed++;
+  bool team1Ready = IsTeamReady(Get5Team_1);
+  bool team2Ready = IsTeamReady(Get5Team_2);
 
-    bool team1Ready = IsTeamReady(Get5Team_1);
-    bool team2Ready = IsTeamReady(Get5Team_2);
-
-    if (team1Ready && team2Ready) {
-      // Waiting for casters or game is starting.
-      return;
-    }
-
-    int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed;
-
-    if (timeLeft > 0) {
-      if ((timeLeft >= 300 && timeLeft % 60 == 0)
-        || (timeLeft < 300 && timeLeft % 30 == 0)
-        || (timeLeft == 10)
-      ) {
-        char formattedTimeLeft[32];
-        ConvertSecondsToMinutesAndSeconds(timeLeft, formattedTimeLeft, sizeof(formattedTimeLeft));
-        FormatTimeString(formattedTimeLeft, sizeof(formattedTimeLeft), formattedTimeLeft);
-
-        if (!team1Ready && !team2Ready) {
-          Get5_MessageToAll("%t", "TeamsMustBeReadyOrTie", formattedTimeLeft);
-        } else if (!team1Ready) {
-          Get5_MessageToAll("%t", "TeamMustBeReadyOrForfeit", g_FormattedTeamNames[Get5Team_1], formattedTimeLeft);
-        } else {
-          Get5_MessageToAll("%t", "TeamMustBeReadyOrForfeit", g_FormattedTeamNames[Get5Team_2], formattedTimeLeft);
-        }
-      }
-      // Still time left; don't end series.
-      return;
-    }
-
-    Get5Team winningTeam = Get5Team_None;
-    if (team1Ready && !team2Ready) {
-      winningTeam = Get5Team_1;
-    } else if (team2Ready && !team1Ready) {
-      winningTeam = Get5Team_2;
-    }
-
-    if (winningTeam != Get5Team_None) {
-      Get5_MessageToAll("%t", "TeamForfeitInfoMessage",
-        g_FormattedTeamNames[OtherMatchTeam(winningTeam)]);
-    }
-
-    Stats_Forfeit();
-    float minDelay = 5.0;
-    StopRecording(minDelay);
-    float endDelay = float(GetTvDelay());
-    if (endDelay < minDelay) {
-      endDelay = minDelay;
-    }
-    EndSeries(winningTeam, winningTeam == Get5Team_None, endDelay);
+  if (team1Ready && team2Ready) {
+    return true;
   }
+
+  if (g_TeamTimeToStartCvar.IntValue <= 0) {
+    return false;
+  }
+
+  int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed;
+
+  if (timeLeft > 0) {
+    if ((timeLeft >= 300 && timeLeft % 60 == 0)
+      || (timeLeft < 300 && timeLeft % 30 == 0)
+      || (timeLeft == 10)
+    ) {
+      char formattedTimeLeft[32];
+      ConvertSecondsToMinutesAndSeconds(timeLeft, formattedTimeLeft, sizeof(formattedTimeLeft));
+      FormatTimeString(formattedTimeLeft, sizeof(formattedTimeLeft), formattedTimeLeft);
+
+      if (!team1Ready && !team2Ready) {
+        Get5_MessageToAll("%t", "TeamsMustBeReadyOrTie", formattedTimeLeft);
+      } else if (!team1Ready) {
+        Get5_MessageToAll("%t", "TeamMustBeReadyOrForfeit", g_FormattedTeamNames[Get5Team_1], formattedTimeLeft);
+      } else {
+        Get5_MessageToAll("%t", "TeamMustBeReadyOrForfeit", g_FormattedTeamNames[Get5Team_2], formattedTimeLeft);
+      }
+    }
+    // Still time left; don't end series.
+    return false;
+  }
+
+  Get5Team winningTeam = Get5Team_None;
+  if (team1Ready && !team2Ready) {
+    winningTeam = Get5Team_1;
+  } else if (team2Ready && !team1Ready) {
+    winningTeam = Get5Team_2;
+  }
+
+  if (winningTeam != Get5Team_None) {
+    Get5_MessageToAll("%t", "TeamForfeitInfoMessage",
+      g_FormattedTeamNames[OtherMatchTeam(winningTeam)]);
+  }
+
+  Stats_Forfeit();
+  EndSeries(winningTeam, winningTeam == Get5Team_None, 0.0);
+  return false;
 }
 
 bool CheckAutoLoadConfig() {

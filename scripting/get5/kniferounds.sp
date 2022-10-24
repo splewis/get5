@@ -9,7 +9,7 @@ Action StartKnifeRound(Handle timer) {
 
   Get5_MessageToAll("%t", "KnifeIn5SecInfoMessage");
   StartWarmup(5);
-  g_KnifeCountdownTimer = CreateTimer(15.0, Timer_AnnounceKnife);
+  g_KnifeCountdownTimer = CreateTimer(10.0, Timer_AnnounceKnife);
   return Plugin_Handled;
 }
 

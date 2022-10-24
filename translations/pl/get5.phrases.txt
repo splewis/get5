@@ -216,6 +216,10 @@
     {
         "pl"            "Załadowano ustawawienia meczu."
     }
+    "CoachingExitInfo"
+    {
+        "pl"            "Wpisz {1}, aby wyjść z roli trenera."
+    }
     "MoveToCoachInfoMessage"
     {
         "pl"            "Ponieważ Twoja drużyna jest pełna, zostałeś przeniesiony na stanowisko coach'a."

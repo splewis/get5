@@ -244,6 +244,10 @@
     {
         "es"            "Configuración de la partida cargada."
     }
+    "CoachingExitInfo"
+    {
+        "es"            "Escribe {1} para salir del papel de entrenador."
+    }
     "MoveToCoachInfoMessage"
     {
         "es"            "Fue cambiado a posición de coach, porque su equipo esta completo."

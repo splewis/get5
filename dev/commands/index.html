@@ -245,13 +245,13 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#win">
-    !win
+<a class="md-nav__link" href="#ffw">
+    !ffw
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#cancelwin">
-    !cancelwin
+<a class="md-nav__link" href="#cancelffw">
+    !cancelffw
   </a>
 </li>
 <li class="md-nav__item">
@@ -543,13 +543,13 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#win">
-    !win
+<a class="md-nav__link" href="#ffw">
+    !ffw
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#cancelwin">
-    !cancelwin
+<a class="md-nav__link" href="#cancelffw">
+    !cancelffw
   </a>
 </li>
 <li class="md-nav__item">
@@ -745,25 +745,30 @@ with <a href="../configuration/#get5_allow_force_ready"><code>get5_allow_force_r
 </dl>
 <h4 id="surrender"><code>!surrender</code> or <code>!gg</code></h4>
 <dl>
-<dd>If the surrender features is <a href="../configuration/#get5_surrender_enabled">enabled</a>, this initiates a vote to surrender
+<dd>If the <a href="../configuration/#get5_surrender_enabled">surrender feature is enabled</a>, this initiates a vote to surrender
 the <strong>current map</strong>. After the first vote is cast,
 a <a href="../configuration/#get5_surrender_required_votes">minimum number of votes</a> must be cast be other team members
 within <a href="../configuration/#get5_surrender_time_limit">the defined time limit</a>. You can only vote to surrender if you
 are <a href="../configuration/#get5_surrender_minimum_round_deficit">sufficiently behind on points</a>.</dd>
 </dl>
-<h4 id="win"><code>!win</code></h4>
+<h4 id="ffw"><code>!ffw</code></h4>
 <dl>
-<dd>When the entire opposing team has left the server in the live phase of a map, this initiates a countdown to win the
-series unless a player from the opposing team rejoins the server
-within <a href="../configuration/#get5_forfeit_countdown">the grace period</a>. This command can only be used if
-the issuing team is full, which is determined by <a href="../match_schema/#schema"><code>players_per_team</code></a>.</dd>
+<dd>If the <a href="../configuration/#get5_forfeit_enabled">forfeit feature is enabled</a>, this initiates a countdown to win the
+series by forfeit (forfeit-win) if the entire opposing team has left the server during the live phase of a map. The
+countdown is canceled if a player from the leaving team rejoins the server
+within <a href="../configuration/#get5_forfeit_countdown">the grace period</a>.</dd>
 </dl>
-<h4 id="cancelwin"><code>!cancelwin</code></h4>
+<h4 id="cancelffw"><code>!cancelffw</code></h4>
 <dl>
 <dd>If a <a href="../configuration/#get5_forfeit_countdown">timer to win by forfeit</a> was started after a team left the
-server, this stops that timer. This command can only be used if the issuing team is full, which is determined
-by <a href="../match_schema/#schema"><code>players_per_team</code></a>.</dd>
+server, this stops that timer.</dd>
 </dl>
+<div class="admonition info">
+<p class="admonition-title">All aboard!</p>
+<p>The <a href="#ffw"><code>!ffw</code></a> and <a href="#cancelffw"><code>!cancelffw</code></a> commands can only be issued by a full team, which is evaluated via
+<a href="../match_schema/#schema"><code>players_per_team</code></a>. This prevents a player from reversing a team's decision to request or
+cancel a forfeit win if the rest of the team left.</p>
+</div>
 <h4 id="get5"><code>!get5</code></h4>
 <dl>
 <dd>Opens a menu that wraps some common commands. It's mostly intended for people using scrim settings, and has

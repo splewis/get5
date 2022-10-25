@@ -517,6 +517,11 @@
     get5_demo_name_format
   </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_postpone_stop">
+    get5_demo_postpone_stop
+  </a>
+</li>
 </ul>
 </nav>
 </li>
@@ -1126,6 +1131,11 @@
     get5_demo_name_format
   </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_postpone_stop">
+    get5_demo_postpone_stop
+  </a>
+</li>
 </ul>
 </nav>
 </li>
@@ -1660,6 +1670,18 @@ added automatically). If you do not include the <a href="#tag-time"><code>{TIME}
 if restoring a game from a backup. Note that the <a href="#tag-mapnumber"><code>{MAPNUMBER}</code></a>variable is not zero-indexed. Set to
 empty string to disable recording demos.<br/><strong><code>Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"</code></strong></dd>
 </dl>
+<h4 id="get5_demo_postpone_stop"><code>get5_demo_postpone_stop</code></h4>
+<dl>
+<dd>If enabled, the <a href="../gotv/#demos">demo recording</a> will stop right before the GOTV finishes broadcasting the match,
+instead of shortly after the match ends (Get5 default). Some servers may experience lockups/freezes of the GOTV
+broadcast when the demo recording is being flushed to disk, so waiting to do this until the entire match has been
+broadcast mitigates this issue. You should only enable this if you encounter this problem.<br/><strong><code>Default: 0</code></strong></dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Longer demo files</p>
+<p>Enabling <code>get5_demo_postpone_stop</code> will extend the length of your demo files by the duration of your GOTV delay, but
+with no meaningful content at the end.</p>
+</div>
 <h2 id="events">Events</h2>
 <h4 id="get5_remote_log_url"><code>get5_remote_log_url</code></h4>
 <dl>

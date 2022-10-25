@@ -391,6 +391,17 @@ added automatically). If you do not include the [`{TIME}`](#tag-time) tag, you w
 if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber)variable is not zero-indexed. Set to
 empty string to disable recording demos.<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
 
+####`get5_demo_postpone_stop`
+:   If enabled, the [demo recording](gotv.md#demos) will stop right before the GOTV finishes broadcasting the match,
+instead of shortly after the match ends (Get5 default). Some servers may experience lockups/freezes of the GOTV
+broadcast when the demo recording is being flushed to disk, so waiting to do this until the entire match has been
+broadcast mitigates this issue. You should only enable this if you encounter this problem.<br>**`Default: 0`**
+
+!!! warning "Longer demo files"
+
+    Enabling `get5_demo_postpone_stop` will extend the length of your demo files by the duration of your GOTV delay, but
+    with no meaningful content at the end.
+
 ## Events
 
 ####`get5_remote_log_url`

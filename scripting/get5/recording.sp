@@ -57,8 +57,9 @@ static void StopRecordingCallback(const char[] matchId, const int mapNumber,
     LogDebug("Demo was not recorded by Get5; not firing Get5_OnDemoFinished()");
     return;
   }
-  // We delay this by 3 seconds to allow the server to flush to the file before firing the event.
-  CreateTimer(3.0, Timer_FireStopRecordingEvent,
+  // We delay this by 10 seconds to allow the server to flush to the file before firing the event.
+  // For some servers, this take a pretty long time.
+  CreateTimer(10.0, Timer_FireStopRecordingEvent,
               GetDemoInfoDataPack(matchId, mapNumber, demoFileName));
 }
 
@@ -210,7 +211,17 @@ static bool IsTVEnabled() {
 
 int GetTvDelay() {
   if (IsTVEnabled()) {
-    return GetCvarIntSafe("tv_delay");
+    bool tvEnable1 = GetCvarIntSafe("tv_enable1") > 0;
+    int tvDelay = GetCvarIntSafe("tv_delay");
+    if (!tvEnable1) {
+      return tvDelay;
+    }
+    int tvDelay1 = GetCvarIntSafe("tv_delay1");
+    if (tvDelay < tvDelay1) {
+      LogDebug("tv_delay1 is longer than the default tv_delay; using that.");
+      return tvDelay1;
+    }
+    return tvDelay;
   }
   return 0;
 }

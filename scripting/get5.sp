@@ -38,7 +38,7 @@
 #define DEBUG_CVAR "get5_debug"
 #define MATCH_ID_LENGTH 64
 #define MAX_CVAR_LENGTH 128
-#define MATCH_END_DELAY_AFTER_TV 15
+#define GOTV_RECORDING_STOP_DELAY 15.0 // default delay when the match ends, so GOTV can record scoreboard.
 
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T
@@ -119,6 +119,7 @@ ConVar g_DemoUploadHeaderKeyCvar;
 ConVar g_DemoUploadHeaderValueCvar;
 ConVar g_DemoUploadDeleteAfterCvar;
 ConVar g_DemoPathCvar;
+ConVar g_DemoPostponeStopCvar;
 
 // Autoset convars (not meant for users to set)
 ConVar g_GameStateCvar;
@@ -396,6 +397,9 @@ public void OnPluginStart() {
   g_DemoPathCvar = CreateConVar(
       "get5_demo_path", "",
       "The folder to save demo files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
+  g_DemoPostponeStopCvar = CreateConVar(
+      "get5_demo_postpone_stop", "0",
+      "If enabled, the demo recording will stop right before the GOTV finishes broadcasting the match, instead of shortly after the match ends.");
   g_DemoUploadHeaderValueCvar = CreateConVar(
       "get5_demo_upload_header_value", "",
       "If defined, it is the authorization value that is appended to the HTTP request. Requires SteamWorks.");
@@ -1276,14 +1280,15 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
   // This ensures that the mp_match_restart_delay is not shorter
   // than what is required for the GOTV recording to finish.
   float restartDelay = GetCurrentMatchRestartDelay();
-  float requiredDelay = float(GetTvDelay() + MATCH_END_DELAY_AFTER_TV);
+  float requiredDelay = float(GetTvDelay()) + GOTV_RECORDING_STOP_DELAY;
   if (requiredDelay > restartDelay) {
     LogDebug("Extended mp_match_restart_delay from %f to %f to ensure GOTV broadcast can finish.",
              restartDelay, requiredDelay);
     SetCurrentMatchRestartDelay(requiredDelay);
     restartDelay = requiredDelay;  // reassigned because we reuse the variable below.
   }
-  StopRecording(float(MATCH_END_DELAY_AFTER_TV));
+  // -0.5 to make sure it actually stops before the match ends.
+  StopRecording((g_DemoPostponeStopCvar.BoolValue ? requiredDelay : GOTV_RECORDING_STOP_DELAY) - 0.5);
 
   if (g_GameState == Get5State_Live) {
     // If someone called for a pause in the last round; cancel it.

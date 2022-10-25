@@ -1104,6 +1104,7 @@ methodmap Get5PlayerSayEvent < Get5PlayerTimedRoundEvent {
     self.MapNumber = mapNumber;
     self.RoundNumber = roundNumber;
     self.RoundTime = roundTime;
+    self.Player = player;
     self.SetCommand(command);
     self.SetMessage(message);
     return self;

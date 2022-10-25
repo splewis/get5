@@ -1510,6 +1510,7 @@ non-zero value to prevent abuse.</p>
 continue playing.</p>
 <p>The forfeit feature allows for the use of the <a href="../commands/#ffw"><code>!ffw</code></a> command in case <strong>one</strong> team leaves <em>or</em>
 triggers an automatic tie if <strong>both</strong> teams leave.</p>
+<p>Note that a surrender applies only to the current map, while a forfeit applies to the entire series.</p>
 </div>
 <h4 id="get5_surrender_enabled"><code>get5_surrender_enabled</code></h4>
 <dl>
@@ -1584,7 +1585,8 @@ disable.<br/><strong><code>Default: 160000</code></strong></dd>
 <h4 id="get5_backup_path"><code>get5_backup_path</code></h4>
 <dl>
 <dd>The folder of saved <a href="../commands/#get5_loadbackup">backup files</a>, relative to the <code>csgo</code> directory. You <strong>can</strong> use
-the <a href="#tag-matchid"><code>{MATCHID}</code></a> variable, i.e. <code>backups/{MATCHID}/</code>.<br/><strong><code>Default: ""</code></strong></dd>
+the <a href="#tag-matchid"><code>{MATCHID}</code></a> variable, i.e. <code>backups/{MATCHID}/</code>. Required folders will be created if they do not
+exist.<br/><strong><code>Default: ""</code></strong></dd>
 </dl>
 <div class="admonition warning">
 <p class="admonition-title">Slash, slash, hundred-yard dash <span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m7 21 7.9-18H17L9.1 21H7Z"></path></svg></span></p>
@@ -1694,7 +1696,7 @@ successfully <a href="../gotv/#upload">uploading it to a web server</a>.<br/><st
 <dd>The folder of saved <a href="../gotv#demos">demo files</a>, relative to the <code>csgo</code> directory. You <strong>can</strong> use
 the <a href="#tag-matchid"><code>{MATCHID}</code></a> and <a href="#tag-date"><code>{DATE}</code></a> variables, i.e. <code>demos/{DATE}/{MATCHID}/</code>.
 Much like <a href="#get5_backup_path"><code>get5_backup_path</code></a>, the path must <strong>not</strong> start with a slash, and
-must <strong>end with a slash</strong>.<br/><strong><code>Default: ""</code></strong></dd>
+must <strong>end with a slash</strong>. Required folders will be created if they do not exist.<br/><strong><code>Default: ""</code></strong></dd>
 </dl>
 <h4 id="get5_demo_name_format"><code>get5_demo_name_format</code></h4>
 <dl>

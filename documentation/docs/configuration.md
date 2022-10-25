@@ -239,6 +239,8 @@ leaves. Set to zero to disable.<br>**`Default: 0`**
     The forfeit feature allows for the use of the [`!ffw`](../commands/#ffw) command in case **one** team leaves *or*
     triggers an automatic tie if **both** teams leave.
 
+    Note that a surrender applies only to the current map, while a forfeit applies to the entire series.
+
 ####`get5_surrender_enabled`
 :   Whether the [`!surrender`](../commands/#surrender) command is available.<br>**`Default: 0`**
 
@@ -302,7 +304,8 @@ disable.<br>**`Default: 160000`**
 
 ####`get5_backup_path`
 :   The folder of saved [backup files](../commands/#get5_loadbackup), relative to the `csgo` directory. You **can** use
-the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`.<br>**`Default: ""`**
+the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`. Required folders will be created if they do not
+exist.<br>**`Default: ""`**
 
 !!! warning "Slash, slash, hundred-yard dash :material-slash-forward:"
 
@@ -408,7 +411,7 @@ successfully [uploading it to a web server](gotv.md#upload).<br>**`Default: 0`**
 :   The folder of saved [demo files](../gotv#demos), relative to the `csgo` directory. You **can** use
 the [`{MATCHID}`](#tag-matchid) and [`{DATE}`](#tag-date) variables, i.e. `demos/{DATE}/{MATCHID}/`.
 Much like [`get5_backup_path`](#get5_backup_path), the path must **not** start with a slash, and
-must **end with a slash**.<br>**`Default: ""`**
+must **end with a slash**. Required folders will be created if they do not exist.<br>**`Default: ""`**
 
 ####`get5_demo_name_format`
 :   Format to use for demo files when [recording matches](gotv.md#demos). Do not include a file extension (`.dem` is

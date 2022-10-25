@@ -60,17 +60,13 @@
     {
         "de"            "{1} schaffte es nicht sich rechtzeitig als bereit zu markieren und gab auf."
     }
-    "MinutesToForfeitMessage"
+    "TeamMustBeReadyOrForfeit"
     {
-        "de"            "{1} hat {2} Minuten um sich als bereit zu markieren oder wird automatisch aufgeben."
+        "de"            "{1} muss sich innerhalb von {2} als bereit markieren oder wird automatisch aufgeben."
     }
-    "SecondsToForfeitInfoMessage"
+    "TeamsMustBeReadyOrTie"
     {
-        "de"            "{1} hat {2} Sekunden um sich als bereit zu markieren oder wird automatisch aufgeben."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "de"            "{1} hat 10 Sekunden um sich als bereit zu markieren oder wird automatisch aufgeben."
+        "de"            "Die Teams müssen sich innerhalb von {1} als bereit markieren oder das Spiel endet unentschieden."
     }
     "MaxPausesUsedInfoMessage"
     {

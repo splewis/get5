@@ -60,17 +60,13 @@
     {
         "pt"            "{1} não ficou pronto a tempo e se rendeu."
     }
-    "MinutesToForfeitMessage"
+    "TeamMustBeReadyOrForfeit"
     {
-        "pt"            "{1} tem {2} minutos para ficarem prontos ou eles se renderão."
+        "pt"            "{1} deve estar pronta dentro de {2} ou perderá a partida."
     }
-    "SecondsToForfeitInfoMessage"
+    "TeamsMustBeReadyOrTie"
     {
-        "pt"            "{1} tem {2} segundos para ficarem prontos ou eles se renderão."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "pt"            "{1} tem 10 segundos para ficarem prontos ou se render."
+        "pt"            "As equipes devem estar prontas em {1} ou a partida terminará em empate."
     }
     "MaxPausesUsedInfoMessage"
     {

@@ -52,18 +52,6 @@
     {
         "chi"            "{1}未及时准备就绪，已被视为弃权。"
     }
-    "MinutesToForfeitMessage"
-    {
-        "chi"            "{1}有{2}分的时间来准备就绪，否则将被视为放弃比赛。"
-    }
-    "SecondsToForfeitInfoMessage"
-    {
-        "chi"            "{1}有{2}秒的时间来准备就绪，否则将被视为放弃比赛。"
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "chi"            "{1}有10秒的时间来准备就绪，否则将被视为放弃比赛。"
-    }
     "MaxPausesUsedInfoMessage"
     {
         "chi"            "您的队伍已经使用了最大为{1}次的暂停次数。"

@@ -56,17 +56,13 @@
     {
         "es"            "{1} no se manifesto durante el tiempo impartido y ha sido descalificado."
     }
-    "MinutesToForfeitMessage"
+    "TeamMustBeReadyOrForfeit"
     {
-        "es"            "{1} dispone de {2} minutos para manifestarse listo, de lo contrario sera descalificado.."
+        "es"            "{1} debe estar listo en {2}, de lo contrario perderá el partido."
     }
-    "SecondsToForfeitInfoMessage"
+    "TeamsMustBeReadyOrTie"
     {
-        "es"            "{1} dispone de {2} segundos para manifestarse listo, de lo contrario sera descalificado.."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "es"            "{1} tiene 10 segundos para manifestarse listo, de lo contrario sera descalificado.."
+        "es"            "Los equipos deben estar listos en {1} o el partido terminará en empate."
     }
     "MaxPausesUsedInfoMessage"
     {

@@ -56,17 +56,13 @@
     {
         "fr"            "{1} ne s'est pas déclarée prête à temps et a été déclarée forfait."
     }
-    "MinutesToForfeitMessage"
+    "TeamMustBeReadyOrForfeit"
     {
-        "fr"            "{1} dispose encore de {2} minutes pour se déclarer prête, sinon elle sera déclarée forfait."
+        "fr"            "{1} doit être prête avant {2} ou il perdra le match."
     }
-    "SecondsToForfeitInfoMessage"
+    "TeamsMustBeReadyOrTie"
     {
-        "fr"            "{1} dispose encore de {2} secondes pour se déclarer prête, sinon elle sera déclarée forfait."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "fr"            "{1} a 10 secondes pour se déclarer prêt(e), sinon elle sera déclarée forfait."
+        "fr"            "Les équipes doivent être prêtes avant {1} ou le match se terminera à égalité."
     }
     "MaxPausesUsedInfoMessage"
     {

@@ -44,6 +44,14 @@
     {
         "pl"            "{1} nie bylo gotowe w wymaganym czasie i mecz został oddany na korzyść drużyny przeciwnej."
     }
+    "TeamMustBeReadyOrForfeit"
+    {
+        "pl"            "{1} musi być gotowe w ciągu {2}, w przeciwnym razie przegra mecz."
+    }
+    "TeamsMustBeReadyOrTie"
+    {
+        "pl"            "Drużyny muszą być gotowe w ciągu {1} lub mecz zakończy się remisem."
+    }
     "MaxPausesUsedInfoMessage"
     {
         "pl"            "Twoja drużyna użyła już maksymalnie {1} pauzy."

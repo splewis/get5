@@ -133,6 +133,11 @@ void SetClientCoaching(int client, Get5Side side, bool broadcast = true) {
   Get5Team team = GetClientMatchTeam(client);
   FormatPlayerName(formattedPlayerName, sizeof(formattedPlayerName), client, team);
   Get5_MessageToAll("%t", "PlayerIsCoachingTeam", formattedPlayerName, g_FormattedTeamNames[team]);
+  if (g_GameState <= Get5State_Warmup) {
+    char coachCommand[64];
+    FormatChatCommand(coachCommand, sizeof(coachCommand), "!coach");
+    Get5_Message(client, "%t", "CoachingExitInfo", coachCommand);
+  }
 }
 
 void CoachingChangedHook(ConVar convar, const char[] oldValue, const char[] newValue) {

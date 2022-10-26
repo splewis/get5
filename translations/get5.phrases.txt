@@ -390,6 +390,11 @@
     {
         "en"            "Loaded match config."
     }
+    "CoachingExitInfo"
+    {
+        "#format"       "{1:s}"
+        "en"            "Type {1} to exit the coach slot."
+    }
     "MoveToCoachInfoMessage"
     {
         "en"            "You were moved to the coach position as your team is full."

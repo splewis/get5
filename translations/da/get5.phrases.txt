@@ -336,6 +336,10 @@
     {
         "da"            "Indlæste kampopsætning."
     }
+    "CoachingExitInfo"
+    {
+        "da"            "Skriv {1} for at forlade trænerpositionen."
+    }
     "MoveToCoachInfoMessage"
     {
         "da"            "Da dit hold er fyldt, blev du flyttet til trænerposition."

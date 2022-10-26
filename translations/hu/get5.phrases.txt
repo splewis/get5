@@ -316,6 +316,10 @@
     {
         "hu"            "Mérkőzés beállítás betöltödött."
     }
+    "CoachingExitInfo"
+    {
+        "hu"            "Írja be a {1} parancsot az edző pozícióból távozásához."
+    }
     "MoveToCoachInfoMessage"
     {
         "hu"            "Mivel a csapatod megtelt, így edzői poziccióba lettél átmozgatva."

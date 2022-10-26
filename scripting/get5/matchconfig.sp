@@ -655,7 +655,7 @@ static bool LoadMatchFromJson(JSON_Object json) {
       } else if (type == JSON_Type_String) {
         cvars.GetString(cvarName, cvarValue, sizeof(cvarValue));
       } else {
-        MatchConfigFail("Expected \"cvars\" section to contain only strings, integers or floats.");
+        MatchConfigFail("Expected \"cvars\" section to contain only strings or numbers.");
         return false;
       }
       g_CvarNames.PushString(cvarName);

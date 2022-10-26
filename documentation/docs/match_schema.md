@@ -8,8 +8,8 @@ players to their correct team and side, setting the map(s) and configuring the g
 Two files ship with Get5 that give a general idea of what can be included in a match config. A Valve KeyValue
 format can be found [here](https://github.com/splewis/get5/blob/master/configs/get5/example_match.cfg), and a JSON
 format can be found [here](https://github.com/splewis/get5/blob/master/configs/get5/example_match.json). In this
-documentation, we'll go through what each value means, but do note that **only the values** `team1` and `team2` are
-required to start a match. Reasonable defaults are used for the other values (Bo3 series,
+documentation, we'll go through what each value means, but do note that **only the values** `team1`, `team2` and
+`maplist` are required to start a match. Reasonable defaults are used for the other values (Bo3 series,
 5v5, empty strings for team names, etc.). We recommend using the JSON format whenever possible, as JSON has way
 better support in various programming languages than Valve's KeyValue format (which essentially has none).
 
@@ -21,13 +21,13 @@ type Get5PlayerSet = { [key: SteamID]: string } | [SteamID] // (9)
 
 interface Get5MatchTeam {
     "players": Get5PlayerSet // (24)
-    "coaches": Get5PlayerSet // (23)
-    "name": string // (16)
-    "tag": string // (17)
-    "flag": string // (18)
-    "logo": string // (19)
-    "series_score": number // (26)
-    "matchtext": string // (27)
+    "coaches": Get5PlayerSet | undefined // (23)
+    "name": string | undefined // (16)
+    "tag": string | undefined // (17)
+    "flag": string | undefined // (18)
+    "logo": string | undefined // (19)
+    "series_score": number | undefined // (26)
+    "matchtext": string | undefined // (27)
 }
 
 interface Get5MatchTeamFromFile {
@@ -35,29 +35,29 @@ interface Get5MatchTeamFromFile {
 }
 
 interface Get5Match {
-    "match_title": string // (25)
-    "matchid": string // (1)
-    "clinch_series": boolean // (32)
-    "num_maps": number // (2)
-    "players_per_team": number // (3)
-    "coaches_per_team": number // (4)
-    "coaches_must_ready": boolean // (33)
-    "min_players_to_ready": number // (5)
-    "min_spectators_to_ready": number // (6)
-    "skip_veto": boolean // (7)
-    "veto_first": "team1" | "team2" | "random" // (11)
-    "side_type": "standard" | "always_knife" | "never_knife" // (12)
-    "map_sides": ["team1_ct" | "team1_t" | "knife"] // (31)
+    "match_title": string | undefined // (25)
+    "matchid": string | undefined // (1)
+    "clinch_series": boolean | undefined // (32)
+    "num_maps": number | undefined // (2)
+    "players_per_team": number | undefined // (3)
+    "coaches_per_team": number | undefined // (4)
+    "coaches_must_ready": boolean | undefined // (33)
+    "min_players_to_ready": number | undefined // (5)
+    "min_spectators_to_ready": number | undefined // (6)
+    "skip_veto": boolean | undefined // (7)
+    "veto_first": "team1" | "team2" | "random" | undefined // (11)
+    "side_type": "standard" | "always_knife" | "never_knife" | undefined // (12)
+    "map_sides": ["team1_ct" | "team1_t" | "knife"] | undefined // (31)
     "spectators": { // (10)
-        "name": string // (29)
-        "players": Get5PlayerSet // (30)
-    },
+        "name": string | undefined // (29)
+        "players": Get5PlayerSet | undefined // (30)
+    } | undefined,
     "maplist": [string] // (13)
-    "favored_percentage_team1": number // (14)
-    "favored_percentage_text": string // (15)
+    "favored_percentage_team1": number | undefined // (14)
+    "favored_percentage_text": string | undefined // (15)
     "team1": Get5MatchTeam | Get5MatchTeamFromFile // (20)
     "team2": Get5MatchTeam | Get5MatchTeamFromFile // (21)
-    "cvars": { [key: string]: string } // (22)
+    "cvars": { [key: string]: string | number } | undefined // (22)
 }
 ```
 

@@ -57,9 +57,9 @@ static void StopRecordingCallback(const char[] matchId, const int mapNumber,
     LogDebug("Demo was not recorded by Get5; not firing Get5_OnDemoFinished()");
     return;
   }
-  // We delay this by 10 seconds to allow the server to flush to the file before firing the event.
-  // For some servers, this take a pretty long time.
-  CreateTimer(10.0, Timer_FireStopRecordingEvent,
+  // We delay this by 15 seconds to allow the server to flush to the file before firing the event.
+  // For some servers, this take a pretty long time (up to 8-9 seconds, so 15 for grace).
+  CreateTimer(15.0, Timer_FireStopRecordingEvent,
               GetDemoInfoDataPack(matchId, mapNumber, demoFileName));
 }
 

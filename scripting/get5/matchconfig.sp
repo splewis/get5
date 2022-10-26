@@ -642,7 +642,22 @@ static bool LoadMatchFromJson(JSON_Object json) {
       key_length = cvars.GetKeySize(i);
       char[] cvarName = new char[key_length];
       cvars.GetKey(i, cvarName, key_length);
-      cvars.GetString(cvarName, cvarValue, sizeof(cvarValue));
+      JSONCellType type = cvars.GetType(cvarName);
+      if (type == JSON_Type_Int) {
+        IntToString(cvars.GetInt(cvarName), cvarValue, sizeof(cvarValue));
+      #if SM_INT64_SUPPORTED // requires SM 1.11 build 6861 according to sm-json
+      } else if (type == JSON_Type_Int64) {
+        IntToString(cvars.GetInt(cvarName), cvarValue, sizeof(cvarValue));
+      }
+      #endif
+      } else if (type == JSON_Type_Float) {
+        FloatToString(cvars.GetFloat(cvarName), cvarValue, sizeof(cvarValue));
+      } else if (type == JSON_Type_String) {
+        cvars.GetString(cvarName, cvarValue, sizeof(cvarValue));
+      } else {
+        MatchConfigFail("Expected \"cvars\" section to contain only strings or numbers.");
+        return false;
+      }
       g_CvarNames.PushString(cvarName);
       g_CvarValues.PushString(cvarValue);
     }

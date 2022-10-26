@@ -10,7 +10,7 @@
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "fr"            "Entrez {1} quand vous êtes prêt(e) à restorer la sauvegarde du match."
+        "fr"            "Entrez {1} quand vous êtes prêt(e) à restaurer la sauvegarde du match."
     }
     "ReadyToKnifeInfoMessage"
     {
@@ -23,6 +23,10 @@
     "YouAreReady"
     {
         "fr"            "Vous avez été marqué(e) comme prêt(e)."
+    }
+    "YouArereadyAuto"
+    {
+        "fr"            "Vous avez été marqué(e) comme prêt(e). Entrez {1} si vous n'êtes pas prêt(e)."
     }
     "YouAreNotReady"
     {
@@ -66,11 +70,11 @@
     }
     "MaxPausesUsedInfoMessage"
     {
-        "fr"            "Votre équipe a déjà utilisé son maximum de {1} pauses."
+        "fr"            "{1} a déjà utilisé son maximum de {2} pause(s)."
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "fr"            "Votre équipe a déjà utilisé son maximum de {1} pause."
+        "fr"            "{1} a déjà utilisé son maximum de temps de pause ({2})."
     }
     "MatchPausedByTeamMessage"
     {
@@ -80,9 +84,73 @@
     {
         "fr"            "{1} a demandé une pause technique."
     }
+    "PausesNotEnabled"
+    {
+        "fr"            "Les pauses ne sont pas activées."
+    }
+    "TechPausesNotEnabled"
+    {
+        "fr"            "Les pauses techniques ne sont pas activées."
+    }
+    "TechnicalPauseMidSentence"
+    {
+        "fr"            "pause technique"
+    }
+    "TacticalPauseMidSentence"
+    {
+        "fr"            "pause tactique"
+    }
+    "TimeRemainingBeforeAnyoneCanUnpausePrefix"
+    {
+        "fr"            "Temps restant avant de pouvoir mettre fin à la pause "
+    }
+    "PauseTimeRemainingPrefix"
+    {
+        "fr"            "Temps de pause restant "
+    }
+    "AwaitingUnpause"
+    {
+        "fr"            "En attente de la reprise."
+    }
+    "PausedByAdministrator"
+    {
+        "fr"            "Un administrateur a mis en pause le match."
+    }
+    "PausedForBackup"
+    {
+        "fr"            "La partie a été rechargée à partir d'une sauvegarde. Les deux équipes doivent quitter la pause pour continuer."
+    }
+    "UserCannotUnpauseAdmin"
+    {
+        "fr"            "Cette pause a été demandée par un admin, elle doit donc être quittée par un admin."
+    }
+    "PausingTeamCannotUnpauseUntilFreezeTime"
+    {
+        "fr"            "Vous ne pouvez pas demander une fin de pause avant que votre pause n'ait commencée. Une demande de pause n'est pas annulable."
+    }
     "PauseRunoutInfoMessage"
     {
         "fr"            "{1} a épuisé son temps de pause, reprise du match."
+    }
+    "TechPauseRunoutInfoMessage"
+    {
+        "fr"            "Le temps maximum de pause a été atteint. Tout le monde peut {1} maintenant."
+    }
+    "TechPauseNoTimeRemaining"
+    {
+        "fr"            "{1} n'a plus de temps de pause technique. Utilisez des pauses tactiques."
+    }
+    "TechPauseNoPausesRemaining"
+    {
+        "fr"            "{1} n'a plus de pause technique. Utilisez des pauses tactiques."
+    }
+    "TechPausePausesRemaining"
+    {
+        "fr"            "Pauses techniques restantes pour {1}: {2}"
+    }
+    "TechPauseAutomaticallyStarted"
+    {
+        "fr"            "Une pause technique a été automatiquement démarée pour {1}."
     }
     "MatchUnpauseInfoMessage"
     {
@@ -94,7 +162,15 @@
     }
     "PausesLeftInfoMessage"
     {
-        "fr"            "{1} dispose encore de {2} pauses."
+        "fr"            "{1} dispose encore de {2} pause(s)."
+    }
+     "PrereleaseVersionWarning"
+    {
+        "fr"            "La version de Get5 que vous utilisez ({1}) est une version test à destination des développeurs. Ce message peut être désactivé avec {2}."
+    }
+    "NewVersionAvailable"
+    {
+        "fr"            "Une nouvelle version de Get5 est disponible. Rendez vous sur {1} pour mettre à jour."
     }
     "TeamFailToReadyMinPlayerCheck"
     {
@@ -124,6 +200,10 @@
     {
         "fr"            "Vous pouvez entrer {1} pour forcer le statut de votre équipe."
     }
+    "ForceReadyDisabled"
+    {
+        "fr"            "La commande {1} est désactivée, vous pouvez l'activer avec {2}."
+    }
     "TeammateForceReadied"
     {
         "fr"            "Votre équipe s'est déclaré prête (de force) par {1}."
@@ -139,6 +219,10 @@
     "AdminForcePauseInfoMessage"
     {
         "fr"            "Un admin a forcé la pause du match."
+    }
+    "AdminForceEndWithWinnerInfoMessage"
+    {
+        "fr"            "Un admin a terminé le match de force en désignant {1} comme vainqueur."
     }
     "AdminForceUnPauseInfoMessage"
     {
@@ -175,6 +259,14 @@
     "MatchFinishedInfoMessage"
     {
         "fr"            "Le match est terminé"
+    }
+    "StopCommandNotEnabled"
+    {
+        "fr"            "La commande stop n'est pas activée."
+    }
+    "StopCommandVotingReset"
+    {
+        "fr"            "La demande de {1} d'arrêter le match a été annulée car la manche s'est finie."
     }
     "BackupLoadedInfoMessage"
     {
@@ -252,6 +344,26 @@
     {
         "fr"            "Vous avez bougé à la position de coach, car votre équipe est complète."
     }
+    "CannotLeaveCoachingTeamIsFull"
+    {
+        "fr"            "Vous ne pouvez pas quitter votre position de coach car votre équipe est complète."
+    }
+    "CoachingNotEnabled"
+    {
+        "fr"            "Le coaching n'est pas activé. Vous devez définir {1} à 1."
+    }
+    "PlayerIsCoachingTeam"
+    {
+        "fr"            "{1} coach {2}."
+    }
+    "CanOnlyCoachDuringWarmup"
+    {
+        "fr"            "Vous ne pouvez changer de coach que pendant l'échauffement."
+    }
+    "AllCoachSlotsFilledForTeam"
+    {
+        "fr"            "Tous les emplacements de coach ({1}) sont actuellement plein pour votre équipe."
+    }
     "ReadyTag"
     {
         "fr"            "[PRÊT]"
@@ -266,7 +378,7 @@
     }
     "MapVetoPickConfirmMenuText"
     {
-        "fr"        "Confirmez que vous souhaitez la jouer {1} :"
+        "fr"        "Confirmez que vous souhaitez jouer {1} :"
     }
     "MapVetoBanMenuText"
     {
@@ -294,6 +406,66 @@
     }
     "VetoCountdown"
     {
-        "fr"        "Le veto commencera dans {1} secondes."
+        "fr"        "Le veto commencera dans {1} seconde(s)."
+    }
+    "SurrenderCommandNotEnabled"
+    {
+        "fr"        ""La commande pour abandonner n'est pas activée."
+    }
+    "SurrenderMinimumRoundDeficit"
+    {
+        "fr"        "Vous devez avoir terminé {1} manche(s) pour pouvoir abandonner."
+    }
+    "SurrenderInitiated"
+    {
+        "fr"        "Un vote pour abandonner à été initié par {1}. Votre équipes doivent avoir {2} votes dans les {3} secondes."
+    }
+    "SurrenderVoteStatus"
+    {
+        "fr"        "{1} des {2} votes d'abandons requis ont été exprimés."
+    }
+    "SurrenderSuccessful"
+    {
+        "fr"        "{1} a abandonné."
+    }
+    "SurrenderVoteFailed"
+    {
+        "fr"        "Trop peu de joueurs de votre équipe ont voté pour abandonner."
+    }
+    "SurrenderOnCooldown"
+    {
+        "fr"        "Vous devez attendre {1} pour lancer un nouveau vote d'abandon."
+    }
+    "WinByForfeitAvailable"
+    {
+        "fr"        "{1} a quitté le serveur. {2} peut désormais entrer {3} pour initialiser un compte à rebours pour gagner à condition que votre équipe reste pleine."
+    }
+    "WinByForfeitRequiresFullTeam"
+    {
+        "fr"        "Votre équipe doit être complète pour pouvoir demander ou annuler une victoire par abandon."
+    }
+    "WinByForfeitAlreadyRequested"
+    {
+        "fr"        "Une demande de victoire par abandon est déjà en cours."
+    }
+    "WinByForfeitCountdownStarted"
+    {
+        "fr"        "{1} gagnera dans {2} sauf si un joueur de {3} rejoins la partie. Cette demande peut être annulée avec {4}."
+    }
+    "WinByForfeitCountdownCanceled"
+    {
+        "fr"        "La demande de {1} de gagner par abandon a été annulée."
+    }
+    "TeamForfeited"
+    {
+        "fr"        "{1} a abandonné la partie."
+    }
+    "AllPlayersLeftTieCountdown"
+    {
+        "fr"        "Les deux équipes ont quitté le serveur. Au moins un joueur de chaque équipe doit rejoindre dans un délai de {1} ou les matchs se finiront sur une égalité."
+    }
+    "TieCountdownCanceled"
+    {
+        "fr"        "Le compte à rebours a été annulé car les deux équipes ont maintenant des joueurs."
     }
 }

@@ -25,15 +25,15 @@ Get5 can be configured to automatically record matches. This is enabled by defau
 of [`get5_demo_name_format`](../configuration/#get5_demo_name_format) and can be disabled by setting that parameter to
 an empty string.
 
-Demo recording starts once all teams have readied up and ends shortly following a map result. When a demo file is
-written to disk, the [`Get5_OnDemoFinished`](events_and_forwards.md) forward is called shortly after. The filename can
-also be found in the map-section of the [KeyValue stats system](../stats_system/#keyvalue).
+Demo recording starts once all teams have readied up and ends following a map result. When a demo file is written to
+disk, the [`Get5_OnDemoFinished`](events_and_forwards.md) forward is called shortly after. The filename can also be
+found in the map-section of the [KeyValue stats system](../stats_system/#keyvalue).
 
-!!! danger "GOTV lockup on flush to disk"
+!!! info "Broadcast delay on GOTV recording"
 
-    Some servers experience lockups of the GOTV broadcast while the demo file is being flushed to disk, which may take
-    up to 10 seconds in some cases. If your server suffers from this problem and you cannot fix it, you can enable
-    [`get5_demo_postpone_stop`](../configuration/#get5_demo_postpone_stop).
+    When the GOTV recording stops, the server will flush its framebuffer to disk. This may cause a lag spike or a
+    complete freeze of the GOTV broadcast if you have a substantial `tv_delay`, so Get5 will wait until the entire match
+    has been broadcast before it stops recording the demo.
 
 ## Automatic Upload {: #upload }
 

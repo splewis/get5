@@ -385,14 +385,14 @@ and off with Get5. Note that setting <code>tv_enable 1</code> won't allow people
 <p>Get5 can be configured to automatically record matches. This is enabled by default based on the state
 of <a href="../configuration/#get5_demo_name_format"><code>get5_demo_name_format</code></a> and can be disabled by setting that parameter to
 an empty string.</p>
-<p>Demo recording starts once all teams have readied up and ends shortly following a map result. When a demo file is
-written to disk, the <a href="../events_and_forwards/"><code>Get5_OnDemoFinished</code></a> forward is called shortly after. The filename can
-also be found in the map-section of the <a href="../stats_system/#keyvalue">KeyValue stats system</a>.</p>
-<div class="admonition danger">
-<p class="admonition-title">GOTV lockup on flush to disk</p>
-<p>Some servers experience lockups of the GOTV broadcast while the demo file is being flushed to disk, which may take
-up to 10 seconds in some cases. If your server suffers from this problem and you cannot fix it, you can enable
-<a href="../configuration/#get5_demo_postpone_stop"><code>get5_demo_postpone_stop</code></a>.</p>
+<p>Demo recording starts once all teams have readied up and ends following a map result. When a demo file is written to
+disk, the <a href="../events_and_forwards/"><code>Get5_OnDemoFinished</code></a> forward is called shortly after. The filename can also be
+found in the map-section of the <a href="../stats_system/#keyvalue">KeyValue stats system</a>.</p>
+<div class="admonition info">
+<p class="admonition-title">Broadcast delay on GOTV recording</p>
+<p>When the GOTV recording stops, the server will flush its framebuffer to disk. This may cause a lag spike or a
+complete freeze of the GOTV broadcast if you have a substantial <code>tv_delay</code>, so Get5 will wait until the entire match
+has been broadcast before it stops recording the demo.</p>
 </div>
 <h2 id="upload">Automatic Upload</h2>
 <p>In addition to recording demos, Get5 can also upload them to a URL when the recording stops. To enable this feature, you

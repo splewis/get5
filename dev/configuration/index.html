@@ -1372,9 +1372,8 @@ affect the availability of <a href="../commands/#get5_forceready"><code>get5_for
 </dl>
 <h4 id="get5_time_to_start"><code>get5_time_to_start</code></h4>
 <dl>
-<dd>Time (in seconds) teams have to ready up before forfeiting the match. Set to zero to remove
-limit. If set to a non-zero value, <a href="#get5_forfeit_countdown"><code>get5_forfeit_countdown</code></a> behaves differently
-during warmup or veto. If neither team becomes ready in time, the series is ended in a tie.<br/><strong><code>Default: 0</code></strong></dd>
+<dd>Time (in seconds) teams have to ready up before forfeiting the match. Set to zero for no limit. If neither team
+becomes ready in time, the series is ended in a tie.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_time_to_make_knife_decision"><code>get5_time_to_make_knife_decision</code></h4>
 <dl>
@@ -1435,15 +1434,16 @@ messages.<br/><strong><code>Default: "{NORMAL}"</code></strong></dd>
 <h4 id="get5_max_pause_time"><code>get5_max_pause_time</code></h4>
 <dl>
 <dd>Maximum number of seconds the game can spend under tactical pause for a team. When pauses are
-unlimited and when <a href="#get5_fixed_pause_time">get5_fixed_pause_time</a> is zero, both teams
+unlimited and when <a href="#get5_fixed_pause_time"><code>get5_fixed_pause_time</code></a> is zero, both teams
 must call <a href="../commands/#unpause"><code>!unpause</code></a> to continue the match. This parameter is ignored
-if <a href="#get5_fixed_pause_time">get5_fixed_pause_time</a> is set to a non-zero
+if <a href="#get5_fixed_pause_time"><code>get5_fixed_pause_time</code></a> is set to a non-zero
 value. Set to zero to remove limit.<br/><strong><code>Default: 300</code></strong></dd>
 </dl>
 <h4 id="get5_fixed_pause_time"><code>get5_fixed_pause_time</code></h4>
 <dl>
-<dd>If non-zero, the fixed length in seconds of all <a href="../pausing/#tactical"><code>tactical</code></a> pauses. This takes precedence
-over the <a href="#get5_max_pause_time">get5_max_pause_time</a> parameter, which will be ignored.<br/><strong><code>Default: 0</code></strong></dd>
+<dd>If non-zero, the fixed length in seconds of all <a href="../pausing/#tactical">tactical pauses</a>. This takes precedence over
+the <a href="#get5_max_pause_time"><code>get5_max_pause_time</code></a> parameter, which will be ignored. Cannot be set lower than 15
+seconds if non-zero.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_allow_technical_pause"><code>get5_allow_technical_pause</code></h4>
 <dl>

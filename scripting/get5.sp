@@ -736,28 +736,29 @@ static Action Timer_InfoMessages(Handle timer) {
         bool knifeRound = g_GameState == Get5State_Warmup && g_MapSides.Get(g_MapNumber) == SideChoice_KnifeRound;
         bool coachingEnabled = g_CoachingEnabledCvar.BoolValue && g_CoachesPerTeam > 0;
         LOOP_CLIENTS(i) {
-          if (IsPlayer(i)) {
-            Get5Team team = GetClientMatchTeam(i);
-            if (team == Get5Team_None) {
-              continue;
+          if (!IsPlayer(i)) {
+            continue;
+          }
+          Get5Team team = GetClientMatchTeam(i);
+          if (team == Get5Team_None) {
+            continue;
+          }
+          bool coach = IsClientCoaching(i);
+          if ((!coach || g_CoachesMustReady) && (team != Get5Team_Spec || g_MinSpectatorsToReady > 0)) {
+            if (IsClientReady(i)) {
+              Get5_Message(i, "%t", "TypeUnreadyIfNotReady", unreadyCommandFormatted);
+            } else {
+              Get5_Message(i, "%t", g_GameState == Get5State_PreVeto ? ("ReadyToVetoInfoMessage") : (knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage"), readyCommandFormatted);
             }
-            bool coach = IsClientCoaching(i);
-            if ((!coach || g_CoachesMustReady) && (team != Get5Team_Spec || g_MinSpectatorsToReady > 0)) {
-              if (IsClientReady(i)) {
-                Get5_Message(i, "%t", "TypeUnreadyIfNotReady", unreadyCommandFormatted);
-              } else {
-                Get5_Message(i, "%t", g_GameState == Get5State_PreVeto ? ("ReadyToVetoInfoMessage") : (knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage"), readyCommandFormatted);
-              }
-            }
-            if (team == Get5Team_Spec) {
-              // Spectators cannot coach.
-              continue;
-            }
-            if (coach) {
-              Get5_Message(i, "%t", "ExitCoachSlotHelp", coachCommandFormatted);
-            } else if (coachingEnabled) {
-              Get5_Message(i, "%t", "EnterCoachSlotHelp", coachCommandFormatted);
-            }
+          }
+          if (team == Get5Team_Spec) {
+            // Spectators cannot coach.
+            continue;
+          }
+          if (coach) {
+            Get5_Message(i, "%t", "ExitCoachSlotHelp", coachCommandFormatted);
+          } else if (coachingEnabled) {
+            Get5_Message(i, "%t", "EnterCoachSlotHelp", coachCommandFormatted);
           }
         }
       }

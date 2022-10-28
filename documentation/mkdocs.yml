@@ -1,9 +1,11 @@
-site_name: Get5
+site_name: Get5 Documentation
 site_url: https://splewis.github.io/get5
 repo_url: https://github.com/splewis/get5
 repo_name: splewis/get5
 edit_uri: https://github.com/splewis/get5/blob/master/documentation/docs
 theme:
+  icon:
+    logo: simple/counterstrike
   features:
     - content.code.annotate
     - navigation.tracking
@@ -13,12 +15,16 @@ theme:
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
+      primary: deep orange
+      accent: deep orange
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
+      primary: deep orange
+      accent: deep orange
       toggle:
         icon: material/brightness-4
         name: Switch to light mode

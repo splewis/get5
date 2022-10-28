@@ -741,7 +741,7 @@ static Action Timer_InfoMessages(Handle timer) {
               continue;
             }
             bool coach = IsClientCoaching(i);
-            if (!coach || g_CoachesMustReady) {
+            if ((!coach || g_CoachesMustReady) && (team != Get5Team_Spec || g_MinSpectatorsToReady > 0)) {
               if (IsClientReady(i)) {
                 Get5_Message(i, "%t", "TypeUnreadyIfNotReady", unreadyCommandFormatted);
               } else {

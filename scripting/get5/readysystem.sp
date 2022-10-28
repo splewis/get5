@@ -152,7 +152,9 @@ void HandleReadyCommand(int client, bool autoReady) {
   if (team == Get5Team_None || IsClientReady(client)) {
     return;
   }
-
+  if (team == Get5Team_Spec && g_MinSpectatorsToReady < 1) {
+    return;
+  }
   Get5_Message(client, "%t", "YouAreReady");
 
   if (autoReady) {

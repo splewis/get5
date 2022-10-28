@@ -38,6 +38,10 @@ void CheckClientTeam(int client) {
     if (CountPlayersOnTeam(correctTeam, client) >= FindConVar("mp_spectators_max").IntValue) {
       KickClient(client, "%t", "TeamIsFullInfoMessage");
     } else {
+      // If already coaching and on spec, we have to remove that prop as SwitchPlayerTeam will not remove coaching.
+      if (IsClientCoaching(client)) {
+        SetEntProp(client, Prop_Send, "m_iCoachingTeam", CS_TEAM_NONE);
+      }
       SwitchPlayerTeam(client, Get5Side_Spec);
     }
     return;

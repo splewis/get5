@@ -38,6 +38,10 @@ void CheckClientTeam(int client) {
     if (CountPlayersOnTeam(correctTeam, client) >= FindConVar("mp_spectators_max").IntValue) {
       KickClient(client, "%t", "TeamIsFullInfoMessage");
     } else {
+      // If already coaching and on spec, we have to remove that prop as SwitchPlayerTeam will not remove coaching.
+      if (IsClientCoaching(client)) {
+        SetEntProp(client, Prop_Send, "m_iCoachingTeam", CS_TEAM_NONE);
+      }
       SwitchPlayerTeam(client, Get5Side_Spec);
     }
     return;
@@ -133,11 +137,6 @@ void SetClientCoaching(int client, Get5Side side, bool broadcast = true) {
   Get5Team team = GetClientMatchTeam(client);
   FormatPlayerName(formattedPlayerName, sizeof(formattedPlayerName), client, team);
   Get5_MessageToAll("%t", "PlayerIsCoachingTeam", formattedPlayerName, g_FormattedTeamNames[team]);
-  if (g_GameState <= Get5State_Warmup) {
-    char coachCommand[64];
-    FormatChatCommand(coachCommand, sizeof(coachCommand), "!coach");
-    Get5_Message(client, "%t", "CoachingExitInfo", coachCommand);
-  }
 }
 
 void CoachingChangedHook(ConVar convar, const char[] oldValue, const char[] newValue) {

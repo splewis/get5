@@ -15,7 +15,7 @@ bool IsReadyGameState() {
 
 // Client ready status
 
-static bool IsClientReady(int client) {
+bool IsClientReady(int client) {
   return g_ClientReady[client] == true;
 }
 
@@ -152,12 +152,14 @@ void HandleReadyCommand(int client, bool autoReady) {
   if (team == Get5Team_None || IsClientReady(client)) {
     return;
   }
-
+  if (team == Get5Team_Spec && g_MinSpectatorsToReady < 1) {
+    return;
+  }
   Get5_Message(client, "%t", "YouAreReady");
 
   if (autoReady) {
-    // We cannot color text in hints, so no formatting the command.
-    PrintHintText(client, "%t", "YouAreReadyAuto", "!unready");
+    PrintHintText(client, "%t", "YouAreReadyAuto");
+    CreateTimer(3.0, Timer_RepeatAutoReadyHint, GetClientUserId(client), TIMER_FLAG_NO_MAPCHANGE);
   }
 
   SetClientReady(client, true);
@@ -165,6 +167,17 @@ void HandleReadyCommand(int client, bool autoReady) {
     SetMatchTeamCvars();
     HandleReadyMessage(team);
   }
+}
+
+static Action Timer_RepeatAutoReadyHint(Handle timer, int userId) {
+  if (!IsReadyGameState()) {
+    return Plugin_Handled;
+  }
+  int client = GetClientOfUserId(userId);
+  if (IsPlayer(client) && IsClientReady(client)) {
+    PrintHintText(client, "%t", "YouAreReadyAuto");
+  }
+  return Plugin_Handled;
 }
 
 Action Command_Ready(int client, int args) {
@@ -268,23 +281,25 @@ static void HandleReadyMessage(Get5Team team) {
 }
 
 void MissingPlayerInfoMessage() {
+  if (!g_AllowForceReadyCvar.BoolValue) {
+    return;
+  }
   MissingPlayerInfoMessageTeam(Get5Team_1);
   MissingPlayerInfoMessageTeam(Get5Team_2);
   MissingPlayerInfoMessageTeam(Get5Team_Spec);
 }
 
 static void MissingPlayerInfoMessageTeam(Get5Team team) {
-  if (!g_AllowForceReadyCvar.BoolValue || IsTeamForcedReady(team)) {
+  if (IsTeamForcedReady(team)) {
     return;
   }
 
-  int minPlayers = GetPlayersPerTeam(team);
-  int minReady = GetTeamMinReady(team);
+  int playersPerTeam = GetPlayersPerTeam(team);
+  int minimumPlayersForForceReady = GetTeamMinReady(team);
   int playerCount = GetTeamPlayerCount(team, g_CoachesMustReady);
   int readyCount = GetTeamReadyCount(team, g_CoachesMustReady);
 
-  if (playerCount == readyCount && playerCount < minPlayers && readyCount >= minReady &&
-      minPlayers > 1) {
+  if (playerCount == readyCount && playerCount < playersPerTeam && readyCount >= minimumPlayersForForceReady) {
     char forceReadyFormatted[64];
     FormatChatCommand(forceReadyFormatted, sizeof(forceReadyFormatted), "!forceready");
     Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", forceReadyFormatted);

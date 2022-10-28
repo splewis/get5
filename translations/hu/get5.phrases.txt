@@ -26,7 +26,11 @@
     }
     "YouAreReadyAuto"
     {
-        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által. Írd be, hogy {1} ha nem állsz még készen."
+        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "hu"            "Írd be, hogy {1} ha nem állsz még készen."
     }
     "YouAreNotReady"
     {
@@ -59,6 +63,14 @@
     "TeamForfeitInfoMessage"
     {
         "hu"            "{1} nem sikerült időben felkészülni, ezért vesztettetek."
+    }
+    "TeamMustBeReadyOrForfeit"
+    {
+        "hu"            "{1} fel kell, hogy készüljön {2} idő alatt vagy fel kell, hogy adják a mérkőzést."
+    }
+    "TeamsMustBeReadyOrTie"
+    {
+        "hu"            "A csapatoknak fel kell, hogy készüljenek {1} alatt vagy a mérkőzés döntetlennel ér véget."
     }
     "MaxPausesUsedInfoMessage"
     {
@@ -316,9 +328,13 @@
     {
         "hu"            "Mérkőzés beállítás betöltödött."
     }
-    "CoachingExitInfo"
+    "ExitCoachSlotHelp"
     {
-        "hu"            "Írja be a {1} parancsot az edző pozícióból távozásához."
+        "hu"            "Írd be a {1} parancsot, hogy kilépj az edzői poziccióból."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "hu"            "Írd be a {1} parancsot, hogy a csapatod edzője legyél."
     }
     "MoveToCoachInfoMessage"
     {

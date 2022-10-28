@@ -26,7 +26,11 @@
     }
     "YouAreReadyAuto"
     {
-        "pt"            "OBSERVAÇÃO: Você foi marcado como pronto devido à atividade do jogo. Digite {1} se você não estiver pronto."
+        "pt"            "OBSERVAÇÃO: Você foi marcado como pronto devido à atividade do jogo."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "pt"            "Digite {1} se você não estiver pronto."
     }
     "YouAreNotReady"
     {
@@ -324,9 +328,13 @@
     {
         "pt"            "A configuração da partida foi carregada com sucesso."
     }
-    "CoachingExitInfo"
+    "ExitCoachSlotHelp"
     {
         "pt"            "Digite {1} para sair da vaga de coach."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "pt"            "Digite {1} para se tornar coach do seu time."
     }
     "MoveToCoachInfoMessage"
     {

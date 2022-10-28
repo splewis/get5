@@ -216,9 +216,13 @@
     {
         "pl"            "Załadowano ustawawienia meczu."
     }
-    "CoachingExitInfo"
+    "ExitCoachSlotHelp"
     {
         "pl"            "Wpisz {1}, aby wyjść z roli trenera."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "pl"            "Wpisz {1}, aby zostać trenerem swojej drużyny."
     }
     "MoveToCoachInfoMessage"
     {

@@ -244,9 +244,13 @@
     {
         "es"            "Configuración de la partida cargada."
     }
-    "CoachingExitInfo"
+    "ExitCoachSlotHelp"
     {
         "es"            "Escribe {1} para salir del papel de entrenador."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "es"            "Escribe {1} para hacerte entrenador de tu equipo."
     }
     "MoveToCoachInfoMessage"
     {

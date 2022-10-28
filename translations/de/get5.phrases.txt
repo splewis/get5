@@ -26,7 +26,11 @@
     }
     "YouAreReadyAuto"
     {
-        "de"            "Hinweis: Du wurdest aufgrund deiner Spielaktivität als bereit markiert. Gebe {1} ein falls du nicht bereit bist."
+        "de"            "Hinweis: Du wurdest aufgrund deiner Spielaktivität als bereit markiert."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "de"            "Gebe {1} ein falls du nicht bereit bist."
     }
     "YouAreNotReady"
     {
@@ -336,9 +340,13 @@
     {
         "de"            "Spiel Konfiguration geladen."
     }
-    "CoachingExitInfo"
+    "ExitCoachSlotHelp"
     {
         "de"            "Gebe {1} ein um die Rolle des Trainers abzulegen."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "de"            "Gebe {1} ein um die Rolle des Trainers in deinem Team anzunehmen."
     }
     "MoveToCoachInfoMessage"
     {

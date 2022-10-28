@@ -26,7 +26,11 @@
     }
     "YouAreReadyAuto"
     {
-        "da"            "NOTE: Du er blevet markeret som klar grundet spilaktivitet. Skriv {1} hvis du ikke er klar."
+        "da"            "NOTE: Du er blevet markeret som klar grundet spilaktivitet."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "da"            "Skriv {1} hvis du ikke er klar."
     }
     "YouAreNotReady"
     {
@@ -336,9 +340,13 @@
     {
         "da"            "Indlæste kampopsætning."
     }
-    "CoachingExitInfo"
+    "ExitCoachSlotHelp"
     {
         "da"            "Skriv {1} for at forlade trænerpositionen."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "da"            "Skriv {1} for at blive træner for dit hold."
     }
     "MoveToCoachInfoMessage"
     {

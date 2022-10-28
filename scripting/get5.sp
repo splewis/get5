@@ -716,32 +716,54 @@ static Action Timer_InfoMessages(Handle timer) {
 
   char readyCommandFormatted[64];
   FormatChatCommand(readyCommandFormatted, sizeof(readyCommandFormatted), "!ready");
+  char unreadyCommandFormatted[64];
+  FormatChatCommand(unreadyCommandFormatted, sizeof(unreadyCommandFormatted), "!unready");
+  char coachCommandFormatted[64];
+  FormatChatCommand(coachCommandFormatted, sizeof(coachCommandFormatted), "!coach");
 
   if (g_GameState == Get5State_PendingRestore) {
     if (!IsTeamsReady() && !IsDoingRestoreOrMapChange()) {
       Get5_MessageToAll("%t", "ReadyToRestoreBackupInfoMessage", readyCommandFormatted);
     }
-  } else if (g_GameState == Get5State_PreVeto) {
-    if (IsTeamsReady() && !IsSpectatorsReady()) {
-      Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
-                        g_FormattedTeamNames[Get5Team_Spec], readyCommandFormatted);
-    } else {
-      Get5_MessageToAll("%t", "ReadyToVetoInfoMessage", readyCommandFormatted);
-    }
-    MissingPlayerInfoMessage();
-  } else if (g_GameState == Get5State_Warmup) {
+  } else if (g_GameState == Get5State_Warmup || g_GameState == Get5State_PreVeto) {
     if (!g_MapChangePending) {
       // Find out what we're waiting for
       if (IsTeamsReady() && !IsSpectatorsReady()) {
         Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
                           g_FormattedTeamNames[Get5Team_Spec], readyCommandFormatted);
       } else {
-        bool knifeRound = g_MapSides.Get(g_MapNumber) == SideChoice_KnifeRound;
-        Get5_MessageToAll("%t", knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage",
-                          readyCommandFormatted);
+        // g_MapSides empty if we veto, so make sure to only check this during warmup.
+        bool knifeRound = g_GameState == Get5State_Warmup && g_MapSides.Get(g_MapNumber) == SideChoice_KnifeRound;
+        bool coachingEnabled = g_CoachingEnabledCvar.BoolValue && g_CoachesPerTeam > 0;
+        LOOP_CLIENTS(i) {
+          if (!IsPlayer(i)) {
+            continue;
+          }
+          Get5Team team = GetClientMatchTeam(i);
+          if (team == Get5Team_None) {
+            continue;
+          }
+          bool coach = IsClientCoaching(i);
+          if ((!coach || g_CoachesMustReady) && (team != Get5Team_Spec || g_MinSpectatorsToReady > 0)) {
+            if (IsClientReady(i)) {
+              Get5_Message(i, "%t", "TypeUnreadyIfNotReady", unreadyCommandFormatted);
+            } else {
+              Get5_Message(i, "%t", g_GameState == Get5State_PreVeto ? ("ReadyToVetoInfoMessage") : (knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage"), readyCommandFormatted);
+            }
+          }
+          if (team == Get5Team_Spec) {
+            // Spectators cannot coach.
+            continue;
+          }
+          if (coach) {
+            Get5_Message(i, "%t", "ExitCoachSlotHelp", coachCommandFormatted);
+          } else if (coachingEnabled) {
+            Get5_Message(i, "%t", "EnterCoachSlotHelp", coachCommandFormatted);
+          }
+        }
       }
       MissingPlayerInfoMessage();
-    } else if (g_DisplayGotvVetoCvar.BoolValue && GetTvDelay() > 0) {
+    } else if (g_GameState == Get5State_Warmup && g_DisplayGotvVetoCvar.BoolValue && GetTvDelay() > 0) {
       Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
     }
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {

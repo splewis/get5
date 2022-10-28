@@ -336,9 +336,13 @@
     {
         "fr"            "Configuration du match chargée."
     }
-    "CoachingExitInfo"
+    "ExitCoachSlotHelp"
     {
         "fr"            "Taper {1} pour sortir du mode coach."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "fr"            "Taper {1} pour devenir le coach de votre équipe."
     }
     "MoveToCoachInfoMessage"
     {

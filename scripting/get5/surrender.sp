@@ -320,7 +320,10 @@ static Action Timer_ForfeitCountdownCheck(Handle timer) {
   g_ForfeitTimer = INVALID_HANDLE;
 
   LogDebug("Forfeit timer expired. Ending series with %d as forfeiting team.", g_ForfeitingTeam);
-  // TODO: We can probably remove this StopRecording call, as Get5 should not be recording at this time?
+  // TODO: GOTV will freeze here if players forfeit due to the flush bug, but the server is not locked in post-game
+  // screen, so it is risky to assume we can just wait the entire GOTV delay before we flush the demo file.
+  // Lagging in this case might not be a real problem either as it's probably not an exiting match to watch the
+  // surrender timeout.
   StopRecording(5.0); // add 5 seconds to include announcement, so players know why they are potentially kicked.
   Get5Team winningTeam = Get5Team_None;
   if (g_ForfeitingTeam != Get5Team_None) {

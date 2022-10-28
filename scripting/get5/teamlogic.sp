@@ -136,7 +136,7 @@ void SetClientCoaching(int client, Get5Side side, bool broadcast = true) {
   if (g_GameState <= Get5State_Warmup) {
     char coachCommand[64];
     FormatChatCommand(coachCommand, sizeof(coachCommand), "!coach");
-    Get5_Message(client, "%t", "CoachingExitInfo", coachCommand);
+    Get5_Message(client, "%t", "ExitCoachSlotHelp", coachCommand);
   }
 }
 

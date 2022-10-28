@@ -324,9 +324,13 @@
     {
         "pt"            "A configuração da partida foi carregada com sucesso."
     }
-    "CoachingExitInfo"
+    "ExitCoachSlotHelp"
     {
         "pt"            "Digite {1} para sair da vaga de coach."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "pt"            "Digite {1} para se tornar coach do seu time."
     }
     "MoveToCoachInfoMessage"
     {

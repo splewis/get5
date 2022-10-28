@@ -390,10 +390,15 @@
     {
         "en"            "Loaded match config."
     }
-    "CoachingExitInfo"
+    "ExitCoachSlotHelp"
     {
         "#format"       "{1:s}"
         "en"            "Type {1} to exit the coach slot."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "#format"       "{1:s}"
+        "en"            "Type {1} to become a coach for your team."
     }
     "MoveToCoachInfoMessage"
     {

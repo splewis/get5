@@ -336,9 +336,13 @@
     {
         "da"            "Indlæste kampopsætning."
     }
-    "CoachingExitInfo"
+    "ExitCoachSlotHelp"
     {
         "da"            "Skriv {1} for at forlade trænerpositionen."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "da"            "Skriv {1} for at blive træner for dit hold."
     }
     "MoveToCoachInfoMessage"
     {

@@ -15,7 +15,7 @@ bool IsReadyGameState() {
 
 // Client ready status
 
-static bool IsClientReady(int client) {
+bool IsClientReady(int client) {
   return g_ClientReady[client] == true;
 }
 
@@ -268,23 +268,25 @@ static void HandleReadyMessage(Get5Team team) {
 }
 
 void MissingPlayerInfoMessage() {
+  if (!g_AllowForceReadyCvar.BoolValue) {
+    return;
+  }
   MissingPlayerInfoMessageTeam(Get5Team_1);
   MissingPlayerInfoMessageTeam(Get5Team_2);
   MissingPlayerInfoMessageTeam(Get5Team_Spec);
 }
 
 static void MissingPlayerInfoMessageTeam(Get5Team team) {
-  if (!g_AllowForceReadyCvar.BoolValue || IsTeamForcedReady(team)) {
+  if (IsTeamForcedReady(team)) {
     return;
   }
 
-  int minPlayers = GetPlayersPerTeam(team);
-  int minReady = GetTeamMinReady(team);
+  int playersPerTeam = GetPlayersPerTeam(team);
+  int minimumPlayersForForceReady = GetTeamMinReady(team);
   int playerCount = GetTeamPlayerCount(team, g_CoachesMustReady);
   int readyCount = GetTeamReadyCount(team, g_CoachesMustReady);
 
-  if (playerCount == readyCount && playerCount < minPlayers && readyCount >= minReady &&
-      minPlayers > 1) {
+  if (playerCount == readyCount && playerCount < playersPerTeam && readyCount >= minimumPlayersForForceReady) {
     char forceReadyFormatted[64];
     FormatChatCommand(forceReadyFormatted, sizeof(forceReadyFormatted), "!forceready");
     Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", forceReadyFormatted);

@@ -170,7 +170,7 @@ void HandleReadyCommand(int client, bool autoReady) {
 }
 
 static Action Timer_RepeatAutoReadyHint(Handle timer, int userId) {
-  if (!IsReadyGameState) {
+  if (!IsReadyGameState()) {
     return Plugin_Handled;
   }
   int client = GetClientOfUserId(userId);

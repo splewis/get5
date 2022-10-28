@@ -732,7 +732,8 @@ static Action Timer_InfoMessages(Handle timer) {
         Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
                           g_FormattedTeamNames[Get5Team_Spec], readyCommandFormatted);
       } else {
-        bool knifeRound = g_MapSides.Get(g_MapNumber) == SideChoice_KnifeRound;
+        // g_MapSides empty if we veto, so make sure to only check this during warmup.
+        bool knifeRound = g_GameState == Get5State_Warmup && g_MapSides.Get(g_MapNumber) == SideChoice_KnifeRound;
         bool coachingEnabled = g_CoachingEnabledCvar.BoolValue && g_CoachesPerTeam > 0;
         LOOP_CLIENTS(i) {
           if (IsPlayer(i)) {

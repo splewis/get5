@@ -12,7 +12,7 @@ Please note that these can be typed by *all players* in chat.
 
 :   Marks the player as ready.
 
-####`!unready`
+####`!unready` or `!notready` {: #unready }
 
 :   Marks the player as not ready.
 

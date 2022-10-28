@@ -716,6 +716,8 @@ static Action Timer_InfoMessages(Handle timer) {
 
   char readyCommandFormatted[64];
   FormatChatCommand(readyCommandFormatted, sizeof(readyCommandFormatted), "!ready");
+  char unreadyCommandFormatted[64];
+  FormatChatCommand(unreadyCommandFormatted, sizeof(unreadyCommandFormatted), "!unready");
   char coachCommandFormatted[64];
   FormatChatCommand(coachCommandFormatted, sizeof(coachCommandFormatted), "!coach");
 
@@ -734,10 +736,21 @@ static Action Timer_InfoMessages(Handle timer) {
         bool coachingEnabled = g_CoachingEnabledCvar.BoolValue && g_CoachesPerTeam > 0;
         LOOP_CLIENTS(i) {
           if (IsPlayer(i)) {
+            Get5Team team = GetClientMatchTeam(i);
+            if (team == Get5Team_None) {
+              continue;
+            }
             bool coach = IsClientCoaching(i);
-            if (!IsClientReady(i) && (!coach || g_CoachesMustReady)) {
-              Get5_Message(i, "%t", g_GameState == Get5State_PreVeto ? ("ReadyToVetoInfoMessage") : (knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage",
-                                                                    readyCommandFormatted));
+            if (!coach || g_CoachesMustReady) {
+              if (IsClientReady(i)) {
+                Get5_Message(i, "%t", "TypeUnreadyIfNotReady", unreadyCommandFormatted);
+              } else {
+                Get5_Message(i, "%t", g_GameState == Get5State_PreVeto ? ("ReadyToVetoInfoMessage") : (knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage"), readyCommandFormatted);
+              }
+            }
+            if (team == Get5Team_Spec) {
+              // Spectators cannot coach.
+              continue;
             }
             if (coach) {
               Get5_Message(i, "%t", "ExitCoachSlotHelp", coachCommandFormatted);

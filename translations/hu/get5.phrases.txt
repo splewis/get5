@@ -26,7 +26,11 @@
     }
     "YouAreReadyAuto"
     {
-        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által. Írd be, hogy {1} ha nem állsz még készen."
+        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "hu"            "Írd be, hogy {1} ha nem állsz még készen."
     }
     "YouAreNotReady"
     {

@@ -156,8 +156,8 @@ void HandleReadyCommand(int client, bool autoReady) {
   Get5_Message(client, "%t", "YouAreReady");
 
   if (autoReady) {
-    // We cannot color text in hints, so no formatting the command.
-    PrintHintText(client, "%t", "YouAreReadyAuto", "!unready");
+    PrintHintText(client, "%t", "YouAreReadyAuto");
+    CreateTimer(3.0, Timer_RepeatAutoReadyHint, GetClientUserId(client), TIMER_FLAG_NO_MAPCHANGE);
   }
 
   SetClientReady(client, true);
@@ -165,6 +165,17 @@ void HandleReadyCommand(int client, bool autoReady) {
     SetMatchTeamCvars();
     HandleReadyMessage(team);
   }
+}
+
+static Action Timer_RepeatAutoReadyHint(Handle timer, int userId) {
+  if (!IsReadyGameState) {
+    return Plugin_Handled;
+  }
+  int client = GetClientOfUserId(userId);
+  if (IsPlayer(client) && IsClientReady(client)) {
+    PrintHintText(client, "%t", "YouAreReadyAuto");
+  }
+  return Plugin_Handled;
 }
 
 Action Command_Ready(int client, int args) {

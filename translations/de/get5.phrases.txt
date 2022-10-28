@@ -26,7 +26,11 @@
     }
     "YouAreReadyAuto"
     {
-        "de"            "Hinweis: Du wurdest aufgrund deiner Spielaktivität als bereit markiert. Gebe {1} ein falls du nicht bereit bist."
+        "de"            "Hinweis: Du wurdest aufgrund deiner Spielaktivität als bereit markiert."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "de"            "Gebe {1} ein falls du nicht bereit bist."
     }
     "YouAreNotReady"
     {

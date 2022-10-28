@@ -31,8 +31,12 @@
     }
     "YouAreReadyAuto"
     {
+        "en"            "NOTE: You have been marked as ready due to game activity."
+    }
+    "TypeUnreadyIfNotReady"
+    {
         "#format"       "{1:s}"
-        "en"            "NOTE: You have been marked as ready due to game activity. Type {1} if you are not ready."
+        "en"            "Type {1} if you are not ready."
     }
     "YouAreNotReady"
     {

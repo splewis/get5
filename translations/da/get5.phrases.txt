@@ -26,7 +26,11 @@
     }
     "YouAreReadyAuto"
     {
-        "da"            "NOTE: Du er blevet markeret som klar grundet spilaktivitet. Skriv {1} hvis du ikke er klar."
+        "da"            "NOTE: Du er blevet markeret som klar grundet spilaktivitet."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "da"            "Skriv {1} hvis du ikke er klar."
     }
     "YouAreNotReady"
     {

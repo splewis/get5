@@ -8,7 +8,7 @@ command. (For example: `sm_ready` in console is equivalent to `!ready` or `.read
 
 Please note that these can be typed by *all players* in chat.
 
-####`!ready`
+####`!ready` or `!r` {: #ready }
 
 :   Marks the player as ready.
 

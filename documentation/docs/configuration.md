@@ -123,9 +123,8 @@ affect the availability of [`get5_forceready`](../commands/#get5_forceready) to 
 :   Whether to set client clan tags to player ready status.<br>**`Default: 1`**
 
 ####`get5_time_to_start`
-:   Time (in seconds) teams have to ready up before forfeiting the match. Set to zero to remove
-limit. If set to a non-zero value, [`get5_forfeit_countdown`](#get5_forfeit_countdown) behaves differently
-during warmup or veto. If neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
+:   Time (in seconds) teams have to ready up before forfeiting the match. Set to zero for no limit. If neither team
+becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
 
 ####`get5_time_to_make_knife_decision`
 :   Time (in seconds) a team has to make a [`!stay`](../commands/#stay) or [`!swap`](../commands/#swap)
@@ -175,14 +174,15 @@ messages.<br>**`Default: "{NORMAL}"`**
 
 ####`get5_max_pause_time`
 :   Maximum number of seconds the game can spend under tactical pause for a team. When pauses are
-unlimited and when [get5_fixed_pause_time](#get5_fixed_pause_time) is zero, both teams
+unlimited and when [`get5_fixed_pause_time`](#get5_fixed_pause_time) is zero, both teams
 must call [`!unpause`](../commands/#unpause) to continue the match. This parameter is ignored
-if [get5_fixed_pause_time](#get5_fixed_pause_time) is set to a non-zero
+if [`get5_fixed_pause_time`](#get5_fixed_pause_time) is set to a non-zero
 value. Set to zero to remove limit.<br>**`Default: 300`**
 
 ####`get5_fixed_pause_time`
-:   If non-zero, the fixed length in seconds of all [`tactical`](../pausing/#tactical) pauses. This takes precedence
-over the [get5_max_pause_time](#get5_max_pause_time) parameter, which will be ignored.<br>**`Default: 0`**
+:   If non-zero, the fixed length in seconds of all [tactical pauses](../pausing/#tactical). This takes precedence over
+the [`get5_max_pause_time`](#get5_max_pause_time) parameter, which will be ignored. Cannot be set lower than 15
+seconds if non-zero.<br>**`Default: 0`**
 
 ####`get5_allow_technical_pause`
 :   Whether [technical pauses](../pausing/#technical) are available to clients or not. Note that this depends

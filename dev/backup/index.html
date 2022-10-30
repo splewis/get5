@@ -173,6 +173,11 @@
         Pausing
       </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../surrender-forfeit/">
+        Surrender &amp; Forfeit
+      </a>
+</li>
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
 <label class="md-nav__link md-nav__link--active" for="__toc">
@@ -311,15 +316,15 @@
 <h1 id="backup-system"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a9 9 0 0 0-9 9H0l4 4 4-4H5a7 7 0 0 1 7-7 7 7 0 0 1 7 7 7 7 0 0 1-7 7c-1.5 0-2.91-.5-4.06-1.3L6.5 19.14A9.115 9.115 0 0 0 12 21a9 9 0 0 0 9-9 9 9 0 0 0-9-9m2 9a2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2Z"></path></svg></span> Backup System</h1>
 <p>Get5 ships with a backup system built on top of
 CS:GO's <a href="https://totalcsgo.com/command/mpbackuprestoreloadfile">built-in round restore system</a>, which can be used to
-either replay a round using the <a href="../commands/#stop"><code>!stop</code></a> command, or to simply restore an entire match's state on
-any server using the <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a> command.</p>
+either replay a round using the <a href="../commands#stop"><code>!stop</code></a> command, or to simply restore an entire match's state on
+any server using the <a href="../commands#get5_loadbackup"><code>get5_loadbackup</code></a> command.</p>
 <p>As Get5's backup system sits on top of CS:GO's, it contains everything a normal CS:GO round backup would, but also
 the entire <a href="../match_schema">match configuration</a> and the match series score for already-played maps.</p>
 <p>The backup system can be enabled or disabled
-with <a href="../configuration/#get5_backup_system_enabled"><code>get5_backup_system_enabled</code></a>.</p>
+with <a href="../configuration#get5_backup_system_enabled"><code>get5_backup_system_enabled</code></a>.</p>
 <h3 id="how-to">How does it work?</h3>
 <p>Every time a round starts, CS:GO automatically writes a round backup file into the root of the <code>csgo</code> directory based on
-the value of <a href="https://totalcsgo.com/command/mpbackuproundfile"><code>mp_backup_round_file</code></a>, which Get5 will <a href="../configuration/#get5_server_id">automatically
+the value of <a href="https://totalcsgo.com/command/mpbackuproundfile"><code>mp_backup_round_file</code></a>, which Get5 will <a href="../configuration#get5_server_id">automatically
 adjust to prevent file collisions</a>. Get5 reads this file, copies it into its
 own file called <code>get5_backup%d_match%s_map%d_round%d.cfg</code>, where the arguments
 are <a href="..configuration/#get5_server_id"><code>get5_server_id</code></a>, <code>matchid</code>, <code>mapnumber</code> and <code>roundnumber</code>, respectively, and
@@ -327,7 +332,7 @@ then deletes the original backup file. A special backup
 called <code>get5_backup%d_match%s_map%d_prelive.cfg</code> is created and should be used if you want to restore to the beginning
 of the map, before the knife round.</p>
 <h3 id="example">Example</h3>
-<p>When in a match, you can call <a href="../commands/#get5_listbackups"><code>get5_listbackups</code></a> to view all backups for the current
+<p>When in a match, you can call <a href="../commands#get5_listbackups"><code>get5_listbackups</code></a> to view all backups for the current
 match. Note that all rounds and map numbers start at 0.</p>
 <p>They print in the format <code>filepath timestamp team1 team2 map team1_score team2_score</code>.</p>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>&gt; get5_listbackups
@@ -343,15 +348,15 @@ match. Note that all rounds and map numbers start at 0.</p>
 <div class="admonition example">
 <p class="admonition-title">Loading a backup</p>
 <p>To load at the beginning of round 13 of the first map of match ID 1844 from a backup created on a
-<a href="../configuration/#get5_server_id">server with ID 4</a>, run <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a>:</p>
+<a href="../configuration#get5_server_id">server with ID 4</a>, run <a href="../commands#get5_loadbackup"><code>get5_loadbackup</code></a>:</p>
 <p><code>get5_loadbackup get5_backup4_match1844_map0_round12.cfg</code></p>
 </div>
-<p>After loading a backup, the game state is restored and the game is <a href="../pausing/#backup">paused</a>. Both teams
-must <a href="../commands/#unpause"><code>!unpause</code></a> to continue.</p>
+<p>After loading a backup, the game state is restored and the game is <a href="../pausing#backup">paused</a>. Both teams
+must <a href="../commands#unpause"><code>!unpause</code></a> to continue.</p>
 <h3 id="pauses">Consumed pauses in backups</h3>
-<p>When restoring from a backup, the <a href="../pausing/">consumed pauses</a> are reset to the state they were in at the beginning
+<p>When restoring from a backup, the <a href="../pausing">consumed pauses</a> are reset to the state they were in at the beginning
 of the round you restore to, but only if the game state is not currently live. This means that using
-the <a href="../commands/#stop"><code>!stop</code></a> command or the <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a> command <strong>for the same
+the <a href="../commands#stop"><code>!stop</code></a> command or the <a href="../commands#get5_loadbackup"><code>get5_loadbackup</code></a> command <strong>for the same
 match and map while the game is live</strong> will retain the currently used pauses. If restarting the server or loading the
 backup from scratch, the consumed pauses defined in the backup file will be set.</p>
 </article>
@@ -360,7 +365,7 @@ backup from scratch, the consumed pauses defined in the backup file will be set.
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Pausing" class="md-footer__link md-footer__link--prev" href="../pausing/" rel="prev">
+<a aria-label="Previous: Surrender &amp; Forfeit" class="md-footer__link md-footer__link--prev" href="../surrender-forfeit/" rel="prev">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -369,7 +374,7 @@ backup from scratch, the consumed pauses defined in the backup file will be set.
 <span class="md-footer__direction">
                 Previous
               </span>
-              Pausing
+              Surrender &amp; Forfeit
             </div>
 </div>
 </a>

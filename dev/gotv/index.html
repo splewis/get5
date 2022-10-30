@@ -174,6 +174,11 @@
       </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../surrender-forfeit/">
+        Surrender &amp; Forfeit
+      </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../backup/">
         Backup System
       </a>
@@ -369,7 +374,7 @@
 <p>Get5 makes no changes to the broadcasting part of the GOTV, but will automatically adjust the
 <a href="https://totalcsgo.com/command/mpmatchrestartdelay"><code>mp_match_restart_delay</code></a> when a map ends if GOTV is enabled to
 ensure that it won't be shorter than what is required for the GOTV broadcast to finish. Players will also not
-be <a href="../configuration/#get5_kick_when_no_match_loaded">kicked from the server</a> before this delay has passed.</p>
+be <a href="../configuration#get5_kick_when_no_match_loaded">kicked from the server</a> before this delay has passed.</p>
 <div class="admonition warning">
 <p class="admonition-title">Don't mess too much with the TV! <img alt="📺" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f4fa.svg" title=":tv:"/></p>
 <p>Changing <code>tv_delay</code> or <code>tv_enable</code> in <code>warmup.cfg</code>, <code>live.cfg</code> etc. is going to cause problems with your demos.
@@ -383,11 +388,11 @@ and off with Get5. Note that setting <code>tv_enable 1</code> won't allow people
 </div>
 <h2 id="demos">Recording Demos</h2>
 <p>Get5 can be configured to automatically record matches. This is enabled by default based on the state
-of <a href="../configuration/#get5_demo_name_format"><code>get5_demo_name_format</code></a> and can be disabled by setting that parameter to
+of <a href="../configuration#get5_demo_name_format"><code>get5_demo_name_format</code></a> and can be disabled by setting that parameter to
 an empty string.</p>
 <p>Demo recording starts once all teams have readied up and ends following a map result. When a demo file is written to
-disk, the <a href="../events_and_forwards/"><code>Get5_OnDemoFinished</code></a> forward is called shortly after. The filename can also be
-found in the map-section of the <a href="../stats_system/#keyvalue">KeyValue stats system</a>.</p>
+disk, the <a href="../events_and_forwards"><code>Get5_OnDemoFinished</code></a> forward is called shortly after. The filename can also be
+found in the map-section of the <a href="../stats_system#keyvalue">KeyValue stats system</a>.</p>
 <div class="admonition info">
 <p class="admonition-title">Broadcast delay on GOTV recording</p>
 <p>When the GOTV recording stops, the server will flush its framebuffer to disk. This may cause a lag spike or a
@@ -396,27 +401,27 @@ has been broadcast before it stops recording the demo.</p>
 </div>
 <h2 id="upload">Automatic Upload</h2>
 <p>In addition to recording demos, Get5 can also upload them to a URL when the recording stops. To enable this feature, you
-must have the <a href="../installation/#steamworks">SteamWorks</a> extension installed and define the URL with
-<a href="../configuration/#get5_demo_upload_url"><code>get5_demo_upload_url</code></a>. The HTTP body will be the raw demo file, and you can
+must have the <a href="../installation#steamworks">SteamWorks</a> extension installed and define the URL with
+<a href="../configuration#get5_demo_upload_url"><code>get5_demo_upload_url</code></a>. The HTTP body will be the raw demo file, and you can
 read the <a href="#headers">headers</a> for file metadata.</p>
 <h3 id="headers">Headers</h3>
 <p>Get5 will add these HTTP headers to its demo upload request:</p>
 <ol>
 <li><code>Get5-DemoName</code> is the name of the file as defined
-   by <a href="../configuration/#get5_demo_name_format"><code>get5_demo_name_format</code></a>,
+   by <a href="../configuration#get5_demo_name_format"><code>get5_demo_name_format</code></a>,
    i.e. <code>2022-09-11_20-49-49_1564_map1_de_vertigo.dem</code>.</li>
 <li><code>Get5-MapNumber</code> is the zero-indexed map number in the series.</li>
-<li><code>Get5-MatchId</code> <strong>if</strong> the <a href="../match_schema/#schema">match ID</a> is not an empty string.</li>
-<li><code>Get5-ServerId</code> <strong>if</strong> <a href="../configuration/#get5_server_id"><code>get5_server_id</code></a> is set to a positive integer.</li>
+<li><code>Get5-MatchId</code> <strong>if</strong> the <a href="../match_schema#schema">match ID</a> is not an empty string.</li>
+<li><code>Get5-ServerId</code> <strong>if</strong> <a href="../configuration#get5_server_id"><code>get5_server_id</code></a> is set to a positive integer.</li>
 </ol>
 <h4 id="authorization">Authorization</h4>
 <p>If you wish to authenticate your upload request, you can define both
-<a href="../configuration/#get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></a> and
-<a href="../configuration/#get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></a> as a header key-value pair which
+<a href="../configuration#get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></a> and
+<a href="../configuration#get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></a> as a header key-value pair which
 Get5 will add to the request.</p>
 <h3 id="cleanup">Cleanup</h3>
-<p>If you set <a href="../configuration/#get5_demo_delete_after_upload"><code>get5_demo_delete_after_upload</code></a>,
-the <a href="../configuration/#get5_demo_name_format">demo file</a> will be removed from the game server after successful upload.</p>
+<p>If you set <a href="../configuration#get5_demo_delete_after_upload"><code>get5_demo_delete_after_upload</code></a>,
+the <a href="../configuration#get5_demo_name_format">demo file</a> will be removed from the game server after successful upload.</p>
 <h3 id="example">Example</h3>
 <p>This is an example of how a <a href="https://nodejs.org/en/">Node.js</a> web server using <a href="https://expressjs.com/">Express</a> might
 read the demo upload request sent by Get5.</p>

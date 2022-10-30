@@ -390,6 +390,11 @@
       </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../surrender-forfeit/">
+        Surrender &amp; Forfeit
+      </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../backup/">
         Backup System
       </a>
@@ -700,7 +705,7 @@ command. (For example: <code>sm_ready</code> in console is equivalent to <code>!
 </dl>
 <h4 id="pause"><code>!pause</code> or <code>!tac</code></h4>
 <dl>
-<dd>Requests a <a href="../pausing/#tactical">tactical pause</a>.</dd>
+<dd>Requests a <a href="../pausing#tactical">tactical pause</a>.</dd>
 </dl>
 <h4 id="unpause"><code>!unpause</code></h4>
 <dl>
@@ -708,11 +713,11 @@ command. (For example: <code>sm_ready</code> in console is equivalent to <code>!
 </dl>
 <h4 id="tech"><code>!tech</code></h4>
 <dl>
-<dd>Requests a <a href="../pausing/#technical">technical pause</a>.</dd>
+<dd>Requests a <a href="../pausing#technical">technical pause</a>.</dd>
 </dl>
 <h4 id="coach"><code>!coach</code></h4>
 <dl>
-<dd>Requests to become a <a href="../coaching/">coach</a> for your team. If already coaching, this will move you back as a player
+<dd>Requests to become a <a href="../coaching">coach</a> for your team. If already coaching, this will move you back as a player
 if possible. Can only be used during warmup.</dd>
 </dl>
 <h4 id="stay"><code>!stay</code></h4>
@@ -726,14 +731,14 @@ if possible. Can only be used during warmup.</dd>
 <h4 id="stop"><code>!stop</code></h4>
 <dl>
 <dd>Asks to reload the last match backup file, i.e. restart the current round. The opposing team must confirm before the
-round ends. Only works if the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a>
-and <a href="../configuration/#get5_stop_command_enabled">get5_stop_command_enabled</a> is set to <code>1</code>.</dd>
+round ends. Only works if the <a href="../configuration#get5_backup_system_enabled">backup system is enabled</a>
+and <a href="../configuration#get5_stop_command_enabled">get5_stop_command_enabled</a> is set to <code>1</code>.</dd>
 </dl>
 <h4 id="forceready"><code>!forceready</code></h4>
 <dl>
 <dd>Force-readies your team, marking all players on your team as ready. This requires that your team has at
-least <a href="../match_schema/#schema"><code>min_players_to_ready</code></a> number of players. Access to this command can be disabled
-with <a href="../configuration/#get5_allow_force_ready"><code>get5_allow_force_ready</code></a>.</dd>
+least <a href="../match_schema#schema"><code>min_players_to_ready</code></a> number of players. Access to this command can be disabled
+with <a href="../configuration#get5_allow_force_ready"><code>get5_allow_force_ready</code></a>.</dd>
 </dl>
 <h4 id="ringer"><code>!ringer &lt;target&gt;</code></h4>
 <dl>
@@ -745,28 +750,23 @@ with <a href="../configuration/#get5_allow_force_ready"><code>get5_allow_force_r
 </dl>
 <h4 id="surrender"><code>!surrender</code> or <code>!gg</code></h4>
 <dl>
-<dd>If the <a href="../configuration/#get5_surrender_enabled">surrender feature is enabled</a>, this initiates a vote to surrender
-the <strong>current map</strong>. After the first vote is cast,
-a <a href="../configuration/#get5_surrender_required_votes">minimum number of votes</a> must be cast be other team members
-within <a href="../configuration/#get5_surrender_time_limit">the defined time limit</a>. You can only vote to surrender if you
-are <a href="../configuration/#get5_surrender_minimum_round_deficit">sufficiently behind on points</a>.</dd>
+<dd>Initiates a vote to <a href="../surrender-forfeit#surrender">surrender the current map</a>.</dd>
 </dl>
 <h4 id="ffw"><code>!ffw</code></h4>
 <dl>
-<dd>If the <a href="../configuration/#get5_forfeit_enabled">forfeit feature is enabled</a>, this initiates a countdown to win the
-series by forfeit (forfeit-win) if the entire opposing team has left the server during the live phase of a map. The
-countdown is canceled if a player from the leaving team rejoins the server
-within <a href="../configuration/#get5_forfeit_countdown">the grace period</a>.</dd>
+<dd>Initiates a countdown to <a href="../surrender-forfeit#forfeit">win the series by forfeit</a> (forfeit-win) if the entire
+opposing team has left the server during the live phase of a map. The countdown is canceled if a player from the leaving
+team rejoins the server within <a href="../configuration#get5_forfeit_countdown">the grace period</a>.</dd>
 </dl>
 <h4 id="cancelffw"><code>!cancelffw</code></h4>
 <dl>
-<dd>If a <a href="../configuration/#get5_forfeit_countdown">timer to win by forfeit</a> was started after a team left the
+<dd>If a <a href="../configuration#get5_forfeit_countdown">timer to win by forfeit</a> was started after a team left the
 server, this stops that timer.</dd>
 </dl>
 <div class="admonition info">
 <p class="admonition-title">All aboard!</p>
 <p>The <a href="#ffw"><code>!ffw</code></a> and <a href="#cancelffw"><code>!cancelffw</code></a> commands can only be issued by a full team, which is evaluated via
-<a href="../match_schema/#schema"><code>players_per_team</code></a>. This prevents a player from reversing a team's decision to request or
+<a href="../match_schema#schema"><code>players_per_team</code></a>. This prevents a player from reversing a team's decision to request or
 cancel a forfeit win if the rest of the team left.</p>
 </div>
 <h4 id="get5"><code>!get5</code></h4>
@@ -785,9 +785,9 @@ file.</dd>
 <h4 id="get5_loadbackup"><code>get5_loadbackup &lt;filename&gt;</code></h4>
 <dl>
 <dd>Loads a match backup, relative to the <code>csgo</code> directory. Requires that
-the <a href="../configuration/#get5_backup_system_enabled">backup system is enabled</a>. If you
-define <a href="../configuration/#get5_backup_path"><code>get5_backup_path</code></a>, you must include the path in the filename. Note that
-loading a backup stops and restarts any ongoing <a href="../gotv/#demos">demo recordings</a>.</dd>
+the <a href="../configuration#get5_backup_system_enabled">backup system is enabled</a>. If you
+define <a href="../configuration#get5_backup_path"><code>get5_backup_path</code></a>, you must include the path in the filename. Note that
+loading a backup stops and restarts any ongoing <a href="../gotv#demos">demo recordings</a>.</dd>
 </dl>
 <h4 id="get5_last_backup_file"><code>get5_last_backup_file</code></h4>
 <dl>
@@ -814,7 +814,7 @@ should put all arguments inside quotation marks (<code>""</code>).</dd>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">SteamWorks required</p>
-<p>Loading remote matches requires the <a href="../installation/#steamworks">SteamWorks</a> extension.</p>
+<p>Loading remote matches requires the <a href="../installation#steamworks">SteamWorks</a> extension.</p>
 </div>
 <h4 id="get5_endmatch"><code>get5_endmatch [team1|team2]</code></h4>
 <dl>
@@ -824,13 +824,13 @@ to that team. Omitting the team argument sets no winner (tie).</dd>
 <h4 id="get5_creatematch"><code>get5_creatematch [map name] [matchid]</code></h4>
 <dl>
 <dd>Creates a BO1 match with the current players on the server. <code>map name</code> defaults to the current map and <code>matchid</code>
-defaults to <code>manual</code>. You should <strong>not</strong> provide a match ID if you use the <a href="../stats_system/#mysql">MySQL extension</a>.</dd>
+defaults to <code>manual</code>. You should <strong>not</strong> provide a match ID if you use the <a href="../stats_system#mysql">MySQL extension</a>.</dd>
 </dl>
 <h4 id="get5_scrim"><code>get5_scrim [opposing team name] [map name] [matchid]</code></h4>
 <dl>
-<dd>Creates a <a href="../getting_started/#scrims">scrim</a> on the current map. The opposing team name defaults to <code>Away</code>
+<dd>Creates a <a href="../getting_started#scrims">scrim</a> on the current map. The opposing team name defaults to <code>Away</code>
 and the map defaults to the current map. <code>matchid</code> defaults to <code>scrim</code>. You should <strong>not</strong> provide a match ID if
-you use the <a href="../stats_system/#mysql">MySQL extension</a>.</dd>
+you use the <a href="../stats_system#mysql">MySQL extension</a>.</dd>
 </dl>
 <h4 id="get5_addplayer"><code>get5_addplayer &lt;auth&gt; &lt;team1|team2|spec&gt; [name]</code></h4>
 <dl>
@@ -841,12 +841,12 @@ name.</dd>
 <dl>
 <dd>Adds a Steam ID to a team as a coach. The name parameter optionally locks the player's
 name. This requires that <a href="https://totalcsgo.com/command/svcoachingenabled"><code>sv_coaching_enabled</code></a> is enabled and cannot
-be used in <a href="../getting_started/#scrims">scrim mode</a>.</dd>
+be used in <a href="../getting_started#scrims">scrim mode</a>.</dd>
 </dl>
 <h4 id="get5_removeplayer"><code>get5_removeplayer &lt;auth&gt;</code></h4>
 <dl>
 <dd>Removes a steam ID from all teams (can be any format for the Steam ID). This also removes the player as
-a <a href="../coaching/">coach</a>. If <a href="../configuration/#get5_check_auths"><code>get5_check_auths</code></a> is set, the player will be removed
+a <a href="../coaching">coach</a>. If <a href="../configuration#get5_check_auths"><code>get5_check_auths</code></a> is set, the player will be removed
 from the server immediately.</dd>
 </dl>
 <h4 id="get5_addkickedplayer"><code>get5_addkickedplayer &lt;team1|team2|spec&gt; [name]</code></h4>
@@ -897,25 +897,25 @@ from the server immediately.</dd>
 <li>The version of Get5 you are currently running, along with that version's commit. <code>Example: "0.8.1-8ef7ffa3"</code></li>
 <li>The current state of the game. The definition lists them in the order they would typically occur.
    <br/><br/><strong><code>none</code></strong><br/>No Get5 configuration was loaded and Get5 will only interfere if
-   <a href="../configuration/#get5_autoload_config"><code>get5_autoload_config</code></a> is defined.
-   <br/><br/><strong><code>pre_veto</code></strong><br/>The game is in warmup, waiting for players to <a href="../commands/#ready"><code>!ready</code></a> for
-   <a href="../veto/">vetoing</a>.
-   <br/><br/><strong><code>veto</code></strong><br/>The game is in warmup with the <a href="../veto/">veto</a> phase currently ongoing.
-   <br/><br/><strong><code>warmup</code></strong><br/>The game is in warmup, waiting for players to <a href="../commands/#ready"><code>!ready</code></a> for either
+   <a href="../configuration#get5_autoload_config"><code>get5_autoload_config</code></a> is defined.
+   <br/><br/><strong><code>pre_veto</code></strong><br/>The game is in warmup, waiting for players to <a href="../commands#ready"><code>!ready</code></a> for
+   <a href="../veto">vetoing</a>.
+   <br/><br/><strong><code>veto</code></strong><br/>The game is in warmup with the <a href="../veto">veto</a> phase currently ongoing.
+   <br/><br/><strong><code>warmup</code></strong><br/>The game is in warmup, waiting for players to <a href="../commands#ready"><code>!ready</code></a> for either
    the knife-round or live.
    <br/><br/><strong><code>knife</code></strong><br/>The knife-round is ongoing.
    <br/><br/><strong><code>waiting_for_knife_decision</code></strong><br/>The knife-round has ended and a decision to
-   <a href="../commands/#stay"><code>!stay</code></a> or <a href="../commands/#swap"><code>!swap</code></a> is pending.
+   <a href="../commands#stay"><code>!stay</code></a> or <a href="../commands#swap"><code>!swap</code></a> is pending.
    <br/><br/><strong><code>going_live</code></strong><br/>The countdown to live has begun.
    <br/><br/><strong><code>live</code></strong><br/>The game is live.
-   <br/><br/><strong><code>pending_restore</code></strong><br/>A <a href="../backup/">backup</a> for a different map was loaded and the game is either
-   pending a map change or waiting for users to <a href="../commands/#ready"><code>!ready</code></a> to restore to a live round.
+   <br/><br/><strong><code>pending_restore</code></strong><br/>A <a href="../backup">backup</a> for a different map was loaded and the game is either
+   pending a map change or waiting for users to <a href="../commands#ready"><code>!ready</code></a> to restore to a live round.
    <br/><br/><strong><code>post_game</code></strong><br/>The map has ended and the countdown to the next map is ongoing. This stage will only
    occur in multi-map series, as single-map matches end immediately.</li>
-<li>Whether the game is currently <a href="../pausing/">paused</a>.</li>
+<li>Whether the game is currently <a href="../pausing">paused</a>.</li>
 <li>The match configuration file currently loaded. <code>Example: "addons/sourcemod/configs/get5/match_config.json"</code>.</li>
 <li>The current match ID. Empty string if not defined or <code>scrim</code> or <code>manual</code> if using
-   <a href="../commands/#get5_scrim"><code>get5_scrim</code></a> or <a href="../commands/#get5_creatematch"><code>get5_creatematch</code></a>.</li>
+   <a href="../commands#get5_scrim"><code>get5_scrim</code></a> or <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>.</li>
 <li>The current map number, starting at <code>0</code>. You can use this to determine the current map by looking at the <code>maps</code>
    array.</li>
 <li>The current round number, starting at <code>0</code>. <code>-1</code> if <code>gamestate</code> is not <code>live</code>.</li>
@@ -926,7 +926,7 @@ from the server immediately.</dd>
 <li>The current series score; the number of maps won.</li>
 <li>The number of rounds won on the current map.</li>
 <li>The number of currently connected players.</li>
-<li>Whether the team is <a href="../commands/#ready"><code>!ready</code></a>.</li>
+<li>Whether the team is <a href="../commands#ready"><code>!ready</code></a>.</li>
 <li>The side the team is currently on.</li>
 <li>The maps to be played in the series, i.e. <code>["de_dust2", "de_mirage", "de_nuke"]</code>. Maps are played in the order they
     appear in this array. <code>map_number</code> is the array index of the current map. <strong>Note:</strong> <code>maps</code> is only present if the
@@ -971,12 +971,12 @@ from the server immediately.</dd>
 <h4 id="get5_listbackups"><code>get5_listbackups [matchid]</code></h4>
 <dl>
 <dd>Lists backup files for the current match or a given match ID if provided. If you define
-<a href="../configuration/#get5_backup_path"><code>get5_backup_path</code></a>, it will only list backups found under that prefix.</dd>
+<a href="../configuration#get5_backup_path"><code>get5_backup_path</code></a>, it will only list backups found under that prefix.</dd>
 </dl>
 <h4 id="get5_ringer"><code>get5_ringer &lt;target&gt;</code></h4>
 <dl>
 <dd>Adds/removes a ringer to/from the home scrim team. <code>target</code> is the name of the player, their user ID or their Steam
-ID. Similar to <a href="../commands/#ringer"><code>!ringer</code></a> in chat. To target a user or Steam ID, prefix it with a <code>#</code>, i.e.
+ID. Similar to <a href="../commands#ringer"><code>!ringer</code></a> in chat. To target a user or Steam ID, prefix it with a <code>#</code>, i.e.
 <code>get5_ringer #43</code> to target user ID 43.
 See <a href="https://wiki.alliedmods.net/Admin_Commands_(SourceMod)#How_to_Target">this article</a> for details.</dd>
 </dl>
@@ -989,7 +989,7 @@ See <a href="https://wiki.alliedmods.net/Admin_Commands_(SourceMod)#How_to_Targe
 </div>
 <h4 id="get5_dumpstats"><code>get5_dumpstats [file]</code></h4>
 <dl>
-<dd>Dumps <a href="../stats_system/#keyvalue">player stats</a> to a file, relative to the <code>csgo</code> directory, defaulting
+<dd>Dumps <a href="../stats_system#keyvalue">player stats</a> to a file, relative to the <code>csgo</code> directory, defaulting
 to <code>get5_matchstats.cfg</code> if no file parameter is provided. If you provide a <code>.json</code> filename, the stats data will be
 output in JSON format.</dd>
 </dl>

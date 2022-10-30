@@ -671,6 +671,11 @@
       </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../surrender-forfeit/">
+        Surrender &amp; Forfeit
+      </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../backup/">
         Backup System
       </a>
@@ -1272,9 +1277,9 @@ also <a href="#config-files">point to other files</a> by editing the main config
 <div class="admonition danger">
 <p class="admonition-title">Prohibited options</p>
 <p>You should avoid these commands in your live, knife and warmup configuration files, as all of these are handled by
-Get5 automatically. Introducing restarts, warmup changes or <a href="../gotv/">GOTV</a> delay modifications can cause problems.
+Get5 automatically. Introducing restarts, warmup changes or <a href="../gotv">GOTV</a> delay modifications can cause problems.
 If you want to set your <code>tv_delay</code> or <code>tv_delay1</code>, do it in the <code>cvars</code> section of your
-<a href="../match_schema/">match configuration</a>.</p>
+<a href="../match_schema">match configuration</a>.</p>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>mp_do_warmup_period
 <a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>mp_restartgame
 <a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>mp_warmup_end
@@ -1295,7 +1300,7 @@ If you want to set your <code>tv_delay</code> or <code>tv_delay1</code>, do it i
 <h4 id="get5_server_id"><code>get5_server_id</code></h4>
 <dl>
 <dd>Integer that identifies your server. This is used in temporary and backup files to prevent collisions and added as a
-header to <a href="../gotv/#upload">demo uploads</a> and <a href="../events_and_forwards/#http">event requests</a>. You should set this if you
+header to <a href="../gotv#upload">demo uploads</a> and <a href="../events_and_forwards#http">event requests</a>. You should set this if you
 run multiple servers off the same storage, such as if using <a href="https://www.docker.com/">Docker</a>. This also defines
 the <a href="#tag-serverid"><code>{SERVERID}</code></a> substitution and the return value of the <code>Get5_GetServerID</code>
 native.<br/><strong><code>Default: 0</code></strong></dd>
@@ -1307,29 +1312,29 @@ a server instance on a host and ensures that no two instances run with the same 
 </div>
 <h4 id="get5_kick_immunity"><code>get5_kick_immunity</code></h4>
 <dl>
-<dd>Whether <a href="../installation/#administrators">admins</a> will be immune to kicks from
+<dd>Whether <a href="../installation#administrators">admins</a> will be immune to kicks from
 <a href="#get5_kick_when_no_match_loaded"><code>get5_kick_when_no_match_loaded</code></a>.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_kick_when_no_match_loaded"><code>get5_kick_when_no_match_loaded</code></h4>
 <dl>
 <dd>Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
-using <a href="../commands/#get5_endmatch"><code>get5_endmatch</code></a>.<br/><strong><code>Default: 0</code></strong></dd>
+using <a href="../commands#get5_endmatch"><code>get5_endmatch</code></a>.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_display_gotv_veto"><code>get5_display_gotv_veto</code></h4>
 <dl>
-<dd>Whether to wait for <a href="../veto/">map vetoes</a> to be broadcast to <a href="../gotv/">GOTV</a> before changing
+<dd>Whether to wait for <a href="../veto">map vetoes</a> to be broadcast to <a href="../gotv">GOTV</a> before changing
 map.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_check_auths"><code>get5_check_auths</code></h4>
 <dl>
 <dd>Whether the Steam IDs from the <code>players</code>, <code>coaches</code> and <code>spectators</code> sections of
-a <a href="../match_schema/#schema">match configuration</a> are used to force players onto teams. Anyone not defined will be
-removed from the game, or if in <a href="../getting_started/#scrims">scrim mode</a>, put on <code>team2</code>.<br/><strong><code>Default: 1</code></strong></dd>
+a <a href="../match_schema#schema">match configuration</a> are used to force players onto teams. Anyone not defined will be
+removed from the game, or if in <a href="../getting_started#scrims">scrim mode</a>, put on <code>team2</code>.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_print_update_notice"><code>get5_print_update_notice</code></h4>
 <dl>
 <dd>Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if
-<a href="../installation/#steamworks">SteamWorks</a> has been installed.<br/><strong><code>Default: 1</code></strong></dd>
+<a href="../installation#steamworks">SteamWorks</a> has been installed.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_pretty_print_json"><code>get5_pretty_print_json</code></h4>
 <dl>
@@ -1338,7 +1343,7 @@ removed from the game, or if in <a href="../getting_started/#scrims">scrim mode<
 </dl>
 <h4 id="get5_autoload_config"><code>get5_autoload_config</code></h4>
 <dl>
-<dd>A <a href="../match_schema/#schema">match configuration</a> file, relative to the <code>csgo</code> directory, to autoload when the server
+<dd>A <a href="../match_schema#schema">match configuration</a> file, relative to the <code>csgo</code> directory, to autoload when the server
 starts, when Get5 is reloaded or if no match is loaded when a player joins the server. Set to empty string to
 disable.<br/><strong><code>Default: ""</code></strong></dd>
 </dl>
@@ -1358,13 +1363,13 @@ only.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_auto_ready_active_players"><code>get5_auto_ready_active_players</code></h4>
 <dl>
-<dd>Whether to automatically mark players as ready if they kill anyone in the warmup or <a href="../veto/">veto</a>
+<dd>Whether to automatically mark players as ready if they kill anyone in the warmup or <a href="../veto">veto</a>
 phase.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_allow_force_ready"><code>get5_allow_force_ready</code></h4>
 <dl>
-<dd>Whether the <a href="../commands/#forceready"><code>!forceready</code></a> command is accessible to players. This does not
-affect the availability of <a href="../commands/#get5_forceready"><code>get5_forceready</code></a> to admins.<br/><strong><code>Default: 1</code></strong></dd>
+<dd>Whether the <a href="../commands#forceready"><code>!forceready</code></a> command is accessible to players. This does not
+affect the availability of <a href="../commands#get5_forceready"><code>get5_forceready</code></a> to admins.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_set_client_clan_tags"><code>get5_set_client_clan_tags</code></h4>
 <dl>
@@ -1377,18 +1382,18 @@ becomes ready in time, the series is ended in a tie.<br/><strong><code>Default: 
 </dl>
 <h4 id="get5_time_to_make_knife_decision"><code>get5_time_to_make_knife_decision</code></h4>
 <dl>
-<dd>Time (in seconds) a team has to make a <a href="../commands/#stay"><code>!stay</code></a> or <a href="../commands/#swap"><code>!swap</code></a>
+<dd>Time (in seconds) a team has to make a <a href="../commands#stay"><code>!stay</code></a> or <a href="../commands#swap"><code>!swap</code></a>
 decision after winning knife round. Cannot be set lower than 10 if non-zero. Set to zero to remove
 limit.<br/><strong><code>Default: 60</code></strong></dd>
 </dl>
 <h4 id="get5_veto_countdown"><code>get5_veto_countdown</code></h4>
 <dl>
-<dd>Time (in seconds) to countdown before the <a href="../veto/">veto</a> process commences. Set to zero to move to veto without a
+<dd>Time (in seconds) to countdown before the <a href="../veto">veto</a> process commences. Set to zero to move to veto without a
 countdown.<br/><strong><code>Default: 5</code></strong></dd>
 </dl>
 <h4 id="get5_veto_confirmation_time"><code>get5_veto_confirmation_time</code></h4>
 <dl>
-<dd>Time (in seconds) from presenting a <a href="../veto/">veto</a> menu to a selection being made, during which a confirmation will
+<dd>Time (in seconds) from presenting a <a href="../veto">veto</a> menu to a selection being made, during which a confirmation will
 be required. 0 to disable.<br/><strong><code>Default: 2.0</code></strong></dd>
 </dl>
 <h4 id="get5_print_damage"><code>get5_print_damage</code></h4>
@@ -1429,42 +1434,42 @@ messages.<br/><strong><code>Default: "{NORMAL}"</code></strong></dd>
 </dl>
 <h4 id="get5_max_pauses"><code>get5_max_pauses</code></h4>
 <dl>
-<dd>Number of <a href="../pausing/#tactical">tactical pauses</a> a team can use. Set to zero to remove limit.<br/><strong><code>Default: 0</code></strong></dd>
+<dd>Number of <a href="../pausing#tactical">tactical pauses</a> a team can use. Set to zero to remove limit.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_max_pause_time"><code>get5_max_pause_time</code></h4>
 <dl>
 <dd>Maximum number of seconds the game can spend under tactical pause for a team. When pauses are
 unlimited and when <a href="#get5_fixed_pause_time"><code>get5_fixed_pause_time</code></a> is zero, both teams
-must call <a href="../commands/#unpause"><code>!unpause</code></a> to continue the match. This parameter is ignored
+must call <a href="../commands#unpause"><code>!unpause</code></a> to continue the match. This parameter is ignored
 if <a href="#get5_fixed_pause_time"><code>get5_fixed_pause_time</code></a> is set to a non-zero
 value. Set to zero to remove limit.<br/><strong><code>Default: 300</code></strong></dd>
 </dl>
 <h4 id="get5_fixed_pause_time"><code>get5_fixed_pause_time</code></h4>
 <dl>
-<dd>If non-zero, the fixed length in seconds of all <a href="../pausing/#tactical">tactical pauses</a>. This takes precedence over
+<dd>If non-zero, the fixed length in seconds of all <a href="../pausing#tactical">tactical pauses</a>. This takes precedence over
 the <a href="#get5_max_pause_time"><code>get5_max_pause_time</code></a> parameter, which will be ignored. Cannot be set lower than 15
 seconds if non-zero.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_allow_technical_pause"><code>get5_allow_technical_pause</code></h4>
 <dl>
-<dd>Whether <a href="../pausing/#technical">technical pauses</a> are available to clients or not. Note that this depends
+<dd>Whether <a href="../pausing#technical">technical pauses</a> are available to clients or not. Note that this depends
 on <a href="#get5_pausing_enabled"><code>get5_pausing_enabled</code></a> being enabled as well.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_max_tech_pauses"><code>get5_max_tech_pauses</code></h4>
 <dl>
-<dd>Number of <a href="../pausing/#technical">technical pauses</a> a team is allowed to have. Set to zero to remove
+<dd>Number of <a href="../pausing#technical">technical pauses</a> a team is allowed to have. Set to zero to remove
 limit.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_tech_pause_time"><code>get5_tech_pause_time</code></h4>
 <dl>
-<dd>If non-zero, number of seconds before any team can call <a href="../commands/#unpause"><code>!unpause</code></a> to end
-a <a href="../pausing/#technical">technical pause</a> without confirmation from the pausing team. Set to zero to remove
+<dd>If non-zero, number of seconds before any team can call <a href="../commands#unpause"><code>!unpause</code></a> to end
+a <a href="../pausing#technical">technical pause</a> without confirmation from the pausing team. Set to zero to remove
 limit.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_auto_tech_pause_missing_players"><code>get5_auto_tech_pause_missing_players</code></h4>
 <dl>
 <dd>The number of players that must disconnect from a team during the live phase of a game in order to trigger an
-automatic <a href="../pausing/#technical">technical pause</a>. <a href="../match_schema#schema"><code>players_per_team</code></a> is used to determine
+automatic <a href="../pausing#technical">technical pause</a>. <a href="../match_schema#schema"><code>players_per_team</code></a> is used to determine
 what is considered a full team, so if these parameters are equal (typically 5), a pause is triggered if an entire team
 leaves. Set to zero to disable.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
@@ -1485,86 +1490,57 @@ non-zero value to prevent abuse.</p>
 </div>
 <h4 id="get5_pause_on_veto"><code>get5_pause_on_veto</code></h4>
 <dl>
-<dd>Whether to freeze players during the <a href="../veto/">veto</a> phase.<br/><strong><code>Default: 0</code></strong></dd>
+<dd>Whether to freeze players during the <a href="../veto">veto</a> phase.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_reset_pauses_each_half"><code>get5_reset_pauses_each_half</code></h4>
 <dl>
-<dd>Whether <a href="../pausing/#tactical">tactical pause</a> limits (time used and count) are reset each halftime period.
-<a href="../pausing/#technical">Technical pauses</a> are not reset.<br/><strong><code>Default: 1</code></strong></dd>
+<dd>Whether <a href="../pausing#tactical">tactical pause</a> limits (time used and count) are reset each halftime period.
+<a href="../pausing#technical">Technical pauses</a> are not reset.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h2 id="surrender-forfeit">Surrender &amp; Forfeit</h2>
-<div class="admonition info">
-<p class="admonition-title">Surrender vs. Forfeit</p>
-<p>While forfeit and surrender may sound the same, they are in fact not.</p>
-<p>The surrender feature allows for a team to call <a href="../commands/#surrender"><code>!surrender</code></a> if they do not want to
-continue playing.</p>
-<p>The forfeit feature allows for the use of the <a href="../commands/#ffw"><code>!ffw</code></a> command in case <strong>one</strong> team leaves <em>or</em>
-triggers an automatic tie if <strong>both</strong> teams leave.</p>
-<p>Note that a surrender applies only to the current map, while a forfeit applies to the entire series.</p>
-</div>
 <h4 id="get5_surrender_enabled"><code>get5_surrender_enabled</code></h4>
 <dl>
-<dd>Whether the <a href="../commands/#surrender"><code>!surrender</code></a> command is available.<br/><strong><code>Default: 0</code></strong></dd>
+<dd>Whether the <a href="../commands#surrender"><code>!surrender</code></a> command is available.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_surrender_minimum_round_deficit"><code>get5_surrender_minimum_round_deficit</code></h4>
 <dl>
-<dd>The minimum number of rounds a team must be behind in order to initiate a vote to surrender. This cannot be set
-lower than <code>1</code>.<br/><strong><code>Default: 8</code></strong></dd>
+<dd>The minimum number of rounds a team must be behind in order to initiate a vote
+to <a href="../surrender-forfeit#surrender">surrender</a>. This cannot be set lower than <code>1</code>.<br/><strong><code>Default: 8</code></strong></dd>
 </dl>
 <h4 id="get5_surrender_required_votes"><code>get5_surrender_required_votes</code></h4>
 <dl>
-<dd>The number of votes required to surrender as a team. If set to <code>1</code> or below, any attempt to surrender will
-immediately succeed.<br/><strong><code>Default: 3</code></strong></dd>
+<dd>The number of votes required to <a href="../surrender-forfeit#surrender">surrender</a> as a team. If set to <code>1</code> or below, any
+attempt to surrender will immediately succeed.<br/><strong><code>Default: 3</code></strong></dd>
 </dl>
 <h4 id="get5_surrender_time_limit"><code>get5_surrender_time_limit</code></h4>
 <dl>
-<dd>The number of seconds a team has to vote to surrender after the first vote is cast. This cannot be set lower
-than <code>10</code>.<br/><strong><code>Default: 15</code></strong></dd>
+<dd>The number of seconds a team has to vote to <a href="../surrender-forfeit#surrender">surrender</a> after the first vote is
+cast. This cannot be set lower than <code>10</code>.<br/><strong><code>Default: 15</code></strong></dd>
 </dl>
 <h4 id="get5_surrender_cooldown"><code>get5_surrender_cooldown</code></h4>
 <dl>
-<dd>The minimum number of seconds a team must wait before they can initiate a surrender vote following a failed
-vote. Set to zero to disable.<br/><strong><code>Default: 60</code></strong></dd>
+<dd>The minimum number of seconds a team must wait before they can initiate
+a <a href="../surrender-forfeit#surrender">surrender</a> vote following a failed vote. Set to zero to disable.<br/><strong><code>Default: 60</code></strong></dd>
 </dl>
 <h4 id="get5_forfeit_enabled"><code>get5_forfeit_enabled</code></h4>
 <dl>
-<dd>Whether the <a href="../commands/#ffw"><code>!ffw</code></a> command is available if one team leaves and whether an automatic forfeit is
-triggered if both teams leave.<br/><strong><code>Default: 1</code></strong></dd>
+<dd>Whether the <a href="../commands#ffw"><code>!ffw</code></a> command is available if one team leaves and whether
+an <a href="../surrender-forfeit#forfeit">automatic forfeit</a> is triggered if both teams leave.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
-<div class="admonition tip">
-<p class="admonition-title">Automatic technical pause</p>
-<p>If you want to trigger a technical pause if a team leaves the server,
-see <a href="#get5_auto_tech_pause_missing_players"><code>get5_auto_tech_pause_missing_players</code></a>.</p>
-</div>
 <h4 id="get5_forfeit_countdown"><code>get5_forfeit_countdown</code></h4>
 <dl>
-<dd>If a full team disconnects during the live phase and <a href="#get5_forfeit_enabled"><code>get5_forfeit_enabled</code></a> is non-zero,
-the <a href="../commands/#ffw"><code>!ffw</code></a> command becomes available to the opposing team, and this then determines the number of
-seconds a player from the disconnecting team has to rejoin the server before the opposing team wins. If both teams
-disconnect (during live <strong>or</strong> knife), this determines how long at least one player from <strong>both</strong> teams have to rejoin
-the server before the series is ended in a tie. This value cannot be set lower than 30.<br/><strong><code>Default: 180</code></strong></dd>
+<dd>Sets the number of seconds players have to rejoin the server once a <a href="../surrender-forfeit#forfeit">forfeit</a> timer
+has started. This value cannot be set lower than 30.<br/><strong><code>Default: 180</code></strong></dd>
 </dl>
-<div class="admonition info">
-<p class="admonition-title">No forfeit during ready-phases</p>
-<p>The forfeit system is not available during warmup/veto or when waiting for a backup restore. If you want the
-warmup/veto-phase to be limited in duration, set <a href="#get5_time_to_start"><code>get5_time_to_start</code></a> to a non-zero value.</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Empty server ends the series</p>
-<p>If there are no players at all (no spectators, coaches or players) and someone rejoins the server during the live
-phase, a pending forfeit timer may immediately trigger a series end, as the game may restart, which causes a loss
-of game state. If this happens, you must <a href="../commands/#get5_loadbackup">restore the game state from a backup</a> to
-continue.</p>
-</div>
 <h2 id="backup-system">Backup System</h2>
 <h4 id="get5_backup_system_enabled"><code>get5_backup_system_enabled</code></h4>
 <dl>
-<dd>Whether the <a href="../backup/">backup system</a> is enabled. This is required for the use of the <a href="../commands/#stop"><code>!stop</code></a>
-command as well as the <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a> command.<br/><strong><code>Default: 1</code></strong></dd>
+<dd>Whether the <a href="../backup">backup system</a> is enabled. This is required for the use of the <a href="../commands#stop"><code>!stop</code></a>
+command as well as the <a href="../commands#get5_loadbackup"><code>get5_loadbackup</code></a> command.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_stop_command_enabled"><code>get5_stop_command_enabled</code></h4>
 <dl>
-<dd>Whether the <a href="../commands/#stop"><code>!stop</code></a> command is enabled.<br/><strong><code>Default: 1</code></strong></dd>
+<dd>Whether the <a href="../commands#stop"><code>!stop</code></a> command is enabled.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_max_backup_age"><code>get5_max_backup_age</code></h4>
 <dl>
@@ -1574,7 +1550,7 @@ disable.<br/><strong><code>Default: 160000</code></strong></dd>
 </dl>
 <h4 id="get5_backup_path"><code>get5_backup_path</code></h4>
 <dl>
-<dd>The folder of saved <a href="../commands/#get5_loadbackup">backup files</a>, relative to the <code>csgo</code> directory. You <strong>can</strong> use
+<dd>The folder of saved <a href="../commands#get5_loadbackup">backup files</a>, relative to the <code>csgo</code> directory. You <strong>can</strong> use
 the <a href="#tag-matchid"><code>{MATCHID}</code></a> variable, i.e. <code>backups/{MATCHID}/</code>. Required folders will be created if they do not
 exist.<br/><strong><code>Default: ""</code></strong></dd>
 </dl>
@@ -1662,9 +1638,9 @@ assists and flash assists.</p>
 <h2 id="demos">Demos</h2>
 <h4 id="get5_demo_upload_url"><code>get5_demo_upload_url</code></h4>
 <dl>
-<dd>If defined, Get5 will <a href="../gotv/#upload">automatically send a recorded demo</a> to this URL in an HTTP <code>POST</code> request
+<dd>If defined, Get5 will <a href="../gotv#upload">automatically send a recorded demo</a> to this URL in an HTTP <code>POST</code> request
 once a recording stops. If no protocol is provided, <code>http://</code> will be prepended to this value. Requires the
-<a href="../installation/#steamworks">SteamWorks</a> extension.<br/><strong><code>Default: ""</code></strong></dd>
+<a href="../installation#steamworks">SteamWorks</a> extension.<br/><strong><code>Default: ""</code></strong></dd>
 </dl>
 <h4 id="get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></h4>
 <dl>
@@ -1679,7 +1655,7 @@ value will be used for your <a href="#get5_demo_upload_url">demo upload HTTP req
 <h4 id="get5_demo_delete_after_upload"><code>get5_demo_delete_after_upload</code></h4>
 <dl>
 <dd>Whether to delete the demo file from the game server after
-successfully <a href="../gotv/#upload">uploading it to a web server</a>.<br/><strong><code>Default: 0</code></strong></dd>
+successfully <a href="../gotv#upload">uploading it to a web server</a>.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_demo_path"><code>get5_demo_path</code></h4>
 <dl>
@@ -1690,7 +1666,7 @@ must <strong>end with a slash</strong>. Required folders will be created if they
 </dl>
 <h4 id="get5_demo_name_format"><code>get5_demo_name_format</code></h4>
 <dl>
-<dd>Format to use for demo files when <a href="../gotv/#demos">recording matches</a>. Do not include a file extension (<code>.dem</code> is
+<dd>Format to use for demo files when <a href="../gotv#demos">recording matches</a>. Do not include a file extension (<code>.dem</code> is
 added automatically). If you do not include the <a href="#tag-time"><code>{TIME}</code></a> tag, you will have problems with duplicate files
 if restoring a game from a backup. Note that the <a href="#tag-mapnumber"><code>{MAPNUMBER}</code></a>variable is not zero-indexed. Set to
 empty string to disable recording demos.<br/><strong><code>Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"</code></strong></dd>
@@ -1698,18 +1674,18 @@ empty string to disable recording demos.<br/><strong><code>Default: "{TIME}_{MAT
 <h2 id="events">Events</h2>
 <h4 id="get5_remote_log_url"><code>get5_remote_log_url</code></h4>
 <dl>
-<dd>The URL to send all <a href="../events_and_forwards/#http">events</a> to. Requires the <a href="../installation/#steamworks">SteamWorks</a>
+<dd>The URL to send all <a href="../events_and_forwards#http">events</a> to. Requires the <a href="../installation#steamworks">SteamWorks</a>
 extension. Set to empty string to disable.<br/><strong><code>Default: ""</code></strong></dd>
 </dl>
 <h4 id="get5_remote_log_header_key"><code>get5_remote_log_header_key</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_remote_log_header_value"><code>get5_remote_log_header_value</code></a> are defined, this
-header name and value will be used for your <a href="../events_and_forwards/#http">event HTTP requests</a>.<br/><strong><code>Default: "Authorization"</code></strong></dd>
+header name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.<br/><strong><code>Default: "Authorization"</code></strong></dd>
 </dl>
 <h4 id="get5_remote_log_header_value"><code>get5_remote_log_header_value</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_remote_log_header_key"><code>get5_remote_log_header_key</code></a> are defined, this header
-name and value will be used for your <a href="../events_and_forwards/#http">event HTTP requests</a>.<br/><strong><code>Default: ""</code></strong></dd>
+name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.<br/><strong><code>Default: ""</code></strong></dd>
 </dl>
 <h2 id="substitution-variables">Substitution Variables</h2>
 <h3 id="state-substitutes">Match/State Substitutes</h3>

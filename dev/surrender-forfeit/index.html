@@ -5,10 +5,10 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<link href="https://splewis.github.io/get5/dev/veto/" rel="canonical"/>
+<link href="https://splewis.github.io/get5/dev/surrender-forfeit/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.4.1, mkdocs-material-8.5.7" name="generator"/>
-<title>Map Veto - Get5 Documentation</title>
+<title>Surrender &amp; Forfeit - Get5 Documentation</title>
 <link href="../assets/stylesheets/main.20d9efc8.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -23,7 +23,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#map-veto">
+<a class="md-skip" href="#surrender-forfeit">
           Skip to content
         </a>
 </div>
@@ -49,7 +49,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Map Veto
+              Surrender &amp; Forfeit
             
           </span>
 </div>
@@ -153,57 +153,10 @@
         Match Schema
       </a>
 </li>
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
-          Map Veto
-          <span class="md-nav__icon md-icon"></span>
-</label>
-<a class="md-nav__link md-nav__link--active" href="./">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../veto/">
         Map Veto
       </a>
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#captains">
-    Team Captains
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#types">
-    Veto Types
-  </a>
-<nav aria-label="Veto Types" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo1">
-    Single map (Bo1)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo2">
-    Double (Bo2)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo3">
-    Best-of-three (Bo3)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo5">
-    Best-of-five (Bo5)
-  </a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../commands/">
@@ -220,10 +173,52 @@
         Pausing
       </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../surrender-forfeit/">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Surrender &amp; Forfeit
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
         Surrender &amp; Forfeit
       </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#surrender">
+    Surrender
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#forfeit">
+    Forfeit
+  </a>
+<nav aria-label="Forfeit" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#one-team">
+    If one team leaves
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#both-teams">
+    If both teams leave
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#auto-tech-pause">
+    Automatic Technical Pause
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../backup/">
@@ -308,38 +303,33 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#captains">
-    Team Captains
+<a class="md-nav__link" href="#surrender">
+    Surrender
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#types">
-    Veto Types
+<a class="md-nav__link" href="#forfeit">
+    Forfeit
   </a>
-<nav aria-label="Veto Types" class="md-nav">
+<nav aria-label="Forfeit" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bo1">
-    Single map (Bo1)
+<a class="md-nav__link" href="#one-team">
+    If one team leaves
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bo2">
-    Double (Bo2)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo3">
-    Best-of-three (Bo3)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo5">
-    Best-of-five (Bo5)
+<a class="md-nav__link" href="#both-teams">
+    If both teams leave
   </a>
 </li>
 </ul>
 </nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#auto-tech-pause">
+    Automatic Technical Pause
+  </a>
 </li>
 </ul>
 </nav>
@@ -348,50 +338,63 @@
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<a class="md-content__button md-icon" href="https://github.com/splewis/get5/blob/master/documentation/docs/veto.md" title="Edit this page">
+<a class="md-content__button md-icon" href="https://github.com/splewis/get5/blob/master/documentation/docs/surrender-forfeit.md" title="Edit this page">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
 </a>
-<h1 id="map-veto"><span class="twemoji"><svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M367.2 412.5 99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192 41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192-41.5 0-79.9 13.1-111.2 35.5l267.7 267.7zM512 256c0 141.4-114.6 256-256 256S0 397.4 0 256 114.6 0 256 0s256 114.6 256 256z"></path></svg></span> Map Veto</h1>
-<p>If your match is configured to include a veto-phase (setting <a href="../match_schema#schema"><code>skip_veto</code></a> to <code>false</code>), each
-team's captain will ban or pick maps to play using in-game menus. The veto system behaves slightly differently depending
-on the number of maps to play (Bo3, Bo5 etc.).</p>
-<div class="admonition warning">
-<p class="admonition-title">Lucky number seven</p>
-<p>The veto-system assumes the <a href="../match_schema#schema"><code>maplist</code></a> has 7 maps, similarly to the competitive map pool,
-and it may not function properly if this is not the case. We also assume that <a href="../match_schema#schema"><code>side_type</code></a>
-is set to <code>standard</code> when describing side choices.</p>
+<h1 id="surrender-forfeit"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14.4 6 14 4H5v17h2v-7h5.6l.4 2h7V6h-5.6Z"></path></svg></span> Surrender &amp; Forfeit</h1>
+<p>Two different types of "giving up" exist in Get5; surrender and forfeit. While they may sound the same, they are in fact
+not.</p>
+<h2 id="surrender">Surrender</h2>
+<p>The surrender feature allows a player to use the <a href="../commands#surrender"><code>!surrender</code></a> command to initiate a vote to
+surrender the current map (and not the entire series). After the first vote is cast,
+a <a href="../configuration#get5_surrender_required_votes">minimum number of votes</a> must be cast by other team members
+within <a href="../configuration#get5_surrender_time_limit">the defined time limit</a>. A team can only vote to surrender if they
+are <a href="../configuration#get5_surrender_minimum_round_deficit">sufficiently behind on points</a>.</p>
+<p>You can only surrender during the live phase; not during warmup, <a href="../veto">veto</a> or the knife round.</p>
+<p>The surrender feature is <a href="../configuration#get5_surrender_enabled">disabled by default</a>.</p>
+<h2 id="forfeit">Forfeit</h2>
+<h4 id="one-team">If one team leaves</h4>
+<p>If a full team disconnects during the live phase of a match, and nobody on the other team has disconnected,
+the <a href="../commands#ffw"><code>!ffw</code></a> command becomes available to the remaining team. Once the command is issued, at least one
+player from the leaving team must connect within the defined <a href="../configuration#get5_forfeit_countdown">time window</a>, or
+the remaining team wins the series.</p>
+<p>The request to win by forfeit can be canceled with <a href="../commands#cancelffw"><code>!cancelffw</code></a> by the issuing team, as long as
+the team is full. Whether a team is considered full is determined by the value
+of <a href="../match_schema#schema"><code>players_per_team</code></a>.</p>
+<h4 id="both-teams">If both teams leave</h4>
+<p>If both teams disconnect (during the live <strong>or</strong> knife phase), at least one player from <strong>both</strong> teams must rejoin
+the server before <a href="../configuration#get5_forfeit_countdown">the time runs out</a>, or the series is ended in a tie. Unlike
+the case where one team leaves, this timer is started automatically under the assumption that nobody is left on the
+server to do it.</p>
+<div class="admonition info">
+<p class="admonition-title">Not full team = empty team</p>
+<p>If one team has left and the other team has partially left, Get5 will consider it to be equal to both teams
+leaving, under the assumption that players are leaving at the same time.</p>
 </div>
-<h2 id="captains">Team Captains</h2>
-<p>Get5 will give veto menus to a player on each team. The player it gives it to will be the first player listed
-in the <a href="../match_schema#schema"><code>players</code></a> section of a match configuration, or a random player on the away-team
-when in <a href="../getting_started#scrims">scrim mode</a>.</p>
-<p><code>team1</code> vetoes first by default, but you can change this in the match configuration via
-the <a href="../match_schema#schema"><code>veto_first</code></a> parameter, which also supports <code>random</code>.</p>
-<h2 id="types">Veto Types</h2>
-<h3 id="bo1">Single map (Bo1)</h3>
-<p>Each team alternates vetoing, vetoing 3 maps each. The last map standing will be played. A knife round will be used to
-decide starting sides.</p>
-<p><code>ban/ban/ban/ban/ban/ban/last map played</code></p>
-<h3 id="bo2">Double (Bo2)</h3>
-<p>Each team alternates vetoing, vetoing 2 maps each. After those vetoes, each team picks a map, letting the other team
-choose a starting side on it. The last map standing will <strong>not</strong> be played.</p>
-<p><code>ban/ban/ban/ban/pick/pick/last map unused</code></p>
-<h3 id="bo3">Best-of-three (Bo3)</h3>
-<p>Each team vetoes 1 map, then each team picks 1 map. The team that did not pick a map gets the side choice on it. After
-this, each team will veto another map until only 1 map is left. The last map standing will be the 3rd map in the series,
-and a knife round will be used to decide starting sides.</p>
-<p><code>ban/ban/pick/pick/ban/ban/last map is 3rd map in series</code></p>
-<h3 id="bo5">Best-of-five (Bo5)</h3>
-<p>Each team vetoes 1 map, then alternate picking the maps. When a team picks a map, the other team will get the side
-choice. The last map standing will be the 5th map in the series and a knife round will be used to decide starting sides.</p>
-<p><code>ban/ban/pick/pick/pick/pick/last map is 5th map in series</code></p>
+<p>The forfeit system is disabled during the warmup and <a href="../veto">veto</a> phases. You can instead set a restriction on
+the <a href="../configuration#get5_time_to_start">time a team has to become ready</a>.</p>
+<p>The forfeit feature is <a href="../configuration#get5_forfeit_enabled">enabled by default</a>.</p>
+<div class="admonition danger">
+<p class="admonition-title">Empty server ends the series</p>
+<p>If there are no players at all (no spectators, coaches or players) and someone rejoins the server during the live
+phase, a pending forfeit timer may immediately trigger a series end, as the game may restart, which causes a loss
+of game state. If this happens, you must <a href="../commands#get5_loadbackup">restore the game state from a backup</a> to
+continue.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Coaches don't count</p>
+<p><a href="../coaching">Coaches</a> are not considered players in a forfeit context.</p>
+</div>
+<h2 id="auto-tech-pause">Automatic Technical Pause</h2>
+<p>If you want to trigger a technical pause if a team leaves the server,
+see <a href="../configuration#get5_auto_tech_pause_missing_players"><code>get5_auto_tech_pause_missing_players</code></a>.</p>
 </article>
 </div>
 </div>
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Match Schema" class="md-footer__link md-footer__link--prev" href="../match_schema/" rel="prev">
+<a aria-label="Previous: Pausing" class="md-footer__link md-footer__link--prev" href="../pausing/" rel="prev">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -400,17 +403,17 @@ choice. The last map standing will be the 5th map in the series and a knife roun
 <span class="md-footer__direction">
                 Previous
               </span>
-              Match Schema
+              Pausing
             </div>
 </div>
 </a>
-<a aria-label="Next: Commands" class="md-footer__link md-footer__link--next" href="../commands/" rel="next">
+<a aria-label="Next: Backup System" class="md-footer__link md-footer__link--next" href="../backup/" rel="next">
 <div class="md-footer__title">
 <div class="md-ellipsis">
 <span class="md-footer__direction">
                 Next
               </span>
-              Commands
+              Backup System
             </div>
 </div>
 <div class="md-footer__button md-icon">

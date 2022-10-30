@@ -5,7 +5,7 @@
 Get5 makes no changes to the broadcasting part of the GOTV, but will automatically adjust the
 [`mp_match_restart_delay`](https://totalcsgo.com/command/mpmatchrestartdelay) when a map ends if GOTV is enabled to
 ensure that it won't be shorter than what is required for the GOTV broadcast to finish. Players will also not
-be [kicked from the server](../configuration/#get5_kick_when_no_match_loaded) before this delay has passed.
+be [kicked from the server](../configuration#get5_kick_when_no_match_loaded) before this delay has passed.
 
 !!! warning "Don't mess too much with the TV! :tv:"
 
@@ -22,12 +22,12 @@ be [kicked from the server](../configuration/#get5_kick_when_no_match_loaded) be
 ## Recording Demos {: #demos }
 
 Get5 can be configured to automatically record matches. This is enabled by default based on the state
-of [`get5_demo_name_format`](../configuration/#get5_demo_name_format) and can be disabled by setting that parameter to
+of [`get5_demo_name_format`](../configuration#get5_demo_name_format) and can be disabled by setting that parameter to
 an empty string.
 
 Demo recording starts once all teams have readied up and ends following a map result. When a demo file is written to
-disk, the [`Get5_OnDemoFinished`](events_and_forwards.md) forward is called shortly after. The filename can also be
-found in the map-section of the [KeyValue stats system](../stats_system/#keyvalue).
+disk, the [`Get5_OnDemoFinished`](../events_and_forwards) forward is called shortly after. The filename can also be
+found in the map-section of the [KeyValue stats system](../stats_system#keyvalue).
 
 !!! info "Broadcast delay on GOTV recording"
 
@@ -38,8 +38,8 @@ found in the map-section of the [KeyValue stats system](../stats_system/#keyvalu
 ## Automatic Upload {: #upload }
 
 In addition to recording demos, Get5 can also upload them to a URL when the recording stops. To enable this feature, you
-must have the [SteamWorks](../installation/#steamworks) extension installed and define the URL with
-[`get5_demo_upload_url`](../configuration/#get5_demo_upload_url). The HTTP body will be the raw demo file, and you can
+must have the [SteamWorks](../installation#steamworks) extension installed and define the URL with
+[`get5_demo_upload_url`](../configuration#get5_demo_upload_url). The HTTP body will be the raw demo file, and you can
 read the [headers](#headers) for file metadata.
 
 ### Headers {: #headers }
@@ -47,23 +47,23 @@ read the [headers](#headers) for file metadata.
 Get5 will add these HTTP headers to its demo upload request:
 
 1. `Get5-DemoName` is the name of the file as defined
-   by [`get5_demo_name_format`](../configuration/#get5_demo_name_format),
+   by [`get5_demo_name_format`](../configuration#get5_demo_name_format),
    i.e. `2022-09-11_20-49-49_1564_map1_de_vertigo.dem`.
 2. `Get5-MapNumber` is the zero-indexed map number in the series.
-3. `Get5-MatchId` **if** the [match ID](../match_schema/#schema) is not an empty string.
-4. `Get5-ServerId` **if** [`get5_server_id`](configuration.md#get5_server_id) is set to a positive integer.
+3. `Get5-MatchId` **if** the [match ID](../match_schema#schema) is not an empty string.
+4. `Get5-ServerId` **if** [`get5_server_id`](../configuration#get5_server_id) is set to a positive integer.
 
 #### Authorization {: #authorization }
 
 If you wish to authenticate your upload request, you can define both
-[`get5_demo_upload_header_key`](../configuration/#get5_demo_upload_header_key) and
-[`get5_demo_upload_header_value`](../configuration/#get5_demo_upload_header_value) as a header key-value pair which
+[`get5_demo_upload_header_key`](../configuration#get5_demo_upload_header_key) and
+[`get5_demo_upload_header_value`](../configuration#get5_demo_upload_header_value) as a header key-value pair which
 Get5 will add to the request.
 
 ### Cleanup {: #cleanup }
 
-If you set [`get5_demo_delete_after_upload`](../configuration/#get5_demo_delete_after_upload),
-the [demo file](../configuration/#get5_demo_name_format) will be removed from the game server after successful upload.
+If you set [`get5_demo_delete_after_upload`](../configuration#get5_demo_delete_after_upload),
+the [demo file](../configuration#get5_demo_name_format) will be removed from the game server after successful upload.
 
 ### Example
 

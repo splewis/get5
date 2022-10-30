@@ -3,18 +3,18 @@
 !!! warning
 
     None of the methods for collecting stats are going to be reliable if
-    [`get5_check_auths`](../configuration/#get5_check_auths) is set to `0`.
+    [`get5_check_auths`](../configuration#get5_check_auths) is set to `0`.
 
 ## SourceMod Forwards {: #forwards }
 
 If you're writing your own plugin, you can collect stats from the game using the
-[forwards](./events_and_forwards.md) provided by Get5.
+[forwards](../events_and_forwards) provided by Get5.
 
 ## KeyValue System {: #keyvalue }
 
 Get5 will automatically record basic stats for each player for each map in the match. These are stored in an internal
 KeyValues structure, and are available at any time during the match (including the postgame waiting period) via the
-`Get5_GetMatchStats` native and the [`get5_dumpstats`](../commands/#get5_dumpstats) command.
+`Get5_GetMatchStats` native and the [`get5_dumpstats`](../commands#get5_dumpstats) command.
 
 The root level contains data for the full series; the series winner (if one exists yet) and the series type (bo1, bo3,
 etc).
@@ -72,8 +72,8 @@ functionality, but can also be used as-is.
 !!! danger "Fixed Match IDs"
 
     If you use the MySQL extension, you should **not** set the `matchid` in your
-    [match configuration](../match_schema/#schema) (just leave it empty) or when creating scrims or matches using the
-    [`get5_scrim`](../commands/#get5_scrim) or [`get5_creatematch`](../commands/#get5_creatematch) commands. The match
+    [match configuration](../match_schema#schema) (just leave it empty) or when creating scrims or matches using the
+    [`get5_scrim`](../commands#get5_scrim) or [`get5_creatematch`](../commands#get5_creatematch) commands. The match
     ID will be set to the
     [auto-incrementing integer](https://dev.mysql.com/doc/refman/8.0/en/example-auto-increment.html) (cast to a string)
     returned by inserting into the `get5_stats_matches` table.

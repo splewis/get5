@@ -51,7 +51,7 @@ so or can live with the potential consequences.
 
 SteamWorks is not required for Get5 to work on your game server, but it is required if you wish
 to [load match configurations remotely](../commands#get5_loadmatch_url), [send events to a remote URL](../configuration#get5_remote_log_url), [check for updates](../configuration#get5_print_update_notice)
-or [upload demos](../gotv/#upload) to a web server.
+or [upload demos](../gotv#upload) to a web server.
 
 [:material-steam: Download SteamWorks](https://github.com/KyleSanderson/SteamWorks/releases/){ .md-button .md-button--primary }
 
@@ -183,7 +183,7 @@ is just to indicate what the correct structure looks like.
     1. SourceMod error logs can be found in here. This directory is empty by default.
     2. This is the core Get5 plugin.
     3. This is the MySQL extension for collecting stats. If you want to use this extension, please see
-       the [guide](../stats_system/#mysql).
+       the [guide](../stats_system#mysql).
     4. This is proof-of-concept integration called [get5 web panel](https://github.com/splewis/get5-web) that can be used to
        manage matches. **This is not supported and is probably very buggy. You should not use it.**
     5. This folder contains all the language files and translations for all the plugins.
@@ -194,10 +194,10 @@ is just to indicate what the correct structure looks like.
     8. Don't change anything in here. There are no editable files in the `metamod` folder. It's here because SourceMod
        depends on it.
     9. SourceMod binaries.
-    10. This a JSON-example of a [match configuration](match_schema.md). You should use this as a template for your own
+    10. This a JSON-example of a [match configuration](../match_schema). You should use this as a template for your own
         match configuration. All JSON match configurations **must** end with `.json`.
-    11. The server's default scrim [match configuration](match_schema.md). This is loaded when using the
-        [`get5_scrim`](../commands/#get5_scrim) command.
+    11. The server's default scrim [match configuration](../match_schema). This is loaded when using the
+        [`get5_scrim`](../commands#get5_scrim) command.
     12. Match configurations can be created in both JSON and
         SourceMod's [KeyValue](https://wiki.alliedmods.net/KeyValues_(SourceMod_Scripting)) format. We recommend JSON for
         all new users, but Get5 will continue to support reading `.cfg` files as well.
@@ -212,7 +212,7 @@ is just to indicate what the correct structure looks like.
     20. Various includes (such as SteamWorks) other plugins depend on for compilation.
     21. `swag.sp` is a part of SteamWorks.
     22. The `spcomp` files are used to compile `.sp` files.
-    23. Contains the [phase configuration files](../configuration/#phase-configuration-files) for Get5.
+    23. Contains the [phase configuration files](../configuration#phase-configuration-files) for Get5.
     24. The default SourceMod config file and Warmode (included with SourceMod) configs. You can ignore these files.
     25. The rest of these folders are already in your `csgo` directory.
 
@@ -228,6 +228,6 @@ is just to indicate what the correct structure looks like.
 Server administrators can be set in the `admin_simple.ini` file inside `addons/sourcemod/configs`. Get5 considers
 anyone with the `changemap` access level an administrator. For instructions on how to add admins, please see
 the [SourceMod guide](https://wiki.alliedmods.net/Adding_Admins_(SourceMod)). Administrative privileges are required
-to execute admin commands such as the [`!get5`](../commands/#get5) menu
-command, [`get5_loadmatch`](../commands/#get5_loadmatch-filename), [`get5_endmatch`](../commands/#get5_endmatch),
-[`get5_loadbackup`](../commands/#get5_loadbackup) and so on.
+to execute admin commands such as the [`!get5`](../commands#get5) menu
+command, [`get5_loadmatch`](../commands#get5_loadmatch-filename), [`get5_endmatch`](../commands#get5_endmatch),
+[`get5_loadbackup`](../commands#get5_loadbackup) and so on.

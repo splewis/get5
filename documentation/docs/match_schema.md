@@ -62,20 +62,20 @@ interface Get5Match {
 ```
 
 1. _Optional_<br>The ID of the match. This determines the `matchid` parameter in all
-   [forwards and events](events_and_forwards.md). If you use the [MySQL extension](../stats_system/#mysql), you
+   [forwards and events](../events_and_forwards). If you use the [MySQL extension](../stats_system#mysql), you
    should leave this field blank (or omit it), as match IDs will be assigned automatically. If you do want to assign
    match IDs from another source, they **must** be integers (in a string) and must increment between
    matches.<br><br>**`Default: ""`**
 2. _Optional_<br>The number of maps to play in the series.<br><br>**`Default: 3`**
 3. _Optional_<br>The number of players per team. You should **never** set this to a value higher than the number of
    players you want to actually play in a game, *excluding* coaches.<br><br>**`Default: 5`**
-4. _Optional_<br>The maximum number of [coaches](coaching.md) per team.<br><br>**`Default: 2`**
-5. _Optional_<br>The minimum number of players that must be present for the [`!forceready`](../commands/#forceready)
-   command to succeed. If not forcing a team ready, **all** players must [`!ready`](../commands/#ready) up
+4. _Optional_<br>The maximum number of [coaches](../coaching) per team.<br><br>**`Default: 2`**
+5. _Optional_<br>The minimum number of players that must be present for the [`!forceready`](../commands#forceready)
+   command to succeed. If not forcing a team ready, **all** players must [`!ready`](../commands#ready) up
    themselves.<br><br>**`Default: 0`**
-6. _Optional_<br>The minimum number of spectators that must be [`!ready`](../commands/#ready) for the game to
+6. _Optional_<br>The minimum number of spectators that must be [`!ready`](../commands#ready) for the game to
    begin.<br><br>**`Default: 0`**
-7. _Optional_<br>Whether to skip the [veto](veto.md) phase. When skipping veto, `map_sides` determines sides, and
+7. _Optional_<br>Whether to skip the [veto](../veto) phase. When skipping veto, `map_sides` determines sides, and
    if `map_sides` is not set, sides are determined by `side_type`.<br><br>**`Default: false`**
 8. A player's :material-steam: Steam ID. This can be in any format, but we recommend a string representation of SteamID
    64, i.e. `"76561197987713664"`.
@@ -84,15 +84,15 @@ interface Get5Match {
    string array of `SteamID` disable name-locking.
 10. _Optional_<br>The spectators to allow into the game. If not defined, spectators cannot join the
     game.<br><br>**`Default: undefined`**
-11. _Optional_<br>The team that [vetoes](veto.md) first.<br><br>**`Default: "team1"`**
-12. _Optional_<br>The method used to determine sides when [vetoing](veto.md) **or** if veto is disabled and `map_sides`
+11. _Optional_<br>The team that [vetoes](../veto) first.<br><br>**`Default: "team1"`**
+12. _Optional_<br>The method used to determine sides when [vetoing](../veto) **or** if veto is disabled and `map_sides`
     are not set.<br><br>`standard` means that the team that doesn't pick a map gets the side choice (only if `skip_veto`
     is `false`).<br><br>`always_knife` means that sides are always determined by a knife-round.<br><br>`never_knife`
     means that `team1` always starts on CT.<br><br>This parameter is ignored if `map_sides` is set for all
     maps. `standard` and `always_knife` behave similarly when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
 13. _Required_<br>The map pool to pick from, as an array of strings (`["de_dust2", "de_nuke"]` etc.), or if `skip_veto`
     is `true`, the order of maps played (limited by `num_maps`). **This should always be odd-sized if using the in-game
-    [veto system](veto.md).**
+    [veto system](../veto).**
 14. _Optional_<br>Wrapper for the server's `mp_teamprediction_pct`. This determines the chances of `team1`
     winning.<br><br>**`Default: 0`**
 15. _Optional_<br>Wrapper for the server's `mp_teamprediction_txt`.<br><br>**`Default: ""`**
@@ -109,10 +109,10 @@ interface Get5Match {
 20. _Required_<br>The data for the first team.
 21. _Required_<br>The data for the second team.
 22. _Optional_<br>Various commands to execute on the server when loading the match configuration. This can be both
-    regular server-commands and any [`Get5 configuration parameter`](configuration.md),
+    regular server-commands and any [`Get5 configuration parameter`](../configuration),
     i.e. `{"hostname": "Match #3123 - Astralis vs. NaVi"}`.<br><br>**`Default: undefined`**
-23. _Optional_<br>Similarly to `players`, this object maps [coaches](coaching.md) using their Steam ID and
-    name, locking them to the coach slot unless removed using [`get5_removeplayer`](../commands/#get5_removeplayer).
+23. _Optional_<br>Similarly to `players`, this object maps [coaches](../coaching) using their Steam ID and
+    name, locking them to the coach slot unless removed using [`get5_removeplayer`](../commands#get5_removeplayer).
     Setting a Steam ID as coach takes precedence over being set as a player.<br><br>Note that
     if [`sv_coaching_enabled`](https://totalcsgo.com/command/svcoachingenabled) is disabled, anyone defined as a coach
     will be considered a regular player for the team instead.<br><br>**`Default: undefined`**
@@ -139,7 +139,7 @@ interface Get5Match {
     <br><br>**`Default: undefined`**
 32. _Optional_<br>If `false`, the entire map list will be played, regardless of score. If `true`, a series will be won
     when the series score for a team exceeds the number of maps divided by two.<br><br>**`Default: true`**
-33. _Optional_<br>Determines if coaches must also [`!ready`](../commands/#ready).<br><br>**`Default: false`**
+33. _Optional_<br>Determines if coaches must also [`!ready`](../commands#ready).<br><br>**`Default: false`**
 
 !!! info "Team assignment priority"
 
@@ -153,8 +153,8 @@ interface Get5Match {
     5. Player for `team2`
 
     If a player's Steam ID was not found in any of these locations, they will be
-    [removed from the server](../configuration/#get5_check_auths) unless you are
-    in [scrim mode](../getting_started/#scrims).
+    [removed from the server](../configuration#get5_check_auths) unless you are
+    in [scrim mode](../getting_started#scrims).
 
 ## Examples {: #example }
 

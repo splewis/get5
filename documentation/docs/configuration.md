@@ -34,9 +34,9 @@ cfg/get5/live.cfg # (3)
 !!! danger "Prohibited options"
 
     You should avoid these commands in your live, knife and warmup configuration files, as all of these are handled by
-    Get5 automatically. Introducing restarts, warmup changes or [GOTV](gotv.md) delay modifications can cause problems.
+    Get5 automatically. Introducing restarts, warmup changes or [GOTV](../gotv) delay modifications can cause problems.
     If you want to set your `tv_delay` or `tv_delay1`, do it in the `cvars` section of your
-    [match configuration](match_schema.md).
+    [match configuration](../match_schema).
 
     ```
     mp_do_warmup_period
@@ -59,7 +59,7 @@ cfg/get5/live.cfg # (3)
 
 ####`get5_server_id`
 :   Integer that identifies your server. This is used in temporary and backup files to prevent collisions and added as a
-header to [demo uploads](gotv.md#upload) and [event requests](events_and_forwards.md#http). You should set this if you
+header to [demo uploads](../gotv#upload) and [event requests](../events_and_forwards#http). You should set this if you
 run multiple servers off the same storage, such as if using [Docker](https://www.docker.com/). This also defines
 the [`{SERVERID}`](#tag-serverid) substitution and the return value of the `Get5_GetServerID`
 native.<br>**`Default: 0`**
@@ -70,32 +70,32 @@ native.<br>**`Default: 0`**
     a server instance on a host and ensures that no two instances run with the same server ID at the same time.
 
 ####`get5_kick_immunity`
-:   Whether [admins](../installation/#administrators) will be immune to kicks from
+:   Whether [admins](../installation#administrators) will be immune to kicks from
 [`get5_kick_when_no_match_loaded`](#get5_kick_when_no_match_loaded).<br>**`Default: 1`**
 
 ####`get5_kick_when_no_match_loaded`
 :   Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
-using [`get5_endmatch`](../commands/#get5_endmatch).<br>**`Default: 0`**
+using [`get5_endmatch`](../commands#get5_endmatch).<br>**`Default: 0`**
 
 ####`get5_display_gotv_veto`
-:   Whether to wait for [map vetoes](veto.md) to be broadcast to [GOTV](gotv.md) before changing
+:   Whether to wait for [map vetoes](../veto) to be broadcast to [GOTV](../gotv) before changing
 map.<br>**`Default: 0`**
 
 ####`get5_check_auths`
 :   Whether the Steam IDs from the `players`, `coaches` and `spectators` sections of
-a [match configuration](../match_schema/#schema) are used to force players onto teams. Anyone not defined will be
-removed from the game, or if in [scrim mode](../getting_started/#scrims), put on `team2`.<br>**`Default: 1`**
+a [match configuration](../match_schema#schema) are used to force players onto teams. Anyone not defined will be
+removed from the game, or if in [scrim mode](../getting_started#scrims), put on `team2`.<br>**`Default: 1`**
 
 ####`get5_print_update_notice`
 :   Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if
-[SteamWorks](../installation/#steamworks) has been installed.<br>**`Default: 1`**
+[SteamWorks](../installation#steamworks) has been installed.<br>**`Default: 1`**
 
 ####`get5_pretty_print_json`
 :   Whether to pretty-print all JSON output. This also affects the output of JSON in the
 [event system](../events_and_forwards).<br>**`Default: 1`**
 
 ####`get5_autoload_config`
-:  A [match configuration](../match_schema/#schema) file, relative to the `csgo` directory, to autoload when the server
+:  A [match configuration](../match_schema#schema) file, relative to the `csgo` directory, to autoload when the server
 starts, when Get5 is reloaded or if no match is loaded when a player joins the server. Set to empty string to
 disable.<br>**`Default: ""`**
 
@@ -112,12 +112,12 @@ only.<br>**`Default: 0`**
 :   Number of seconds used to count down when a match is going live.<br>**`Default: 10`**
 
 ####`get5_auto_ready_active_players`
-:   Whether to automatically mark players as ready if they kill anyone in the warmup or [veto](veto.md)
+:   Whether to automatically mark players as ready if they kill anyone in the warmup or [veto](../veto)
 phase.<br>**`Default: 0`**
 
 ####`get5_allow_force_ready`
-:   Whether the [`!forceready`](../commands/#forceready) command is accessible to players. This does not
-affect the availability of [`get5_forceready`](../commands/#get5_forceready) to admins.<br>**`Default: 1`**
+:   Whether the [`!forceready`](../commands#forceready) command is accessible to players. This does not
+affect the availability of [`get5_forceready`](../commands#get5_forceready) to admins.<br>**`Default: 1`**
 
 ####`get5_set_client_clan_tags`
 :   Whether to set client clan tags to player ready status.<br>**`Default: 1`**
@@ -127,16 +127,16 @@ affect the availability of [`get5_forceready`](../commands/#get5_forceready) to 
 becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
 
 ####`get5_time_to_make_knife_decision`
-:   Time (in seconds) a team has to make a [`!stay`](../commands/#stay) or [`!swap`](../commands/#swap)
+:   Time (in seconds) a team has to make a [`!stay`](../commands#stay) or [`!swap`](../commands#swap)
 decision after winning knife round. Cannot be set lower than 10 if non-zero. Set to zero to remove
 limit.<br>**`Default: 60`**
 
 ####`get5_veto_countdown`
-:   Time (in seconds) to countdown before the [veto](veto.md) process commences. Set to zero to move to veto without a
+:   Time (in seconds) to countdown before the [veto](../veto) process commences. Set to zero to move to veto without a
 countdown.<br>**`Default: 5`**
 
 ####`get5_veto_confirmation_time`
-:   Time (in seconds) from presenting a [veto](veto.md) menu to a selection being made, during which a confirmation will
+:   Time (in seconds) from presenting a [veto](../veto) menu to a selection being made, during which a confirmation will
 be required. 0 to disable.<br>**`Default: 2.0`**
 
 ####`get5_print_damage`
@@ -170,36 +170,36 @@ messages.<br>**`Default: "{NORMAL}"`**
 :   Whether [pauses](../pausing) are available to clients or not.<br>**`Default: 1`**
 
 ####`get5_max_pauses`
-:   Number of [tactical pauses](../pausing/#tactical) a team can use. Set to zero to remove limit.<br>**`Default: 0`**
+:   Number of [tactical pauses](../pausing#tactical) a team can use. Set to zero to remove limit.<br>**`Default: 0`**
 
 ####`get5_max_pause_time`
 :   Maximum number of seconds the game can spend under tactical pause for a team. When pauses are
 unlimited and when [`get5_fixed_pause_time`](#get5_fixed_pause_time) is zero, both teams
-must call [`!unpause`](../commands/#unpause) to continue the match. This parameter is ignored
+must call [`!unpause`](../commands#unpause) to continue the match. This parameter is ignored
 if [`get5_fixed_pause_time`](#get5_fixed_pause_time) is set to a non-zero
 value. Set to zero to remove limit.<br>**`Default: 300`**
 
 ####`get5_fixed_pause_time`
-:   If non-zero, the fixed length in seconds of all [tactical pauses](../pausing/#tactical). This takes precedence over
+:   If non-zero, the fixed length in seconds of all [tactical pauses](../pausing#tactical). This takes precedence over
 the [`get5_max_pause_time`](#get5_max_pause_time) parameter, which will be ignored. Cannot be set lower than 15
 seconds if non-zero.<br>**`Default: 0`**
 
 ####`get5_allow_technical_pause`
-:   Whether [technical pauses](../pausing/#technical) are available to clients or not. Note that this depends
+:   Whether [technical pauses](../pausing#technical) are available to clients or not. Note that this depends
 on [`get5_pausing_enabled`](#get5_pausing_enabled) being enabled as well.<br>**`Default: 1`**
 
 ####`get5_max_tech_pauses`
-:   Number of [technical pauses](../pausing/#technical) a team is allowed to have. Set to zero to remove
+:   Number of [technical pauses](../pausing#technical) a team is allowed to have. Set to zero to remove
 limit.<br>**`Default: 0`**
 
 ####`get5_tech_pause_time`
-:   If non-zero, number of seconds before any team can call [`!unpause`](../commands/#unpause) to end
-a [technical pause](../pausing/#technical) without confirmation from the pausing team. Set to zero to remove
+:   If non-zero, number of seconds before any team can call [`!unpause`](../commands#unpause) to end
+a [technical pause](../pausing#technical) without confirmation from the pausing team. Set to zero to remove
 limit.<br>**`Default: 0`**
 
 ####`get5_auto_tech_pause_missing_players`
 :   The number of players that must disconnect from a team during the live phase of a game in order to trigger an
-automatic [technical pause](../pausing/#technical). [`players_per_team`](../match_schema#schema) is used to determine
+automatic [technical pause](../pausing#technical). [`players_per_team`](../match_schema#schema) is used to determine
 what is considered a full team, so if these parameters are equal (typically 5), a pause is triggered if an entire team
 leaves. Set to zero to disable.<br>**`Default: 0`**
 
@@ -221,81 +221,49 @@ leaves. Set to zero to disable.<br>**`Default: 0`**
     non-zero value to prevent abuse.
 
 ####`get5_pause_on_veto`
-:   Whether to freeze players during the [veto](veto.md) phase.<br>**`Default: 0`**
+:   Whether to freeze players during the [veto](../veto) phase.<br>**`Default: 0`**
 
 ####`get5_reset_pauses_each_half`
-:   Whether [tactical pause](../pausing/#tactical) limits (time used and count) are reset each halftime period.
-[Technical pauses](../pausing/#technical) are not reset.<br>**`Default: 1`**
+:   Whether [tactical pause](../pausing#tactical) limits (time used and count) are reset each halftime period.
+[Technical pauses](../pausing#technical) are not reset.<br>**`Default: 1`**
 
 ## Surrender & Forfeit
 
-!!! info "Surrender vs. Forfeit"
-
-    While forfeit and surrender may sound the same, they are in fact not.
-
-    The surrender feature allows for a team to call [`!surrender`](../commands/#surrender) if they do not want to
-    continue playing.
-
-    The forfeit feature allows for the use of the [`!ffw`](../commands/#ffw) command in case **one** team leaves *or*
-    triggers an automatic tie if **both** teams leave.
-
-    Note that a surrender applies only to the current map, while a forfeit applies to the entire series.
-
 ####`get5_surrender_enabled`
-:   Whether the [`!surrender`](../commands/#surrender) command is available.<br>**`Default: 0`**
+:   Whether the [`!surrender`](../commands#surrender) command is available.<br>**`Default: 0`**
 
 ####`get5_surrender_minimum_round_deficit`
-:   The minimum number of rounds a team must be behind in order to initiate a vote to surrender. This cannot be set
-lower than `1`.<br>**`Default: 8`**
+:   The minimum number of rounds a team must be behind in order to initiate a vote
+to [surrender](../surrender-forfeit#surrender). This cannot be set lower than `1`.<br>**`Default: 8`**
 
 ####`get5_surrender_required_votes`
-:   The number of votes required to surrender as a team. If set to `1` or below, any attempt to surrender will
-immediately succeed.<br>**`Default: 3`**
+:   The number of votes required to [surrender](../surrender-forfeit#surrender) as a team. If set to `1` or below, any
+attempt to surrender will immediately succeed.<br>**`Default: 3`**
 
 ####`get5_surrender_time_limit`
-:   The number of seconds a team has to vote to surrender after the first vote is cast. This cannot be set lower
-than `10`.<br>**`Default: 15`**
+:   The number of seconds a team has to vote to [surrender](../surrender-forfeit#surrender) after the first vote is
+cast. This cannot be set lower than `10`.<br>**`Default: 15`**
 
 ####`get5_surrender_cooldown`
-:   The minimum number of seconds a team must wait before they can initiate a surrender vote following a failed
-vote. Set to zero to disable.<br>**`Default: 60`**
+:   The minimum number of seconds a team must wait before they can initiate
+a [surrender](../surrender-forfeit#surrender) vote following a failed vote. Set to zero to disable.<br>**`Default: 60`**
 
 ####`get5_forfeit_enabled`
-:   Whether the [`!ffw`](../commands/#ffw) command is available if one team leaves and whether an automatic forfeit is
-triggered if both teams leave.<br>**`Default: 1`**
-
-!!! tip "Automatic technical pause"
-
-    If you want to trigger a technical pause if a team leaves the server,
-    see [`get5_auto_tech_pause_missing_players`](#get5_auto_tech_pause_missing_players).
+:   Whether the [`!ffw`](../commands#ffw) command is available if one team leaves and whether
+an [automatic forfeit](../surrender-forfeit#forfeit) is triggered if both teams leave.<br>**`Default: 1`**
 
 ####`get5_forfeit_countdown`
-:   If a full team disconnects during the live phase and [`get5_forfeit_enabled`](#get5_forfeit_enabled) is non-zero,
-the [`!ffw`](../commands/#ffw) command becomes available to the opposing team, and this then determines the number of
-seconds a player from the disconnecting team has to rejoin the server before the opposing team wins. If both teams
-disconnect (during live **or** knife), this determines how long at least one player from **both** teams have to rejoin
-the server before the series is ended in a tie. This value cannot be set lower than 30.<br>**`Default: 180`**
-
-!!! info "No forfeit during ready-phases"
-
-    The forfeit system is not available during warmup/veto or when waiting for a backup restore. If you want the
-    warmup/veto-phase to be limited in duration, set [`get5_time_to_start`](#get5_time_to_start) to a non-zero value.
-
-!!! warning "Empty server ends the series"
-
-    If there are no players at all (no spectators, coaches or players) and someone rejoins the server during the live
-    phase, a pending forfeit timer may immediately trigger a series end, as the game may restart, which causes a loss
-    of game state. If this happens, you must [restore the game state from a backup](../commands/#get5_loadbackup) to
-    continue.
+:   Sets the number of seconds players have to rejoin the server once a [forfeit](../surrender-forfeit#forfeit) timer
+has started. This value cannot be set lower than 30.<br>**`Default: 180`**
 
 ## Backup System
 
 ####`get5_backup_system_enabled`
-:   Whether the [backup system](backup.md) is enabled. This is required for the use of the [`!stop`](../commands/#stop)
-command as well as the [`get5_loadbackup`](../commands/#get5_loadbackup) command.<br>**`Default: 1`**
+:   Whether the [backup system](../backup) is enabled. This is required for the use of the [`!stop`](../commands#stop)
+command as well as the [`get5_loadbackup`](../commands#get5_loadbackup) command.<br>**`Default: 1`**
 
 ####`get5_stop_command_enabled`
-:   Whether the [`!stop`](../commands/#stop) command is enabled.<br>**`Default: 1`**
+:   Whether the [`!stop`](../commands#stop) command is enabled.<br>**`Default: 1`**
 
 ####`get5_max_backup_age`
 :   Number of seconds before a Get5 backup file is automatically deleted. If you define
@@ -303,7 +271,7 @@ command as well as the [`get5_loadbackup`](../commands/#get5_loadbackup) command
 disable.<br>**`Default: 160000`**
 
 ####`get5_backup_path`
-:   The folder of saved [backup files](../commands/#get5_loadbackup), relative to the `csgo` directory. You **can** use
+:   The folder of saved [backup files](../commands#get5_loadbackup), relative to the `csgo` directory. You **can** use
 the [`{MATCHID}`](#tag-matchid) variable, i.e. `backups/{MATCHID}/`. Required folders will be created if they do not
 exist.<br>**`Default: ""`**
 
@@ -391,9 +359,9 @@ if [`get5_print_damage`](#get5_print_damage) is disabled.<br>
 ## Demos
 
 ####`get5_demo_upload_url`
-:   If defined, Get5 will [automatically send a recorded demo](gotv.md#upload) to this URL in an HTTP `POST` request
+:   If defined, Get5 will [automatically send a recorded demo](../gotv#upload) to this URL in an HTTP `POST` request
 once a recording stops. If no protocol is provided, `http://` will be prepended to this value. Requires the
-[SteamWorks](../installation/#steamworks) extension.<br>**`Default: ""`**
+[SteamWorks](../installation#steamworks) extension.<br>**`Default: ""`**
 
 ####`get5_demo_upload_header_key`
 :   If this **and** [`get5_demo_upload_header_value`](#get5_demo_upload_header_value) are defined, this header name and
@@ -405,7 +373,7 @@ value will be used for your [demo upload HTTP request](#get5_demo_upload_url).<b
 
 ####`get5_demo_delete_after_upload`
 :   Whether to delete the demo file from the game server after
-successfully [uploading it to a web server](gotv.md#upload).<br>**`Default: 0`**
+successfully [uploading it to a web server](../gotv#upload).<br>**`Default: 0`**
 
 ####`get5_demo_path`
 :   The folder of saved [demo files](../gotv#demos), relative to the `csgo` directory. You **can** use
@@ -414,7 +382,7 @@ Much like [`get5_backup_path`](#get5_backup_path), the path must **not** start w
 must **end with a slash**. Required folders will be created if they do not exist.<br>**`Default: ""`**
 
 ####`get5_demo_name_format`
-:   Format to use for demo files when [recording matches](gotv.md#demos). Do not include a file extension (`.dem` is
+:   Format to use for demo files when [recording matches](../gotv#demos). Do not include a file extension (`.dem` is
 added automatically). If you do not include the [`{TIME}`](#tag-time) tag, you will have problems with duplicate files
 if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber)variable is not zero-indexed. Set to
 empty string to disable recording demos.<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
@@ -422,16 +390,16 @@ empty string to disable recording demos.<br>**`Default: "{TIME}_{MATCHID}_map{MA
 ## Events
 
 ####`get5_remote_log_url`
-:   The URL to send all [events](events_and_forwards.md#http) to. Requires the [SteamWorks](../installation/#steamworks)
+:   The URL to send all [events](../events_and_forwards#http) to. Requires the [SteamWorks](../installation#steamworks)
 extension. Set to empty string to disable.<br>**`Default: ""`**
 
 ####`get5_remote_log_header_key`
 :   If this **and** [`get5_remote_log_header_value`](#get5_remote_log_header_value) are defined, this
-header name and value will be used for your [event HTTP requests](events_and_forwards.md#http).<br>**`Default: "Authorization"`**
+header name and value will be used for your [event HTTP requests](../events_and_forwards#http).<br>**`Default: "Authorization"`**
 
 ####`get5_remote_log_header_value`
 :   If this **and** [`get5_remote_log_header_key`](#get5_remote_log_header_key) are defined, this header
-name and value will be used for your [event HTTP requests](events_and_forwards.md#http).<br>**`Default: ""`**
+name and value will be used for your [event HTTP requests](../events_and_forwards#http).<br>**`Default: ""`**
 
 ## Substitution Variables
 

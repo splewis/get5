@@ -7,17 +7,17 @@
    exactly what the [get5_apistats](https://github.com/splewis/get5/blob/master/scripting/get5_apistats.sp)
    and [get5_mysqlstats](https://github.com/splewis/get5/blob/master/scripting/get5_mysqlstats.sp) plugins do.
 
-2. You can read [event logs](events_and_forwards.md) from a file on disk (set
-   by [`get5_event_log_format`](../configuration/#get5_event_log_format)), through a RCON connection to the server
+2. You can read [event logs](../events_and_forwards) from a file on disk (set
+   by [`get5_event_log_format`](../configuration#get5_event_log_format)), through a RCON connection to the server
    console since they are output there, or through another SourceMod plugin.
 
-3. You can [send all events to a web server over HTTP](../events_and_forwards/#http).
+3. You can [send all events to a web server over HTTP](../events_and_forwards#http).
 
-4. You can read the [stats](stats_system.md) Get5 collects from a file on disk (set
-   by [`get5_stats_path_format`](../configuration/#get5_stats_path_format)).
+4. You can read the [stats](../stats_system) Get5 collects from a file on disk (set
+   by [`get5_stats_path_format`](../configuration#get5_stats_path_format)).
 
-5. You can execute any [command](commands.md), such as [`get5_loadmatch`](../commands/#get5_loadmatch)
-   or [`get5_loadmatch_url`](../commands/#get5_loadmatch_url) via another plugin or
+5. You can execute any [command](../commands), such as [`get5_loadmatch`](../commands#get5_loadmatch)
+   or [`get5_loadmatch_url`](../commands#get5_loadmatch_url) via another plugin or
    via [RCON](https://developer.valvesoftware.com/wiki/Source_RCON_Protocol).
 
 ## Building Get5 from source {: #build }

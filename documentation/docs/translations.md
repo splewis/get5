@@ -4,7 +4,7 @@ Get5 has been translated into a few languages, but some a are still incomplete o
 are proficient in a language other than English, you are welcome to open a pull request on GitHub with adjustments or
 even entirely new languages. Note that you should be **good** at the language; machine-translations or sloppy
 linguistics are worse than defaulting Get5 to English. If you cannot code and have found errors in translations, feel
-free to join the [Discord](../community/#discord) and let us know.
+free to join the [Discord](../community#discord) and let us know.
 
 ## How to translate?
 

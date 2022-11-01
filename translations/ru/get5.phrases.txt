@@ -154,7 +154,7 @@
     }
     "TechPauseAutomaticallyStarted"
     {
-        "en"            "Для {1} автоматически началась техническая пауза."
+        "ru"            "Для {1} автоматически началась техническая пауза."
     }
     "MatchUnpauseInfoMessage"
     {

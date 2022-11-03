@@ -38,6 +38,7 @@ enum Get5State {
   Get5State_WaitingForKnifeRoundDecision,  // waiting for a .stay/.swap command after the knife
   Get5State_GoingLive,                     // counting down to live
   Get5State_Live,                          // the match is live
+  Get5State_PendingRestore,                // pending restore to a live match
   Get5State_PostGame,                      // postgame screen + waiting for GOTV to finish broadcast
 };
 
@@ -80,7 +81,8 @@ native bool Get5_LoadMatchConfig(const char[] filename);
 // Loads a match config by downloading a remote config via a HTTP GET request.
 // Request parameters should be left out of the url and put into the optional ArrayLists parameters.
 native bool Get5_LoadMatchConfigFromURL(const char[] url, ArrayList paramNames = null,
-                                        ArrayList paramValues = null);
+                                        ArrayList paramValues = null, ArrayList headerNames = null,
+                                        ArrayList headerValues = null);
 
 // Adds a player to a match team. You can optionally force set a player name here as well.
 // Returns if they were successfully added.
@@ -542,6 +544,15 @@ methodmap Get5PlayerTimedRoundEvent < Get5TimedRoundEvent {
 
 methodmap Get5SeriesResultEvent < Get5MatchEvent {
 
+  property int TimeUntilRestore {
+    public get() {
+      return this.GetInt("time_until_restore");
+    }
+    public set(int time) {
+      this.SetInt("time_until_restore", time);
+    }
+  }
+
   property Get5Winner Winner {
     public get() {
       return view_as<Get5Winner>(this.GetObject("winner"));
@@ -569,13 +580,14 @@ methodmap Get5SeriesResultEvent < Get5MatchEvent {
     }
   }
 
-  public Get5SeriesResultEvent(const char[] matchId, const Get5Winner winner, const int team1Score, const int team2Score) {
+  public Get5SeriesResultEvent(const char[] matchId, const Get5Winner winner, const int team1Score, const int team2Score, const int timeUntilRestore) {
     Get5SeriesResultEvent self = view_as<Get5SeriesResultEvent>(new JSON_Object());
     self.SetEvent("series_end");
     self.SetMatchId(matchId);
     self.Winner = winner;
     self.Team1SeriesScore = team1Score;
     self.Team2SeriesScore = team2Score;
+    self.TimeUntilRestore = timeUntilRestore;
     return self;
   }
 }
@@ -812,7 +824,7 @@ methodmap Get5RoundStatsUpdatedEvent < Get5RoundEvent {
   }
 }
 
-methodmap Get5DemoFinishedEvent < Get5MapEvent {
+methodmap Get5DemoFileEvent < Get5MapEvent {
 
   public bool SetFileName(const char[] filename) {
     return this.SetString("filename", filename);
@@ -820,6 +832,9 @@ methodmap Get5DemoFinishedEvent < Get5MapEvent {
   public bool GetFileName(char[] buffer, const int maxSize) {
     return this.GetString("filename", buffer, maxSize);
   }
+}
+
+methodmap Get5DemoFinishedEvent < Get5DemoFileEvent {
 
   public Get5DemoFinishedEvent(const char[] matchId, const int mapNumber, const char[] filename) {
     Get5DemoFinishedEvent self = view_as<Get5DemoFinishedEvent>(new JSON_Object());
@@ -827,6 +842,28 @@ methodmap Get5DemoFinishedEvent < Get5MapEvent {
     self.SetMatchId(matchId);
     self.MapNumber = mapNumber;
     self.SetFileName(filename);
+    return self;
+  }
+}
+
+methodmap Get5DemoUploadEndedEvent < Get5DemoFileEvent {
+
+  property bool Success {
+    public get() {
+      return this.GetBool("success");
+    }
+    public set(bool success) {
+      this.SetBool("success", success);
+    }
+  }
+
+  public Get5DemoUploadEndedEvent(const char[] matchId, const int mapNumber, const char[] filename, const bool success) {
+    Get5DemoUploadEndedEvent self = view_as<Get5DemoUploadEndedEvent>(new JSON_Object());
+    self.SetEvent("demo_upload_ended");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.SetFileName(filename);
+    self.Success = success;
     return self;
   }
 }
@@ -1067,6 +1104,7 @@ methodmap Get5PlayerSayEvent < Get5PlayerTimedRoundEvent {
     self.MapNumber = mapNumber;
     self.RoundNumber = roundNumber;
     self.RoundTime = roundTime;
+    self.Player = player;
     self.SetCommand(command);
     self.SetMessage(message);
     return self;
@@ -1603,23 +1641,25 @@ methodmap Get5BombDefusedEvent < Get5PlayerBombEvent {
 stock void GameStateString(const Get5State state, char[] buffer, const int length) {
   switch (state) {
     case Get5State_None:
-      Format(buffer, length, "none");
+      FormatEx(buffer, length, "none");
     case Get5State_PreVeto:
-      Format(buffer, length, "pre_veto");
+      FormatEx(buffer, length, "pre_veto");
     case Get5State_Veto:
-      Format(buffer, length, "veto");
+      FormatEx(buffer, length, "veto");
     case Get5State_Warmup:
-      Format(buffer, length, "warmup");
+      FormatEx(buffer, length, "warmup");
     case Get5State_KnifeRound:
-      Format(buffer, length, "knife");
+      FormatEx(buffer, length, "knife");
     case Get5State_WaitingForKnifeRoundDecision:
-      Format(buffer, length, "waiting_for_knife_decision");
+      FormatEx(buffer, length, "waiting_for_knife_decision");
     case Get5State_GoingLive:
-      Format(buffer, length, "going_live");
+      FormatEx(buffer, length, "going_live");
     case Get5State_Live:
-      Format(buffer, length, "live");
+      FormatEx(buffer, length, "live");
+    case Get5State_PendingRestore:
+      FormatEx(buffer, length, "pending_restore");
     case Get5State_PostGame:
-      Format(buffer, length, "post_game");
+      FormatEx(buffer, length, "post_game");
   }
 }
 
@@ -1777,6 +1817,9 @@ forward void Get5_OnSidePicked(const Get5SidePickedEvent event);
 
 // Called when a demo finishes recording.
 forward void Get5_OnDemoFinished(const Get5DemoFinishedEvent event);
+
+// Called when a demo upload attempt ends.
+forward void Get5_OnDemoUploadEnded(const Get5DemoUploadEndedEvent event);
 
 // Called when a match is paused.
 forward void Get5_OnMatchPaused(const Get5MatchPausedEvent event);

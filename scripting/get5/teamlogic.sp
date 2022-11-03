@@ -2,15 +2,32 @@ Action Command_JoinGame(int client, const char[] command, int argc) {
   LogDebug("Client %d sent joingame command.", client);
   if (CheckAutoLoadConfig()) {
     // Autoload places players on teams.
-    return;
+    return Plugin_Continue;
   }
-  if (g_GameState != Get5State_None && g_CheckAuthsCvar.BoolValue && IsPlayer(client)) {
+  if (g_GameState == Get5State_None) {
+    // Don't spawn timers if Get5 is not loaded.
+    return Plugin_Continue;
+  }
+  // It seems a delay may be required in some edge cases. It does work most of the time without one,
+  // but we've had issues with players ending up in really odd locations on the map without this delay.
+  CreateTimer(0.5, Timer_PlacePlayerOnJoin, GetClientUserId(client), TIMER_FLAG_NO_MAPCHANGE);
+  return Plugin_Continue;
+}
+
+static Action Timer_PlacePlayerOnJoin(Handle timer, int userId) {
+  if (g_GameState == Get5State_None || !g_CheckAuthsCvar.BoolValue) {
+    return Plugin_Handled;
+  }
+  int client = GetClientOfUserId(userId);
+  if (IsPlayer(client)) {
     PlacePlayerOnTeam(client);
   }
+  return Plugin_Handled;
 }
 
 // Assumes client IsPlayer().
 void CheckClientTeam(int client) {
+  g_ClientPendingTeamCheck[client] = false;
   Get5Team correctTeam = GetClientMatchTeam(client);
   if (correctTeam == Get5Team_None) {
     RememberAndKickClient(client, "%t", "YouAreNotAPlayerInfoMessage");
@@ -21,6 +38,10 @@ void CheckClientTeam(int client) {
     if (CountPlayersOnTeam(correctTeam, client) >= FindConVar("mp_spectators_max").IntValue) {
       KickClient(client, "%t", "TeamIsFullInfoMessage");
     } else {
+      // If already coaching and on spec, we have to remove that prop as SwitchPlayerTeam will not remove coaching.
+      if (IsClientCoaching(client)) {
+        SetEntProp(client, Prop_Send, "m_iCoachingTeam", CS_TEAM_NONE);
+      }
       SwitchPlayerTeam(client, Get5Side_Spec);
     }
     return;
@@ -29,8 +50,7 @@ void CheckClientTeam(int client) {
   Get5Side correctSide = view_as<Get5Side>(Get5TeamToCSTeam(correctTeam));
   if (correctSide == Get5Side_None) {
     // This should not be possible.
-    LogError("Client %d belongs to no side. This is an unexpected error and should be reported.",
-             client);
+    LogError("Client %d belongs to no side. This is an unexpected error and should be reported.", client);
     return;
   }
 
@@ -72,7 +92,8 @@ void CheckClientTeam(int client) {
 
 static void PlacePlayerOnTeam(int client) {
   if (g_PendingSideSwap || InHalftimePhase()) {
-    LogDebug("Blocking attempt to join a team due to halftime or pending team swap.");
+    LogDebug("Blocking attempt to join a team for client %d due to halftime or pending team swap.", client);
+    g_ClientPendingTeamCheck[client] = true;
     return;
   }
   CheckClientTeam(client);
@@ -240,9 +261,7 @@ Action Command_Coach(int client, const char[] command, int argc) {
   if (g_GameState == Get5State_None || !g_CheckAuthsCvar.BoolValue) {
     return Plugin_Continue;
   }
-  ReplyToCommand(
-      client,
-      "Please use .coach in chat or sm_coach instead of the built-in console coach command.");
+  ReplyToCommand(client, "Please use .coach in chat or sm_coach instead of the built-in console coach command.");
   return Plugin_Stop;
 }
 
@@ -317,8 +336,7 @@ int CountCoachesOnTeam(Get5Team team, int exclude = -1) {
   int count = 0;
   Get5Side side = view_as<Get5Side>(Get5TeamToCSTeam(team));
   LOOP_CLIENTS(i) {
-    if (i != exclude && IsAuthedPlayer(i) && GetClientMatchTeam(i) == team &&
-        GetClientCoachingSide(i) == side) {
+    if (i != exclude && IsAuthedPlayer(i) && GetClientMatchTeam(i) == team && GetClientCoachingSide(i) == side) {
       count++;
     }
   }

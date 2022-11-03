@@ -31,8 +31,12 @@
     }
     "YouAreReadyAuto"
     {
+        "en"            "NOTE: You have been marked as ready due to game activity."
+    }
+    "TypeUnreadyIfNotReady"
+    {
         "#format"       "{1:s}"
-        "en"            "NOTE: You have been marked as ready due to game activity. Type {1} if you are not ready."
+        "en"            "Type {1} if you are not ready."
     }
     "YouAreNotReady"
     {
@@ -68,20 +72,15 @@
         "#format"       "{1:s}"
         "en"            "{1} failed to ready up in time and has forfeit."
     }
-    "MinutesToForfeitMessage"
+    "TeamMustBeReadyOrForfeit"
     {
-        "#format"       "{1:s},{2:d}"
-        "en"            "{1} has {2} minutes left to ready up or they will forfeit the match."
+        "#format"       "{1:s},{2:s}"
+        "en"            "{1} must be ready within {2} or they will forfeit the match."
     }
-    "SecondsToForfeitInfoMessage"
-    {
-        "#format"       "{1:s},{2:d}"
-        "en"            "{1} has {2} seconds left to ready up or they will forfeit the match."
-    }
-    "10SecondsToForfeitInfoMessage"
+    "TeamsMustBeReadyOrTie"
     {
         "#format"       "{1:s}"
-        "en"            "{1} has 10 seconds to ready up or forfeit the match."
+        "en"            "Teams must be ready within {1} or the match will end in a tie."
     }
     "MaxPausesUsedInfoMessage"
     {
@@ -172,6 +171,11 @@
         "#format"       "{1:s},{2:d}"
         "en"            "Technical pauses remaining for {1}: {2}"
     }
+    "TechPauseAutomaticallyStarted"
+    {
+        "#format"       "{1:s}"
+        "en"            "A technical pause was automatically started for {1}."
+    }
     "MatchUnpauseInfoMessage"
     {
         "#format"       "{1:s}"
@@ -229,8 +233,13 @@
     }
     "ForceReadyInfoMessage"
     {
+        "#format"       "{1:s}"
+        "en"            "You may type {1} to force-ready your team."
+    }
+    "ForceReadyDisabled"
+    {
         "#format"       "{1:s},{2:s}"
-        "en"            "You may type {1} to force-ready your team if you have less than {2} players."
+        "en"            "The {1} command is disabled, but can be enabled with {2}."
     }
     "TeammateForceReadied"
     {
@@ -331,12 +340,12 @@
     "TeamDecidedToStayInfoMessage"
     {
         "#format"       "{1:s}"
-        "en"            "{1} has decided to stay."
+        "en"            "{1} decided to stay."
     }
     "TeamDecidedToSwapInfoMessage"
     {
         "#format"       "{1:s}"
-        "en"            "{1} has decided to swap."
+        "en"            "{1} decided to swap."
     }
     "TeamLostTimeToDecideInfoMessage"
     {
@@ -384,6 +393,16 @@
     "MatchConfigLoadedInfoMessage"
     {
         "en"            "Loaded match config."
+    }
+    "ExitCoachSlotHelp"
+    {
+        "#format"       "{1:s}"
+        "en"            "Type {1} to exit the coach slot."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "#format"       "{1:s}"
+        "en"            "Type {1} to become a coach for your team."
     }
     "MoveToCoachInfoMessage"
     {
@@ -460,5 +479,75 @@
     {
         "#format"   "{1:s}"
         "en"        "Veto commencing in {1} seconds."
+    }
+    "SurrenderCommandNotEnabled"
+    {
+        "en"        "The surrender command is not enabled."
+    }
+    "SurrenderMinimumRoundDeficit"
+    {
+        "#format"   "{1:d}"
+        "en"        "You must be behind by at least {1} round(s) in order to surrender."
+    }
+    "SurrenderInitiated"
+    {
+        "#format"   "{1:s},{2:d},{3:d}"
+        "en"        "A vote to surrender was initiated by {1}. Your team must reach {2} votes within {3} seconds."
+    }
+    "SurrenderVoteStatus"
+    {
+        "#format"   "{1:d},{2:d}"
+        "en"        "{1} of {2} required surrender votes have been cast."
+    }
+    "SurrenderSuccessful"
+    {
+        "#format"   "{1:s}"
+        "en"        "{1} has surrendered."
+    }
+    "SurrenderVoteFailed"
+    {
+        "en"        "Not enough players on your team voted to surrender."
+    }
+    "SurrenderOnCooldown"
+    {
+        "#format"   "{1:s}"
+        "en"        "You must wait {1} to initiate a new vote to surrender."
+    }
+    "WinByForfeitAvailable"
+    {
+        "#format"   "{1:s},{2:s},{3:s}"
+        "en"        "{1} left the server. {2} can now type {3} to initiate a countdown to win as long as their team is full."
+    }
+    "WinByForfeitRequiresFullTeam"
+    {
+        "en"        "You must have a full team in order to request or cancel a win by forfeit."
+    }
+    "WinByForfeitAlreadyRequested"
+    {
+        "en"        "A request to win by forfeit is already pending."
+    }
+    "WinByForfeitCountdownStarted"
+    {
+        "#format"   "{1:s},{2:s},{3:s},{4:s}"
+        "en"        "{1} will win in {2} unless a player from {3} rejoins the game. This request can be canceled with {4}."
+    }
+    "WinByForfeitCountdownCanceled"
+    {
+        "#format"   "{1:s}"
+        "en"        "The request from {1} to win by forfeit was canceled."
+    }
+    "TeamForfeited"
+    {
+        "#format"   "{1:s}"
+        "en"        "{1} forfeited the series."
+    }
+    "AllPlayersLeftTieCountdown"
+    {
+        "#format"   "{1:s}"
+        "en"        "Both teams left the server. At least one player from each team must rejoin within {1} or the series will end in a tie."
+    }
+    "TieCountdownCanceled"
+    {
+        "en"        "The countdown to a tie was canceled as both teams now have players."
     }
 }

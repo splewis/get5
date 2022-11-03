@@ -1,6 +1,6 @@
 #define TEMP_MATCHCONFIG_BACKUP_PATTERN "get5_match_config_backup%d.txt"
-#define TEMP_VALVE_BACKUP_PATTERN "get5_temp_backup%d.txt"
-#define TEMP_VALVE_NAMES_FILE_PATTERN "get5_names%d.txt"
+#define TEMP_VALVE_BACKUP_PATTERN       "get5_temp_backup%d.txt"
+#define TEMP_VALVE_NAMES_FILE_PATTERN   "get5_names%d.txt"
 
 Action Command_LoadBackup(int client, int args) {
   if (!g_BackupSystemEnabledCvar.BoolValue) {
@@ -10,6 +10,11 @@ Action Command_LoadBackup(int client, int args) {
 
   if (g_PendingSideSwap || InHalftimePhase()) {
     ReplyToCommand(client, "You cannot load a backup during halftime.");
+    return Plugin_Handled;
+  }
+
+  if (IsDoingRestoreOrMapChange()) {
+    ReplyToCommand(client, "A map change or backup restore is in progress. You cannot load a backup right now.");
     return Plugin_Handled;
   }
 
@@ -24,7 +29,6 @@ Action Command_LoadBackup(int client, int args) {
   } else {
     ReplyToCommand(client, "Usage: get5_loadbackup <file>");
   }
-
   return Plugin_Handled;
 }
 
@@ -50,7 +54,7 @@ Action Command_ListBackups(int client, int args) {
   if (files != null) {
     char backupInfo[256];
     char pattern[PLATFORM_MAX_PATH];
-    Format(pattern, sizeof(pattern), "get5_backup_match%s", matchID);
+    FormatEx(pattern, sizeof(pattern), "get5_backup%d_match%s", Get5_GetServerID(), matchID);
 
     char filename[PLATFORM_MAX_PATH];
     while (files.GetNext(filename, sizeof(filename))) {
@@ -109,7 +113,7 @@ static bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
 
   // Try entering Valve's backup section (it doesn't always exist).
   if (!kv.JumpToKey("valve_backup")) {
-    Format(info, maxlength, "%s %s \"%s\" \"%s\"", path, timestamp, team1Name, team2Name);
+    FormatEx(info, maxlength, "%s %s \"%s\" \"%s\"", path, timestamp, team1Name, team2Name);
     delete kv;
     return true;
   }
@@ -119,8 +123,7 @@ static bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
 
   // Try entering FirstHalfScore section.
   if (!kv.JumpToKey("FirstHalfScore")) {
-    Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
-           map, 0, 0);
+    FormatEx(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name, map, 0, 0);
     delete kv;
     return true;
   }
@@ -133,8 +136,8 @@ static bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
 
   // Try entering SecondHalfScore section.
   if (!kv.JumpToKey("SecondHalfScore")) {
-    Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
-           map, team1Score, team2Score);
+    FormatEx(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name, map, team1Score,
+             team2Score);
     delete kv;
     return true;
   }
@@ -146,8 +149,8 @@ static bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
   kv.GoBack();
   delete kv;
 
-  Format(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name,
-         map, team1Score, team2Score);
+  FormatEx(info, maxlength, "%s %s \"%s\" \"%s\" %s %d %d", path, timestamp, team1Name, team2Name, map, team1Score,
+           team2Score);
   return true;
 }
 
@@ -156,76 +159,31 @@ void WriteBackup() {
     return;
   }
 
-  if (g_GameState != Get5State_Warmup && g_GameState != Get5State_KnifeRound &&
-      g_GameState != Get5State_Live) {
+  if (g_PendingSurrenderTeam != Get5Team_None) {
+    LogDebug("Not writing backup as there is a pending surrender for team %d.", g_PendingSurrenderTeam);
+    return;
+  }
+
+  if (g_GameState != Get5State_Warmup && g_GameState != Get5State_KnifeRound && g_GameState != Get5State_Live) {
     LogDebug("Not writing backup for game state %d.", g_GameState);
     return;  // Only backup post-veto warmup, knife and live.
   }
 
   char folder[PLATFORM_MAX_PATH];
-  g_RoundBackupPathCvar.GetString(folder, sizeof(folder));
-  ReplaceString(folder, sizeof(folder), "{MATCHID}", g_MatchID);
-
-  int backupFolderLength = strlen(folder);
-  if (backupFolderLength > 0 &&
-      (folder[0] == '/' || folder[0] == '.' || folder[backupFolderLength - 1] != '/' ||
-       StrContains(folder, "//") != -1)) {
-    LogError(
-        "get5_backup_path must end with a slash and must not start with a slash or dot. It will be reset to an empty string! Current value: %s",
-        folder);
-    folder = "";
-    g_RoundBackupPathCvar.SetString(folder, false, false);
-  } else {
-    CreateBackupFolderStructure(folder);
-  }
+  char variableSubstitutes[][] = {"{MATCHID}"};
+  CheckAndCreateFolderPath(g_RoundBackupPathCvar, variableSubstitutes, 1, folder, sizeof(folder));
 
   char path[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
-    Format(path, sizeof(path), "%sget5_backup_match%s_map%d_round%d.cfg", folder, g_MatchID,
-           g_MapNumber, g_RoundNumber);
+    FormatEx(path, sizeof(path), "%sget5_backup%d_match%s_map%d_round%d.cfg", folder, Get5_GetServerID(), g_MatchID,
+             g_MapNumber, g_RoundNumber);
   } else {
-    Format(path, sizeof(path), "%sget5_backup_match%s_map%d_prelive.cfg", folder, g_MatchID,
-           g_MapNumber);
+    FormatEx(path, sizeof(path), "%sget5_backup%d_match%s_map%d_prelive.cfg", folder, Get5_GetServerID(), g_MatchID,
+             g_MapNumber);
   }
   LogDebug("Writing backup to %s", path);
   WriteBackupStructure(path);
   g_LastGet5BackupCvar.SetString(path);
-}
-
-static bool CreateDirectoryWithPermissions(const char[] directory) {
-  LogDebug("Creating directory: %s", directory);
-  return CreateDirectory(directory,  // sets 777 permissions.
-                         FPERM_U_READ | FPERM_U_WRITE | FPERM_U_EXEC | FPERM_G_READ |
-                             FPERM_G_WRITE | FPERM_G_EXEC | FPERM_O_READ | FPERM_O_WRITE |
-                             FPERM_O_EXEC);
-}
-
-static bool CreateBackupFolderStructure(const char[] path) {
-  if (strlen(path) == 0 || DirExists(path)) {
-    return true;
-  }
-
-  LogDebug("Creating backup directory %s because it does not exist.", path);
-  char folders[16][PLATFORM_MAX_PATH];  // {folder1, folder2, etc}
-  char fullFolderPath[PLATFORM_MAX_PATH] =
-      "";  // initially empty, but we append every time a folder is created/verified
-  char currentFolder[PLATFORM_MAX_PATH];  // shorthand for folders[i]
-
-  ExplodeString(path, "/", folders, sizeof(folders), PLATFORM_MAX_PATH, true);
-  for (int i = 0; i < sizeof(folders); i++) {
-    currentFolder = folders[i];
-    if (strlen(currentFolder) ==
-        0) {  // as the loop is a fixed size, we stop when there are no more pieces.
-      break;
-    }
-    // Append the current folder to the full path
-    Format(fullFolderPath, sizeof(fullFolderPath), "%s%s/", fullFolderPath, currentFolder);
-    if (!DirExists(fullFolderPath) && !CreateDirectoryWithPermissions(fullFolderPath)) {
-      LogError("Failed to create or verify existence of directory: %s", fullFolderPath);
-      return false;
-    }
-  }
-  return true;
 }
 
 static void WriteBackupStructure(const char[] path) {
@@ -238,16 +196,8 @@ static void WriteBackupStructure(const char[] path) {
   char mapName[PLATFORM_MAX_PATH];
   GetCurrentMap(mapName, sizeof(mapName));
 
-  if (g_GameState == Get5State_Veto) {
-    kv.SetNum("gamestate", view_as<int>(Get5State_PreVeto));
-  } else if (g_GameState == Get5State_Warmup ||
-             g_GameState == Get5State_WaitingForKnifeRoundDecision ||
-             g_GameState == Get5State_KnifeRound || g_GameState == Get5State_GoingLive ||
-             g_GameState == Get5State_PostGame) {
-    kv.SetNum("gamestate", view_as<int>(Get5State_Warmup));
-  } else if (g_GameState == Get5State_Live) {
-    kv.SetNum("gamestate", view_as<int>(Get5State_Live));
-  }
+  // Assume warmup; changed to live below if a valve backup exists.
+  kv.SetNum("gamestate", view_as<int>(Get5State_Warmup));
 
   kv.SetNum("team1_side", g_TeamSide[Get5Team_1]);
   kv.SetNum("team2_side", g_TeamSide[Get5Team_2]);
@@ -266,6 +216,8 @@ static void WriteBackupStructure(const char[] path) {
   kv.SetNum("team2_tech_pauses_used", g_TechnicalPausesUsed[Get5Team_2]);
   kv.SetNum("team1_pause_time_used", g_TacticalPauseTimeUsed[Get5Team_1]);
   kv.SetNum("team2_pause_time_used", g_TacticalPauseTimeUsed[Get5Team_2]);
+
+  kv.SetNum("mapnumber", g_MapNumber);
 
   // Write original maplist.
   kv.JumpToKey("maps", true);
@@ -294,20 +246,26 @@ static void WriteBackupStructure(const char[] path) {
   WriteMatchToKv(kv);
   kv.GoBack();
 
-  if (g_GameState == Get5State_Live) {
-    // Write valve's backup format into the file. This only applies to live rounds, as any pre-live
-    // backups should just restart the game to the knife round.
+  ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
+  if (lastBackupCvar != null) {
     char lastBackup[PLATFORM_MAX_PATH];
-    ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
-    if (lastBackupCvar != null) {
-      lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
-      KeyValues valveBackup = new KeyValues("valve_backup");
-      if (valveBackup.ImportFromFile(lastBackup)) {
-        kv.JumpToKey("valve_backup", true);
-        KvCopySubkeys(valveBackup, kv);
-        kv.GoBack();
+    lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
+    if (strlen(lastBackup) > 0) {
+      if (g_GameState == Get5State_Live) {
+        // Write valve's backup format into the file. This only applies to live rounds, as any pre-live
+        // backups should just restart the game to warmup (post-veto).
+        KeyValues valveBackup = new KeyValues("valve_backup");
+        if (valveBackup.ImportFromFile(lastBackup)) {
+          kv.SetNum("gamestate", view_as<int>(Get5State_Live));
+          kv.JumpToKey("valve_backup", true);
+          KvCopySubkeys(valveBackup, kv);
+          kv.GoBack();
+        }
+        delete valveBackup;
       }
-      delete valveBackup;
+      if (DeleteFile(lastBackup)) {
+        lastBackupCvar.SetString("");
+      }
     }
   }
 
@@ -320,7 +278,7 @@ static void WriteBackupStructure(const char[] path) {
   delete kv;
 }
 
-bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
+bool RestoreFromBackup(const char[] path) {
   KeyValues kv = new KeyValues("Backup");
   if (!kv.ImportFromFile(path)) {
     LogError("Failed to read backup file \"%s\"", path);
@@ -328,10 +286,51 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
     return false;
   }
 
-  if (restartRecording) {
-    // We must stop recording when loading a backup, and we must do it before we load the match
-    // config, or the g_MatchID variable will be incorrect. This is suppressed when using the !stop
-    // command.
+  int loadedMapNumber = kv.GetNum("mapnumber", -1);
+  if (loadedMapNumber == -1) {
+    LogError("The backup was created with an earlier version of Get5 and is not compatible.");
+    delete kv;
+    return false;
+  }
+
+  char currentMap[PLATFORM_MAX_PATH];
+  GetCurrentMap(currentMap, sizeof(currentMap));
+
+  char loadedMatchId[MATCH_ID_LENGTH];
+  kv.GetString("matchid", loadedMatchId, sizeof(loadedMatchId));
+  char loadedMapName[PLATFORM_MAX_PATH];
+
+  // These gymnastics are required to determine if the backup we are trying to load is for a different
+  // map than the one the server is currently on, in which case the StopRecording() call should always
+  // be made. We have to loop "maps" twice because:
+  // 1. You cannot access KeyValue keys on index, so we can't just grab index "loadedMapNumber"
+  // 2. We need to determine if we should stop recording **before** we change the global variables,
+  // which the second loop below does.
+  if (kv.JumpToKey("maps")) {
+    if (kv.GotoFirstSubKey(false)) {
+      int index = 0;
+      do {
+        if (index == loadedMapNumber) {
+          kv.GetSectionName(loadedMapName, sizeof(loadedMapName));
+          break;
+        }
+        index++;
+      } while (kv.GotoNextKey(false));
+      kv.GoBack();
+    }
+    kv.GoBack();
+  }
+
+  bool backupIsForDifferentMap = !StrEqual(currentMap, loadedMapName, false);
+
+  bool shouldRestartRecording = g_GameState != Get5State_Live || g_MapNumber != loadedMapNumber ||
+                                backupIsForDifferentMap || !StrEqual(loadedMatchId, g_MatchID);
+
+  if (shouldRestartRecording) {
+    // We must stop recording to fire the Get5_OnDemoFinished event when loading a backup to another match or map, and
+    // we must do it before we load the match config, or the g_MatchID, g_MapNumber and g_DemoFileName variables will be
+    // incorrect. This is suppressed if we load to the same match and map ID during a live match, either via
+    // get5_loadbackup or the !stop-command, as we want only 1 demo file in those cases.
     StopRecording();
   }
 
@@ -353,8 +352,8 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
 
   if (g_GameState != Get5State_Live) {
     // This isn't perfect, but it's better than resetting all pauses used to zero in cases of
-    // restore on a new server. If restoring while live, we just retain the current pauses used, as
-    // they should be the "most correct".
+    // restore on a new server or a different map. If restoring while live, we just retain the
+    // current pauses used, as they should be the "most correct".
     g_TacticalPausesUsed[Get5Team_1] = kv.GetNum("team1_tac_pauses_used", 0);
     g_TacticalPausesUsed[Get5Team_2] = kv.GetNum("team2_tac_pauses_used", 0);
     g_TechnicalPausesUsed[Get5Team_1] = kv.GetNum("team1_tech_pauses_used", 0);
@@ -379,8 +378,7 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
   // draws.
   g_TeamSeriesScores[Get5Team_None] = kv.GetNum("series_draw", 0);
 
-  // Immediately set map number global var to ensure anything below doesn't break.
-  g_MapNumber = Get5_GetMapNumber();
+  g_MapNumber = loadedMapNumber;
 
   char mapName[PLATFORM_MAX_PATH];
   if (kv.JumpToKey("maps")) {
@@ -422,29 +420,25 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
   }
 
   // When loading pre-live, there is no Valve backup, so we assume -1.
-  g_WaitingForRoundBackup = false;
+  bool valveBackup = false;
   int roundNumberRestoredTo = -1;
   if (kv.JumpToKey("valve_backup")) {
-    g_WaitingForRoundBackup = true;
+    valveBackup = true;
     char tempValveBackup[PLATFORM_MAX_PATH];
     GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
     kv.ExportToFile(tempValveBackup);
     roundNumberRestoredTo = kv.GetNum("round", 0);
     kv.GoBack();
   }
+  delete kv;
 
-  char currentMap[PLATFORM_MAX_PATH];
-  GetCurrentMap(currentMap, sizeof(currentMap));
-
-  char currentSeriesMap[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(g_MapNumber, currentSeriesMap, sizeof(currentSeriesMap));
-
-  if (!StrEqual(currentMap, currentSeriesMap)) {
+  if (backupIsForDifferentMap) {
     // We don't need to assign players if changing map; this will be done when the players rejoin.
     // If a map is to be changed, we want to suppress all stats events immediately, as the
     // Get5_OnBackupRestore is called now and we don't want events firing after this until the game
     // is live again.
-    ChangeMap(currentSeriesMap, 3.0);
+    ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
+    ChangeMap(loadedMapName, 3.0);
   } else {
     // We must assign players to their teams. This is normally done inside LoadMatchConfig, but
     // since we need the team sides to be applied from the backup, we skip it then and do it here.
@@ -455,10 +449,10 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
         }
       }
     }
-    if (g_WaitingForRoundBackup) {
+    if (valveBackup) {
       // Same map, but round restore with a Valve backup; do normal restore immediately with no
-      // ready-up.
-      RestoreGet5Backup(restartRecording);
+      // ready-up and no game-state change.
+      RestoreGet5Backup(shouldRestartRecording);
     } else {
       // We are restarting to the same map for prelive; just go back into warmup and let players
       // ready-up again.
@@ -470,12 +464,10 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
     }
   }
 
-  delete kv;
-
   LogDebug("Calling Get5_OnBackupRestore()");
 
   Get5BackupRestoredEvent backupEvent =
-      new Get5BackupRestoredEvent(g_MatchID, g_MapNumber, roundNumberRestoredTo, path);
+    new Get5BackupRestoredEvent(g_MatchID, g_MapNumber, roundNumberRestoredTo, path);
 
   Call_StartForward(g_OnBackupRestore);
   Call_PushCell(backupEvent);
@@ -486,7 +478,7 @@ bool RestoreFromBackup(const char[] path, bool restartRecording = true) {
   return true;
 }
 
-void RestoreGet5Backup(bool restartRecording = true) {
+void RestoreGet5Backup(bool restartRecording) {
   // If you load a backup during a live round, the game might get stuck if there are only bots
   // remaining and no players are alive. Other stuff will probably also go wrong, so we put the game
   // into warmup. We **cannot** restart the game as that causes problems for tournaments using the
@@ -498,37 +490,28 @@ void RestoreGet5Backup(bool restartRecording = true) {
   PauseGame(Get5Team_None, Get5PauseType_Backup);
   g_DoingBackupRestoreNow = true;  // reset after the backup has completed, suppresses various
                                    // events and hooks until then.
-  g_WaitingForRoundBackup = false;
-  CreateTimer(1.5, Timer_StartRestore);
-  if (restartRecording) {
-    // Since a backup command forces the recording to stop, we restart it here once the backup has
-    // completed. We have to do this on a delay, as when loading from a live game, the backup will
-    // already be recording and must flush before a new record command can be issued. This is
-    // suppressed when using the !stop command!
-    CreateTimer(3.0, Timer_StartRecordingAfterBackup, _, TIMER_FLAG_NO_MAPCHANGE);
-  }
+  // We add a 2 second delay here to give the server time to
+  // flush the current GOTV recording *if* one is running.
+  CreateTimer(2.0, Timer_StartRestore, restartRecording, TIMER_FLAG_NO_MAPCHANGE);
 }
 
-static Action Timer_StartRecordingAfterBackup(Handle timer) {
-  if (g_GameState != Get5State_Live) {
-    return;
+static Action Timer_StartRestore(Handle timer, bool restartRecording) {
+  if (!g_DoingBackupRestoreNow) {
+    return Plugin_Handled;
   }
-  StartRecording();
-}
-
-static Action Timer_StartRestore(Handle timer) {
   ChangeState(Get5State_Live);
   char tempValveBackup[PLATFORM_MAX_PATH];
   GetTempFilePath(tempValveBackup, sizeof(tempValveBackup), TEMP_VALVE_BACKUP_PATTERN);
   ServerCommand("mp_backup_restore_load_file \"%s\"", tempValveBackup);
-  CreateTimer(0.5, Timer_FinishBackup);
+
+  // Small delay here as mp_backup_restore_load_file is async.
+  CreateTimer(0.5, Timer_FinishBackup, restartRecording, TIMER_FLAG_NO_MAPCHANGE);
 
   // We need to fire the OnRoundStarted event manually, as it will be suppressed during backups and
   // won't fire while g_DoingBackupRestoreNow is true.
   KeyValues kv = new KeyValues("Backup");
   if (kv.ImportFromFile(tempValveBackup)) {
-    Get5RoundStartedEvent startEvent =
-        new Get5RoundStartedEvent(g_MatchID, g_MapNumber, kv.GetNum("round", 0));
+    Get5RoundStartedEvent startEvent = new Get5RoundStartedEvent(g_MatchID, g_MapNumber, kv.GetNum("round", 0));
     LogDebug("Calling Get5_OnRoundStart() via backup.");
     Call_StartForward(g_OnRoundStart);
     Call_PushCell(startEvent);
@@ -536,9 +519,13 @@ static Action Timer_StartRestore(Handle timer) {
     EventLogger_LogAndDeleteEvent(startEvent);
   }
   delete kv;
+  return Plugin_Handled;
 }
 
-static Action Timer_FinishBackup(Handle timer) {
+static Action Timer_FinishBackup(Handle timer, bool restartRecording) {
+  if (!g_DoingBackupRestoreNow) {
+    return Plugin_Handled;
+  }
   // This ensures that coaches are moved to their slots.
   if (g_CheckAuthsCvar.BoolValue) {
     LOOP_CLIENTS(i) {
@@ -556,6 +543,10 @@ static Action Timer_FinishBackup(Handle timer) {
   } else {
     LogDebug("Failed to delete temp valve backup file: %s", tempValveBackup);
   }
+  if (restartRecording) {
+    StartRecording();
+  }
+  return Plugin_Handled;
 }
 
 void DeleteOldBackups() {
@@ -569,8 +560,7 @@ void DeleteOldBackups() {
   g_RoundBackupPathCvar.GetString(path, sizeof(path));
 
   if (StrContains(path, "{MATCHID}") != -1) {
-    LogError(
-        "Automatic backup deletion cannot be performed when get5_backup_path contains the {MATCHID} variable.");
+    LogError("Automatic backup deletion cannot be performed when get5_backup_path contains the {MATCHID} variable.");
     return;
   }
 
@@ -579,7 +569,7 @@ void DeleteOldBackups() {
     LogDebug("Searching '%s' for expired backups...", path);
     char filename[PLATFORM_MAX_PATH];
     while (files.GetNext(filename, sizeof(filename))) {
-      if (StrContains(filename, "get5_backup_") == 0) {
+      if (StrContains(filename, "get5_backup") == 0) {
         Format(filename, sizeof(filename), "%s%s", path, filename);
         if (GetTime() - GetFileTime(filename, FileTime_LastChange) >= maxTimeDifference) {
           if (DeleteFileIfExists(filename)) {

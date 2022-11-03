@@ -1,23 +1,27 @@
 #include <string>
 
-#define REMOTE_CONFIG_PATTERN "remote_config%d.json"
-#define CONFIG_MATCHID_DEFAULT ""  // empty string if no match ID defined in config.
-#define CONFIG_MATCHTITLE_DEFAULT "Map {MAPNUMBER} of {MAXMAPS}"
-#define CONFIG_PLAYERSPERTEAM_DEFAULT 5
-#define CONFIG_COACHESPERTEAM_DEFAULT 2
-#define CONFIG_MINPLAYERSTOREADY_DEFAULT 0
+#define REMOTE_CONFIG_PATTERN               "remote_config%d.json"
+#define CONFIG_MATCHID_DEFAULT              ""  // empty string if no match ID defined in config.
+#define CONFIG_MATCHTITLE_DEFAULT           "Map {MAPNUMBER} of {MAXMAPS}"
+#define CONFIG_PLAYERSPERTEAM_DEFAULT       5
+#define CONFIG_COACHESPERTEAM_DEFAULT       2
+#define CONFIG_MINPLAYERSTOREADY_DEFAULT    0
 #define CONFIG_MINSPECTATORSTOREADY_DEFAULT 0
-#define CONFIG_SPECTATORSNAME_DEFAULT "casters"
-#define CONFIG_NUM_MAPSDEFAULT 3
-#define CONFIG_SKIPVETO_DEFAULT false
-#define CONFIG_CLINCH_SERIES_DEFAULT true
-#define CONFIG_VETOFIRST_DEFAULT "team1"
-#define CONFIG_SIDETYPE_DEFAULT "standard"
+#define CONFIG_SPECTATORSNAME_DEFAULT       "casters"
+#define CONFIG_NUM_MAPSDEFAULT              3
+#define CONFIG_SKIPVETO_DEFAULT             false
+#define CONFIG_COACHES_MUST_READY_DEFAULT   false
+#define CONFIG_CLINCH_SERIES_DEFAULT        true
+#define CONFIG_VETOFIRST_DEFAULT            "team1"
+#define CONFIG_SIDETYPE_DEFAULT             "standard"
 
 bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   if (g_GameState != Get5State_None && !restoreBackup) {
     return false;
   }
+
+  EndSurrenderTimers();
+  ResetForfeitTimer();
 
   ResetReadyStatus();
   LOOP_TEAMS(team) {
@@ -53,7 +57,6 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   g_CvarValues.Clear();
   g_TeamScoresPerMap.Clear();
 
-  g_WaitingForRoundBackup = false;
   g_LastGet5BackupCvar.SetString("");
 
   CloseCvarStorage(g_KnifeChangedCvars);
@@ -74,8 +77,8 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   }
 
   if (g_NumberOfMapsInSeries > g_MapPoolList.Length) {
-    MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps",
-                    g_NumberOfMapsInSeries, g_MapPoolList.Length);
+    MatchConfigFail("Cannot play a series of %d maps with a maplist of %d maps", g_NumberOfMapsInSeries,
+                    g_MapPoolList.Length);
     return false;
   }
 
@@ -87,8 +90,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
 
       // Push a map side if one hasn't been set yet.
       if (g_MapSides.Length < g_MapsToPlay.Length) {
-        if (g_MatchSideType == MatchSideType_Standard ||
-            g_MatchSideType == MatchSideType_AlwaysKnife) {
+        if (g_MatchSideType == MatchSideType_Standard || g_MatchSideType == MatchSideType_AlwaysKnife) {
           g_MapSides.Push(SideChoice_KnifeRound);
         } else {
           g_MapSides.Push(SideChoice_Team1CT);
@@ -128,6 +130,9 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   AddTeamLogosToDownloadTable();
   SetStartingTeams();
 
+  // Set mp_backup_round_file to prevent backup file collisions
+  ServerCommand("mp_backup_round_file backup_%d", Get5_GetServerID());
+
   if (!restoreBackup) {
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();
@@ -139,7 +144,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     Stats_InitSeries();
 
     Get5SeriesStartedEvent startEvent =
-        new Get5SeriesStartedEvent(g_MatchID, g_TeamNames[Get5Team_1], g_TeamNames[Get5Team_2]);
+      new Get5SeriesStartedEvent(g_MatchID, g_TeamNames[Get5Team_1], g_TeamNames[Get5Team_2]);
 
     LogDebug("Calling Get5_OnSeriesInit");
 
@@ -152,8 +157,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     if (!g_CheckAuthsCvar.BoolValue &&
         (GetTeamPlayers(Get5Team_1).Length != 0 || GetTeamPlayers(Get5Team_2).Length != 0 ||
          GetTeamCoaches(Get5Team_1).Length != 0 || GetTeamCoaches(Get5Team_2).Length != 0)) {
-      LogError(
-          "Setting player auths in the \"players\" or \"coaches\" section has no impact with get5_check_auths 0");
+      LogError("Setting player auths in the \"players\" or \"coaches\" section has no impact with get5_check_auths 0");
     }
 
     // ExecuteMatchConfigCvars must be executed before we place players, as it might have
@@ -163,7 +167,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
     // When the match is loaded, we do not want to assign players on no team, as they may be in the
     // process of joining the server, which is the reason for the timer callback. This has caused
     // problems with players getting stuck on no team when using match config autoload, essentially
-    // recreating the "coaching bug". Adding a second seems to solve this problem. We cannot just
+    // recreating the "coaching bug". Adding a few seconds seems to solve this problem. We cannot just
     // skip team none, as players may also just be on the team selection menu when the match is
     // loaded, meaning they will never have a joingame hook, as it already happened, and we still
     // want those players placed.
@@ -171,7 +175,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
       LOOP_CLIENTS(i) {
         if (IsPlayer(i)) {
           if (GetClientTeam(i) == CS_TEAM_NONE) {
-            CreateTimer(1.0, Timer_PlacePlayerFromTeamNone, i, TIMER_FLAG_NO_MAPCHANGE);
+            CreateTimer(2.0, Timer_PlacePlayerFromTeamNone, i, TIMER_FLAG_NO_MAPCHANGE);
           } else {
             CheckClientTeam(i);
           }
@@ -256,66 +260,113 @@ static void MatchConfigFail(const char[] reason, any...) {
   EventLogger_LogAndDeleteEvent(event);
 }
 
-stock bool LoadMatchFromUrl(const char[] url, ArrayList paramNames = null,
-                            ArrayList paramValues = null) {
-  bool steamWorksAvaliable = LibraryExists("SteamWorks");
+bool LoadMatchFromUrl(const char[] url, const ArrayList paramNames = null, const ArrayList paramValues = null,
+                      const ArrayList headerNames = null, const ArrayList headerValues = null) {
+  if (!LibraryExists("SteamWorks")) {
+    MatchConfigFail("The SteamWorks extension is required in order to load match configurations over HTTP.");
+    return false;
+  }
 
-  char cleanedUrl[1024];
-  strcopy(cleanedUrl, sizeof(cleanedUrl), url);
-  ReplaceString(cleanedUrl, sizeof(cleanedUrl), "\"", "");
-  strcopy(g_LoadedConfigUrl, sizeof(g_LoadedConfigUrl), cleanedUrl);
+  Handle request = CreateGet5HTTPRequest(k_EHTTPMethodGET, url);
+  if (request == INVALID_HANDLE) {
+    MatchConfigFail("Failed to create remote match load request for URL '%s'.", url);
+    return false;
+  }
 
-  if (steamWorksAvaliable) {
-    // Add the protocol strings if missing (only http).
-    if (StrContains(cleanedUrl, "http://") == -1 && StrContains(cleanedUrl, "https://") == -1) {
-      Format(cleanedUrl, sizeof(cleanedUrl), "http://%s", cleanedUrl);
-    }
-    LogDebug("cleanedUrl (SteamWorks) = %s", cleanedUrl);
-    Handle request = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, cleanedUrl);
-    if (request == INVALID_HANDLE) {
-      MatchConfigFail("Failed to create HTTP GET request");
+  char key[1024];
+  char value[1024];
+  if (headerNames != null && headerValues != null) {
+    if (headerNames.Length != headerValues.Length) {
+      MatchConfigFail("The number of header keys and values must be identical.");
+      delete request;
       return false;
     }
 
-    if (paramNames != null && paramValues != null) {
-      if (paramNames.Length != paramValues.Length) {
-        MatchConfigFail("request paramNames and paramValues size mismatch");
+    for (int i = 0; i < headerNames.Length; i++) {
+      headerNames.GetString(i, key, sizeof(key));
+      headerValues.GetString(i, value, sizeof(value));
+      if (!SteamWorks_SetHTTPRequestHeaderValue(request, key, value)) {
+        MatchConfigFail("Failed to set HTTP header '%s' with value '%s'.", key, value);
+        delete request;
         return false;
       }
+    }
+  }
 
-      char param[128];
-      char value[128];
-      for (int i = 0; i < paramNames.Length; i++) {
-        paramNames.GetString(i, param, sizeof(param));
-        paramValues.GetString(i, value, sizeof(value));
-        SteamWorks_SetHTTPRequestGetOrPostParameter(request, param, value);
-      }
+  if (paramNames != null && paramValues != null) {
+    if (paramNames.Length != paramValues.Length) {
+      MatchConfigFail("The number of query parameter keys and values must be identical.");
+      delete request;
+      return false;
     }
 
-    SteamWorks_SetHTTPCallbacks(request, SteamWorks_OnMatchConfigReceived);
-    SteamWorks_SendHTTPRequest(request);
-    return true;
-
-  } else {
-    MatchConfigFail("SteamWorks extension is not available");
-    return false;
+    for (int i = 0; i < paramNames.Length; i++) {
+      paramNames.GetString(i, key, sizeof(key));
+      paramValues.GetString(i, value, sizeof(value));
+      if (!SteamWorks_SetHTTPRequestGetOrPostParameter(request, key, value)) {
+        MatchConfigFail("Failed to set HTTP query parameter '%s' with value '%s'.", key, value);
+        delete request;
+        return false;
+      }
+    }
   }
+
+  DataPack pack = new DataPack();
+  pack.WriteString(url);
+
+  SteamWorks_SetHTTPRequestContextValue(request, pack);
+  SteamWorks_SetHTTPCallbacks(request, SteamWorks_OnMatchConfigReceived);
+  SteamWorks_SendHTTPRequest(request);
+  return true;
 }
 
-// SteamWorks HTTP callback for fetching a workshop collection
 static int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful,
-                                            EHTTPStatusCode statusCode, Handle data) {
+                                            EHTTPStatusCode statusCode, DataPack pack) {
+
+  char loadedUrl[PLATFORM_MAX_PATH];
+  pack.Reset();
+  pack.ReadString(loadedUrl, sizeof(loadedUrl));
+  delete pack;
+
   if (failure || !requestSuccessful) {
-    MatchConfigFail("Steamworks GET request failed, HTTP status code = %d", statusCode);
+    MatchConfigFail(
+      "Match config HTTP request for '%s' failed due to a network or configuration error. Make sure you have enclosed your URL in quotes.",
+      loadedUrl);
+    delete request;
+    return;
+  }
+
+  int status = view_as<int>(statusCode);
+  if (status >= 300 || status < 200) {
+    MatchConfigFail("Match config HTTP request for '%s' failed with HTTP status code: %d.", loadedUrl, statusCode);
+    int responseSize;
+    SteamWorks_GetHTTPResponseBodySize(request, responseSize);
+    char[] response = new char[responseSize];
+    if (SteamWorks_GetHTTPResponseBodyData(request, response, responseSize)) {
+      LogError("Response body: %s", response);
+    } else {
+      LogError("Failed to read response body.");
+    }
+    delete request;
     return;
   }
 
   char remoteConfig[PLATFORM_MAX_PATH];
   GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
-  SteamWorks_WriteHTTPResponseBodyToFile(request, remoteConfig);
-  LoadMatchConfig(remoteConfig);
-
-  strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), g_LoadedConfigUrl);
+  if (SteamWorks_WriteHTTPResponseBodyToFile(request, remoteConfig)) {
+    if (LoadMatchConfig(remoteConfig)) {
+      // LoadMatchConfig prints its own error via MatchConfigFail.
+      // Override g_LoadedConfigFile to point to the URL instead of the local temp file.
+      strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), loadedUrl);
+      // We only delete the file if it loads successfully, as it may be used for debugging otherwise.
+      if (FileExists(remoteConfig) && !DeleteFile(remoteConfig)) {
+        LogError("Unable to delete temporary match config file '%s'.", remoteConfig);
+      }
+    }
+  } else {
+    MatchConfigFail("Failed to write match configuration to file '%s'.", remoteConfig);
+  }
+  delete request;
 }
 
 void WriteMatchToKv(KeyValues kv) {
@@ -325,6 +376,7 @@ void WriteMatchToKv(KeyValues kv) {
   kv.SetNum("num_maps", g_NumberOfMapsInSeries);
   kv.SetNum("players_per_team", g_PlayersPerTeam);
   kv.SetNum("coaches_per_team", g_CoachesPerTeam);
+  kv.SetNum("coaches_must_ready", g_CoachesMustReady);
   kv.SetNum("min_players_to_ready", g_MinPlayersToReady);
   kv.SetNum("min_spectators_to_ready", g_MinSpectatorsToReady);
   kv.SetString("match_title", g_MatchTitle);
@@ -363,7 +415,7 @@ void WriteMatchToKv(KeyValues kv) {
     char cvarValue[MAX_CVAR_LENGTH];
     g_CvarNames.GetString(i, cvarName, sizeof(cvarName));
     g_CvarValues.GetString(i, cvarValue, sizeof(cvarValue));
-    kv.SetString(cvarName, cvarValue);
+    kv.SetString(cvarName, strlen(cvarValue) == 0 ? KEYVALUE_STRING_PLACEHOLDER : cvarValue);
   }
   kv.GoBack();
 }
@@ -393,7 +445,7 @@ static void AddTeamBackupData(KeyValues kv, Get5Team team) {
       if (!g_PlayerNames.GetString(auth, name, sizeof(name))) {
         strcopy(name, sizeof(name), KEYVALUE_STRING_PLACEHOLDER);
       }
-      kv.SetString(auth, KEYVALUE_STRING_PLACEHOLDER);
+      kv.SetString(auth, name);
     }
     kv.GoBack();
   }
@@ -407,15 +459,14 @@ static bool LoadMatchFromKv(KeyValues kv) {
   g_SeriesCanClinch = kv.GetNum("clinch_series", CONFIG_CLINCH_SERIES_DEFAULT) != 0;
   g_CoachesPerTeam = kv.GetNum("coaches_per_team", CONFIG_COACHESPERTEAM_DEFAULT);
   g_MinPlayersToReady = kv.GetNum("min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
-  g_MinSpectatorsToReady =
-      kv.GetNum("min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
+  g_MinSpectatorsToReady = kv.GetNum("min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
   g_SkipVeto = kv.GetNum("skip_veto", CONFIG_SKIPVETO_DEFAULT) != 0;
+  g_CoachesMustReady = kv.GetNum("coaches_must_ready", CONFIG_COACHES_MUST_READY_DEFAULT) != 0;
 
   g_NumberOfMapsInSeries = kv.GetNum("num_maps", CONFIG_NUM_MAPSDEFAULT);
   g_MapsToWin = MapsToWin(g_NumberOfMapsInSeries);
   if (g_NumberOfMapsInSeries != 2 && g_NumberOfMapsInSeries % 2 == 0) {
-    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.",
-                    g_NumberOfMapsInSeries);
+    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
     return false;
   }
 
@@ -433,8 +484,7 @@ static bool LoadMatchFromKv(KeyValues kv) {
   GetTeamPlayers(Get5Team_Spec).Clear();
   if (kv.JumpToKey("spectators")) {
     AddSubsectionAuthsToList(kv, "players", GetTeamPlayers(Get5Team_Spec));
-    kv.GetString("name", g_TeamNames[Get5Team_Spec], MAX_CVAR_LENGTH,
-                 CONFIG_SPECTATORSNAME_DEFAULT);
+    kv.GetString("name", g_TeamNames[Get5Team_Spec], MAX_CVAR_LENGTH, CONFIG_SPECTATORSNAME_DEFAULT);
     kv.GoBack();
     FormatTeamName(Get5Team_Spec);
   }
@@ -493,43 +543,35 @@ static bool LoadMatchFromKv(KeyValues kv) {
 }
 
 static bool LoadMatchFromJson(JSON_Object json) {
-  json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID),
-                              CONFIG_MATCHID_DEFAULT);
+  json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID), CONFIG_MATCHID_DEFAULT);
   g_InScrimMode = json_object_get_bool_safe(json, "scrim", false);
   g_SeriesCanClinch = json_object_get_bool_safe(json, "clinch_series", true);
-  json_object_get_string_safe(json, "match_title", g_MatchTitle, sizeof(g_MatchTitle),
-                              CONFIG_MATCHTITLE_DEFAULT);
+  json_object_get_string_safe(json, "match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
 
-  g_PlayersPerTeam =
-      json_object_get_int_safe(json, "players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
-  g_CoachesPerTeam =
-      json_object_get_int_safe(json, "coaches_per_team", CONFIG_COACHESPERTEAM_DEFAULT);
-  g_MinPlayersToReady =
-      json_object_get_int_safe(json, "min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
-  g_MinSpectatorsToReady = json_object_get_int_safe(json, "min_spectators_to_ready",
-                                                    CONFIG_MINSPECTATORSTOREADY_DEFAULT);
+  g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
+  g_CoachesPerTeam = json_object_get_int_safe(json, "coaches_per_team", CONFIG_COACHESPERTEAM_DEFAULT);
+  g_MinPlayersToReady = json_object_get_int_safe(json, "min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
+  g_MinSpectatorsToReady =
+    json_object_get_int_safe(json, "min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
   g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
+  g_CoachesMustReady = json_object_get_bool_safe(json, "coaches_must_ready", CONFIG_COACHES_MUST_READY_DEFAULT);
 
   g_NumberOfMapsInSeries = json_object_get_int_safe(json, "num_maps", CONFIG_NUM_MAPSDEFAULT);
   g_MapsToWin = MapsToWin(g_NumberOfMapsInSeries);
   if (g_NumberOfMapsInSeries != 2 && g_NumberOfMapsInSeries % 2 == 0) {
-    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.",
-                    g_NumberOfMapsInSeries);
+    MatchConfigFail("Cannot create a series of %d maps. Use an odd number or 2.", g_NumberOfMapsInSeries);
     return false;
   }
 
   char vetoFirstBuffer[64];
-  json_object_get_string_safe(json, "veto_first", vetoFirstBuffer, sizeof(vetoFirstBuffer),
-                              CONFIG_VETOFIRST_DEFAULT);
+  json_object_get_string_safe(json, "veto_first", vetoFirstBuffer, sizeof(vetoFirstBuffer), CONFIG_VETOFIRST_DEFAULT);
   g_LastVetoTeam = OtherMatchTeam(VetoFirstFromString(vetoFirstBuffer));
 
   char sideTypeBuffer[64];
-  json_object_get_string_safe(json, "side_type", sideTypeBuffer, sizeof(sideTypeBuffer),
-                              CONFIG_SIDETYPE_DEFAULT);
+  json_object_get_string_safe(json, "side_type", sideTypeBuffer, sizeof(sideTypeBuffer), CONFIG_SIDETYPE_DEFAULT);
   g_MatchSideType = MatchSideTypeFromString(sideTypeBuffer);
 
-  json_object_get_string_safe(json, "favored_percentage_text", g_FavoredTeamText,
-                              sizeof(g_FavoredTeamText));
+  json_object_get_string_safe(json, "favored_percentage_text", g_FavoredTeamText, sizeof(g_FavoredTeamText));
   g_FavoredTeamPercentage = json_object_get_int_safe(json, "favored_percentage_team1", 0);
 
   GetTeamPlayers(Get5Team_Spec).Clear();
@@ -587,8 +629,21 @@ static bool LoadMatchFromJson(JSON_Object json) {
       key_length = cvars.GetKeySize(i);
       char[] cvarName = new char[key_length];
       cvars.GetKey(i, cvarName, key_length);
-
-      cvars.GetString(cvarName, cvarValue, sizeof(cvarValue));
+      JSONCellType type = cvars.GetType(cvarName);
+      if (type == JSON_Type_Int) {
+        IntToString(cvars.GetInt(cvarName), cvarValue, sizeof(cvarValue));
+#if SM_INT64_SUPPORTED  // requires SM 1.11 build 6861 according to sm-json
+      } else if (type == JSON_Type_Int64) {
+        IntToString(cvars.GetInt(cvarName), cvarValue, sizeof(cvarValue));
+#endif
+      } else if (type == JSON_Type_Float) {
+        FloatToString(cvars.GetFloat(cvarName), cvarValue, sizeof(cvarValue));
+      } else if (type == JSON_Type_String) {
+        cvars.GetString(cvarName, cvarValue, sizeof(cvarValue));
+      } else {
+        MatchConfigFail("Expected \"cvars\" section to contain only strings or numbers.");
+        return false;
+      }
       g_CvarNames.PushString(cvarName);
       g_CvarValues.PushString(cvarValue);
     }
@@ -670,11 +725,9 @@ static void FormatTeamName(const Get5Team team) {
     teamNameFallback = "team2";
   } else if (team == Get5Team_Spec) {
     g_SpecNameColorCvar.GetString(color, sizeof(color));
-  } else {
-    color = "{NORMAL}";
   }
-  Format(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color,
-         strlen(g_TeamNames[team]) > 0 ? g_TeamNames[team] : teamNameFallback);
+  FormatEx(g_FormattedTeamNames[team], MAX_CVAR_LENGTH, "%s%s{NORMAL}", color,
+           strlen(g_TeamNames[team]) > 0 ? g_TeamNames[team] : teamNameFallback);
 }
 
 static void LoadDefaultMapList(ArrayList list) {
@@ -715,8 +768,8 @@ void SetMatchTeamCvars() {
   // Update mp_teammatchstat_txt with the match title.
   char mapstat[MAX_CVAR_LENGTH];
   strcopy(mapstat, sizeof(mapstat), g_MatchTitle);
-  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAPNUMBER}", Get5_GetMapNumber() + 1, false);
-  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAXMAPS}", g_NumberOfMapsInSeries, false);
+  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAPNUMBER}", Get5_GetMapNumber() + 1);
+  ReplaceStringWithInt(mapstat, sizeof(mapstat), "{MAXMAPS}", g_NumberOfMapsInSeries);
   SetConVarStringSafe("mp_teammatchstat_txt", mapstat);
 
   if (g_MapsToWin >= 3) {
@@ -725,12 +778,11 @@ void SetMatchTeamCvars() {
     IntToString(g_TeamSeriesScores[Get5Team_1], team1Text, sizeof(team1Text));
     IntToString(g_TeamSeriesScores[Get5Team_2], team2Text, sizeof(team2Text));
 
-    MatchTeamStringsToCSTeam(team1Text, team2Text, ctMatchText, sizeof(ctMatchText), tMatchText,
-                             sizeof(tMatchText));
+    MatchTeamStringsToCSTeam(team1Text, team2Text, ctMatchText, sizeof(ctMatchText), tMatchText, sizeof(tMatchText));
   }
 
-  SetTeamInfo(CS_TEAM_CT, g_TeamNames[ctTeam], g_TeamFlags[ctTeam], g_TeamLogos[ctTeam],
-              ctMatchText, g_TeamSeriesScores[ctTeam]);
+  SetTeamInfo(CS_TEAM_CT, g_TeamNames[ctTeam], g_TeamFlags[ctTeam], g_TeamLogos[ctTeam], ctMatchText,
+              g_TeamSeriesScores[ctTeam]);
 
   SetTeamInfo(CS_TEAM_T, g_TeamNames[tTeam], g_TeamFlags[tTeam], g_TeamLogos[tTeam], tMatchText,
               g_TeamSeriesScores[tTeam]);
@@ -817,24 +869,20 @@ Action Command_AddPlayer(int client, int args) {
     ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
   } else if (g_InScrimMode) {
-    ReplyToCommand(
-        client,
-        "Cannot use get5_addplayer in scrim mode. Use get5_ringer to swap a player's team.");
+    ReplyToCommand(client, "Cannot use get5_addplayer in scrim mode. Use get5_ringer to swap a player's team.");
     return Plugin_Handled;
-  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  } else if (g_DoingBackupRestoreNow || g_GameState == Get5State_PendingRestore) {
     ReplyToCommand(client, "Cannot add players while waiting for round backup.");
     return Plugin_Handled;
   } else if (g_PendingSideSwap || InHalftimePhase()) {
-    ReplyToCommand(client,
-                   "Cannot add players during halftime. Please wait until the next round starts.");
+    ReplyToCommand(client, "Cannot add players during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
   char auth[AUTH_LENGTH];
   char teamString[32];
   char name[MAX_NAME_LENGTH];
-  if (args >= 2 && GetCmdArg(1, auth, sizeof(auth)) &&
-      GetCmdArg(2, teamString, sizeof(teamString))) {
+  if (args >= 2 && GetCmdArg(1, auth, sizeof(auth)) && GetCmdArg(2, teamString, sizeof(teamString))) {
     if (args >= 3) {
       GetCmdArg(3, name, sizeof(name));
     }
@@ -855,9 +903,8 @@ Action Command_AddPlayer(int client, int args) {
       ReplyToCommand(client, "Successfully added player %s to %s.", auth, teamString);
     } else {
       ReplyToCommand(
-          client,
-          "Failed to add player %s to team %. They may already be on a team or you provided an invalid Steam ID.",
-          auth, teamString);
+        client, "Failed to add player %s to team %. They may already be on a team or you provided an invalid Steam ID.",
+        auth, teamString);
     }
 
   } else {
@@ -874,23 +921,20 @@ Action Command_AddCoach(int client, int args) {
     ReplyToCommand(client, "Coaching is not enabled.");
     return Plugin_Handled;
   } else if (g_InScrimMode) {
-    ReplyToCommand(client,
-                   "Coaches cannot be added in scrim mode. Use the !coach command in chat.");
+    ReplyToCommand(client, "Coaches cannot be added in scrim mode. Use the !coach command in chat.");
     return Plugin_Handled;
-  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  } else if (g_DoingBackupRestoreNow || g_GameState == Get5State_PendingRestore) {
     ReplyToCommand(client, "Cannot add coaches while waiting for round backup.");
     return Plugin_Handled;
   } else if (g_PendingSideSwap || InHalftimePhase()) {
-    ReplyToCommand(client,
-                   "Cannot add coaches during halftime. Please wait until the next round starts.");
+    ReplyToCommand(client, "Cannot add coaches during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
   char auth[AUTH_LENGTH];
   char teamString[32];
   char name[MAX_NAME_LENGTH];
-  if (args >= 2 && GetCmdArg(1, auth, sizeof(auth)) &&
-      GetCmdArg(2, teamString, sizeof(teamString))) {
+  if (args >= 2 && GetCmdArg(1, auth, sizeof(auth)) && GetCmdArg(2, teamString, sizeof(teamString))) {
     if (args >= 3) {
       GetCmdArg(3, name, sizeof(name));
     }
@@ -925,17 +969,15 @@ Action Command_AddCoach(int client, int args) {
       if (addedClient > 0 && IsClientConnected(addedClient)) {
         Get5Side side = view_as<Get5Side>(Get5TeamToCSTeam(team));
         if (side != Get5Side_None) {
-          LogDebug(
-              "Player %s was present on the server when added as coach; moving them to coach for %d.",
-              auth, team);
+          LogDebug("Player %s was present on the server when added as coach; moving them to coach for %d.", auth, team);
           SetClientCoaching(addedClient, side);
         }
       }
     } else {
       ReplyToCommand(
-          client,
-          "Failed to add player %s as coach for %s. They may already be coaching or you provided an invalid Steam ID.",
-          auth, teamString);
+        client,
+        "Failed to add player %s as coach for %s. They may already be coaching or you provided an invalid Steam ID.",
+        auth, teamString);
     }
   } else {
     ReplyToCommand(client, "Usage: get5_addcoach <auth> <team1|team2> [name]");
@@ -948,16 +990,13 @@ Action Command_AddKickedPlayer(int client, int args) {
     ReplyToCommand(client, "No match configuration was loaded.");
     return Plugin_Handled;
   } else if (g_InScrimMode) {
-    ReplyToCommand(
-        client,
-        "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a player's team.");
+    ReplyToCommand(client, "Cannot use get5_addkickedplayer in scrim mode. Use get5_ringer to swap a player's team.");
     return Plugin_Handled;
-  } else if (g_DoingBackupRestoreNow || g_WaitingForRoundBackup) {
+  } else if (g_DoingBackupRestoreNow || g_GameState == Get5State_PendingRestore) {
     ReplyToCommand(client, "Cannot add players while waiting for round backup.");
     return Plugin_Handled;
   } else if (g_PendingSideSwap || InHalftimePhase()) {
-    ReplyToCommand(client,
-                   "Cannot add players during halftime. Please wait until the next round starts.");
+    ReplyToCommand(client, "Cannot add players during halftime. Please wait until the next round starts.");
     return Plugin_Handled;
   }
 
@@ -986,13 +1025,11 @@ Action Command_AddKickedPlayer(int client, int args) {
     }
 
     if (AddPlayerToTeam(g_LastKickedPlayerAuth, team, name)) {
-      ReplyToCommand(client, "Successfully added kicked player %s to %s.", g_LastKickedPlayerAuth,
-                     teamString);
+      ReplyToCommand(client, "Successfully added kicked player %s to %s.", g_LastKickedPlayerAuth, teamString);
     } else {
       ReplyToCommand(
-          client,
-          "Failed to add player %s to %s. They may already be on a team or you provided an invalid Steam ID.",
-          g_LastKickedPlayerAuth, teamString);
+        client, "Failed to add player %s to %s. They may already be on a team or you provided an invalid Steam ID.",
+        g_LastKickedPlayerAuth, teamString);
     }
 
   } else {
@@ -1008,9 +1045,7 @@ Action Command_RemovePlayer(int client, int args) {
   }
 
   if (g_InScrimMode) {
-    ReplyToCommand(
-        client,
-        "Cannot use get5_removeplayer in scrim mode. Use get5_ringer to swap a player's team.");
+    ReplyToCommand(client, "Cannot use get5_removeplayer in scrim mode. Use get5_ringer to swap a player's team.");
     return Plugin_Handled;
   }
 
@@ -1019,8 +1054,7 @@ Action Command_RemovePlayer(int client, int args) {
     if (RemovePlayerFromTeams(auth)) {
       ReplyToCommand(client, "Successfully removed player %s.", auth);
     } else {
-      ReplyToCommand(client, "Player %s not found in auth lists or the Steam ID was invalid.",
-                     auth);
+      ReplyToCommand(client, "Player %s not found in auth lists or the Steam ID was invalid.", auth);
     }
   } else {
     ReplyToCommand(client, "Usage: get5_removeplayer <auth>");
@@ -1035,9 +1069,7 @@ Action Command_RemoveKickedPlayer(int client, int args) {
   }
 
   if (g_InScrimMode) {
-    ReplyToCommand(
-        client,
-        "Cannot use get5_removekickedplayer in scrim mode. Use get5_ringer to swap a players team.");
+    ReplyToCommand(client, "Cannot use get5_removekickedplayer in scrim mode. Use get5_ringer to swap a players team.");
     return Plugin_Handled;
   }
 
@@ -1049,8 +1081,7 @@ Action Command_RemoveKickedPlayer(int client, int args) {
   if (RemovePlayerFromTeams(g_LastKickedPlayerAuth)) {
     ReplyToCommand(client, "Successfully removed kicked player %s.", g_LastKickedPlayerAuth);
   } else {
-    ReplyToCommand(client, "Player %s not found in auth lists or the Steam ID was invalid.",
-                   g_LastKickedPlayerAuth);
+    ReplyToCommand(client, "Player %s not found in auth lists or the Steam ID was invalid.", g_LastKickedPlayerAuth);
   }
   return Plugin_Handled;
 }
@@ -1077,7 +1108,7 @@ Action Command_CreateMatch(int client, int args) {
   }
 
   char path[PLATFORM_MAX_PATH];
-  Format(path, sizeof(path), "get5_%s.cfg", matchid);
+  FormatEx(path, sizeof(path), "get5_%s.cfg", matchid);
   DeleteFileIfExists(path);
 
   KeyValues kv = new KeyValues("Match");
@@ -1149,7 +1180,7 @@ Action Command_CreateScrim(int client, int args) {
   }
 
   char path[PLATFORM_MAX_PATH];
-  Format(path, sizeof(path), "get5_%s.cfg", matchid);
+  FormatEx(path, sizeof(path), "get5_%s.cfg", matchid);
   DeleteFileIfExists(path);
 
   KeyValues kv = new KeyValues("Match");
@@ -1240,7 +1271,6 @@ Action Command_Ringer(int client, int args) {
 static int AddPlayersToAuthKv(KeyValues kv, Get5Team team, char teamName[MAX_CVAR_LENGTH]) {
   int count = 0;
   kv.JumpToKey("players", true);
-  bool gotClientName = false;
   char auth[AUTH_LENGTH];
   LOOP_CLIENTS(i) {
     if (IsAuthedPlayer(i)) {
@@ -1255,13 +1285,9 @@ static int AddPlayersToAuthKv(KeyValues kv, Get5Team team, char teamName[MAX_CVA
       }
 
       if (t == team) {
-        if (!gotClientName) {
-          gotClientName = true;
-          char clientName[MAX_NAME_LENGTH];
-          GetClientName(i, clientName, sizeof(clientName));
-          Format(teamName, sizeof(teamName), "team_%s", clientName);
+        if (count == 0) {
+          FormatEx(teamName, sizeof(teamName), "team_%N", i);
         }
-
         count++;
         if (GetAuth(i, auth, sizeof(auth))) {
           kv.SetString(auth, KEYVALUE_STRING_PLACEHOLDER);
@@ -1273,8 +1299,8 @@ static int AddPlayersToAuthKv(KeyValues kv, Get5Team team, char teamName[MAX_CVA
   return count;
 }
 
-static void MatchTeamStringsToCSTeam(const char[] team1Str, const char[] team2Str, char[] ctStr,
-                                     int ctLen, char[] tStr, int tLen) {
+static void MatchTeamStringsToCSTeam(const char[] team1Str, const char[] team2Str, char[] ctStr, int ctLen, char[] tStr,
+                                     int tLen) {
   if (Get5TeamToCSTeam(Get5Team_1) == CS_TEAM_CT) {
     strcopy(ctStr, ctLen, team1Str);
     strcopy(tStr, tLen, team2Str);
@@ -1295,19 +1321,17 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
     return;
 
   char logoPath[PLATFORM_MAX_PATH + 1];
-  Format(logoPath, sizeof(logoPath), "materials/panorama/images/tournaments/teams/%s.svg",
-         logoName);
+  FormatEx(logoPath, sizeof(logoPath), "materials/panorama/images/tournaments/teams/%s.svg", logoName);
   if (FileExists(logoPath)) {
     LogDebug("Adding file %s to download table", logoName);
     AddFileToDownloadsTable(logoPath);
   } else {
-    Format(logoPath, sizeof(logoPath), "resource/flash/econ/tournaments/teams/%s.png", logoName);
+    FormatEx(logoPath, sizeof(logoPath), "resource/flash/econ/tournaments/teams/%s.png", logoName);
     if (FileExists(logoPath)) {
       LogDebug("Adding file %s to download table", logoName);
       AddFileToDownloadsTable(logoPath);
     } else {
-      LogError("Error in locating file %s. Please ensure the file exists on your game server.",
-               logoPath);
+      LogError("Error in locating file %s. Please ensure the file exists on your game server.", logoPath);
     }
   }
 }
@@ -1317,9 +1341,12 @@ void CheckTeamNameStatus(Get5Team team) {
     LOOP_CLIENTS(i) {
       if (IsAuthedPlayer(i)) {
         if (GetClientMatchTeam(i) == team) {
-          char clientName[MAX_NAME_LENGTH];
-          GetClientName(i, clientName, sizeof(clientName));
-          Format(g_TeamNames[team], MAX_CVAR_LENGTH, "team_%s", clientName);
+          FormatEx(g_TeamNames[team], MAX_CVAR_LENGTH, "team_%N", i);
+          if (team == Get5Team_1) {
+            g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamNames[team]);
+          } else if (team == Get5Team_2) {
+            g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[team]);
+          }
           break;
         }
       }

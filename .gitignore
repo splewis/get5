@@ -2,6 +2,7 @@
 *.zip
 *.tar.gz
 builds
+build
 .vscode/
 .idea
 documentation/site

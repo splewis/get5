@@ -10,7 +10,7 @@ Action Command_DebugInfo(int client, int args) {
 
   File f = OpenFile(path, "w");
   if (f == null) {
-    LogError("Failed to open get5_debug.txt for writing");
+    LogError("Failed to open %s for writing", path);
     return Plugin_Handled;
   }
 
@@ -43,7 +43,7 @@ static void AddSpacing(File f) {
 static bool GetCvar(const char[] name, char[] value, int len) {
   ConVar cvar = FindConVar(name);
   if (cvar == null) {
-    Format(value, len, "NULL CVAR");
+    FormatEx(value, len, "NULL CVAR");
     return false;
   } else {
     cvar.GetString(value, len);
@@ -122,12 +122,12 @@ static void AddGlobalStateInfo(File f) {
 
   f.WriteLine("g_MapChangePending = %d", g_MapChangePending);
   f.WriteLine("g_PendingSideSwap = %d", g_PendingSideSwap);
-  f.WriteLine("g_WaitingForRoundBackup = %d", g_WaitingForRoundBackup);
   f.WriteLine("g_DoingBackupRestoreNow = %d", g_DoingBackupRestoreNow);
   f.WriteLine("g_ReadyTimeWaitingUsed = %d", g_ReadyTimeWaitingUsed);
   f.WriteLine("g_PausingTeam = %d", g_PausingTeam);
   f.WriteLine("g_PauseType = %d", g_PauseType);
   f.WriteLine("g_LatestPauseDuration = %d", g_LatestPauseDuration);
+  f.WriteLine("g_PendingSurrenderTeam = %d", g_PendingSurrenderTeam);
 
   LOOP_TEAMS(team) {
     GetTeamString(team, buffer, sizeof(buffer));
@@ -139,6 +139,7 @@ static void AddGlobalStateInfo(File f) {
     f.WriteLine("g_TeamFlags = %s", g_TeamFlags[team]);
     f.WriteLine("g_TeamLogos = %s", g_TeamLogos[team]);
     f.WriteLine("g_TeamMatchTexts = %s", g_TeamMatchTexts[team]);
+    f.WriteLine("g_SurrenderVotes = %d", g_SurrenderVotes[team]);
 
     CSTeamString(g_TeamSide[team], buffer, sizeof(buffer));
     f.WriteLine("g_TeamSide = %s (%d)", buffer, g_TeamSide[team]);
@@ -207,7 +208,7 @@ static void AddLogLines(File f, const char[] pattern, int maxLines) {
   while (dir.GetNext(filename, sizeof(filename), type)) {
     if (type == FileType_File && StrContains(filename, pattern) >= 0) {
       char fullPath[PLATFORM_MAX_PATH];
-      Format(fullPath, sizeof(fullPath), "%s/%s", logsDir, filename);
+      FormatEx(fullPath, sizeof(fullPath), "%s/%s", logsDir, filename);
       logFilenames.PushString(fullPath);
     }
   }

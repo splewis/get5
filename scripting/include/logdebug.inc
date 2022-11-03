@@ -12,23 +12,20 @@
 
 // define NO_DEBUG before including this file to completely disable all debugging
 #if defined NO_DEBUG
-stock void InitDebugLog(const char[] convarName, const char[] debugTag,
-                        int adminFlags = ADMFLAG_GENERIC) {}
+stock void InitDebugLog(const char[] convarName, const char[] debugTag, int adminFlags = ADMFLAG_GENERIC) {
+}
 stock bool LogDebug(const char[] format, any...) {
   return false;
 }
 #endinput
 #endif
 
-#define DEBUG_SERVER_CONSOLE 1 /**< Message will be routed to server console */
-#define DEBUG_CLIENT_CONSOLE 2 /**< Message will be routed to all clients' consoles */
-#define DEBUG_ADMIN_CONSOLE \
-  4 /**< Message will be routed to consoles of admins with a flag specified by plugin */
-#define DEBUG_CLIENT_CHAT \
-  8 /**< Message will be routed to all clients' chat boxes (and consequently consoles) */
-#define DEBUG_ADMIN_CHAT \
-  16 /**< Message will be routed to chat boxes of admins with a flag specified by plugin */
-#define DEBUG_LOG_FILE 32 /**< Message will be routed to plugin's debug log */
+#define DEBUG_SERVER_CONSOLE 1  /**< Message will be routed to server console */
+#define DEBUG_CLIENT_CONSOLE 2  /**< Message will be routed to all clients' consoles */
+#define DEBUG_ADMIN_CONSOLE  4  /**< Message will be routed to consoles of admins with a flag specified by plugin */
+#define DEBUG_CLIENT_CHAT    8  /**< Message will be routed to all clients' chat boxes (and consequently consoles) */
+#define DEBUG_ADMIN_CHAT     16 /**< Message will be routed to chat boxes of admins with a flag specified by plugin */
+#define DEBUG_LOG_FILE       32 /**< Message will be routed to plugin's debug log */
 
 ConVar g_cvarDebugMode;
 char g_DebugLogFileName[PLATFORM_MAX_PATH];
@@ -47,8 +44,7 @@ int g_DebugAdminFlags;
  * "admin". If you pass multiple flags, users will need ALL flags.
  * @noreturn
  */
-stock void InitDebugLog(const char[] convarName, const char[] debugTag,
-                        int adminFlags = ADMFLAG_GENERIC) {
+stock void InitDebugLog(const char[] convarName, const char[] debugTag, int adminFlags = ADMFLAG_GENERIC) {
   BuildPath(Path_SM, g_DebugLogFileName, sizeof(g_DebugLogFileName), "logs/%s.log", convarName);
 
   char flagChars[32];
@@ -71,13 +67,12 @@ stock void InitDebugLog(const char[] convarName, const char[] debugTag,
   g_DebugAdminFlags = adminFlags;
 
   char convarDescription[512];
-  Format(
-      convarDescription, sizeof(convarDescription),
-      "Add up values to enable debug logging to those locations\n  1 = server console\n  2 = all clients' consoles\n  4 = consoles of admins with '%s' flag%s or access to '%s' override\n  8 = all clients' chat\n  16 = chat of admins with '%s' flag%s or access to '%s' override\n  32 = debug log file %s",
-      flagChars, flagChars[1] == '\0' ? "" : "s", convarName, flagChars,
-      flagChars[1] == '\0' ? "" : "s", convarName, g_DebugLogFileName);
-  g_cvarDebugMode =
-      CreateConVar(convarName, "0", convarDescription, FCVAR_DONTRECORD, true, 0.0, true, 63.0);
+  FormatEx(
+    convarDescription, sizeof(convarDescription),
+    "Add up values to enable debug logging to those locations\n  1 = server console\n  2 = all clients' consoles\n  4 = consoles of admins with '%s' flag%s or access to '%s' override\n  8 = all clients' chat\n  16 = chat of admins with '%s' flag%s or access to '%s' override\n  32 = debug log file %s",
+    flagChars, flagChars[1] == '\0' ? "" : "s", convarName, flagChars, flagChars[1] == '\0' ? "" : "s", convarName,
+    g_DebugLogFileName);
+  g_cvarDebugMode = CreateConVar(convarName, "0", convarDescription, FCVAR_DONTRECORD, true, 0.0, true, 63.0);
 
   strcopy(g_DebugTag, sizeof(g_DebugTag), debugTag);
   strcopy(g_DebugCvarName, sizeof(g_DebugCvarName), convarName);
@@ -117,8 +112,7 @@ stock bool LogDebug(const char[] format, any...) {
 
   if (output & DEBUG_ADMIN_CONSOLE) {
     for (int i = 1; i <= MaxClients; i++) {
-      if (IsClientInGame(i) && !IsFakeClient(i) &&
-          CheckCommandAccess(i, g_DebugCvarName, g_DebugAdminFlags, true)) {
+      if (IsClientInGame(i) && !IsFakeClient(i) && CheckCommandAccess(i, g_DebugCvarName, g_DebugAdminFlags, true)) {
         PrintToConsole(i, "[%s] %s", g_DebugTag, buffer);
       }
     }
@@ -130,8 +124,7 @@ stock bool LogDebug(const char[] format, any...) {
 
   if (output & DEBUG_ADMIN_CHAT) {
     for (int i = 1; i <= MaxClients; i++) {
-      if (IsClientInGame(i) && !IsFakeClient(i) &&
-          CheckCommandAccess(i, g_DebugCvarName, g_DebugAdminFlags, true)) {
+      if (IsClientInGame(i) && !IsFakeClient(i) && CheckCommandAccess(i, g_DebugCvarName, g_DebugAdminFlags, true)) {
         PrintToChat(i, "[%s] %s", g_DebugTag, buffer);
       }
     }

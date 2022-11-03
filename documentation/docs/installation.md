@@ -1,10 +1,25 @@
 # :material-folder-cog: Installation
 
-## SourceMod & MetaMod
+## Game Server {: #server }
 
-You must have [SourceMod](https://www.sourcemod.net/) installed on your server. Please note that Get5
-requires **SourceMod version 1.10** or higher. SourceMod requires MetaMod, so you must install both plugins.
-You can get the latest versions here:
+Get5 can run on any
+official [CS:GO Dedicated Server](https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive_Dedicated_Servers)
+on both Windows and Linux, but setting up a server is outside the scope of this documentation. It is assumed that you
+have already done this and have a good grasp on how to manage your server.
+
+!!! warning "Online-only :material-cable-data:"
+
+    You **cannot** use Get5 for completely-offline events. Internet access is required on both the server and clients in
+    order for Get5 to perform most of its basic functions, such as locking players based on their Steam ID.
+
+    Your server must have a valid [Game Server Token](https://steamcommunity.com/dev/managegameservers) and must **not**
+    run with [`sv_lan 1`](https://totalcsgo.com/command/svlan).
+
+## SourceMod & MetaMod {: #sourcemod }
+
+You must have [SourceMod](https://www.sourcemod.net/) installed on your server. Please note that Get5 requires **
+SourceMod version 1.10** or higher. SourceMod requires MetaMod, so you must install both plugins. You can get the latest
+versions here:
 
 [:material-download: Download MetaMod](https://www.sourcemm.net/downloads.php?branch=stable){ .md-button .md-button--primary } [:material-download: Download SourceMod](https://www.sourcemod.net/downloads.php?branch=stable){ .md-button .md-button--primary }
 
@@ -34,9 +49,9 @@ so or can live with the potential consequences.
 
 ## SteamWorks (Recommended) {: #steamworks }
 
-SteamWorks is not required for Get5 to work on your game server, however it is required if you wish to [load match
-configs remotely](../commands#get5_loadmatch_url) or if you want Get5 to [automatically
-check for updates](../configuration#get5_print_update_notice).
+SteamWorks is not required for Get5 to work on your game server, but it is required if you wish
+to [load match configurations remotely](../commands#get5_loadmatch_url), [send events to a remote URL](../configuration#get5_remote_log_url), [check for updates](../configuration#get5_print_update_notice)
+or [upload demos](../gotv#upload) to a web server.
 
 [:material-steam: Download SteamWorks](https://github.com/KyleSanderson/SteamWorks/releases/){ .md-button .md-button--primary }
 
@@ -45,7 +60,7 @@ check for updates](../configuration#get5_print_update_notice).
     Similarly to SourceMod and MetaMod, SteamWorks is OS-specific. If you run Windows, you can get a Windows-version of
     SteamWorks [here](https://github.com/hexa-core-eu/SteamWorks/releases).
 
-## Putting it all together
+## Installation {: #installation }
 
 Once you have downloaded the zip file(s), extract it/them into your `csgo/` directory in your game server. Once MetaMod,
 SourceMod and Get5 (and optionally SteamWorks) have all been installed, the `csgo` folder on your server
@@ -54,12 +69,12 @@ is just to indicate what the correct structure looks like.
 
 !!! warning "Updating Get5 from an earlier version"
 
-    If you already have Get5 installed and wish to upgrade to a newer version, simply copying the entire `get5.zip` folder
-    structure will override your configuration files, so when updating, you should only add `get5.smx` (and
-    optionally `get5_mysqlstats.smx`) to `addons/sourcemod/plugins` and merge the entire `translations` folder with
-    `addons/sourcemod/translations`. In updated versions we might add or remove translation strings, and Get5 will error if
-    it cannot find the strings it expects in these folders. The folder only contains Get5's translations, so it won't
-    override translations for any other plugins.
+    If you already have Get5 installed and wish to upgrade to a newer version, simply copying the entire `get5.zip`
+    folder structure will override your configuration files, so when updating, you should only add `get5.smx` (and
+    optionally `get5_mysqlstats.smx` or `get5_apistats.smx`) to `addons/sourcemod/plugins` and merge the entire
+    `translations` folder with `addons/sourcemod/translations`. In updated versions we might add or remove translation
+    strings, and Get5 will error if it cannot find the strings it expects in these folders. The folder only contains
+    Get5's translations, so it won't override translations for any other plugins.
 
 ???+ example "Server folder structure"
 
@@ -168,20 +183,21 @@ is just to indicate what the correct structure looks like.
     1. SourceMod error logs can be found in here. This directory is empty by default.
     2. This is the core Get5 plugin.
     3. This is the MySQL extension for collecting stats. If you want to use this extension, please see
-       the [guide](../stats_system/#mysql).
+       the [guide](../stats_system#mysql).
     4. This is proof-of-concept integration called [get5 web panel](https://github.com/splewis/get5-web) that can be used to
        manage matches. **This is not supported and is probably very buggy. You should not use it.**
     5. This folder contains all the language files and translations for all the plugins.
-    6. Each language has its own folder with translation files.
+    6. Each language has its own folder with translation files. If you remove a language folder, Get5 will simply fall
+       back to English for the missing language.
     7. This is the source code for the plugins. These *cannot* be executed by the server, as they must be compiled first, so
        you cannot simply edit these to change plugin behavior.
     8. Don't change anything in here. There are no editable files in the `metamod` folder. It's here because SourceMod
        depends on it.
     9. SourceMod binaries.
-    10. This a JSON-example of a [match configuration](match_schema.md). You should use this as a template for your own
+    10. This a JSON-example of a [match configuration](../match_schema). You should use this as a template for your own
         match configuration. All JSON match configurations **must** end with `.json`.
-    11. The server's default scrim [match configuration](match_schema.md). This is loaded when using the
-        [`get5_scrim`](../commands/#get5_scrim) command.
+    11. The server's default scrim [match configuration](../match_schema). This is loaded when using the
+        [`get5_scrim`](../commands#get5_scrim) command.
     12. Match configurations can be created in both JSON and
         SourceMod's [KeyValue](https://wiki.alliedmods.net/KeyValues_(SourceMod_Scripting)) format. We recommend JSON for
         all new users, but Get5 will continue to support reading `.cfg` files as well.
@@ -196,7 +212,7 @@ is just to indicate what the correct structure looks like.
     20. Various includes (such as SteamWorks) other plugins depend on for compilation.
     21. `swag.sp` is a part of SteamWorks.
     22. The `spcomp` files are used to compile `.sp` files.
-    23. Contains the [phase configuration files](../configuration/#phase-configuration-files) for Get5.
+    23. Contains the [phase configuration files](../configuration#phase-configuration-files) for Get5.
     24. The default SourceMod config file and Warmode (included with SourceMod) configs. You can ignore these files.
     25. The rest of these folders are already in your `csgo` directory.
 
@@ -212,6 +228,6 @@ is just to indicate what the correct structure looks like.
 Server administrators can be set in the `admin_simple.ini` file inside `addons/sourcemod/configs`. Get5 considers
 anyone with the `changemap` access level an administrator. For instructions on how to add admins, please see
 the [SourceMod guide](https://wiki.alliedmods.net/Adding_Admins_(SourceMod)). Administrative privileges are required
-to execute admin commands such as the [`!get5`](../commands/#get5) menu
-command, [`get5_loadmatch`](../commands/#get5_loadmatch-filename), [`get5_endmatch`](../commands/#get5_endmatch),
-[`get5_loadbackup`](../commands/#get5_loadbackup) and so on.
+to execute admin commands such as the [`!get5`](../commands#get5) menu
+command, [`get5_loadmatch`](../commands#get5_loadmatch-filename), [`get5_endmatch`](../commands#get5_endmatch),
+[`get5_loadbackup`](../commands#get5_loadbackup) and so on.

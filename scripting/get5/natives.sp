@@ -44,9 +44,9 @@ public int Native_Message(Handle plugin, int numParams) {
 
   char finalMsg[1024];
   if (StrEqual(prefix, ""))
-    Format(finalMsg, sizeof(finalMsg), " %s", buffer);
+    FormatEx(finalMsg, sizeof(finalMsg), " %s", buffer);
   else
-    Format(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
+    FormatEx(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
 
   if (client == 0) {
     Colorize(finalMsg, sizeof(finalMsg), true);
@@ -75,9 +75,9 @@ public int Native_MessageToTeam(Handle plugin, int numParams) {
 
     char finalMsg[1024];
     if (StrEqual(prefix, ""))
-      Format(finalMsg, sizeof(finalMsg), " %s", buffer);
+      FormatEx(finalMsg, sizeof(finalMsg), " %s", buffer);
     else
-      Format(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
+      FormatEx(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
 
     Colorize(finalMsg, sizeof(finalMsg));
     PrintToChat(i, finalMsg);
@@ -101,9 +101,9 @@ public int Native_MessageToAll(Handle plugin, int numParams) {
 
     char finalMsg[1024];
     if (StrEqual(prefix, ""))
-      Format(finalMsg, sizeof(finalMsg), " %s", buffer);
+      FormatEx(finalMsg, sizeof(finalMsg), " %s", buffer);
     else
-      Format(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
+      FormatEx(finalMsg, sizeof(finalMsg), "%s %s", prefix, buffer);
 
     if (i == 0) {
       Colorize(finalMsg, sizeof(finalMsg), true);
@@ -126,7 +126,9 @@ public int Native_LoadMatchConfigFromURL(Handle plugin, int numParams) {
   GetNativeString(1, url, sizeof(url));
   ArrayList paramNames = view_as<ArrayList>(GetNativeCell(2));
   ArrayList paramValues = view_as<ArrayList>(GetNativeCell(3));
-  return LoadMatchFromUrl(url, paramNames, paramValues);
+  ArrayList headerNames = view_as<ArrayList>(GetNativeCell(4));
+  ArrayList headerValues = view_as<ArrayList>(GetNativeCell(5));
+  return LoadMatchFromUrl(url, paramNames, paramValues, headerNames, headerValues);
 }
 
 public int Native_AddPlayerToTeam(Handle plugin, int numParams) {
@@ -205,8 +207,7 @@ public int Native_GetServerID(Handle plugin, int numParams) {
 }
 
 public int Native_GetMapNumber(Handle plugin, int numParams) {
-  return g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2] +
-         g_TeamSeriesScores[Get5Team_None];
+  return g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2] + g_TeamSeriesScores[Get5Team_None];
 }
 
 public int Native_AddLiveCvar(Handle plugin, int numParams) {

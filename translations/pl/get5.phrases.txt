@@ -44,17 +44,13 @@
     {
         "pl"            "{1} nie bylo gotowe w wymaganym czasie i mecz został oddany na korzyść drużyny przeciwnej."
     }
-    "MinutesToForfeitMessage"
+    "TeamMustBeReadyOrForfeit"
     {
-        "pl"            "{1} ma {2} minuty aby być gotowym do meczu albo mecz zostanie oddany na korzyść drużyny przeciwnej."
+        "pl"            "{1} musi być gotowe w ciągu {2}, w przeciwnym razie przegra mecz."
     }
-    "SecondsToForfeitInfoMessage"
+    "TeamsMustBeReadyOrTie"
     {
-        "pl"            "{1} ma {2} sekund aby być gotowym do meczu albo mecz zostanie oddany na korzyść drużyny przeciwnej."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "pl"            "{1} ma 10 sekund aby być gotowym do meczu albo mecz zostanie oddany na korzyść drużyny przeciwnej."
+        "pl"            "Drużyny muszą być gotowe w ciągu {1} lub mecz zakończy się remisem."
     }
     "MaxPausesUsedInfoMessage"
     {
@@ -219,6 +215,14 @@
     "MatchConfigLoadedInfoMessage"
     {
         "pl"            "Załadowano ustawawienia meczu."
+    }
+    "ExitCoachSlotHelp"
+    {
+        "pl"            "Wpisz {1}, aby wyjść z roli trenera."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "pl"            "Wpisz {1}, aby zostać trenerem swojej drużyny."
     }
     "MoveToCoachInfoMessage"
     {

@@ -1,0 +1,28 @@
+name: Auto Format Code On Master Merge
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  auto-formatter-on-master:
+    name: Auto Format Code On Master Merge
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Clang format
+      run: |
+        sudo apt install clang-format
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - run: python ./misc/format.py
+
+    - uses: EndBug/add-and-commit@v9.1.1
+      with:
+        committer_name: GitHub Actions
+        committer_email: 41898282+github-actions[bot]@users.noreply.github.com
+        message: 'Run automatic format script as code does not match clang format rules.'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

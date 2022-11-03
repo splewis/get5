@@ -7,15 +7,12 @@ Action Command_Get5AdminMenu(int client, int args) {
 
   // Add actual choices
   menu.AddItem("get5_scrim", "Create a scrim", EnabledIf(g_GameState == Get5State_None));
-  menu.AddItem("get5_creatematch", "Create match with current players",
-               EnabledIf(g_GameState == Get5State_None));
+  menu.AddItem("get5_creatematch", "Create match with current players", EnabledIf(g_GameState == Get5State_None));
   menu.AddItem("get5_forceready", "Force-ready all players",
                EnabledIf(g_GameState == Get5State_Warmup || g_GameState == Get5State_PreVeto));
   menu.AddItem("get5_endmatch", "End match", EnabledIf(g_GameState != Get5State_None));
-  menu.AddItem("ringer", "Add scrim ringer",
-               EnabledIf(g_InScrimMode && g_GameState != Get5State_None));
-  menu.AddItem("sm_swap", "Swap scrim sides",
-               EnabledIf(g_InScrimMode && g_GameState == Get5State_Warmup));
+  menu.AddItem("ringer", "Add scrim ringer", EnabledIf(g_InScrimMode && g_GameState != Get5State_None));
+  menu.AddItem("sm_swap", "Swap scrim sides", EnabledIf(g_InScrimMode && g_GameState == Get5State_Warmup));
 
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
@@ -63,7 +60,7 @@ static void GiveRingerMenu(int client) {
       char infoString[64];
       IntToString(GetClientSerial(i), infoString, sizeof(infoString));
       char displayString[64];
-      Format(displayString, sizeof(displayString), "%N", i);
+      FormatEx(displayString, sizeof(displayString), "%N", i);
       menu.AddItem(infoString, displayString);
     }
   }

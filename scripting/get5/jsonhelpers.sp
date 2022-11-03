@@ -1,17 +1,17 @@
 stock void json_string_type(JSONCellType type, char[] output, int maxlength) {
   switch (type) {
     case JSON_Type_Invalid:
-      Format(output, maxlength, "invalid");
+      FormatEx(output, maxlength, "invalid");
     case JSON_Type_String:
-      Format(output, maxlength, "string");
+      FormatEx(output, maxlength, "string");
     case JSON_Type_Int:
-      Format(output, maxlength, "int");
+      FormatEx(output, maxlength, "int");
     case JSON_Type_Float:
-      Format(output, maxlength, "float");
+      FormatEx(output, maxlength, "float");
     case JSON_Type_Bool:
-      Format(output, maxlength, "bool");
+      FormatEx(output, maxlength, "bool");
     case JSON_Type_Object:
-      Format(output, maxlength, "object");
+      FormatEx(output, maxlength, "object");
   }
 }
 
@@ -28,16 +28,15 @@ stock bool json_has_key(JSON_Object json, const char[] key, JSONCellType expecte
       char actualTypeStr[16];
       json_string_type(expectedType, expectedTypeStr, sizeof(expectedTypeStr));
       json_string_type(actualType, actualTypeStr, sizeof(actualTypeStr));
-      LogError("Type mismatch for key \"%s\", got %s when expected a %s", key, actualTypeStr,
-               expectedTypeStr);
+      LogError("Type mismatch for key \"%s\", got %s when expected a %s", key, actualTypeStr, expectedTypeStr);
       return false;
     }
     return true;
   }
 }
 
-stock int json_object_get_string_safe(JSON_Object json, const char[] key, char[] buffer,
-                                      int maxlength, const char[] defaultValue = "") {
+stock int json_object_get_string_safe(JSON_Object json, const char[] key, char[] buffer, int maxlength,
+                                      const char[] defaultValue = "") {
   if (json_has_key(json, key, JSON_Type_String)) {
     return json.GetString(key, buffer, maxlength);
   } else {
@@ -53,8 +52,7 @@ stock int json_object_get_int_safe(JSON_Object json, const char[] key, int defau
   }
 }
 
-stock bool json_object_get_bool_safe(JSON_Object json, const char[] key,
-                                     bool defaultValue = false) {
+stock bool json_object_get_bool_safe(JSON_Object json, const char[] key, bool defaultValue = false) {
   if (json_has_key(json, key, JSON_Type_Bool)) {
     return json.GetBool(key);
   } else {
@@ -62,8 +60,7 @@ stock bool json_object_get_bool_safe(JSON_Object json, const char[] key,
   }
 }
 
-stock float json_object_get_float_safe(JSON_Object json, const char[] key,
-                                       float defaultValue = 0.0) {
+stock float json_object_get_float_safe(JSON_Object json, const char[] key, float defaultValue = 0.0) {
   if (json_has_key(json, key, JSON_Type_Float)) {
     return json.GetFloat(key);
   } else {
@@ -72,8 +69,7 @@ stock float json_object_get_float_safe(JSON_Object json, const char[] key,
 }
 
 // Used for parsing an Array[String] to a sourcepawn ArrayList of strings
-stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, ArrayList list,
-                                       int maxValueLength) {
+stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, ArrayList list, int maxValueLength) {
   if (!json_has_key(json, key, JSON_Type_Object)) {
     return 0;
   }
@@ -92,8 +88,7 @@ stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, Array
 }
 
 // Used for mapping a keyvalue section
-stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list,
-                             int maxValueLength) {
+stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list, int maxValueLength) {
   int count = 0;
   // We handle two formats here: one where we get a array of steamids as strings, and in the
   // 2nd format we have a map of steamid- > player name.

@@ -1,9 +1,11 @@
-site_name: Get5
+site_name: Get5 Documentation
 site_url: https://splewis.github.io/get5
 repo_url: https://github.com/splewis/get5
 repo_name: splewis/get5
 edit_uri: https://github.com/splewis/get5/blob/master/documentation/docs
 theme:
+  icon:
+    logo: simple/counterstrike
   features:
     - content.code.annotate
     - navigation.tracking
@@ -11,12 +13,18 @@ theme:
   name: material
   palette:
     # Palette toggle for light mode
-    - scheme: default
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep orange
+      accent: deep orange
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     # Palette toggle for dark mode
-    - scheme: slate
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep orange
+      accent: deep orange
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -36,13 +44,15 @@ nav:
   - Basics:
       - Getting Started: getting_started.md
       - Match Schema: match_schema.md
+      - Map Veto: veto.md
       - Commands: commands.md
       - Coaching: coaching.md
       - Pausing: pausing.md
+      - Surrender & Forfeit: surrender-forfeit.md
       - Backup System: backup.md
       - GOTV & Demos: gotv.md
   - Advanced:
-      - Developer API: developer_api.md
+      - Developers: developers.md
       - Events & Forwards: events_and_forwards.md
       - Player Stats System: stats_system.md
       - Translations: translations.md
@@ -69,6 +79,8 @@ markdown_extensions:
 extra_javascript:
   - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
   - javascripts/tablesort.js
+extra_css:
+  - stylesheets/extra.css
 extra:
   version:
     default: latest

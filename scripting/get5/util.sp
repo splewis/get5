@@ -1,8 +1,8 @@
 #include <sdktools>
 
 #define MAX_INTEGER_STRING_LENGTH 16
-#define MAX_FLOAT_STRING_LENGTH 32
-#define AUTH_LENGTH 64
+#define MAX_FLOAT_STRING_LENGTH   32
+#define AUTH_LENGTH               64
 
 // Dummy value for when we need to write a KeyValue string, but we don't care about the value *or*
 // when the value is an empty string. Trying to write an empty string results in the KeyValue not
@@ -16,7 +16,7 @@ static char _colorCodes[][] = {"\x01", "\x02", "\x03", "\x04", "\x05", "\x06", "
                                "\x08", "\x09", "\x0B", "\x0C", "\x0E", "\x10"};
 
 // Convenience macros.
-#define LOOP_TEAMS(%1) for (Get5Team %1 = Get5Team_1; %1 < Get5Team_Count; %1 ++)
+#define LOOP_TEAMS(%1)   for (Get5Team %1 = Get5Team_1; %1 < Get5Team_Count; %1 ++)
 #define LOOP_CLIENTS(%1) for (int %1 = 1; %1 <= MaxClients; %1 ++)
 
 // These match CS:GO's m_gamePhase values.
@@ -126,25 +126,27 @@ stock void FormatChatCommand(char[] buffer, const int bufferLength, const char[]
   Format(buffer, bufferLength, "{GREEN}%s{NORMAL}", command);
 }
 
+stock void FormatTimeString(char[] buffer, const int bufferLength, const char[] formattedTime) {
+  Format(buffer, bufferLength, "{GREEN}%s{NORMAL}", formattedTime);
+}
+
 stock void FormatCvarName(char[] buffer, const int bufferLength, const char[] cVar) {
   Format(buffer, bufferLength, "{GRAY}%s{NORMAL}", cVar);
 }
 
-stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client,
-                            const Get5Team team) {
+stock void FormatPlayerName(char[] buffer, const int bufferLength, const int client, const Get5Team team) {
   // Used when injecting the team for coaching players, who are always on team spectator.
   Get5Side side = view_as<Get5Side>(Get5_Get5TeamToCSTeam(team));
   if (side == Get5Side_CT) {
-    Format(buffer, bufferLength, "{LIGHT_BLUE}%N{NORMAL}", client);
+    FormatEx(buffer, bufferLength, "{LIGHT_BLUE}%N{NORMAL}", client);
   } else if (side == Get5Side_T) {
-    Format(buffer, bufferLength, "{GOLD}%N{NORMAL}", client);
+    FormatEx(buffer, bufferLength, "{GOLD}%N{NORMAL}", client);
   } else {
-    Format(buffer, bufferLength, "{PURPLE}%N{NORMAL}", client);
+    FormatEx(buffer, bufferLength, "{PURPLE}%N{NORMAL}", client);
   }
 }
 
-stock void ReplaceStringWithInt(char[] buffer, int len, const char[] replace, int value,
-                                bool caseSensitive = false) {
+stock void ReplaceStringWithInt(char[] buffer, int len, const char[] replace, int value, bool caseSensitive = true) {
   char intString[MAX_INTEGER_STRING_LENGTH];
   IntToString(value, intString, sizeof(intString));
   ReplaceString(buffer, len, replace, intString, caseSensitive);
@@ -175,9 +177,7 @@ stock bool InFreezeTime() {
 stock void StartWarmup(int warmupTime = 0) {
   ServerCommand("mp_do_warmup_period 1");
   ServerCommand("mp_warmuptime_all_players_connected 0");
-  if (!InWarmup()) {
-    ServerCommand("mp_warmup_start");
-  }
+  ServerCommand("mp_warmup_start");
   if (warmupTime < 1) {
     LogDebug("Setting indefinite warmup.");
     // Setting mp_warmuptime to anything less than 7 triggers the countdown to restart regardless of
@@ -191,15 +191,6 @@ stock void StartWarmup(int warmupTime = 0) {
   }
 }
 
-stock void EndWarmup(int time = 0) {
-  if (time == 0) {
-    ServerCommand("mp_warmup_end");
-  } else {
-    ServerCommand("mp_warmuptime %d", time);
-    ServerCommand("mp_warmup_pausetimer 0");
-  }
-}
-
 stock bool IsPaused() {
   return GameRules_GetProp("m_bMatchWaitingForResume") != 0;
 }
@@ -208,8 +199,8 @@ stock void RestartGame(int delay = 1) {
   ServerCommand("mp_restartgame %d", delay);
 }
 
-stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
-                       const char[] logo = "", const char[] matchstat = "", int series_score = 0) {
+stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "", const char[] logo = "",
+                       const char[] matchstat = "", int series_score = 0) {
   int team_int = (csTeam == CS_TEAM_CT) ? 1 : 2;
 
   char teamCvarName[MAX_CVAR_LENGTH];
@@ -217,22 +208,21 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "",
   char logoCvarName[MAX_CVAR_LENGTH];
   char textCvarName[MAX_CVAR_LENGTH];
   char scoreCvarName[MAX_CVAR_LENGTH];
-  Format(teamCvarName, sizeof(teamCvarName), "mp_teamname_%d", team_int);
-  Format(flagCvarName, sizeof(flagCvarName), "mp_teamflag_%d", team_int);
-  Format(logoCvarName, sizeof(logoCvarName), "mp_teamlogo_%d", team_int);
-  Format(textCvarName, sizeof(textCvarName), "mp_teammatchstat_%d", team_int);
-  Format(scoreCvarName, sizeof(scoreCvarName), "mp_teamscore_%d", team_int);
+  FormatEx(teamCvarName, sizeof(teamCvarName), "mp_teamname_%d", team_int);
+  FormatEx(flagCvarName, sizeof(flagCvarName), "mp_teamflag_%d", team_int);
+  FormatEx(logoCvarName, sizeof(logoCvarName), "mp_teamlogo_%d", team_int);
+  FormatEx(textCvarName, sizeof(textCvarName), "mp_teammatchstat_%d", team_int);
+  FormatEx(scoreCvarName, sizeof(scoreCvarName), "mp_teamscore_%d", team_int);
 
   // Add Ready/Not ready tags to team name if in warmup.
   char taggedName[MAX_CVAR_LENGTH];
   if (g_ReadyTeamTagCvar.BoolValue) {
-    if ((g_GameState == Get5State_Warmup || g_GameState == Get5State_PreVeto) &&
-        !g_DoingBackupRestoreNow) {
+    if (IsReadyGameState()) {
       Get5Team matchTeam = CSTeamToGet5Team(csTeam);
       if (IsTeamReady(matchTeam)) {
-        Format(taggedName, sizeof(taggedName), "%s %T", name, "ReadyTag", LANG_SERVER);
+        FormatEx(taggedName, sizeof(taggedName), "%s %T", name, "ReadyTag", LANG_SERVER);
       } else {
-        Format(taggedName, sizeof(taggedName), "%s %T", name, "NotReadyTag", LANG_SERVER);
+        FormatEx(taggedName, sizeof(taggedName), "%s %T", name, "NotReadyTag", LANG_SERVER);
       }
     } else {
       strcopy(taggedName, sizeof(taggedName), name);
@@ -300,8 +290,7 @@ stock int GetCvarIntSafe(const char[] cvarName) {
   }
 }
 
-stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool cleanName = false,
-                         bool color = false) {
+stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool cleanName = false, bool color = false) {
   // explode map by '/' so we can remove any directory prefixes (e.g. workshop stuff)
   char buffers[4][PLATFORM_MAX_PATH];
   int numSplits = ExplodeString(mapName, "/", buffers, sizeof(buffers), PLATFORM_MAX_PATH);
@@ -363,8 +352,7 @@ stock bool InHalftimePhase() {
   return GetGamePhase() == GamePhase_HalfTime;
 }
 
-stock int AddSubsectionKeysToList(KeyValues kv, const char[] section, ArrayList list,
-                                  int maxKeyLength) {
+stock int AddSubsectionKeysToList(KeyValues kv, const char[] section, ArrayList list, int maxKeyLength) {
   int count = 0;
   if (kv.JumpToKey(section)) {
     count = AddKeysToList(kv, list, maxKeyLength);
@@ -427,20 +415,18 @@ stock bool RemoveStringFromArray(ArrayList list, const char[] str) {
 
 // Because KeyValue cannot write empty strings, we use this to consistently read empty strings and
 // replace our empty-string-placeholder with actual empty string.
-stock bool ReadEmptyStringInsteadOfPlaceholder(const KeyValues kv, char[] buffer,
-                                               const int bufferSize) {
+stock bool ReadEmptyStringInsteadOfPlaceholder(const KeyValues kv, char[] buffer, const int bufferSize) {
   kv.GetString(NULL_STRING, buffer, bufferSize);
   if (StrEqual(KEYVALUE_STRING_PLACEHOLDER, buffer)) {
-    Format(buffer, bufferSize, "");
+    FormatEx(buffer, bufferSize, "");
     return true;
   }
   return false;
 }
 
-stock bool WritePlaceholderInsteadOfEmptyString(const KeyValues kv, char[] buffer,
-                                                const int bufferSize) {
+stock bool WritePlaceholderInsteadOfEmptyString(const KeyValues kv, char[] buffer, const int bufferSize) {
   kv.GetString(NULL_STRING, buffer, bufferSize);
-  if (StrEqual("", buffer)) {
+  if (strlen(buffer) == 0) {
     kv.SetString(NULL_STRING, KEYVALUE_STRING_PLACEHOLDER);
     return true;
   }
@@ -513,23 +499,23 @@ stock int MapsToWin(int numberOfMaps) {
 
 stock void CSTeamString(int csTeam, char[] buffer, int len) {
   if (csTeam == CS_TEAM_CT) {
-    Format(buffer, len, "CT");
+    FormatEx(buffer, len, "CT");
   } else if (csTeam == CS_TEAM_T) {
-    Format(buffer, len, "T");
+    FormatEx(buffer, len, "T");
   } else {
-    Format(buffer, len, "none");
+    FormatEx(buffer, len, "none");
   }
 }
 
 stock void GetTeamString(Get5Team team, char[] buffer, int len) {
   if (team == Get5Team_1) {
-    Format(buffer, len, "team1");
+    FormatEx(buffer, len, "team1");
   } else if (team == Get5Team_2) {
-    Format(buffer, len, "team2");
+    FormatEx(buffer, len, "team2");
   } else if (team == Get5Team_Spec) {
-    Format(buffer, len, "spec");
+    FormatEx(buffer, len, "spec");
   } else {
-    Format(buffer, len, "none");
+    FormatEx(buffer, len, "none");
   }
 }
 
@@ -545,11 +531,11 @@ stock MatchSideType MatchSideTypeFromString(const char[] str) {
 
 stock void MatchSideTypeToString(MatchSideType type, char[] str, int len) {
   if (type == MatchSideType_Standard) {
-    Format(str, len, "standard");
+    FormatEx(str, len, "standard");
   } else if (type == MatchSideType_NeverKnife) {
-    Format(str, len, "never_knife");
+    FormatEx(str, len, "never_knife");
   } else {
-    Format(str, len, "always_knife");
+    FormatEx(str, len, "always_knife");
   }
 }
 
@@ -603,12 +589,11 @@ stock bool ConvertSteam3ToSteam2(const char[] steam3Auth, char[] steam2Auth, int
   int a = (x % 2);
   int b = (x - a) / 2;
 
-  Format(steam2Auth, size, "STEAM_0:%d:%d", a, b);
+  FormatEx(steam2Auth, size, "STEAM_0:%d:%d", a, b);
   return true;
 }
 
-stock bool ConvertAuthToSteam64(const char[] inputId, char outputId[AUTH_LENGTH],
-                                bool reportErrors = true) {
+stock bool ConvertAuthToSteam64(const char[] inputId, char outputId[AUTH_LENGTH], bool reportErrors = true) {
   if (StrContains(inputId, "STEAM_") == 0 && strlen(inputId) >= 11) {  // steam2
     return ConvertSteam2ToSteam64(inputId, outputId, sizeof(outputId));
 
@@ -649,16 +634,13 @@ stock SideChoice SideTypeFromString(const char[] input) {
   }
 }
 
-// Deletes a file if it exists. Returns true if the
-// file existed AND there was an error deleting it.
+// Deletes a file if it exists. Returns false if the
+// file exists AND there was an error deleting it.
 stock bool DeleteFileIfExists(const char[] path) {
-  if (FileExists(path)) {
-    if (!DeleteFile(path)) {
-      LogError("Failed to delete file %s", path);
-      return false;
-    }
+  if (FileExists(path) && !DeleteFile(path)) {
+    LogError("Failed to delete file %s", path);
+    return false;
   }
-
   return true;
 }
 
@@ -669,6 +651,78 @@ stock bool IsJSONPath(const char[] path) {
   } else {
     return false;
   }
+}
+
+stock bool CreateDirectoryWithPermissions(const char[] directory) {
+  LogDebug("Creating directory: %s", directory);
+  return CreateDirectory(directory,  // sets 777 permissions.
+                         FPERM_U_READ | FPERM_U_WRITE | FPERM_U_EXEC | FPERM_G_READ | FPERM_G_WRITE | FPERM_G_EXEC |
+                           FPERM_O_READ | FPERM_O_WRITE | FPERM_O_EXEC);
+}
+
+stock bool CreateFolderStructure(const char[] path) {
+  if (strlen(path) == 0 || DirExists(path)) {
+    return true;
+  }
+
+  LogDebug("Creating directory %s because it does not exist.", path);
+  char folders[16][PLATFORM_MAX_PATH];  // {folder1, folder2, etc}
+  // initially empty, but we append every time a folder is created/verified
+  char fullFolderPath[PLATFORM_MAX_PATH] = "";
+  // shorthand for folders[i]
+  char currentFolder[PLATFORM_MAX_PATH];
+
+  ExplodeString(path, "/", folders, sizeof(folders), PLATFORM_MAX_PATH, true);
+  for (int i = 0; i < sizeof(folders); i++) {
+    currentFolder = folders[i];
+    if (strlen(currentFolder) == 0) {  // as the loop is a fixed size, we stop when there are no more pieces.
+      break;
+    }
+    // Append the current folder to the full path
+    Format(fullFolderPath, sizeof(fullFolderPath), "%s%s/", fullFolderPath, currentFolder);
+    if (!DirExists(fullFolderPath) && !CreateDirectoryWithPermissions(fullFolderPath)) {
+      LogError("Failed to create or verify existence of directory: %s", fullFolderPath);
+      return false;
+    }
+  }
+  return true;
+}
+
+stock void CheckAndCreateFolderPath(const ConVar cvar, const char[][] varsToReplace, const int varListSize,
+                                    char outputFolder[PLATFORM_MAX_PATH], const int outputFolderSize) {
+  char path[PLATFORM_MAX_PATH];
+  char cvarName[MAX_CVAR_LENGTH];
+
+  cvar.GetName(cvarName, sizeof(cvarName));
+  cvar.GetString(path, sizeof(path));
+
+  for (int i = 0; i < varListSize; i++) {
+    if (StrEqual("{MATCHID}", varsToReplace[i])) {
+      ReplaceString(path, sizeof(path), varsToReplace[i], g_MatchID);
+    } else if (StrEqual("{DATE}", varsToReplace[i])) {
+      char dateFormat[64];
+      char formattedDate[64];
+      int timeStamp = GetTime();
+      g_DateFormatCvar.GetString(dateFormat, sizeof(dateFormat));
+
+      FormatTime(formattedDate, sizeof(formattedDate), dateFormat, timeStamp);
+      ReplaceString(path, sizeof(path), varsToReplace[i], formattedDate);
+    }
+  }
+
+  int folderLength = strlen(path);
+
+  if (folderLength > 0 &&
+      (path[0] == '/' || path[0] == '.' || path[folderLength - 1] != '/' || StrContains(path, "//") != -1)) {
+    LogError(
+      "%s must end with a slash and must not start with a slash or dot. It will be reset to an empty string! Current value: %s",
+      cvarName, path);
+    path = "";
+    cvar.SetString(path, false, false);
+  } else {
+    CreateFolderStructure(path);
+  }
+  Format(outputFolder, outputFolderSize, "%s", path);
 }
 
 stock int GetMilliSecondsPassedSince(float timestamp) {
@@ -702,17 +756,16 @@ stock Get5BombSite GetNearestBombsite(int client) {
   return (aDist < bDist) ? Get5BombSite_A : Get5BombSite_B;
 }
 
-stock void convertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer,
-                                             const int bufferSize) {
+stock void ConvertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer, const int bufferSize) {
   int minutes = 0;
   int seconds = timeAsSeconds;
   if (timeAsSeconds >= 60) {
     minutes = timeAsSeconds / 60;
     seconds = timeAsSeconds % 60;
   }
-  Format(buffer, bufferSize, seconds < 10 ? "%d:0%d" : "%d:%d", minutes, seconds);
+  FormatEx(buffer, bufferSize, seconds < 10 ? "%d:0%d" : "%d:%d", minutes, seconds);
 }
 
 stock bool IsDoingRestoreOrMapChange() {
-  return g_DoingBackupRestoreNow || g_WaitingForRoundBackup || g_MapChangePending;
+  return g_DoingBackupRestoreNow || g_MapChangePending;
 }

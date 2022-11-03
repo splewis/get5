@@ -56,17 +56,13 @@
     {
         "es"            "{1} no se manifesto durante el tiempo impartido y ha sido descalificado."
     }
-    "MinutesToForfeitMessage"
+    "TeamMustBeReadyOrForfeit"
     {
-        "es"            "{1} dispone de {2} minutos para manifestarse listo, de lo contrario sera descalificado.."
+        "es"            "{1} debe estar listo en {2}, de lo contrario perderá el partido."
     }
-    "SecondsToForfeitInfoMessage"
+    "TeamsMustBeReadyOrTie"
     {
-        "es"            "{1} dispone de {2} segundos para manifestarse listo, de lo contrario sera descalificado.."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "es"            "{1} tiene 10 segundos para manifestarse listo, de lo contrario sera descalificado.."
+        "es"            "Los equipos deben estar listos en {1} o el partido terminará en empate."
     }
     "MaxPausesUsedInfoMessage"
     {
@@ -126,7 +122,7 @@
     }
     "ForceReadyInfoMessage"
     {
-        "es"            "Puede teclear {1} para forzar su equipo a estar listo si tienen {2} jugadores"
+        "es"            "Puede teclear {1} para forzar su equipo a estar listo."
     }
     "TeammateForceReadied"
     {
@@ -247,6 +243,14 @@
     "MatchConfigLoadedInfoMessage"
     {
         "es"            "Configuración de la partida cargada."
+    }
+    "ExitCoachSlotHelp"
+    {
+        "es"            "Escribe {1} para salir del papel de entrenador."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "es"            "Escribe {1} para hacerte entrenador de tu equipo."
     }
     "MoveToCoachInfoMessage"
     {

@@ -6,11 +6,11 @@
     }
     "WaitingForCastersReadyInfoMessage"
     {
-        "pt"            "Esperando pelos streammers para digitar {2} pra começar."
+        "pt"            "Aguardando {1} digitar {2} pra começar."
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "pt"            "Digite {1} quando vocês estiver pronto para restaurar o backup da partida."
+        "pt"            "Digite {1} quando vocês estiverem prontos para restaurar o backup da partida."
     }
     "ReadyToKnifeInfoMessage"
     {
@@ -24,6 +24,14 @@
     {
         "pt"            "Você foi marcado como pronto."
     }
+    "YouAreReadyAuto"
+    {
+        "pt"            "OBSERVAÇÃO: Você foi marcado como pronto devido à atividade do jogo."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "pt"            "Digite {1} se você não estiver pronto."
+    }
     "YouAreNotReady"
     {
         "pt"            "Você foi desmarcado como pronto."
@@ -34,35 +42,35 @@
     }
     "WaitingForGOTVBrodcastEndingInfoMessage"
     {
-        "pt"            "O mapa vai mudar assim que o broadcast do GOTV acabar."
+        "pt"            "O mapa vai mudar assim que o transmissão do GOTV acabar."
+    }
+    "WaitingForGOTVVetoInfoMessage"
+    {
+        "pt"            "O mapa mudará assim que a transmissão da GOTV exibir os vetos do mapa."
     }
     "NoMatchSetupInfoMessage"
     {
-        "pt"			"Não existe configuração de partida."
+        "pt"			"Não existe configuração de partida"
     }
     "YouAreNotAPlayerInfoMessage"
     {
-        "pt"            "Você não é um jogador dessa partida."
+        "pt"            "Você não é um jogador dessa partida"
     }
     "TeamIsFullInfoMessage"
     {
-        "pt"            "Seu time está cheio."
+        "pt"            "Seu time está cheio"
     }
     "TeamForfeitInfoMessage"
     {
         "pt"            "{1} não ficou pronto a tempo e se rendeu."
     }
-    "MinutesToForfeitMessage"
+    "TeamMustBeReadyOrForfeit"
     {
-        "pt"            "{1} tem {2} minutos para ficar prontos ou eles se renderão."
+        "pt"            "{1} deve estar pronta dentro de {2} ou perderá a partida."
     }
-    "SecondsToForfeitInfoMessage"
+    "TeamsMustBeReadyOrTie"
     {
-        "pt"            "{1} tem {2} segundos para ficar prontos ou eles se renderão."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "pt"            "{1} tem 10 segundos para fica prontos ou se render."
+        "pt"            "As equipes devem estar prontas em {1} ou a partida terminará em empate."
     }
     "MaxPausesUsedInfoMessage"
     {
@@ -70,15 +78,87 @@
     }
     "MaxPausesTimeUsedInfoMessage"
     {
-        "pt"            "Seu time já usou o máximo de {1} pausa."
+        "pt"            "Seu time já usou o máximo de {1} pausas."
     }
     "MatchPausedByTeamMessage"
     {
         "pt"            "{1} pausou a partida."
     }
+    "MatchTechPausedByTeamMessage"
+    {
+        "pt"            "{1} pediu uma pausa técnica."
+    }
+    "TechPausesNotEnabled"
+    {
+        "pt"            "As pausas técnicas não estão habilitadas."
+    }
+     "TechnicalPauseMidSentence"
+    {
+        "pt"            "pausa técnica"
+    }
+    "TacticalPauseMidSentence"
+    {
+        "pt"            "pausa tática"
+    }
+    "TimeRemainingBeforeAnyoneCanUnpausePrefix"
+    {
+        "pt"            "Tempo restante antes que alguém possa retomar"
+    }
+    "StopCommandNotEnabled"
+    {
+        "pt"            "O comando parar não está habilitado."
+    }
+    "StopCommandVotingReset"
+    {
+        "pt"            "O pedido de {1} para parar o jogo foi cancelado quando o round terminou."
+    }
+    "PauseTimeRemainingPrefix"
+    {
+        "pt"            "Tempo de pausa restante"
+    }
+    "PausedForBackup"
+    {
+        "pt"            "O jogo foi restaurado a partir de um backup. Ambas as equipes devem despausar o jogo para continuar."
+    }
+    "AwaitingUnpause"
+    {
+        "pt"            "Esperando despausar"
+    }
+    "PausedByAdministrator"
+    {
+        "pt"            "Um administrador pausou a partida."
+    }
+    "PausesNotEnabled"
+    {
+        "pt"            "As pausas não estão habilitadas."
+    }
+    "UserCannotUnpauseAdmin"
+    {
+        "pt"            "Como um administrador solicitou essa pausa, ela também deve ser retomada por um administrador."
+    }
+    "PausingTeamCannotUnpauseUntilFreezeTime"
+    {
+        "pt"            "Você não pode despausar antes de sua pausa começar. Solicitações de pausa não podem ser canceladas."
+    }
     "PauseRunoutInfoMessage"
     {
-        "pt"            "{1} chegou ao fim do tmepo de pause, resumindo a partida."
+        "pt"            "{1} chegou ao fim do tempo de pausa, resumindo a partida."
+    }
+    "TechPauseRunoutInfoMessage"
+    {
+        "pt"            "A duração máxima da pausa técnica foi atingida. Qualquer um pode despausar agora digitando {1}."
+    }
+    "TechPauseNoTimeRemaining"
+    {
+        "pt"            "{1} não tem mais tempo de pausa técnica. Por favor, use pausas táticas."
+    }
+    "TechPauseNoPausesRemaining"
+    {
+        "pt"            "{1} não tem mais pausas técnicas. Por favor, use pausas táticas."
+    }
+    "TechPausePausesRemaining"
+    {
+        "pt"            "Pausas técnicas restando para {1}: {2}"
     }
     "MatchUnpauseInfoMessage"
     {
@@ -90,11 +170,11 @@
     }
     "PausesLeftInfoMessage"
     {
-        "pt"            "{1} tem {2} pauses sobrando."
+        "pt"            "{1} tem {2} pausas sobrando."
     }
     "TeamFailToReadyMinPlayerCheck"
     {
-        "pt"            "Você precisa ter pelo menos {1} jogadores conectados no server para ficar pronto."
+        "pt"            "Você precisa ter pelo menos {1} jogadores conectados no servidor para ficar pronto."
     }
     "TeamReadyToVetoInfoMessage"
     {
@@ -118,7 +198,11 @@
     }
     "ForceReadyInfoMessage"
     {
-        "pt"            "Você pode digitar {1} para forçar seu time a ficar pronto se você tiver menos de {2} jogador."
+        "pt"            "Você pode digitar {1} para forçar seu time a ficar pronto."
+    }
+    "ForceReadyDisabled"
+    {
+        "pt"            "O comando {1} está desativado, mas pode ser ativado com {2}."
     }
     "TeammateForceReadied"
     {
@@ -132,9 +216,13 @@
     {
         "pt"            "O administrador forçou o fim da partida."
     }
+    "AdminForceEndWithWinnerInfoMessage"
+    {
+        "pt"            "Um administrador forçou o término da partida, definindo {1} como vencedor."
+    }
     "AdminForcePauseInfoMessage"
     {
-        "pt"            "O administrador forçou um pause na partida."
+        "pt"            "O administrador forçou uma pausa na partida."
     }
     "AdminForceUnPauseInfoMessage"
     {
@@ -154,11 +242,15 @@
     }
     "NextSeriesMapInfoMessage"
     {
-        "pt"            "O próximo mapa da série será {1}."
+        "pt"            "O próximo mapa da série é {1} e começará em {2}."
     }
     "TeamWonMatchInfoMessage"
     {
         "pt"            "{1} é a equipe vencedora da partida."
+    }
+    "TeamTiedMatchInfoMessage"
+    {
+        "pt"            "{1} and {2} empataram a partida."
     }
     "TeamWonSeriesInfoMessage"
     {
@@ -166,7 +258,7 @@
     }
     "MatchFinishedInfoMessage"
     {
-        "pt"            "A partida foi fnializada"
+        "pt"            "A partida foi finalizada"
     }
     "BackupLoadedInfoMessage"
     {
@@ -178,7 +270,7 @@
     }
     "MatchIsLiveInfoMessage"
     {
-        "pt"            "A partida é {GREEN}LIVE"
+        "pt"            "A partida {GREEN}COMEÇOU"
     }
     "KnifeIn5SecInfoMessage"
     {
@@ -236,9 +328,37 @@
     {
         "pt"            "A configuração da partida foi carregada com sucesso."
     }
+    "ExitCoachSlotHelp"
+    {
+        "pt"            "Digite {1} para sair da vaga de coach."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "pt"            "Digite {1} para se tornar coach do seu time."
+    }
     "MoveToCoachInfoMessage"
     {
         "pt"            "Você foi movido para a posição de Coach pois seu time está cheio."
+    }
+    "CannotLeaveCoachingTeamIsFull"
+    {
+        "pt"            "Você não pode deixar de ser coach porque sua equipe está cheia."
+    }
+    "CoachingNotEnabled"
+    {
+        "pt"            "Coaching não está habilitado. Você deve definir {1} para 1."
+    }
+    "PlayerIsCoachingTeam"
+    {
+        "pt"            "{1} é coach do {2}."
+    }
+    "CanOnlyCoachDuringWarmup"
+    {
+        "pt"            "Você só pode mudar de ou para coach durante o aquecimento."
+    }
+     "AllCoachSlotsFilledForTeam"
+    {
+        "pt"            "Todas as vagas de coach ({1}) estão atualmente preenchidas para sua equipe."
     }
     "ReadyTag"
     {
@@ -247,5 +367,73 @@
     "NotReadyTag"
     {
         "pt"            "[NOT READY]"
+    }
+    "MapVetoPickMenuText"
+    {
+        "pt"        "Selecione um mapa para JOGAR:"
+    }
+    "MapVetoPickConfirmMenuText"
+    {
+        "pt"        "Confirme que você quer JOGAR {1}:"
+    }
+    "MapVetoBanMenuText"
+    {
+        "pt"        "Selecione um mapa para VETAR:"
+    }
+    "MapVetoBanConfirmMenuText"
+    {
+        "pt"        "Confirme que você quer VETAR {1}:"
+    }
+    "MapVetoSidePickMenuText"
+    {
+        "pt"        "Selecione um lado para {1}:"
+    }
+    "MapVetoSidePickConfirmMenuText"
+    {
+        "pt"        "Confirme que você quer começar de {1}:"
+    }
+    "ConfirmPositiveOptionText"
+    {
+        "pt"        "Sim"
+    }
+    "ConfirmNegativeOptionText"
+    {
+        "pt"        "Não"
+    }
+    "VetoCountdown"
+    {
+        "pt"        "Veto começando em {1} segundos."
+    }
+    "SurrenderCommandNotEnabled"
+    {
+        "pt"        "O comando para se render não está habilitado."
+    }
+    "SurrenderMinimumRoundDeficit"
+    {
+        "pt"        "Você deve estar atrás por pelo menos {1} round(s) para se render."
+    }
+    "SurrenderInitiated"
+    {
+        "pt"        "Uma votação para se render foi iniciada por {1}. Sua equipe deve alcançar {2} votos em {3} segundos."
+    }
+    "SurrenderVoteStatus"
+    {
+        "pt"        "{1} de {2} votos de rendição obrigatórios foram emitidos."
+    }
+    "SurrenderSuccessful"
+    {
+        "pt"        "{1} se rendeu."
+    }
+    "SurrenderVoteFailed"
+    {
+        "pt"        "Não há jogadores suficientes em seu time que votaram para se render."
+    }
+    "SurrenderOnCooldown"
+    {
+        "pt"        "Você deve esperar {1} para iniciar uma nova votação para se render."
+    }
+    "AllPlayersLeftTieCountdown"
+    {
+        "pt"        "Ambas as equipes deixaram o servidor. Pelo menos um jogador deve retornar dentro de {1} segundos ou a partida terminará em empate."
     }
 }

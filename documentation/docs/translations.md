@@ -4,7 +4,7 @@ Get5 has been translated into a few languages, but some a are still incomplete o
 are proficient in a language other than English, you are welcome to open a pull request on GitHub with adjustments or
 even entirely new languages. Note that you should be **good** at the language; machine-translations or sloppy
 linguistics are worse than defaulting Get5 to English. If you cannot code and have found errors in translations, feel
-free to join the [Discord](../community/#discord) and let us know.
+free to join the [Discord](../community#discord) and let us know.
 
 ## How to translate?
 
@@ -46,7 +46,7 @@ this: `Team A picked de_dust2 as map 2.` The French translation file for this st
     }
     ```
 
-## Types of strings
+## Types of Strings
 
 ####`Chat`
 
@@ -84,7 +84,8 @@ end with a full stop as this is added automatically.
 | `ReadyToKnifeInfoMessage`                   | Type _!ready_ when you are ready to knife.                                                                                                                               | Chat       |
 | `ReadyToStartInfoMessage`                   | Type _!ready_ when you are ready to begin.                                                                                                                               | Chat       |
 | `YouAreReady`                               | You have been marked as ready.                                                                                                                                           | Chat       |
-| `YouAreReadyAuto`                           | NOTE: You have been marked as ready due to game activity. Type _!unready_ if you are not ready.                                                                          | HintText   |
+| `YouAreReadyAuto`                           | NOTE: You have been marked as ready due to game activity.                                                                                                                | HintText   |
+| `TypeUnreadyIfNotReady`                     | Type _!unready_ if you are not ready.                                                                                                                                    | Chat       |
 | `YouAreNotReady`                            | You have been marked as NOT ready.                                                                                                                                       | Chat       |
 | `WaitingForEnemySwapInfoMessage`            | _Team A_ won the knife round. Waiting for them to type _!stay_ or _!swap_.                                                                                               | Chat       |
 | `WaitingForGOTVBrodcastEndingInfoMessage`   | The map will change once the GOTV broadcast has ended.                                                                                                                   | Chat       |
@@ -93,8 +94,8 @@ end with a full stop as this is added automatically.
 | `YouAreNotAPlayerInfoMessage`               | You are not a player in this match                                                                                                                                       | KickedNote |
 | `TeamIsFullInfoMessage`                     | Your team is full                                                                                                                                                        | KickedNote |
 | `TeamForfeitInfoMessage`                    | _Team A_ failed to ready up in time and has forfeit.                                                                                                                     | Chat       |
-| `MinutesToForfeitMessage`                   | _Team A_ has _2_ minutes left to ready up or they will forfeit the match.                                                                                                | Chat       |
-| `SecondsToForfeitInfoMessage`               | _Team A_ has _30_ seconds left to ready up or they will forfeit the match.                                                                                               | Chat       |
+| `TeamMustBeReadyOrForfeit`                  | _Team A_ must be ready within _2:30_ or they will forfeit the match.                                                                                                     | Chat       |
+| `TeamsMustBeReadyOrTie `                    | Teams must be ready within _5:00_ or the match will end in a tie.                                                                                                        | Chat       |
 | `MaxPausesUsedInfoMessage`                  | _Team A_ has used all their tactical pauses (_3_).                                                                                                                       | Chat       |
 | `MaxPausesTimeUsedInfoMessage`              | _Team A_ has used all their tactical pause time (_2:30_).                                                                                                                | Chat       |
 | `MatchPausedByTeamMessage`                  | _PlayerName_ has called for a tactical pause.                                                                                                                            | Chat       |
@@ -117,6 +118,7 @@ end with a full stop as this is added automatically.
 | `TechPauseNoTimeRemaining`                  | _Team A_ has no more tech pause time. Please use tactical pauses.                                                                                                        | Chat       |
 | `TechPauseNoPausesRemaining`                | _Team B_ has no more tech pauses. Please use tactical pauses.                                                                                                            | Chat       |
 | `TechPausePausesRemaining`                  | Technical pauses remaining for _Team A_: _2_                                                                                                                             | Chat       |
+| `TechPauseAutomaticallyStarted`             | A technical pause was automatically started for _Team A_.                                                                                                                | Chat       |
 | `MatchUnpauseInfoMessage`                   | _PlayerName_ unpaused the match.                                                                                                                                         | Chat       |
 | `WaitingForUnpauseInfoMessage`              | _Team A_ wants to unpause, waiting for Team B to type _!unpause_.                                                                                                        | Chat       |
 | `PausesLeftInfoMessage`                     | Tactical pauses remaining for _Team A_: _3_                                                                                                                              | Chat       |
@@ -126,7 +128,8 @@ end with a full stop as this is added automatically.
 | `TeamReadyToKnifeInfoMessage`               | _Team A_ is ready to knife for sides.                                                                                                                                    | Chat       |
 | `TeamReadyToBeginInfoMessage`               | _Team A_ is ready to begin the match.                                                                                                                                    | Chat       |
 | `TeamNotReadyInfoMessage`                   | _Team A_ is no longer ready.                                                                                                                                             | Chat       |
-| `ForceReadyInfoMessage`                     | You may type !forceready to force-ready your team if you have less than _5_ players.                                                                                     | Chat       |
+| `ForceReadyInfoMessage`                     | You may type _!forceready_ to force-ready your team.                                                                                                                     | Chat       |
+| `ForceReadyDisabled`                        | The _!forceready_ command is disabled, but can enabled with _get5_allow_force_ready_.                                                                                    | Chat       |
 | `TeammateForceReadied`                      | Your team was force-readied by _PlayerName_.                                                                                                                             | Chat       |
 | `AdminForceReadyInfoMessage`                | An admin has force-readied all teams.                                                                                                                                    | Chat       |
 | `AdminForceEndInfoMessage`                  | An admin force-ended the match.                                                                                                                                          | Chat       |
@@ -159,6 +162,8 @@ end with a full stop as this is added automatically.
 | `ReadyToResumeVetoInfoMessage`              | Type _!ready_ when you are ready to resume the veto.                                                                                                                     | Chat       |
 | `MatchConfigLoadedInfoMessage`              | Loaded match config.                                                                                                                                                     | Chat       |
 | `MoveToCoachInfoMessage`                    | You were moved to the coach position as your team is full.                                                                                                               | Chat       |
+| `ExitCoachSlotHelp`                         | Type _!coach_ to exit the coach slot.                                                                                                                                    | Chat       |
+| `EnterCoachSlotHelp`                        | Type _!coach_ to become a coach for your team.                                                                                                                           | Chat       |
 | `CannotLeaveCoachingTeamIsFull`             | You cannot leave the coach position as your team is full.                                                                                                                | Chat       |
 | `CoachingNotEnabled`                        | Coaching is not enabled. You must set _sv_coaching_enabled_ to 1.                                                                                                        | Chat       |
 | `PlayerIsCoachingTeam`                      | _PlayerName_ is coaching _Team A_.                                                                                                                                       | Chat       |
@@ -177,6 +182,21 @@ end with a full stop as this is added automatically.
 | `VetoCountdown`                             | Veto commencing in _3_ seconds.                                                                                                                                          | Chat       |
 | `NewVersionAvailable`                       | A newer version of Get5 is available. Please visit _splewis.github.io/get5_ to update.                                                                                   | Chat       |
 | `PrereleaseVersionWarning`                  | You are running an unofficial version of Get5 (_0.9.0-c7af39a_) intended for development and testing only. This message can be disabled with _get5_print_update_notice_. | Chat       |
+| `SurrenderCommandNotEnabled`                | The surrender command is not enabled.                                                                                                                                    | Chat       |
+| `SurrenderMinimumRoundDeficit`              | You must be behind by at least _3_ round(s) in order to surrender.                                                                                                       | Chat       |
+| `SurrenderInitiated`                        | A vote to surrender was initiated by _PlayerName_. Your team must reach _3_ votes within _15_ seconds.                                                                   | Chat       |
+| `SurrenderVoteStatus`                       | _2_ of _3_ required surrender votes have been cast.                                                                                                                      | Chat       |
+| `SurrenderSuccessful`                       | _Team A_ has surrendered.                                                                                                                                                | Chat       |
+| `SurrenderVoteFailed`                       | Not enough players on your team voted to surrender.                                                                                                                      | Chat       |
+| `SurrenderOnCooldown`                       | You must wait _1:30_ to initiate a new vote to surrender.                                                                                                                | Chat       |
+| `WinByForfeitAvailable`                     | _Team A_ left the server. _Team B_ can now type _!ffw_ to initiate a countdown to win as long as their team is full.                                                     | Chat       |
+| `WinByForfeitRequiresFullTeam`              | You must have a full team in order to request or cancel a win by forfeit.                                                                                                | Chat       |
+| `WinByForfeitAlreadyRequested`              | A request to win by forfeit is already pending.                                                                                                                          | Chat       |
+| `WinByForfeitCountdownStarted`              | _Team B_ will win in _0:45_ unless a player from _Team A_ rejoins the game. This request can be canceled with _!cancelffw_.                                              | Chat       |
+| `WinByForfeitCountdownCanceled`             | The request from _Team B_ to win by forfeit was canceled.                                                                                                                | Chat       |
+| `TeamForfeited`                             | _Team A_ forfeited the series.                                                                                                                                           | Chat       |
+| `AllPlayersLeftTieCountdown`                | Both teams have left the server. At least one player from each team must rejoin within _0:45_ or the series will end in a tie.                                           | Chat       |
+| `TieCountdownCanceled`                      | The countdown to a tie was canceled as both teams now have players.                                                                                                      | Chat       |
 
 ## Supported Languages {: #supported-languages }
 

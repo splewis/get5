@@ -26,7 +26,11 @@
     }
     "YouAreReadyAuto"
     {
-        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által. Írd be, hogy {1} ha nem állsz még készen."
+        "hu"            "INFO: Felkészült állapotba kerültél a játék aktívitásod által."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "hu"            "Írd be, hogy {1} ha nem állsz még készen."
     }
     "YouAreNotReady"
     {
@@ -60,17 +64,13 @@
     {
         "hu"            "{1} nem sikerült időben felkészülni, ezért vesztettetek."
     }
-    "MinutesToForfeitMessage"
+    "TeamMustBeReadyOrForfeit"
     {
-        "hu"            "{1} {2} perc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
+        "hu"            "{1} fel kell, hogy készüljön {2} idő alatt vagy fel kell, hogy adják a mérkőzést."
     }
-    "SecondsToForfeitInfoMessage"
+    "TeamsMustBeReadyOrTie"
     {
-        "hu"            "{1} {2} másodperc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
-    }
-    "10SecondsToForfeitInfoMessage"
-    {
-        "hu"            "{1} 10 másodperc maradt, hogy felkészüljenek vagy elveszítik a mérkőzést."
+        "hu"            "A csapatoknak fel kell, hogy készüljenek {1} alatt vagy a mérkőzés döntetlennel ér véget."
     }
     "MaxPausesUsedInfoMessage"
     {
@@ -198,7 +198,11 @@
     }
     "ForceReadyInfoMessage"
     {
-        "hu"            "Beírhatod a {1} parancsot, ha fel szeretnéd készíteni a csapatod, ha kevesebb mint {2} játékosod van."
+        "hu"            "Beírhatod a {1} parancsot, ha fel szeretnéd készíteni a csapatod."
+    }
+    "ForceReadyDisabled"
+    {
+        "hu"            "A {1} parancs ki van kapcsolva, de engedélyezheted a {2} paranccsal."
     }
     "TeammateForceReadied"
     {
@@ -323,6 +327,14 @@
     "MatchConfigLoadedInfoMessage"
     {
         "hu"            "Mérkőzés beállítás betöltödött."
+    }
+    "ExitCoachSlotHelp"
+    {
+        "hu"            "Írd be a {1} parancsot, hogy kilépj az edzői poziccióból."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "hu"            "Írd be a {1} parancsot, hogy a csapatod edzője legyél."
     }
     "MoveToCoachInfoMessage"
     {

@@ -31,7 +31,7 @@ RUN tar xfz $(basename ${SMPACKAGE})
 RUN chmod +x /get5/addons/sourcemod/scripting/spcomp
 ENV PATH "$PATH:/get5/addons/sourcemod/scripting:/root/.local/bin"
 WORKDIR /get5/addons/sourcemod/scripting/include
-RUN wget https://raw.githubusercontent.com/KyleSanderson/SteamWorks/master/Pawn/includes/SteamWorks.inc
+RUN wget https://raw.githubusercontent.com/PhlexPlexico/SteamWorks/master/Pawn/includes/SteamWorks.inc
 WORKDIR /get5
 
 VOLUME /get5/builds

@@ -46,8 +46,8 @@ void CheckForChatAlias(int client, const char[] sArgs) {
   }
 }
 
-static bool CheckChatAlias(const char[] alias, const char[] command, const char[] chatCommand,
-                           const char[] chatArgs, int client) {
+static bool CheckChatAlias(const char[] alias, const char[] command, const char[] chatCommand, const char[] chatArgs,
+                           int client) {
   if (StrEqual(chatCommand, alias, false)) {
     // Get the original cmd reply source so it can be restored after the fake client command.
     // This means and ReplyToCommand will go into the chat area, rather than console, since

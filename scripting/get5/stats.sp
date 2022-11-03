@@ -16,21 +16,19 @@ void Stats_PluginStart() {
   HookEvent("smokegrenade_detonate", Stats_SmokeGrenadeDetonateEvent);
 }
 
-static Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, float &damage,
-                                 int &damagetype) {
+static Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
     return Plugin_Continue;
   }
-  LogDebug("HandlePlayerDamage(victim=%d, attacker=%d, inflictor=%d, damage=%f, damageType=%d)",
-           victim, attacker, inflictor, damage, damagetype);
+  LogDebug("HandlePlayerDamage(victim=%d, attacker=%d, inflictor=%d, damage=%f, damageType=%d)", victim, attacker,
+           inflictor, damage, damagetype);
   if (!IsValidClient(attacker) || !IsValidClient(victim)) {
     return Plugin_Continue;
   }
 
   int playerHealth = GetClientHealth(victim);
-  int damageUncapped =
-      RoundToFloor(damage);  // Only used for damage report in chat; not sent to forwards or events.
-  int damageAsIntCapped = damageUncapped;  // Set to player health if >= that. See below.
+  int damageUncapped = RoundToFloor(damage);  // Only used for damage report in chat; not sent to forwards or events.
+  int damageAsIntCapped = damageUncapped;     // Set to player health if >= that. See below.
   bool isDecoy = false;
   bool victimKilled = false;
 
@@ -82,8 +80,8 @@ static Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, floa
         grenadeObject.DamageFriendlies = grenadeObject.DamageFriendlies + damageAsIntCapped;
       }
 
-      grenadeObject.Victims.PushObject(new Get5DamageGrenadeVictim(
-          GetPlayerObject(victim), !helpful, victimKilled, damageAsIntCapped));
+      grenadeObject.Victims.PushObject(
+        new Get5DamageGrenadeVictim(GetPlayerObject(victim), !helpful, victimKilled, damageAsIntCapped));
     }
 
   } else if (damagetype == 8) {
@@ -103,8 +101,7 @@ static Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, floa
 
       int length = molotovObject.Victims.Length;
       for (int i = 0; i < length; i++) {
-        Get5DamageGrenadeVictim victimObject =
-            view_as<Get5DamageGrenadeVictim>(molotovObject.Victims.GetObject(i));
+        Get5DamageGrenadeVictim victimObject = view_as<Get5DamageGrenadeVictim>(molotovObject.Victims.GetObject(i));
 
         if (victimObject.Player.UserId == victimUserId) {
           victimObject.Damage = victimObject.Damage + damageAsIntCapped;
@@ -113,8 +110,8 @@ static Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, floa
         }
       }
 
-      molotovObject.Victims.PushObject(new Get5DamageGrenadeVictim(
-          GetPlayerObject(victim), !helpful, victimKilled, damageAsIntCapped));
+      molotovObject.Victims.PushObject(
+        new Get5DamageGrenadeVictim(GetPlayerObject(victim), !helpful, victimKilled, damageAsIntCapped));
     }
   }
 
@@ -421,8 +418,8 @@ static Action Stats_DecoyStartedEvent(Event event, const char[] name, bool dontB
     return;
   }
 
-  Get5DecoyStartedEvent decoyObject = new Get5DecoyStartedEvent(
-      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(attacker));
+  Get5DecoyStartedEvent decoyObject =
+    new Get5DecoyStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(attacker));
 
   LogDebug("Calling Get5_OnDecoyStarted()");
 
@@ -445,9 +442,9 @@ static Action Stats_SmokeGrenadeDetonateEvent(Event event, const char[] name, bo
     return;
   }
 
-  Get5SmokeDetonatedEvent smokeEvent = new Get5SmokeDetonatedEvent(
-      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(attacker),
-      g_LatestMolotovToExtinguishBySmoke > 0);
+  Get5SmokeDetonatedEvent smokeEvent =
+    new Get5SmokeDetonatedEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(attacker),
+                                g_LatestMolotovToExtinguishBySmoke > 0);
 
   Call_StartForward(g_OnSmokeGrenadeDetonated);
   Call_PushCell(smokeEvent);
@@ -477,12 +474,11 @@ static Action Stats_MolotovStartBurnEvent(Event event, const char[] name, bool d
   IntToString(entityId, molotovKey, sizeof(molotovKey));
 
   g_MolotovContainer.SetValue(
-      molotovKey,
-      new Get5MolotovDetonatedEvent(
-          g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
-          GetPlayerObject(g_LatestUserIdToDetonateMolotov)  // Set in molotov detonate event
-          ),
-      true);
+    molotovKey,
+    new Get5MolotovDetonatedEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
+                                  GetPlayerObject(g_LatestUserIdToDetonateMolotov)  // Set in molotov detonate event
+                                  ),
+    true);
 }
 
 static Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, bool dontBroadcast) {
@@ -541,8 +537,8 @@ static Action Stats_FlashbangDetonateEvent(Event event, const char[] name, bool 
 
   int entityId = event.GetInt("entityid");
 
-  Get5FlashbangDetonatedEvent flashEvent = new Get5FlashbangDetonatedEvent(
-      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(attacker));
+  Get5FlashbangDetonatedEvent flashEvent =
+    new Get5FlashbangDetonatedEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(attacker));
 
   char flashKey[16];
   IntToString(entityId, flashKey, sizeof(flashKey));
@@ -573,8 +569,8 @@ static Action Stats_HEGrenadeDetonateEvent(Event event, const char[] name, bool 
 
   int entityId = event.GetInt("entityid");
 
-  Get5HEDetonatedEvent grenadeObject = new Get5HEDetonatedEvent(
-      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(attacker));
+  Get5HEDetonatedEvent grenadeObject =
+    new Get5HEDetonatedEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(attacker));
 
   char grenadeKey[16];
   IntToString(entityId, grenadeKey, sizeof(grenadeKey));
@@ -606,9 +602,9 @@ static Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dont
   char weapon[32];
   event.GetString("weapon", weapon, sizeof(weapon));
 
-  Get5GrenadeThrownEvent grenadeEvent = new Get5GrenadeThrownEvent(
-      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(attacker),
-      new Get5Weapon(weapon, CS_AliasToWeaponID(weapon)));
+  Get5GrenadeThrownEvent grenadeEvent =
+    new Get5GrenadeThrownEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(attacker),
+                               new Get5Weapon(weapon, CS_AliasToWeaponID(weapon)));
 
   LogDebug("Calling Get5_OnGrenadeThrown()");
 
@@ -687,8 +683,7 @@ static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
   if (!g_FirstDeathDone) {
     g_FirstDeathDone = true;
-    IncrementPlayerStat(victim,
-                        (victimTeam == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
+    IncrementPlayerStat(victim, (victimTeam == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
   }
 
   if (isSuicide) {
@@ -699,8 +694,7 @@ static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
     } else {
       if (!g_FirstKillDone) {
         g_FirstKillDone = true;
-        IncrementPlayerStat(attacker,
-                            (attackerTeam == CS_TEAM_CT) ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
+        IncrementPlayerStat(attacker, (attackerTeam == CS_TEAM_CT) ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
       }
 
       g_RoundKills[attacker]++;
@@ -719,20 +713,17 @@ static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
       // Other than these constants, all knives can be found after CSWeapon_MAX_WEAPONS_NO_KNIFES.
       // See https://sourcemod.dev/#/cstrike/enumeration.CSWeaponID
-      if (weaponId == CSWeapon_KNIFE || weaponId == CSWeapon_KNIFE_GG ||
-          weaponId == CSWeapon_KNIFE_T || weaponId == CSWeapon_KNIFE_GHOST ||
-          weaponId > CSWeapon_MAX_WEAPONS_NO_KNIFES) {
+      if (weaponId == CSWeapon_KNIFE || weaponId == CSWeapon_KNIFE_GG || weaponId == CSWeapon_KNIFE_T ||
+          weaponId == CSWeapon_KNIFE_GHOST || weaponId > CSWeapon_MAX_WEAPONS_NO_KNIFES) {
         IncrementPlayerStat(attacker, STAT_KNIFE_KILLS);
       }
     }
   }
 
   Get5PlayerDeathEvent playerDeathEvent = new Get5PlayerDeathEvent(
-      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(victim),
-      new Get5Weapon(weapon, weaponId), headshot,
-      validAttacker ? attackerTeam == victimTeam : false, event.GetBool("thrusmoke"),
-      event.GetBool("noscope"), event.GetBool("attackerblind"), isSuicide,
-      event.GetInt("penetrated"), killedByBomb);
+    g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(victim), new Get5Weapon(weapon, weaponId),
+    headshot, validAttacker ? attackerTeam == victimTeam : false, event.GetBool("thrusmoke"), event.GetBool("noscope"),
+    event.GetBool("attackerblind"), isSuicide, event.GetInt("penetrated"), killedByBomb);
 
   if (validAttacker) {
     playerDeathEvent.Attacker = GetPlayerObject(attacker);
@@ -742,8 +733,7 @@ static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
     bool assistedFlash = event.GetBool("assistedflash");
     bool friendlyFire = GetClientTeam(assister) == victimTeam;
 
-    playerDeathEvent.Assist =
-        new Get5AssisterObject(GetPlayerObject(assister), assistedFlash, friendlyFire);
+    playerDeathEvent.Assist = new Get5AssisterObject(GetPlayerObject(assister), assistedFlash, friendlyFire);
 
     // Assists should only count towards opposite team
     if (!friendlyFire) {
@@ -796,9 +786,8 @@ static Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBr
     g_BombSiteLastPlanted = GetNearestBombsite(client);
     IncrementPlayerStat(client, STAT_BOMBPLANTS);
 
-    Get5BombPlantedEvent bombEvent =
-        new Get5BombPlantedEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
-                                 GetPlayerObject(client), g_BombSiteLastPlanted);
+    Get5BombPlantedEvent bombEvent = new Get5BombPlantedEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
+                                                              GetPlayerObject(client), g_BombSiteLastPlanted);
 
     LogDebug("Calling Get5_OnBombPlanted()");
 
@@ -820,16 +809,15 @@ static Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBr
   if (IsValidClient(client)) {
     IncrementPlayerStat(client, STAT_BOMBDEFUSES);
 
-    int timeRemaining =
-        (GetCvarIntSafe("mp_c4timer") * 1000) - GetMilliSecondsPassedSince(g_BombPlantedTime);
+    int timeRemaining = (GetCvarIntSafe("mp_c4timer") * 1000) - GetMilliSecondsPassedSince(g_BombPlantedTime);
     if (timeRemaining < 0) {
       timeRemaining = 0;  // fail-safe in case of race conditions between events or if the timer
                           // value is changed after plant.
     }
 
     Get5BombDefusedEvent defuseEvent =
-        new Get5BombDefusedEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
-                                 GetPlayerObject(client), g_BombSiteLastPlanted, timeRemaining);
+      new Get5BombDefusedEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(client),
+                               g_BombSiteLastPlanted, timeRemaining);
 
     LogDebug("Calling Get5_OnBombDefused()");
 
@@ -846,8 +834,8 @@ static Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontB
     return;
   }
 
-  Get5BombExplodedEvent bombExplodedEvent = new Get5BombExplodedEvent(
-      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), g_BombSiteLastPlanted);
+  Get5BombExplodedEvent bombExplodedEvent =
+    new Get5BombExplodedEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), g_BombSiteLastPlanted);
 
   LogDebug("Calling Get5_OnBombExploded()");
 
@@ -892,8 +880,7 @@ static Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBr
     IntToString(entityId, flashKey, sizeof(flashKey));
     Get5FlashbangDetonatedEvent flashEvent;
     if (g_FlashbangContainer.GetValue(flashKey, flashEvent)) {
-      flashEvent.Victims.PushObject(
-          new Get5BlindedGrenadeVictim(GetPlayerObject(victim), friendlyFire, duration));
+      flashEvent.Victims.PushObject(new Get5BlindedGrenadeVictim(GetPlayerObject(victim), friendlyFire, duration));
     }
   }
 }
@@ -908,8 +895,8 @@ static Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroad
   if (IsValidClient(client)) {
     IncrementPlayerStat(client, STAT_MVP);
 
-    Get5RoundMVPEvent mvpEvent = new Get5RoundMVPEvent(
-        g_MatchID, g_MapNumber, g_RoundNumber, GetPlayerObject(client), event.GetInt("reason"));
+    Get5RoundMVPEvent mvpEvent =
+      new Get5RoundMVPEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetPlayerObject(client), event.GetInt("reason"));
 
     LogDebug("Calling Get5_OnPlayerBecameMVP()");
 
@@ -1195,9 +1182,9 @@ void PrintDamageInfo(int client) {
 
       Colorize(message, msgSize);
       if (replacedNameIndex != -1) {
-        PrintToChat(client, message, i); // Replaces %N with player name.
+        PrintToChat(client, message, i);  // Replaces %N with player name.
       } else {
-        PrintToChat(client, message); // {NAME} was not part of the string.
+        PrintToChat(client, message);  // {NAME} was not part of the string.
       }
     }
   }

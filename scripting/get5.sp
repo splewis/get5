@@ -32,20 +32,19 @@
 #undef REQUIRE_EXTENSIONS
 #include <SteamWorks>
 
-#define CHECK_READY_TIMER_INTERVAL 1.0
+#define CHECK_READY_TIMER_INTERVAL  1.0
 #define INFO_MESSAGE_TIMER_INTERVAL 20.0
 
-#define DEBUG_CVAR "get5_debug"
+#define DEBUG_CVAR      "get5_debug"
 #define MATCH_ID_LENGTH 64
 #define MAX_CVAR_LENGTH 128
 
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T
-#define DEFAULT_TAG "[{YELLOW}Get5{NORMAL}]"
+#define DEFAULT_TAG         "[{YELLOW}Get5{NORMAL}]"
 
 #if !defined LATEST_VERSION_URL
-#define LATEST_VERSION_URL \
-  "https://raw.githubusercontent.com/splewis/get5/master/scripting/get5/version.sp"
+#define LATEST_VERSION_URL "https://raw.githubusercontent.com/splewis/get5/master/scripting/get5/version.sp"
 #endif
 
 #if !defined GET5_GITHUB_PAGE
@@ -174,8 +173,7 @@ Handle g_KnifeDecisionTimer = INVALID_HANDLE;
 Handle g_KnifeCountdownTimer = INVALID_HANDLE;
 
 /** Pausing **/
-bool g_IsChangingPauseState =
-    false;  // Used to prevent mp_pause_match and mp_unpause_match from being called directly.
+bool g_IsChangingPauseState = false;  // Used to prevent mp_pause_match and mp_unpause_match from being called directly.
 Get5Team g_PausingTeam = Get5Team_None;          // The team that last called for a pause.
 Get5PauseType g_PauseType = Get5PauseType_None;  // The type of pause last initiated.
 int g_LatestPauseDuration = 0;
@@ -211,16 +209,16 @@ bool g_DoingBackupRestoreNow = false;
 StringMap g_FlashbangContainer;  // Stores flashbang-entity-id -> Get5FlashbangDetonatedEvent.
 StringMap g_HEGrenadeContainer;  // Stores he-entity-id -> Get5HEDetonatedEvent.
 StringMap g_MolotovContainer;    // Stores molotov-entity-id -> Get5MolotovDetonatedEvent.
-int g_LatestUserIdToDetonateMolotov =
-    0;  // Molotov detonate and start-burning/extinguish are two separate events always fired right
-        // after each other. We need this to bind them together as detonate does not have client id.
+
+// Molotov detonate and start-burning/extinguish are two separate events always fired right
+// after each other. We need this to bind them together as detonate does not have client id.
+int g_LatestUserIdToDetonateMolotov = 0;
 int g_LatestMolotovToExtinguishBySmoke = 0;  //  Attributes extinguish booleans to smoke grenades.
 bool g_FirstKillDone = false;
 bool g_FirstDeathDone = false;
 bool g_SetTeamClutching[4];
-int g_RoundKills[MAXPLAYERS + 1];  // kills per round each client has gotten
-int g_RoundClutchingEnemyCount[MAXPLAYERS +
-                               1];  // number of enemies left alive when last alive on your team
+int g_RoundKills[MAXPLAYERS + 1];                // kills per round each client has gotten
+int g_RoundClutchingEnemyCount[MAXPLAYERS + 1];  // number of enemies left alive when last alive on your team
 int g_PlayerKilledBy[MAXPLAYERS + 1];
 float g_PlayerKilledByTime[MAXPLAYERS + 1];
 int g_DamageDone[MAXPLAYERS + 1][MAXPLAYERS + 1];
@@ -245,7 +243,7 @@ int g_ReadyTimeWaitingUsed = 0;
 char g_LastKickedPlayerAuth[64];
 
 /** Chat aliases loaded **/
-#define ALIAS_LENGTH 64
+#define ALIAS_LENGTH   64
 #define COMMAND_LENGTH 64
 ArrayList g_ChatAliases;
 ArrayList g_ChatAliasesCommands;
@@ -356,186 +354,82 @@ public void OnPluginStart() {
   LoadTranslations("common.phrases");
 
   /** ConVars **/
-  g_AllowTechPauseCvar = CreateConVar("get5_allow_technical_pause", "1",
-                                      "Whether or not technical pauses are allowed");
-  g_MaxTechPauseDurationCvar = CreateConVar(
-      "get5_tech_pause_time", "0",
-      "Number of seconds before anyone can call unpause on a technical timeout, 0=unlimited");
-  g_MaxTechPausesCvar =
-      CreateConVar("get5_max_tech_pauses", "0",
-                   "Number of technical pauses a team is allowed to have, 0=unlimited");
-  g_AutoTechPauseMissingPlayersCvar =
-      CreateConVar("get5_auto_tech_pause_missing_players", "0",
-                   "The number of players that must leave a team to trigger an automatic technical pause. Set to 0 to disable.");
-  g_AutoLoadConfigCvar =
-      CreateConVar("get5_autoload_config", "",
-                   "Name of a match config file to automatically load when the server loads");
-  g_AutoReadyActivePlayersCvar = CreateConVar(
-      "get5_auto_ready_active_players", "0",
-      "Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase.");
-  g_BackupSystemEnabledCvar =
-      CreateConVar("get5_backup_system_enabled", "1", "Whether the get5 backup system is enabled");
-  g_DamagePrintCvar =
-      CreateConVar("get5_print_damage", "0", "Whether damage reports are printed on round end.");
-  g_DamagePrintFormatCvar = CreateConVar(
-      "get5_damageprint_format",
-      "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)",
-      "Format of the damage output string. Available tags are in the default, color tags such as {LIGHT_RED} and {GREEN} also work. {KILL_TO} and {KILL_FROM} indicate kills, assists and flash assists as booleans, all of which are mutually exclusive.");
-  g_DamagePrintExcessCvar = CreateConVar(
-      "get5_print_damage_excess", "0",
-      "Prints full damage given in the damage report on round end. With this disabled (default), a player cannot take more than 100 damage.");
-  g_DateFormatCvar = CreateConVar(
-      "get5_date_format", "%Y-%m-%d",
-      "Date format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
-  g_CheckAuthsCvar =
-      CreateConVar("get5_check_auths", "1",
-                   "If set to 0, get5 will not force players to the correct team based on steamid");
-  g_DemoNameFormatCvar = CreateConVar(
-      "get5_demo_name_format", "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}",
-      "Format for demo file names, use \"\" to disable. Do not remove the {TIME} placeholder if you use the backup system.");
-  g_DemoPathCvar = CreateConVar(
-      "get5_demo_path", "",
-      "The folder to save demo files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
-  g_DemoUploadHeaderValueCvar = CreateConVar(
-      "get5_demo_upload_header_value", "",
-      "If defined, it is the authorization value that is appended to the HTTP request. Requires SteamWorks.");
-  g_DemoUploadHeaderKeyCvar = CreateConVar(
-      "get5_demo_upload_header_key", "Authorization",
-      "If defined, it is the authorization key that is appended to the HTTP request. Requires SteamWorks.");
-  g_DemoUploadDeleteAfterCvar = CreateConVar(
-      "get5_demo_delete_after_upload", "0",
-      "Whether to delete the demo from the game server after a successful upload.");
-  g_DemoUploadURLCvar = CreateConVar(
-      "get5_demo_upload_url", "",
-      "If defined, it is the URL at which a server resides to accept connections to upload demos. Requires SteamWorks extension. If no protocol is provided, the plugin will prepend http:// to this value.");
-  g_DisplayGotvVetoCvar =
-      CreateConVar("get5_display_gotv_veto", "0",
-                   "Whether to wait for map vetos to be printed to GOTV before changing map");
-  g_EventLogFormatCvar =
-      CreateConVar("get5_event_log_format", "",
-                   "Path to use when writing match event logs, use \"\" to disable");
-  g_EventLogRemoteURLCvar =
-      CreateConVar("get5_remote_log_url", "", "URL to send event logs as JSON objects to. http:// will be prepended if no protocol is provided.");
-  g_EventLogRemoteHeaderKeyCvar =
-      CreateConVar("get5_remote_log_header_key", "Authorization", "Custom header key to add to event log HTTP requests.");
-  g_EventLogRemoteHeaderValueCvar =
-      CreateConVar("get5_remote_log_header_value", "", "Value to assign to get5_remote_log_header_key.");
-  g_FixedPauseTimeCvar =
-      CreateConVar("get5_fixed_pause_time", "0",
-                   "If set to non-zero, this will be the fixed length of any pause");
-  g_KickClientImmunityCvar = CreateConVar(
-      "get5_kick_immunity", "1",
-      "Whether or not admins with the changemap flag will be immune to kicks from \"get5_kick_when_no_match_loaded\". Set to \"0\" to disable");
-  g_KickClientsWithNoMatchCvar =
-      CreateConVar("get5_kick_when_no_match_loaded", "0",
-                   "Whether the plugin kicks new clients when no match is loaded");
-  g_LiveCfgCvar = CreateConVar("get5_live_cfg", "get5/live.cfg",
-                               "Config file to exec when the game goes live.");
-  g_WarmupCfgCvar =
-      CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods.");
-  g_KnifeCfgCvar =
-      CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to exec in knife periods.");
-  g_LiveCountdownTimeCvar = CreateConVar(
-      "get5_live_countdown_time", "10",
-      "Number of seconds used to count down when a match is going live", 0, true, 5.0, true, 60.0);
-  g_MaxBackupAgeCvar =
-      CreateConVar("get5_max_backup_age", "160000",
-                   "Number of seconds before a backup file is automatically deleted, 0 to disable");
-  g_MaxTacticalPausesCvar =
-      CreateConVar("get5_max_pauses", "0", "Maximum number of pauses a team can use, 0=unlimited");
-  g_MaxPauseTimeCvar =
-      CreateConVar("get5_max_pause_time", "300",
-                   "Maximum number of time the game can spend paused by a team, 0=unlimited");
-  g_MessagePrefixCvar =
-      CreateConVar("get5_message_prefix", DEFAULT_TAG, "The tag applied before plugin messages.");
-  g_ResetPausesEachHalfCvar =
-      CreateConVar("get5_reset_pauses_each_half", "1",
-                   "Whether pause limits will be reset each halftime period");
-  g_PauseOnVetoCvar =
-      CreateConVar("get5_pause_on_veto", "0", "Set 1 to Pause Match during Veto time");
-  g_PausingEnabledCvar = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
-  g_PrettyPrintJsonCvar = CreateConVar("get5_pretty_print_json", "1",
-                                       "Whether all JSON output is in pretty-print format.");
-  g_ReadyTeamTagCvar =
-      CreateConVar("get5_ready_team_tag", "1",
-                   "Adds [READY] [NOT READY] Tags before Team Names. 0 to disable it.");
-  g_AllowForceReadyCvar =
-      CreateConVar("get5_allow_force_ready", "1", "Allows players to use the !forceready command. Turning this off does not disable get5_forceready.");
-  g_ServerIdCvar = CreateConVar(
-      "get5_server_id", "0",
-      "Integer that identifies your server. This is used in temp files to prevent collisions.");
-  g_SetClientClanTagCvar = CreateConVar("get5_set_client_clan_tags", "1",
-                                        "Whether to set client clan tags to player ready status.");
-  g_SetHostnameCvar = CreateConVar(
-      "get5_hostname_format", "Get5: {TEAM1} vs {TEAM2}",
-      "Template that the server hostname will follow when a match is live. Leave field blank to disable.");
-  g_StatsPathFormatCvar =
-      CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg",
-                   "Where match stats are saved (updated each map end), set to \"\" to disable");
-  g_StopCommandEnabledCvar =
-      CreateConVar("get5_stop_command_enabled", "1",
-                   "Whether clients can use the !stop command to restore to the last round");
-  g_TeamTimeToStartCvar = CreateConVar(
-      "get5_time_to_start", "0",
-      "Time (in seconds) teams have to ready up before forfeiting the match, 0=unlimited");
-  g_TeamTimeToKnifeDecisionCvar = CreateConVar(
-      "get5_time_to_make_knife_decision", "60",
-      "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited");
-  g_TimeFormatCvar = CreateConVar(
-      "get5_time_format", "%Y-%m-%d_%H-%M-%S",
-      "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
-  g_VetoConfirmationTimeCvar = CreateConVar(
-      "get5_veto_confirmation_time", "2.0",
-      "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required, 0 to disable");
-  g_VetoCountdownCvar =
-      CreateConVar("get5_veto_countdown", "5",
-                   "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
-  g_PrintUpdateNoticeCvar = CreateConVar(
-      "get5_print_update_notice", "1",
-      "Whether to print to chat when the game goes live if a new version of Get5 is available.");
-  g_RoundBackupPathCvar = CreateConVar(
-      "get5_backup_path", "",
-      "The folder to save backup files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
-  g_PhaseAnnouncementCountCvar = CreateConVar(
-      "get5_phase_announcement_count", "5",
-      "The number of times Get5 will print 'Knife' or 'Match is LIVE' when the game starts. Set to 0 to disable.");
-  g_Team1NameColorCvar = CreateConVar("get5_team1_color", "{LIGHT_GREEN}",
-                                      "The color used for the name of team 1 in chat messages.");
-  g_Team2NameColorCvar = CreateConVar("get5_team2_color", "{PINK}",
-                                      "The color used for the name of team 2 in chat messages.");
-  g_SpecNameColorCvar = CreateConVar("get5_spec_color", "{NORMAL}",
-                                     "The color used for the name of spectators in chat messages.");
-  g_SurrenderEnabledCvar =
-      CreateConVar("get5_surrender_enabled", "0", "Whether the surrender command is enabled.");
-  g_MinimumRoundDeficitForSurrenderCvar =
-      CreateConVar("get5_surrender_minimum_round_deficit", "8", "The minimum number of rounds a team must be behind in order to surrender.", 0, true, 0.0);
-  g_VotesRequiredForSurrenderCvar =
-        CreateConVar("get5_surrender_required_votes", "3", "The number of votes required for a team to surrender.", 0, true, 1.0);
-  g_SurrenderVoteTimeLimitCvar =
-        CreateConVar("get5_surrender_time_limit", "15", "The number of seconds before a vote to surrender fails.", 0, true, 10.0);
-  g_SurrenderCooldownCvar =
-        CreateConVar("get5_surrender_cooldown", "60", "The number of seconds before a vote to surrender can be retried if it fails.");
-  g_ForfeitEnabledCvar = CreateConVar(
-      "get5_forfeit_enabled", "1",
-      "Whether the forfeit feature is enabled. Not to be confused with the surrender feature.");
-  g_ForfeitCountdownTimeCvar = CreateConVar(
-      "get5_forfeit_countdown", "180",
-      "This determines the grace-period for rejoining the server to avoid a loss by forfeit. Cannot be set lower than 30 seconds.", 0, true, 30.0);
-
+  // clang-format off
+  g_AllowTechPauseCvar                  = CreateConVar("get5_allow_technical_pause", "1", "Whether or not technical pauses are allowed");
+  g_MaxTechPauseDurationCvar            = CreateConVar("get5_tech_pause_time", "0", "Number of seconds before anyone can call unpause on a technical timeout, 0=unlimited");
+  g_MaxTechPausesCvar                   = CreateConVar("get5_max_tech_pauses", "0", "Number of technical pauses a team is allowed to have, 0=unlimited");
+  g_AutoTechPauseMissingPlayersCvar     = CreateConVar("get5_auto_tech_pause_missing_players", "0", "The number of players that must leave a team to trigger an automatic technical pause. Set to 0 to disable.");
+  g_AutoLoadConfigCvar                  = CreateConVar("get5_autoload_config", "", "Name of a match config file to automatically load when the server loads");
+  g_AutoReadyActivePlayersCvar          = CreateConVar("get5_auto_ready_active_players", "0", "Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase.");
+  g_BackupSystemEnabledCvar             = CreateConVar("get5_backup_system_enabled", "1", "Whether the get5 backup system is enabled");
+  g_DamagePrintCvar                     = CreateConVar("get5_print_damage", "0", "Whether damage reports are printed on round end.");
+  g_DamagePrintFormatCvar               = CreateConVar("get5_damageprint_format", "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)", "Format of the damage output string. Available tags are in the default, color tags such as {LIGHT_RED} and {GREEN} also work. {KILL_TO} and {KILL_FROM} indicate kills, assists and flash assists as booleans, all of which are mutually exclusive.");
+  g_DamagePrintExcessCvar               = CreateConVar("get5_print_damage_excess", "0", "Prints full damage given in the damage report on round end. With this disabled (default), a player cannot take more than 100 damage.");
+  g_DateFormatCvar                      = CreateConVar("get5_date_format", "%Y-%m-%d", "Date format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
+  g_CheckAuthsCvar                      = CreateConVar("get5_check_auths", "1", "If set to 0, get5 will not force players to the correct team based on steamid");
+  g_DemoNameFormatCvar                  = CreateConVar("get5_demo_name_format", "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}", "Format for demo file names, use \"\" to disable. Do not remove the {TIME} placeholder if you use the backup system.");
+  g_DemoPathCvar                        = CreateConVar("get5_demo_path", "", "The folder to save demo files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
+  g_DemoUploadHeaderValueCvar           = CreateConVar("get5_demo_upload_header_value", "", "If defined, it is the authorization value that is appended to the HTTP request. Requires SteamWorks.");
+  g_DemoUploadHeaderKeyCvar             = CreateConVar("get5_demo_upload_header_key", "Authorization", "If defined, it is the authorization key that is appended to the HTTP request. Requires SteamWorks.");
+  g_DemoUploadDeleteAfterCvar           = CreateConVar("get5_demo_delete_after_upload", "0", "Whether to delete the demo from the game server after a successful upload.");
+  g_DemoUploadURLCvar                   = CreateConVar("get5_demo_upload_url", "", "If defined, it is the URL at which a server resides to accept connections to upload demos. Requires SteamWorks extension. If no protocol is provided, the plugin will prepend http:// to this value.");
+  g_DisplayGotvVetoCvar                 = CreateConVar("get5_display_gotv_veto", "0", "Whether to wait for map vetos to be printed to GOTV before changing map");
+  g_EventLogFormatCvar                  = CreateConVar("get5_event_log_format", "", "Path to use when writing match event logs, use \"\" to disable");
+  g_EventLogRemoteURLCvar               = CreateConVar("get5_remote_log_url", "", "URL to send event logs as JSON objects to. http:// will be prepended if no protocol is provided.");
+  g_EventLogRemoteHeaderKeyCvar         = CreateConVar("get5_remote_log_header_key", "Authorization", "Custom header key to add to event log HTTP requests.");
+  g_EventLogRemoteHeaderValueCvar       = CreateConVar("get5_remote_log_header_value", "", "Value to assign to get5_remote_log_header_key.");
+  g_FixedPauseTimeCvar                  = CreateConVar("get5_fixed_pause_time", "0", "If set to non-zero, this will be the fixed length of any pause");
+  g_KickClientImmunityCvar              = CreateConVar("get5_kick_immunity", "1", "Whether or not admins with the changemap flag will be immune to kicks from \"get5_kick_when_no_match_loaded\". Set to \"0\" to disable");
+  g_KickClientsWithNoMatchCvar          = CreateConVar("get5_kick_when_no_match_loaded", "0", "Whether the plugin kicks new clients when no match is loaded");
+  g_LiveCfgCvar                         = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to exec when the game goes live.");
+  g_WarmupCfgCvar                       = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods.");
+  g_KnifeCfgCvar                        = CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to exec in knife periods.");
+  g_LiveCountdownTimeCvar               = CreateConVar("get5_live_countdown_time", "10", "Number of seconds used to count down when a match is going live", 0, true, 5.0, true, 60.0);
+  g_MaxBackupAgeCvar                    = CreateConVar("get5_max_backup_age", "160000", "Number of seconds before a backup file is automatically deleted, 0 to disable");
+  g_MaxTacticalPausesCvar               = CreateConVar("get5_max_pauses", "0", "Maximum number of pauses a team can use, 0=unlimited");
+  g_MaxPauseTimeCvar                    = CreateConVar("get5_max_pause_time", "300", "Maximum number of time the game can spend paused by a team, 0=unlimited");
+  g_MessagePrefixCvar                   = CreateConVar("get5_message_prefix", DEFAULT_TAG, "The tag applied before plugin messages.");
+  g_ResetPausesEachHalfCvar             = CreateConVar("get5_reset_pauses_each_half", "1", "Whether pause limits will be reset each halftime period");
+  g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "0", "Set 1 to Pause Match during Veto time");
+  g_PausingEnabledCvar                  = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
+  g_PrettyPrintJsonCvar                 = CreateConVar("get5_pretty_print_json", "1", "Whether all JSON output is in pretty-print format.");
+  g_ReadyTeamTagCvar                    = CreateConVar("get5_ready_team_tag", "1", "Adds [READY] [NOT READY] Tags before Team Names. 0 to disable it.");
+  g_AllowForceReadyCvar                 = CreateConVar("get5_allow_force_ready", "1", "Allows players to use the !forceready command. Turning this off does not disable get5_forceready.");
+  g_ServerIdCvar                        = CreateConVar("get5_server_id", "0", "Integer that identifies your server. This is used in temp files to prevent collisions.");
+  g_SetClientClanTagCvar                = CreateConVar("get5_set_client_clan_tags", "1", "Whether to set client clan tags to player ready status.");
+  g_SetHostnameCvar                     = CreateConVar("get5_hostname_format", "Get5: {TEAM1} vs {TEAM2}", "Template that the server hostname will follow when a match is live. Leave field blank to disable.");
+  g_StatsPathFormatCvar                 = CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg", "Where match stats are saved (updated each map end), set to \"\" to disable");
+  g_StopCommandEnabledCvar              = CreateConVar("get5_stop_command_enabled", "1", "Whether clients can use the !stop command to restore to the last round");
+  g_TeamTimeToStartCvar                 = CreateConVar("get5_time_to_start", "0", "Time (in seconds) teams have to ready up before forfeiting the match, 0=unlimited");
+  g_TeamTimeToKnifeDecisionCvar         = CreateConVar("get5_time_to_make_knife_decision", "60", "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited");
+  g_TimeFormatCvar                      = CreateConVar("get5_time_format", "%Y-%m-%d_%H-%M-%S", "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
+  g_VetoConfirmationTimeCvar            = CreateConVar("get5_veto_confirmation_time", "2.0", "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required, 0 to disable");
+  g_VetoCountdownCvar                   = CreateConVar("get5_veto_countdown", "5", "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
+  g_PrintUpdateNoticeCvar               = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
+  g_RoundBackupPathCvar                 = CreateConVar("get5_backup_path", "", "The folder to save backup files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
+  g_PhaseAnnouncementCountCvar          = CreateConVar("get5_phase_announcement_count", "5", "The number of times Get5 will print 'Knife' or 'Match is LIVE' when the game starts. Set to 0 to disable.");
+  g_Team1NameColorCvar                  = CreateConVar("get5_team1_color", "{LIGHT_GREEN}", "The color used for the name of team 1 in chat messages.");
+  g_Team2NameColorCvar                  = CreateConVar("get5_team2_color", "{PINK}", "The color used for the name of team 2 in chat messages.");
+  g_SpecNameColorCvar                   = CreateConVar("get5_spec_color", "{NORMAL}", "The color used for the name of spectators in chat messages.");
+  g_SurrenderEnabledCvar                = CreateConVar("get5_surrender_enabled", "0", "Whether the surrender command is enabled.");
+  g_MinimumRoundDeficitForSurrenderCvar = CreateConVar("get5_surrender_minimum_round_deficit", "8", "The minimum number of rounds a team must be behind in order to surrender.", 0, true, 0.0);
+  g_VotesRequiredForSurrenderCvar       = CreateConVar("get5_surrender_required_votes", "3", "The number of votes required for a team to surrender.", 0, true, 1.0);
+  g_SurrenderVoteTimeLimitCvar          = CreateConVar("get5_surrender_time_limit", "15", "The number of seconds before a vote to surrender fails.", 0, true, 10.0);
+  g_SurrenderCooldownCvar               = CreateConVar("get5_surrender_cooldown", "60", "The number of seconds before a vote to surrender can be retried if it fails.");
+  g_ForfeitEnabledCvar                  = CreateConVar("get5_forfeit_enabled", "1", "Whether the forfeit feature is enabled. Not to be confused with the surrender feature.");
+  g_ForfeitCountdownTimeCvar            = CreateConVar("get5_forfeit_countdown", "180", "This determines the grace-period for rejoining the server to avoid a loss by forfeit. Cannot be set lower than 30 seconds.", 0, true, 30.0);
+  // clang-format on
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");
 
-  g_GameStateCvar =
-      CreateConVar("get5_game_state", "0", "Current game state (see get5.inc)", FCVAR_DONTRECORD);
-  g_LastGet5BackupCvar =
-      CreateConVar("get5_last_backup_file", "", "Last get5 backup file written", FCVAR_DONTRECORD);
+  g_GameStateCvar = CreateConVar("get5_game_state", "0", "Current game state (see get5.inc)", FCVAR_DONTRECORD);
+  g_LastGet5BackupCvar = CreateConVar("get5_last_backup_file", "", "Last get5 backup file written", FCVAR_DONTRECORD);
   g_VersionCvar = CreateConVar("get5_version", PLUGIN_VERSION, "Current get5 version",
                                FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
   g_VersionCvar.SetString(PLUGIN_VERSION);
 
   g_CoachingEnabledCvar = FindConVar("sv_coaching_enabled");
-  g_CoachingEnabledCvar.AddChangeHook(
-      CoachingChangedHook);  // used to move people off coaching if it gets disabled.
+  g_CoachingEnabledCvar.AddChangeHook(CoachingChangedHook);  // used to move people off coaching if it gets disabled.
 
   /** Client commands **/
   g_ChatAliases = new ArrayList(ByteCountToCells(ALIAS_LENGTH));
@@ -550,12 +444,9 @@ public void OnPluginStart() {
   AddAliasedCommand("tac", Command_Pause, "Alias of pause");
   AddAliasedCommand("unpause", Command_Unpause, "Unpauses the game");
   AddAliasedCommand("coach", Command_SmCoach, "Marks a client as a coach for their team");
-  AddAliasedCommand("stay", Command_Stay,
-                    "Elects to stay on the current team after winning a knife round");
-  AddAliasedCommand("swap", Command_Swap,
-                    "Elects to swap the current teams after winning a knife round");
-  AddAliasedCommand("switch", Command_Swap,
-                    "Elects to swap the current teams after winning a knife round");
+  AddAliasedCommand("stay", Command_Stay, "Elects to stay on the current team after winning a knife round");
+  AddAliasedCommand("swap", Command_Swap, "Elects to swap the current teams after winning a knife round");
+  AddAliasedCommand("switch", Command_Swap, "Elects to swap the current teams after winning a knife round");
   AddAliasedCommand("t", Command_T, "Elects to start on T side after winning a knife round");
   AddAliasedCommand("ct", Command_Ct, "Elects to start on CT side after winning a knife round");
   AddAliasedCommand("stop", Command_Stop, "Elects to stop the game to reload a backup file");
@@ -565,21 +456,16 @@ public void OnPluginStart() {
   AddAliasedCommand("cancelffw", Command_CancelFFW, "Cancels a request to win by forfeit initiated with !ffw.");
 
   /** Admin/server commands **/
+  RegAdminCmd("get5_loadmatch", Command_LoadMatch, ADMFLAG_CHANGEMAP,
+              "Loads a match config file (json or keyvalues) from a file relative to the csgo/ directory");
   RegAdminCmd(
-      "get5_loadmatch", Command_LoadMatch, ADMFLAG_CHANGEMAP,
-      "Loads a match config file (json or keyvalues) from a file relative to the csgo/ directory");
-  RegAdminCmd(
-      "get5_loadmatch_url", Command_LoadMatchUrl, ADMFLAG_CHANGEMAP,
-      "Loads a JSON config file by sending a GET request to download it. Requires either the SteamWorks extension.");
-  RegAdminCmd("get5_loadteam", Command_LoadTeam, ADMFLAG_CHANGEMAP,
-              "Loads a team data from a file into a team");
+    "get5_loadmatch_url", Command_LoadMatchUrl, ADMFLAG_CHANGEMAP,
+    "Loads a JSON config file by sending a GET request to download it. Requires either the SteamWorks extension.");
+  RegAdminCmd("get5_loadteam", Command_LoadTeam, ADMFLAG_CHANGEMAP, "Loads a team data from a file into a team");
   RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP, "Force ends the current match");
-  RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP,
-              "Adds a steamid to a match team");
-  RegAdminCmd("get5_addcoach", Command_AddCoach, ADMFLAG_CHANGEMAP,
-              "Adds a steamid to a match teams coach slot");
-  RegAdminCmd("get5_removeplayer", Command_RemovePlayer, ADMFLAG_CHANGEMAP,
-              "Removes a steamid from a match team");
+  RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Adds a steamid to a match team");
+  RegAdminCmd("get5_addcoach", Command_AddCoach, ADMFLAG_CHANGEMAP, "Adds a steamid to a match teams coach slot");
+  RegAdminCmd("get5_removeplayer", Command_RemovePlayer, ADMFLAG_CHANGEMAP, "Removes a steamid from a match team");
   RegAdminCmd("get5_addkickedplayer", Command_AddKickedPlayer, ADMFLAG_CHANGEMAP,
               "Adds the last kicked steamid to a match team");
   RegAdminCmd("get5_removekickedplayer", Command_RemoveKickedPlayer, ADMFLAG_CHANGEMAP,
@@ -589,35 +475,28 @@ public void OnPluginStart() {
 
   RegAdminCmd("get5_scrim", Command_CreateScrim, ADMFLAG_CHANGEMAP,
               "Creates and loads a match using the scrim template");
-  RegAdminCmd("sm_scrim", Command_CreateScrim, ADMFLAG_CHANGEMAP,
-              "Creates and loads a match using the scrim template");
+  RegAdminCmd("sm_scrim", Command_CreateScrim, ADMFLAG_CHANGEMAP, "Creates and loads a match using the scrim template");
 
-  RegAdminCmd("get5_ringer", Command_Ringer, ADMFLAG_CHANGEMAP,
-              "Adds/removes a ringer to/from the home scrim team");
-  RegAdminCmd("sm_ringer", Command_Ringer, ADMFLAG_CHANGEMAP,
-              "Adds/removes a ringer to/from the home scrim team");
+  RegAdminCmd("get5_ringer", Command_Ringer, ADMFLAG_CHANGEMAP, "Adds/removes a ringer to/from the home scrim team");
+  RegAdminCmd("sm_ringer", Command_Ringer, ADMFLAG_CHANGEMAP, "Adds/removes a ringer to/from the home scrim team");
 
   RegAdminCmd("sm_get5", Command_Get5AdminMenu, ADMFLAG_CHANGEMAP, "Displays a helper menu");
 
-  RegAdminCmd("get5_forceready", Command_AdminForceReady, ADMFLAG_CHANGEMAP,
-              "Force readies all current teams");
-  RegAdminCmd("get5_forcestart", Command_AdminForceReady, ADMFLAG_CHANGEMAP,
-              "Force readies all current teams");
+  RegAdminCmd("get5_forceready", Command_AdminForceReady, ADMFLAG_CHANGEMAP, "Force readies all current teams");
+  RegAdminCmd("get5_forcestart", Command_AdminForceReady, ADMFLAG_CHANGEMAP, "Force readies all current teams");
 
-  RegAdminCmd("get5_dumpstats", Command_DumpStats, ADMFLAG_CHANGEMAP,
-              "Dumps match stats to a file");
+  RegAdminCmd("get5_dumpstats", Command_DumpStats, ADMFLAG_CHANGEMAP, "Dumps match stats to a file");
   RegAdminCmd("get5_listbackups", Command_ListBackups, ADMFLAG_CHANGEMAP,
               "Lists get5 match backups for the current matchid or a given one");
-  RegAdminCmd("get5_loadbackup", Command_LoadBackup, ADMFLAG_CHANGEMAP,
-              "Loads a get5 match backup");
+  RegAdminCmd("get5_loadbackup", Command_LoadBackup, ADMFLAG_CHANGEMAP, "Loads a get5 match backup");
   RegAdminCmd("get5_debuginfo", Command_DebugInfo, ADMFLAG_CHANGEMAP,
               "Dumps debug info to a file (addons/sourcemod/logs/get5_debuginfo.txt by default)");
 
   /** Other commands **/
   RegConsoleCmd("get5_status", Command_Status, "Prints JSON formatted match state info");
   RegServerCmd(
-      "get5_test", Command_Test,
-      "Runs get5 tests - should not be used on a live match server since it will reload a match config to test");
+    "get5_test", Command_Test,
+    "Runs get5 tests - should not be used on a live match server since it will reload a match config to test");
 
   /** Hooks **/
   HookEvent("cs_win_panel_match", Event_MatchOver);
@@ -670,8 +549,7 @@ public void OnPluginStart() {
   g_OnFlashbangDetonated = CreateGlobalForward("Get5_OnFlashbangDetonated", ET_Ignore, Param_Cell);
   g_OnHEGrenadeDetonated = CreateGlobalForward("Get5_OnHEGrenadeDetonated", ET_Ignore, Param_Cell);
   g_OnDecoyStarted = CreateGlobalForward("Get5_OnDecoyStarted", ET_Ignore, Param_Cell);
-  g_OnSmokeGrenadeDetonated =
-      CreateGlobalForward("Get5_OnSmokeGrenadeDetonated", ET_Ignore, Param_Cell);
+  g_OnSmokeGrenadeDetonated = CreateGlobalForward("Get5_OnSmokeGrenadeDetonated", ET_Ignore, Param_Cell);
   g_OnMolotovDetonated = CreateGlobalForward("Get5_OnMolotovDetonated", ET_Ignore, Param_Cell);
   g_OnGameStateChanged = CreateGlobalForward("Get5_OnGameStateChanged", ET_Ignore, Param_Cell);
   g_OnGoingLive = CreateGlobalForward("Get5_OnGoingLive", ET_Ignore, Param_Cell);
@@ -687,13 +565,11 @@ public void OnPluginStart() {
   g_OnBombExploded = CreateGlobalForward("Get5_OnBombExploded", ET_Ignore, Param_Cell);
   g_OnRoundStart = CreateGlobalForward("Get5_OnRoundStart", ET_Ignore, Param_Cell);
   g_OnRoundEnd = CreateGlobalForward("Get5_OnRoundEnd", ET_Ignore, Param_Cell);
-  g_OnLoadMatchConfigFailed =
-      CreateGlobalForward("Get5_OnLoadMatchConfigFailed", ET_Ignore, Param_Cell);
+  g_OnLoadMatchConfigFailed = CreateGlobalForward("Get5_OnLoadMatchConfigFailed", ET_Ignore, Param_Cell);
   g_OnMapPicked = CreateGlobalForward("Get5_OnMapPicked", ET_Ignore, Param_Cell);
   g_OnMapVetoed = CreateGlobalForward("Get5_OnMapVetoed", ET_Ignore, Param_Cell);
   g_OnSidePicked = CreateGlobalForward("Get5_OnSidePicked", ET_Ignore, Param_Cell);
-  g_OnTeamReadyStatusChanged =
-      CreateGlobalForward("Get5_OnTeamReadyStatusChanged", ET_Ignore, Param_Cell);
+  g_OnTeamReadyStatusChanged = CreateGlobalForward("Get5_OnTeamReadyStatusChanged", ET_Ignore, Param_Cell);
   g_OnKnifeRoundStarted = CreateGlobalForward("Get5_OnKnifeRoundStarted", ET_Ignore, Param_Cell);
   g_OnKnifeRoundWon = CreateGlobalForward("Get5_OnKnifeRoundWon", ET_Ignore, Param_Cell);
   g_OnRoundStatsUpdated = CreateGlobalForward("Get5_OnRoundStatsUpdated", ET_Ignore, Param_Cell);
@@ -729,8 +605,8 @@ static Action Timer_InfoMessages(Handle timer) {
     if (!g_MapChangePending) {
       // Find out what we're waiting for
       if (IsTeamsReady() && !IsSpectatorsReady()) {
-        Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage",
-                          g_FormattedTeamNames[Get5Team_Spec], readyCommandFormatted);
+        Get5_MessageToAll("%t", "WaitingForCastersReadyInfoMessage", g_FormattedTeamNames[Get5Team_Spec],
+                          readyCommandFormatted);
       } else {
         // g_MapSides empty if we veto, so make sure to only check this during warmup.
         bool knifeRound = g_GameState == Get5State_Warmup && g_MapSides.Get(g_MapNumber) == SideChoice_KnifeRound;
@@ -748,7 +624,11 @@ static Action Timer_InfoMessages(Handle timer) {
             if (IsClientReady(i)) {
               Get5_Message(i, "%t", "TypeUnreadyIfNotReady", unreadyCommandFormatted);
             } else {
-              Get5_Message(i, "%t", g_GameState == Get5State_PreVeto ? ("ReadyToVetoInfoMessage") : (knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage"), readyCommandFormatted);
+              Get5_Message(i, "%t",
+                           g_GameState == Get5State_PreVeto
+                             ? "ReadyToVetoInfoMessage"
+                             : (knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage"),
+                           readyCommandFormatted);
             }
           }
           if (team == Get5Team_Spec) {
@@ -767,7 +647,7 @@ static Action Timer_InfoMessages(Handle timer) {
       Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
     }
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
-     PromptForKnifeDecision();
+    PromptForKnifeDecision();
   } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
     // Handle postgame
     Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
@@ -785,8 +665,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
     if (team == Get5Team_None) {
       RememberAndKickClient(client, "%t", "YouAreNotAPlayerInfoMessage");
     } else if (CountPlayersOnTeam(team, client) >= g_PlayersPerTeam &&
-               (!g_CoachingEnabledCvar.BoolValue ||
-                CountCoachesOnTeam(team, client) >= g_CoachesPerTeam)) {
+               (!g_CoachingEnabledCvar.BoolValue || CountCoachesOnTeam(team, client) >= g_CoachesPerTeam)) {
       KickClient(client, "%t", "TeamIsFullInfoMessage");
     }
   }
@@ -814,8 +693,7 @@ public void OnClientPutInServer(int client) {
 public void OnClientPostAdminCheck(int client) {
   if (IsPlayer(client)) {
     if (g_GameState == Get5State_None && g_KickClientsWithNoMatchCvar.BoolValue) {
-      if (!g_KickClientImmunityCvar.BoolValue ||
-          !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
+      if (!g_KickClientImmunityCvar.BoolValue || !CheckCommandAccess(client, "get5_kickcheck", ADMFLAG_CHANGEMAP)) {
         KickClient(client, "%t", "NoMatchSetupInfoMessage");
       }
     }
@@ -823,12 +701,10 @@ public void OnClientPostAdminCheck(int client) {
 }
 
 public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs) {
-  if (g_GameState != Get5State_None &&
-      (StrEqual(command, "say") || StrEqual(command, "say_team"))) {
+  if (g_GameState != Get5State_None && (StrEqual(command, "say") || StrEqual(command, "say_team"))) {
     if (IsValidClient(client)) {
-      Get5PlayerSayEvent event =
-          new Get5PlayerSayEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
-                                 GetPlayerObject(client), command, sArgs);
+      Get5PlayerSayEvent event = new Get5PlayerSayEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
+                                                        GetPlayerObject(client), command, sArgs);
 
       LogDebug("Calling Get5_OnPlayerSay()");
 
@@ -854,8 +730,7 @@ static Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
     char ipAddress[32];
     GetClientIP(client, ipAddress, sizeof(ipAddress));
 
-    Get5PlayerConnectedEvent connectEvent =
-        new Get5PlayerConnectedEvent(GetPlayerObject(client), ipAddress);
+    Get5PlayerConnectedEvent connectEvent = new Get5PlayerConnectedEvent(GetPlayerObject(client), ipAddress);
 
     LogDebug("Calling Get5_OnPlayerConnected()");
     Call_StartForward(g_OnPlayerConnected);
@@ -871,8 +746,7 @@ static Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
   int client = GetClientOfUserId(event.GetInt("userid"));
   g_ClientPendingTeamCheck[client] = false;
   if (IsPlayer(client)) {
-    Get5PlayerDisconnectedEvent disconnectEvent =
-        new Get5PlayerDisconnectedEvent(GetPlayerObject(client));
+    Get5PlayerDisconnectedEvent disconnectEvent = new Get5PlayerDisconnectedEvent(GetPlayerObject(client));
 
     LogDebug("Calling Get5_OnPlayerDisconnected()");
     Call_StartForward(g_OnPlayerDisconnected);
@@ -1017,10 +891,7 @@ static bool CheckReadyWaitingTimes() {
   int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed;
 
   if (timeLeft > 0) {
-    if ((timeLeft >= 300 && timeLeft % 60 == 0)
-      || (timeLeft < 300 && timeLeft % 30 == 0)
-      || (timeLeft == 10)
-    ) {
+    if ((timeLeft >= 300 && timeLeft % 60 == 0) || (timeLeft < 300 && timeLeft % 30 == 0) || (timeLeft == 10)) {
       char formattedTimeLeft[32];
       ConvertSecondsToMinutesAndSeconds(timeLeft, formattedTimeLeft, sizeof(formattedTimeLeft));
       FormatTimeString(formattedTimeLeft, sizeof(formattedTimeLeft), formattedTimeLeft);
@@ -1045,8 +916,7 @@ static bool CheckReadyWaitingTimes() {
   }
 
   if (winningTeam != Get5Team_None) {
-    Get5_MessageToAll("%t", "TeamForfeitInfoMessage",
-      g_FormattedTeamNames[OtherMatchTeam(winningTeam)]);
+    Get5_MessageToAll("%t", "TeamForfeitInfoMessage", g_FormattedTeamNames[OtherMatchTeam(winningTeam)]);
   }
 
   Stats_Forfeit();
@@ -1102,9 +972,8 @@ static Action Command_EndMatch(int client, int args) {
   int team2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
 
   Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
-      g_MatchID, g_MapNumber,
-      new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), team1score,
-      team2score);
+    g_MatchID, g_MapNumber, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), team1score,
+    team2score);
 
   LogDebug("Calling Get5_OnMapResult()");
   Call_StartForward(g_OnMapResult);
@@ -1122,8 +991,7 @@ static Action Command_EndMatch(int client, int args) {
   if (winningTeam == Get5Team_None) {
     Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
   } else {
-    Get5_MessageToAll("%t", "AdminForceEndWithWinnerInfoMessage",
-                      g_FormattedTeamNames[winningTeam]);
+    Get5_MessageToAll("%t", "AdminForceEndWithWinnerInfoMessage", g_FormattedTeamNames[winningTeam]);
   }
 
   RestartGame();
@@ -1206,8 +1074,8 @@ static Action Command_Stop(int client, int args) {
 
   // Because a live restore to the same match does not change get5 state to warmup, we have to make sure
   // that successive calls to !stop (spammed by players) does not reload multiple backups.
-  if (g_GameState != Get5State_Live || InHalftimePhase() || g_DoingBackupRestoreNow
-    || g_PauseType == Get5PauseType_Backup) {
+  if (g_GameState != Get5State_Live || InHalftimePhase() || g_DoingBackupRestoreNow ||
+      g_PauseType == Get5PauseType_Backup) {
     return Plugin_Handled;
   }
 
@@ -1298,8 +1166,8 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
   // than what is required for the GOTV recording to finish.
   float restartDelay = GetCurrentMatchRestartDelay();
   float tvDelay = float(GetTvDelay());
-  float requiredDelay = tvDelay + 15.0; // Broadcast delay + 15 seconds to show scoreboard before get5 resets.
-  float tvFlushDelay = requiredDelay; // And initially, the recording flushes at the same time.
+  float requiredDelay = tvDelay + 15.0;  // Broadcast delay + 15 seconds to show scoreboard before get5 resets.
+  float tvFlushDelay = requiredDelay;    // And initially, the recording flushes at the same time.
   if (tvDelay > 0.0) {
     // If there is a GOTV delay, add another 10 seconds to requiredDelay to leave room for flushing the demo to disk.
     // GOTV will freeze when flushing to disk with a substantial tv_delay, so we cannot stop the recording until all
@@ -1308,8 +1176,8 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     requiredDelay = requiredDelay + 10.0;
   }
   if (requiredDelay > restartDelay) {
-    LogDebug("Extended mp_match_restart_delay from %f to %f to ensure GOTV broadcast can finish.",
-             restartDelay, requiredDelay);
+    LogDebug("Extended mp_match_restart_delay from %f to %f to ensure GOTV broadcast can finish.", restartDelay,
+             requiredDelay);
     SetCurrentMatchRestartDelay(requiredDelay);
     restartDelay = requiredDelay;  // reassigned because we reuse the variable below.
   }
@@ -1342,9 +1210,8 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     g_TeamScoresPerMap.Set(g_MapNumber, t2score, view_as<int>(Get5Team_2));
 
     Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
-        g_MatchID, g_MapNumber,
-        new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), t1score,
-        t2score);
+      g_MatchID, g_MapNumber, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), t1score,
+      t2score);
 
     LogDebug("Calling Get5_OnMapResult()");
 
@@ -1385,12 +1252,10 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     }
 
     if (t1maps > t2maps) {
-      Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_1],
-                        t1maps, t2maps);
+      Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_1], t1maps, t2maps);
 
     } else if (t2maps > t1maps) {
-      Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_2],
-                        t2maps, t1maps);
+      Get5_MessageToAll("%t", "TeamWinningSeriesInfoMessage", g_FormattedTeamNames[Get5Team_2], t2maps, t1maps);
 
     } else {
       Get5_MessageToAll("%t", "SeriesTiedInfoMessage", t1maps, t2maps);
@@ -1430,8 +1295,7 @@ Action Timer_NextMatchMap(Handle timer) {
   ChangeMap(map, 3.0);
 }
 
-void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay,
-                      bool kickPlayers = true) {
+void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay, bool kickPlayers = true) {
   Stats_SeriesEnd(winningTeam);
 
   if (printWinnerMessage) {
@@ -1443,15 +1307,14 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
         Get5_MessageToAll("%t", "TeamWonMatchInfoMessage", g_FormattedTeamNames[winningTeam]);
       } else {
         Get5_MessageToAll("%t", "TeamWonSeriesInfoMessage", g_FormattedTeamNames[winningTeam],
-                          g_TeamSeriesScores[winningTeam],
-                          g_TeamSeriesScores[OtherMatchTeam(winningTeam)]);
+                          g_TeamSeriesScores[winningTeam], g_TeamSeriesScores[OtherMatchTeam(winningTeam)]);
       }
     }
   }
 
   Get5SeriesResultEvent event = new Get5SeriesResultEvent(
-      g_MatchID, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
-      g_TeamSeriesScores[Get5Team_1], g_TeamSeriesScores[Get5Team_2], RoundToFloor(restoreDelay));
+    g_MatchID, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))),
+    g_TeamSeriesScores[Get5Team_1], g_TeamSeriesScores[Get5Team_2], RoundToFloor(restoreDelay));
 
   LogDebug("Calling Get5_OnSeriesResult()");
 
@@ -1526,8 +1389,7 @@ static Action Timer_KickOnEnd(Handle timer) {
 static void KickPlayers() {
   bool kickImmunity = g_KickClientImmunityCvar.BoolValue;
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i) &&
-        !(kickImmunity && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
+    if (IsPlayer(i) && !(kickImmunity && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
       KickClient(i, "%t", "MatchFinishedInfoMessage");
     }
   }
@@ -1674,8 +1536,7 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
     return;
   }
 
-  Get5RoundStartedEvent startEvent =
-      new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
+  Get5RoundStartedEvent startEvent = new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
   LogDebug("Calling Get5_OnRoundStart()");
   Call_StartForward(g_OnRoundStart);
   Call_PushCell(startEvent);
@@ -1744,11 +1605,8 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       EndSurrenderTimers();
     }
 
-    Get5_MessageToAll("%s {GREEN}%d {NORMAL}- {GREEN}%d %s", g_FormattedTeamNames[Get5Team_1],
-      team1Score,
-      team2Score,
-      g_FormattedTeamNames[Get5Team_2]
-    );
+    Get5_MessageToAll("%s {GREEN}%d {NORMAL}- {GREEN}%d %s", g_FormattedTeamNames[Get5Team_1], team1Score, team2Score,
+                      g_FormattedTeamNames[Get5Team_2]);
 
     Stats_RoundEnd(csTeamWinner);
 
@@ -1758,8 +1616,7 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       }
     }
 
-    Get5RoundStatsUpdatedEvent statsEvent =
-        new Get5RoundStatsUpdatedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
+    Get5RoundStatsUpdatedEvent statsEvent = new Get5RoundStatsUpdatedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
 
     LogDebug("Calling Get5_OnRoundStatsUpdated()");
 
@@ -1801,12 +1658,8 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     // https://github.com/alliedmodders/sourcemod/blob/master/plugins/include/cstrike.inc#L53-L77
     // - which is why we subtract one.
     Get5RoundEndedEvent roundEndEvent = new Get5RoundEndedEvent(
-      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
-      view_as<CSRoundEndReason>(event.GetInt("reason") - 1),
-      new Get5Winner(CSTeamToGet5Team(csTeamWinner), view_as<Get5Side>(csTeamWinner)),
-      team1Score,
-      team2Score
-    );
+      g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), view_as<CSRoundEndReason>(event.GetInt("reason") - 1),
+      new Get5Winner(CSTeamToGet5Team(csTeamWinner), view_as<Get5Side>(csTeamWinner)), team1Score, team2Score);
 
     LogDebug("Calling Get5_OnRoundEnd()");
     Call_StartForward(g_OnRoundEnd);
@@ -1950,8 +1803,8 @@ static Action Command_Status(int client, int args) {
 
 static Get5StatusTeam GetTeamInfo(Get5Team team) {
   int side = Get5TeamToCSTeam(team);
-  return new Get5StatusTeam(g_TeamNames[team], g_TeamSeriesScores[team], CS_GetTeamScore(side),
-                            IsTeamReady(team), view_as<Get5Side>(side), GetNumHumansOnTeam(side));
+  return new Get5StatusTeam(g_TeamNames[team], g_TeamSeriesScores[team], CS_GetTeamScore(side), IsTeamReady(team),
+                            view_as<Get5Side>(side), GetNumHumansOnTeam(side));
 }
 
 bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
@@ -2049,8 +1902,7 @@ static void CheckForLatestVersion() {
   // both x.y.z-dev and x.y.z-abcdef contain a single dash, so we can look for that.
   g_RunningPrereleaseVersion = StrContains(PLUGIN_VERSION, "-", true) > -1;
   if (g_RunningPrereleaseVersion) {
-    LogMessage(
-        "Non-official Get5 version detected. Skipping update check. You may see this if you compiled Get5 \
+    LogMessage("Non-official Get5 version detected. Skipping update check. You may see this if you compiled Get5 \
 yourself or if you downloaded a pre-release for testing. If you are done testing, please download an official \
 release version to remove this message.");
     return;
@@ -2106,9 +1958,8 @@ static int VersionCheckRequestCallback(Handle request, bool failure, bool reques
     LogDebug("Newest Get5 version from GitHub is: %s", newestVersionFound);
     g_NewerVersionAvailable = !StrEqual(PLUGIN_VERSION, newestVersionFound);
     if (g_NewerVersionAvailable) {
-      LogMessage(
-          "A newer version of Get5 is available. You are running %s while the latest version is %s.",
-          PLUGIN_VERSION, newestVersionFound);
+      LogMessage("A newer version of Get5 is available. You are running %s while the latest version is %s.",
+                 PLUGIN_VERSION, newestVersionFound);
     } else {
       LogMessage("Update check successful. Get5 is up-to-date (%s).", PLUGIN_VERSION);
     }

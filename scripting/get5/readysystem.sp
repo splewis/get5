@@ -198,7 +198,7 @@ Action Command_NotReady(int client, int args) {
   SetTeamForcedReady(team, false);
   if (teamWasReady) {
     Get5TeamReadyStatusChangedEvent readyEvent =
-        new Get5TeamReadyStatusChangedEvent(g_MatchID, team, false, Get5_GetGameState());
+      new Get5TeamReadyStatusChangedEvent(g_MatchID, team, false, Get5_GetGameState());
 
     LogDebug("Calling Get5_OnTeamReadyStatusChanged()");
 
@@ -258,7 +258,7 @@ static void HandleReadyMessage(Get5Team team) {
   CheckTeamNameStatus(team);
 
   Get5TeamReadyStatusChangedEvent readyEvent =
-      new Get5TeamReadyStatusChangedEvent(g_MatchID, team, true, Get5_GetGameState());
+    new Get5TeamReadyStatusChangedEvent(g_MatchID, team, true, Get5_GetGameState());
 
   LogDebug("Calling Get5_OnTeamReadyStatusChanged()");
 
@@ -274,8 +274,7 @@ static void HandleReadyMessage(Get5Team team) {
     Get5_MessageToAll("%t", "TeamReadyToRestoreBackupInfoMessage", g_FormattedTeamNames[team]);
   } else if (g_GameState == Get5State_Warmup) {
     bool knifeRound = view_as<SideChoice>(g_MapSides.Get(g_MapNumber)) == SideChoice_KnifeRound;
-    Get5_MessageToAll("%t",
-                      knifeRound ? "TeamReadyToKnifeInfoMessage" : "TeamReadyToBeginInfoMessage",
+    Get5_MessageToAll("%t", knifeRound ? "TeamReadyToKnifeInfoMessage" : "TeamReadyToBeginInfoMessage",
                       g_FormattedTeamNames[team]);
   }
 }
@@ -332,14 +331,14 @@ void UpdateClanTags() {
       continue;
     }
     if (readyGameState) {
-      if (team == CS_TEAM_SPECTATOR && IsClientCoaching(i)) { // No need to check for coach if not on team spec!
+      if (team == CS_TEAM_SPECTATOR && IsClientCoaching(i)) {  // No need to check for coach if not on team spec!
         CS_SetClientClanTag(i, g_CoachesMustReady ? (IsClientReady(i) ? readyTag : notReadyTag) : "");
-      } else if (team == CS_TEAM_SPECTATOR) { // spectator but not coaching
+      } else if (team == CS_TEAM_SPECTATOR) {  // spectator but not coaching
         CS_SetClientClanTag(i, GetTeamMinReady(Get5Team_Spec) > 0 ? (IsClientReady(i) ? readyTag : notReadyTag) : "");
       } else {
         CS_SetClientClanTag(i, IsClientReady(i) ? readyTag : notReadyTag);
       }
-    } else if (team == CS_TEAM_SPECTATOR) { // covers coaches and spectators.
+    } else if (team == CS_TEAM_SPECTATOR) {  // covers coaches and spectators.
       CS_SetClientClanTag(i, "");
     } else {
       CS_SetClientClanTag(i, g_TeamTags[GetClientMatchTeam(i)]);

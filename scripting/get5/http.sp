@@ -1,7 +1,7 @@
-#define GET5_HEADER_MATCHID "Get5-MatchId"
+#define GET5_HEADER_MATCHID   "Get5-MatchId"
 #define GET5_HEADER_MAPNUMBER "Get5-MapNumber"
-#define GET5_HEADER_SERVERID "Get5-ServerId"
-#define GET5_HEADER_DEMONAME "Get5-DemoName"
+#define GET5_HEADER_SERVERID  "Get5-ServerId"
+#define GET5_HEADER_DEMONAME  "Get5-DemoName"
 
 Handle CreateGet5HTTPRequest(const EHTTPMethod method, const char[] url) {
   static char formattedUrl[1024];

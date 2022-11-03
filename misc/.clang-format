@@ -1,0 +1,13 @@
+---
+ColumnLimit: 120
+IndentWidth: 2
+ContinuationIndentWidth: 2
+ReflowComments: true
+SpacesBeforeTrailingComments: 2
+AlignConsecutiveBitFields: Consecutive
+AlignAfterOpenBracket: Align
+AlignConsecutiveMacros: Consecutive
+AllowShortFunctionsOnASingleLine: None
+IndentCaseLabels: true
+BreakBeforeBraces: Attach
+BreakStringLiterals: false

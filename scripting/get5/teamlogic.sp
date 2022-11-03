@@ -50,8 +50,7 @@ void CheckClientTeam(int client) {
   Get5Side correctSide = view_as<Get5Side>(Get5TeamToCSTeam(correctTeam));
   if (correctSide == Get5Side_None) {
     // This should not be possible.
-    LogError("Client %d belongs to no side. This is an unexpected error and should be reported.",
-             client);
+    LogError("Client %d belongs to no side. This is an unexpected error and should be reported.", client);
     return;
   }
 
@@ -262,9 +261,7 @@ Action Command_Coach(int client, const char[] command, int argc) {
   if (g_GameState == Get5State_None || !g_CheckAuthsCvar.BoolValue) {
     return Plugin_Continue;
   }
-  ReplyToCommand(
-      client,
-      "Please use .coach in chat or sm_coach instead of the built-in console coach command.");
+  ReplyToCommand(client, "Please use .coach in chat or sm_coach instead of the built-in console coach command.");
   return Plugin_Stop;
 }
 
@@ -339,8 +336,7 @@ int CountCoachesOnTeam(Get5Team team, int exclude = -1) {
   int count = 0;
   Get5Side side = view_as<Get5Side>(Get5TeamToCSTeam(team));
   LOOP_CLIENTS(i) {
-    if (i != exclude && IsAuthedPlayer(i) && GetClientMatchTeam(i) == team &&
-        GetClientCoachingSide(i) == side) {
+    if (i != exclude && IsAuthedPlayer(i) && GetClientMatchTeam(i) == team && GetClientCoachingSide(i) == side) {
       count++;
     }
   }

@@ -7,8 +7,7 @@ bool StartRecording() {
   }
 
   if (!IsTVEnabled()) {
-    LogError(
-        "Demo recording will not work with \"tv_enable 0\". Set \"tv_enable 1\" and restart the map to fix this.");
+    LogError("Demo recording will not work with \"tv_enable 0\". Set \"tv_enable 1\" and restart the map to fix this.");
     g_DemoFileName = "";
     return false;
   }
@@ -23,8 +22,7 @@ bool StartRecording() {
 
   char demoFolder[PLATFORM_MAX_PATH];
   char variableSubstitutes[][] = {"{MATCHID}", "{DATE}"};
-  CheckAndCreateFolderPath(g_DemoPathCvar, variableSubstitutes, 2, demoFolder,
-                           sizeof(demoFolder));
+  CheckAndCreateFolderPath(g_DemoPathCvar, variableSubstitutes, 2, demoFolder, sizeof(demoFolder));
 
   char demoPath[PLATFORM_MAX_PATH];
   FormatEx(demoPath, sizeof(demoPath), "%s%s", demoFolder, demoName);
@@ -44,14 +42,12 @@ void StopRecording(float delay = 0.0) {
     StopRecordingCallback(g_MatchID, g_MapNumber, g_DemoFileName);
   } else {
     LogDebug("Starting timer that will end GOTV recording in %f seconds.", delay);
-    CreateTimer(delay, Timer_StopGoTVRecording,
-                GetDemoInfoDataPack(g_MatchID, g_MapNumber, g_DemoFileName));
+    CreateTimer(delay, Timer_StopGoTVRecording, GetDemoInfoDataPack(g_MatchID, g_MapNumber, g_DemoFileName));
   }
   g_DemoFileName = "";
 }
 
-static void StopRecordingCallback(const char[] matchId, const int mapNumber,
-                                  const char[] demoFileName) {
+static void StopRecordingCallback(const char[] matchId, const int mapNumber, const char[] demoFileName) {
   ServerCommand("tv_stoprecord");
   if (StrEqual("", demoFileName)) {
     LogDebug("Demo was not recorded by Get5; not firing Get5_OnDemoFinished()");
@@ -59,12 +55,10 @@ static void StopRecordingCallback(const char[] matchId, const int mapNumber,
   }
   // We delay this by 15 seconds to allow the server to flush to the file before firing the event.
   // For some servers, this take a pretty long time (up to 8-9 seconds, so 15 for grace).
-  CreateTimer(15.0, Timer_FireStopRecordingEvent,
-              GetDemoInfoDataPack(matchId, mapNumber, demoFileName));
+  CreateTimer(15.0, Timer_FireStopRecordingEvent, GetDemoInfoDataPack(matchId, mapNumber, demoFileName));
 }
 
-static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber,
-                                    const char[] demoFileName) {
+static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber, const char[] demoFileName) {
   DataPack pack = CreateDataPack();
   pack.WriteString(matchId);
   pack.WriteCell(mapNumber);
@@ -138,7 +132,8 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
   // to an end point that has no authentication.
   if (!StrEqual(demoHeaderKey, "") && !StrEqual(demoHeaderValue, "")) {
     if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, demoHeaderKey, demoHeaderValue)) {
-      LogError("Failed to add custom header '%s' with value '%s' to demo upload request.", demoHeaderKey, demoHeaderValue);
+      LogError("Failed to add custom header '%s' with value '%s' to demo upload request.", demoHeaderKey,
+               demoHeaderValue);
       delete demoRequest;
       CallUploadEvent(matchId, mapNumber, demoFileName, false);
       return;
@@ -153,7 +148,7 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
   }
 
   if (strlen(matchId) > 0) {
-   if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, GET5_HEADER_MATCHID, matchId)) {
+    if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, GET5_HEADER_MATCHID, matchId)) {
       LogError("Failed to add match ID header with value '%s' to demo upload request.", matchId);
       delete demoRequest;
       CallUploadEvent(matchId, mapNumber, demoFileName, false);
@@ -178,8 +173,8 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
     return;
   }
 
-  if (!FileExists(demoFileName) || !SteamWorks_SetHTTPRequestRawPostBodyFromFile(
-    demoRequest, "application/octet-stream", demoFileName)) {
+  if (!FileExists(demoFileName) ||
+      !SteamWorks_SetHTTPRequestRawPostBodyFromFile(demoRequest, "application/octet-stream", demoFileName)) {
     LogError("Failed to add file '%s' as POST body for demo upload request.", demoFileName);
     delete demoRequest;
     CallUploadEvent(matchId, mapNumber, demoFileName, false);
@@ -241,8 +236,8 @@ void SetCurrentMatchRestartDelay(float delay) {
   }
 }
 
-static int DemoRequestCallback(Handle request, bool failure, bool requestSuccessful,
-                               EHTTPStatusCode statusCode, DataPack pack) {
+static int DemoRequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
+                               DataPack pack) {
   int mapNumber;
   char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];

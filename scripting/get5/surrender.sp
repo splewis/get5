@@ -54,7 +54,8 @@ Action Command_Surrender(int client, int args) {
   // Player has already voted for surrender.
   if (g_SurrenderedPlayers[client]) {
     LogDebug("Player client %d has already voted to surrender.", client);
-    Get5_MessageToTeam(team, "%t", "SurrenderVoteStatus", g_SurrenderVotes[team], g_VotesRequiredForSurrenderCvar.IntValue);
+    Get5_MessageToTeam(team, "%t", "SurrenderVoteStatus", g_SurrenderVotes[team],
+                       g_VotesRequiredForSurrenderCvar.IntValue);
     return Plugin_Handled;
   }
 
@@ -70,11 +71,13 @@ Action Command_Surrender(int client, int args) {
       }
       char playerNameFormatted[MAX_NAME_LENGTH];
       FormatPlayerName(playerNameFormatted, sizeof(playerNameFormatted), client, team);
-      Get5_MessageToTeam(team, "%t", "SurrenderInitiated", playerNameFormatted, g_VotesRequiredForSurrenderCvar.IntValue, surrenderTimeLimit);
+      Get5_MessageToTeam(team, "%t", "SurrenderInitiated", playerNameFormatted,
+                         g_VotesRequiredForSurrenderCvar.IntValue, surrenderTimeLimit);
       g_SurrenderTimers[team] = CreateTimer(float(surrenderTimeLimit), Timer_SurrenderFailed, team);
     }
   } else {
-    Get5_MessageToTeam(team, "%t", "SurrenderVoteStatus", g_SurrenderVotes[team], g_VotesRequiredForSurrenderCvar.IntValue);
+    Get5_MessageToTeam(team, "%t", "SurrenderVoteStatus", g_SurrenderVotes[team],
+                       g_VotesRequiredForSurrenderCvar.IntValue);
   }
 
   if (g_SurrenderVotes[team] >= g_VotesRequiredForSurrenderCvar.IntValue) {
@@ -176,9 +179,7 @@ Action Timer_DisconnectCheck(Handle timer) {
   char winCommandFormatted[32];
   FormatChatCommand(winCommandFormatted, sizeof(winCommandFormatted), "!ffw");
   Get5_MessageToAll("%t", "WinByForfeitAvailable", g_FormattedTeamNames[forfeitingTeam],
-   g_FormattedTeamNames[OtherMatchTeam(forfeitingTeam)],
-    winCommandFormatted
-  );
+                    g_FormattedTeamNames[OtherMatchTeam(forfeitingTeam)], winCommandFormatted);
   return Plugin_Handled;
 }
 
@@ -191,12 +192,8 @@ static void AnnounceRemainingForfeitTime(const int remainingSeconds, const Get5T
     char formattedCancelFFWCommand[64];
     FormatChatCommand(formattedCancelFFWCommand, sizeof(formattedCancelFFWCommand), "!cancelffw");
 
-    Get5_MessageToAll("%t", "WinByForfeitCountdownStarted",
-      g_FormattedTeamNames[OtherMatchTeam(forfeitingTeam)],
-      formattedTimeRemaining,
-      g_FormattedTeamNames[forfeitingTeam],
-      formattedCancelFFWCommand
-    );
+    Get5_MessageToAll("%t", "WinByForfeitCountdownStarted", g_FormattedTeamNames[OtherMatchTeam(forfeitingTeam)],
+                      formattedTimeRemaining, g_FormattedTeamNames[forfeitingTeam], formattedCancelFFWCommand);
   } else {
     Get5_MessageToAll("%t", "AllPlayersLeftTieCountdown", formattedTimeRemaining);
   }
@@ -227,25 +224,27 @@ static void StartForfeitTimer(const Get5Team forfeitingTeam) {
 }
 
 Action Command_CancelFFW(int client, int args) {
-  if (g_GameState != Get5State_Live || client == 0 || g_ForfeitingTeam == Get5Team_None || g_ForfeitTimer == INVALID_HANDLE) {
+  if (g_GameState != Get5State_Live || client == 0 || g_ForfeitingTeam == Get5Team_None ||
+      g_ForfeitTimer == INVALID_HANDLE) {
     return Plugin_Handled;
   }
   Get5Team team = GetClientMatchTeam(client);
   if (!IsPlayerTeam(team)) {
-   return Plugin_Handled;
+    return Plugin_Handled;
   }
   if (GetTeamPlayerCount(team) < g_PlayersPerTeam) {
     Get5_MessageToAll("%t", "WinByForfeitRequiresFullTeam");
     return Plugin_Handled;
   }
-  AnnounceForfeitCanceled(); // must be before ResetForfeitTimer() or the message will be wrong.
+  AnnounceForfeitCanceled();  // must be before ResetForfeitTimer() or the message will be wrong.
   ResetForfeitTimer();
   return Plugin_Handled;
 }
 
 void SurrenderMap(Get5Team team) {
   Get5Side side = view_as<Get5Side>(Get5TeamToCSTeam(team));
-  CS_TerminateRound(FindConVar("mp_round_restart_delay").FloatValue, side == Get5Side_CT ? CSRoundEnd_CTSurrender : CSRoundEnd_TerroristsSurrender);
+  CS_TerminateRound(FindConVar("mp_round_restart_delay").FloatValue,
+                    side == Get5Side_CT ? CSRoundEnd_CTSurrender : CSRoundEnd_TerroristsSurrender);
 }
 
 void EndSurrenderTimers() {
@@ -292,14 +291,14 @@ static Action Timer_ForfeitCountdownCheck(Handle timer) {
   if (g_ForfeitingTeam != Get5Team_None) {
     if (GetTeamPlayerCount(g_ForfeitingTeam) > 0) {
       LogDebug("Stopping forfeit timer for team %d.", g_ForfeitingTeam);
-      AnnounceForfeitCanceled(); // must go before ResetForfeitTimer()
+      AnnounceForfeitCanceled();  // must go before ResetForfeitTimer()
       g_ForfeitTimer = INVALID_HANDLE;
       ResetForfeitTimer();
       return Plugin_Stop;
     }
   } else if (GetTeamPlayerCount(Get5Team_1) > 0 && GetTeamPlayerCount(Get5Team_2) > 0) {
     LogDebug("Stopping tie countdown timer as both teams now have players.");
-    AnnounceForfeitCanceled(); // must go before ResetForfeitTimer()
+    AnnounceForfeitCanceled();  // must go before ResetForfeitTimer()
     g_ForfeitTimer = INVALID_HANDLE;
     ResetForfeitTimer();
     return Plugin_Stop;
@@ -307,7 +306,7 @@ static Action Timer_ForfeitCountdownCheck(Handle timer) {
 
   g_ForfeitSecondsPassed++;
   int gracePeriod = GetForfeitGracePeriod();
-  if (g_ForfeitSecondsPassed < gracePeriod) { // don't <= gracePeriod; zero seconds left should not trigger and return.
+  if (g_ForfeitSecondsPassed < gracePeriod) {  // don't <= gracePeriod; zero seconds left should not trigger and return.
     int remainingSeconds = gracePeriod - g_ForfeitSecondsPassed;
     if (remainingSeconds % 30 == 0 || remainingSeconds == 10) {
       AnnounceRemainingForfeitTime(remainingSeconds, g_ForfeitingTeam);
@@ -324,7 +323,7 @@ static Action Timer_ForfeitCountdownCheck(Handle timer) {
   // screen, so it is risky to assume we can just wait the entire GOTV delay before we flush the demo file.
   // Lagging in this case might not be a real problem either as it's probably not an exiting match to watch the
   // surrender timeout.
-  StopRecording(5.0); // add 5 seconds to include announcement, so players know why they are potentially kicked.
+  StopRecording(5.0);  // add 5 seconds to include announcement, so players know why they are potentially kicked.
   Get5Team winningTeam = Get5Team_None;
   if (g_ForfeitingTeam != Get5Team_None) {
     // We only announce if it's not a tie.

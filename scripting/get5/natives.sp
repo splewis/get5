@@ -207,8 +207,7 @@ public int Native_GetServerID(Handle plugin, int numParams) {
 }
 
 public int Native_GetMapNumber(Handle plugin, int numParams) {
-  return g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2] +
-         g_TeamSeriesScores[Get5Team_None];
+  return g_TeamSeriesScores[Get5Team_1] + g_TeamSeriesScores[Get5Team_2] + g_TeamSeriesScores[Get5Team_None];
 }
 
 public int Native_AddLiveCvar(Handle plugin, int numParams) {

@@ -1,4 +1,4 @@
-#define CVAR_NAME_MAX_LENGTH 128
+#define CVAR_NAME_MAX_LENGTH  128
 #define CVAR_VALUE_MAX_LENGTH 128
 
 // Returns a cvar Handle that can be used to restore cvars.
@@ -26,7 +26,7 @@ stock Handle SaveCvars(ArrayList cvarNames) {
 }
 
 // Restores cvars to their previous value using a return value of SaveCvars.
-stock void RestoreCvars(Handle& cvarStorage, bool close = true) {
+stock void RestoreCvars(Handle &cvarStorage, bool close = true) {
   LogDebug("Restoring match cvars.");
   if (cvarStorage == INVALID_HANDLE) {
     return;
@@ -52,7 +52,7 @@ stock void RestoreCvars(Handle& cvarStorage, bool close = true) {
 }
 
 // Closes a cvar storage object returned by SaveCvars.
-stock void CloseCvarStorage(Handle& cvarStorage) {
+stock void CloseCvarStorage(Handle &cvarStorage) {
   if (cvarStorage == INVALID_HANDLE) {
     return;
   }

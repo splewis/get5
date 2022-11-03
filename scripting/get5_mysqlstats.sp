@@ -101,7 +101,7 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
     FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
             (matchid, series_type, team1_name, team2_name, start_time, server_id) VALUES \
             ('%s', '%s', '%s', '%s', NOW(), %d)",
-           matchIdSz, seriesTypeSz, team1NameSz, team2NameSz, serverId);
+             matchIdSz, seriesTypeSz, team1NameSz, team2NameSz, serverId);
     LogDebug(queryBuffer);
     db.Query(SQLErrorCheckCallback, queryBuffer);
     LogMessage("Starting match with preset ID: %s", matchId);
@@ -109,7 +109,7 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
     FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
             (series_type, team1_name, team2_name, start_time, server_id) VALUES \
             ('%s', '%s', '%s', NOW(), %d)",
-           seriesTypeSz, team1NameSz, team2NameSz, serverId);
+             seriesTypeSz, team1NameSz, team2NameSz, serverId);
     LogDebug(queryBuffer);
     db.Query(MatchInitCallback, queryBuffer);
   }
@@ -121,7 +121,7 @@ static void MatchInitCallback(Database dbObj, DBResultSet results, const char[] 
     g_DisableStats = true;
   } else if (results.InsertId < 1) {
     LogError(
-        "Match ID init query succeeded but did not return a match ID integer. Perhaps the column does not have AUTO_INCREMENT?");
+      "Match ID init query succeeded but did not return a match ID integer. Perhaps the column does not have AUTO_INCREMENT?");
     g_DisableStats = true;
   } else {
     char matchId[64];
@@ -151,7 +151,7 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
   FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT IGNORE INTO `get5_stats_maps` \
         (matchid, mapnumber, mapname, start_time) VALUES \
         ('%s', %d, '%s', NOW())",
-         matchIdSz, event.MapNumber, mapNameSz);
+           matchIdSz, event.MapNumber, mapNameSz);
   LogDebug(queryBuffer);
 
   db.Query(SQLErrorCheckCallback, queryBuffer);
@@ -167,7 +167,7 @@ static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
 
   FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_maps` \
         SET team1_score = %d, team2_score = %d WHERE matchid = '%s' and mapnumber = %d",
-         t1score, t2score, matchIdSz, mapNumber);
+           t1score, t2score, matchIdSz, mapNumber);
   LogDebug(queryBuffer);
   db.Query(SQLErrorCheckCallback, queryBuffer);
 
@@ -204,10 +204,9 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
   // Update the map winner
   char winnerString[64];
   GetTeamString(event.Winner.Team, winnerString, sizeof(winnerString));
-  FormatEx(queryBuffer, sizeof(queryBuffer),
-         "UPDATE `get5_stats_maps` SET winner = '%s', end_time = NOW() \
+  FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_maps` SET winner = '%s', end_time = NOW() \
         WHERE matchid = '%s' and mapnumber = %d",
-         winnerString, matchIdSz, event.MapNumber);
+           winnerString, matchIdSz, event.MapNumber);
   LogDebug(queryBuffer);
   db.Query(SQLErrorCheckCallback, queryBuffer);
 
@@ -218,13 +217,12 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
 
   FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_matches` \
         SET team1_score = %d, team2_score = %d WHERE matchid = '%s'",
-         t1_seriesscore, t2_seriesscore, matchIdSz);
+           t1_seriesscore, t2_seriesscore, matchIdSz);
   LogDebug(queryBuffer);
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-static void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv,
-                           const Get5Team team) {
+static void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv, const Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
   char nameSz[MAX_NAME_LENGTH * 2 + 1];
@@ -369,7 +367,7 @@ public void Get5_OnSeriesResult(const Get5SeriesResultEvent event) {
   FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_matches` \
         SET winner = '%s', team1_score = %d, team2_score = %d, end_time = NOW() \
         WHERE matchid = '%s'",
-         winnerString, event.Team1SeriesScore, event.Team2SeriesScore, matchIdSz);
+           winnerString, event.Team1SeriesScore, event.Team2SeriesScore, matchIdSz);
   LogDebug(queryBuffer);
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }

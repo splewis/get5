@@ -42,7 +42,7 @@ char g_APIKey[128];
 ConVar g_APIURLCvar;
 char g_APIURL[128];
 
-#define LOGO_DIR "materials/panorama/images/tournaments/teams"
+#define LOGO_DIR        "materials/panorama/images/tournaments/teams"
 #define LEGACY_LOGO_DIR "resource/flash/econ/tournaments/teams"
 
 // clang-format off
@@ -61,8 +61,7 @@ public void OnPluginStart() {
   g_UseSVGCvar = CreateConVar("get5_use_svg", "1", "support svg team logos");
   HookConVarChange(g_UseSVGCvar, LogoBasePathChanged);
   g_LogoBasePath = g_UseSVGCvar.BoolValue ? LOGO_DIR : LEGACY_LOGO_DIR;
-  g_APIKeyCvar =
-      CreateConVar("get5_web_api_key", "", "Match API key, this is automatically set through rcon");
+  g_APIKeyCvar = CreateConVar("get5_web_api_key", "", "Match API key, this is automatically set through rcon");
   HookConVarChange(g_APIKeyCvar, ApiInfoChanged);
 
   g_APIURLCvar = CreateConVar("get5_web_api_url", "", "URL the get5 api is hosted at");
@@ -136,8 +135,7 @@ static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:
   }
 }
 
-int RequestCallback(Handle request, bool failure, bool requestSuccessful,
-                    EHTTPStatusCode statusCode) {
+int RequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode) {
   if (failure || !requestSuccessful) {
     LogError("API request failed, HTTP status code = %d", statusCode);
     char response[1024];
@@ -179,9 +177,8 @@ static void CheckForLogo(const char[] logo) {
   // Try to fetch the file if we don't have it.
   if (!FileExists(logoPath)) {
     LogDebug("Fetching logo for %s", logo);
-    Handle req = g_UseSVGCvar.BoolValue
-                     ? CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.svg", logo)
-                     : CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.png", logo);
+    Handle req = g_UseSVGCvar.BoolValue ? CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.svg", logo)
+                                        : CreateRequest(k_EHTTPMethodGET, "/static/img/logos/%s.png", logo);
 
     if (req == INVALID_HANDLE) {
       return;
@@ -196,8 +193,7 @@ static void CheckForLogo(const char[] logo) {
   }
 }
 
-static int LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status,
-                        int data) {
+static int LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status, int data) {
   if (failure || !successful) {
     LogError("Logo request failed, status code = %d", status);
     return;
@@ -285,8 +281,7 @@ static void AddIntStat(Handle req, KeyValues kv, const char[] field) {
   AddIntParam(req, field, kv.GetNum(field));
 }
 
-static void UpdatePlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv,
-                              const Get5Team team) {
+static void UpdatePlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv, const Get5Team team) {
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
 
@@ -297,8 +292,7 @@ static void UpdatePlayerStats(const char[] matchId, const int mapNumber, const K
       char teamString[16];
       GetTeamString(team, teamString, sizeof(teamString));
 
-      Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/player/%s/update", matchId,
-                                 mapNumber, auth);
+      Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/player/%s/update", matchId, mapNumber, auth);
       if (req != INVALID_HANDLE) {
         AddStringParam(req, "team", teamString);
         AddStringParam(req, STAT_NAME, name);

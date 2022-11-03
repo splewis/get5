@@ -27,19 +27,19 @@ void SendEventJSONToURL(const char[] event) {
 
   if (strlen(eventUrlHeaderKey) > 0 && strlen(eventUrlHeaderValue) > 0) {
     if (!SteamWorks_SetHTTPRequestHeaderValue(eventRequest, eventUrlHeaderKey, eventUrlHeaderValue)) {
-      LogError("Failed to add header '%s' with value '%s' to event HTTP request.", eventUrlHeaderKey, eventUrlHeaderValue);
+      LogError("Failed to add header '%s' with value '%s' to event HTTP request.", eventUrlHeaderKey,
+               eventUrlHeaderValue);
       delete eventRequest;
       return;
     }
   }
   SteamWorks_SetHTTPRequestRawPostBody(eventRequest, "application/json", event, strlen(event));
-  SteamWorks_SetHTTPRequestNetworkActivityTimeout(eventRequest, 15); // Default 60 is a bit much.
+  SteamWorks_SetHTTPRequestNetworkActivityTimeout(eventRequest, 15);  // Default 60 is a bit much.
   SteamWorks_SetHTTPCallbacks(eventRequest, EventRequestCallback);
   SteamWorks_SendHTTPRequest(eventRequest);
 }
 
-static int EventRequestCallback(Handle request, bool failure, bool requestSuccessful,
-                               EHTTPStatusCode statusCode) {
+static int EventRequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode) {
   if (failure || !requestSuccessful) {
     LogError("Event HTTP request failed due to a network or configuration error.");
     delete request;

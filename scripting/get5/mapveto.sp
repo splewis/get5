@@ -6,9 +6,8 @@
 
 void CreateVeto() {
   if (g_MapPoolList.Length % 2 == 0) {
-    LogError(
-        "Warning, the maplist is even number sized (%d maps), vetos may not function correctly!",
-        g_MapPoolList.Length);
+    LogError("Warning, the maplist is even number sized (%d maps), vetos may not function correctly!",
+             g_MapPoolList.Length);
   }
 
   g_VetoCaptains[Get5Team_1] = GetTeamCaptain(Get5Team_1);
@@ -188,8 +187,7 @@ static void VetoController(int client) {
       g_MapSides.Push(SideChoice_Team1CT);
     }
 
-    Get5MapPickedEvent event =
-        new Get5MapPickedEvent(g_MatchID, Get5Team_None, mapName, g_MapsToPlay.Length - 1);
+    Get5MapPickedEvent event = new Get5MapPickedEvent(g_MatchID, Get5Team_None, mapName, g_MapsToPlay.Length - 1);
 
     LogDebug("Calling Get5_OnMapPicked()");
 
@@ -209,8 +207,7 @@ static void VetoController(int client) {
 
 // Confirmations
 
-static void GiveConfirmationMenu(int client, MenuHandler handler, const char[] title,
-                                 const char[] confirmChoice) {
+static void GiveConfirmationMenu(int client, MenuHandler handler, const char[] title, const char[] confirmChoice) {
   // Figure out text for positive and negative values
   char positiveBuffer[1024], negativeBuffer[1024];
   FormatEx(positiveBuffer, sizeof(positiveBuffer), "%T", "ConfirmPositiveOptionText", client);
@@ -314,8 +311,7 @@ static int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
     FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), true, false);
     // Add color here as FormatMapName would make the color green.
     Format(formattedMapName, sizeof(formattedMapName), "{LIGHT_RED}%s{NORMAL}", formattedMapName);
-    Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team],
-                      formattedMapName);
+    Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], formattedMapName);
 
     Get5MapVetoedEvent event = new Get5MapVetoedEvent(g_MatchID, team, mapName);
 
@@ -389,12 +385,11 @@ static int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
 
     char mapNameFormatted[PLATFORM_MAX_PATH];
     FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), true, true);
-    Get5_MessageToAll("%t", "TeamPickedMapInfoMessage", g_FormattedTeamNames[team],
-                      mapNameFormatted, g_MapsToPlay.Length);
+    Get5_MessageToAll("%t", "TeamPickedMapInfoMessage", g_FormattedTeamNames[team], mapNameFormatted,
+                      g_MapsToPlay.Length);
     g_LastVetoTeam = team;
 
-    Get5MapPickedEvent event =
-        new Get5MapPickedEvent(g_MatchID, team, mapName, g_MapsToPlay.Length - 1);
+    Get5MapPickedEvent event = new Get5MapPickedEvent(g_MatchID, team, mapName, g_MapsToPlay.Length - 1);
 
     LogDebug("Calling Get5_OnMapPicked()");
 
@@ -475,11 +470,10 @@ static int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
     g_MapsToPlay.GetString(mapNumber, mapName, sizeof(mapName));
 
     Format(choice, sizeof(choice), "{GREEN}%s{NORMAL}", choice);
-    Get5_MessageToAll("%t", "TeamSelectSideInfoMessage", g_FormattedTeamNames[team], choice,
-                      mapName);
+    Get5_MessageToAll("%t", "TeamSelectSideInfoMessage", g_FormattedTeamNames[team], choice, mapName);
 
-    Get5SidePickedEvent event = new Get5SidePickedEvent(g_MatchID, mapNumber, mapName, team,
-                                                        view_as<Get5Side>(selectedSide));
+    Get5SidePickedEvent event =
+      new Get5SidePickedEvent(g_MatchID, mapNumber, mapName, team, view_as<Get5Side>(selectedSide));
 
     LogDebug("Calling Get5_OnSidePicked()");
 

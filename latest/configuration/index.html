@@ -7,16 +7,17 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/latest/configuration/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.4.1, mkdocs-material-8.5.6" name="generator"/>
-<title>Configuration - Get5</title>
+<meta content="mkdocs-1.4.2, mkdocs-material-8.5.7" name="generator"/>
+<title>Configuration - Get5 Documentation</title>
 <link href="../assets/stylesheets/main.20d9efc8.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
 <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../stylesheets/extra.css" rel="stylesheet"/>
 <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 </head>
-<body data-md-color-accent="" data-md-color-primary="" data-md-color-scheme="default" dir="ltr">
+<body data-md-color-accent="deep-orange" data-md-color-primary="deep-orange" data-md-color-scheme="default" dir="ltr">
 <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
@@ -32,8 +33,8 @@
 </div>
 <header class="md-header" data-md-component="header">
 <nav aria-label="Header" class="md-header__inner md-grid">
-<a aria-label="Get5" class="md-header__button md-logo" data-md-component="logo" href=".." title="Get5">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+<a aria-label="Get5 Documentation" class="md-header__button md-logo" data-md-component="logo" href=".." title="Get5 Documentation">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.103.435a1.753 1.753 0 0 1 1.652-.362c.218.072.406.203.609.333.16.101.348.145.493.261.072.058.014.16.014.232.189.45.29.942.13 1.42-.13.16-.362.203-.55.276-.03.203.043.39.072.594-.043.029-.072.058-.116.087.276-.015.551-.073.827-.13.101-.102.26-.044.39-.059.015-.203.088-.391.088-.594a.34.34 0 0 0 .116-.029c.014.145 0 .29.043.435.073.058.189.029.276.043 0 .058 0 .116.014.174 1.681-.014 3.377 0 5.058 0v.247h.16V2.42h.188c0 .26-.014.507 0 .768a.11.11 0 0 0 .073.029c0 .029.014.087.014.116.058-.058.13-.102.218-.073.014.044.029.087.043.145-.058.058-.087.13-.058.218.464.014.928 0 1.406 0 .044-.058.116-.087.189-.116a.464.464 0 0 1 .087.058h.68a.874.874 0 0 1 .015.333h-.696a.46.46 0 0 1-.087.073c-.072-.044-.13-.073-.202-.116h-1.261c-.247.072-.508.058-.754.014v.275H16.16a.532.532 0 0 1-.29.13c.044.218-.202.276-.29.436a.45.45 0 0 1-.231.174c-.073.449.087.87.203 1.29-.13.029-.276.072-.406.101-.073.29-.145.594-.203.884a.848.848 0 0 1-.507.58c-.174.203-.406.406-.682.42-.101.03-.174-.043-.246-.101-.362.029-.696-.145-1.015-.29-.347-.16-.666-.363-1-.55.03.202-.072.376-.145.55.16.072.377.13.464.304.058.13.116.276.116.435-.014.522-.072 1.044-.101 1.565.014.377-.174.754-.435 1.03-.174-.015-.319-.088-.478-.16-.058.13-.189.26-.116.42.058.189.058.392.145.566a6.674 6.674 0 0 1 1.217 1.753c.304.624.536 1.276.783 1.928.043 0 .13-.015.174-.015.058.189 0 .406.116.58.101.16.072.348.072.536-.029.435-.058.87-.101 1.305-.03.304-.102.609-.145.913.014.232.116.464.101.696-.014.217-.014.449-.188.608.014.493-.116.986.058 1.464.232.32.493.623.768.899.304.145.667.174.928.435.1.16.043.347.014.521a6.732 6.732 0 0 1-1.87 0c-.246-.058-.478-.159-.724-.188-.334.014-.725.145-1.03-.087-.028-.391.117-.768.189-1.145.029-.13.16-.217.145-.348-.03-.45-.058-.913-.087-1.362-.058-.03-.16-.058-.145-.145 0-.218-.072-.435-.13-.638a10.821 10.821 0 0 1-.16-1.681c-.014-.16.087-.276.203-.377.03-.246.058-.507.073-.754-.044-.13-.145-.232-.203-.348-.261.03-.638.087-.797-.188-.377-.565-.769-1.145-1.145-1.71-.16-.015-.348 0-.493-.102-.16-.174-.261-.405-.363-.623-.043.174-.072.362-.174.507-.087.145-.231.247-.333.377-.101.232-.188.464-.275.696-.102.29-.247.58-.276.899-.014.159-.043.304-.101.449-.073.116-.203.16-.319.217-.087.189-.145.377-.275.537-.087.101-.232.13-.29.26-.058.174-.145.334-.218.493-.029.174.087.363.03.536-.102.435-.32.841-.522 1.232-.102.29-.174.595-.32.87-.057.116-.202.145-.318.16-.13.318-.276.623-.362.956a5.437 5.437 0 0 0-.03.971c0 .145.088.261.146.391.057.174.014.348-.015.522-.565.073-1.145.13-1.696-.043-.058-.044-.043-.116-.058-.174-.043-.261-.072-.536.015-.783.188-.681.348-1.362.536-2.043-.072-.073-.174-.13-.174-.247-.014-.188 0-.391.044-.58.087-.319.318-.565.434-.87.044-.13.03-.26.044-.39 0-.305.174-.551.304-.812.13-.218.232-.45.406-.638.116-.101.116-.26.203-.391.087-.16.232-.29.232-.479.029-.231-.058-.463-.03-.695.059-.681.19-1.348.305-2.03-.058-.072-.145-.144-.174-.246.015-.072.03-.13.044-.203l-.13-.217c.057-.087.115-.188.173-.275-.058-.044-.13-.102-.188-.145.072-.218.043-.537.304-.638.03.014.102.029.13.043-.043-.376-.043-.768-.086-1.145a3.534 3.534 0 0 1-.073-1.232c.145-.217.42-.304.667-.318-.319-.073-.638-.102-.942-.203-.015-.261.029-.522.072-.783.13-.507.073-1.029.145-1.55.073-.146.261-.175.42-.146.189.03.377-.029.566-.087 0-.072.014-.16 0-.232-.116-.507-.087-1.029 0-1.521.116-.638.377-1.261.855-1.71.319-.305.783-.45 1.217-.435.145 0 .232.145.348.232.058-.058.116-.116.16-.174-.073-.247-.189-.508-.174-.769.029-.58.217-1.174.652-1.565m4.522 4.102c.029.029.029.029 0 0m.203.029c.014.101.043.203-.015.29-.072.029-.16.029-.232.072.203 0 .406.015.61 0 .159-.043.1-.246.1-.362-.1-.116-.318-.044-.463 0m-.507.609c.145.159.217.405.347.565.189-.247.334-.508.551-.725-.26-.015-.522.015-.782-.015-.044.058-.073.116-.116.174Z"></path></svg>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
@@ -42,7 +43,7 @@
 <div class="md-header__ellipsis">
 <div class="md-header__topic">
 <span class="md-ellipsis">
-            Get5
+            Get5 Documentation
           </span>
 </div>
 <div class="md-header__topic" data-md-component="header-topic">
@@ -55,11 +56,11 @@
 </div>
 </div>
 <form class="md-header__option" data-md-component="palette">
-<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="" data-md-color-media="" data-md-color-primary="" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="deep-orange" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="deep-orange" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
 <label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
 </label>
-<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="" data-md-color-media="" data-md-color-primary="" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="deep-orange" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="deep-orange" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
 <label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
 </label>
@@ -84,10 +85,10 @@
 <div class="md-sidebar__inner">
 <nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
 <label class="md-nav__title" for="__drawer">
-<a aria-label="Get5" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Get5">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+<a aria-label="Get5 Documentation" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Get5 Documentation">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.103.435a1.753 1.753 0 0 1 1.652-.362c.218.072.406.203.609.333.16.101.348.145.493.261.072.058.014.16.014.232.189.45.29.942.13 1.42-.13.16-.362.203-.55.276-.03.203.043.39.072.594-.043.029-.072.058-.116.087.276-.015.551-.073.827-.13.101-.102.26-.044.39-.059.015-.203.088-.391.088-.594a.34.34 0 0 0 .116-.029c.014.145 0 .29.043.435.073.058.189.029.276.043 0 .058 0 .116.014.174 1.681-.014 3.377 0 5.058 0v.247h.16V2.42h.188c0 .26-.014.507 0 .768a.11.11 0 0 0 .073.029c0 .029.014.087.014.116.058-.058.13-.102.218-.073.014.044.029.087.043.145-.058.058-.087.13-.058.218.464.014.928 0 1.406 0 .044-.058.116-.087.189-.116a.464.464 0 0 1 .087.058h.68a.874.874 0 0 1 .015.333h-.696a.46.46 0 0 1-.087.073c-.072-.044-.13-.073-.202-.116h-1.261c-.247.072-.508.058-.754.014v.275H16.16a.532.532 0 0 1-.29.13c.044.218-.202.276-.29.436a.45.45 0 0 1-.231.174c-.073.449.087.87.203 1.29-.13.029-.276.072-.406.101-.073.29-.145.594-.203.884a.848.848 0 0 1-.507.58c-.174.203-.406.406-.682.42-.101.03-.174-.043-.246-.101-.362.029-.696-.145-1.015-.29-.347-.16-.666-.363-1-.55.03.202-.072.376-.145.55.16.072.377.13.464.304.058.13.116.276.116.435-.014.522-.072 1.044-.101 1.565.014.377-.174.754-.435 1.03-.174-.015-.319-.088-.478-.16-.058.13-.189.26-.116.42.058.189.058.392.145.566a6.674 6.674 0 0 1 1.217 1.753c.304.624.536 1.276.783 1.928.043 0 .13-.015.174-.015.058.189 0 .406.116.58.101.16.072.348.072.536-.029.435-.058.87-.101 1.305-.03.304-.102.609-.145.913.014.232.116.464.101.696-.014.217-.014.449-.188.608.014.493-.116.986.058 1.464.232.32.493.623.768.899.304.145.667.174.928.435.1.16.043.347.014.521a6.732 6.732 0 0 1-1.87 0c-.246-.058-.478-.159-.724-.188-.334.014-.725.145-1.03-.087-.028-.391.117-.768.189-1.145.029-.13.16-.217.145-.348-.03-.45-.058-.913-.087-1.362-.058-.03-.16-.058-.145-.145 0-.218-.072-.435-.13-.638a10.821 10.821 0 0 1-.16-1.681c-.014-.16.087-.276.203-.377.03-.246.058-.507.073-.754-.044-.13-.145-.232-.203-.348-.261.03-.638.087-.797-.188-.377-.565-.769-1.145-1.145-1.71-.16-.015-.348 0-.493-.102-.16-.174-.261-.405-.363-.623-.043.174-.072.362-.174.507-.087.145-.231.247-.333.377-.101.232-.188.464-.275.696-.102.29-.247.58-.276.899-.014.159-.043.304-.101.449-.073.116-.203.16-.319.217-.087.189-.145.377-.275.537-.087.101-.232.13-.29.26-.058.174-.145.334-.218.493-.029.174.087.363.03.536-.102.435-.32.841-.522 1.232-.102.29-.174.595-.32.87-.057.116-.202.145-.318.16-.13.318-.276.623-.362.956a5.437 5.437 0 0 0-.03.971c0 .145.088.261.146.391.057.174.014.348-.015.522-.565.073-1.145.13-1.696-.043-.058-.044-.043-.116-.058-.174-.043-.261-.072-.536.015-.783.188-.681.348-1.362.536-2.043-.072-.073-.174-.13-.174-.247-.014-.188 0-.391.044-.58.087-.319.318-.565.434-.87.044-.13.03-.26.044-.39 0-.305.174-.551.304-.812.13-.218.232-.45.406-.638.116-.101.116-.26.203-.391.087-.16.232-.29.232-.479.029-.231-.058-.463-.03-.695.059-.681.19-1.348.305-2.03-.058-.072-.145-.144-.174-.246.015-.072.03-.13.044-.203l-.13-.217c.057-.087.115-.188.173-.275-.058-.044-.13-.102-.188-.145.072-.218.043-.537.304-.638.03.014.102.029.13.043-.043-.376-.043-.768-.086-1.145a3.534 3.534 0 0 1-.073-1.232c.145-.217.42-.304.667-.318-.319-.073-.638-.102-.942-.203-.015-.261.029-.522.072-.783.13-.507.073-1.029.145-1.55.073-.146.261-.175.42-.146.189.03.377-.029.566-.087 0-.072.014-.16 0-.232-.116-.507-.087-1.029 0-1.521.116-.638.377-1.261.855-1.71.319-.305.783-.45 1.217-.435.145 0 .232.145.348.232.058-.058.116-.116.16-.174-.073-.247-.189-.508-.174-.769.029-.58.217-1.174.652-1.565m4.522 4.102c.029.029.029.029 0 0m.203.029c.014.101.043.203-.015.29-.072.029-.16.029-.232.072.203 0 .406.015.61 0 .159-.043.1-.246.1-.362-.1-.116-.318-.044-.463 0m-.507.609c.145.159.217.405.347.565.189-.247.334-.508.551-.725-.26-.015-.522.015-.782-.015-.044.058-.073.116-.116.174Z"></path></svg>
 </a>
-    Get5
+    Get5 Documentation
   </label>
 <div class="md-nav__source">
 <a class="md-source" data-md-component="source" href="https://github.com/splewis/get5" title="Go to repository">
@@ -164,18 +165,8 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_stop_command_enabled">
-    get5_stop_command_enabled
-  </a>
-</li>
-<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_kick_when_no_match_loaded">
     get5_kick_when_no_match_loaded
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#get5_end_match_on_empty_server">
-    get5_end_match_on_empty_server
   </a>
 </li>
 <li class="md-nav__item">
@@ -199,8 +190,13 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_hostname_format">
-    get5_hostname_format
+<a class="md-nav__link" href="#get5_autoload_config">
+    get5_autoload_config
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_debug">
+    get5_debug
   </a>
 </li>
 </ul>
@@ -225,6 +221,11 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_auto_ready_active_players">
     get5_auto_ready_active_players
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_allow_force_ready">
+    get5_allow_force_ready
   </a>
 </li>
 <li class="md-nav__item">
@@ -263,18 +264,8 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_damageprint_format">
-    get5_damageprint_format
-  </a>
-</li>
-<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_phase_announcement_count">
     get5_phase_announcement_count
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#get5_message_prefix">
-    get5_message_prefix
   </a>
 </li>
 <li class="md-nav__item">
@@ -337,6 +328,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_auto_tech_pause_missing_players">
+    get5_auto_tech_pause_missing_players
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_pause_on_veto">
     get5_pause_on_veto
   </a>
@@ -350,29 +346,44 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#formats">
-    Formats
+<a class="md-nav__link" href="#surrender-forfeit">
+    Surrender &amp; Forfeit
   </a>
-<nav aria-label="Formats" class="md-nav">
+<nav aria-label="Surrender &amp; Forfeit" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_time_format">
-    get5_time_format
+<a class="md-nav__link" href="#get5_surrender_enabled">
+    get5_surrender_enabled
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_demo_name_format">
-    get5_demo_name_format
+<a class="md-nav__link" href="#get5_surrender_minimum_round_deficit">
+    get5_surrender_minimum_round_deficit
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_event_log_format">
-    get5_event_log_format
+<a class="md-nav__link" href="#get5_surrender_required_votes">
+    get5_surrender_required_votes
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_stats_path_format">
-    get5_stats_path_format
+<a class="md-nav__link" href="#get5_surrender_time_limit">
+    get5_surrender_time_limit
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_cooldown">
+    get5_surrender_cooldown
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_forfeit_enabled">
+    get5_forfeit_enabled
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_forfeit_countdown">
+    get5_forfeit_countdown
   </a>
 </li>
 </ul>
@@ -390,6 +401,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stop_command_enabled">
+    get5_stop_command_enabled
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_max_backup_age">
     get5_max_backup_age
   </a>
@@ -397,6 +413,50 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_backup_path">
     get5_backup_path
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#formats-paths">
+    Formats &amp; Paths
+  </a>
+<nav aria-label="Formats &amp; Paths" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_time_format">
+    get5_time_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_date_format">
+    get5_date_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_event_log_format">
+    get5_event_log_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stats_path_format">
+    get5_stats_path_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_hostname_format">
+    get5_hostname_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_message_prefix">
+    get5_message_prefix
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_damageprint_format">
+    get5_damageprint_format
   </a>
 </li>
 </ul>
@@ -423,9 +483,67 @@
     get5_knife_cfg
   </a>
 </li>
+</ul>
+</nav>
+</li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_autoload_config">
-    get5_autoload_config
+<a class="md-nav__link" href="#demos">
+    Demos
+  </a>
+<nav aria-label="Demos" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_url">
+    get5_demo_upload_url
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_header_key">
+    get5_demo_upload_header_key
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_header_value">
+    get5_demo_upload_header_value
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_delete_after_upload">
+    get5_demo_delete_after_upload
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_path">
+    get5_demo_path
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_name_format">
+    get5_demo_name_format
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#events">
+    Events
+  </a>
+<nav aria-label="Events" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_remote_log_url">
+    get5_remote_log_url
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_remote_log_header_key">
+    get5_remote_log_header_key
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_remote_log_header_value">
+    get5_remote_log_header_value
   </a>
 </li>
 </ul>
@@ -446,6 +564,11 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#tag-time">
     {TIME}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-date">
+    {DATE}
   </a>
 </li>
 <li class="md-nav__item">
@@ -528,6 +651,11 @@
       </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../veto/">
+        Map Veto
+      </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../commands/">
         Commands
       </a>
@@ -540,6 +668,11 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../pausing/">
         Pausing
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../surrender-forfeit/">
+        Surrender &amp; Forfeit
       </a>
 </li>
 <li class="md-nav__item">
@@ -568,8 +701,8 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../developer_api/">
-        Developer API
+<a class="md-nav__link" href="../developers/">
+        Developers
       </a>
 </li>
 <li class="md-nav__item">
@@ -651,18 +784,8 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_stop_command_enabled">
-    get5_stop_command_enabled
-  </a>
-</li>
-<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_kick_when_no_match_loaded">
     get5_kick_when_no_match_loaded
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#get5_end_match_on_empty_server">
-    get5_end_match_on_empty_server
   </a>
 </li>
 <li class="md-nav__item">
@@ -686,8 +809,13 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_hostname_format">
-    get5_hostname_format
+<a class="md-nav__link" href="#get5_autoload_config">
+    get5_autoload_config
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_debug">
+    get5_debug
   </a>
 </li>
 </ul>
@@ -712,6 +840,11 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_auto_ready_active_players">
     get5_auto_ready_active_players
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_allow_force_ready">
+    get5_allow_force_ready
   </a>
 </li>
 <li class="md-nav__item">
@@ -750,18 +883,8 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_damageprint_format">
-    get5_damageprint_format
-  </a>
-</li>
-<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_phase_announcement_count">
     get5_phase_announcement_count
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#get5_message_prefix">
-    get5_message_prefix
   </a>
 </li>
 <li class="md-nav__item">
@@ -824,6 +947,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_auto_tech_pause_missing_players">
+    get5_auto_tech_pause_missing_players
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_pause_on_veto">
     get5_pause_on_veto
   </a>
@@ -837,29 +965,44 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#formats">
-    Formats
+<a class="md-nav__link" href="#surrender-forfeit">
+    Surrender &amp; Forfeit
   </a>
-<nav aria-label="Formats" class="md-nav">
+<nav aria-label="Surrender &amp; Forfeit" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_time_format">
-    get5_time_format
+<a class="md-nav__link" href="#get5_surrender_enabled">
+    get5_surrender_enabled
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_demo_name_format">
-    get5_demo_name_format
+<a class="md-nav__link" href="#get5_surrender_minimum_round_deficit">
+    get5_surrender_minimum_round_deficit
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_event_log_format">
-    get5_event_log_format
+<a class="md-nav__link" href="#get5_surrender_required_votes">
+    get5_surrender_required_votes
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_stats_path_format">
-    get5_stats_path_format
+<a class="md-nav__link" href="#get5_surrender_time_limit">
+    get5_surrender_time_limit
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_surrender_cooldown">
+    get5_surrender_cooldown
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_forfeit_enabled">
+    get5_forfeit_enabled
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_forfeit_countdown">
+    get5_forfeit_countdown
   </a>
 </li>
 </ul>
@@ -877,6 +1020,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stop_command_enabled">
+    get5_stop_command_enabled
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_max_backup_age">
     get5_max_backup_age
   </a>
@@ -884,6 +1032,50 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#get5_backup_path">
     get5_backup_path
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#formats-paths">
+    Formats &amp; Paths
+  </a>
+<nav aria-label="Formats &amp; Paths" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_time_format">
+    get5_time_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_date_format">
+    get5_date_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_event_log_format">
+    get5_event_log_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stats_path_format">
+    get5_stats_path_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_hostname_format">
+    get5_hostname_format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_message_prefix">
+    get5_message_prefix
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_damageprint_format">
+    get5_damageprint_format
   </a>
 </li>
 </ul>
@@ -910,9 +1102,67 @@
     get5_knife_cfg
   </a>
 </li>
+</ul>
+</nav>
+</li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#get5_autoload_config">
-    get5_autoload_config
+<a class="md-nav__link" href="#demos">
+    Demos
+  </a>
+<nav aria-label="Demos" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_url">
+    get5_demo_upload_url
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_header_key">
+    get5_demo_upload_header_key
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_upload_header_value">
+    get5_demo_upload_header_value
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_delete_after_upload">
+    get5_demo_delete_after_upload
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_path">
+    get5_demo_path
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_demo_name_format">
+    get5_demo_name_format
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#events">
+    Events
+  </a>
+<nav aria-label="Events" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_remote_log_url">
+    get5_remote_log_url
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_remote_log_header_key">
+    get5_remote_log_header_key
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_remote_log_header_value">
+    get5_remote_log_header_value
   </a>
 </li>
 </ul>
@@ -933,6 +1183,11 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#tag-time">
     {TIME}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-date">
+    {DATE}
   </a>
 </li>
 <li class="md-nav__item">
@@ -1022,8 +1277,9 @@ also <a href="#config-files">point to other files</a> by editing the main config
 <div class="admonition danger">
 <p class="admonition-title">Prohibited options</p>
 <p>You should avoid these commands in your live, knife and warmup configuration files, as all of these are handled by
-Get5 automatically. Introducing restarts, warmup changes or <a href="../gotv/">GOTV</a> delay modifications can cause problems.
-If you want to set your <code>tv_delay</code>, do it in the <code>cvars</code> section of your <a href="../match_schema/">match configuration</a>.</p>
+Get5 automatically. Introducing restarts, warmup changes or <a href="../gotv">GOTV</a> delay modifications can cause problems.
+If you want to set your <code>tv_delay</code> or <code>tv_delay1</code>, do it in the <code>cvars</code> section of your
+<a href="../match_schema">match configuration</a>.</p>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>mp_do_warmup_period
 <a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>mp_restartgame
 <a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>mp_warmup_end
@@ -1032,140 +1288,129 @@ If you want to set your <code>tv_delay</code>, do it in the <code>cvars</code> s
 <a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>mp_warmuptime
 <a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a>mp_warmuptime_all_players_connected
 <a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a>tv_delay
-<a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a>tv_delaymapchange
-<a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a>tv_enable
-<a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a>tv_record
-<a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a>tv_stoprecord
+<a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a>tv_delay1
+<a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a>tv_delaymapchange
+<a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a>tv_enable
+<a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a>tv_enable1
+<a href="#__codelineno-2-13" id="__codelineno-2-13" name="__codelineno-2-13"></a>tv_record
+<a href="#__codelineno-2-14" id="__codelineno-2-14" name="__codelineno-2-14"></a>tv_stoprecord
 </code></pre></div>
 </div>
 <h2 id="server-setup">Server Setup</h2>
-<p><strong>These options will generally not be directly presented to clients.</strong></p>
 <h4 id="get5_server_id"><code>get5_server_id</code></h4>
 <dl>
-<dd>Integer that identifies your server. This is used in temp files to prevent collisions. Defines the
-<a href="#tag-serverid"><code>{SERVERID}</code></a> substitution and the return value of the <code>Get5_GetServerID</code> native. <strong><code>Default: 0</code></strong></dd>
+<dd>Integer that identifies your server. This is used in temporary and backup files to prevent collisions and added as a
+header to <a href="../gotv#upload">demo uploads</a> and <a href="../events_and_forwards#http">event requests</a>. You should set this if you
+run multiple servers off the same storage, such as if using <a href="https://www.docker.com/">Docker</a>. This also defines
+the <a href="#tag-serverid"><code>{SERVERID}</code></a> substitution and the return value of the <code>Get5_GetServerID</code>
+native.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
+<div class="admonition tip">
+<p class="admonition-title">Server ID could be port number</p>
+<p>A good candidate for <code>get5_server_id</code> would be the port number the server is bound to, since it uniquely identifies
+a server instance on a host and ensures that no two instances run with the same server ID at the same time.</p>
+</div>
 <h4 id="get5_kick_immunity"><code>get5_kick_immunity</code></h4>
 <dl>
-<dd>Whether <a href="../installation/#administrators">admins</a> will be immune to kicks from
-<a href="#get5_kick_when_no_match_loaded"><code>get5_kick_when_no_match_loaded</code></a>. <strong><code>Default: 1</code></strong></dd>
-</dl>
-<h4 id="get5_stop_command_enabled"><code>get5_stop_command_enabled</code></h4>
-<dl>
-<dd>Whether the <a href="../commands/#stop"><code>!stop</code></a> command is enabled. <strong><code>Default: 1</code></strong></dd>
+<dd>Whether <a href="../installation#administrators">admins</a> will be immune to kicks from
+<a href="#get5_kick_when_no_match_loaded"><code>get5_kick_when_no_match_loaded</code></a>.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_kick_when_no_match_loaded"><code>get5_kick_when_no_match_loaded</code></h4>
 <dl>
 <dd>Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
-using <a href="../commands/#get5_endmatch"><code>get5_endmatch</code></a>. <strong><code>Default: 0</code></strong></dd>
-</dl>
-<h4 id="get5_end_match_on_empty_server"><code>get5_end_match_on_empty_server</code></h4>
-<dl>
-<dd>Whether the match is ended with no winner if all players leave (note: this will happen even if all players
-disconnect even in warmup with the intention to reconnect!). <strong><code>Default: 0</code></strong></dd>
+using <a href="../commands#get5_endmatch"><code>get5_endmatch</code></a>.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_display_gotv_veto"><code>get5_display_gotv_veto</code></h4>
 <dl>
-<dd>Whether to wait for map vetoes to be printed to GOTV before changing map. <strong><code>Default: 0</code></strong></dd>
+<dd>Whether to wait for <a href="../veto">map vetoes</a> to be broadcast to <a href="../gotv">GOTV</a> before changing
+map.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_check_auths"><code>get5_check_auths</code></h4>
 <dl>
-<dd>Whether the Steam IDs from the <code>players</code> and <code>coaches</code> sections of a <a href="../match_schema/#schema">match configuration</a>
-are used to force players onto teams. Anyone not defined will be removed from the game, or if
-in <a href="../getting_started/#scrims">scrim mode</a>, put on <code>team2</code>. <strong><code>Default: 1</code></strong></dd>
+<dd>Whether the Steam IDs from the <code>players</code>, <code>coaches</code> and <code>spectators</code> sections of
+a <a href="../match_schema#schema">match configuration</a> are used to force players onto teams. Anyone not defined will be
+removed from the game, or if in <a href="../getting_started#scrims">scrim mode</a>, put on <code>team2</code>.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_print_update_notice"><code>get5_print_update_notice</code></h4>
 <dl>
 <dd>Whether to print to chat when the game goes live if a new version of Get5 is available. This only works if
-<a href="../installation/#steamworks">SteamWorks</a> has been installed. <strong><code>Default: 1</code></strong></dd>
+<a href="../installation#steamworks">SteamWorks</a> has been installed.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_pretty_print_json"><code>get5_pretty_print_json</code></h4>
 <dl>
 <dd>Whether to pretty-print all JSON output. This also affects the output of JSON in the
-<a href="../events_and_forwards">event system</a>. <strong><code>Default: 1</code></strong></dd>
+<a href="../events_and_forwards">event system</a>.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
-<h4 id="get5_hostname_format"><code>get5_hostname_format</code></h4>
+<h4 id="get5_autoload_config"><code>get5_autoload_config</code></h4>
 <dl>
-<dd>The hostname to apply to the server when a match configuration is loaded.
-<a href="#state-substitutes">State substitutes</a> can be used. Leave blank to disable changing the hostname.
-<strong><code>Default: Get5: {TEAM1} vs {TEAM2}</code></strong></dd>
+<dd>A <a href="../match_schema#schema">match configuration</a> file, relative to the <code>csgo</code> directory, to autoload when the server
+starts, when Get5 is reloaded or if no match is loaded when a player joins the server. Set to empty string to
+disable.<br/><strong><code>Default: ""</code></strong></dd>
+</dl>
+<h4 id="get5_debug"><code>get5_debug</code></h4>
+<dl>
+<dd>Enable or disable verbose debug output from Get5. Intended for development and debugging purposes
+only.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h2 id="match-setup">Match Setup</h2>
-<p><strong>These options will generally be represented by in-game changes to the client.</strong></p>
 <h4 id="get5_ready_team_tag"><code>get5_ready_team_tag</code></h4>
 <dl>
-<dd>Adds <code>[READY]</code> or <code>[NOT READY]</code> tags before team names, and removes clan tags from users. <strong><code>Default: 1</code></strong></dd>
+<dd>Adds <code>[READY]</code> or <code>[NOT READY]</code> tags to team names.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_live_countdown_time"><code>get5_live_countdown_time</code></h4>
 <dl>
-<dd>Number of seconds used to count down when a match is going live. <strong><code>Default: 10</code></strong></dd>
+<dd>Number of seconds used to count down when a match is going live.<br/><strong><code>Default: 10</code></strong></dd>
 </dl>
 <h4 id="get5_auto_ready_active_players"><code>get5_auto_ready_active_players</code></h4>
 <dl>
-<dd>Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase. <strong><code>Default: 0</code></strong></dd>
+<dd>Whether to automatically mark players as ready if they kill anyone in the warmup or <a href="../veto">veto</a>
+phase.<br/><strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_allow_force_ready"><code>get5_allow_force_ready</code></h4>
+<dl>
+<dd>Whether the <a href="../commands#forceready"><code>!forceready</code></a> command is accessible to players. This does not
+affect the availability of <a href="../commands#get5_forceready"><code>get5_forceready</code></a> to admins.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_set_client_clan_tags"><code>get5_set_client_clan_tags</code></h4>
 <dl>
-<dd>Whether to set client clan tags to player ready status. <strong><code>Default: 1</code></strong></dd>
+<dd>Whether to set client clan tags to player ready status.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_time_to_start"><code>get5_time_to_start</code></h4>
 <dl>
-<dd>Time (in seconds) teams have to ready up before forfeiting the match, 0 = unlimited. <strong><code>Default: 0</code></strong></dd>
+<dd>Time (in seconds) teams have to ready up before forfeiting the match. Set to zero for no limit. If neither team
+becomes ready in time, the series is ended in a tie.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_time_to_make_knife_decision"><code>get5_time_to_make_knife_decision</code></h4>
 <dl>
-<dd>Time (in seconds) a team has to make a <a href="../commands/#stay"><code>!stay</code></a> or <a href="../commands/#swap"><code>!swap</code></a>
+<dd>Time (in seconds) a team has to make a <a href="../commands#stay"><code>!stay</code></a> or <a href="../commands#swap"><code>!swap</code></a>
 decision after winning knife round. Cannot be set lower than 10 if non-zero. Set to zero to remove
 limit.<br/><strong><code>Default: 60</code></strong></dd>
 </dl>
 <h4 id="get5_veto_countdown"><code>get5_veto_countdown</code></h4>
 <dl>
-<dd>Time (in seconds) to countdown before veto process commences. <strong><code>Default: 5</code></strong></dd>
+<dd>Time (in seconds) to countdown before the <a href="../veto">veto</a> process commences. Set to zero to move to veto without a
+countdown.<br/><strong><code>Default: 5</code></strong></dd>
 </dl>
 <h4 id="get5_veto_confirmation_time"><code>get5_veto_confirmation_time</code></h4>
 <dl>
-<dd>Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be
-required. 0 to disable. <strong><code>Default: 2.0</code></strong></dd>
+<dd>Time (in seconds) from presenting a <a href="../veto">veto</a> menu to a selection being made, during which a confirmation will
+be required. 0 to disable.<br/><strong><code>Default: 2.0</code></strong></dd>
 </dl>
 <h4 id="get5_print_damage"><code>get5_print_damage</code></h4>
 <dl>
-<dd>Whether to print damage reports on round ends. <strong><code>Default: 0</code></strong></dd>
+<dd>Whether to print damage reports when a round ends. The format is determined
+by <a href="#get5_damageprint_format"><code>get5_damageprint_format</code></a>.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_print_damage_excess"><code>get5_print_damage_excess</code></h4>
 <dl>
 <dd>Whether to include damage that exceeds the remaining health of a player in the chat
 report. If enabled, you can inflict more than 100 damage to a player in the damage report. Ignored if
-<a href="#get5_print_damage"><code>get5_print_damage</code></a> is disabled. <strong><code>Default: 0</code></strong></dd>
+<a href="#get5_print_damage"><code>get5_print_damage</code></a> is disabled.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
-<h4 id="get5_damageprint_format"><code>get5_damageprint_format</code></h4>
-<dl>
-<dd>
-<p>Formatting of damage reports in chat on round end. Ignored
-if <a href="#get5_print_damage"><code>get5_print_damage</code></a> is disabled.
-<strong><code>Default: - [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)</code></strong></p>
-<p>The default example above prints the following to chat on round end and includes information about assists and flash
-assists.</p>
-<p><code>{KILL_TO}</code> becomes a green <code>X</code> for a kill or a yellow <code>A</code> or <code>F</code> for assist or flash assist, respectively.
-<code>{KILL_FROM}</code> is similar to <code>{KILL_TO}</code>, but the <code>X</code> value is red (indicating a player killed you). No attribution
-becomes a white dash.</p>
-</dd>
-</dl>
-<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>[Get5] Team A 1 - 0 Team B
-<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a>- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - killed this player, they assisted in killing you
-<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a>- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - killed by this player, flash assisted in killing them
-<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a>- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - no interaction, this player survived
-<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a>- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - assisted in killing this player
-<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a>- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - dealt damage to this player, not enough for assist
-</code></pre></div>
 <h4 id="get5_phase_announcement_count"><code>get5_phase_announcement_count</code></h4>
 <dl>
-<dd>The number of times the "Knife" or "Match is LIVE" announcements will be printed in chat. Set to zero to disable.
-<strong><code>Default: 5</code></strong></dd>
-</dl>
-<h4 id="get5_message_prefix"><code>get5_message_prefix</code></h4>
-<dl>
-<dd>The tag applied before plugin messages. Note that at least one character must come before
-a <a href="#color-substitutes">color modifier</a>. <strong><code>Default: "[{YELLOW}Get5{NORMAL}]"</code></strong></dd>
+<dd>The number of times the "Knife" or "Match is LIVE" announcements will be printed in chat. Set to zero to
+disable.<br/><strong><code>Default: 5</code></strong></dd>
 </dl>
 <h4 id="get5_team1_color"><code>get5_team1_color</code></h4>
 <dl>
@@ -1185,89 +1430,132 @@ messages.<br/><strong><code>Default: "{NORMAL}"</code></strong></dd>
 <h2 id="pausing">Pausing</h2>
 <h4 id="get5_pausing_enabled"><code>get5_pausing_enabled</code></h4>
 <dl>
-<dd>Whether <a href="../pausing">pauses</a> are available to clients or not. <strong><code>Default: 1</code></strong></dd>
+<dd>Whether <a href="../pausing">pauses</a> are available to clients or not.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_max_pauses"><code>get5_max_pauses</code></h4>
 <dl>
-<dd>Number of <a href="../pausing/#tactical">tactical pauses</a> a team can use. 0 = unlimited. <strong><code>Default: 0</code></strong></dd>
+<dd>Number of <a href="../pausing#tactical">tactical pauses</a> a team can use. Set to zero to remove limit.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_max_pause_time"><code>get5_max_pause_time</code></h4>
 <dl>
-<dd>Maximum number of seconds the game can spend under tactical pause for a team. 0 = unlimited. When pauses are
-unlimited and when <a href="#get5_fixed_pause_time">get5_fixed_pause_time</a> is zero, both teams
-must call <a href="../commands/#unpause"><code>!unpause</code></a> to continue the match. This parameter is ignored
-if <a href="#get5_fixed_pause_time">get5_fixed_pause_time</a> is set to a non-zero
-value. <strong><code>Default: 300 (5 minutes)</code></strong></dd>
+<dd>Maximum number of seconds the game can spend under tactical pause for a team. When pauses are
+unlimited and when <a href="#get5_fixed_pause_time"><code>get5_fixed_pause_time</code></a> is zero, both teams
+must call <a href="../commands#unpause"><code>!unpause</code></a> to continue the match. This parameter is ignored
+if <a href="#get5_fixed_pause_time"><code>get5_fixed_pause_time</code></a> is set to a non-zero
+value. Set to zero to remove limit.<br/><strong><code>Default: 300</code></strong></dd>
 </dl>
 <h4 id="get5_fixed_pause_time"><code>get5_fixed_pause_time</code></h4>
 <dl>
-<dd>If non-zero, the fixed length in seconds of all <a href="../pausing/#tactical"><code>tactical</code></a> pauses. This takes precedence
-over the <a href="#get5_max_pause_time">get5_max_pause_time</a> parameter, which will be ignored. <strong><code>Default: 0</code></strong></dd>
+<dd>If non-zero, the fixed length in seconds of all <a href="../pausing#tactical">tactical pauses</a>. This takes precedence over
+the <a href="#get5_max_pause_time"><code>get5_max_pause_time</code></a> parameter, which will be ignored. Cannot be set lower than 15
+seconds if non-zero.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_allow_technical_pause"><code>get5_allow_technical_pause</code></h4>
 <dl>
-<dd>Whether <a href="../pausing/#technical">technical pauses</a> are available to clients or not. <strong><code>Default: 1</code></strong></dd>
+<dd>Whether <a href="../pausing#technical">technical pauses</a> are available to clients or not. Note that this depends
+on <a href="#get5_pausing_enabled"><code>get5_pausing_enabled</code></a> being enabled as well.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_max_tech_pauses"><code>get5_max_tech_pauses</code></h4>
 <dl>
-<dd>Number of <a href="../pausing/#technical">technical pauses</a> a team is allowed to have, 0=unlimited. <strong><code>Default: 0</code></strong></dd>
+<dd>Number of <a href="../pausing#technical">technical pauses</a> a team is allowed to have. Set to zero to remove
+limit.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_tech_pause_time"><code>get5_tech_pause_time</code></h4>
 <dl>
-<dd>If non-zero, number of seconds before any team can call <a href="../commands/#unpause"><code>!unpause</code></a> to end
-a <a href="../pausing/#technical">technical pause</a> without confirmation from the pausing team. 0 = unlimited and both teams
-must confirm. <strong><code>Default: 0</code></strong></dd>
+<dd>If non-zero, number of seconds before any team can call <a href="../commands#unpause"><code>!unpause</code></a> to end
+a <a href="../pausing#technical">technical pause</a> without confirmation from the pausing team. Set to zero to remove
+limit.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
+<h4 id="get5_auto_tech_pause_missing_players"><code>get5_auto_tech_pause_missing_players</code></h4>
+<dl>
+<dd>The number of players that must disconnect from a team during the live phase of a game in order to trigger an
+automatic <a href="../pausing#technical">technical pause</a>. <a href="../match_schema#schema"><code>players_per_team</code></a> is used to determine
+what is considered a full team, so if these parameters are equal (typically 5), a pause is triggered if an entire team
+leaves. Set to zero to disable.<br/><strong><code>Default: 0</code></strong></dd>
+</dl>
+<div class="admonition question">
+<p class="admonition-title">If I just want to pause if a team is empty?</p>
+<p>If you always want the pause to trigger if an entire team disconnects, regardless of team size, you can
+set <a href="#get5_auto_tech_pause_missing_players"><code>get5_auto_tech_pause_missing_players</code></a> to a large value, as setting it
+to a value larger than <a href="../match_schema#schema"><code>players_per_team</code></a> behaves as if it was set to that value.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Auto-pausing is always enabled</p>
+<p>If you set <a href="#get5_auto_tech_pause_missing_players"><code>get5_auto_tech_pause_missing_players</code></a> to a non-zero value, a
+technical pause will be started regardless of the configuration of <a href="#get5_pausing_enabled"><code>get5_pausing_enabled</code></a>
+or <a href="#get5_allow_technical_pause"><code>get5_allow_technical_pause</code></a>. This allows you to automatically enable technical
+pauses without letting players initiate them on their own.</p>
+<p>Automatic tech pauses are still limited by <a href="#get5_max_tech_pauses"><code>get5_max_tech_pauses</code></a>, so you can set that to a
+non-zero value to prevent abuse.</p>
+</div>
 <h4 id="get5_pause_on_veto"><code>get5_pause_on_veto</code></h4>
 <dl>
-<dd>Whether to freeze players during the map-veto phase. <strong><code>Default: 0</code></strong></dd>
+<dd>Whether to freeze players during the <a href="../veto">veto</a> phase.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_reset_pauses_each_half"><code>get5_reset_pauses_each_half</code></h4>
 <dl>
-<dd>Whether <a href="../pausing/#tactical">tactical pause</a> limits (time used and count) are reset each halftime period.
-<a href="../pausing/#technical">Technical pauses</a> are not reset. <strong><code>Default: 1</code></strong></dd>
+<dd>Whether <a href="../pausing#tactical">tactical pause</a> limits (time used and count) are reset each halftime period.
+<a href="../pausing#technical">Technical pauses</a> are not reset.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
-<h2 id="formats">Formats</h2>
-<p><strong>Note: for these, setting the cvar to an empty string ("") will disable the file writing entirely.</strong></p>
-<h4 id="get5_time_format"><code>get5_time_format</code></h4>
+<h2 id="surrender-forfeit">Surrender &amp; Forfeit</h2>
+<h4 id="get5_surrender_enabled"><code>get5_surrender_enabled</code></h4>
 <dl>
-<dd>Time format string. This determines the <a href="#tag-time"><code>{TIME}</code></a> tag. <strong>Do not change this unless you know what you are
-doing! Avoid using spaces or colons.</strong> <strong><code>Default: "%Y-%m-%d_%H-%M-%S"</code></strong></dd>
+<dd>Whether the <a href="../commands#surrender"><code>!surrender</code></a> command is available.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
-<h4 id="get5_demo_name_format"><code>get5_demo_name_format</code></h4>
+<h4 id="get5_surrender_minimum_round_deficit"><code>get5_surrender_minimum_round_deficit</code></h4>
 <dl>
-<dd>Format to use for demo files when <a href="../gotv/">recording matches</a>. Do not include a file extension (<code>.dem</code> is added
-automatically). Set to empty string to disable. If you do not include the <a href="#tag-time"><code>{TIME}</code></a> tag, you will have
-problems with duplicate files if restoring a game from a backup.<br/>Note that the <a href="#tag-mapnumber"><code>{MAPNUMBER}</code></a>
-variable is not zero-indexed!<br/><strong><code>Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"</code></strong></dd>
+<dd>The minimum number of rounds a team must be behind in order to initiate a vote
+to <a href="../surrender-forfeit#surrender">surrender</a>. This cannot be set lower than <code>1</code>.<br/><strong><code>Default: 8</code></strong></dd>
 </dl>
-<h4 id="get5_event_log_format"><code>get5_event_log_format</code></h4>
+<h4 id="get5_surrender_required_votes"><code>get5_surrender_required_votes</code></h4>
 <dl>
-<dd>Format to write event logs to. Set to empty string to disable. <strong><code>Default: ""</code></strong></dd>
+<dd>The number of votes required to <a href="../surrender-forfeit#surrender">surrender</a> as a team. If set to <code>1</code> or below, any
+attempt to surrender will immediately succeed.<br/><strong><code>Default: 3</code></strong></dd>
 </dl>
-<h4 id="get5_stats_path_format"><code>get5_stats_path_format</code></h4>
+<h4 id="get5_surrender_time_limit"><code>get5_surrender_time_limit</code></h4>
 <dl>
-<dd>Path where stats are output at each map end if it is set. Set to empty string to
-disable. <strong><code>Default: "get5_matchstats_{MATCHID}.cfg"</code></strong></dd>
+<dd>The number of seconds a team has to vote to <a href="../surrender-forfeit#surrender">surrender</a> after the first vote is
+cast. This cannot be set lower than <code>10</code>.<br/><strong><code>Default: 15</code></strong></dd>
+</dl>
+<h4 id="get5_surrender_cooldown"><code>get5_surrender_cooldown</code></h4>
+<dl>
+<dd>The minimum number of seconds a team must wait before they can initiate
+a <a href="../surrender-forfeit#surrender">surrender</a> vote following a failed vote. Set to zero to disable.<br/><strong><code>Default: 60</code></strong></dd>
+</dl>
+<h4 id="get5_forfeit_enabled"><code>get5_forfeit_enabled</code></h4>
+<dl>
+<dd>Whether the <a href="../commands#ffw"><code>!ffw</code></a> command is available if one team leaves and whether
+an <a href="../surrender-forfeit#forfeit">automatic forfeit</a> is triggered if both teams leave.<br/><strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_forfeit_countdown"><code>get5_forfeit_countdown</code></h4>
+<dl>
+<dd>Sets the number of seconds players have to rejoin the server once a <a href="../surrender-forfeit#forfeit">forfeit</a> timer
+has started. This value cannot be set lower than 30.<br/><strong><code>Default: 180</code></strong></dd>
 </dl>
 <h2 id="backup-system">Backup System</h2>
 <h4 id="get5_backup_system_enabled"><code>get5_backup_system_enabled</code></h4>
 <dl>
-<dd>Whether the <a href="../backup/">backup system</a> is enabled. This is required for the use of the <a href="../commands/#stop"><code>!stop</code></a>
-command as well as the <a href="../commands/#get5_loadbackup"><code>get5_loadbackup</code></a> command. <strong><code>Default: 1</code></strong></dd>
+<dd>Whether the <a href="../backup">backup system</a> is enabled. This is required for the use of the <a href="../commands#stop"><code>!stop</code></a>
+command as well as the <a href="../commands#get5_loadbackup"><code>get5_loadbackup</code></a> command.<br/><strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_stop_command_enabled"><code>get5_stop_command_enabled</code></h4>
+<dl>
+<dd>Whether the <a href="../commands#stop"><code>!stop</code></a> command is enabled.<br/><strong><code>Default: 1</code></strong></dd>
 </dl>
 <h4 id="get5_max_backup_age"><code>get5_max_backup_age</code></h4>
 <dl>
-<dd>Number of seconds before a Get5 backup file is automatically deleted. 0 to disable. If you define
-<a href="#get5_backup_path"><code>get5_backup_path</code></a>, only files in that path will be deleted. <strong><code>Default: 160000</code></strong></dd>
+<dd>Number of seconds before a Get5 backup file is automatically deleted. If you define
+<a href="#get5_backup_path"><code>get5_backup_path</code></a>, only files in that path will be deleted. Set to zero to
+disable.<br/><strong><code>Default: 160000</code></strong></dd>
 </dl>
 <h4 id="get5_backup_path"><code>get5_backup_path</code></h4>
 <dl>
-<dd>The folder of saved <a href="../commands/#get5_loadbackup">backup files</a>, relative to the <code>csgo</code> directory. You <strong>can</strong> use
-the <a href="#tag-matchid"><code>{MATCHID}</code></a> variable, i.e. <code>backups/{MATCHID}/</code>. <strong><code>Default: ""</code></strong></dd>
+<dd>The folder of saved <a href="../commands#get5_loadbackup">backup files</a>, relative to the <code>csgo</code> directory. You <strong>can</strong> use
+the <a href="#tag-matchid"><code>{MATCHID}</code></a> variable, i.e. <code>backups/{MATCHID}/</code>. Required folders will be created if they do not
+exist.<br/><strong><code>Default: ""</code></strong></dd>
 </dl>
 <div class="admonition warning">
-<p class="admonition-title">Slash, slash, hundred yard dash <span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m7 21 7.9-18H17L9.1 21H7Z"></path></svg></span></p>
+<p class="admonition-title">Slash, slash, hundred-yard dash <span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m7 21 7.9-18H17L9.1 21H7Z"></path></svg></span></p>
 <p>It is very important that your backup path does <strong>not</strong> start with a slash but instead <strong>ends with a slash</strong>. If
 not, the last part of the path will be considered a prefix of the filename and things will not work correctly. Also
 note that if you use the <a href="#tag-matchid"><code>{MATCHID}</code></a> variable, <a href="#get5_max_backup_age">automatic deletion of backups</a>
@@ -1276,6 +1564,63 @@ does not work.</p>
 <p><img alt="✅" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2705.svg" title=":white_check_mark:"/> <code>backups/{MATCHID}/</code></p>
 <p><img alt="⛔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26d4.svg" title=":no_entry:"/> <code>/backups/</code></p>
 <p><img alt="⛔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26d4.svg" title=":no_entry:"/> <code>/backups/{MATCHID}</code></p>
+</div>
+<h2 id="formats-paths">Formats &amp; Paths</h2>
+<h4 id="get5_time_format"><code>get5_time_format</code></h4>
+<dl>
+<dd>Date and time format string. This determines the <a href="#tag-time"><code>{TIME}</code></a> tag.<br/><strong><code>Default: "%Y-%m-%d_%H-%M-%S"</code></strong></dd>
+</dl>
+<h4 id="get5_date_format"><code>get5_date_format</code></h4>
+<dl>
+<dd>Date format string. This determines the <a href="#tag-date"><code>{DATE}</code></a> tag.<br/><strong><code>Default: "%Y-%m-%d"</code></strong></dd>
+</dl>
+<div class="admonition danger">
+<p class="admonition-title">Advanced users only</p>
+<p>Do not change the time format unless you know what you are doing. Please always include a component of hours,
+minutes and seconds in your <code>get5_time_format</code> so that <a href="#get5_demo_name_format">demo files</a> will not be overwritten.
+You can find the reference for formatting a time string <a href="https://cplusplus.com/reference/ctime/strftime/">here</a>. The
+default example above prints time in this format: <code>2022-06-12_13-15-45</code>.</p>
+</div>
+<h4 id="get5_event_log_format"><code>get5_event_log_format</code></h4>
+<dl>
+<dd>Format to write event logs to. Set to empty string to disable writing event logs.<br/><strong><code>Default: ""</code></strong></dd>
+</dl>
+<h4 id="get5_stats_path_format"><code>get5_stats_path_format</code></h4>
+<dl>
+<dd>Path where stats are output on each map end. Set to empty string to
+disable.<br/><strong><code>Default: "get5_matchstats_{MATCHID}.cfg"</code></strong></dd>
+</dl>
+<h4 id="get5_hostname_format"><code>get5_hostname_format</code></h4>
+<dl>
+<dd>The hostname to apply to the server when a match configuration is loaded.
+<a href="#state-substitutes">State substitutes</a> can be used. Leave blank to disable changing the hostname.<br/>
+<strong><code>Default: "Get5: {TEAM1} vs {TEAM2}"</code></strong></dd>
+</dl>
+<h4 id="get5_message_prefix"><code>get5_message_prefix</code></h4>
+<dl>
+<dd>The tag applied before plugin messages. Note that at least one character must come before
+a <a href="#color-substitutes">color modifier</a>.<br/><strong><code>Default: "[{YELLOW}Get5{NORMAL}]"</code></strong></dd>
+</dl>
+<h4 id="get5_damageprint_format"><code>get5_damageprint_format</code></h4>
+<dl>
+<dd>Formatting of damage reports in chat on round end. Ignored
+if <a href="#get5_print_damage"><code>get5_print_damage</code></a> is disabled.<br/>
+<strong><code>Default: "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)"</code></strong></dd>
+</dl>
+<div class="admonition example">
+<p class="admonition-title">Damage report example</p>
+<p>The default example above prints the following to chat on round end and includes information about kills, deaths,
+assists and flash assists.</p>
+<p><code>{KILL_TO}</code> becomes a green <code>X</code> for a kill or a yellow <code>A</code> or <code>F</code> for assist or flash assist, respectively.</p>
+<p><code>{KILL_FROM}</code> is similar to <code>{KILL_TO}</code>, but the <code>X</code> value is red (indicating a player killed you).</p>
+<p>No attribution replaces <code>{KILL_TO}</code> and/or <code>{KILL_FROM}</code> with a white dash: <code>-</code>.
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>[Get5] Team A 1 - 0 Team B
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a>- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - Killed this player, they assisted in killing you.
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a>- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - Killed by this player, flash assisted in killing them.
+<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a>- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - No interaction, this player survived.
+<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a>- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - Assisted in killing this player.
+<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a>- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - Dealt damage to this player, not enough for assist.
+</code></pre></div></p>
 </div>
 <h2 id="config-files">Config Files</h2>
 <h4 id="get5_live_cfg"><code>get5_live_cfg</code></h4>
@@ -1290,18 +1635,70 @@ does not work.</p>
 <dl>
 <dd>Config file executed for the knife round, relative to <code>csgo/cfg</code>.<br/><strong><code>Default: "get5/knife.cfg"</code></strong></dd>
 </dl>
-<h4 id="get5_autoload_config"><code>get5_autoload_config</code></h4>
+<h2 id="demos">Demos</h2>
+<h4 id="get5_demo_upload_url"><code>get5_demo_upload_url</code></h4>
 <dl>
-<dd>A <a href="../match_schema/#schema">match configuration</a> file, relative to the <code>csgo</code> directory, to autoload when a player
-joins the server if no match is loaded. Set to empty string to disable. <strong><code>Default: ""</code></strong></dd>
+<dd>If defined, Get5 will <a href="../gotv#upload">automatically send a recorded demo</a> to this URL in an HTTP <code>POST</code> request
+once a recording stops. If no protocol is provided, <code>http://</code> will be prepended to this value. Requires the
+<a href="../installation#steamworks">SteamWorks</a> extension.<br/><strong><code>Default: ""</code></strong></dd>
+</dl>
+<h4 id="get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></h4>
+<dl>
+<dd>If this <strong>and</strong> <a href="#get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></a> are defined, this header name and
+value will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>.<br/><strong><code>Default: "Authorization"</code></strong></dd>
+</dl>
+<h4 id="get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></h4>
+<dl>
+<dd>If this <strong>and</strong> <a href="#get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></a> are defined, this header name and
+value will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>.<br/><strong><code>Default: ""</code></strong></dd>
+</dl>
+<h4 id="get5_demo_delete_after_upload"><code>get5_demo_delete_after_upload</code></h4>
+<dl>
+<dd>Whether to delete the demo file from the game server after
+successfully <a href="../gotv#upload">uploading it to a web server</a>.<br/><strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_demo_path"><code>get5_demo_path</code></h4>
+<dl>
+<dd>The folder of saved <a href="../gotv#demos">demo files</a>, relative to the <code>csgo</code> directory. You <strong>can</strong> use
+the <a href="#tag-matchid"><code>{MATCHID}</code></a> and <a href="#tag-date"><code>{DATE}</code></a> variables, i.e. <code>demos/{DATE}/{MATCHID}/</code>.
+Much like <a href="#get5_backup_path"><code>get5_backup_path</code></a>, the path must <strong>not</strong> start with a slash, and
+must <strong>end with a slash</strong>. Required folders will be created if they do not exist.<br/><strong><code>Default: ""</code></strong></dd>
+</dl>
+<h4 id="get5_demo_name_format"><code>get5_demo_name_format</code></h4>
+<dl>
+<dd>Format to use for demo files when <a href="../gotv#demos">recording matches</a>. Do not include a file extension (<code>.dem</code> is
+added automatically). If you do not include the <a href="#tag-time"><code>{TIME}</code></a> tag, you will have problems with duplicate files
+if restoring a game from a backup. Note that the <a href="#tag-mapnumber"><code>{MAPNUMBER}</code></a>variable is not zero-indexed. Set to
+empty string to disable recording demos.<br/><strong><code>Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"</code></strong></dd>
+</dl>
+<h2 id="events">Events</h2>
+<h4 id="get5_remote_log_url"><code>get5_remote_log_url</code></h4>
+<dl>
+<dd>The URL to send all <a href="../events_and_forwards#http">events</a> to. Requires the <a href="../installation#steamworks">SteamWorks</a>
+extension. Set to empty string to disable.<br/><strong><code>Default: ""</code></strong></dd>
+</dl>
+<h4 id="get5_remote_log_header_key"><code>get5_remote_log_header_key</code></h4>
+<dl>
+<dd>If this <strong>and</strong> <a href="#get5_remote_log_header_value"><code>get5_remote_log_header_value</code></a> are defined, this
+header name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.<br/><strong><code>Default: "Authorization"</code></strong></dd>
+</dl>
+<h4 id="get5_remote_log_header_value"><code>get5_remote_log_header_value</code></h4>
+<dl>
+<dd>If this <strong>and</strong> <a href="#get5_remote_log_header_key"><code>get5_remote_log_header_key</code></a> are defined, this header
+name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.<br/><strong><code>Default: ""</code></strong></dd>
 </dl>
 <h2 id="substitution-variables">Substitution Variables</h2>
 <h3 id="state-substitutes">Match/State Substitutes</h3>
 <p>Various configuration parameters, such as the file format parameters or the <code>get5_hostname_format</code> option, take
-placeholder strings that will be replaced by meaningful values when printed.</p>
+placeholder strings that will be replaced by meaningful values when printed. Note that these are <strong>case-sensitive</strong>, so
+<code>{Mapname}</code> would not work.</p>
 <h4 id="tag-time"><code>{TIME}</code></h4>
 <dl>
 <dd>The current time, determined by <a href="#get5_time_format"><code>get5_time_format</code></a>.</dd>
+</dl>
+<h4 id="tag-date"><code>{DATE}</code></h4>
+<dl>
+<dd>The current date, determined by <a href="#get5_date_format"><code>get5_date_format</code></a>.</dd>
 </dl>
 <h4 id="tag-mapname"><code>{MAPNAME}</code></h4>
 <dl>
@@ -1313,7 +1710,7 @@ placeholder strings that will be replaced by meaningful values when printed.</p>
 </dl>
 <h4 id="tag-maxmaps"><code>{MAXMAPS}</code></h4>
 <dl>
-<dd>The maximum number of maps in the series, i.e. <code>3</code> for a Bo3. <strong>Note: Not zero-indexed!</strong></dd>
+<dd>The maximum number of maps in the series, i.e. <code>3</code> for a Bo3.</dd>
 </dl>
 <h4 id="tag-matchid"><code>{MATCHID}</code></h4>
 <dl>
@@ -1404,8 +1801,8 @@ after using a color variable.</p>
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
-<script src="../assets/javascripts/bundle.078830c0.min.js"></script>
+<script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+<script src="../assets/javascripts/bundle.8492ddcf.min.js"></script>
 <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
 <script src="../javascripts/tablesort.js"></script>
 </body>

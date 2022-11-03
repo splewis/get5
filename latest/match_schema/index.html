@@ -7,16 +7,17 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://splewis.github.io/get5/latest/match_schema/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.4.1, mkdocs-material-8.5.6" name="generator"/>
-<title>Match Schema - Get5</title>
+<meta content="mkdocs-1.4.2, mkdocs-material-8.5.7" name="generator"/>
+<title>Match Schema - Get5 Documentation</title>
 <link href="../assets/stylesheets/main.20d9efc8.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
 <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../stylesheets/extra.css" rel="stylesheet"/>
 <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 </head>
-<body data-md-color-accent="" data-md-color-primary="" data-md-color-scheme="default" dir="ltr">
+<body data-md-color-accent="deep-orange" data-md-color-primary="deep-orange" data-md-color-scheme="default" dir="ltr">
 <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
@@ -32,8 +33,8 @@
 </div>
 <header class="md-header" data-md-component="header">
 <nav aria-label="Header" class="md-header__inner md-grid">
-<a aria-label="Get5" class="md-header__button md-logo" data-md-component="logo" href=".." title="Get5">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+<a aria-label="Get5 Documentation" class="md-header__button md-logo" data-md-component="logo" href=".." title="Get5 Documentation">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.103.435a1.753 1.753 0 0 1 1.652-.362c.218.072.406.203.609.333.16.101.348.145.493.261.072.058.014.16.014.232.189.45.29.942.13 1.42-.13.16-.362.203-.55.276-.03.203.043.39.072.594-.043.029-.072.058-.116.087.276-.015.551-.073.827-.13.101-.102.26-.044.39-.059.015-.203.088-.391.088-.594a.34.34 0 0 0 .116-.029c.014.145 0 .29.043.435.073.058.189.029.276.043 0 .058 0 .116.014.174 1.681-.014 3.377 0 5.058 0v.247h.16V2.42h.188c0 .26-.014.507 0 .768a.11.11 0 0 0 .073.029c0 .029.014.087.014.116.058-.058.13-.102.218-.073.014.044.029.087.043.145-.058.058-.087.13-.058.218.464.014.928 0 1.406 0 .044-.058.116-.087.189-.116a.464.464 0 0 1 .087.058h.68a.874.874 0 0 1 .015.333h-.696a.46.46 0 0 1-.087.073c-.072-.044-.13-.073-.202-.116h-1.261c-.247.072-.508.058-.754.014v.275H16.16a.532.532 0 0 1-.29.13c.044.218-.202.276-.29.436a.45.45 0 0 1-.231.174c-.073.449.087.87.203 1.29-.13.029-.276.072-.406.101-.073.29-.145.594-.203.884a.848.848 0 0 1-.507.58c-.174.203-.406.406-.682.42-.101.03-.174-.043-.246-.101-.362.029-.696-.145-1.015-.29-.347-.16-.666-.363-1-.55.03.202-.072.376-.145.55.16.072.377.13.464.304.058.13.116.276.116.435-.014.522-.072 1.044-.101 1.565.014.377-.174.754-.435 1.03-.174-.015-.319-.088-.478-.16-.058.13-.189.26-.116.42.058.189.058.392.145.566a6.674 6.674 0 0 1 1.217 1.753c.304.624.536 1.276.783 1.928.043 0 .13-.015.174-.015.058.189 0 .406.116.58.101.16.072.348.072.536-.029.435-.058.87-.101 1.305-.03.304-.102.609-.145.913.014.232.116.464.101.696-.014.217-.014.449-.188.608.014.493-.116.986.058 1.464.232.32.493.623.768.899.304.145.667.174.928.435.1.16.043.347.014.521a6.732 6.732 0 0 1-1.87 0c-.246-.058-.478-.159-.724-.188-.334.014-.725.145-1.03-.087-.028-.391.117-.768.189-1.145.029-.13.16-.217.145-.348-.03-.45-.058-.913-.087-1.362-.058-.03-.16-.058-.145-.145 0-.218-.072-.435-.13-.638a10.821 10.821 0 0 1-.16-1.681c-.014-.16.087-.276.203-.377.03-.246.058-.507.073-.754-.044-.13-.145-.232-.203-.348-.261.03-.638.087-.797-.188-.377-.565-.769-1.145-1.145-1.71-.16-.015-.348 0-.493-.102-.16-.174-.261-.405-.363-.623-.043.174-.072.362-.174.507-.087.145-.231.247-.333.377-.101.232-.188.464-.275.696-.102.29-.247.58-.276.899-.014.159-.043.304-.101.449-.073.116-.203.16-.319.217-.087.189-.145.377-.275.537-.087.101-.232.13-.29.26-.058.174-.145.334-.218.493-.029.174.087.363.03.536-.102.435-.32.841-.522 1.232-.102.29-.174.595-.32.87-.057.116-.202.145-.318.16-.13.318-.276.623-.362.956a5.437 5.437 0 0 0-.03.971c0 .145.088.261.146.391.057.174.014.348-.015.522-.565.073-1.145.13-1.696-.043-.058-.044-.043-.116-.058-.174-.043-.261-.072-.536.015-.783.188-.681.348-1.362.536-2.043-.072-.073-.174-.13-.174-.247-.014-.188 0-.391.044-.58.087-.319.318-.565.434-.87.044-.13.03-.26.044-.39 0-.305.174-.551.304-.812.13-.218.232-.45.406-.638.116-.101.116-.26.203-.391.087-.16.232-.29.232-.479.029-.231-.058-.463-.03-.695.059-.681.19-1.348.305-2.03-.058-.072-.145-.144-.174-.246.015-.072.03-.13.044-.203l-.13-.217c.057-.087.115-.188.173-.275-.058-.044-.13-.102-.188-.145.072-.218.043-.537.304-.638.03.014.102.029.13.043-.043-.376-.043-.768-.086-1.145a3.534 3.534 0 0 1-.073-1.232c.145-.217.42-.304.667-.318-.319-.073-.638-.102-.942-.203-.015-.261.029-.522.072-.783.13-.507.073-1.029.145-1.55.073-.146.261-.175.42-.146.189.03.377-.029.566-.087 0-.072.014-.16 0-.232-.116-.507-.087-1.029 0-1.521.116-.638.377-1.261.855-1.71.319-.305.783-.45 1.217-.435.145 0 .232.145.348.232.058-.058.116-.116.16-.174-.073-.247-.189-.508-.174-.769.029-.58.217-1.174.652-1.565m4.522 4.102c.029.029.029.029 0 0m.203.029c.014.101.043.203-.015.29-.072.029-.16.029-.232.072.203 0 .406.015.61 0 .159-.043.1-.246.1-.362-.1-.116-.318-.044-.463 0m-.507.609c.145.159.217.405.347.565.189-.247.334-.508.551-.725-.26-.015-.522.015-.782-.015-.044.058-.073.116-.116.174Z"></path></svg>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
@@ -42,7 +43,7 @@
 <div class="md-header__ellipsis">
 <div class="md-header__topic">
 <span class="md-ellipsis">
-            Get5
+            Get5 Documentation
           </span>
 </div>
 <div class="md-header__topic" data-md-component="header-topic">
@@ -55,11 +56,11 @@
 </div>
 </div>
 <form class="md-header__option" data-md-component="palette">
-<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="" data-md-color-media="" data-md-color-primary="" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="deep-orange" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="deep-orange" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
 <label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
 </label>
-<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="" data-md-color-media="" data-md-color-primary="" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="deep-orange" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="deep-orange" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
 <label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"></path></svg>
 </label>
@@ -84,10 +85,10 @@
 <div class="md-sidebar__inner">
 <nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
 <label class="md-nav__title" for="__drawer">
-<a aria-label="Get5" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Get5">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+<a aria-label="Get5 Documentation" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Get5 Documentation">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.103.435a1.753 1.753 0 0 1 1.652-.362c.218.072.406.203.609.333.16.101.348.145.493.261.072.058.014.16.014.232.189.45.29.942.13 1.42-.13.16-.362.203-.55.276-.03.203.043.39.072.594-.043.029-.072.058-.116.087.276-.015.551-.073.827-.13.101-.102.26-.044.39-.059.015-.203.088-.391.088-.594a.34.34 0 0 0 .116-.029c.014.145 0 .29.043.435.073.058.189.029.276.043 0 .058 0 .116.014.174 1.681-.014 3.377 0 5.058 0v.247h.16V2.42h.188c0 .26-.014.507 0 .768a.11.11 0 0 0 .073.029c0 .029.014.087.014.116.058-.058.13-.102.218-.073.014.044.029.087.043.145-.058.058-.087.13-.058.218.464.014.928 0 1.406 0 .044-.058.116-.087.189-.116a.464.464 0 0 1 .087.058h.68a.874.874 0 0 1 .015.333h-.696a.46.46 0 0 1-.087.073c-.072-.044-.13-.073-.202-.116h-1.261c-.247.072-.508.058-.754.014v.275H16.16a.532.532 0 0 1-.29.13c.044.218-.202.276-.29.436a.45.45 0 0 1-.231.174c-.073.449.087.87.203 1.29-.13.029-.276.072-.406.101-.073.29-.145.594-.203.884a.848.848 0 0 1-.507.58c-.174.203-.406.406-.682.42-.101.03-.174-.043-.246-.101-.362.029-.696-.145-1.015-.29-.347-.16-.666-.363-1-.55.03.202-.072.376-.145.55.16.072.377.13.464.304.058.13.116.276.116.435-.014.522-.072 1.044-.101 1.565.014.377-.174.754-.435 1.03-.174-.015-.319-.088-.478-.16-.058.13-.189.26-.116.42.058.189.058.392.145.566a6.674 6.674 0 0 1 1.217 1.753c.304.624.536 1.276.783 1.928.043 0 .13-.015.174-.015.058.189 0 .406.116.58.101.16.072.348.072.536-.029.435-.058.87-.101 1.305-.03.304-.102.609-.145.913.014.232.116.464.101.696-.014.217-.014.449-.188.608.014.493-.116.986.058 1.464.232.32.493.623.768.899.304.145.667.174.928.435.1.16.043.347.014.521a6.732 6.732 0 0 1-1.87 0c-.246-.058-.478-.159-.724-.188-.334.014-.725.145-1.03-.087-.028-.391.117-.768.189-1.145.029-.13.16-.217.145-.348-.03-.45-.058-.913-.087-1.362-.058-.03-.16-.058-.145-.145 0-.218-.072-.435-.13-.638a10.821 10.821 0 0 1-.16-1.681c-.014-.16.087-.276.203-.377.03-.246.058-.507.073-.754-.044-.13-.145-.232-.203-.348-.261.03-.638.087-.797-.188-.377-.565-.769-1.145-1.145-1.71-.16-.015-.348 0-.493-.102-.16-.174-.261-.405-.363-.623-.043.174-.072.362-.174.507-.087.145-.231.247-.333.377-.101.232-.188.464-.275.696-.102.29-.247.58-.276.899-.014.159-.043.304-.101.449-.073.116-.203.16-.319.217-.087.189-.145.377-.275.537-.087.101-.232.13-.29.26-.058.174-.145.334-.218.493-.029.174.087.363.03.536-.102.435-.32.841-.522 1.232-.102.29-.174.595-.32.87-.057.116-.202.145-.318.16-.13.318-.276.623-.362.956a5.437 5.437 0 0 0-.03.971c0 .145.088.261.146.391.057.174.014.348-.015.522-.565.073-1.145.13-1.696-.043-.058-.044-.043-.116-.058-.174-.043-.261-.072-.536.015-.783.188-.681.348-1.362.536-2.043-.072-.073-.174-.13-.174-.247-.014-.188 0-.391.044-.58.087-.319.318-.565.434-.87.044-.13.03-.26.044-.39 0-.305.174-.551.304-.812.13-.218.232-.45.406-.638.116-.101.116-.26.203-.391.087-.16.232-.29.232-.479.029-.231-.058-.463-.03-.695.059-.681.19-1.348.305-2.03-.058-.072-.145-.144-.174-.246.015-.072.03-.13.044-.203l-.13-.217c.057-.087.115-.188.173-.275-.058-.044-.13-.102-.188-.145.072-.218.043-.537.304-.638.03.014.102.029.13.043-.043-.376-.043-.768-.086-1.145a3.534 3.534 0 0 1-.073-1.232c.145-.217.42-.304.667-.318-.319-.073-.638-.102-.942-.203-.015-.261.029-.522.072-.783.13-.507.073-1.029.145-1.55.073-.146.261-.175.42-.146.189.03.377-.029.566-.087 0-.072.014-.16 0-.232-.116-.507-.087-1.029 0-1.521.116-.638.377-1.261.855-1.71.319-.305.783-.45 1.217-.435.145 0 .232.145.348.232.058-.058.116-.116.16-.174-.073-.247-.189-.508-.174-.769.029-.58.217-1.174.652-1.565m4.522 4.102c.029.029.029.029 0 0m.203.029c.014.101.043.203-.015.29-.072.029-.16.029-.232.072.203 0 .406.015.61 0 .159-.043.1-.246.1-.362-.1-.116-.318-.044-.463 0m-.507.609c.145.159.217.405.347.565.189-.247.334-.508.551-.725-.26-.015-.522.015-.782-.015-.044.058-.073.116-.116.174Z"></path></svg>
 </a>
-    Get5
+    Get5 Documentation
   </label>
 <div class="md-nav__source">
 <a class="md-source" data-md-component="source" href="https://github.com/splewis/get5" title="Go to repository">
@@ -181,6 +182,11 @@
 </nav>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="../veto/">
+        Map Veto
+      </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="../commands/">
         Commands
       </a>
@@ -193,6 +199,11 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../pausing/">
         Pausing
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../surrender-forfeit/">
+        Surrender &amp; Forfeit
       </a>
 </li>
 <li class="md-nav__item">
@@ -221,8 +232,8 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../developer_api/">
-        Developer API
+<a class="md-nav__link" href="../developers/">
+        Developers
       </a>
 </li>
 <li class="md-nav__item">
@@ -309,8 +320,8 @@ players to their correct team and side, setting the map(s) and configuring the g
 <p>Two files ship with Get5 that give a general idea of what can be included in a match config. A Valve KeyValue
 format can be found <a href="https://github.com/splewis/get5/blob/master/configs/get5/example_match.cfg">here</a>, and a JSON
 format can be found <a href="https://github.com/splewis/get5/blob/master/configs/get5/example_match.json">here</a>. In this
-documentation, we'll go through what each value means, but do note that <strong>only the values</strong> <code>team1</code> and <code>team2</code> are
-required to start a match. Reasonable defaults are used for the other values (Bo3 series,
+documentation, we'll go through what each value means, but do note that <strong>only the values</strong> <code>team1</code>, <code>team2</code> and
+<code>maplist</code> are required to start a match. Reasonable defaults are used for the other values (Bo3 series,
 5v5, empty strings for team names, etc.). We recommend using the JSON format whenever possible, as JSON has way
 better support in various programming languages than Valve's KeyValue format (which essentially has none).</p>
 <h2 id="schema">The schema</h2>
@@ -319,13 +330,13 @@ better support in various programming languages than Valve's KeyValue format (wh
 <a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>
 <a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">Get5MatchTeam</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="s2">"players"</span><span class="o">:</span><span class="w"> </span><span class="nx">Get5PlayerSet</span><span class="w"> </span><span class="c1">// (24)</span><span class="w"></span>
-<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">    </span><span class="s2">"coaches"</span><span class="o">:</span><span class="w"> </span><span class="nx">Get5PlayerSet</span><span class="w"> </span><span class="c1">// (23)</span><span class="w"></span>
-<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="c1">// (16)</span><span class="w"></span>
-<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">    </span><span class="s2">"tag"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="c1">// (17)</span><span class="w"></span>
-<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">    </span><span class="s2">"flag"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="c1">// (18)</span><span class="w"></span>
-<a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w">    </span><span class="s2">"logo"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="c1">// (19)</span><span class="w"></span>
-<a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="w">    </span><span class="s2">"series_score"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="c1">// (26)</span><span class="w"></span>
-<a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">    </span><span class="s2">"matchtext"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="c1">// (27)</span><span class="w"></span>
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">    </span><span class="s2">"coaches"</span><span class="o">:</span><span class="w"> </span><span class="nx">Get5PlayerSet</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (23)</span><span class="w"></span>
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (16)</span><span class="w"></span>
+<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">    </span><span class="s2">"tag"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (17)</span><span class="w"></span>
+<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">    </span><span class="s2">"flag"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (18)</span><span class="w"></span>
+<a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w">    </span><span class="s2">"logo"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (19)</span><span class="w"></span>
+<a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="w">    </span><span class="s2">"series_score"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (26)</span><span class="w"></span>
+<a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">    </span><span class="s2">"matchtext"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (27)</span><span class="w"></span>
 <a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="p">}</span><span class="w"></span>
 <a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a>
 <a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">Get5MatchTeamFromFile</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -333,47 +344,48 @@ better support in various programming languages than Valve's KeyValue format (wh
 <a href="#__codelineno-0-17" id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="p">}</span><span class="w"></span>
 <a href="#__codelineno-0-18" id="__codelineno-0-18" name="__codelineno-0-18"></a>
 <a href="#__codelineno-0-19" id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">Get5Match</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-0-20" id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="w">    </span><span class="s2">"match_title"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="c1">// (25)</span><span class="w"></span>
-<a href="#__codelineno-0-21" id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">    </span><span class="s2">"matchid"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="c1">// (1)</span><span class="w"></span>
-<a href="#__codelineno-0-22" id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="w">    </span><span class="s2">"clinch_series"</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="c1">// (32)</span><span class="w"></span>
-<a href="#__codelineno-0-23" id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="w">    </span><span class="s2">"num_maps"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="c1">// (2)</span><span class="w"></span>
-<a href="#__codelineno-0-24" id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="w">    </span><span class="s2">"players_per_team"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="c1">// (3)</span><span class="w"></span>
-<a href="#__codelineno-0-25" id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="w">    </span><span class="s2">"coaches_per_team"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="c1">// (4)</span><span class="w"></span>
-<a href="#__codelineno-0-26" id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="w">    </span><span class="s2">"min_players_to_ready"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="c1">// (5)</span><span class="w"></span>
-<a href="#__codelineno-0-27" id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="w">    </span><span class="s2">"min_spectators_to_ready"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="c1">// (6)</span><span class="w"></span>
-<a href="#__codelineno-0-28" id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="w">    </span><span class="s2">"skip_veto"</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="c1">// (7),</span><span class="w"></span>
-<a href="#__codelineno-0-29" id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="w">    </span><span class="s2">"veto_first"</span><span class="o">:</span><span class="w"> </span><span class="s2">"team1"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"team2"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"random"</span><span class="w"> </span><span class="c1">// (11)</span><span class="w"></span>
-<a href="#__codelineno-0-30" id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="w">    </span><span class="s2">"side_type"</span><span class="o">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"always_knife"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"never_knife"</span><span class="w"> </span><span class="c1">// (12)</span><span class="w"></span>
-<a href="#__codelineno-0-31" id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="w">    </span><span class="s2">"map_sides"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"team1_ct"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"team1_t"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"knife"</span><span class="p">]</span><span class="w"> </span><span class="c1">// (31)</span><span class="w"></span>
-<a href="#__codelineno-0-32" id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="w">    </span><span class="s2">"spectators"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// (10)</span><span class="w"></span>
-<a href="#__codelineno-0-33" id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="w">        </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="c1">// (29)</span><span class="w"></span>
-<a href="#__codelineno-0-34" id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="w">        </span><span class="s2">"players"</span><span class="o">:</span><span class="w"> </span><span class="nx">Get5PlayerSet</span><span class="w"> </span><span class="c1">// (30)</span><span class="w"></span>
-<a href="#__codelineno-0-35" id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="w">    </span><span class="p">},</span><span class="w"></span>
-<a href="#__codelineno-0-36" id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="w">    </span><span class="s2">"maplist"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="w"> </span><span class="c1">// (13)</span><span class="w"></span>
-<a href="#__codelineno-0-37" id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="w">    </span><span class="s2">"favored_percentage_team1"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="c1">// (14)</span><span class="w"></span>
-<a href="#__codelineno-0-38" id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="w">    </span><span class="s2">"favored_percentage_text"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="c1">// (15)</span><span class="w"></span>
-<a href="#__codelineno-0-39" id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="w">    </span><span class="s2">"team1"</span><span class="o">:</span><span class="w"> </span><span class="nx">Get5MatchTeam</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Get5MatchTeamFromFile</span><span class="w"> </span><span class="c1">// (20)</span><span class="w"></span>
-<a href="#__codelineno-0-40" id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="w">    </span><span class="s2">"team2"</span><span class="o">:</span><span class="w"> </span><span class="nx">Get5MatchTeam</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Get5MatchTeamFromFile</span><span class="w"> </span><span class="c1">// (21)</span><span class="w"></span>
-<a href="#__codelineno-0-41" id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="w">    </span><span class="s2">"cvars"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">[</span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// (22)</span><span class="w"></span>
-<a href="#__codelineno-0-42" id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="p">}</span><span class="w"></span>
+<a href="#__codelineno-0-20" id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="w">    </span><span class="s2">"match_title"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (25)</span><span class="w"></span>
+<a href="#__codelineno-0-21" id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">    </span><span class="s2">"matchid"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (1)</span><span class="w"></span>
+<a href="#__codelineno-0-22" id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="w">    </span><span class="s2">"clinch_series"</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (32)</span><span class="w"></span>
+<a href="#__codelineno-0-23" id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="w">    </span><span class="s2">"num_maps"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (2)</span><span class="w"></span>
+<a href="#__codelineno-0-24" id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="w">    </span><span class="s2">"players_per_team"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (3)</span><span class="w"></span>
+<a href="#__codelineno-0-25" id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="w">    </span><span class="s2">"coaches_per_team"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (4)</span><span class="w"></span>
+<a href="#__codelineno-0-26" id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="w">    </span><span class="s2">"coaches_must_ready"</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (33)</span><span class="w"></span>
+<a href="#__codelineno-0-27" id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="w">    </span><span class="s2">"min_players_to_ready"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (5)</span><span class="w"></span>
+<a href="#__codelineno-0-28" id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="w">    </span><span class="s2">"min_spectators_to_ready"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (6)</span><span class="w"></span>
+<a href="#__codelineno-0-29" id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="w">    </span><span class="s2">"skip_veto"</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (7)</span><span class="w"></span>
+<a href="#__codelineno-0-30" id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="w">    </span><span class="s2">"veto_first"</span><span class="o">:</span><span class="w"> </span><span class="s2">"team1"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"team2"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"random"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (11)</span><span class="w"></span>
+<a href="#__codelineno-0-31" id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="w">    </span><span class="s2">"side_type"</span><span class="o">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"always_knife"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"never_knife"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (12)</span><span class="w"></span>
+<a href="#__codelineno-0-32" id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="w">    </span><span class="s2">"map_sides"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"team1_ct"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"team1_t"</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">"knife"</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (31)</span><span class="w"></span>
+<a href="#__codelineno-0-33" id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="w">    </span><span class="s2">"spectators"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// (10)</span><span class="w"></span>
+<a href="#__codelineno-0-34" id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="w">        </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (29)</span><span class="w"></span>
+<a href="#__codelineno-0-35" id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="w">        </span><span class="s2">"players"</span><span class="o">:</span><span class="w"> </span><span class="nx">Get5PlayerSet</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (30)</span><span class="w"></span>
+<a href="#__codelineno-0-36" id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-0-37" id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="w">    </span><span class="s2">"maplist"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="w"> </span><span class="c1">// (13)</span><span class="w"></span>
+<a href="#__codelineno-0-38" id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="w">    </span><span class="s2">"favored_percentage_team1"</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (14)</span><span class="w"></span>
+<a href="#__codelineno-0-39" id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="w">    </span><span class="s2">"favored_percentage_text"</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (15)</span><span class="w"></span>
+<a href="#__codelineno-0-40" id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="w">    </span><span class="s2">"team1"</span><span class="o">:</span><span class="w"> </span><span class="nx">Get5MatchTeam</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Get5MatchTeamFromFile</span><span class="w"> </span><span class="c1">// (20)</span><span class="w"></span>
+<a href="#__codelineno-0-41" id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="w">    </span><span class="s2">"team2"</span><span class="o">:</span><span class="w"> </span><span class="nx">Get5MatchTeam</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">Get5MatchTeamFromFile</span><span class="w"> </span><span class="c1">// (21)</span><span class="w"></span>
+<a href="#__codelineno-0-42" id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="w">    </span><span class="s2">"cvars"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">[</span><span class="nx">key</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (22)</span><span class="w"></span>
+<a href="#__codelineno-0-43" id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <ol>
 <li><em>Optional</em><br/>The ID of the match. This determines the <code>matchid</code> parameter in all
-   <a href="../events_and_forwards/">forwards and events</a>. If you use the <a href="../stats_system/#mysql">MySQL extension</a>, you
+   <a href="../events_and_forwards">forwards and events</a>. If you use the <a href="../stats_system#mysql">MySQL extension</a>, you
    should leave this field blank (or omit it), as match IDs will be assigned automatically. If you do want to assign
    match IDs from another source, they <strong>must</strong> be integers (in a string) and must increment between
    matches.<br/><br/><strong><code>Default: ""</code></strong></li>
 <li><em>Optional</em><br/>The number of maps to play in the series.<br/><br/><strong><code>Default: 3</code></strong></li>
 <li><em>Optional</em><br/>The number of players per team. You should <strong>never</strong> set this to a value higher than the number of
    players you want to actually play in a game, <em>excluding</em> coaches.<br/><br/><strong><code>Default: 5</code></strong></li>
-<li><em>Optional</em><br/>The maximum number of <a href="../coaching/">coaches</a> per team.<br/><br/><strong><code>Default: 2</code></strong></li>
-<li><em>Optional</em><br/>The minimum number of players that must be present for the <a href="../commands/#forceready"><code>!forceready</code></a>
-   command to succeed. If not forcing a team ready, <strong>all</strong> players must <a href="../commands/#ready"><code>!ready</code></a> up
+<li><em>Optional</em><br/>The maximum number of <a href="../coaching">coaches</a> per team.<br/><br/><strong><code>Default: 2</code></strong></li>
+<li><em>Optional</em><br/>The minimum number of players that must be present for the <a href="../commands#forceready"><code>!forceready</code></a>
+   command to succeed. If not forcing a team ready, <strong>all</strong> players must <a href="../commands#ready"><code>!ready</code></a> up
    themselves.<br/><br/><strong><code>Default: 0</code></strong></li>
-<li><em>Optional</em><br/>The minimum number of spectators that must be <a href="../commands/#ready"><code>!ready</code></a> for the game to
+<li><em>Optional</em><br/>The minimum number of spectators that must be <a href="../commands#ready"><code>!ready</code></a> for the game to
    begin.<br/><br/><strong><code>Default: 0</code></strong></li>
-<li><em>Optional</em><br/>Whether to skip the veto phase. When skipping veto, <code>map_sides</code> determines sides, and if <code>map_sides</code> is
-   not set, sides are determined by <code>side_type</code>.<br/><br/><strong><code>Default: false</code></strong></li>
+<li><em>Optional</em><br/>Whether to skip the <a href="../veto">veto</a> phase. When skipping veto, <code>map_sides</code> determines sides, and
+   if <code>map_sides</code> is not set, sides are determined by <code>side_type</code>.<br/><br/><strong><code>Default: false</code></strong></li>
 <li>A player's <span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10c-4.6 0-8.45-3.08-9.64-7.27l3.83 1.58a2.843 2.843 0 0 0 2.78 2.27c1.56 0 2.83-1.27 2.83-2.83v-.13l3.4-2.43h.08c2.08 0 3.77-1.69 3.77-3.77s-1.69-3.77-3.77-3.77-3.78 1.69-3.78 3.77v.05l-2.37 3.46-.16-.01c-.59 0-1.14.18-1.59.49L2 11.2C2.43 6.05 6.73 2 12 2M8.28 17.17c.8.33 1.72-.04 2.05-.84.33-.8-.05-1.71-.83-2.04l-1.28-.53c.49-.18 1.04-.19 1.56.03.53.21.94.62 1.15 1.15.22.52.22 1.1 0 1.62-.43 1.08-1.7 1.6-2.78 1.15-.5-.21-.88-.59-1.09-1.04l1.22.5m9.52-7.75c0 1.39-1.13 2.52-2.52 2.52a2.52 2.52 0 0 1-2.51-2.52 2.5 2.5 0 0 1 2.51-2.51 2.52 2.52 0 0 1 2.52 2.51m-4.4 0c0 1.04.84 1.89 1.89 1.89 1.04 0 1.88-.85 1.88-1.89s-.84-1.89-1.88-1.89c-1.05 0-1.89.85-1.89 1.89Z"></path></svg></span> Steam ID. This can be in any format, but we recommend a string representation of SteamID
    64, i.e. <code>"76561197987713664"</code>.</li>
 <li>Players are represented each with a mapping of <code>SteamID -&gt; PlayerName</code> as a key-value dictionary. The name
@@ -381,15 +393,15 @@ better support in various programming languages than Valve's KeyValue format (wh
    string array of <code>SteamID</code> disable name-locking.</li>
 <li><em>Optional</em><br/>The spectators to allow into the game. If not defined, spectators cannot join the
     game.<br/><br/><strong><code>Default: undefined</code></strong></li>
-<li><em>Optional</em><br/>The team that vetoes first.<br/><br/><strong><code>Default: "team1"</code></strong></li>
-<li><em>Optional</em><br/>The method used to determine sides when vetoing <strong>or</strong> if veto is disabled and <code>map_sides</code> are not
-    set.<br/><br/><code>standard</code> means that the team that doesn't pick a map gets the side choice (only if <code>skip_veto</code>
+<li><em>Optional</em><br/>The team that <a href="../veto">vetoes</a> first.<br/><br/><strong><code>Default: "team1"</code></strong></li>
+<li><em>Optional</em><br/>The method used to determine sides when <a href="../veto">vetoing</a> <strong>or</strong> if veto is disabled and <code>map_sides</code>
+    are not set.<br/><br/><code>standard</code> means that the team that doesn't pick a map gets the side choice (only if <code>skip_veto</code>
     is <code>false</code>).<br/><br/><code>always_knife</code> means that sides are always determined by a knife-round.<br/><br/><code>never_knife</code>
     means that <code>team1</code> always starts on CT.<br/><br/>This parameter is ignored if <code>map_sides</code> is set for all
     maps. <code>standard</code> and <code>always_knife</code> behave similarly when <code>skip_veto</code> is <code>true</code>.<br/><br/><strong><code>Default: "standard"</code></strong></li>
 <li><em>Required</em><br/>The map pool to pick from, as an array of strings (<code>["de_dust2", "de_nuke"]</code> etc.), or if <code>skip_veto</code>
     is <code>true</code>, the order of maps played (limited by <code>num_maps</code>). <strong>This should always be odd-sized if using the in-game
-    veto system.</strong></li>
+    <a href="../veto">veto system</a>.</strong></li>
 <li><em>Optional</em><br/>Wrapper for the server's <code>mp_teamprediction_pct</code>. This determines the chances of <code>team1</code>
     winning.<br/><br/><strong><code>Default: 0</code></strong></li>
 <li><em>Optional</em><br/>Wrapper for the server's <code>mp_teamprediction_txt</code>.<br/><br/><strong><code>Default: ""</code></strong></li>
@@ -406,11 +418,13 @@ better support in various programming languages than Valve's KeyValue format (wh
 <li><em>Required</em><br/>The data for the first team.</li>
 <li><em>Required</em><br/>The data for the second team.</li>
 <li><em>Optional</em><br/>Various commands to execute on the server when loading the match configuration. This can be both
-    regular server-commands and any <a href="../configuration/"><code>Get5 configuration parameter</code></a>,
+    regular server-commands and any <a href="../configuration"><code>Get5 configuration parameter</code></a>,
     i.e. <code>{"hostname": "Match #3123 - Astralis vs. NaVi"}</code>.<br/><br/><strong><code>Default: undefined</code></strong></li>
-<li><em>Optional</em><br/>Similarly to <code>players</code>, this object maps <a href="../coaching/">coaches</a> using their Steam ID and
-    name, locking them to the coach slot unless removed using <a href="../commands/#get5_removeplayer"><code>get5_removeplayer</code></a>.
-    Setting a Steam ID as coach takes precedence over being set as a player.<br/><br/><strong><code>Default: undefined</code></strong></li>
+<li><em>Optional</em><br/>Similarly to <code>players</code>, this object maps <a href="../coaching">coaches</a> using their Steam ID and
+    name, locking them to the coach slot unless removed using <a href="../commands#get5_removeplayer"><code>get5_removeplayer</code></a>.
+    Setting a Steam ID as coach takes precedence over being set as a player.<br/><br/>Note that
+    if <a href="https://totalcsgo.com/command/svcoachingenabled"><code>sv_coaching_enabled</code></a> is disabled, anyone defined as a coach
+    will be considered a regular player for the team instead.<br/><br/><strong><code>Default: undefined</code></strong></li>
 <li><em>Required</em><br/>The players on the team.</li>
 <li><em>Optional</em><br/>Wrapper of the server's <code>mp_teammatchstat_txt</code> cvar, but can use <code>{MAPNUMBER}</code> and <code>{MAXMAPS}</code> as
     variables that get replaced with their integer values. In a BoX series, you probably don't want to set this since
@@ -434,6 +448,7 @@ better support in various programming languages than Valve's KeyValue format (wh
     <br/><br/><strong><code>Default: undefined</code></strong></li>
 <li><em>Optional</em><br/>If <code>false</code>, the entire map list will be played, regardless of score. If <code>true</code>, a series will be won
     when the series score for a team exceeds the number of maps divided by two.<br/><br/><strong><code>Default: true</code></strong></li>
+<li><em>Optional</em><br/>Determines if coaches must also <a href="../commands#ready"><code>!ready</code></a>.<br/><br/><strong><code>Default: false</code></strong></li>
 </ol>
 <div class="admonition info">
 <p class="admonition-title">Team assignment priority</p>
@@ -447,8 +462,8 @@ to determine where to put the player:</p>
 <li>Player for <code>team2</code></li>
 </ol>
 <p>If a player's Steam ID was not found in any of these locations, they will be
-<a href="../configuration/#get5_check_auths">removed from the server</a> unless you are
-in <a href="../getting_started/#scrims">scrim mode</a>.</p>
+<a href="../configuration#get5_check_auths">removed from the server</a> unless you are
+in <a href="../getting_started#scrims">scrim mode</a>.</p>
 </div>
 <h2 id="example">Examples</h2>
 <p>These examples are identical in the way they would work if loaded.</p>
@@ -466,54 +481,54 @@ in <a href="../getting_started/#scrims">scrim mode</a>.</p>
 <a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">  </span><span class="nt">"num_maps"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"></span>
 <a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">  </span><span class="nt">"players_per_team"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"></span>
 <a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">  </span><span class="nt">"coaches_per_team"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">  </span><span class="nt">"min_players_to_ready"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w">  </span><span class="nt">"min_spectators_to_ready"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="w">  </span><span class="nt">"skip_veto"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-11" id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="w">  </span><span class="nt">"veto_first"</span><span class="p">:</span><span class="w"> </span><span class="s2">"team1"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-12" id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="w">  </span><span class="nt">"side_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-13" id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="w">  </span><span class="nt">"spectators"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-1-14" id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Blast PRO 2021"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-15" id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="w">    </span><span class="nt">"players"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-1-16" id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="w">      </span><span class="nt">"76561197987511774"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Anders Blume"</span><span class="w"></span>
-<a href="#__codelineno-1-17" id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
-<a href="#__codelineno-1-18" id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="w">  </span><span class="p">},</span><span class="w"></span>
-<a href="#__codelineno-1-19" id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="w">  </span><span class="nt">"maplist"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<a href="#__codelineno-1-20" id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="w">    </span><span class="s2">"de_dust2"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-21" id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="w">    </span><span class="s2">"de_nuke"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-22" id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="w">    </span><span class="s2">"de_inferno"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-23" id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="w">    </span><span class="s2">"de_mirage"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-24" id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="w">    </span><span class="s2">"de_vertigo"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-25" id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="w">    </span><span class="s2">"de_ancient"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-26" id="__codelineno-1-26" name="__codelineno-1-26"></a><span class="w">    </span><span class="s2">"de_overpass"</span><span class="w"></span>
-<a href="#__codelineno-1-27" id="__codelineno-1-27" name="__codelineno-1-27"></a><span class="w">  </span><span class="p">],</span><span class="w"></span>
-<a href="#__codelineno-1-28" id="__codelineno-1-28" name="__codelineno-1-28"></a><span class="w">  </span><span class="nt">"map_sides"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<a href="#__codelineno-1-29" id="__codelineno-1-29" name="__codelineno-1-29"></a><span class="w">    </span><span class="s2">"team1_ct"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-30" id="__codelineno-1-30" name="__codelineno-1-30"></a><span class="w">    </span><span class="s2">"team2_ct"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-31" id="__codelineno-1-31" name="__codelineno-1-31"></a><span class="w">    </span><span class="s2">"knife"</span><span class="w"></span>
-<a href="#__codelineno-1-32" id="__codelineno-1-32" name="__codelineno-1-32"></a><span class="w">  </span><span class="p">],</span><span class="w"></span>
-<a href="#__codelineno-1-33" id="__codelineno-1-33" name="__codelineno-1-33"></a><span class="w">  </span><span class="nt">"team1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-1-34" id="__codelineno-1-34" name="__codelineno-1-34"></a><span class="w">    </span><span class="nt">"fromfile"</span><span class="p">:</span><span class="w"> </span><span class="s2">"addons/sourcemod/get5/team_navi.json"</span><span class="w"></span>
-<a href="#__codelineno-1-35" id="__codelineno-1-35" name="__codelineno-1-35"></a><span class="w">  </span><span class="p">},</span><span class="w"></span>
-<a href="#__codelineno-1-36" id="__codelineno-1-36" name="__codelineno-1-36"></a><span class="w">  </span><span class="nt">"team2"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-1-37" id="__codelineno-1-37" name="__codelineno-1-37"></a><span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Astralis"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-38" id="__codelineno-1-38" name="__codelineno-1-38"></a><span class="w">    </span><span class="nt">"tag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Astralis"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-39" id="__codelineno-1-39" name="__codelineno-1-39"></a><span class="w">    </span><span class="nt">"flag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DK"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-40" id="__codelineno-1-40" name="__codelineno-1-40"></a><span class="w">    </span><span class="nt">"logo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"astr"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-41" id="__codelineno-1-41" name="__codelineno-1-41"></a><span class="w">    </span><span class="nt">"players"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-1-42" id="__codelineno-1-42" name="__codelineno-1-42"></a><span class="w">      </span><span class="nt">"76561197990682262"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Xyp9x"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-43" id="__codelineno-1-43" name="__codelineno-1-43"></a><span class="w">      </span><span class="nt">"76561198010511021"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gla1ve"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-44" id="__codelineno-1-44" name="__codelineno-1-44"></a><span class="w">      </span><span class="nt">"76561197979669175"</span><span class="p">:</span><span class="w"> </span><span class="s2">"K0nfig"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-45" id="__codelineno-1-45" name="__codelineno-1-45"></a><span class="w">      </span><span class="nt">"76561198028458803"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BlameF"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-46" id="__codelineno-1-46" name="__codelineno-1-46"></a><span class="w">      </span><span class="nt">"76561198024248129"</span><span class="p">:</span><span class="w"> </span><span class="s2">"farlig"</span><span class="w"></span>
-<a href="#__codelineno-1-47" id="__codelineno-1-47" name="__codelineno-1-47"></a><span class="w">    </span><span class="p">},</span><span class="w"></span>
-<a href="#__codelineno-1-48" id="__codelineno-1-48" name="__codelineno-1-48"></a><span class="w">    </span><span class="nt">"coaches"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-1-49" id="__codelineno-1-49" name="__codelineno-1-49"></a><span class="w">      </span><span class="nt">"76561197987144812"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Trace"</span><span class="w"></span>
-<a href="#__codelineno-1-50" id="__codelineno-1-50" name="__codelineno-1-50"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
-<a href="#__codelineno-1-51" id="__codelineno-1-51" name="__codelineno-1-51"></a><span class="w">  </span><span class="p">},</span><span class="w"></span>
-<a href="#__codelineno-1-52" id="__codelineno-1-52" name="__codelineno-1-52"></a><span class="w">  </span><span class="nt">"cvars"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-1-53" id="__codelineno-1-53" name="__codelineno-1-53"></a><span class="w">    </span><span class="nt">"hostname"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Get5 Match #3123"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-54" id="__codelineno-1-54" name="__codelineno-1-54"></a><span class="w">    </span><span class="nt">"mp_friendly_fire"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-1-55" id="__codelineno-1-55" name="__codelineno-1-55"></a><span class="w">    </span><span class="nt">"get5_end_match_on_empty_server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">  </span><span class="nt">"coaches_must_ready"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w">  </span><span class="nt">"min_players_to_ready"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="w">  </span><span class="nt">"min_spectators_to_ready"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-11" id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="w">  </span><span class="nt">"skip_veto"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-12" id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="w">  </span><span class="nt">"veto_first"</span><span class="p">:</span><span class="w"> </span><span class="s2">"team1"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-13" id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="w">  </span><span class="nt">"side_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-14" id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="w">  </span><span class="nt">"spectators"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-1-15" id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Blast PRO 2021"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-16" id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="w">    </span><span class="nt">"players"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-1-17" id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="w">      </span><span class="nt">"76561197987511774"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Anders Blume"</span><span class="w"></span>
+<a href="#__codelineno-1-18" id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
+<a href="#__codelineno-1-19" id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="w">  </span><span class="p">},</span><span class="w"></span>
+<a href="#__codelineno-1-20" id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="w">  </span><span class="nt">"maplist"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<a href="#__codelineno-1-21" id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="w">    </span><span class="s2">"de_dust2"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-22" id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="w">    </span><span class="s2">"de_nuke"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-23" id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="w">    </span><span class="s2">"de_inferno"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-24" id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="w">    </span><span class="s2">"de_mirage"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-25" id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="w">    </span><span class="s2">"de_vertigo"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-26" id="__codelineno-1-26" name="__codelineno-1-26"></a><span class="w">    </span><span class="s2">"de_ancient"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-27" id="__codelineno-1-27" name="__codelineno-1-27"></a><span class="w">    </span><span class="s2">"de_overpass"</span><span class="w"></span>
+<a href="#__codelineno-1-28" id="__codelineno-1-28" name="__codelineno-1-28"></a><span class="w">  </span><span class="p">],</span><span class="w"></span>
+<a href="#__codelineno-1-29" id="__codelineno-1-29" name="__codelineno-1-29"></a><span class="w">  </span><span class="nt">"map_sides"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<a href="#__codelineno-1-30" id="__codelineno-1-30" name="__codelineno-1-30"></a><span class="w">    </span><span class="s2">"team1_ct"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-31" id="__codelineno-1-31" name="__codelineno-1-31"></a><span class="w">    </span><span class="s2">"team2_ct"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-32" id="__codelineno-1-32" name="__codelineno-1-32"></a><span class="w">    </span><span class="s2">"knife"</span><span class="w"></span>
+<a href="#__codelineno-1-33" id="__codelineno-1-33" name="__codelineno-1-33"></a><span class="w">  </span><span class="p">],</span><span class="w"></span>
+<a href="#__codelineno-1-34" id="__codelineno-1-34" name="__codelineno-1-34"></a><span class="w">  </span><span class="nt">"team1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-1-35" id="__codelineno-1-35" name="__codelineno-1-35"></a><span class="w">    </span><span class="nt">"fromfile"</span><span class="p">:</span><span class="w"> </span><span class="s2">"addons/sourcemod/get5/team_navi.json"</span><span class="w"></span>
+<a href="#__codelineno-1-36" id="__codelineno-1-36" name="__codelineno-1-36"></a><span class="w">  </span><span class="p">},</span><span class="w"></span>
+<a href="#__codelineno-1-37" id="__codelineno-1-37" name="__codelineno-1-37"></a><span class="w">  </span><span class="nt">"team2"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-1-38" id="__codelineno-1-38" name="__codelineno-1-38"></a><span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Astralis"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-39" id="__codelineno-1-39" name="__codelineno-1-39"></a><span class="w">    </span><span class="nt">"tag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Astralis"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-40" id="__codelineno-1-40" name="__codelineno-1-40"></a><span class="w">    </span><span class="nt">"flag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DK"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-41" id="__codelineno-1-41" name="__codelineno-1-41"></a><span class="w">    </span><span class="nt">"logo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"astr"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-42" id="__codelineno-1-42" name="__codelineno-1-42"></a><span class="w">    </span><span class="nt">"players"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-1-43" id="__codelineno-1-43" name="__codelineno-1-43"></a><span class="w">      </span><span class="nt">"76561197990682262"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Xyp9x"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-44" id="__codelineno-1-44" name="__codelineno-1-44"></a><span class="w">      </span><span class="nt">"76561198010511021"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gla1ve"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-45" id="__codelineno-1-45" name="__codelineno-1-45"></a><span class="w">      </span><span class="nt">"76561197979669175"</span><span class="p">:</span><span class="w"> </span><span class="s2">"K0nfig"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-46" id="__codelineno-1-46" name="__codelineno-1-46"></a><span class="w">      </span><span class="nt">"76561198028458803"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BlameF"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-47" id="__codelineno-1-47" name="__codelineno-1-47"></a><span class="w">      </span><span class="nt">"76561198024248129"</span><span class="p">:</span><span class="w"> </span><span class="s2">"farlig"</span><span class="w"></span>
+<a href="#__codelineno-1-48" id="__codelineno-1-48" name="__codelineno-1-48"></a><span class="w">    </span><span class="p">},</span><span class="w"></span>
+<a href="#__codelineno-1-49" id="__codelineno-1-49" name="__codelineno-1-49"></a><span class="w">    </span><span class="nt">"coaches"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-1-50" id="__codelineno-1-50" name="__codelineno-1-50"></a><span class="w">      </span><span class="nt">"76561197987144812"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Trace"</span><span class="w"></span>
+<a href="#__codelineno-1-51" id="__codelineno-1-51" name="__codelineno-1-51"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
+<a href="#__codelineno-1-52" id="__codelineno-1-52" name="__codelineno-1-52"></a><span class="w">  </span><span class="p">},</span><span class="w"></span>
+<a href="#__codelineno-1-53" id="__codelineno-1-53" name="__codelineno-1-53"></a><span class="w">  </span><span class="nt">"cvars"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-1-54" id="__codelineno-1-54" name="__codelineno-1-54"></a><span class="w">    </span><span class="nt">"hostname"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Get5 Match #3123"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-1-55" id="__codelineno-1-55" name="__codelineno-1-55"></a><span class="w">    </span><span class="nt">"mp_friendly_fire"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w"></span>
 <a href="#__codelineno-1-56" id="__codelineno-1-56" name="__codelineno-1-56"></a><span class="w">    </span><span class="nt">"get5_stop_command_enabled"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w"></span>
 <a href="#__codelineno-1-57" id="__codelineno-1-57" name="__codelineno-1-57"></a><span class="w">    </span><span class="nt">"sm_practicemode_can_be_started"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="w"></span>
 <a href="#__codelineno-1-58" id="__codelineno-1-58" name="__codelineno-1-58"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
@@ -545,42 +560,42 @@ in <a href="../getting_started/#scrims">scrim mode</a>.</p>
 <a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">    </span><span class="s2">"num_maps"</span><span class="o">:</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"></span>
 <a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="w">    </span><span class="s2">"players_per_team"</span><span class="o">:</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span><span class="w"></span>
 <a href="#__codelineno-3-7" id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="w">    </span><span class="s2">"coaches_per_team"</span><span class="o">:</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-8" id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="w">    </span><span class="s2">"min_players_to_ready"</span><span class="o">:</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-9" id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="w">    </span><span class="s2">"min_spectators_to_ready"</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-10" id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="w">    </span><span class="s2">"skip_veto"</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-11" id="__codelineno-3-11" name="__codelineno-3-11"></a><span class="w">    </span><span class="s2">"veto_first"</span><span class="o">:</span><span class="w"> </span><span class="s2">"team1"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-12" id="__codelineno-3-12" name="__codelineno-3-12"></a><span class="w">    </span><span class="s2">"side_type"</span><span class="o">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-13" id="__codelineno-3-13" name="__codelineno-3-13"></a><span class="w">    </span><span class="s2">"spectators"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-3-14" id="__codelineno-3-14" name="__codelineno-3-14"></a><span class="w">        </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Blast PRO 2021"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-15" id="__codelineno-3-15" name="__codelineno-3-15"></a><span class="w">        </span><span class="s2">"players"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-3-16" id="__codelineno-3-16" name="__codelineno-3-16"></a><span class="w">            </span><span class="s2">"76561197987511774"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Anders Blume"</span><span class="w"></span>
-<a href="#__codelineno-3-17" id="__codelineno-3-17" name="__codelineno-3-17"></a><span class="w">        </span><span class="p">}</span><span class="w"></span>
-<a href="#__codelineno-3-18" id="__codelineno-3-18" name="__codelineno-3-18"></a><span class="w">    </span><span class="p">},</span><span class="w"></span>
-<a href="#__codelineno-3-19" id="__codelineno-3-19" name="__codelineno-3-19"></a><span class="w">    </span><span class="s2">"maplist"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"de_dust2"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_nuke"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_inferno"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_mirage"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_vertigo"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_ancient"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_overpass"</span><span class="p">],</span><span class="w"></span>
-<a href="#__codelineno-3-20" id="__codelineno-3-20" name="__codelineno-3-20"></a><span class="w">    </span><span class="s2">"map_sides"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"team1_ct"</span><span class="p">,</span><span class="w"> </span><span class="s2">"team2_ct"</span><span class="p">,</span><span class="w"> </span><span class="s2">"knife"</span><span class="p">],</span><span class="w"> </span><span class="c1">// Example; would only work with "skip_veto": true</span><span class="w"></span>
-<a href="#__codelineno-3-21" id="__codelineno-3-21" name="__codelineno-3-21"></a><span class="w">    </span><span class="s2">"team1"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-3-22" id="__codelineno-3-22" name="__codelineno-3-22"></a><span class="w">        </span><span class="s2">"fromfile"</span><span class="o">:</span><span class="w"> </span><span class="s2">"addons/sourcemod/get5/team_navi.json"</span><span class="w"></span>
-<a href="#__codelineno-3-23" id="__codelineno-3-23" name="__codelineno-3-23"></a><span class="w">    </span><span class="p">},</span><span class="w"></span>
-<a href="#__codelineno-3-24" id="__codelineno-3-24" name="__codelineno-3-24"></a><span class="w">    </span><span class="s2">"team2"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-3-25" id="__codelineno-3-25" name="__codelineno-3-25"></a><span class="w">        </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Astralis"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-26" id="__codelineno-3-26" name="__codelineno-3-26"></a><span class="w">        </span><span class="s2">"tag"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Astralis"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-27" id="__codelineno-3-27" name="__codelineno-3-27"></a><span class="w">        </span><span class="s2">"flag"</span><span class="o">:</span><span class="w"> </span><span class="s2">"DK"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-28" id="__codelineno-3-28" name="__codelineno-3-28"></a><span class="w">        </span><span class="s2">"logo"</span><span class="o">:</span><span class="w"> </span><span class="s2">"astr"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-29" id="__codelineno-3-29" name="__codelineno-3-29"></a><span class="w">        </span><span class="s2">"players"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-3-30" id="__codelineno-3-30" name="__codelineno-3-30"></a><span class="w">            </span><span class="s2">"76561197990682262"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Xyp9x"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-31" id="__codelineno-3-31" name="__codelineno-3-31"></a><span class="w">            </span><span class="s2">"76561198010511021"</span><span class="o">:</span><span class="w"> </span><span class="s2">"gla1ve"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-32" id="__codelineno-3-32" name="__codelineno-3-32"></a><span class="w">            </span><span class="s2">"76561197979669175"</span><span class="o">:</span><span class="w"> </span><span class="s2">"K0nfig"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-33" id="__codelineno-3-33" name="__codelineno-3-33"></a><span class="w">            </span><span class="s2">"76561198028458803"</span><span class="o">:</span><span class="w"> </span><span class="s2">"BlameF"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-34" id="__codelineno-3-34" name="__codelineno-3-34"></a><span class="w">            </span><span class="s2">"76561198024248129"</span><span class="o">:</span><span class="w"> </span><span class="s2">"farlig"</span><span class="w"></span>
-<a href="#__codelineno-3-35" id="__codelineno-3-35" name="__codelineno-3-35"></a><span class="w">        </span><span class="p">},</span><span class="w"></span>
-<a href="#__codelineno-3-36" id="__codelineno-3-36" name="__codelineno-3-36"></a><span class="w">        </span><span class="s2">"coaches"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-3-37" id="__codelineno-3-37" name="__codelineno-3-37"></a><span class="w">            </span><span class="s2">"76561197987144812"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Trace"</span><span class="w"></span>
-<a href="#__codelineno-3-38" id="__codelineno-3-38" name="__codelineno-3-38"></a><span class="w">        </span><span class="p">}</span><span class="w"></span>
-<a href="#__codelineno-3-39" id="__codelineno-3-39" name="__codelineno-3-39"></a><span class="w">    </span><span class="p">},</span><span class="w"></span>
-<a href="#__codelineno-3-40" id="__codelineno-3-40" name="__codelineno-3-40"></a><span class="w">    </span><span class="s2">"cvars"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a href="#__codelineno-3-41" id="__codelineno-3-41" name="__codelineno-3-41"></a><span class="w">        </span><span class="s2">"hostname"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Get5 Match #3123"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-42" id="__codelineno-3-42" name="__codelineno-3-42"></a><span class="w">        </span><span class="s2">"mp_friendly_fire"</span><span class="o">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w"></span>
-<a href="#__codelineno-3-43" id="__codelineno-3-43" name="__codelineno-3-43"></a><span class="w">        </span><span class="s2">"get5_end_match_on_empty_server"</span><span class="o">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-8" id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="w">    </span><span class="s2">"coaches_must_ready"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-9" id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="w">    </span><span class="s2">"min_players_to_ready"</span><span class="o">:</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-10" id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="w">    </span><span class="s2">"min_spectators_to_ready"</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-11" id="__codelineno-3-11" name="__codelineno-3-11"></a><span class="w">    </span><span class="s2">"skip_veto"</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-12" id="__codelineno-3-12" name="__codelineno-3-12"></a><span class="w">    </span><span class="s2">"veto_first"</span><span class="o">:</span><span class="w"> </span><span class="s2">"team1"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-13" id="__codelineno-3-13" name="__codelineno-3-13"></a><span class="w">    </span><span class="s2">"side_type"</span><span class="o">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-14" id="__codelineno-3-14" name="__codelineno-3-14"></a><span class="w">    </span><span class="s2">"spectators"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-3-15" id="__codelineno-3-15" name="__codelineno-3-15"></a><span class="w">        </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Blast PRO 2021"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-16" id="__codelineno-3-16" name="__codelineno-3-16"></a><span class="w">        </span><span class="s2">"players"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-3-17" id="__codelineno-3-17" name="__codelineno-3-17"></a><span class="w">            </span><span class="s2">"76561197987511774"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Anders Blume"</span><span class="w"></span>
+<a href="#__codelineno-3-18" id="__codelineno-3-18" name="__codelineno-3-18"></a><span class="w">        </span><span class="p">}</span><span class="w"></span>
+<a href="#__codelineno-3-19" id="__codelineno-3-19" name="__codelineno-3-19"></a><span class="w">    </span><span class="p">},</span><span class="w"></span>
+<a href="#__codelineno-3-20" id="__codelineno-3-20" name="__codelineno-3-20"></a><span class="w">    </span><span class="s2">"maplist"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"de_dust2"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_nuke"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_inferno"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_mirage"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_vertigo"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_ancient"</span><span class="p">,</span><span class="w"> </span><span class="s2">"de_overpass"</span><span class="p">],</span><span class="w"></span>
+<a href="#__codelineno-3-21" id="__codelineno-3-21" name="__codelineno-3-21"></a><span class="w">    </span><span class="s2">"map_sides"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"team1_ct"</span><span class="p">,</span><span class="w"> </span><span class="s2">"team2_ct"</span><span class="p">,</span><span class="w"> </span><span class="s2">"knife"</span><span class="p">],</span><span class="w"> </span><span class="c1">// Example; would only work with "skip_veto": true</span><span class="w"></span>
+<a href="#__codelineno-3-22" id="__codelineno-3-22" name="__codelineno-3-22"></a><span class="w">    </span><span class="s2">"team1"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-3-23" id="__codelineno-3-23" name="__codelineno-3-23"></a><span class="w">        </span><span class="s2">"fromfile"</span><span class="o">:</span><span class="w"> </span><span class="s2">"addons/sourcemod/get5/team_navi.json"</span><span class="w"></span>
+<a href="#__codelineno-3-24" id="__codelineno-3-24" name="__codelineno-3-24"></a><span class="w">    </span><span class="p">},</span><span class="w"></span>
+<a href="#__codelineno-3-25" id="__codelineno-3-25" name="__codelineno-3-25"></a><span class="w">    </span><span class="s2">"team2"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-3-26" id="__codelineno-3-26" name="__codelineno-3-26"></a><span class="w">        </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Astralis"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-27" id="__codelineno-3-27" name="__codelineno-3-27"></a><span class="w">        </span><span class="s2">"tag"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Astralis"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-28" id="__codelineno-3-28" name="__codelineno-3-28"></a><span class="w">        </span><span class="s2">"flag"</span><span class="o">:</span><span class="w"> </span><span class="s2">"DK"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-29" id="__codelineno-3-29" name="__codelineno-3-29"></a><span class="w">        </span><span class="s2">"logo"</span><span class="o">:</span><span class="w"> </span><span class="s2">"astr"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-30" id="__codelineno-3-30" name="__codelineno-3-30"></a><span class="w">        </span><span class="s2">"players"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-3-31" id="__codelineno-3-31" name="__codelineno-3-31"></a><span class="w">            </span><span class="s2">"76561197990682262"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Xyp9x"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-32" id="__codelineno-3-32" name="__codelineno-3-32"></a><span class="w">            </span><span class="s2">"76561198010511021"</span><span class="o">:</span><span class="w"> </span><span class="s2">"gla1ve"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-33" id="__codelineno-3-33" name="__codelineno-3-33"></a><span class="w">            </span><span class="s2">"76561197979669175"</span><span class="o">:</span><span class="w"> </span><span class="s2">"K0nfig"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-34" id="__codelineno-3-34" name="__codelineno-3-34"></a><span class="w">            </span><span class="s2">"76561198028458803"</span><span class="o">:</span><span class="w"> </span><span class="s2">"BlameF"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-35" id="__codelineno-3-35" name="__codelineno-3-35"></a><span class="w">            </span><span class="s2">"76561198024248129"</span><span class="o">:</span><span class="w"> </span><span class="s2">"farlig"</span><span class="w"></span>
+<a href="#__codelineno-3-36" id="__codelineno-3-36" name="__codelineno-3-36"></a><span class="w">        </span><span class="p">},</span><span class="w"></span>
+<a href="#__codelineno-3-37" id="__codelineno-3-37" name="__codelineno-3-37"></a><span class="w">        </span><span class="s2">"coaches"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-3-38" id="__codelineno-3-38" name="__codelineno-3-38"></a><span class="w">            </span><span class="s2">"76561197987144812"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Trace"</span><span class="w"></span>
+<a href="#__codelineno-3-39" id="__codelineno-3-39" name="__codelineno-3-39"></a><span class="w">        </span><span class="p">}</span><span class="w"></span>
+<a href="#__codelineno-3-40" id="__codelineno-3-40" name="__codelineno-3-40"></a><span class="w">    </span><span class="p">},</span><span class="w"></span>
+<a href="#__codelineno-3-41" id="__codelineno-3-41" name="__codelineno-3-41"></a><span class="w">    </span><span class="s2">"cvars"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-3-42" id="__codelineno-3-42" name="__codelineno-3-42"></a><span class="w">        </span><span class="s2">"hostname"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Get5 Match #3123"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-3-43" id="__codelineno-3-43" name="__codelineno-3-43"></a><span class="w">        </span><span class="s2">"mp_friendly_fire"</span><span class="o">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w"></span>
 <a href="#__codelineno-3-44" id="__codelineno-3-44" name="__codelineno-3-44"></a><span class="w">        </span><span class="s2">"get5_stop_command_enabled"</span><span class="o">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w"></span>
 <a href="#__codelineno-3-45" id="__codelineno-3-45" name="__codelineno-3-45"></a><span class="w">        </span><span class="s2">"sm_practicemode_can_be_started"</span><span class="o">:</span><span class="w"> </span><span class="s2">"0"</span><span class="w"></span>
 <a href="#__codelineno-3-46" id="__codelineno-3-46" name="__codelineno-3-46"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
@@ -605,63 +620,63 @@ empty strings as values in dictionaries (<code>maplist</code> and <code>map_side
 <a href="#__codelineno-4-6" id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w">    </span><span class="na">"num_maps"                  "3"</span><span class="w"></span>
 <a href="#__codelineno-4-7" id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="w">    </span><span class="na">"players_per_team"          "5"</span><span class="w"></span>
 <a href="#__codelineno-4-8" id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w">    </span><span class="na">"coaches_per_team"          "2"</span><span class="w"></span>
-<a href="#__codelineno-4-9" id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w">    </span><span class="na">"min_players_to_ready"      "2"</span><span class="w"></span>
-<a href="#__codelineno-4-10" id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="w">    </span><span class="na">"min_spectators_to_ready"   "0"</span><span class="w"></span>
-<a href="#__codelineno-4-11" id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="w">    </span><span class="na">"skip_veto"                 "0"</span><span class="w"></span>
-<a href="#__codelineno-4-12" id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="w">    </span><span class="na">"veto_first"                "team1"</span><span class="w"></span>
-<a href="#__codelineno-4-13" id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="w">    </span><span class="na">"side_type"                 "standard"</span><span class="w"></span>
-<a href="#__codelineno-4-14" id="__codelineno-4-14" name="__codelineno-4-14"></a><span class="w">    </span><span class="na">"spectators"    </span><span class="w"></span>
-<a href="#__codelineno-4-15" id="__codelineno-4-15" name="__codelineno-4-15"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
-<a href="#__codelineno-4-16" id="__codelineno-4-16" name="__codelineno-4-16"></a><span class="w">        </span><span class="na">"name" "Blast PRO 2021"</span><span class="w"></span>
-<a href="#__codelineno-4-17" id="__codelineno-4-17" name="__codelineno-4-17"></a><span class="w">        </span><span class="na">"players"</span><span class="w"></span>
-<a href="#__codelineno-4-18" id="__codelineno-4-18" name="__codelineno-4-18"></a><span class="w">        </span><span class="na">{</span><span class="w"></span>
-<a href="#__codelineno-4-19" id="__codelineno-4-19" name="__codelineno-4-19"></a><span class="w">            </span><span class="na">"76561197987511774" "Anders Blume"</span><span class="w"></span>
-<a href="#__codelineno-4-20" id="__codelineno-4-20" name="__codelineno-4-20"></a><span class="w">        </span><span class="na">}</span><span class="w"></span>
-<a href="#__codelineno-4-21" id="__codelineno-4-21" name="__codelineno-4-21"></a><span class="w">    </span><span class="na">}</span><span class="w"></span>
-<a href="#__codelineno-4-22" id="__codelineno-4-22" name="__codelineno-4-22"></a><span class="w">    </span><span class="na">"maplist"</span><span class="w"></span>
-<a href="#__codelineno-4-23" id="__codelineno-4-23" name="__codelineno-4-23"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
-<a href="#__codelineno-4-24" id="__codelineno-4-24" name="__codelineno-4-24"></a><span class="w">        </span><span class="na">"de_dust2"      ""</span><span class="w"></span>
-<a href="#__codelineno-4-25" id="__codelineno-4-25" name="__codelineno-4-25"></a><span class="w">        </span><span class="na">"de_nuke"       ""</span><span class="w"></span>
-<a href="#__codelineno-4-26" id="__codelineno-4-26" name="__codelineno-4-26"></a><span class="w">        </span><span class="na">"de_inferno"    ""</span><span class="w"></span>
-<a href="#__codelineno-4-27" id="__codelineno-4-27" name="__codelineno-4-27"></a><span class="w">        </span><span class="na">"de_mirage"     ""</span><span class="w"></span>
-<a href="#__codelineno-4-28" id="__codelineno-4-28" name="__codelineno-4-28"></a><span class="w">        </span><span class="na">"de_vertigo"    ""</span><span class="w"></span>
-<a href="#__codelineno-4-29" id="__codelineno-4-29" name="__codelineno-4-29"></a><span class="w">        </span><span class="na">"de_ancient"    ""</span><span class="w"></span>
-<a href="#__codelineno-4-30" id="__codelineno-4-30" name="__codelineno-4-30"></a><span class="w">        </span><span class="na">"de_overpass"   ""</span><span class="w"></span>
-<a href="#__codelineno-4-31" id="__codelineno-4-31" name="__codelineno-4-31"></a><span class="w">    </span><span class="na">}</span><span class="w"></span>
-<a href="#__codelineno-4-32" id="__codelineno-4-32" name="__codelineno-4-32"></a><span class="w">    </span><span class="na">"map_sides"  // Example; would only work with "skip_veto" "1"</span><span class="w"></span>
-<a href="#__codelineno-4-33" id="__codelineno-4-33" name="__codelineno-4-33"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
-<a href="#__codelineno-4-34" id="__codelineno-4-34" name="__codelineno-4-34"></a><span class="w">        </span><span class="na">"team1_ct" ""</span><span class="w"></span>
-<a href="#__codelineno-4-35" id="__codelineno-4-35" name="__codelineno-4-35"></a><span class="w">        </span><span class="na">"team2_ct" ""</span><span class="w"></span>
-<a href="#__codelineno-4-36" id="__codelineno-4-36" name="__codelineno-4-36"></a><span class="w">        </span><span class="na">"knife"    ""</span><span class="w"></span>
-<a href="#__codelineno-4-37" id="__codelineno-4-37" name="__codelineno-4-37"></a><span class="w">    </span><span class="na">}</span><span class="w"></span>
-<a href="#__codelineno-4-38" id="__codelineno-4-38" name="__codelineno-4-38"></a><span class="w">    </span><span class="na">"team1"</span><span class="w"></span>
-<a href="#__codelineno-4-39" id="__codelineno-4-39" name="__codelineno-4-39"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
-<a href="#__codelineno-4-40" id="__codelineno-4-40" name="__codelineno-4-40"></a><span class="w">        </span><span class="na">"fromfile"  "addons/sourcemod/get5/team_navi.cfg"</span><span class="w"></span>
-<a href="#__codelineno-4-41" id="__codelineno-4-41" name="__codelineno-4-41"></a><span class="w">    </span><span class="na">}</span><span class="w"></span>
-<a href="#__codelineno-4-42" id="__codelineno-4-42" name="__codelineno-4-42"></a><span class="w">    </span><span class="na">"team2"</span><span class="w"></span>
-<a href="#__codelineno-4-43" id="__codelineno-4-43" name="__codelineno-4-43"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
-<a href="#__codelineno-4-44" id="__codelineno-4-44" name="__codelineno-4-44"></a><span class="w">        </span><span class="na">"name"      "Astralis"</span><span class="w"></span>
-<a href="#__codelineno-4-45" id="__codelineno-4-45" name="__codelineno-4-45"></a><span class="w">        </span><span class="na">"tag"       "Astralis"</span><span class="w"></span>
-<a href="#__codelineno-4-46" id="__codelineno-4-46" name="__codelineno-4-46"></a><span class="w">        </span><span class="na">"flag"      "DK"</span><span class="w"></span>
-<a href="#__codelineno-4-47" id="__codelineno-4-47" name="__codelineno-4-47"></a><span class="w">        </span><span class="na">"logo"      "astr"</span><span class="w"></span>
-<a href="#__codelineno-4-48" id="__codelineno-4-48" name="__codelineno-4-48"></a><span class="w">        </span><span class="na">"players"</span><span class="w"></span>
-<a href="#__codelineno-4-49" id="__codelineno-4-49" name="__codelineno-4-49"></a><span class="w">        </span><span class="na">{</span><span class="w"></span>
-<a href="#__codelineno-4-50" id="__codelineno-4-50" name="__codelineno-4-50"></a><span class="w">            </span><span class="na">"76561197990682262" "Xyp9x"</span><span class="w"></span>
-<a href="#__codelineno-4-51" id="__codelineno-4-51" name="__codelineno-4-51"></a><span class="w">            </span><span class="na">"76561198010511021" "gla1ve"</span><span class="w"></span>
-<a href="#__codelineno-4-52" id="__codelineno-4-52" name="__codelineno-4-52"></a><span class="w">            </span><span class="na">"76561197979669175" "K0nfig"</span><span class="w"></span>
-<a href="#__codelineno-4-53" id="__codelineno-4-53" name="__codelineno-4-53"></a><span class="w">            </span><span class="na">"76561198028458803" "BlameF"</span><span class="w"></span>
-<a href="#__codelineno-4-54" id="__codelineno-4-54" name="__codelineno-4-54"></a><span class="w">            </span><span class="na">"76561198024248129" "farlig"</span><span class="w"></span>
-<a href="#__codelineno-4-55" id="__codelineno-4-55" name="__codelineno-4-55"></a><span class="w">        </span><span class="na">}</span><span class="w"></span>
-<a href="#__codelineno-4-56" id="__codelineno-4-56" name="__codelineno-4-56"></a><span class="w">        </span><span class="na">"coaches"</span><span class="w"></span>
-<a href="#__codelineno-4-57" id="__codelineno-4-57" name="__codelineno-4-57"></a><span class="w">        </span><span class="na">{</span><span class="w"></span>
-<a href="#__codelineno-4-58" id="__codelineno-4-58" name="__codelineno-4-58"></a><span class="w">            </span><span class="na">"76561197987144812" "Trace"</span><span class="w"></span>
-<a href="#__codelineno-4-59" id="__codelineno-4-59" name="__codelineno-4-59"></a><span class="w">        </span><span class="na">}</span><span class="w"></span>
-<a href="#__codelineno-4-60" id="__codelineno-4-60" name="__codelineno-4-60"></a><span class="w">    </span><span class="na">}</span><span class="w"></span>
-<a href="#__codelineno-4-61" id="__codelineno-4-61" name="__codelineno-4-61"></a><span class="w">    </span><span class="na">"cvars"</span><span class="w"></span>
-<a href="#__codelineno-4-62" id="__codelineno-4-62" name="__codelineno-4-62"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
-<a href="#__codelineno-4-63" id="__codelineno-4-63" name="__codelineno-4-63"></a><span class="w">        </span><span class="na">"hostname"                       "Get5 Match #3123"</span><span class="w"></span>
-<a href="#__codelineno-4-64" id="__codelineno-4-64" name="__codelineno-4-64"></a><span class="w">        </span><span class="na">"mp_friendly_fire"               "0"</span><span class="w"></span>
-<a href="#__codelineno-4-65" id="__codelineno-4-65" name="__codelineno-4-65"></a><span class="w">        </span><span class="na">"get5_end_match_on_empty_server" "0"</span><span class="w"></span>
+<a href="#__codelineno-4-9" id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w">    </span><span class="na">"coaches_must_ready"        "1"</span><span class="w"></span>
+<a href="#__codelineno-4-10" id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="w">    </span><span class="na">"min_players_to_ready"      "2"</span><span class="w"></span>
+<a href="#__codelineno-4-11" id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="w">    </span><span class="na">"min_spectators_to_ready"   "0"</span><span class="w"></span>
+<a href="#__codelineno-4-12" id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="w">    </span><span class="na">"skip_veto"                 "0"</span><span class="w"></span>
+<a href="#__codelineno-4-13" id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="w">    </span><span class="na">"veto_first"                "team1"</span><span class="w"></span>
+<a href="#__codelineno-4-14" id="__codelineno-4-14" name="__codelineno-4-14"></a><span class="w">    </span><span class="na">"side_type"                 "standard"</span><span class="w"></span>
+<a href="#__codelineno-4-15" id="__codelineno-4-15" name="__codelineno-4-15"></a><span class="w">    </span><span class="na">"spectators"    </span><span class="w"></span>
+<a href="#__codelineno-4-16" id="__codelineno-4-16" name="__codelineno-4-16"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
+<a href="#__codelineno-4-17" id="__codelineno-4-17" name="__codelineno-4-17"></a><span class="w">        </span><span class="na">"name" "Blast PRO 2021"</span><span class="w"></span>
+<a href="#__codelineno-4-18" id="__codelineno-4-18" name="__codelineno-4-18"></a><span class="w">        </span><span class="na">"players"</span><span class="w"></span>
+<a href="#__codelineno-4-19" id="__codelineno-4-19" name="__codelineno-4-19"></a><span class="w">        </span><span class="na">{</span><span class="w"></span>
+<a href="#__codelineno-4-20" id="__codelineno-4-20" name="__codelineno-4-20"></a><span class="w">            </span><span class="na">"76561197987511774" "Anders Blume"</span><span class="w"></span>
+<a href="#__codelineno-4-21" id="__codelineno-4-21" name="__codelineno-4-21"></a><span class="w">        </span><span class="na">}</span><span class="w"></span>
+<a href="#__codelineno-4-22" id="__codelineno-4-22" name="__codelineno-4-22"></a><span class="w">    </span><span class="na">}</span><span class="w"></span>
+<a href="#__codelineno-4-23" id="__codelineno-4-23" name="__codelineno-4-23"></a><span class="w">    </span><span class="na">"maplist"</span><span class="w"></span>
+<a href="#__codelineno-4-24" id="__codelineno-4-24" name="__codelineno-4-24"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
+<a href="#__codelineno-4-25" id="__codelineno-4-25" name="__codelineno-4-25"></a><span class="w">        </span><span class="na">"de_dust2"      ""</span><span class="w"></span>
+<a href="#__codelineno-4-26" id="__codelineno-4-26" name="__codelineno-4-26"></a><span class="w">        </span><span class="na">"de_nuke"       ""</span><span class="w"></span>
+<a href="#__codelineno-4-27" id="__codelineno-4-27" name="__codelineno-4-27"></a><span class="w">        </span><span class="na">"de_inferno"    ""</span><span class="w"></span>
+<a href="#__codelineno-4-28" id="__codelineno-4-28" name="__codelineno-4-28"></a><span class="w">        </span><span class="na">"de_mirage"     ""</span><span class="w"></span>
+<a href="#__codelineno-4-29" id="__codelineno-4-29" name="__codelineno-4-29"></a><span class="w">        </span><span class="na">"de_vertigo"    ""</span><span class="w"></span>
+<a href="#__codelineno-4-30" id="__codelineno-4-30" name="__codelineno-4-30"></a><span class="w">        </span><span class="na">"de_ancient"    ""</span><span class="w"></span>
+<a href="#__codelineno-4-31" id="__codelineno-4-31" name="__codelineno-4-31"></a><span class="w">        </span><span class="na">"de_overpass"   ""</span><span class="w"></span>
+<a href="#__codelineno-4-32" id="__codelineno-4-32" name="__codelineno-4-32"></a><span class="w">    </span><span class="na">}</span><span class="w"></span>
+<a href="#__codelineno-4-33" id="__codelineno-4-33" name="__codelineno-4-33"></a><span class="w">    </span><span class="na">"map_sides"  // Example; would only work with "skip_veto" "1"</span><span class="w"></span>
+<a href="#__codelineno-4-34" id="__codelineno-4-34" name="__codelineno-4-34"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
+<a href="#__codelineno-4-35" id="__codelineno-4-35" name="__codelineno-4-35"></a><span class="w">        </span><span class="na">"team1_ct" ""</span><span class="w"></span>
+<a href="#__codelineno-4-36" id="__codelineno-4-36" name="__codelineno-4-36"></a><span class="w">        </span><span class="na">"team2_ct" ""</span><span class="w"></span>
+<a href="#__codelineno-4-37" id="__codelineno-4-37" name="__codelineno-4-37"></a><span class="w">        </span><span class="na">"knife"    ""</span><span class="w"></span>
+<a href="#__codelineno-4-38" id="__codelineno-4-38" name="__codelineno-4-38"></a><span class="w">    </span><span class="na">}</span><span class="w"></span>
+<a href="#__codelineno-4-39" id="__codelineno-4-39" name="__codelineno-4-39"></a><span class="w">    </span><span class="na">"team1"</span><span class="w"></span>
+<a href="#__codelineno-4-40" id="__codelineno-4-40" name="__codelineno-4-40"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
+<a href="#__codelineno-4-41" id="__codelineno-4-41" name="__codelineno-4-41"></a><span class="w">        </span><span class="na">"fromfile"  "addons/sourcemod/get5/team_navi.cfg"</span><span class="w"></span>
+<a href="#__codelineno-4-42" id="__codelineno-4-42" name="__codelineno-4-42"></a><span class="w">    </span><span class="na">}</span><span class="w"></span>
+<a href="#__codelineno-4-43" id="__codelineno-4-43" name="__codelineno-4-43"></a><span class="w">    </span><span class="na">"team2"</span><span class="w"></span>
+<a href="#__codelineno-4-44" id="__codelineno-4-44" name="__codelineno-4-44"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
+<a href="#__codelineno-4-45" id="__codelineno-4-45" name="__codelineno-4-45"></a><span class="w">        </span><span class="na">"name"      "Astralis"</span><span class="w"></span>
+<a href="#__codelineno-4-46" id="__codelineno-4-46" name="__codelineno-4-46"></a><span class="w">        </span><span class="na">"tag"       "Astralis"</span><span class="w"></span>
+<a href="#__codelineno-4-47" id="__codelineno-4-47" name="__codelineno-4-47"></a><span class="w">        </span><span class="na">"flag"      "DK"</span><span class="w"></span>
+<a href="#__codelineno-4-48" id="__codelineno-4-48" name="__codelineno-4-48"></a><span class="w">        </span><span class="na">"logo"      "astr"</span><span class="w"></span>
+<a href="#__codelineno-4-49" id="__codelineno-4-49" name="__codelineno-4-49"></a><span class="w">        </span><span class="na">"players"</span><span class="w"></span>
+<a href="#__codelineno-4-50" id="__codelineno-4-50" name="__codelineno-4-50"></a><span class="w">        </span><span class="na">{</span><span class="w"></span>
+<a href="#__codelineno-4-51" id="__codelineno-4-51" name="__codelineno-4-51"></a><span class="w">            </span><span class="na">"76561197990682262" "Xyp9x"</span><span class="w"></span>
+<a href="#__codelineno-4-52" id="__codelineno-4-52" name="__codelineno-4-52"></a><span class="w">            </span><span class="na">"76561198010511021" "gla1ve"</span><span class="w"></span>
+<a href="#__codelineno-4-53" id="__codelineno-4-53" name="__codelineno-4-53"></a><span class="w">            </span><span class="na">"76561197979669175" "K0nfig"</span><span class="w"></span>
+<a href="#__codelineno-4-54" id="__codelineno-4-54" name="__codelineno-4-54"></a><span class="w">            </span><span class="na">"76561198028458803" "BlameF"</span><span class="w"></span>
+<a href="#__codelineno-4-55" id="__codelineno-4-55" name="__codelineno-4-55"></a><span class="w">            </span><span class="na">"76561198024248129" "farlig"</span><span class="w"></span>
+<a href="#__codelineno-4-56" id="__codelineno-4-56" name="__codelineno-4-56"></a><span class="w">        </span><span class="na">}</span><span class="w"></span>
+<a href="#__codelineno-4-57" id="__codelineno-4-57" name="__codelineno-4-57"></a><span class="w">        </span><span class="na">"coaches"</span><span class="w"></span>
+<a href="#__codelineno-4-58" id="__codelineno-4-58" name="__codelineno-4-58"></a><span class="w">        </span><span class="na">{</span><span class="w"></span>
+<a href="#__codelineno-4-59" id="__codelineno-4-59" name="__codelineno-4-59"></a><span class="w">            </span><span class="na">"76561197987144812" "Trace"</span><span class="w"></span>
+<a href="#__codelineno-4-60" id="__codelineno-4-60" name="__codelineno-4-60"></a><span class="w">        </span><span class="na">}</span><span class="w"></span>
+<a href="#__codelineno-4-61" id="__codelineno-4-61" name="__codelineno-4-61"></a><span class="w">    </span><span class="na">}</span><span class="w"></span>
+<a href="#__codelineno-4-62" id="__codelineno-4-62" name="__codelineno-4-62"></a><span class="w">    </span><span class="na">"cvars"</span><span class="w"></span>
+<a href="#__codelineno-4-63" id="__codelineno-4-63" name="__codelineno-4-63"></a><span class="w">    </span><span class="na">{</span><span class="w"></span>
+<a href="#__codelineno-4-64" id="__codelineno-4-64" name="__codelineno-4-64"></a><span class="w">        </span><span class="na">"hostname"                       "Get5 Match #3123"</span><span class="w"></span>
+<a href="#__codelineno-4-65" id="__codelineno-4-65" name="__codelineno-4-65"></a><span class="w">        </span><span class="na">"mp_friendly_fire"               "0"</span><span class="w"></span>
 <a href="#__codelineno-4-66" id="__codelineno-4-66" name="__codelineno-4-66"></a><span class="w">        </span><span class="na">"get5_stop_command_enabled"      "0"</span><span class="w"></span>
 <a href="#__codelineno-4-67" id="__codelineno-4-67" name="__codelineno-4-67"></a><span class="w">        </span><span class="na">"sm_practicemode_can_be_started" "0"</span><span class="w"></span>
 <a href="#__codelineno-4-68" id="__codelineno-4-68" name="__codelineno-4-68"></a><span class="w">    </span><span class="na">}</span><span class="w"></span>
@@ -709,13 +724,13 @@ empty strings as values in dictionaries (<code>maplist</code> and <code>map_side
             </div>
 </div>
 </a>
-<a aria-label="Next: Commands" class="md-footer__link md-footer__link--next" href="../commands/" rel="next">
+<a aria-label="Next: Map Veto" class="md-footer__link md-footer__link--next" href="../veto/" rel="next">
 <div class="md-footer__title">
 <div class="md-ellipsis">
 <span class="md-footer__direction">
                 Next
               </span>
-              Commands
+              Map Veto
             </div>
 </div>
 <div class="md-footer__button md-icon">
@@ -740,8 +755,8 @@ empty strings as values in dictionaries (<code>maplist</code> and <code>map_side
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
-<script src="../assets/javascripts/bundle.078830c0.min.js"></script>
+<script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+<script src="../assets/javascripts/bundle.8492ddcf.min.js"></script>
 <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
 <script src="../javascripts/tablesort.js"></script>
 </body>

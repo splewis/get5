@@ -101,6 +101,8 @@ ConVar g_SetClientClanTagCvar;
 ConVar g_SetHostnameCvar;
 ConVar g_StatsPathFormatCvar;
 ConVar g_StopCommandEnabledCvar;
+ConVar g_StopCommandNoDamageCvar;
+ConVar g_StopCommandTimeLimitCvar;
 ConVar g_TeamTimeToKnifeDecisionCvar;
 ConVar g_TimeToStartCvar;
 ConVar g_TimeToStartVetoCvar;
@@ -238,6 +240,7 @@ bool g_DamageDoneAssist[MAXPLAYERS + 1][MAXPLAYERS + 1];
 bool g_DamageDoneFlashAssist[MAXPLAYERS + 1][MAXPLAYERS + 1];
 bool g_PlayerRoundKillOrAssistOrTradedDeath[MAXPLAYERS + 1];
 bool g_PlayerSurvived[MAXPLAYERS + 1];
+bool g_PlayerHasTakenDamage = false;
 KeyValues g_StatsKv;
 
 ArrayList g_TeamScoresPerMap = null;
@@ -383,6 +386,8 @@ public void OnPluginStart() {
   g_BackupSystemEnabledCvar             = CreateConVar("get5_backup_system_enabled", "1", "Whether the Get5 backup system is enabled.");
   g_MaxBackupAgeCvar                    = CreateConVar("get5_max_backup_age", "172800", "Number of seconds before a backup file is automatically deleted. Set to 0 to disable. Default is 2 days.");
   g_StopCommandEnabledCvar              = CreateConVar("get5_stop_command_enabled", "1", "Whether clients can use the !stop command to restore to the beginning of the current round.");
+  g_StopCommandNoDamageCvar             = CreateConVar("get5_stop_command_no_damage", "0", "Whether the stop command becomes unavailable if a player damages a player from the opposing team.");
+  g_StopCommandTimeLimitCvar            = CreateConVar("get5_stop_command_time_limit", "0", "The number of seconds into a round after which a team can no longer request/confirm to stop and restart the round.");
 
   // Demos
   g_DemoUploadDeleteAfterCvar           = CreateConVar("get5_demo_delete_after_upload", "0", "Whether to delete the demo from the game server after a successful upload.");
@@ -1117,8 +1122,9 @@ static Action Command_Stop(int client, int args) {
 
   // Because a live restore to the same match does not change get5 state to warmup, we have to make sure
   // that successive calls to !stop (spammed by players) does not reload multiple backups.
-  if (g_GameState != Get5State_Live || InHalftimePhase() || g_DoingBackupRestoreNow ||
-      g_PauseType == Get5PauseType_Backup) {
+  // Don't allow it during freeze time or after the round has ended either.
+  if (g_GameState != Get5State_Live || InHalftimePhase() || InFreezeTime() || g_DoingBackupRestoreNow ||
+      GetRoundsPlayed() != g_RoundNumber) {
     return Plugin_Handled;
   }
 
@@ -1137,6 +1143,20 @@ static Action Command_Stop(int client, int args) {
   if (!IsPlayerTeam(team)) {
     return Plugin_Handled;
   }
+
+  if (g_PlayerHasTakenDamage && g_StopCommandNoDamageCvar.BoolValue) {
+    Get5_MessageToAll("%t", "StopCommandRequiresNoDamage");
+    return Plugin_Handled;
+  }
+  int stopCommandGrace = g_StopCommandTimeLimitCvar.IntValue;
+  if (stopCommandGrace > 0 && GetRoundTime() / 1000 > stopCommandGrace) {
+    char formattedGracePeriod[32];
+    ConvertSecondsToMinutesAndSeconds(stopCommandGrace, formattedGracePeriod, sizeof(formattedGracePeriod));
+    FormatTimeString(formattedGracePeriod, sizeof(formattedGracePeriod), formattedGracePeriod);
+    Get5_MessageToAll("%t", "StopCommandTimeLimitExceeded", formattedGracePeriod);
+    return Plugin_Handled;
+  }
+
   g_TeamGivenStopCommand[team] = true;
 
   char stopCommandFormatted[64];
@@ -1581,6 +1601,7 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_RoundStartedTime = 0.0;
   g_BombPlantedTime = 0.0;
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
+  g_PlayerHasTakenDamage = false;
   RestartInfoTimer();
 
   if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {

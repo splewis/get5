@@ -315,6 +315,15 @@
         "#format"       "{1:s}"
         "en"            "The request by {1} to stop the game was canceled as the round ended."
     }
+    "StopCommandRequiresNoDamage"
+    {
+        "en"            "A request to restart the round cannot be given once a player has damaged any opposing player."
+    }
+    "StopCommandTimeLimitExceeded"
+    {
+        "#format"       "{1:s}"
+        "en"            "A request to restart the round must be given within {1} after the round has started."
+    }
     "BackupLoadedInfoMessage"
     {
         "#format"       "{1:s}"

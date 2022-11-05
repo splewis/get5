@@ -275,6 +275,16 @@ command as well as the [`get5_loadbackup`](../commands#get5_loadbackup) command.
 ####`get5_stop_command_enabled`
 :   Whether the [`!stop`](../commands#stop) command is enabled.<br>**`Default: 1`**
 
+####`get5_stop_command_no_damage`
+:   Whether the [`!stop`](../commands#stop) command becomes unavailable after a player takes damage during a round. Only
+damage from one team to another counts (no friendly fire, no fall damage etc.). The command may still be used by admins
+via console at any time (`sm_stop`).<br>**`Default: 0`**
+
+####`get5_stop_command_time_limit`
+:   The number of seconds into a round after which the [`!stop`](../commands#stop) command can no longer be used. The
+command may still be used by admins via console at any time (`sm_stop`). Set to zero to remove the
+limit.<br>**`Default: 0`**
+
 ####`get5_max_backup_age`
 :   Number of seconds before a Get5 backup file is automatically deleted. If you define
 [`get5_backup_path`](#get5_backup_path), only files in that path will be deleted. Set to zero to

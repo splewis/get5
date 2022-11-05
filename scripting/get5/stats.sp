@@ -61,6 +61,7 @@ static Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, floa
     if (isUtilityDamage) {
       AddToPlayerStat(attacker, STAT_UTILITY_DAMAGE, damageAsIntCapped);
     }
+    g_PlayerHasTakenDamage = true;
   }
 
   if (!isUtilityDamage) {

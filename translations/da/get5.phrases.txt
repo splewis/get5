@@ -272,6 +272,14 @@
     {
         "da"            "Anmodningen fra {1} om at stoppe spillet blev annulleret, da runden sluttede."
     }
+    "StopCommandRequiresNoDamage"
+    {
+        "da"            "Anmodning om at genstarte runden kan ikke gives, efter en spiller har skadet en anden spiller fra det modsatte hold."
+    }
+    "StopCommandTimeLimitExceeded"
+    {
+        "da"            "Anmodning om at genstarte runden skal gives inden {1} fra rundens start."
+    }
     "BackupLoadedInfoMessage"
     {
         "da"            "Backup {1} indlæst."

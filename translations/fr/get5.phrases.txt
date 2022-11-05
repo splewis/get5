@@ -272,6 +272,14 @@
     {
         "fr"            "La demande de {1} d'arrêter le match a été annulée car la manche s'est finie."
     }
+    "StopCommandRequiresNoDamage"
+    {
+        "fr"            "Une demande de redémarrage du tour ne peut pas être donnée une fois qu’un joueur a endommagé un joueur adverse."
+    }
+    "StopCommandTimeLimitExceeded"
+    {
+        "fr"            "Une demande de redémarrage du tour doit être faite dans les {1} suivant le début du tour."
+    }
     "BackupLoadedInfoMessage"
     {
         "fr"            "Sauvegarde chargée avec succès {1}."

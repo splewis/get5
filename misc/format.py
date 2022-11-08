@@ -23,7 +23,7 @@ def main():
                 files.append(os.path.join(dirpath, f))
 
     for filename in files:
-        subprocess.call('clang-format --style=file:{0}/misc/.clang-format -i {1}'.format(root_path, filename), shell=True)
+        subprocess.call('clang-format --style=file:./misc/.clang-format -i {0}'.format(filename), shell=True)
         with open(filename, 'r+') as f:
             data = f.read()
             for (k, v) in replacements.items():

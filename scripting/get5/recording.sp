@@ -37,50 +37,69 @@ bool StartRecording() {
 }
 
 void StopRecording(float delay = 0.0) {
+  char uploadUrl[1024];
+  g_DemoUploadURLCvar.GetString(uploadUrl, sizeof(uploadUrl));
+  char uploadUrlHeaderKey[1024];
+  g_DemoUploadHeaderKeyCvar.GetString(uploadUrlHeaderKey, sizeof(uploadUrlHeaderKey));
+  char uploadUrlHeaderValue[1024];
+  g_DemoUploadHeaderValueCvar.GetString(uploadUrlHeaderValue, sizeof(uploadUrlHeaderValue));
+  DataPack pack = GetDemoInfoDataPack(g_MatchID, g_MapNumber, g_DemoFileName, uploadUrl, uploadUrlHeaderKey,
+                                      uploadUrlHeaderValue, g_DemoUploadDeleteAfterCvar.BoolValue);
   if (delay < 0.1) {
     LogDebug("Stopping GOTV recording immediately.");
-    StopRecordingCallback(g_MatchID, g_MapNumber, g_DemoFileName);
+    StopRecordingCallback(pack);
   } else {
     LogDebug("Starting timer that will end GOTV recording in %f seconds.", delay);
-    CreateTimer(delay, Timer_StopGoTVRecording, GetDemoInfoDataPack(g_MatchID, g_MapNumber, g_DemoFileName));
+    CreateTimer(delay, Timer_StopGoTVRecording, pack);
   }
   g_DemoFileName = "";
 }
 
-static void StopRecordingCallback(const char[] matchId, const int mapNumber, const char[] demoFileName) {
+static void StopRecordingCallback(DataPack pack) {
   ServerCommand("tv_stoprecord");
+  char demoFileName[PLATFORM_MAX_PATH];
+  pack.Position = view_as<DataPackPos>(2); // demo file name is at index 2, see GetDemoInfoDataPack().
+  pack.ReadString(demoFileName, sizeof(demoFileName));
   if (StrEqual("", demoFileName)) {
     LogDebug("Demo was not recorded by Get5; not firing Get5_OnDemoFinished()");
+    delete pack;
     return;
   }
   // We delay this by 15 seconds to allow the server to flush to the file before firing the event.
   // For some servers, this take a pretty long time (up to 8-9 seconds, so 15 for grace).
-  CreateTimer(15.0, Timer_FireStopRecordingEvent, GetDemoInfoDataPack(matchId, mapNumber, demoFileName));
+  CreateTimer(15.0, Timer_FireStopRecordingEvent, pack);
 }
 
-static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber, const char[] demoFileName) {
+static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber, const char[] demoFileName,
+                                    const char[] uploadUrl, const char[] uploadHeaderKey,
+                                    const char[] uploadHeaderValue, const bool deleteAfterUpload) {
   DataPack pack = CreateDataPack();
   pack.WriteString(matchId);
   pack.WriteCell(mapNumber);
   pack.WriteString(demoFileName);
+  pack.WriteString(uploadUrl);
+  pack.WriteString(uploadHeaderKey);
+  pack.WriteString(uploadHeaderValue);
+  pack.WriteCell(deleteAfterUpload);
   return pack;
 }
 
-static void ReadDemoDataPack(DataPack pack, char[] matchId, const int matchIdLength, int &mapNumber,
-                             char[] demoFileName, const int demoFileNameLength) {
+static void ReadDemoDataPack(DataPack pack, char[] matchId, const int matchIdLength, int &mapNumber, char[] uploadUrl,
+                             const int uploadUrlLength, char[] uploadHeaderKey, const int uploadHeaderKeyLength,
+                             char[] uploadeHeaderValue, const int uploadHeaderValueLength, char[] demoFileName,
+                             const int demoFileNameLength, bool &deleteAfterUpload) {
   pack.Reset();
   pack.ReadString(matchId, matchIdLength);
   mapNumber = pack.ReadCell();
   pack.ReadString(demoFileName, demoFileNameLength);
-  delete pack;
+  pack.ReadString(uploadUrl, uploadUrlLength);
+  pack.ReadString(uploadHeaderKey, uploadHeaderKeyLength);
+  pack.ReadString(uploadeHeaderValue, uploadHeaderValueLength);
+  deleteAfterUpload = pack.ReadCell();
 }
 
 static Action Timer_StopGoTVRecording(Handle timer, DataPack pack) {
-  char matchId[MATCH_ID_LENGTH];
-  char demoFileName[PLATFORM_MAX_PATH];
-  int mapNumber;
-  ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, demoFileName, sizeof(demoFileName));
-  StopRecordingCallback(matchId, mapNumber, demoFileName);
+  StopRecordingCallback(pack);
   return Plugin_Handled;
 }
 
@@ -88,7 +107,14 @@ static Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
   char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];
   int mapNumber;
-  ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, demoFileName, sizeof(demoFileName));
+  char uploadUrl[1024];
+  char uploadUrlHeaderKey[1024];
+  char uploadUrlHeaderValue[1024];
+  bool deleteAfterUpload;
+  ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, uploadUrl, sizeof(uploadUrl), uploadUrlHeaderKey,
+                   sizeof(uploadUrlHeaderKey), uploadUrlHeaderValue, sizeof(uploadUrlHeaderValue), demoFileName,
+                   sizeof(demoFileName), deleteAfterUpload);
+  delete pack;
 
   Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(matchId, mapNumber, demoFileName);
   LogDebug("Calling Get5_OnDemoFinished()");
@@ -97,18 +123,13 @@ static Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
   Call_Finish();
   EventLogger_LogAndDeleteEvent(event);
 
-  UploadDemoToServer(demoFileName, matchId, mapNumber);
+  UploadDemoToServer(demoFileName, matchId, mapNumber, uploadUrl, uploadUrlHeaderKey, uploadUrlHeaderValue,
+                     deleteAfterUpload);
   return Plugin_Handled;
 }
 
-static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, int mapNumber) {
-  char demoUrl[1024];
-  char demoHeaderKey[1024];
-  char demoHeaderValue[1024];
-
-  g_DemoUploadURLCvar.GetString(demoUrl, sizeof(demoUrl));
-  g_DemoUploadHeaderKeyCvar.GetString(demoHeaderKey, sizeof(demoHeaderKey));
-  g_DemoUploadHeaderValueCvar.GetString(demoHeaderValue, sizeof(demoHeaderValue));
+static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, int mapNumber, const char[] demoUrl,
+                               const char[] demoHeaderKey, const char[] demoHeaderValue, const bool deleteAfterUpload) {
 
   if (StrEqual(demoUrl, "")) {
     LogDebug("Will not upload any demos as upload URL is not set.");
@@ -181,7 +202,9 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
     return;
   }
 
-  SteamWorks_SetHTTPRequestContextValue(demoRequest, GetDemoInfoDataPack(matchId, mapNumber, demoFileName));
+  SteamWorks_SetHTTPRequestContextValue(
+    demoRequest,
+    GetDemoInfoDataPack(matchId, mapNumber, demoFileName, demoUrl, demoHeaderKey, demoHeaderValue, deleteAfterUpload));
   SteamWorks_SetHTTPCallbacks(demoRequest, DemoRequestCallback);
   SteamWorks_SendHTTPRequest(demoRequest);
 }
@@ -238,13 +261,20 @@ void SetCurrentMatchRestartDelay(float delay) {
 
 static int DemoRequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
                                DataPack pack) {
-  int mapNumber;
   char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];
-  ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, demoFileName, sizeof(demoFileName));
+  int mapNumber;
+  char uploadUrl[1024];
+  char uploadUrlHeaderKey[1024];
+  char uploadUrlHeaderValue[1024];
+  bool deleteAfterUpload;
+  ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, uploadUrl, sizeof(uploadUrl), uploadUrlHeaderKey,
+                   sizeof(uploadUrlHeaderKey), uploadUrlHeaderValue, sizeof(uploadUrlHeaderValue), demoFileName,
+                   sizeof(demoFileName), deleteAfterUpload);
+  delete pack;
 
   if (failure || !requestSuccessful) {
-    LogError("Failed to upload demo %s.", demoFileName);
+    LogError("Failed to upload demo '%s' to '%s'.", demoFileName, uploadUrl);
     delete request;
     CallUploadEvent(matchId, mapNumber, demoFileName, false);
     return;
@@ -267,8 +297,9 @@ static int DemoRequestCallback(Handle request, bool failure, bool requestSuccess
   }
 
   LogDebug("Demo request succeeded. HTTP status code: %d.", statusCode);
-  if (g_DemoUploadDeleteAfterCvar.BoolValue) {
-    LogDebug("get5_demo_delete_after_upload set to true; deleting the file from the game server.");
+  if (deleteAfterUpload) {
+    LogDebug(
+      "get5_demo_delete_after_upload set to true when demo request started; deleting the file from the game server.");
     if (FileExists(demoFileName)) {
       if (!DeleteFile(demoFileName)) {
         LogError("Unable to delete demo file %s.", demoFileName);

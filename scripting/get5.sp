@@ -149,6 +149,7 @@ char g_TeamMatchTexts[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
 char g_MatchTitle[MAX_CVAR_LENGTH];
 int g_FavoredTeamPercentage = 0;
 char g_FavoredTeamText[MAX_CVAR_LENGTH];
+char g_HostnamePreGet5[MAX_CVAR_LENGTH];
 int g_PlayersPerTeam = 5;
 int g_CoachesPerTeam = 2;
 int g_MinPlayersToReady = 1;
@@ -1339,6 +1340,7 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
   if (restoreDelay < 0.1) {
     // When force-ending the match there is no delay.
     RestoreCvars(g_MatchConfigChangedCvars);
+    ResetHostname();
   } else {
     // If we restore cvars immediately, it might change the tv_ params or set the
     // mp_match_restart_delay to something lower, which is noticed by the game and may trigger a map
@@ -1400,6 +1402,7 @@ static Action Timer_RestoreMatchCvars(Handle timer) {
     // Only reset if no game is running, otherwise a game started before the restart delay for
     // another ends will mess this up.
     RestoreCvars(g_MatchConfigChangedCvars);
+    ResetHostname();
   }
   return Plugin_Handled;
 }
@@ -1472,6 +1475,9 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
     // Get5_OnRoundStart() is fired from within the backup event when loading the valve backup.
     return;
   }
+
+  // Update server hostname as it may contain team score variables.
+  UpdateHostname();
 
   // We cannot do this during warmup, as sending users into warmup post-knife triggers a round start
   // event.
@@ -1807,7 +1813,7 @@ static Get5StatusTeam GetTeamInfo(Get5Team team) {
                             view_as<Get5Side>(side), GetNumHumansOnTeam(side));
 }
 
-bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
+bool FormatCvarString(ConVar cvar, char[] buffer, int len, bool safeTeamNames = true) {
   cvar.GetString(buffer, len);
   if (StrEqual(buffer, "")) {
     return false;
@@ -1827,14 +1833,15 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   FormatTime(formattedTime, sizeof(formattedTime), timeFormat, timeStamp);
   FormatTime(formattedDate, sizeof(formattedDate), dateFormat, timeStamp);
 
-  // Get team names with spaces removed.
   char team1Str[MAX_CVAR_LENGTH];
   strcopy(team1Str, sizeof(team1Str), g_TeamNames[Get5Team_1]);
-  ReplaceString(team1Str, sizeof(team1Str), " ", "_");
-
   char team2Str[MAX_CVAR_LENGTH];
   strcopy(team2Str, sizeof(team2Str), g_TeamNames[Get5Team_2]);
-  ReplaceString(team2Str, sizeof(team2Str), " ", "_");
+  if (safeTeamNames) {
+    // Get team names with spaces removed.
+    ReplaceString(team1Str, sizeof(team1Str), " ", "_");
+    ReplaceString(team2Str, sizeof(team2Str), " ", "_");
+  }
 
   // MATCHTITLE must go first as it can contain other placeholders
   ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle);
@@ -1847,6 +1854,11 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len) {
   ReplaceString(buffer, len, "{TIME}", formattedTime);
   ReplaceString(buffer, len, "{TEAM1}", team1Str);
   ReplaceString(buffer, len, "{TEAM2}", team2Str);
+
+  Get5Side team1Side = view_as<Get5Side>(Get5_Get5TeamToCSTeam(Get5Team_1));
+  Get5Side team2Side = team1Side == Get5Side_CT ? Get5Side_T : Get5Side_CT;
+  ReplaceStringWithInt(buffer, len, "{TEAM1_SCORE}", team1Side != Get5Side_None ? CS_GetTeamScore(view_as<int>(team1Side)) : 0);
+  ReplaceStringWithInt(buffer, len, "{TEAM2_SCORE}", team2Side != Get5Side_None ? CS_GetTeamScore(view_as<int>(team2Side)) : 0);
 
   return true;
 }

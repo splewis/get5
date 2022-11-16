@@ -62,6 +62,11 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   CloseCvarStorage(g_KnifeChangedCvars);
   CloseCvarStorage(g_MatchConfigChangedCvars);
 
+  if (!restoreBackup) {
+    // Loading a backup should not override this, as the original hostname pre-Get5 will then be lost.
+    GetConVarStringSafe("hostname", g_HostnamePreGet5, sizeof(g_HostnamePreGet5));
+  }
+
   if (!LoadMatchFile(config)) {
     return false;
   }
@@ -129,6 +134,7 @@ bool LoadMatchConfig(const char[] config, bool restoreBackup = false) {
   LoadPlayerNames();
   AddTeamLogosToDownloadTable();
   SetStartingTeams();
+  UpdateHostname();
 
   // Set mp_backup_round_file to prevent backup file collisions
   ServerCommand("mp_backup_round_file backup_%d", Get5_GetServerID());
@@ -794,16 +800,7 @@ void SetMatchTeamCvars() {
   } else {
     SetConVarIntSafe("mp_teamprediction_pct", 100 - g_FavoredTeamPercentage);
   }
-
-  if (g_MapsToWin > 1) {
-    SetConVarIntSafe("mp_teamscore_max", g_MapsToWin);
-  }
-
-  char formattedHostname[128];
-
-  if (FormatCvarString(g_SetHostnameCvar, formattedHostname, sizeof(formattedHostname))) {
-    SetConVarStringSafe("hostname", formattedHostname);
-  }
+  SetConVarIntSafe("mp_teamscore_max", g_MapsToWin > 1 ? g_MapsToWin : 0);
 }
 
 static void ExecuteMatchConfigCvars() {
@@ -1368,4 +1365,16 @@ static Action Timer_ExecMatchConfig(Handle timer) {
   ExecuteMatchConfigCvars();
   SetMatchTeamCvars();
   return Plugin_Handled;
+}
+
+void ResetHostname() {
+  SetConVarStringSafe("hostname", g_HostnamePreGet5);
+  g_HostnamePreGet5 = "";
+}
+
+void UpdateHostname() {
+  char formattedHostname[128];
+  if (FormatCvarString(g_SetHostnameCvar, formattedHostname, sizeof(formattedHostname), false)) {
+    SetConVarStringSafe("hostname", formattedHostname);
+  }
 }

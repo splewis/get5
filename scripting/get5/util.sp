@@ -235,10 +235,7 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "", co
   SetConVarStringSafe(flagCvarName, flag);
   SetConVarStringSafe(logoCvarName, logo);
   SetConVarStringSafe(textCvarName, matchstat);
-
-  if (g_MapsToWin > 1) {
-    SetConVarIntSafe(scoreCvarName, series_score);
-  }
+  SetConVarIntSafe(scoreCvarName, g_MapsToWin > 1 ? series_score : 0);
 }
 
 stock void SetConVarIntSafe(const char[] name, int value) {

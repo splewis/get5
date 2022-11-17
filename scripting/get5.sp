@@ -96,7 +96,8 @@ ConVar g_SetHostnameCvar;
 ConVar g_StatsPathFormatCvar;
 ConVar g_StopCommandEnabledCvar;
 ConVar g_TeamTimeToKnifeDecisionCvar;
-ConVar g_TeamTimeToStartCvar;
+ConVar g_TimeToStartCvar;
+ConVar g_TimeToStartVetoCvar;
 ConVar g_TimeFormatCvar;
 ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
@@ -422,7 +423,8 @@ public void OnPluginStart() {
 
   // Countdown/timers
   g_LiveCountdownTimeCvar               = CreateConVar("get5_live_countdown_time", "10", "Number of seconds used to count down when a match is going live.", 0, true, 5.0, true, 60.0);
-  g_TeamTimeToStartCvar                 = CreateConVar("get5_time_to_start", "0", "Time (in seconds) teams have to ready up before forfeiting the match. 0 = unlimited.");
+  g_TimeToStartCvar                     = CreateConVar("get5_time_to_start", "0", "Time (in seconds) teams have to ready up for live/knife before forfeiting the match. 0 = unlimited.");
+  g_TimeToStartVetoCvar                 = CreateConVar("get5_time_to_start_veto", "0", "Time (in seconds) teams have to ready up for vetoing before forfeiting the match. 0 = unlimited.");
   g_TeamTimeToKnifeDecisionCvar         = CreateConVar("get5_time_to_make_knife_decision", "60", "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round. 0 = unlimited.");
   g_VetoConfirmationTimeCvar            = CreateConVar("get5_veto_confirmation_time", "2.0", "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required. 0 to disable.");
   g_VetoCountdownCvar                   = CreateConVar("get5_veto_countdown", "5", "Seconds to countdown before veto process commences. 0 to skip countdown.");
@@ -908,11 +910,12 @@ static bool CheckReadyWaitingTimes() {
     return true;
   }
 
-  if (g_TeamTimeToStartCvar.IntValue <= 0) {
+  int readyTime = g_GameState == Get5State_PreVeto ? g_TimeToStartVetoCvar.IntValue : g_TimeToStartCvar.IntValue;
+  if (readyTime <= 0) {
     return false;
   }
 
-  int timeLeft = g_TeamTimeToStartCvar.IntValue - g_ReadyTimeWaitingUsed;
+  int timeLeft = readyTime - g_ReadyTimeWaitingUsed;
 
   if (timeLeft > 0) {
     if ((timeLeft >= 300 && timeLeft % 60 == 0) || (timeLeft < 300 && timeLeft % 30 == 0) || (timeLeft == 10)) {

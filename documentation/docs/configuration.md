@@ -129,8 +129,12 @@ affect the availability of [`get5_forceready`](../commands#get5_forceready) to a
 :   Whether to set client clan tags to player ready status.<br>**`Default: 1`**
 
 ####`get5_time_to_start`
-:   Time (in seconds) teams have to ready up before forfeiting the match. Set to zero for no limit. If neither team
-becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
+:   Time (in seconds) teams have to ready up for knife/live before forfeiting the match. Set to zero for no limit. If
+neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
+
+####`get5_time_to_start_veto`
+:   Time (in seconds) teams have to ready up for vetoing before forfeiting the match. Set to zero for no limit. If
+neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
 
 ####`get5_time_to_make_knife_decision`
 :   Time (in seconds) a team has to make a [`!stay`](../commands#stay) or [`!swap`](../commands#swap)

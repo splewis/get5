@@ -602,6 +602,16 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#tag-team1-score">
+    {TEAM1_SCORE}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-team2-score">
+    {TEAM2_SCORE}
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#tag-matchtitle">
     {MATCHTITLE}
   </a>
@@ -1221,6 +1231,16 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#tag-team1-score">
+    {TEAM1_SCORE}
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tag-team2-score">
+    {TEAM2_SCORE}
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#tag-matchtitle">
     {MATCHTITLE}
   </a>
@@ -1592,9 +1612,9 @@ disable.<br/><strong><code>Default: "get5_matchstats_{MATCHID}.cfg"</code></stro
 </dl>
 <h4 id="get5_hostname_format"><code>get5_hostname_format</code></h4>
 <dl>
-<dd>The hostname to apply to the server when a match configuration is loaded.
-<a href="#state-substitutes">State substitutes</a> can be used. Leave blank to disable changing the hostname.<br/>
-<strong><code>Default: "Get5: {TEAM1} vs {TEAM2}"</code></strong></dd>
+<dd>The hostname to apply to the server. <a href="#state-substitutes">State substitutes</a> can be used. Set to an empty string to
+disable changing the hostname. This is updated on every round start to allow for the use of team score
+substitutes.<br/><strong><code>Default: "Get5: {TEAM1} vs {TEAM2}"</code></strong></dd>
 </dl>
 <h4 id="get5_message_prefix"><code>get5_message_prefix</code></h4>
 <dl>
@@ -1668,9 +1688,15 @@ must <strong>end with a slash</strong>. Required folders will be created if they
 <dl>
 <dd>Format to use for demo files when <a href="../gotv#demos">recording matches</a>. Do not include a file extension (<code>.dem</code> is
 added automatically). If you do not include the <a href="#tag-time"><code>{TIME}</code></a> tag, you will have problems with duplicate files
-if restoring a game from a backup. Note that the <a href="#tag-mapnumber"><code>{MAPNUMBER}</code></a>variable is not zero-indexed. Set to
+if restoring a game from a backup. Note that the <a href="#tag-mapnumber"><code>{MAPNUMBER}</code></a> variable is not zero-indexed. Set to
 empty string to disable recording demos.<br/><strong><code>Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"</code></strong></dd>
 </dl>
+<div class="admonition info">
+<p class="admonition-title">Team score is always zero</p>
+<p>While it may be tempting to use the <a href="#tag-team1-score"><code>{TEAM1_SCORE}</code></a> and <a href="#tag-team2-score"><code>{TEAM2_SCORE}</code></a>
+variables in the demo name; note that this file is created as the match begins, so the score will always be zero at
+that stage.</p>
+</div>
 <h2 id="events">Events</h2>
 <h4 id="get5_remote_log_url"><code>get5_remote_log_url</code></h4>
 <dl>
@@ -1723,6 +1749,14 @@ placeholder strings that will be replaced by meaningful values when printed. Not
 <h4 id="tag-team2"><code>{TEAM2}</code></h4>
 <dl>
 <dd>The name of <code>team2</code>.</dd>
+</dl>
+<h4 id="tag-team1-score"><code>{TEAM1_SCORE}</code></h4>
+<dl>
+<dd>The score of <code>team1</code> on the current map.</dd>
+</dl>
+<h4 id="tag-team2-score"><code>{TEAM2_SCORE}</code></h4>
+<dl>
+<dd>The score of <code>team2</code> on the current map.</dd>
 </dl>
 <h4 id="tag-matchtitle"><code>{MATCHTITLE}</code></h4>
 <dl>

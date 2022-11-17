@@ -37,6 +37,10 @@ bool StartRecording() {
 }
 
 void StopRecording(float delay = 0.0) {
+  if (StrEqual("", g_DemoFileName)) {
+    LogDebug("Demo was not recorded by Get5; not firing Get5_OnDemoFinished() or stopping recording.");
+    return;
+  }
   char uploadUrl[1024];
   g_DemoUploadURLCvar.GetString(uploadUrl, sizeof(uploadUrl));
   char uploadUrlHeaderKey[1024];
@@ -55,19 +59,41 @@ void StopRecording(float delay = 0.0) {
   g_DemoFileName = "";
 }
 
+static Action Timer_StopGoTVRecording(Handle timer, DataPack pack) {
+  StopRecordingCallback(pack);
+  return Plugin_Handled;
+}
+
 static void StopRecordingCallback(DataPack pack) {
   ServerCommand("tv_stoprecord");
-  char demoFileName[PLATFORM_MAX_PATH];
-  pack.Position = view_as<DataPackPos>(2); // demo file name is at index 2, see GetDemoInfoDataPack().
-  pack.ReadString(demoFileName, sizeof(demoFileName));
-  if (StrEqual("", demoFileName)) {
-    LogDebug("Demo was not recorded by Get5; not firing Get5_OnDemoFinished()");
-    delete pack;
-    return;
-  }
   // We delay this by 15 seconds to allow the server to flush to the file before firing the event.
   // For some servers, this take a pretty long time (up to 8-9 seconds, so 15 for grace).
   CreateTimer(15.0, Timer_FireStopRecordingEvent, pack);
+}
+
+static Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
+  char matchId[MATCH_ID_LENGTH];
+  char demoFileName[PLATFORM_MAX_PATH];
+  int mapNumber;
+  char uploadUrl[1024];
+  char uploadUrlHeaderKey[1024];
+  char uploadUrlHeaderValue[1024];
+  bool deleteAfterUpload;
+  ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, uploadUrl, sizeof(uploadUrl), uploadUrlHeaderKey,
+                   sizeof(uploadUrlHeaderKey), uploadUrlHeaderValue, sizeof(uploadUrlHeaderValue), demoFileName,
+                   sizeof(demoFileName), deleteAfterUpload);
+  delete pack;
+
+  Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(matchId, mapNumber, demoFileName);
+  LogDebug("Calling Get5_OnDemoFinished()");
+  Call_StartForward(g_OnDemoFinished);
+  Call_PushCell(event);
+  Call_Finish();
+  EventLogger_LogAndDeleteEvent(event);
+
+  UploadDemoToServer(demoFileName, matchId, mapNumber, uploadUrl, uploadUrlHeaderKey, uploadUrlHeaderValue,
+                     deleteAfterUpload);
+  return Plugin_Handled;
 }
 
 static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber, const char[] demoFileName,
@@ -98,52 +124,20 @@ static void ReadDemoDataPack(DataPack pack, char[] matchId, const int matchIdLen
   deleteAfterUpload = pack.ReadCell();
 }
 
-static Action Timer_StopGoTVRecording(Handle timer, DataPack pack) {
-  StopRecordingCallback(pack);
-  return Plugin_Handled;
-}
-
-static Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
-  char matchId[MATCH_ID_LENGTH];
-  char demoFileName[PLATFORM_MAX_PATH];
-  int mapNumber;
-  char uploadUrl[1024];
-  char uploadUrlHeaderKey[1024];
-  char uploadUrlHeaderValue[1024];
-  bool deleteAfterUpload;
-  ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, uploadUrl, sizeof(uploadUrl), uploadUrlHeaderKey,
-                   sizeof(uploadUrlHeaderKey), uploadUrlHeaderValue, sizeof(uploadUrlHeaderValue), demoFileName,
-                   sizeof(demoFileName), deleteAfterUpload);
-  delete pack;
-
-  Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(matchId, mapNumber, demoFileName);
-  LogDebug("Calling Get5_OnDemoFinished()");
-  Call_StartForward(g_OnDemoFinished);
-  Call_PushCell(event);
-  Call_Finish();
-  EventLogger_LogAndDeleteEvent(event);
-
-  UploadDemoToServer(demoFileName, matchId, mapNumber, uploadUrl, uploadUrlHeaderKey, uploadUrlHeaderValue,
-                     deleteAfterUpload);
-  return Plugin_Handled;
-}
-
 static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, int mapNumber, const char[] demoUrl,
                                const char[] demoHeaderKey, const char[] demoHeaderValue, const bool deleteAfterUpload) {
 
   if (StrEqual(demoUrl, "")) {
-    LogDebug("Will not upload any demos as upload URL is not set.");
+    LogDebug("Skipping demo upload as upload URL is not set.");
     return;
   }
 
   if (!LibraryExists("SteamWorks")) {
-    LogDebug("Cannot upload demos to a web server without the SteamWorks extension running.");
+    LogError("Get5 cannot upload demos to a web server without the SteamWorks extension. Set get5_demo_upload_url to an empty string to remove this message.");
     return;
   }
 
-  LogDebug("UploadDemoToServer: demoUrl (SteamWorks) = %s", demoUrl);
   Handle demoRequest = CreateGet5HTTPRequest(k_EHTTPMethodPOST, demoUrl);
-
   if (demoRequest == INVALID_HANDLE) {
     CallUploadEvent(matchId, mapNumber, demoFileName, false);
     return;
@@ -259,7 +253,7 @@ void SetCurrentMatchRestartDelay(float delay) {
   }
 }
 
-static int DemoRequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
+static void DemoRequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
                                DataPack pack) {
   char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];

@@ -313,9 +313,9 @@ exist.<br>**`Default: ""`**
 disable.<br>**`Default: "get5_matchstats_{MATCHID}.cfg"`**
 
 ####`get5_hostname_format`
-:   The hostname to apply to the server when a match configuration is loaded.
-[State substitutes](#state-substitutes) can be used. Leave blank to disable changing the hostname.<br>
-**`Default: "Get5: {TEAM1} vs {TEAM2}"`**
+:   The hostname to apply to the server. [State substitutes](#state-substitutes) can be used. Set to an empty string to
+disable changing the hostname. This is updated on every round start to allow for the use of team score
+substitutes.<br>**`Default: "Get5: {TEAM1} vs {TEAM2}"`**
 
 ####`get5_message_prefix`
 :   The tag applied before plugin messages. Note that at least one character must come before
@@ -384,8 +384,14 @@ must **end with a slash**. Required folders will be created if they do not exist
 ####`get5_demo_name_format`
 :   Format to use for demo files when [recording matches](../gotv#demos). Do not include a file extension (`.dem` is
 added automatically). If you do not include the [`{TIME}`](#tag-time) tag, you will have problems with duplicate files
-if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber)variable is not zero-indexed. Set to
+if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber) variable is not zero-indexed. Set to
 empty string to disable recording demos.<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
+
+!!! info "Team score is always zero"
+
+    While it may be tempting to use the [`{TEAM1_SCORE}`](#tag-team1-score) and [`{TEAM2_SCORE}`](#tag-team2-score)
+    variables in the demo name; note that this file is created as the match begins, so the score will always be zero at
+    that stage.
 
 ## Events
 
@@ -432,6 +438,12 @@ placeholder strings that will be replaced by meaningful values when printed. Not
 
 ####`{TEAM2}` {: #tag-team2}
 :   The name of `team2`.
+
+####`{TEAM1_SCORE}` {: #tag-team1-score }
+:   The score of `team1` on the current map.
+
+####`{TEAM2_SCORE}` {: #tag-team2-score }
+:   The score of `team2` on the current map.
 
 ####`{MATCHTITLE}` {: #tag-matchtitle}
 :   The title of the current match.

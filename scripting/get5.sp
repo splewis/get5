@@ -1855,10 +1855,17 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len, bool safeTeamNames = 
   ReplaceString(buffer, len, "{TEAM1}", team1Str);
   ReplaceString(buffer, len, "{TEAM2}", team2Str);
 
-  Get5Side team1Side = view_as<Get5Side>(Get5_Get5TeamToCSTeam(Get5Team_1));
-  Get5Side team2Side = team1Side == Get5Side_CT ? Get5Side_T : Get5Side_CT;
-  ReplaceStringWithInt(buffer, len, "{TEAM1_SCORE}", team1Side != Get5Side_None ? CS_GetTeamScore(view_as<int>(team1Side)) : 0);
-  ReplaceStringWithInt(buffer, len, "{TEAM2_SCORE}", team2Side != Get5Side_None ? CS_GetTeamScore(view_as<int>(team2Side)) : 0);
+  int team1Score = 0;
+  int team2Score = 0;
+  if (g_GameState == Get5State_Live) {
+    Get5Side team1Side = view_as<Get5Side>(Get5_Get5TeamToCSTeam(Get5Team_1));
+    if (team1Side != Get5Side_None) {
+      team1Score = CS_GetTeamScore(view_as<int>(team1Side));
+      team2Score = CS_GetTeamScore(view_as<int>(team1Side == Get5Side_CT ? Get5Side_T : Get5Side_CT));
+    }
+  }
+  ReplaceStringWithInt(buffer, len, "{TEAM1_SCORE}", team1Score);
+  ReplaceStringWithInt(buffer, len, "{TEAM2_SCORE}", team2Score);
 
   return true;
 }

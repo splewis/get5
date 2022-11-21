@@ -37,7 +37,7 @@
 
 #define DEBUG_CVAR      "get5_debug"
 #define MATCH_ID_LENGTH 64
-#define MAX_CVAR_LENGTH 128
+#define MAX_CVAR_LENGTH 513 // 512 + 1 for buffers
 
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T
@@ -356,69 +356,92 @@ public void OnPluginStart() {
 
   /** ConVars **/
   // clang-format off
-  g_AllowTechPauseCvar                  = CreateConVar("get5_allow_technical_pause", "1", "Whether or not technical pauses are allowed");
-  g_MaxTechPauseDurationCvar            = CreateConVar("get5_tech_pause_time", "0", "Number of seconds before anyone can call unpause on a technical timeout, 0=unlimited");
-  g_MaxTechPausesCvar                   = CreateConVar("get5_max_tech_pauses", "0", "Number of technical pauses a team is allowed to have, 0=unlimited");
+
+  // Pauses
+  g_AllowTechPauseCvar                  = CreateConVar("get5_allow_technical_pause", "1", "Whether technical pauses are allowed.");
   g_AutoTechPauseMissingPlayersCvar     = CreateConVar("get5_auto_tech_pause_missing_players", "0", "The number of players that must leave a team to trigger an automatic technical pause. Set to 0 to disable.");
-  g_AutoLoadConfigCvar                  = CreateConVar("get5_autoload_config", "", "Name of a match config file to automatically load when the server loads");
-  g_AutoReadyActivePlayersCvar          = CreateConVar("get5_auto_ready_active_players", "0", "Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase.");
-  g_BackupSystemEnabledCvar             = CreateConVar("get5_backup_system_enabled", "1", "Whether the get5 backup system is enabled");
-  g_DamagePrintCvar                     = CreateConVar("get5_print_damage", "0", "Whether damage reports are printed on round end.");
-  g_DamagePrintFormatCvar               = CreateConVar("get5_damageprint_format", "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)", "Format of the damage output string. Available tags are in the default, color tags such as {LIGHT_RED} and {GREEN} also work. {KILL_TO} and {KILL_FROM} indicate kills, assists and flash assists as booleans, all of which are mutually exclusive.");
-  g_DamagePrintExcessCvar               = CreateConVar("get5_print_damage_excess", "0", "Prints full damage given in the damage report on round end. With this disabled (default), a player cannot take more than 100 damage.");
-  g_DateFormatCvar                      = CreateConVar("get5_date_format", "%Y-%m-%d", "Date format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
-  g_CheckAuthsCvar                      = CreateConVar("get5_check_auths", "1", "If set to 0, get5 will not force players to the correct team based on steamid");
-  g_DemoNameFormatCvar                  = CreateConVar("get5_demo_name_format", "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}", "Format for demo file names, use \"\" to disable. Do not remove the {TIME} placeholder if you use the backup system.");
-  g_DemoPathCvar                        = CreateConVar("get5_demo_path", "", "The folder to save demo files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
-  g_DemoUploadHeaderValueCvar           = CreateConVar("get5_demo_upload_header_value", "", "If defined, it is the authorization value that is appended to the HTTP request. Requires SteamWorks.");
-  g_DemoUploadHeaderKeyCvar             = CreateConVar("get5_demo_upload_header_key", "Authorization", "If defined, it is the authorization key that is appended to the HTTP request. Requires SteamWorks.");
+  g_FixedPauseTimeCvar                  = CreateConVar("get5_fixed_pause_time", "0", "The fixed duration of tactical pauses in seconds. 0 = unlimited.");
+  g_MaxTacticalPausesCvar               = CreateConVar("get5_max_pauses", "0", "Number of tactical pauses a team can use. 0 = unlimited.");
+  g_MaxPauseTimeCvar                    = CreateConVar("get5_max_pause_time", "300", "Maximum number of seconds a game can spend under tactical pause for each team. 0 = unlimited.");
+  g_MaxTechPausesCvar                   = CreateConVar("get5_max_tech_pauses", "0", "Number of technical pauses a team can use. 0 = unlimited.");
+  g_PausingEnabledCvar                  = CreateConVar("get5_pausing_enabled", "1", "Whether pausing (both kinds) is allowed by players.");
+  g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "0", "Whether the game pauses during the veto phase.");
+  g_ResetPausesEachHalfCvar             = CreateConVar("get5_reset_pauses_each_half", "1", "Whether tactical pause limits will be reset on halftime.");
+  g_MaxTechPauseDurationCvar            = CreateConVar("get5_tech_pause_time", "0", "Number of seconds before anyone can call !unpause during a technical timeout. 0 = unlimited.");
+
+  // Backups
+  g_RoundBackupPathCvar                 = CreateConVar("get5_backup_path", "", "The folder to save backup files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash. Set to empty string to use the csgo root.");
+  g_BackupSystemEnabledCvar             = CreateConVar("get5_backup_system_enabled", "1", "Whether the Get5 backup system is enabled.");
+  g_MaxBackupAgeCvar                    = CreateConVar("get5_max_backup_age", "172800", "Number of seconds before a backup file is automatically deleted. Set to 0 to disable. Default is 2 days.");
+  g_StopCommandEnabledCvar              = CreateConVar("get5_stop_command_enabled", "1", "Whether clients can use the !stop command to restore to the beginning of the current round.");
+
+  // Demos
   g_DemoUploadDeleteAfterCvar           = CreateConVar("get5_demo_delete_after_upload", "0", "Whether to delete the demo from the game server after a successful upload.");
-  g_DemoUploadURLCvar                   = CreateConVar("get5_demo_upload_url", "", "If defined, it is the URL at which a server resides to accept connections to upload demos. Requires SteamWorks extension. If no protocol is provided, the plugin will prepend http:// to this value.");
-  g_DisplayGotvVetoCvar                 = CreateConVar("get5_display_gotv_veto", "0", "Whether to wait for map vetos to be printed to GOTV before changing map");
-  g_EventLogFormatCvar                  = CreateConVar("get5_event_log_format", "", "Path to use when writing match event logs, use \"\" to disable");
-  g_EventLogRemoteURLCvar               = CreateConVar("get5_remote_log_url", "", "URL to send event logs as JSON objects to. http:// will be prepended if no protocol is provided.");
-  g_EventLogRemoteHeaderKeyCvar         = CreateConVar("get5_remote_log_header_key", "Authorization", "Custom header key to add to event log HTTP requests.");
-  g_EventLogRemoteHeaderValueCvar       = CreateConVar("get5_remote_log_header_value", "", "Value to assign to get5_remote_log_header_key.");
-  g_FixedPauseTimeCvar                  = CreateConVar("get5_fixed_pause_time", "0", "If set to non-zero, this will be the fixed length of any pause");
-  g_KickClientImmunityCvar              = CreateConVar("get5_kick_immunity", "1", "Whether or not admins with the changemap flag will be immune to kicks from \"get5_kick_when_no_match_loaded\". Set to \"0\" to disable");
-  g_KickClientsWithNoMatchCvar          = CreateConVar("get5_kick_when_no_match_loaded", "0", "Whether the plugin kicks new clients when no match is loaded");
-  g_LiveCfgCvar                         = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to exec when the game goes live.");
-  g_WarmupCfgCvar                       = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to exec in warmup periods.");
-  g_KnifeCfgCvar                        = CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to exec in knife periods.");
-  g_LiveCountdownTimeCvar               = CreateConVar("get5_live_countdown_time", "10", "Number of seconds used to count down when a match is going live", 0, true, 5.0, true, 60.0);
-  g_MaxBackupAgeCvar                    = CreateConVar("get5_max_backup_age", "160000", "Number of seconds before a backup file is automatically deleted, 0 to disable");
-  g_MaxTacticalPausesCvar               = CreateConVar("get5_max_pauses", "0", "Maximum number of pauses a team can use, 0=unlimited");
-  g_MaxPauseTimeCvar                    = CreateConVar("get5_max_pause_time", "300", "Maximum number of time the game can spend paused by a team, 0=unlimited");
-  g_MessagePrefixCvar                   = CreateConVar("get5_message_prefix", DEFAULT_TAG, "The tag applied before plugin messages.");
-  g_ResetPausesEachHalfCvar             = CreateConVar("get5_reset_pauses_each_half", "1", "Whether pause limits will be reset each halftime period");
-  g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "0", "Set 1 to Pause Match during Veto time");
-  g_PausingEnabledCvar                  = CreateConVar("get5_pausing_enabled", "1", "Whether pausing is allowed.");
-  g_PrettyPrintJsonCvar                 = CreateConVar("get5_pretty_print_json", "1", "Whether all JSON output is in pretty-print format.");
-  g_ReadyTeamTagCvar                    = CreateConVar("get5_ready_team_tag", "1", "Adds [READY] [NOT READY] Tags before Team Names. 0 to disable it.");
-  g_AllowForceReadyCvar                 = CreateConVar("get5_allow_force_ready", "1", "Allows players to use the !forceready command. Turning this off does not disable get5_forceready.");
-  g_ServerIdCvar                        = CreateConVar("get5_server_id", "0", "Integer that identifies your server. This is used in temp files to prevent collisions.");
-  g_SetClientClanTagCvar                = CreateConVar("get5_set_client_clan_tags", "1", "Whether to set client clan tags to player ready status.");
-  g_SetHostnameCvar                     = CreateConVar("get5_hostname_format", "Get5: {TEAM1} vs {TEAM2}", "Template that the server hostname will follow when a match is live. Leave field blank to disable.");
-  g_StatsPathFormatCvar                 = CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg", "Where match stats are saved (updated each map end), set to \"\" to disable");
-  g_StopCommandEnabledCvar              = CreateConVar("get5_stop_command_enabled", "1", "Whether clients can use the !stop command to restore to the last round");
-  g_TeamTimeToStartCvar                 = CreateConVar("get5_time_to_start", "0", "Time (in seconds) teams have to ready up before forfeiting the match, 0=unlimited");
-  g_TeamTimeToKnifeDecisionCvar         = CreateConVar("get5_time_to_make_knife_decision", "60", "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round, 0=unlimited");
-  g_TimeFormatCvar                      = CreateConVar("get5_time_format", "%Y-%m-%d_%H-%M-%S", "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
-  g_VetoConfirmationTimeCvar            = CreateConVar("get5_veto_confirmation_time", "2.0", "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required, 0 to disable");
-  g_VetoCountdownCvar                   = CreateConVar("get5_veto_countdown", "5", "Seconds to countdown before veto process commences. Set to \"0\" to disable.");
-  g_PrintUpdateNoticeCvar               = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
-  g_RoundBackupPathCvar                 = CreateConVar("get5_backup_path", "", "The folder to save backup files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash.");
-  g_PhaseAnnouncementCountCvar          = CreateConVar("get5_phase_announcement_count", "5", "The number of times Get5 will print 'Knife' or 'Match is LIVE' when the game starts. Set to 0 to disable.");
-  g_Team1NameColorCvar                  = CreateConVar("get5_team1_color", "{LIGHT_GREEN}", "The color used for the name of team 1 in chat messages.");
-  g_Team2NameColorCvar                  = CreateConVar("get5_team2_color", "{PINK}", "The color used for the name of team 2 in chat messages.");
-  g_SpecNameColorCvar                   = CreateConVar("get5_spec_color", "{NORMAL}", "The color used for the name of spectators in chat messages.");
+  g_DemoNameFormatCvar                  = CreateConVar("get5_demo_name_format", "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}", "The format to use for demo files. Do not remove the {TIME} placeholder if you use the backup system. Set to empty string to disable automatic demo recording.");
+  g_DemoPathCvar                        = CreateConVar("get5_demo_path", "", "The folder to save demo files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash. Set to empty string to use the csgo root.");
+  g_DemoUploadHeaderKeyCvar             = CreateConVar("get5_demo_upload_header_key", "Authorization", "If defined, a custom HTTP header with this name is added to the demo upload HTTP request.", FCVAR_DONTRECORD);
+  g_DemoUploadHeaderValueCvar           = CreateConVar("get5_demo_upload_header_value", "", "If defined, the value of the custom header added to the demo upload HTTP request.", FCVAR_DONTRECORD | FCVAR_PROTECTED);
+  g_DemoUploadURLCvar                   = CreateConVar("get5_demo_upload_url", "", "If defined, recorded demos will be uploaded to this URL over HTTP. If no protocol is provided, 'http://' is prepended to this value.", FCVAR_DONTRECORD);
+
+  // Surrender/Forfeit
+  g_ForfeitCountdownTimeCvar            = CreateConVar("get5_forfeit_countdown", "180", "The grace-period (in seconds) for rejoining the server to avoid a loss by forfeit.", 0, true, 30.0);
+  g_ForfeitEnabledCvar                  = CreateConVar("get5_forfeit_enabled", "1", "Whether the forfeit feature is enabled.");
+  g_SurrenderCooldownCvar               = CreateConVar("get5_surrender_cooldown", "60", "The number of seconds before a vote to surrender can be retried if it fails.");
   g_SurrenderEnabledCvar                = CreateConVar("get5_surrender_enabled", "0", "Whether the surrender command is enabled.");
   g_MinimumRoundDeficitForSurrenderCvar = CreateConVar("get5_surrender_minimum_round_deficit", "8", "The minimum number of rounds a team must be behind in order to surrender.", 0, true, 0.0);
   g_VotesRequiredForSurrenderCvar       = CreateConVar("get5_surrender_required_votes", "3", "The number of votes required for a team to surrender.", 0, true, 1.0);
   g_SurrenderVoteTimeLimitCvar          = CreateConVar("get5_surrender_time_limit", "15", "The number of seconds before a vote to surrender fails.", 0, true, 10.0);
-  g_SurrenderCooldownCvar               = CreateConVar("get5_surrender_cooldown", "60", "The number of seconds before a vote to surrender can be retried if it fails.");
-  g_ForfeitEnabledCvar                  = CreateConVar("get5_forfeit_enabled", "1", "Whether the forfeit feature is enabled. Not to be confused with the surrender feature.");
-  g_ForfeitCountdownTimeCvar            = CreateConVar("get5_forfeit_countdown", "180", "This determines the grace-period for rejoining the server to avoid a loss by forfeit. Cannot be set lower than 30 seconds.", 0, true, 30.0);
+
+  // Events
+  g_EventLogFormatCvar                  = CreateConVar("get5_event_log_format", "", "Path to use when writing match event logs to disk. Use \"\" to disable.");
+  g_EventLogRemoteHeaderKeyCvar         = CreateConVar("get5_remote_log_header_key", "Authorization", "If defined, a custom HTTP header with this name is added to the HTTP requests for events.", FCVAR_DONTRECORD);
+  g_EventLogRemoteHeaderValueCvar       = CreateConVar("get5_remote_log_header_value", "", "If defined, the value of the custom header added to the events sent over HTTP.", FCVAR_DONTRECORD | FCVAR_PROTECTED);
+  g_EventLogRemoteURLCvar               = CreateConVar("get5_remote_log_url", "", "If defined, all events are sent to this URL over HTTP. If no protocol is provided, 'http://' is prepended to this value.", FCVAR_DONTRECORD);
+
+  // Damage info
+  g_DamagePrintCvar                     = CreateConVar("get5_print_damage", "1", "Whether damage reports are printed to chat on round end.");
+  g_DamagePrintExcessCvar               = CreateConVar("get5_print_damage_excess", "0", "Prints full damage given in the damage report on round end. With this disabled, a player cannot take more than 100 damage.");
+  g_DamagePrintFormatCvar               = CreateConVar("get5_damageprint_format", "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)", "Format of the damage output string. Available tags are in the default, color tags such as {LIGHT_RED} and {GREEN} also work. {KILL_TO} and {KILL_FROM} indicate kills, assists and flash assists as booleans, all of which are mutually exclusive.");
+
+  // Date/time formats
+  g_DateFormatCvar                      = CreateConVar("get5_date_format", "%Y-%m-%d", "Date format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
+  g_TimeFormatCvar                      = CreateConVar("get5_time_format", "%Y-%m-%d_%H-%M-%S", "Time format to use when creating file names. Don't tweak this unless you know what you're doing! Avoid using spaces or colons.");
+
+  // Ready system
+  g_AllowForceReadyCvar                 = CreateConVar("get5_allow_force_ready", "1", "Allows players to use the !forceready command.");
+  g_AutoReadyActivePlayersCvar          = CreateConVar("get5_auto_ready_active_players", "0", "Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase.");
+  g_ReadyTeamTagCvar                    = CreateConVar("get5_ready_team_tag", "1", "Adds [READY]/[NOT READY] tags to team names.");
+  g_SetClientClanTagCvar                = CreateConVar("get5_set_client_clan_tags", "1", "Whether to set client clan tags to player ready status.");
+
+  // Chat/color
+  g_MessagePrefixCvar                   = CreateConVar("get5_message_prefix", DEFAULT_TAG, "The tag printed before each chat message.");
+  g_PhaseAnnouncementCountCvar          = CreateConVar("get5_phase_announcement_count", "5", "The number of times 'Knife' or 'Match is LIVE' is printed to chat when the game starts.");
+  g_SpecNameColorCvar                   = CreateConVar("get5_spec_color", "{NORMAL}", "The color used for the name of spectators in chat messages.");
+  g_Team1NameColorCvar                  = CreateConVar("get5_team1_color", "{LIGHT_GREEN}", "The color used for the name of team 1 in chat messages.");
+  g_Team2NameColorCvar                  = CreateConVar("get5_team2_color", "{PINK}", "The color used for the name of team 2 in chat messages.");
+
+  // Countdown/timers
+  g_LiveCountdownTimeCvar               = CreateConVar("get5_live_countdown_time", "10", "Number of seconds used to count down when a match is going live.", 0, true, 5.0, true, 60.0);
+  g_TeamTimeToStartCvar                 = CreateConVar("get5_time_to_start", "0", "Time (in seconds) teams have to ready up before forfeiting the match. 0 = unlimited.");
+  g_TeamTimeToKnifeDecisionCvar         = CreateConVar("get5_time_to_make_knife_decision", "60", "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round. 0 = unlimited.");
+  g_VetoConfirmationTimeCvar            = CreateConVar("get5_veto_confirmation_time", "2.0", "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required. 0 to disable.");
+  g_VetoCountdownCvar                   = CreateConVar("get5_veto_countdown", "5", "Seconds to countdown before veto process commences. 0 to skip countdown.");
+
+  // Server config
+  g_AutoLoadConfigCvar                  = CreateConVar("get5_autoload_config", "", "The path/name of a match config file to automatically load when the server loads or when the first player joins.");
+  g_CheckAuthsCvar                      = CreateConVar("get5_check_auths", "1", "Whether players are forced onto the correct teams based on their Steam IDs.");
+  g_DisplayGotvVetoCvar                 = CreateConVar("get5_display_gotv_veto", "0", "Whether to wait for map vetos to be printed to GOTV before changing map.");
+  g_SetHostnameCvar                     = CreateConVar("get5_hostname_format", "Get5: {TEAM1} vs {TEAM2}", "The server hostname to use when a match is loaded. Set to \"\" to disable/use existing.");
+  g_KickClientImmunityCvar              = CreateConVar("get5_kick_immunity", "1", "Whether admins with the 'changemap' flag will be immune to kicks from \"get5_kick_when_no_match_loaded\".");
+  g_KickClientsWithNoMatchCvar          = CreateConVar("get5_kick_when_no_match_loaded", "0", "Whether the plugin kicks players when no match is loaded and when a match ends.");
+  g_KnifeCfgCvar                        = CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to execute for the knife round.");
+  g_LiveCfgCvar                         = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to execute when the game goes live.");
+  g_PrettyPrintJsonCvar                 = CreateConVar("get5_pretty_print_json", "1", "Whether all JSON output is in pretty-print format.");
+  g_PrintUpdateNoticeCvar               = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
+  g_ServerIdCvar                        = CreateConVar("get5_server_id", "0", "Integer that identifies your server. This is used in temporary files to prevent collisions.");
+  g_StatsPathFormatCvar                 = CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg", "Where match stats are saved (updated each map end). Set to \"\" to disable.");
+  g_WarmupCfgCvar                       = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to execute during warmup periods.");
+
   // clang-format on
   /** Create and exec plugin's configuration file **/
   AutoExecConfig(true, "get5");

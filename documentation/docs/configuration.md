@@ -14,6 +14,12 @@ cfg/sourcemod/get5.cfg
 You can either set the below parameters in that file, or in the `cvars` section of a match config. As mentioned in
 the explanation of the [match schema](../match_schema), that section will override all other settings.
 
+!!! warning "512 and no more"
+
+    Note that the maximum length of any config parameter is *less than* 512 characters. Depending on where these
+    parameters are set, being close to this limit may cause problems. This applies to things like URLs or HTTP headers,
+    so beware of long strings in these cases.
+
 ### Phase Configuration Files
 
 You should also have three config files. These can be edited, but we recommend not

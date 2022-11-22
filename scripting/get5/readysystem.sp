@@ -226,7 +226,7 @@ Action Command_ForceReadyClient(int client, int args) {
     char cVarName[MAX_CVAR_LENGTH];
     g_AllowForceReadyCvar.GetName(cVarName, sizeof(cVarName));
     FormatCvarName(cVarName, sizeof(cVarName), cVarName);
-    char forceReadyCommand[MAX_CVAR_LENGTH];
+    char forceReadyCommand[64];
     FormatChatCommand(forceReadyCommand, sizeof(forceReadyCommand), "!forceready");
     Get5_Message(client, "%t", "ForceReadyDisabled", forceReadyCommand, cVarName);
     return;

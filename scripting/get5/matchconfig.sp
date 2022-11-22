@@ -416,9 +416,9 @@ void WriteMatchToKv(KeyValues kv) {
   kv.GoBack();
 
   kv.JumpToKey("cvars", true);
+  char cvarName[MAX_CVAR_LENGTH];
+  char cvarValue[MAX_CVAR_LENGTH];
   for (int i = 0; i < g_CvarNames.Length; i++) {
-    char cvarName[MAX_CVAR_LENGTH];
-    char cvarValue[MAX_CVAR_LENGTH];
     g_CvarNames.GetString(i, cvarName, sizeof(cvarName));
     g_CvarValues.GetString(i, cvarValue, sizeof(cvarValue));
     kv.SetString(cvarName, strlen(cvarValue) == 0 ? KEYVALUE_STRING_PLACEHOLDER : cvarValue);
@@ -531,9 +531,9 @@ static bool LoadMatchFromKv(KeyValues kv) {
   }
 
   if (kv.JumpToKey("cvars")) {
+    char name[MAX_CVAR_LENGTH];
+    char value[MAX_CVAR_LENGTH];
     if (kv.GotoFirstSubKey(false)) {
-      char name[MAX_CVAR_LENGTH];
-      char value[MAX_CVAR_LENGTH];
       do {
         kv.GetSectionName(name, sizeof(name));
         ReadEmptyStringInsteadOfPlaceholder(kv, value, sizeof(value));
@@ -1219,8 +1219,8 @@ Action Command_CreateScrim(int client, int args) {
 
   // Also ensure empty string values in cvars get printed to the match config.
   if (kv.JumpToKey("cvars")) {
+    char cVarValue[MAX_CVAR_LENGTH];
     if (kv.GotoFirstSubKey(false)) {
-      char cVarValue[MAX_CVAR_LENGTH];
       do {
         WritePlaceholderInsteadOfEmptyString(kv, cVarValue, sizeof(cVarValue));
       } while (kv.GotoNextKey(false));

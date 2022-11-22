@@ -1280,6 +1280,12 @@ here:</p>
 </code></pre></div>
 <p>You can either set the below parameters in that file, or in the <code>cvars</code> section of a match config. As mentioned in
 the explanation of the <a href="../match_schema">match schema</a>, that section will override all other settings.</p>
+<div class="admonition warning">
+<p class="admonition-title">512 and no more</p>
+<p>Note that the maximum length of any config parameter is <em>less than</em> 512 characters. Depending on where these
+parameters are set, being close to this limit may cause problems. This applies to things like URLs or HTTP headers,
+so beware of long strings in these cases.</p>
+</div>
 <h3 id="phase-configuration-files">Phase Configuration Files</h3>
 <p>You should also have three config files. These can be edited, but we recommend not
 blindly pasting another config in (e.g. ESL, CEVO). These must only include commands you would run in the console (such

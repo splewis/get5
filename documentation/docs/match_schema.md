@@ -51,8 +51,9 @@ interface Get5Match {
     "spectators": { // (10)
         "name": string | undefined // (29)
         "players": Get5PlayerSet | undefined // (30)
+        "fromfile": string | undefined // (34)
     } | undefined,
-    "maplist": [string] // (13)
+    "maplist": string[] // (13)
     "favored_percentage_team1": number | undefined // (14)
     "favored_percentage_text": string | undefined // (15)
     "team1": Get5MatchTeam | Get5MatchTeamFromFile // (20)
@@ -128,9 +129,8 @@ interface Get5Match {
     cvars.<br><br>**`Default: ""`**
 28. Match teams can also be loaded from a separate file, allowing you to easily re-use a match configuration for
     different sets of teams. A `fromfile` value could be `"addons/sourcemod/configs/get5/team_nip.json"`, and is always
-    relative to the `csgo` directory. The file should contain a valid `Get5MatchTeam` object. Note that the file you
-    point to must be in the same format as the main file, so pointing to a `.cfg` file when the main file is `.json`
-    will **not** work.
+    relative to the `csgo` directory. The file should contain a valid `Get5MatchTeam` object. You **are** allowed to mix
+    filetypes, so a JSON file can point to a `fromfile` that's a KeyValue file and vice-versa.
 29. _Optional_<br>The name of the spectator team.<br><br>**`Default: "casters"`**
 30. _Optional_<br>The spectator/caster Steam IDs and names. Setting a Steam ID as spectator takes precedence over being
     set as a player or coach.
@@ -140,6 +140,7 @@ interface Get5Match {
 32. _Optional_<br>If `false`, the entire map list will be played, regardless of score. If `true`, a series will be won
     when the series score for a team exceeds the number of maps divided by two.<br><br>**`Default: true`**
 33. _Optional_<br>Determines if coaches must also [`!ready`](../commands#ready).<br><br>**`Default: false`**
+34. _Optional_<br>Similarly to teams, spectators may also be loaded from another file.
 
 !!! info "Team assignment priority"
 
@@ -382,6 +383,7 @@ These examples are identical in the way they would work if loaded.
     ```
     `fromfile` example:
     ```cfg title="addons/sourcemod/get5/team_navi.cfg"
+    Team
     { 
         "name"		"Natus Vincere"
     	"tag"		"NaVi"

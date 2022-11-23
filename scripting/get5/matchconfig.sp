@@ -489,25 +489,29 @@ static bool LoadMatchFromKv(KeyValues kv) {
 
   GetTeamPlayers(Get5Team_Spec).Clear();
   if (kv.JumpToKey("spectators")) {
-    AddSubsectionAuthsToList(kv, "players", GetTeamPlayers(Get5Team_Spec));
-    kv.GetString("name", g_TeamNames[Get5Team_Spec], MAX_CVAR_LENGTH, CONFIG_SPECTATORSNAME_DEFAULT);
+    if (!LoadTeamData(kv, Get5Team_Spec, true)) {
+      return false;
+    }
     kv.GoBack();
-    FormatTeamName(Get5Team_Spec);
   }
 
   if (kv.JumpToKey("team1")) {
-    LoadTeamData(kv, Get5Team_1);
+    if (!LoadTeamData(kv, Get5Team_1, true)) {
+      return false;
+    }
     kv.GoBack();
   } else {
-    MatchConfigFail("Missing \"team1\" section in match kv");
+    MatchConfigFail("Missing \"team1\" section in match config KeyValues.");
     return false;
   }
 
   if (kv.JumpToKey("team2")) {
-    LoadTeamData(kv, Get5Team_2);
+    if (!LoadTeamData(kv, Get5Team_2, true)) {
+      return false;
+    }
     kv.GoBack();
   } else {
-    MatchConfigFail("Missing \"team2\" section in match kv");
+    MatchConfigFail("Missing \"team2\" section in match config KeyValues.");
     return false;
   }
 
@@ -582,26 +586,27 @@ static bool LoadMatchFromJson(JSON_Object json) {
 
   GetTeamPlayers(Get5Team_Spec).Clear();
   JSON_Object spec = json.GetObject("spectators");
-  if (spec != null) {
-    json_object_get_string_safe(spec, "name", g_TeamNames[Get5Team_Spec], MAX_CVAR_LENGTH,
-                                CONFIG_SPECTATORSNAME_DEFAULT);
-    AddJsonAuthsToList(spec, "players", GetTeamPlayers(Get5Team_Spec), AUTH_LENGTH);
-    FormatTeamName(Get5Team_Spec);
+  if (spec != null && !LoadTeamDataJson(spec, Get5Team_Spec, true)) {
+    return false;
   }
 
   JSON_Object team1 = json.GetObject("team1");
   if (team1 != null) {
-    LoadTeamDataJson(team1, Get5Team_1);
+    if (!LoadTeamDataJson(team1, Get5Team_1, true)) {
+      return false;
+    }
   } else {
-    MatchConfigFail("Missing \"team1\" section in match json");
+    MatchConfigFail("Missing \"team1\" section in match config JSON.");
     return false;
   }
 
   JSON_Object team2 = json.GetObject("team2");
   if (team2 != null) {
-    LoadTeamDataJson(team2, Get5Team_2);
+    if (!LoadTeamDataJson(team2, Get5Team_2, true)) {
+      return false;
+    }
   } else {
-    MatchConfigFail("Missing \"team2\" section in match json");
+    MatchConfigFail("Missing \"team2\" section in match config JSON.");
     return false;
   }
 
@@ -658,66 +663,86 @@ static bool LoadMatchFromJson(JSON_Object json) {
   return true;
 }
 
-static void LoadTeamDataJson(JSON_Object json, Get5Team matchTeam) {
-  GetTeamPlayers(matchTeam).Clear();
-  GetTeamCoaches(matchTeam).Clear();
-
+static bool LoadTeamDataJson(const JSON_Object json, const Get5Team matchTeam, const bool loadFromMatchConfig,
+                             const bool allowFromFile = true) {
   char fromfile[PLATFORM_MAX_PATH];
-  json_object_get_string_safe(json, "fromfile", fromfile, sizeof(fromfile));
-
+  if (allowFromFile) {
+    json_object_get_string_safe(json, "fromfile", fromfile, sizeof(fromfile));
+  }
   if (StrEqual(fromfile, "")) {
+    GetTeamPlayers(matchTeam).Clear();
+    GetTeamCoaches(matchTeam).Clear();
     // TODO: this needs to support both an array and a dictionary
     // For now, it only supports an array
+    json_object_get_string_safe(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH,
+                                matchTeam == Get5Team_Spec ? CONFIG_SPECTATORSNAME_DEFAULT : "");
+    FormatTeamName(matchTeam);
     AddJsonAuthsToList(json, "players", GetTeamPlayers(matchTeam), AUTH_LENGTH);
-    JSON_Object coaches = json.GetObject("coaches");
-    if (coaches != null) {
-      AddJsonAuthsToList(json, "coaches", GetTeamCoaches(matchTeam), AUTH_LENGTH);
+    if (matchTeam != Get5Team_Spec) {
+      JSON_Object coaches = json.GetObject("coaches");
+      if (coaches != null) {
+        AddJsonAuthsToList(json, "coaches", GetTeamCoaches(matchTeam), AUTH_LENGTH);
+      }
+      json_object_get_string_safe(json, "tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH);
+      json_object_get_string_safe(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
+      json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
+      json_object_get_string_safe(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
+      g_TeamSeriesScores[matchTeam] = json_object_get_int_safe(json, "series_score", 0);
     }
-    json_object_get_string_safe(json, "name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH);
-    json_object_get_string_safe(json, "tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH);
-    json_object_get_string_safe(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
-    json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
-    json_object_get_string_safe(json, "matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH);
+    return true;
   } else {
-    JSON_Object fromfileJson = json_read_from_file(fromfile);
-    if (fromfileJson == null) {
-      LogError("Cannot load team config from file \"%s\", fromfile");
-    } else {
-      LoadTeamDataJson(fromfileJson, matchTeam);
-      json_cleanup_and_delete(fromfileJson);
-    }
+    return LoadTeamDataFromFile(fromfile, matchTeam, loadFromMatchConfig);
   }
-
-  g_TeamSeriesScores[matchTeam] = json_object_get_int_safe(json, "series_score", 0);
-  FormatTeamName(matchTeam);
 }
 
-static void LoadTeamData(KeyValues kv, Get5Team matchTeam) {
-  GetTeamPlayers(matchTeam).Clear();
-  GetTeamCoaches(matchTeam).Clear();
+static bool LoadTeamData(const KeyValues kv, const Get5Team matchTeam, const bool loadFromMatchConfig,
+                         const bool allowFromFile = true) {
   char fromfile[PLATFORM_MAX_PATH];
-  kv.GetString("fromfile", fromfile, sizeof(fromfile));
-
-  if (StrEqual(fromfile, "")) {
-    AddSubsectionAuthsToList(kv, "players", GetTeamPlayers(matchTeam));
-    AddSubsectionAuthsToList(kv, "coaches", GetTeamCoaches(matchTeam));
-    kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH, "");
-    kv.GetString("tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH, "");
-    kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
-    kv.GetString("logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH, "");
-    kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");
-  } else {
-    KeyValues fromfilekv = new KeyValues("team");
-    if (fromfilekv.ImportFromFile(fromfile)) {
-      LoadTeamData(fromfilekv, matchTeam);
-    } else {
-      LogError("Cannot load team config from file \"%s\"", fromfile);
-    }
-    delete fromfilekv;
+  if (allowFromFile) {
+    kv.GetString("fromfile", fromfile, sizeof(fromfile));
   }
+  if (StrEqual(fromfile, "")) {
+    // TODO: Probably add some validation here and use loadFromMatchConfig to determine error and return false?
+    GetTeamPlayers(matchTeam).Clear();
+    GetTeamCoaches(matchTeam).Clear();
+    kv.GetString("name", g_TeamNames[matchTeam], MAX_CVAR_LENGTH,
+                 matchTeam == Get5Team_Spec ? CONFIG_SPECTATORSNAME_DEFAULT : "");
+    FormatTeamName(matchTeam);
+    AddSubsectionAuthsToList(kv, "players", GetTeamPlayers(matchTeam));
+    if (matchTeam != Get5Team_Spec) {
+      AddSubsectionAuthsToList(kv, "coaches", GetTeamCoaches(matchTeam));
+      kv.GetString("tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH, "");
+      kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
+      kv.GetString("logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH, "");
+      kv.GetString("matchtext", g_TeamMatchTexts[matchTeam], MAX_CVAR_LENGTH, "");
+      g_TeamSeriesScores[matchTeam] = kv.GetNum("series_score", 0);
+    }
+    return true;
+  } else {
+    return LoadTeamDataFromFile(fromfile, matchTeam, loadFromMatchConfig);
+  }
+}
 
-  g_TeamSeriesScores[matchTeam] = kv.GetNum("series_score", 0);
-  FormatTeamName(matchTeam);
+static bool LoadTeamDataFromFile(const char[] fromFile, const Get5Team team, const bool loadFromMatchConfig) {
+  LogDebug("Loading team data for team %d using fromfile.", team);
+  bool success = false;
+  if (IsJSONPath(fromFile)) {
+    JSON_Object fromFileJson = json_read_from_file(fromFile);
+    if (fromFileJson != null) {
+      success = LoadTeamDataJson(fromFileJson, team, loadFromMatchConfig, false);
+      json_cleanup_and_delete(fromFileJson);
+    }
+  } else {
+    KeyValues kvFromFile = new KeyValues("Team");
+    if (kvFromFile.ImportFromFile(fromFile)) {
+      success = LoadTeamData(kvFromFile, team, loadFromMatchConfig, false);
+    }
+    delete kvFromFile;
+  }
+  if (!success && loadFromMatchConfig) {
+    MatchConfigFail("Cannot load team config from file: \"%s\".", fromFile);
+  }
+  return success;
 }
 
 static void FormatTeamName(const Get5Team team) {
@@ -824,40 +849,47 @@ static void ExecuteMatchConfigCvars() {
 }
 
 Action Command_LoadTeam(int client, int args) {
-  if (g_GameState == Get5State_None) {
-    ReplyToCommand(client, "Cannot change player lists when there is no match to modify");
+  char arg1[PLATFORM_MAX_PATH];
+  char arg2[PLATFORM_MAX_PATH];
+  if (args < 2 || !GetCmdArg(1, arg1, sizeof(arg1)) || !GetCmdArg(2, arg2, sizeof(arg2))) {
+    ReplyToCommand(client, "Usage: get_loadteam <team1|team2|spec> <filename>");
     return Plugin_Handled;
   }
 
-  char arg1[PLATFORM_MAX_PATH];
-  char arg2[PLATFORM_MAX_PATH];
-  if (args >= 2 && GetCmdArg(1, arg1, sizeof(arg1)) && GetCmdArg(2, arg2, sizeof(arg2))) {
-    Get5Team team = Get5Team_None;
-    if (StrEqual(arg1, "team1")) {
-      team = Get5Team_1;
-    } else if (StrEqual(arg1, "team2")) {
-      team = Get5Team_2;
-    } else if (StrEqual(arg1, "spec")) {
-      team = Get5Team_Spec;
-    } else {
-      ReplyToCommand(client, "Unknown team: must be one of team1, team2, spec");
-      return Plugin_Handled;
-    }
-
-    KeyValues kv = new KeyValues("team");
-    if (kv.ImportFromFile(arg2)) {
-      LoadTeamData(kv, team);
-      ReplyToCommand(client, "Loaded team data for %s", arg1);
-      SetMatchTeamCvars();
-    } else {
-      ReplyToCommand(client, "Failed to read keyvalues from file \"%s\"", arg2);
-    }
-    delete kv;
-
-  } else {
-    ReplyToCommand(client, "Usage: get_loadteam <team1|team2|spec> <filename>");
+  if (g_GameState == Get5State_None) {
+    ReplyToCommand(client, "A match configuration must be loaded before you can load a team file.");
+    return Plugin_Handled;
   }
 
+  Get5Team team = Get5Team_None;
+  if (StrEqual(arg1, "team1")) {
+    team = Get5Team_1;
+  } else if (StrEqual(arg1, "team2")) {
+    team = Get5Team_2;
+    if (g_InScrimMode) {
+      ReplyToCommand(client, "In scrim mode only team1 or spec can be loaded.");
+      return Plugin_Handled;
+    }
+  } else if (StrEqual(arg1, "spec")) {
+    team = Get5Team_Spec;
+  } else {
+    ReplyToCommand(client, "Unknown team argument. Must be one of: team1, team2, spec.");
+    return Plugin_Handled;
+  }
+
+  if (LoadTeamDataFromFile(arg2, team, false)) {
+    ReplyToCommand(client, "Loaded team data for %s.", arg1);
+    SetMatchTeamCvars();
+    if (g_CheckAuthsCvar.BoolValue) {
+      LOOP_CLIENTS(i) {
+        if (IsPlayer(i)) {
+          CheckClientTeam(i);
+        }
+      }
+    }
+  } else {
+    ReplyToCommand(client, "Failed to load data for %s from file: \"%s\".", arg1, arg2);
+  }
   return Plugin_Handled;
 }
 

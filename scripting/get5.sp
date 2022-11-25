@@ -53,6 +53,12 @@
 
 #pragma semicolon 1
 #pragma newdecls required
+/**
+ * Increases stack space to 32000 cells (or 128KB, a cell is 4 bytes)
+ * This is to prevent "Not enough space on the heap" error when dumping match stats
+ * Default heap size is 4KB
+ */
+#pragma dynamic 32000
 
 /** ConVar handles **/
 ConVar g_AllowTechPauseCvar;

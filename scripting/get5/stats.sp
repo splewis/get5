@@ -620,16 +620,16 @@ static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
     return;
   }
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
+  int victim = GetClientOfUserId(event.GetInt("userid"));
 
   if (g_GameState != Get5State_Live) {
-    if (g_AutoReadyActivePlayersCvar.BoolValue && IsAuthedPlayer(attacker)) {
+    if (attacker != victim && g_AutoReadyActivePlayersCvar.BoolValue && IsAuthedPlayer(attacker)) {
       // HandleReadyCommand checks for game state, so we don't need to do that here as well.
       HandleReadyCommand(attacker, true);
     }
     return;
   }
 
-  int victim = GetClientOfUserId(event.GetInt("userid"));
   int assister = GetClientOfUserId(event.GetInt("assister"));
 
   bool validAttacker = IsValidClient(attacker);

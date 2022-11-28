@@ -37,7 +37,7 @@
 
 #define DEBUG_CVAR      "get5_debug"
 #define MATCH_ID_LENGTH 64
-#define MAX_CVAR_LENGTH 513 // 512 + 1 for buffers
+#define MAX_CVAR_LENGTH 513  // 512 + 1 for buffers
 
 #define TEAM1_STARTING_SIDE CS_TEAM_CT
 #define TEAM2_STARTING_SIDE CS_TEAM_T

@@ -133,7 +133,8 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
   }
 
   if (!LibraryExists("SteamWorks")) {
-    LogError("Get5 cannot upload demos to a web server without the SteamWorks extension. Set get5_demo_upload_url to an empty string to remove this message.");
+    LogError(
+      "Get5 cannot upload demos to a web server without the SteamWorks extension. Set get5_demo_upload_url to an empty string to remove this message.");
     return;
   }
 
@@ -254,7 +255,7 @@ void SetCurrentMatchRestartDelay(float delay) {
 }
 
 static void DemoRequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
-                               DataPack pack) {
+                                DataPack pack) {
   char matchId[MATCH_ID_LENGTH];
   char demoFileName[PLATFORM_MAX_PATH];
   int mapNumber;

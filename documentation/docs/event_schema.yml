@@ -59,13 +59,11 @@ paths:
             schema:
               title: Get5PlayerConnectedEvent
               allOf:
-                - $ref: "#/components/schemas/Get5Event"
+                - $ref: "#/components/schemas/Get5PlayerDisconnectedEvent"
               properties:
                 event:
                   enum:
                     - player_connect
-                player:
-                  $ref: "#/components/schemas/Get5Player"
                 ip_address:
                   type: string
                   example: '34.132.182.66'
@@ -83,13 +81,11 @@ paths:
             schema:
               title: Get5PlayerDisconnectedEvent
               allOf:
-                - $ref: "#/components/schemas/Get5Event"
+                - $ref: "#/components/schemas/Get5PlayerDisconnectedEvent"
               properties:
                 event:
                   enum:
                     - player_disconnect
-                player:
-                  $ref: "#/components/schemas/Get5Player"
       responses: { }
   "/Get5_OnPreLoadMatchConfig":
     post:
@@ -1142,6 +1138,12 @@ components:
         - a
         - b
       description: The site at which the bomb was planted/defused or exploded. `Site` in SourceMod.
+    Get5PlayerDisconnectedEvent:
+      allOf:
+        - "$ref": "#/components/schemas/Get5MatchEvent"
+      properties:
+        player:
+          $ref: "#/components/schemas/Get5Player"
 
 tags:
   - name: All Events

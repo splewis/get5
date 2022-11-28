@@ -757,12 +757,15 @@ public void OnClientSayCommand_Post(int client, const char[] command, const char
  * put on that team and spawned, so we can't allow that.
  */
 static Action Event_PlayerConnectFull(Event event, const char[] name, bool dontBroadcast) {
+  if (g_GameState == Get5State_None) {
+    return Plugin_Continue;
+  }
   int client = GetClientOfUserId(event.GetInt("userid"));
   if (IsPlayer(client)) {
     char ipAddress[32];
     GetClientIP(client, ipAddress, sizeof(ipAddress));
 
-    Get5PlayerConnectedEvent connectEvent = new Get5PlayerConnectedEvent(GetPlayerObject(client), ipAddress);
+    Get5PlayerConnectedEvent connectEvent = new Get5PlayerConnectedEvent(g_MatchID, GetPlayerObject(client), ipAddress);
 
     LogDebug("Calling Get5_OnPlayerConnected()");
     Call_StartForward(g_OnPlayerConnected);
@@ -772,13 +775,14 @@ static Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
 
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
   }
+  return Plugin_Continue;
 }
 
 static Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
   g_ClientPendingTeamCheck[client] = false;
-  if (IsPlayer(client)) {
-    Get5PlayerDisconnectedEvent disconnectEvent = new Get5PlayerDisconnectedEvent(GetPlayerObject(client));
+  if (g_GameState != Get5State_None && IsPlayer(client)) {
+    Get5PlayerDisconnectedEvent disconnectEvent = new Get5PlayerDisconnectedEvent(g_MatchID, GetPlayerObject(client));
 
     LogDebug("Calling Get5_OnPlayerDisconnected()");
     Call_StartForward(g_OnPlayerDisconnected);
@@ -790,6 +794,7 @@ static Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
     // to get the right "number of players per team" in CheckForForfeitOnDisconnect().
     CreateTimer(0.1, Timer_DisconnectCheck, _, TIMER_FLAG_NO_MAPCHANGE);
   }
+  return Plugin_Continue;
 }
 
 // This runs every time a map starts *or* when the plugin is reloaded.

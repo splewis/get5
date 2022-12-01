@@ -1590,16 +1590,16 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
 static Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundWinPanel");
   if (g_GameState == Get5State_KnifeRound && g_HasKnifeRoundStarted) {
-    int ctAlive = CountAlivePlayersOnTeam(CS_TEAM_CT);
-    int tAlive = CountAlivePlayersOnTeam(CS_TEAM_T);
+    int ctAlive = CountAlivePlayersOnTeam(Get5Side_CT);
+    int tAlive = CountAlivePlayersOnTeam(Get5Side_T);
     int winningCSTeam;
     if (ctAlive > tAlive) {
       winningCSTeam = CS_TEAM_CT;
     } else if (tAlive > ctAlive) {
       winningCSTeam = CS_TEAM_T;
     } else {
-      int ctHealth = SumHealthOfTeam(CS_TEAM_CT);
-      int tHealth = SumHealthOfTeam(CS_TEAM_T);
+      int ctHealth = SumHealthOfTeam(Get5Side_CT);
+      int tHealth = SumHealthOfTeam(Get5Side_T);
       if (ctHealth > tHealth) {
         winningCSTeam = CS_TEAM_CT;
       } else if (tHealth > ctHealth) {

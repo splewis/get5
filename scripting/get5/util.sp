@@ -40,20 +40,20 @@ stock int GetNumHumansOnTeam(int team) {
   return count;
 }
 
-stock int CountAlivePlayersOnTeam(int csTeam) {
+stock int CountAlivePlayersOnTeam(const Get5Side side) {
   int count = 0;
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == csTeam) {
+    if (IsValidClient(i) && IsPlayerAlive(i) && view_as<Get5Side>(GetClientTeam(i)) == side) {
       count++;
     }
   }
   return count;
 }
 
-stock int SumHealthOfTeam(int team) {
+stock int SumHealthOfTeam(Get5Side side) {
   int sum = 0;
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == team) {
+    if (IsValidClient(i) && IsPlayerAlive(i) && view_as<Get5Side>(GetClientTeam(i)) == side) {
       sum += GetClientHealth(i);
     }
   }

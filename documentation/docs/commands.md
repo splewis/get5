@@ -99,8 +99,7 @@ Please note that these are meant to be used by *admins* in console. The definiti
 ####`get5_loadbackup <filename>` {: #get5_loadbackup }
 :   Loads a match backup, relative to the `csgo` directory. Requires that
 the [backup system is enabled](../configuration#get5_backup_system_enabled). If you
-define [`get5_backup_path`](../configuration#get5_backup_path), you must include the path in the filename. Note that
-loading a backup stops and restarts any ongoing [demo recordings](../gotv#demos).
+define [`get5_backup_path`](../configuration#get5_backup_path), you must include the path in the filename.
 
 ####`get5_last_backup_file`
 :   Prints the name of the last match backup file Get5 wrote in the current series, this is automatically updated each

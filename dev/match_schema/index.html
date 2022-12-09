@@ -427,15 +427,13 @@ better support in various programming languages than Valve's KeyValue format (wh
     if <a href="https://totalcsgo.com/command/svcoachingenabled"><code>sv_coaching_enabled</code></a> is disabled, anyone defined as a coach
     will be considered a regular player for the team instead.<br/><br/><strong><code>Default: undefined</code></strong></li>
 <li><em>Required</em><br/>The players on the team.</li>
-<li><em>Optional</em><br/>Wrapper of the server's <code>mp_teammatchstat_txt</code> cvar, but can use <code>{MAPNUMBER}</code> and <code>{MAXMAPS}</code> as
-    variables that get replaced with their integer values. In a BoX series, you probably don't want to set this since
-    Get5 automatically sets <code>mp_teamscore</code> cvars for the current series score, and take the place of
-    the <code>mp_teammatchstat</code> cvars.<br/><br/><strong><code>Default: "Map {MAPNUMBER} of {MAXMAPS}"</code></strong></li>
+<li><em>Optional</em><br/>Sets the server's <code>mp_teammatchstat_txt</code> ConVar, but lets you use <code>{MAPNUMBER}</code> and <code>{MAXMAPS}</code> as
+    variables that get replaced with their integer values. You should <strong>not</strong> set <code>mp_teammatchstat_txt</code> yourself, as it
+    will be overridden by this parameter.<br/><br/><strong><code>Default: "Map {MAPNUMBER} of {MAXMAPS}"</code></strong></li>
 <li><em>Optional</em><br/>The current score in the series, this can be used to give a team a map advantage or used as a manual
     backup method.<br/><br/><strong><code>Default: 0</code></strong></li>
-<li><em>Optional</em><br/>Wraps <code>mp_teammatchstat_1</code> and <code>mp_teammatchstat_2</code>. You probably don't want to set this, in BoX
-    series, <code>mp_teamscore</code> cvars are automatically set and take the place of the <code>mp_teammatchstat_x</code>
-    cvars.<br/><br/><strong><code>Default: ""</code></strong></li>
+<li><em>Optional</em><br/>Assigns values to <code>mp_teammatchstat_1</code> and <code>mp_teammatchstat_2</code>, respectively. If you don't set this
+    value in a BoX series, it is set to each team's map series score automatically.<br/><br/><strong><code>Default: ""</code></strong></li>
 <li>Match teams can also be loaded from a separate file, allowing you to easily re-use a match configuration for
     different sets of teams. A <code>fromfile</code> value could be <code>"addons/sourcemod/configs/get5/team_nip.json"</code>, and is always
     relative to the <code>csgo</code> directory. The file should contain a valid <code>Get5MatchTeam</code> object. You <strong>are</strong> allowed to mix
@@ -684,7 +682,7 @@ empty strings as values in dictionaries (<code>maplist</code> and <code>map_side
 <a href="#__codelineno-4-69" id="__codelineno-4-69" name="__codelineno-4-69"></a><span class="na">}</span><span class="w"></span>
 </code></pre></div>
 <code>fromfile</code> example:
-<div class="highlight"><span class="filename">addons/sourcemod/get5/team_navi.cfg</span><pre><span></span><code><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="na">Team</span><span class="w"></span>
+<div class="highlight"><span class="filename">addons/sourcemod/get5/team_navi.cfg</span><pre><span></span><code><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="na">"Team"</span><span class="w"></span>
 <a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="na">{ </span><span class="w"></span>
 <a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="w">    </span><span class="na">"name"      "Natus Vincere"</span><span class="w"></span>
 <a href="#__codelineno-5-4" id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="w">    </span><span class="na">"tag"       "NaVi"</span><span class="w"></span>

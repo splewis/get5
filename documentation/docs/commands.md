@@ -45,7 +45,9 @@ if possible. Can only be used during warmup.
 
 :   Asks to reload the last match backup file, i.e. restart the current round. The opposing team must confirm before the
 round ends. Only works if the [backup system is enabled](../configuration#get5_backup_system_enabled)
-and [`get5_stop_command_enabled`](../configuration#get5_stop_command_enabled) is set to `1`.
+and [`get5_stop_command_enabled`](../configuration#get5_stop_command_enabled) is set to `1`. You can also set
+a [time](../configuration#get5_stop_command_time_limit) or
+[damage](../configuration#get5_stop_command_no_damage) restriction on the use of this command.
 
 ####`!forceready`
 

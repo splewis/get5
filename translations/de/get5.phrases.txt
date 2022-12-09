@@ -272,6 +272,14 @@
     {
         "de"            "Die Anfrage von {1} das Spiel zu stoppen wurde abgebrochen da die Runde zu Ende ist."
     }
+    "StopCommandRequiresNoDamage"
+    {
+        "de"            "Ein Neustart der Runde kann nicht angefragt werden, sobald ein Spieler einem anderen Spieler Schaden zugefügt hat."
+    }
+    "StopCommandTimeLimitExceeded"
+    {
+        "de"            "Ein Neustart der Runde muss innerhalb der ersten {1} nach dem Rundenstart angefragt werden."
+    }
     "BackupLoadedInfoMessage"
     {
         "de"            "Die Sicherung {1} wurde erfolgreich geladen."

@@ -148,6 +148,14 @@
     {
         "pl"            "Mecz został zakończony"
     }
+    "StopCommandRequiresNoDamage"
+    {
+        "pl"            "Prośba o wznowienie rundy nie może być zgłoszona, gdy gracz zadał obrażenia jakiemukolwiek graczowi przeciwnika."
+    }
+    "StopCommandTimeLimitExceeded"
+    {
+        "pl"            "Prośba o wznowienie rundy musi zostać zgłoszona w ciągu {1} po rozpoczęciu rundy."
+    }
     "BackupLoadedInfoMessage"
     {
         "pl"            "Pomyślnie wczytano kopię meczu {1}."

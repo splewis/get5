@@ -1,5 +1,5 @@
 #define CVAR_NAME_MAX_LENGTH  128
-#define CVAR_VALUE_MAX_LENGTH 128
+#define CVAR_VALUE_MAX_LENGTH 513
 
 // Returns a cvar Handle that can be used to restore cvars.
 stock Handle SaveCvars(ArrayList cvarNames) {

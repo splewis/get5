@@ -1,0 +1,18 @@
+{
+  "num_maps": 3,
+  "maplist": {
+    "fromfile": ""
+  },
+  "team1": {
+    "name": "Team A",
+    "players": {
+      "STEAM_0:1:52245092": "PlayerName"
+    }
+  },
+  "team2": {
+    "name": "Team B",
+    "players": [
+      "STEAM_1:1:46796472"
+    ]
+  }
+}

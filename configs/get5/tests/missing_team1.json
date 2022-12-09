@@ -1,0 +1,10 @@
+{
+  "team2": {
+    "fromfile": "addons/sourcemod/configs/get5/tests/team2.json"
+  },
+  "maplist": [
+    "de_dust2",
+    "de_mirage",
+    "de_ancient"
+  ]
+}

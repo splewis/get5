@@ -1505,6 +1505,7 @@ void ResetMatchConfigVariables(bool backup = false) {
   g_PausingTeam = Get5Team_None;
   g_LatestPauseDuration = 0;
   g_PauseType = Get5PauseType_None;
+  g_PlayerHasTakenDamage = false;
   if (!backup) {
     // All hell breaks loose if these are reset during a backup.
     g_DoingBackupRestoreNow = false;

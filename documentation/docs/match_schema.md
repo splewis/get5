@@ -28,10 +28,11 @@ interface Get5MatchTeam {
     "logo": string | undefined // (19)
     "series_score": number | undefined // (26)
     "matchtext": string | undefined // (27)
+    "fromfile": string | undefined // (28)
 }
 
-interface Get5MatchTeamFromFile {
-    "fromfile": string // (28)
+interface Get5MapListFromFile {
+    "fromfile": string // (35)
 }
 
 interface Get5Match {
@@ -52,12 +53,12 @@ interface Get5Match {
         "name": string | undefined // (29)
         "players": Get5PlayerSet | undefined // (30)
         "fromfile": string | undefined // (34)
-    } | undefined,
-    "maplist": string[] // (13)
+    } | undefined
+    "maplist": string[] | Get5MapListFromFile // (13)
     "favored_percentage_team1": number | undefined // (14)
     "favored_percentage_text": string | undefined // (15)
-    "team1": Get5MatchTeam | Get5MatchTeamFromFile // (20)
-    "team2": Get5MatchTeam | Get5MatchTeamFromFile // (21)
+    "team1": Get5MatchTeam // (20)
+    "team2": Get5MatchTeam // (21)
     "cvars": { [key: string]: string | number } | undefined // (22)
 }
 ```
@@ -93,7 +94,8 @@ interface Get5Match {
     maps. `standard` and `always_knife` behave similarly when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
 13. _Required_<br>The map pool to pick from, as an array of strings (`["de_dust2", "de_nuke"]` etc.), or if `skip_veto`
     is `true`, the order of maps played (limited by `num_maps`). **This should always be odd-sized if using the in-game
-    [veto system](../veto).**
+    [veto system](../veto).** Similarly to teams, you can set this to an object with a `fromfile` property to load a map
+    list from a separate file.
 14. _Optional_<br>Wrapper for the server's `mp_teamprediction_pct`. This determines the chances of `team1`
     winning.<br><br>**`Default: 0`**
 15. _Optional_<br>Wrapper for the server's `mp_teamprediction_txt`.<br><br>**`Default: ""`**
@@ -125,10 +127,12 @@ interface Get5Match {
     backup method.<br><br>**`Default: 0`**
 27. _Optional_<br>Assigns values to `mp_teammatchstat_1` and `mp_teammatchstat_2`, respectively. If you don't set this
     value in a BoX series, it is set to each team's map series score automatically.<br><br>**`Default: ""`**
-28. Match teams can also be loaded from a separate file, allowing you to easily re-use a match configuration for
-    different sets of teams. A `fromfile` value could be `"addons/sourcemod/configs/get5/team_nip.json"`, and is always
-    relative to the `csgo` directory. The file should contain a valid `Get5MatchTeam` object. You **are** allowed to mix
-    filetypes, so a JSON file can point to a `fromfile` that's a KeyValue file and vice-versa.
+28. _Optional_<br>Match teams can also be loaded from a separate file, allowing you to easily re-use a match
+    configuration for different sets of teams. A `fromfile` value could
+    be `"addons/sourcemod/configs/get5/team_nip.json"`, and is always relative to the `csgo` directory. The file should
+    contain a valid `Get5MatchTeam` object. You **are** allowed to mix filetypes, so a JSON file can point to
+    a `fromfile` that's a KeyValue file and vice-versa. If you provide a `fromfile` property, all other properties are
+    ignored and team data is only read from the provided file.
 29. _Optional_<br>The name of the spectator team.<br><br>**`Default: "casters"`**
 30. _Optional_<br>The spectator/caster Steam IDs and names. Setting a Steam ID as spectator takes precedence over being
     set as a player or coach.
@@ -138,7 +142,8 @@ interface Get5Match {
 32. _Optional_<br>If `false`, the entire map list will be played, regardless of score. If `true`, a series will be won
     when the series score for a team exceeds the number of maps divided by two.<br><br>**`Default: true`**
 33. _Optional_<br>Determines if coaches must also [`!ready`](../commands#ready).<br><br>**`Default: false`**
-34. _Optional_<br>Similarly to teams, spectators may also be loaded from another file.
+34. _Optional_<br>Similarly to teams and map list, spectators may also be loaded from another file.
+35. _Required_<br>Similarly to teams and spectators, a map list may also be loaded from another file.
 
 !!! info "Team assignment priority"
 

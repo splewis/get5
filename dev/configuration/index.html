@@ -411,6 +411,16 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stop_command_no_damage">
+    get5_stop_command_no_damage
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stop_command_time_limit">
+    get5_stop_command_time_limit
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_max_backup_age">
     get5_max_backup_age
   </a>
@@ -1045,6 +1055,16 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stop_command_no_damage">
+    get5_stop_command_no_damage
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get5_stop_command_time_limit">
+    get5_stop_command_time_limit
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_max_backup_age">
     get5_max_backup_age
   </a>
@@ -1582,6 +1602,18 @@ command as well as the <a href="../commands#get5_loadbackup"><code>get5_loadback
 <h4 id="get5_stop_command_enabled"><code>get5_stop_command_enabled</code></h4>
 <dl>
 <dd>Whether the <a href="../commands#stop"><code>!stop</code></a> command is enabled.<br/><strong><code>Default: 1</code></strong></dd>
+</dl>
+<h4 id="get5_stop_command_no_damage"><code>get5_stop_command_no_damage</code></h4>
+<dl>
+<dd>Whether the <a href="../commands#stop"><code>!stop</code></a> command becomes unavailable after a player takes damage during a round. Only
+damage from one team to another counts (no friendly fire, no fall damage etc.). The command may still be used by admins
+via console at any time (<code>sm_stop</code>).<br/><strong><code>Default: 0</code></strong></dd>
+</dl>
+<h4 id="get5_stop_command_time_limit"><code>get5_stop_command_time_limit</code></h4>
+<dl>
+<dd>The number of seconds into a round after which the <a href="../commands#stop"><code>!stop</code></a> command can no longer be used. The
+command may still be used by admins via console at any time (<code>sm_stop</code>). Set to zero to remove the
+limit.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_max_backup_age"><code>get5_max_backup_age</code></h4>
 <dl>

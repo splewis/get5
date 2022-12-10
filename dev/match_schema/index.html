@@ -422,7 +422,12 @@ better support in various programming languages than Valve's KeyValue format (wh
 <li><em>Required</em><br/>The data for the second team.</li>
 <li><em>Optional</em><br/>Various commands to execute on the server when loading the match configuration. This can be both
     regular server-commands and any <a href="../configuration"><code>Get5 configuration parameter</code></a>,
-    i.e. <code>{"hostname": "Match #3123 - Astralis vs. NaVi"}</code>.<br/><br/><strong><code>Default: undefined</code></strong></li>
+    i.e. <code>{"mp_friendlyfire": "0", "get5_max_pauses": "2"}</code>.<br/><br/>When the match ends, these parameters will by
+    default
+    be <a href="../configuration#get5_reset_cvars_on_end">reset to the value they had before the match was loaded</a>.<br/><br/>You
+    should avoid putting server-specific parameters, such as <a href="../configuration#get5_server_id"><code>get5_server_id</code></a>, in
+    this property, as these are all written to <a href="../backup">backups</a> and set when restored from.<br/><br/>
+<strong><code>Default: undefined</code></strong></li>
 <li><em>Optional</em><br/>Similarly to <code>players</code>, this object maps <a href="../coaching">coaches</a> using their Steam ID and
     name, locking them to the coach slot unless removed using <a href="../commands#get5_removeplayer"><code>get5_removeplayer</code></a>.
     Setting a Steam ID as coach takes precedence over being set as a player.<br/><br/>Note that

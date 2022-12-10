@@ -97,6 +97,7 @@ ConVar g_ReadyTeamTagCvar;
 ConVar g_AllowForceReadyCvar;
 ConVar g_ResetPausesEachHalfCvar;
 ConVar g_ServerIdCvar;
+ConVar g_ResetCvarsOnEndCvar;
 ConVar g_SetClientClanTagCvar;
 ConVar g_SetHostnameCvar;
 ConVar g_StatsPathFormatCvar;
@@ -213,6 +214,7 @@ Get5Team g_LastVetoTeam;
 Menu g_ActiveVetoMenu;
 Handle g_InfoTimer = INVALID_HANDLE;
 Handle g_MatchConfigExecTimer = INVALID_HANDLE;
+Handle g_ResetCvarsTimer = INVALID_HANDLE;
 
 /** Backup data **/
 bool g_DoingBackupRestoreNow = false;
@@ -456,6 +458,7 @@ public void OnPluginStart() {
   g_ServerIdCvar                        = CreateConVar("get5_server_id", "0", "Integer that identifies your server. This is used in temporary files to prevent collisions.");
   g_StatsPathFormatCvar                 = CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg", "Where match stats are saved (updated each map end). Set to \"\" to disable.");
   g_WarmupCfgCvar                       = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to execute during warmup periods.");
+  g_ResetCvarsOnEndCvar                 = CreateConVar("get5_reset_cvars_on_end", "1", "Whether parameters from the \"cvars\" section of a match configuration and the Get5-determined hostname are restored to their original values when a series ends.");
 
   // clang-format on
   /** Create and exec plugin's configuration file **/
@@ -1390,26 +1393,16 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
   EventLogger_LogAndDeleteEvent(event);
   ChangeState(Get5State_None);
 
-  // We don't want to kick players until after the specified delay, as it will kick casters
-  // potentially before GOTV ends.
-  if (kickPlayers && g_KickClientsWithNoMatchCvar.BoolValue) {
-    if (restoreDelay < 0.1) {
-      KickPlayers();
-    } else {
-      CreateTimer(restoreDelay, Timer_KickOnEnd, _, TIMER_FLAG_NO_MAPCHANGE);
-    }
-  }
-
   if (restoreDelay < 0.1) {
     // When force-ending the match there is no delay.
-    RestoreCvars(g_MatchConfigChangedCvars);
-    ResetHostname();
+    ResetMatchCvarsAndHostnameAndKickPlayers(kickPlayers);
   } else {
     // If we restore cvars immediately, it might change the tv_ params or set the
     // mp_match_restart_delay to something lower, which is noticed by the game and may trigger a map
     // change before GOTV broadcast ends, so we don't do this until the current match restart delay
-    // has passed.
-    CreateTimer(restoreDelay, Timer_RestoreMatchCvars, _, TIMER_FLAG_NO_MAPCHANGE);
+    // has passed. We also don't want to kick players until after the specified delay, as it will kick
+    // casters potentially before GOTV ends.
+    g_ResetCvarsTimer = CreateTimer(restoreDelay, Timer_RestoreMatchCvarsAndKickPlayers, kickPlayers);
   }
 
   // If the match is ended during pending map change;
@@ -1513,31 +1506,31 @@ void ResetMatchConfigVariables(bool backup = false) {
   }
 }
 
-static Action Timer_KickOnEnd(Handle timer) {
-  if (g_GameState == Get5State_None) {
-    // If a match was started before this event is triggered, don't do anything.
-    KickPlayers();
+static Action Timer_RestoreMatchCvarsAndKickPlayers(Handle timer, bool kickPlayers) {
+  if (timer != g_ResetCvarsTimer) {
+    LogDebug("g_ResetCvarsTimer callback has unexpected/invalid handle. Ignoring.");
+    return Plugin_Handled;
   }
+  ResetMatchCvarsAndHostnameAndKickPlayers(kickPlayers);
+  g_ResetCvarsTimer = INVALID_HANDLE;
   return Plugin_Handled;
 }
 
-static void KickPlayers() {
-  bool kickImmunity = g_KickClientImmunityCvar.BoolValue;
-  LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && !(kickImmunity && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
-      KickClient(i, "%t", "MatchFinishedInfoMessage");
+void ResetMatchCvarsAndHostnameAndKickPlayers(bool kickPlayers) {
+  if (kickPlayers && g_KickClientsWithNoMatchCvar.BoolValue) {
+    bool kickImmunity = g_KickClientImmunityCvar.BoolValue;
+    LOOP_CLIENTS(i) {
+      if (IsPlayer(i) && !(kickImmunity && CheckCommandAccess(i, "get5_kickcheck", ADMFLAG_CHANGEMAP))) {
+        KickClient(i, "%t", "MatchFinishedInfoMessage");
+      }
     }
   }
-}
-
-static Action Timer_RestoreMatchCvars(Handle timer) {
-  if (g_GameState == Get5State_None) {
-    // Only reset if no game is running, otherwise a game started before the restart delay for
-    // another ends will mess this up.
+  if (g_ResetCvarsOnEndCvar.BoolValue) {
     RestoreCvars(g_MatchConfigChangedCvars);
     ResetHostname();
+  } else {
+    CloseCvarStorage(g_MatchConfigChangedCvars);
   }
-  return Plugin_Handled;
 }
 
 static Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
@@ -1626,9 +1619,7 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
       // This immediately triggers another Event_RoundStart, so we can return here and avoid
       // writing backup twice.
       LogDebug("Changed to warmup post knife.");
-      if (g_KnifeChangedCvars != INVALID_HANDLE) {
-        RestoreCvars(g_KnifeChangedCvars, true);
-      }
+      RestoreCvars(g_KnifeChangedCvars);
       ExecCfg(g_WarmupCfgCvar);
       StartWarmup();
 

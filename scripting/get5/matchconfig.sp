@@ -27,6 +27,13 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   ResetMatchConfigVariables(restoreBackup);
   ResetReadyStatus();
 
+  // If a new match is loaded while there is still a pending cvar restore timer running, we
+  // want to make sure that that timer's callback does *not* fire and mess up our game state.
+  if (g_ResetCvarsTimer != INVALID_HANDLE) {
+    LogDebug("Killing g_ResetCvarsTimer as a new match was loaded.");
+    delete g_ResetCvarsTimer;
+  }
+
   g_CvarNames.Clear();
   g_CvarValues.Clear();
 
@@ -849,7 +856,7 @@ static void SetTeamSpecificCvars(const Get5Team team) {
 
 static void ExecuteMatchConfigCvars() {
   // Save the original match cvar values if we haven't already.
-  if (g_MatchConfigChangedCvars == INVALID_HANDLE) {
+  if (g_MatchConfigChangedCvars == INVALID_HANDLE && g_ResetCvarsOnEndCvar.BoolValue) {
     g_MatchConfigChangedCvars = SaveCvars(g_CvarNames);
   }
 

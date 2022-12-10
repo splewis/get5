@@ -26,8 +26,7 @@ stock Handle SaveCvars(ArrayList cvarNames) {
 }
 
 // Restores cvars to their previous value using a return value of SaveCvars.
-stock void RestoreCvars(Handle &cvarStorage, bool close = true) {
-  LogDebug("Restoring match cvars.");
+stock void RestoreCvars(Handle &cvarStorage) {
   if (cvarStorage == INVALID_HANDLE) {
     return;
   }
@@ -38,17 +37,13 @@ stock void RestoreCvars(Handle &cvarStorage, bool close = true) {
   char value[CVAR_VALUE_MAX_LENGTH];
   for (int i = 0; i < cvarNameList.Length; i++) {
     cvarNameList.GetString(i, name, sizeof(name));
-    cvarValueList.GetString(i, value, sizeof(value));
-
     Handle cvar = FindConVar(name);
     if (cvar != INVALID_HANDLE) {
+      cvarValueList.GetString(i, value, sizeof(value));
       SetConVarString(cvar, value);
     }
   }
-
-  if (close) {
-    CloseCvarStorage(cvarStorage);
-  }
+  CloseCvarStorage(cvarStorage);
 }
 
 // Closes a cvar storage object returned by SaveCvars.

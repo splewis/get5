@@ -113,7 +113,12 @@ interface Get5Match {
 21. _Required_<br>The data for the second team.
 22. _Optional_<br>Various commands to execute on the server when loading the match configuration. This can be both
     regular server-commands and any [`Get5 configuration parameter`](../configuration),
-    i.e. `{"hostname": "Match #3123 - Astralis vs. NaVi"}`.<br><br>**`Default: undefined`**
+    i.e. `{"mp_friendlyfire": "0", "get5_max_pauses": "2"}`.<br><br>When the match ends, these parameters will by
+    default
+    be [reset to the value they had before the match was loaded](../configuration#get5_reset_cvars_on_end).<br><br>You
+    should avoid putting server-specific parameters, such as [`get5_server_id`](../configuration#get5_server_id), in
+    this property, as these are all written to [backups](../backup) and set when restored from.<br><br>
+    **`Default: undefined`**
 23. _Optional_<br>Similarly to `players`, this object maps [coaches](../coaching) using their Steam ID and
     name, locking them to the coach slot unless removed using [`get5_removeplayer`](../commands#get5_removeplayer).
     Setting a Steam ID as coach takes precedence over being set as a player.<br><br>Note that

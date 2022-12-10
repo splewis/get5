@@ -73,7 +73,10 @@ native.<br>**`Default: 0`**
 !!! tip "Server ID could be port number"
 
     A good candidate for `get5_server_id` would be the port number the server is bound to, since it uniquely identifies
-    a server instance on a host and ensures that no two instances run with the same server ID at the same time.
+    a server instance on a host and ensures that no two instances run with the same server ID at the same time. You
+    should also **not** put this parameter in your [match configuration](../match_schema#schema) `cvars`, as those
+    parameters will be written to [backup](../backup) files, which would mean that loading a backup created on another
+    server would change the server ID.
 
 ####`get5_kick_immunity`
 :   Whether [admins](../installation#administrators) will be immune to kicks from
@@ -104,6 +107,13 @@ removed from the game, or if in [scrim mode](../getting_started#scrims), put on 
 :  A [match configuration](../match_schema#schema) file, relative to the `csgo` directory, to autoload when the server
 starts, when Get5 is reloaded or if no match is loaded when a player joins the server. Set to empty string to
 disable.<br>**`Default: ""`**
+
+####`get5_reset_cvars_on_end`
+:  Whether the `cvars` of a [match configuration](../match_schema#schema) as well as
+the [Get5-determined hostname](#get5_hostname_format) are reset to their original values when a series ends. You may
+want to disable this if you only run Get5 on your servers and use `cvars` to
+configure [demos](../gotv), [backups](../backup) or [remote URL logging](../events_and_forwards#http) on a per-match
+basis, as reverting some of those parameters can be problematic.<br>**`Default: 1`**
 
 ####`get5_debug`
 :   Enable or disable verbose debug output from Get5. Intended for development and debugging purposes
@@ -218,7 +228,6 @@ leaves. Set to zero to disable.<br>**`Default: 0`**
     If you always want the pause to trigger if an entire team disconnects, regardless of team size, you can
     set [`get5_auto_tech_pause_missing_players`](#get5_auto_tech_pause_missing_players) to a large value, as setting it
     to a value larger than [`players_per_team`](../match_schema#schema) behaves as if it was set to that value.
-    
 
 !!! warning "Auto-pausing is always enabled"
 
@@ -333,9 +342,10 @@ exist.<br>**`Default: ""`**
 disable.<br>**`Default: "get5_matchstats_{MATCHID}.cfg"`**
 
 ####`get5_hostname_format`
-:   The hostname to apply to the server. [State substitutes](#state-substitutes) can be used. Set to an empty string to
-disable changing the hostname. This is updated on every round start to allow for the use of team score
-substitutes.<br>**`Default: "Get5: {TEAM1} vs {TEAM2}"`**
+:   The hostname to apply to the server. [State substitutes](#state-substitutes) can be used.
+If [`get5_reset_cvars_on_end`](#get5_reset_cvars_on_end) is enabled, the hostname will be reverted to its original value
+when the series ends. The hostname is updated on every round start to allow for the use of team score substitutes. Set
+to an empty string to disable changing the hostname.<br>**`Default: "Get5: {TEAM1} vs {TEAM2}"`**
 
 ####`get5_message_prefix`
 :   The tag applied before plugin messages. Note that at least one character must come before

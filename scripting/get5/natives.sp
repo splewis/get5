@@ -7,6 +7,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
   CreateNative("Get5_MessageToAll", Native_MessageToAll);
   CreateNative("Get5_LoadMatchConfig", Native_LoadMatchConfig);
   CreateNative("Get5_LoadMatchConfigFromURL", Native_LoadMatchConfigFromURL);
+  CreateNative("Get5_LoadBackupFromURL", Native_LoadBackupFromURL);
   CreateNative("Get5_AddPlayerToTeam", Native_AddPlayerToTeam);
   CreateNative("Get5_SetPlayerName", Native_SetPlayerName);
   CreateNative("Get5_RemovePlayerFromTeam", Native_RemovePlayerFromTeam);
@@ -119,7 +120,9 @@ public int Native_LoadMatchConfig(Handle plugin, int numParams) {
   char filename[PLATFORM_MAX_PATH];
   GetNativeString(1, filename, sizeof(filename));
   char error[PLATFORM_MAX_PATH];
-  return LoadMatchConfig(filename, error);
+  if (!LoadMatchConfig(filename, error)) {
+    MatchConfigFail(error);
+  }
 }
 
 public int Native_LoadMatchConfigFromURL(Handle plugin, int numParams) {
@@ -129,7 +132,23 @@ public int Native_LoadMatchConfigFromURL(Handle plugin, int numParams) {
   ArrayList paramValues = view_as<ArrayList>(GetNativeCell(3));
   ArrayList headerNames = view_as<ArrayList>(GetNativeCell(4));
   ArrayList headerValues = view_as<ArrayList>(GetNativeCell(5));
-  return LoadMatchFromUrl(url, paramNames, paramValues, headerNames, headerValues);
+  char error[PLATFORM_MAX_PATH];
+  if (!LoadMatchFromUrl(url, paramNames, paramValues, headerNames, headerValues, error)) {
+    LogError(error);
+  }
+}
+
+public int Native_LoadBackupFromURL(Handle plugin, int numParams) {
+  char url[PLATFORM_MAX_PATH];
+  GetNativeString(1, url, sizeof(url));
+  ArrayList paramNames = view_as<ArrayList>(GetNativeCell(2));
+  ArrayList paramValues = view_as<ArrayList>(GetNativeCell(3));
+  ArrayList headerNames = view_as<ArrayList>(GetNativeCell(4));
+  ArrayList headerValues = view_as<ArrayList>(GetNativeCell(5));
+  char error[PLATFORM_MAX_PATH];
+  if (!LoadBackupFromUrl(url, paramNames, paramValues, headerNames, headerValues, error)) {
+    LogError(error);
+  }
 }
 
 public int Native_AddPlayerToTeam(Handle plugin, int numParams) {

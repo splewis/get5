@@ -8,14 +8,15 @@ bool StartRecording() {
 
   if (!IsTVEnabled()) {
     LogError("Demo recording will not work with \"tv_enable 0\". Set \"tv_enable 1\" and restart the map to fix this.");
+    g_DemoFilePath = "";
     g_DemoFileName = "";
     return false;
   }
 
   char demoName[PLATFORM_MAX_PATH + 1];
-
   if (!FormatCvarString(g_DemoNameFormatCvar, demoName, sizeof(demoName))) {
-    LogError("Failed to format demo filename. Please check your demo file format convar.");
+    LogError("Failed to format demo filename. Please check your demo file format ConVar.");
+    g_DemoFilePath = "";
     g_DemoFileName = "";
     return false;
   }
@@ -24,20 +25,23 @@ bool StartRecording() {
   char variableSubstitutes[][] = {"{MATCHID}", "{DATE}"};
   CheckAndCreateFolderPath(g_DemoPathCvar, variableSubstitutes, 2, demoFolder, sizeof(demoFolder));
 
+  // If there is no path (folder empty string), this just becomes = demoName
   char demoPath[PLATFORM_MAX_PATH];
   FormatEx(demoPath, sizeof(demoPath), "%s%s", demoFolder, demoName);
-  FormatEx(g_DemoFileName, sizeof(g_DemoFileName), "%s%s.dem", demoFolder, demoName);
-  LogMessage("Recording to %s", g_DemoFileName);
-
   // Escape unsafe characters and start recording. .dem is appended to the filename automatically.
   ReplaceString(demoPath, sizeof(demoPath), "\"", "\\\"");
   ServerCommand("tv_record \"%s\"", demoPath);
-  Stats_SetDemoName(g_DemoFileName);
+
+  // Global reference needs the .dem file extension for the uploader to be able to find the file.
+  FormatEx(g_DemoFileName, sizeof(g_DemoFileName), "%s.dem", demoName);
+  FormatEx(g_DemoFilePath, sizeof(g_DemoFilePath), "%s%s", demoFolder, g_DemoFileName);
+  LogMessage("Recording to %s", g_DemoFilePath);
+  Stats_SetDemoName(g_DemoFilePath);
   return true;
 }
 
 void StopRecording(float delay = 0.0) {
-  if (StrEqual("", g_DemoFileName)) {
+  if (StrEqual("", g_DemoFilePath)) {
     LogDebug("Demo was not recorded by Get5; not firing Get5_OnDemoFinished() or stopping recording.");
     return;
   }
@@ -47,8 +51,8 @@ void StopRecording(float delay = 0.0) {
   g_DemoUploadHeaderKeyCvar.GetString(uploadUrlHeaderKey, sizeof(uploadUrlHeaderKey));
   char uploadUrlHeaderValue[1024];
   g_DemoUploadHeaderValueCvar.GetString(uploadUrlHeaderValue, sizeof(uploadUrlHeaderValue));
-  DataPack pack = GetDemoInfoDataPack(g_MatchID, g_MapNumber, g_DemoFileName, uploadUrl, uploadUrlHeaderKey,
-                                      uploadUrlHeaderValue, g_DemoUploadDeleteAfterCvar.BoolValue);
+  DataPack pack = GetDemoInfoDataPack(g_MatchID, g_MapNumber, g_DemoFilePath, g_DemoFileName, uploadUrl,
+                                      uploadUrlHeaderKey, uploadUrlHeaderValue, g_DemoUploadDeleteAfterCvar.BoolValue);
   if (delay < 0.1) {
     LogDebug("Stopping GOTV recording immediately.");
     StopRecordingCallback(pack);
@@ -56,6 +60,7 @@ void StopRecording(float delay = 0.0) {
     LogDebug("Starting timer that will end GOTV recording in %f seconds.", delay);
     CreateTimer(delay, Timer_StopGoTVRecording, pack);
   }
+  g_DemoFilePath = "";
   g_DemoFileName = "";
 }
 
@@ -73,6 +78,7 @@ static void StopRecordingCallback(DataPack pack) {
 
 static Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
   char matchId[MATCH_ID_LENGTH];
+  char demoFilePath[PLATFORM_MAX_PATH];
   char demoFileName[PLATFORM_MAX_PATH];
   int mapNumber;
   char uploadUrl[1024];
@@ -80,29 +86,30 @@ static Action Timer_FireStopRecordingEvent(Handle timer, DataPack pack) {
   char uploadUrlHeaderValue[1024];
   bool deleteAfterUpload;
   ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, uploadUrl, sizeof(uploadUrl), uploadUrlHeaderKey,
-                   sizeof(uploadUrlHeaderKey), uploadUrlHeaderValue, sizeof(uploadUrlHeaderValue), demoFileName,
-                   sizeof(demoFileName), deleteAfterUpload);
+                   sizeof(uploadUrlHeaderKey), uploadUrlHeaderValue, sizeof(uploadUrlHeaderValue), demoFilePath,
+                   sizeof(demoFilePath), demoFileName, sizeof(demoFileName), deleteAfterUpload);
   delete pack;
 
-  Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(matchId, mapNumber, demoFileName);
+  Get5DemoFinishedEvent event = new Get5DemoFinishedEvent(matchId, mapNumber, demoFilePath);
   LogDebug("Calling Get5_OnDemoFinished()");
   Call_StartForward(g_OnDemoFinished);
   Call_PushCell(event);
   Call_Finish();
   EventLogger_LogAndDeleteEvent(event);
 
-  UploadDemoToServer(demoFileName, matchId, mapNumber, uploadUrl, uploadUrlHeaderKey, uploadUrlHeaderValue,
-                     deleteAfterUpload);
+  UploadDemoToServer(demoFilePath, demoFileName, matchId, mapNumber, uploadUrl, uploadUrlHeaderKey,
+                     uploadUrlHeaderValue, deleteAfterUpload);
   return Plugin_Handled;
 }
 
-static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber, const char[] demoFileName,
-                                    const char[] uploadUrl, const char[] uploadHeaderKey,
+static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber, const char[] demoFilePath,
+                                    const char[] demoFileName, const char[] uploadUrl, const char[] uploadHeaderKey,
                                     const char[] uploadHeaderValue, const bool deleteAfterUpload) {
   DataPack pack = CreateDataPack();
   pack.WriteString(matchId);
   pack.WriteCell(mapNumber);
-  pack.WriteString(demoFileName);
+  pack.WriteString(demoFilePath);  // Full path, including file name and extension
+  pack.WriteString(demoFileName);  // File name and extension only
   pack.WriteString(uploadUrl);
   pack.WriteString(uploadHeaderKey);
   pack.WriteString(uploadHeaderValue);
@@ -112,11 +119,13 @@ static DataPack GetDemoInfoDataPack(const char[] matchId, const int mapNumber, c
 
 static void ReadDemoDataPack(DataPack pack, char[] matchId, const int matchIdLength, int &mapNumber, char[] uploadUrl,
                              const int uploadUrlLength, char[] uploadHeaderKey, const int uploadHeaderKeyLength,
-                             char[] uploadeHeaderValue, const int uploadHeaderValueLength, char[] demoFileName,
-                             const int demoFileNameLength, bool &deleteAfterUpload) {
+                             char[] uploadeHeaderValue, const int uploadHeaderValueLength, char[] demoFilePath,
+                             const int demoFilePathLength, char[] demoFileName, const int demoFileNameLength,
+                             bool &deleteAfterUpload) {
   pack.Reset();
   pack.ReadString(matchId, matchIdLength);
   mapNumber = pack.ReadCell();
+  pack.ReadString(demoFilePath, demoFilePathLength);
   pack.ReadString(demoFileName, demoFileNameLength);
   pack.ReadString(uploadUrl, uploadUrlLength);
   pack.ReadString(uploadHeaderKey, uploadHeaderKeyLength);
@@ -124,8 +133,9 @@ static void ReadDemoDataPack(DataPack pack, char[] matchId, const int matchIdLen
   deleteAfterUpload = pack.ReadCell();
 }
 
-static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, int mapNumber, const char[] demoUrl,
-                               const char[] demoHeaderKey, const char[] demoHeaderValue, const bool deleteAfterUpload) {
+static void UploadDemoToServer(const char[] demoFilePath, const char[] demoFileName, const char[] matchId,
+                               int mapNumber, const char[] demoUrl, const char[] demoHeaderKey,
+                               const char[] demoHeaderValue, const bool deleteAfterUpload) {
 
   if (StrEqual(demoUrl, "")) {
     LogDebug("Skipping demo upload as upload URL is not set.");
@@ -138,69 +148,33 @@ static void UploadDemoToServer(const char[] demoFileName, const char[] matchId, 
     return;
   }
 
-  Handle demoRequest = CreateGet5HTTPRequest(k_EHTTPMethodPOST, demoUrl);
-  if (demoRequest == INVALID_HANDLE) {
-    CallUploadEvent(matchId, mapNumber, demoFileName, false);
+  char error[PLATFORM_MAX_PATH];
+  Handle demoRequest = CreateGet5HTTPRequest(k_EHTTPMethodPOST, demoUrl, error);
+  if (demoRequest == INVALID_HANDLE || !AddFileAsHttpBody(demoRequest, demoFilePath, error) ||
+      !SetFileNameHeader(demoRequest, demoFileName, error) || !SetMatchIdHeader(demoRequest, matchId, error) ||
+      !SetMapNumberHeader(demoRequest, mapNumber, error)) {
+    LogError(error);
+    delete demoRequest;
+    CallUploadEvent(matchId, mapNumber, demoFilePath, false);
     return;
   }
 
   // Set the auth keys only if they are defined. If not, we can still technically POST
   // to an end point that has no authentication.
-  if (!StrEqual(demoHeaderKey, "") && !StrEqual(demoHeaderValue, "")) {
-    if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, demoHeaderKey, demoHeaderValue)) {
-      LogError("Failed to add custom header '%s' with value '%s' to demo upload request.", demoHeaderKey,
-               demoHeaderValue);
-      delete demoRequest;
-      CallUploadEvent(matchId, mapNumber, demoFileName, false);
-      return;
-    }
-  }
-
-  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, GET5_HEADER_DEMONAME, demoFileName)) {
-    LogError("Failed to add filename header with value '%s' to demo upload request.", demoFileName);
+  if (strlen(demoHeaderKey) > 0 && strlen(demoHeaderValue) > 0 &&
+      !SetHeaderKeyValuePair(demoRequest, demoHeaderKey, demoHeaderValue, error)) {
+    LogError(error);
     delete demoRequest;
-    CallUploadEvent(matchId, mapNumber, demoFileName, false);
+    CallUploadEvent(matchId, mapNumber, demoFilePath, false);
     return;
   }
 
-  if (strlen(matchId) > 0) {
-    if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, GET5_HEADER_MATCHID, matchId)) {
-      LogError("Failed to add match ID header with value '%s' to demo upload request.", matchId);
-      delete demoRequest;
-      CallUploadEvent(matchId, mapNumber, demoFileName, false);
-      return;
-    }
-  }
+  DataPack pack = GetDemoInfoDataPack(matchId, mapNumber, demoFilePath, demoFileName, demoUrl, demoHeaderKey,
+                                      demoHeaderValue, deleteAfterUpload);
 
-  char strMapNumber[5];
-  IntToString(mapNumber, strMapNumber, sizeof(strMapNumber));
-  if (!SteamWorks_SetHTTPRequestHeaderValue(demoRequest, GET5_HEADER_MAPNUMBER, strMapNumber)) {
-    LogError("Failed to add map number header with value '%s' to demo upload request.", strMapNumber);
-    delete demoRequest;
-    CallUploadEvent(matchId, mapNumber, demoFileName, false);
-    return;
-  }
-
-  const timeout = 180;
-  if (!SteamWorks_SetHTTPRequestNetworkActivityTimeout(demoRequest, timeout)) {
-    LogError("Failed to change demo upload request timeout to %d seconds.", timeout);
-    delete demoRequest;
-    CallUploadEvent(matchId, mapNumber, demoFileName, false);
-    return;
-  }
-
-  if (!FileExists(demoFileName) ||
-      !SteamWorks_SetHTTPRequestRawPostBodyFromFile(demoRequest, "application/octet-stream", demoFileName)) {
-    LogError("Failed to add file '%s' as POST body for demo upload request.", demoFileName);
-    delete demoRequest;
-    CallUploadEvent(matchId, mapNumber, demoFileName, false);
-    return;
-  }
-
-  SteamWorks_SetHTTPRequestContextValue(
-    demoRequest,
-    GetDemoInfoDataPack(matchId, mapNumber, demoFileName, demoUrl, demoHeaderKey, demoHeaderValue, deleteAfterUpload));
-  SteamWorks_SetHTTPCallbacks(demoRequest, DemoRequestCallback);
+  SteamWorks_SetHTTPRequestNetworkActivityTimeout(demoRequest, 180);
+  SteamWorks_SetHTTPRequestContextValue(demoRequest, pack);
+  SteamWorks_SetHTTPCallbacks(demoRequest, DemoRequest_Callback);
   SteamWorks_SendHTTPRequest(demoRequest);
 }
 
@@ -254,9 +228,10 @@ void SetCurrentMatchRestartDelay(float delay) {
   }
 }
 
-static void DemoRequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
-                                DataPack pack) {
+static void DemoRequest_Callback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
+                                 DataPack pack) {
   char matchId[MATCH_ID_LENGTH];
+  char demoFilePath[PLATFORM_MAX_PATH];
   char demoFileName[PLATFORM_MAX_PATH];
   int mapNumber;
   char uploadUrl[1024];
@@ -264,45 +239,27 @@ static void DemoRequestCallback(Handle request, bool failure, bool requestSucces
   char uploadUrlHeaderValue[1024];
   bool deleteAfterUpload;
   ReadDemoDataPack(pack, matchId, sizeof(matchId), mapNumber, uploadUrl, sizeof(uploadUrl), uploadUrlHeaderKey,
-                   sizeof(uploadUrlHeaderKey), uploadUrlHeaderValue, sizeof(uploadUrlHeaderValue), demoFileName,
-                   sizeof(demoFileName), deleteAfterUpload);
+                   sizeof(uploadUrlHeaderKey), uploadUrlHeaderValue, sizeof(uploadUrlHeaderValue), demoFilePath,
+                   sizeof(demoFilePath), demoFileName, sizeof(demoFileName), deleteAfterUpload);
   delete pack;
-
+  bool success = false;
   if (failure || !requestSuccessful) {
-    LogError("Failed to upload demo '%s' to '%s'.", demoFileName, uploadUrl);
-    delete request;
-    CallUploadEvent(matchId, mapNumber, demoFileName, false);
-    return;
-  }
-
-  int status = view_as<int>(statusCode);
-  if (status >= 300 || status < 200) {
-    LogError("Demo request failed with HTTP status code: %d.", statusCode);
-    int responseSize;
-    SteamWorks_GetHTTPResponseBodySize(request, responseSize);
-    char[] response = new char[responseSize];
-    if (SteamWorks_GetHTTPResponseBodyData(request, response, responseSize)) {
-      LogError("Response body: %s", response);
-    } else {
-      LogError("Failed to read response body.");
-    }
-    delete request;
-    CallUploadEvent(matchId, mapNumber, demoFileName, false);
-    return;
-  }
-
-  LogDebug("Demo request succeeded. HTTP status code: %d.", statusCode);
-  if (deleteAfterUpload) {
-    LogDebug(
-      "get5_demo_delete_after_upload set to true when demo request started; deleting the file from the game server.");
-    if (FileExists(demoFileName)) {
-      if (!DeleteFile(demoFileName)) {
+    LogError("Failed to upload demo '%s' to '%s'. Make sure your URL is enclosed in quotes.", demoFilePath, uploadUrl);
+  } else if (!CheckForSuccessfulResponse(request, statusCode)) {
+    LogError("Failed to upload demo '%s' to '%s'. HTTP status code: %d.", demoFilePath, uploadUrl, statusCode);
+  } else {
+    success = true;
+    LogDebug("Demo request succeeded. HTTP status code: %d.", statusCode);
+    if (deleteAfterUpload) {
+      LogDebug(
+        "get5_demo_delete_after_upload set to true when demo request started; deleting the file from the game server.");
+      if (FileExists(demoFileName) && !DeleteFile(demoFileName)) {
         LogError("Unable to delete demo file %s.", demoFileName);
       }
     }
   }
+  CallUploadEvent(matchId, mapNumber, demoFilePath, success);
   delete request;
-  CallUploadEvent(matchId, mapNumber, demoFileName, true);
 }
 
 static void CallUploadEvent(const char[] matchId, const int mapNumber, const char[] demoFileName, const bool success) {

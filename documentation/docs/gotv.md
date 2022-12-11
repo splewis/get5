@@ -46,12 +46,13 @@ read the [headers](#headers) for file metadata.
 
 Get5 will add these HTTP headers to its demo upload request:
 
-1. `Get5-DemoName` is the name of the file as defined
+1. `Get5-FileName` is the name of the file as defined
    by [`get5_demo_name_format`](../configuration#get5_demo_name_format),
    i.e. `2022-09-11_20-49-49_1564_map1_de_vertigo.dem`.
 2. `Get5-MapNumber` is the zero-indexed map number in the series.
 3. `Get5-MatchId` **if** the [match ID](../match_schema#schema) is not an empty string.
 4. `Get5-ServerId` **if** [`get5_server_id`](../configuration#get5_server_id) is set to a positive integer.
+5. `Get5-Version` is the version of Get5, i.e. `0.12.0`.
 
 #### Authorization {: #authorization }
 

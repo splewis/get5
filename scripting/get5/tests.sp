@@ -54,13 +54,16 @@ static void MissingPropertiesTest() {
   SetTestContext("MissingPropertiesTest");
 
   char error[PLATFORM_MAX_PATH];
-  AssertFalse("Load missing team1 JSON", LoadMatchConfig("addons/sourcemod/configs/get5/tests/missing_team1.json", error));
+  AssertFalse("Load missing team1 JSON",
+              LoadMatchConfig("addons/sourcemod/configs/get5/tests/missing_team1.json", error));
   AssertStrEq("Load missing team1 JSON error", error, "Missing \"team1\" section in match config JSON.");
 
-  AssertFalse("Load missing team2 JSON", LoadMatchConfig("addons/sourcemod/configs/get5/tests/missing_team2.json", error));
+  AssertFalse("Load missing team2 JSON",
+              LoadMatchConfig("addons/sourcemod/configs/get5/tests/missing_team2.json", error));
   AssertStrEq("Load missing team2 JSON error", error, "Missing \"team2\" section in match config JSON.");
 
-  AssertFalse("Load missing maplist JSON", LoadMatchConfig("addons/sourcemod/configs/get5/tests/missing_maplist.json", error));
+  AssertFalse("Load missing maplist JSON",
+              LoadMatchConfig("addons/sourcemod/configs/get5/tests/missing_maplist.json", error));
   AssertStrEq("Load missing maplist JSON error", error, "Missing \"maplist\" section in match config JSON.");
 
   AssertFalse("Load missing team1 KV", LoadMatchConfig("addons/sourcemod/configs/get5/tests/missing_team1.cfg", error));
@@ -69,14 +72,16 @@ static void MissingPropertiesTest() {
   AssertFalse("Load missing team2 KV", LoadMatchConfig("addons/sourcemod/configs/get5/tests/missing_team2.cfg", error));
   AssertStrEq("Load missing team2 KV error", error, "Missing \"team2\" section in match config KeyValues.");
 
-  AssertFalse("Load missing maplist KV", LoadMatchConfig("addons/sourcemod/configs/get5/tests/missing_maplist.cfg", error));
+  AssertFalse("Load missing maplist KV",
+              LoadMatchConfig("addons/sourcemod/configs/get5/tests/missing_maplist.cfg", error));
   AssertStrEq("Load missing maplist KV error", error, "Missing \"maplist\" section in match config KeyValues.");
 }
 
 static void MatchConfigNotFoundTest() {
   SetTestContext("MatchConfigNotFoundTest");
   char error[PLATFORM_MAX_PATH];
-  AssertFalse("Load match config does not exist", LoadMatchConfig("addons/sourcemod/configs/get5/tests/file_not_found.cfg", error));
+  AssertFalse("Load match config does not exist",
+              LoadMatchConfig("addons/sourcemod/configs/get5/tests/file_not_found.cfg", error));
   AssertTrue("Match config does not exist error", StrContains(error, "Match config file doesn't exist") != -1);
 }
 
@@ -87,24 +92,34 @@ static void MapListFromFileTest() {
   // JSON
   MapListValid("addons/sourcemod/configs/get5/tests/fromfile_maplist_valid.json");
 
-  AssertFalse("Load empty maplist config JSON", LoadMatchConfig("addons/sourcemod/configs/get5/tests/fromfile_maplist_empty.json", error));
+  AssertFalse("Load empty maplist config JSON",
+              LoadMatchConfig("addons/sourcemod/configs/get5/tests/fromfile_maplist_empty.json", error));
   AssertStrEq("Load empty maplist config JSON", error, "\"maplist\" is empty array.");
 
-  AssertFalse("Load maplist fromfile file not found config", LoadMatchConfig("addons/sourcemod/configs/get5/tests/fromfile_maplist_not_found.json", error));
-  AssertEq("Load maplist fromfile file not found config", StrContains(error, "Maplist fromfile file does not exist"), 0);
+  AssertFalse("Load maplist fromfile file not found config",
+              LoadMatchConfig("addons/sourcemod/configs/get5/tests/fromfile_maplist_not_found.json", error));
+  AssertEq("Load maplist fromfile file not found config", StrContains(error, "Maplist fromfile file does not exist"),
+           0);
 
-  AssertFalse("Load maplist fromfile config not array JSON", LoadMatchConfig("addons/sourcemod/configs/get5/tests/fromfile_maplist_not_array.json", error));
-  AssertStrEq("Load maplist fromfile config not array JSON", error, "\"maplist\" object in match configuration file must have a non-empty \"fromfile\" property or be an array.");
+  AssertFalse("Load maplist fromfile config not array JSON",
+              LoadMatchConfig("addons/sourcemod/configs/get5/tests/fromfile_maplist_not_array.json", error));
+  AssertStrEq(
+    "Load maplist fromfile config not array JSON", error,
+    "\"maplist\" object in match configuration file must have a non-empty \"fromfile\" property or be an array.");
 
-  AssertFalse("Load maplist fromfile config empty string JSON", LoadMatchConfig("addons/sourcemod/configs/get5/tests/fromfile_maplist_empty_string.json", error));
-  AssertStrEq("Load maplist fromfile config empty string JSON", error, "\"maplist\" object in match configuration file must have a non-empty \"fromfile\" property or be an array.");
+  AssertFalse("Load maplist fromfile config empty string JSON",
+              LoadMatchConfig("addons/sourcemod/configs/get5/tests/fromfile_maplist_empty_string.json", error));
+  AssertStrEq(
+    "Load maplist fromfile config empty string JSON", error,
+    "\"maplist\" object in match configuration file must have a non-empty \"fromfile\" property or be an array.");
 
   // KeyValues
   MapListValid("addons/sourcemod/configs/get5/tests/fromfile_maplist_valid.cfg");
 
-  AssertFalse("Load maplist fromfile config invalid KV", LoadMatchConfig("addons/sourcemod/configs/get5/tests/fromfile_maplist_invalid.cfg", error));
-  AssertStrEq("Load maplist fromfile config invalid KV", error, "\"maplist\" has no valid subkeys in match config KV file.");
-
+  AssertFalse("Load maplist fromfile config invalid KV",
+              LoadMatchConfig("addons/sourcemod/configs/get5/tests/fromfile_maplist_invalid.cfg", error));
+  AssertStrEq("Load maplist fromfile config invalid KV", error,
+              "\"maplist\" has no valid subkeys in match config KV file.");
 }
 
 static void InvalidMatchConfigFile(const char[] matchConfig) {
@@ -148,7 +163,8 @@ static void LoadTeamFromFileTest() {
   SetTestContext("LoadTeamFromFileTest");
   char err[255];
   AssertTrue("load config", LoadMatchConfig("addons/sourcemod/configs/get5/tests/default_valid.json", err));
-  AssertTrue("load team", LoadTeamDataFromFile("addons/sourcemod/configs/get5/tests/team2_array.json", Get5Team_2, err));
+  AssertTrue("load team",
+             LoadTeamDataFromFile("addons/sourcemod/configs/get5/tests/team2_array.json", Get5Team_2, err));
 
   char playerId[32];
   char playerName[32];
@@ -176,13 +192,16 @@ static void LoadTeamFromFileTest() {
   AssertStrEq("Team B Tag", g_TeamTags[Get5Team_2], "TAG-FA");
   AssertStrEq("Team B MatchText", g_TeamMatchTexts[Get5Team_2], "");
 
-  AssertFalse("load team file not found", LoadTeamDataFromFile("addons/sourcemod/configs/get5/tests/file_not_found.json", Get5Team_2, err));
+  AssertFalse("load team file not found",
+              LoadTeamDataFromFile("addons/sourcemod/configs/get5/tests/file_not_found.json", Get5Team_2, err));
   AssertEq("load team file not found", StrContains(err, "Team fromfile file does not exist"), 0);
 
-  AssertFalse("JSON load team file invalid", LoadTeamDataFromFile("addons/sourcemod/configs/get5/tests/invalid_config.json", Get5Team_2, err));
+  AssertFalse("JSON load team file invalid",
+              LoadTeamDataFromFile("addons/sourcemod/configs/get5/tests/invalid_config.json", Get5Team_2, err));
   AssertEq("JSON load team file invalid", StrContains(err, "Cannot read team config from JSON file"), 0);
 
-  AssertFalse("KV load team file invalid", LoadTeamDataFromFile("addons/sourcemod/configs/get5/tests/invalid_config.cfg", Get5Team_2, err));
+  AssertFalse("KV load team file invalid",
+              LoadTeamDataFromFile("addons/sourcemod/configs/get5/tests/invalid_config.cfg", Get5Team_2, err));
   AssertEq("KV load team file invalid", StrContains(err, "Cannot read team config from KV file"), 0);
 
   EndSeries(Get5Team_None, false, 0.0);
@@ -284,7 +303,9 @@ static void ValidMatchConfigTest(const char[] matchConfig) {
   AssertEq("Map sides length", g_MapSides.Length, 3);
   AssertEq("Sides 0", view_as<int>(g_MapSides.Get(0)), view_as<int>(SideChoice_KnifeRound));
   AssertEq("Sides 1", view_as<int>(g_MapSides.Get(1)), view_as<int>(SideChoice_Team1T));
-  AssertEq("Sides 2", view_as<int>(g_MapSides.Get(2)), view_as<int>(SideChoice_Team1CT)); // only 2 sides present in the file, and side_type: never_knife = team 1 ct
+  AssertEq(
+    "Sides 2", view_as<int>(g_MapSides.Get(2)),
+    view_as<int>(SideChoice_Team1CT));  // only 2 sides present in the file, and side_type: never_knife = team 1 ct
 
   AssertStrEq("Match ID", g_MatchID, "test_match_valid");
   AssertStrEq("Match Title", g_MatchTitle, "Test {MAPNUMBER} of {MAXMAPS}");
@@ -311,7 +332,7 @@ static void ValidMatchConfigTest(const char[] matchConfig) {
   AssertConVarEquals("mp_teamname_2", "Team B Default [NOT READY]");
   AssertConVarEquals("mp_teamflag_2", "DE");
   AssertConVarEquals("mp_teamlogo_2", "fromfile_team");
-  AssertConVarEquals("mp_teammatchstat_2", "0"); // blank match text = use map series score
+  AssertConVarEquals("mp_teammatchstat_2", "0");  // blank match text = use map series score
   AssertConVarEquals("mp_teamscore_2", "");
 
   AssertConVarEquals("mp_teamprediction_txt", "team percentage text");
@@ -324,7 +345,8 @@ static void ValidMatchConfigTest(const char[] matchConfig) {
   WriteBackup();
 
   char backupFilePath[PLATFORM_MAX_PATH];
-  FormatEx(backupFilePath, sizeof(backupFilePath), "addons/sourcemod/configs/get5/tests/backups/%s/%s", g_MatchID, "get5_backup1234_matchtest_match_valid_map0_prelive.cfg");
+  FormatEx(backupFilePath, sizeof(backupFilePath), "addons/sourcemod/configs/get5/tests/backups/%s/%s", g_MatchID,
+           "get5_backup1234_matchtest_match_valid_map0_prelive.cfg");
   AssertTrue("Check backup file exists", FileExists(backupFilePath));
 
   KeyValues backup = new KeyValues("Backup");
@@ -356,7 +378,7 @@ static void ValidMatchConfigTest(const char[] matchConfig) {
         AssertStrEq("Check map name 1 in backup", mapName, "de_dust2");
         AssertEq("Check map side 1 in backup", backup.GetNum(NULL_STRING), view_as<int>(SideChoice_KnifeRound));
       } else if (index == 1) {
-        AssertStrEq("Check map name 2 in backup",mapName, "de_mirage");
+        AssertStrEq("Check map name 2 in backup", mapName, "de_mirage");
         AssertEq("Check map side 2 in backup", backup.GetNum(NULL_STRING), view_as<int>(SideChoice_Team1T));
       } else if (index == 2) {
         AssertStrEq("Check map name 3 in backup", mapName, "de_inferno");

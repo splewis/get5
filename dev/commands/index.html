@@ -279,6 +279,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_loadbackup_url">
+    get5_loadbackup_url &lt;url&gt; [header name] [header value]
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_last_backup_file">
     get5_last_backup_file
   </a>
@@ -582,6 +587,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_loadbackup_url">
+    get5_loadbackup_url &lt;url&gt; [header name] [header value]
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_last_backup_file">
     get5_last_backup_file
   </a>
@@ -790,6 +800,13 @@ file.</dd>
 the <a href="../configuration#get5_backup_system_enabled">backup system is enabled</a>. If you
 define <a href="../configuration#get5_backup_path"><code>get5_backup_path</code></a>, you must include the path in the filename.</dd>
 </dl>
+<h4 id="get5_loadbackup_url"><code>get5_loadbackup_url &lt;url&gt; [header name] [header value]</code></h4>
+<dl>
+<dd>Loads a match backup <a href="../backup#remote">from a remote host</a> by sending an HTTP(S) <code>GET</code> to the given URL. Requires
+that the <a href="../configuration#get5_backup_system_enabled">backup system is enabled</a>. You may optionally provide an HTTP
+header and value pair using the <code>header name</code> and <code>header value</code> arguments. You should put all arguments inside
+quotation marks (<code>""</code>).</dd>
+</dl>
 <h4 id="get5_last_backup_file"><code>get5_last_backup_file</code></h4>
 <dl>
 <dd>Prints the name of the last match backup file Get5 wrote in the current series, this is automatically updated each
@@ -816,6 +833,12 @@ should put all arguments inside quotation marks (<code>""</code>).</dd>
 <div class="admonition warning">
 <p class="admonition-title">SteamWorks required</p>
 <p>Loading remote matches requires the <a href="../installation#steamworks">SteamWorks</a> extension.</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">File URL is public!</p>
+<p>As the <a href="#get5_status"><code>get_status</code></a> command is available to all clients, be aware that everyone can see the URL of
+the loaded match configuration when loading from a remote. Make sure that your match configuration file does not
+contain any sensitive information <em>or</em> that it is protected by authorization or is inaccessible to clients.</p>
 </div>
 <h4 id="get5_endmatch"><code>get5_endmatch [team1|team2]</code></h4>
 <dl>
@@ -914,7 +937,9 @@ from the server immediately.</dd>
    <br/><br/><strong><code>post_game</code></strong><br/>The map has ended and the countdown to the next map is ongoing. This stage will only
    occur in multi-map series, as single-map matches end immediately.</li>
 <li>Whether the game is currently <a href="../pausing">paused</a>.</li>
-<li>The match configuration file currently loaded. <code>Example: "addons/sourcemod/configs/get5/match_config.json"</code>.</li>
+<li>The match configuration file currently loaded. <code>Example: "addons/sourcemod/configs/get5/match_config.json"</code>. Note
+   that this points to the URL of the match configuration when a match was loaded
+   using <a href="#get5_loadmatch_url"><code>get5_loadmatch_url</code></a>.</li>
 <li>The current match ID. Empty string if not defined or <code>scrim</code> or <code>manual</code> if using
    <a href="../commands#get5_scrim"><code>get5_scrim</code></a> or <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>.</li>
 <li>The current map number, starting at <code>0</code>. You can use this to determine the current map by looking at the <code>maps</code>

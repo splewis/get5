@@ -407,12 +407,13 @@ read the <a href="#headers">headers</a> for file metadata.</p>
 <h3 id="headers">Headers</h3>
 <p>Get5 will add these HTTP headers to its demo upload request:</p>
 <ol>
-<li><code>Get5-DemoName</code> is the name of the file as defined
+<li><code>Get5-FileName</code> is the name of the file as defined
    by <a href="../configuration#get5_demo_name_format"><code>get5_demo_name_format</code></a>,
    i.e. <code>2022-09-11_20-49-49_1564_map1_de_vertigo.dem</code>.</li>
 <li><code>Get5-MapNumber</code> is the zero-indexed map number in the series.</li>
 <li><code>Get5-MatchId</code> <strong>if</strong> the <a href="../match_schema#schema">match ID</a> is not an empty string.</li>
 <li><code>Get5-ServerId</code> <strong>if</strong> <a href="../configuration#get5_server_id"><code>get5_server_id</code></a> is set to a positive integer.</li>
+<li><code>Get5-Version</code> is the version of Get5, i.e. <code>0.12.0</code>.</li>
 </ol>
 <h4 id="authorization">Authorization</h4>
 <p>If you wish to authenticate your upload request, you can define both

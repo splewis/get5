@@ -204,6 +204,35 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#upload">
+    Automatic Upload
+  </a>
+<nav aria-label="Automatic Upload" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#headers">
+    Headers
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#authorization">
+    Authorization
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example_1">
+    Example
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#remote">
+    Loading from Remote
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#pauses">
     Consumed pauses in backups
   </a>
@@ -299,6 +328,35 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#upload">
+    Automatic Upload
+  </a>
+<nav aria-label="Automatic Upload" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#headers">
+    Headers
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#authorization">
+    Authorization
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example_1">
+    Example
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#remote">
+    Loading from Remote
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#pauses">
     Consumed pauses in backups
   </a>
@@ -353,6 +411,36 @@ match. Note that all rounds and map numbers start at 0.</p>
 </div>
 <p>After loading a backup, the game state is restored and the game is <a href="../pausing#backup">paused</a>. Both teams
 must <a href="../commands#unpause"><code>!unpause</code></a> to continue.</p>
+<h3 id="upload">Automatic Upload</h3>
+<p>You can configure Get5 to automatically send all your backups to
+a <a href="../configuration#get5_remote_backup_url">remote location</a> (such as a central server at a LAN). The file will be sent
+as the raw HTTP body. Requires the <a href="../installation#steamworks">SteamWorks</a> extension.</p>
+<div class="admonition warning">
+<p class="admonition-title">Pre-live backups are sent multiple times</p>
+<p>As Get5 writes the <code>prelive</code> backup file multiple times, it will also upload it multiple times. If you don't care
+about this backup, just discard the file if the <code>Get5-RoundNumber</code> header is <code>-1</code>. You should still reply with
+<code>200 OK</code> though.</p>
+</div>
+<h4 id="headers">Headers</h4>
+<p>Get5 will add these headers to the request in order for your server to handle it:</p>
+<ol>
+<li><code>Get5-FileName</code> is the name of the backup file (see examples above).</li>
+<li><code>Get5-MapNumber</code> is the zero-indexed map number in the series.</li>
+<li><code>Get5-RoundNumber</code> is the zero-indexed round number of the map. If the match is not yet live (warmup, knife), this
+   value is <code>-1</code>.</li>
+<li><code>Get5-MatchId</code> <strong>if</strong> the <a href="../match_schema#schema">match ID</a> is not an empty string.</li>
+<li><code>Get5-ServerId</code> <strong>if</strong> <a href="../configuration#get5_server_id"><code>get5_server_id</code></a> is set to a positive integer.</li>
+<li><code>Get5-Version</code> is the version of Get5, i.e. <code>0.12.0</code>.</li>
+</ol>
+<h4 id="authorization">Authorization</h4>
+<p>You can add a <a href="../configuration#get5_remote_backup_header_key">custom header</a> to the request for authorization, if
+required.</p>
+<h4 id="example_1">Example</h4>
+<p>For an example of how to read the file on your web server, please see the example for <a href="../gotv#example">demo uploads</a>.
+The same principles apply to backups.</p>
+<h3 id="remote">Loading from Remote</h3>
+<p>You can use the <a href="../commands#get5_loadbackup_url"><code>get5_loadbackup_url</code></a> command to load a backup from a remote host.
+This assumes the file is a valid KeyValues file and requires the <a href="../installation#steamworks">SteamWorks</a> extension.</p>
 <h3 id="pauses">Consumed pauses in backups</h3>
 <p>When restoring from a backup, the <a href="../pausing">consumed pauses</a> are reset to the state they were in at the beginning
 of the round you restore to, but only if the game state is not currently live. This means that using

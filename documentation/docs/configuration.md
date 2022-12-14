@@ -52,6 +52,7 @@ cfg/get5/live.cfg # (3)
     mp_warmup_start
     mp_warmuptime
     mp_warmuptime_all_players_connected
+    mp_endwarmup_player_count
     tv_delay
     tv_delay1
     tv_delaymapchange

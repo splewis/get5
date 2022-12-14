@@ -49,7 +49,7 @@ void UnpauseGame(Get5Team team) {
 
   EventLogger_LogAndDeleteEvent(event);
 
-  delete g_PauseTimer; // Immediately stop pause timer if running.
+  delete g_PauseTimer;  // Immediately stop pause timer if running.
   g_PauseType = Get5PauseType_None;
   g_PausingTeam = Get5Team_None;
   g_LatestPauseDuration = 0;

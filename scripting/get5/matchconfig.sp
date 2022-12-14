@@ -18,7 +18,6 @@
 bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = false) {
   if (g_GameState != Get5State_None && !restoreBackup) {
     Format(error, PLATFORM_MAX_PATH, "Cannot load a match configuration when a match is already loaded.");
-    MatchConfigFail(error);
     return false;
   }
 
@@ -47,14 +46,13 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
     GetConVarStringSafe("hostname", g_HostnamePreGet5, sizeof(g_HostnamePreGet5));
   }
 
-  if (!LoadMatchFile(config, error)) {
-    MatchConfigFail(error);
+  if (!LoadMatchFile(config, error, restoreBackup)) {
     return false;
   }
 
   if (g_NumberOfMapsInSeries > g_MapPoolList.Length) {
-    FormatEx(error, PLATFORM_MAX_PATH, "Cannot play a series of %d maps with a maplist of only %d maps.", g_NumberOfMapsInSeries, g_MapPoolList.Length);
-    MatchConfigFail(error);
+    FormatEx(error, PLATFORM_MAX_PATH, "Cannot play a series of %d maps with a maplist of only %d maps.",
+             g_NumberOfMapsInSeries, g_MapPoolList.Length);
     return false;
   }
 
@@ -111,7 +109,7 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   // depends on it. We set this one first as the others may depend on something changed in the match
   // cvars section.
   ExecuteMatchConfigCvars();
-  SetStartingTeams(); // must go before SetMatchTeamCvars as it depends on correct starting teams!
+  SetStartingTeams();  // must go before SetMatchTeamCvars as it depends on correct starting teams!
   SetMatchTeamCvars();
   LoadPlayerNames();
   AddTeamLogosToDownloadTable();
@@ -183,16 +181,15 @@ static Action Timer_PlacePlayerFromTeamNone(Handle timer, int client) {
   }
 }
 
-static bool LoadMatchFile(const char[] config, char[] error) {
-  Get5PreloadMatchConfigEvent event = new Get5PreloadMatchConfigEvent(config);
-
-  LogDebug("Calling Get5_OnPreLoadMatchConfig()");
-
-  Call_StartForward(g_OnPreLoadMatchConfig);
-  Call_PushCell(event);
-  Call_Finish();
-
-  EventLogger_LogAndDeleteEvent(event);
+static bool LoadMatchFile(const char[] config, char[] error, bool backup) {
+  if (!backup) {
+    LogDebug("Calling Get5_OnPreLoadMatchConfig()");
+    Get5PreloadMatchConfigEvent event = new Get5PreloadMatchConfigEvent(config);
+    Call_StartForward(g_OnPreLoadMatchConfig);
+    Call_PushCell(event);
+    Call_Finish();
+    EventLogger_LogAndDeleteEvent(event);
+  }
 
   if (!FileExists(config)) {
     FormatEx(error, PLATFORM_MAX_PATH, "Match config file doesn't exist: \"%s\".", config);
@@ -226,10 +223,10 @@ static bool LoadMatchFile(const char[] config, char[] error) {
   return success;
 }
 
-static void MatchConfigFail(const char[] reason, any...) {
+void MatchConfigFail(const char[] reason, any...) {
   char buffer[512];
   VFormat(buffer, sizeof(buffer), reason, 2);
-  LogError("Failed to load match config: %s", buffer);
+  LogError("Failed to load match configuration: %s", buffer);
 
   Get5LoadMatchConfigFailedEvent event = new Get5LoadMatchConfigFailedEvent(buffer);
 
@@ -243,67 +240,31 @@ static void MatchConfigFail(const char[] reason, any...) {
 }
 
 bool LoadMatchFromUrl(const char[] url, const ArrayList paramNames = null, const ArrayList paramValues = null,
-                      const ArrayList headerNames = null, const ArrayList headerValues = null) {
+                      const ArrayList headerNames = null, const ArrayList headerValues = null, char[] error) {
   if (!LibraryExists("SteamWorks")) {
-    MatchConfigFail("The SteamWorks extension is required in order to load match configurations over HTTP.");
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "The SteamWorks extension is required in order to load match configurations over HTTP.");
     return false;
   }
 
-  Handle request = CreateGet5HTTPRequest(k_EHTTPMethodGET, url);
-  if (request == INVALID_HANDLE) {
-    MatchConfigFail("Failed to create remote match load request for URL '%s'.", url);
+  Handle request = CreateGet5HTTPRequest(k_EHTTPMethodGET, url, error);
+  if (request == INVALID_HANDLE || !SetMultipleHeaders(request, headerNames, headerValues, error) ||
+      !SetMultipleQueryParameters(request, paramNames, paramValues, error)) {
+    delete request;
     return false;
-  }
-
-  char key[1024];
-  char value[1024];
-  if (headerNames != null && headerValues != null) {
-    if (headerNames.Length != headerValues.Length) {
-      MatchConfigFail("The number of header keys and values must be identical.");
-      delete request;
-      return false;
-    }
-
-    for (int i = 0; i < headerNames.Length; i++) {
-      headerNames.GetString(i, key, sizeof(key));
-      headerValues.GetString(i, value, sizeof(value));
-      if (!SteamWorks_SetHTTPRequestHeaderValue(request, key, value)) {
-        MatchConfigFail("Failed to set HTTP header '%s' with value '%s'.", key, value);
-        delete request;
-        return false;
-      }
-    }
-  }
-
-  if (paramNames != null && paramValues != null) {
-    if (paramNames.Length != paramValues.Length) {
-      MatchConfigFail("The number of query parameter keys and values must be identical.");
-      delete request;
-      return false;
-    }
-
-    for (int i = 0; i < paramNames.Length; i++) {
-      paramNames.GetString(i, key, sizeof(key));
-      paramValues.GetString(i, value, sizeof(value));
-      if (!SteamWorks_SetHTTPRequestGetOrPostParameter(request, key, value)) {
-        MatchConfigFail("Failed to set HTTP query parameter '%s' with value '%s'.", key, value);
-        delete request;
-        return false;
-      }
-    }
   }
 
   DataPack pack = new DataPack();
   pack.WriteString(url);
 
   SteamWorks_SetHTTPRequestContextValue(request, pack);
-  SteamWorks_SetHTTPCallbacks(request, SteamWorks_OnMatchConfigReceived);
+  SteamWorks_SetHTTPCallbacks(request, LoadMatchFromUrl_Callback);
   SteamWorks_SendHTTPRequest(request);
   return true;
 }
 
-static int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool requestSuccessful,
-                                            EHTTPStatusCode statusCode, DataPack pack) {
+static int LoadMatchFromUrl_Callback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
+                                     DataPack pack) {
 
   char loadedUrl[PLATFORM_MAX_PATH];
   pack.Reset();
@@ -312,41 +273,28 @@ static int SteamWorks_OnMatchConfigReceived(Handle request, bool failure, bool r
 
   if (failure || !requestSuccessful) {
     MatchConfigFail(
-      "Match config HTTP request for '%s' failed due to a network or configuration error. Make sure you have enclosed your URL in quotes.",
+      "HTTP request for '%s' failed due to a network or configuration error. Make sure you have enclosed your URL in quotes.",
       loadedUrl);
-    delete request;
-    return;
-  }
-
-  int status = view_as<int>(statusCode);
-  if (status >= 300 || status < 200) {
-    MatchConfigFail("Match config HTTP request for '%s' failed with HTTP status code: %d.", loadedUrl, statusCode);
-    int responseSize;
-    SteamWorks_GetHTTPResponseBodySize(request, responseSize);
-    char[] response = new char[responseSize];
-    if (SteamWorks_GetHTTPResponseBodyData(request, response, responseSize)) {
-      LogError("Response body: %s", response);
-    } else {
-      LogError("Failed to read response body.");
-    }
-    delete request;
-    return;
-  }
-
-  char remoteConfig[PLATFORM_MAX_PATH];
-  char error[PLATFORM_MAX_PATH];
-  GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
-  if (SteamWorks_WriteHTTPResponseBodyToFile(request, remoteConfig)) {
-    if (LoadMatchConfig(remoteConfig, error)) {
-      // Override g_LoadedConfigFile to point to the URL instead of the local temp file.
-      strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), loadedUrl);
-      // We only delete the file if it loads successfully, as it may be used for debugging otherwise.
-      if (FileExists(remoteConfig) && !DeleteFile(remoteConfig)) {
-        LogError("Unable to delete temporary match config file '%s'.", remoteConfig);
-      }
-    }
+  } else if (!CheckForSuccessfulResponse(request, statusCode)) {
+    MatchConfigFail("HTTP request for '%s' failed with HTTP status code: %d.", loadedUrl, statusCode);
   } else {
-    MatchConfigFail("Failed to write match configuration to file '%s'.", remoteConfig);
+    char remoteConfig[PLATFORM_MAX_PATH];
+    char error[PLATFORM_MAX_PATH];
+    GetTempFilePath(remoteConfig, sizeof(remoteConfig), REMOTE_CONFIG_PATTERN);
+    if (SteamWorks_WriteHTTPResponseBodyToFile(request, remoteConfig)) {
+      if (LoadMatchConfig(remoteConfig, error)) {
+        // Override g_LoadedConfigFile to point to the URL instead of the local temp file.
+        strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), loadedUrl);
+        // We only delete the file if it loads successfully, as it may be used for debugging otherwise.
+        if (FileExists(remoteConfig) && !DeleteFile(remoteConfig)) {
+          LogError("Unable to delete temporary match config file '%s'.", remoteConfig);
+        }
+      } else {
+        MatchConfigFail(error);
+      }
+    } else {
+      MatchConfigFail("Failed to write match configuration to file '%s'.", remoteConfig);
+    }
   }
   delete request;
 }
@@ -410,7 +358,8 @@ static void AddTeamBackupData(const char[] key, const KeyValues kv, const Get5Te
   kv.GoBack();
 }
 
-static void WritePlayerDataToKV(const char[] key, const ArrayList players, const KeyValues kv, char[] auth, char[] name) {
+static void WritePlayerDataToKV(const char[] key, const ArrayList players, const KeyValues kv, char[] auth,
+                                char[] name) {
   kv.JumpToKey(key, true);
   for (int i = 0; i < players.Length; i++) {
     players.GetString(i, auth, AUTH_LENGTH);
@@ -522,7 +471,8 @@ static bool LoadMatchFromJson(const JSON_Object json, char[] error) {
   g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
   g_CoachesPerTeam = json_object_get_int_safe(json, "coaches_per_team", CONFIG_COACHESPERTEAM_DEFAULT);
   g_MinPlayersToReady = json_object_get_int_safe(json, "min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
-  g_MinSpectatorsToReady = json_object_get_int_safe(json, "min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
+  g_MinSpectatorsToReady =
+    json_object_get_int_safe(json, "min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
   g_SkipVeto = json_object_get_bool_safe(json, "skip_veto", CONFIG_SKIPVETO_DEFAULT);
   g_CoachesMustReady = json_object_get_bool_safe(json, "coaches_must_ready", CONFIG_COACHES_MUST_READY_DEFAULT);
   g_NumberOfMapsInSeries = json_object_get_int_safe(json, "num_maps", CONFIG_NUM_MAPSDEFAULT);
@@ -673,14 +623,15 @@ static bool LoadMapListJson(const JSON_Object json, char[] error, const bool all
     if (allowFromFile && json.GetString("fromfile", mapFileName, PLATFORM_MAX_PATH) && strlen(mapFileName) > 0) {
       success = LoadMapListFromFile(mapFileName, error);
     } else {
-      FormatEx(error, PLATFORM_MAX_PATH, "\"maplist\" object in match configuration file must have a non-empty \"fromfile\" property or be an array.");
+      FormatEx(
+        error, PLATFORM_MAX_PATH,
+        "\"maplist\" object in match configuration file must have a non-empty \"fromfile\" property or be an array.");
     }
   }
   return success;
 }
 
-static bool LoadTeamDataKeyValue(const KeyValues kv, const Get5Team matchTeam, char[] error,
-                         const bool allowFromFile) {
+static bool LoadTeamDataKeyValue(const KeyValues kv, const Get5Team matchTeam, char[] error, const bool allowFromFile) {
   char fromfile[PLATFORM_MAX_PATH];
   if (allowFromFile) {
     kv.GetString("fromfile", fromfile, sizeof(fromfile));
@@ -706,8 +657,7 @@ static bool LoadTeamDataKeyValue(const KeyValues kv, const Get5Team matchTeam, c
   }
 }
 
-static bool LoadTeamDataJson(const JSON_Object json, const Get5Team matchTeam, char[] error,
-                             const bool allowFromFile) {
+static bool LoadTeamDataJson(const JSON_Object json, const Get5Team matchTeam, char[] error, const bool allowFromFile) {
   if (json.IsArray) {
     FormatEx(error, PLATFORM_MAX_PATH, "Team data in JSON is array. Must be object.");
     return false;
@@ -750,7 +700,8 @@ static bool LoadMapListFromFile(const char[] fromFile, char[] error) {
   if (IsJSONPath(fromFile)) {
     JSON_Object jsonFromFile = json_read_from_file(fromFile, JSON_DECODE_ORDERED_KEYS);
     if (jsonFromFile == null) {
-      FormatEx(error, PLATFORM_MAX_PATH, "\"maplist\" -> \"fromfile\" points to an invalid or unreadable JSON file: \"%s\".", fromFile);
+      FormatEx(error, PLATFORM_MAX_PATH,
+               "\"maplist\" -> \"fromfile\" points to an invalid or unreadable JSON file: \"%s\".", fromFile);
     } else {
       success = LoadMapListJson(jsonFromFile, error, false);
       json_cleanup_and_delete(jsonFromFile);
@@ -758,7 +709,9 @@ static bool LoadMapListFromFile(const char[] fromFile, char[] error) {
   } else {
     char parseError[PLATFORM_MAX_PATH];
     if (!CheckKeyValuesFile(fromFile, parseError, sizeof(parseError))) {
-      FormatEx(error, PLATFORM_MAX_PATH, "\"maplist\" -> \"fromfile\" points to an invalid or unreadable KV file: \"%s\". Error: %s", fromFile, parseError);
+      FormatEx(error, PLATFORM_MAX_PATH,
+               "\"maplist\" -> \"fromfile\" points to an invalid or unreadable KV file: \"%s\". Error: %s", fromFile,
+               parseError);
     } else {
       KeyValues kvFromFile = new KeyValues("maplist");
       if (kvFromFile.ImportFromFile(fromFile)) {
@@ -843,13 +796,14 @@ void SetMatchTeamCvars() {
 
 static void SetTeamSpecificCvars(const Get5Team team) {
   char teamText[MAX_CVAR_LENGTH];
-  strcopy(teamText, sizeof(teamText), g_TeamMatchTexts[team]); // Copy as we don't want to modify the original values.
+  strcopy(teamText, sizeof(teamText), g_TeamMatchTexts[team]);  // Copy as we don't want to modify the original values.
   int teamScore = g_TeamSeriesScores[team];
   if (g_MapsToWin > 1 && strlen(teamText) == 0) {
     // If we play BoX > 1 and no match team text was specifically set, overwrite with the map series score:
     IntToString(teamScore, teamText, sizeof(teamText));
   }
-  // For this specifically, the starting side is the one to use, as the game swaps _1 and _2 cvars itself after halftime.
+  // For this specifically, the starting side is the one to use, as the game swaps _1 and _2 cvars itself after
+  // halftime.
   Get5Side side = view_as<Get5Side>(g_TeamStartingSide[team]);
   SetTeamInfo(side, g_TeamNames[team], g_TeamFlags[team], g_TeamLogos[team], teamText, teamScore);
 }

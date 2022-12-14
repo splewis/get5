@@ -319,6 +319,19 @@ exist.<br>**`Default: ""`**
 
     :no_entry: `/backups/{MATCHID}`
 
+####`get5_remote_backup_url`
+:   If defined, Get5 will [automatically send backups](../backup#upload) to this URL in an HTTP `POST` request. If no
+protocol is provided, `http://` will be prepended to this value. Requires the
+[SteamWorks](../installation#steamworks) extension.<br>**`Default: ""`**
+
+####`get5_remote_backup_header_key`
+:   If this **and** [`get5_remote_backup_header_value`](#get5_remote_backup_header_value) are defined, this header name
+and value will be used for your [backup upload HTTP request](#get5_remote_backup_url).<br>**`Default: "Authorization"`**
+
+####`get5_remote_backup_header_value`
+:   If this **and** [`get5_remote_backup_header_key`](#get5_remote_backup_header_key) are defined, this header name and
+value will be used for your [backup upload HTTP request](#get5_remote_backup_url).<br>**`Default: ""`**
+
 ## Formats & Paths
 
 ####`get5_time_format`

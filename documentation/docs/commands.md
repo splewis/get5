@@ -103,6 +103,12 @@ Please note that these are meant to be used by *admins* in console. The definiti
 the [backup system is enabled](../configuration#get5_backup_system_enabled). If you
 define [`get5_backup_path`](../configuration#get5_backup_path), you must include the path in the filename.
 
+####`get5_loadbackup_url <url> [header name] [header value]` {: #get5_loadbackup_url }
+:   Loads a match backup [from a remote host](../backup#remote) by sending an HTTP(S) `GET` to the given URL. Requires
+that the [backup system is enabled](../configuration#get5_backup_system_enabled). You may optionally provide an HTTP
+header and value pair using the `header name` and `header value` arguments. You should put all arguments inside
+quotation marks (`""`).
+
 ####`get5_last_backup_file`
 :   Prints the name of the last match backup file Get5 wrote in the current series, this is automatically updated each
 time a backup file is written. Empty string if no backup was written.
@@ -117,7 +123,7 @@ You may optionally provide an HTTP header and value pair using the `header name`
 should put all arguments inside quotation marks (`""`).
 
 !!! example
-    
+
     With `Authorization`:<br>
     `get5_loadmatch_url "https://example.com/match_config.json" "Authorization" "Bearer <token>"`
 
@@ -127,6 +133,12 @@ should put all arguments inside quotation marks (`""`).
 !!! warning "SteamWorks required"
 
     Loading remote matches requires the [SteamWorks](../installation#steamworks) extension.
+
+!!! danger "File URL is public!"
+
+    As the [`get_status`](#get5_status) command is available to all clients, be aware that everyone can see the URL of
+    the loaded match configuration when loading from a remote. Make sure that your match configuration file does not
+    contain any sensitive information *or* that it is protected by authorization or is inaccessible to clients.
 
 ####`get5_endmatch [team1|team2]` {: #get5_endmatch }
 :   Force-ends the current match. The team argument will force the winner of the series and the current map to be set
@@ -217,7 +229,9 @@ from the server immediately.
        <br><br>**`post_game`**<br>The map has ended and the countdown to the next map is ongoing. This stage will only
        occur in multi-map series, as single-map matches end immediately.
     3. Whether the game is currently [paused](../pausing).
-    4. The match configuration file currently loaded. `Example: "addons/sourcemod/configs/get5/match_config.json"`.
+    4. The match configuration file currently loaded. `Example: "addons/sourcemod/configs/get5/match_config.json"`. Note
+       that this points to the URL of the match configuration when a match was loaded
+       using [`get5_loadmatch_url`](#get5_loadmatch_url).
     5. The current match ID. Empty string if not defined or `scrim` or `manual` if using
        [`get5_scrim`](../commands#get5_scrim) or [`get5_creatematch`](../commands#get5_creatematch).
     6. The current map number, starting at `0`. You can use this to determine the current map by looking at the `maps`

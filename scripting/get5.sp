@@ -68,6 +68,9 @@ ConVar g_AutoTechPauseMissingPlayersCvar;
 ConVar g_AutoLoadConfigCvar;
 ConVar g_AutoReadyActivePlayersCvar;
 ConVar g_BackupSystemEnabledCvar;
+ConVar g_RemoteBackupURLCvar;
+ConVar g_RemoteBackupURLHeaderValueCvar;
+ConVar g_RemoteBackupURLHeaderKeyCvar;
 ConVar g_CheckAuthsCvar;
 ConVar g_DateFormatCvar;
 ConVar g_DamagePrintCvar;
@@ -264,7 +267,8 @@ ArrayList g_ChatAliases;
 ArrayList g_ChatAliasesCommands;
 
 /** Map-game state not related to the actual gameplay. **/
-char g_DemoFileName[PLATFORM_MAX_PATH];
+char g_DemoFilePath[PLATFORM_MAX_PATH];  // full path to demo file being recorded to, including .dem extension
+char g_DemoFileName[PLATFORM_MAX_PATH];  // the file name of the demo file, including .dem extension
 bool g_MapChangePending = false;
 bool g_PendingSideSwap = false;
 Handle g_PendingMapChangeTimer = INVALID_HANDLE;
@@ -390,6 +394,9 @@ public void OnPluginStart() {
   g_StopCommandEnabledCvar              = CreateConVar("get5_stop_command_enabled", "1", "Whether clients can use the !stop command to restore to the beginning of the current round.");
   g_StopCommandNoDamageCvar             = CreateConVar("get5_stop_command_no_damage", "0", "Whether the stop command becomes unavailable if a player damages a player from the opposing team.");
   g_StopCommandTimeLimitCvar            = CreateConVar("get5_stop_command_time_limit", "0", "The number of seconds into a round after which a team can no longer request/confirm to stop and restart the round.");
+  g_RemoteBackupURLCvar                 = CreateConVar("get5_remote_backup_url", "", "A URL to send backup files to over HTTP. Leave empty to disable.");
+  g_RemoteBackupURLHeaderKeyCvar        = CreateConVar("get5_remote_backup_header_key", "Authorization", "If defined, a custom HTTP header with this name is added to the backup HTTP request.", FCVAR_DONTRECORD);
+  g_RemoteBackupURLHeaderValueCvar      = CreateConVar("get5_remote_backup_header_value", "", "If defined, the value of the custom header added to the backup HTTP request.", FCVAR_DONTRECORD | FCVAR_PROTECTED);
 
   // Demos
   g_DemoUploadDeleteAfterCvar           = CreateConVar("get5_demo_delete_after_upload", "0", "Whether to delete the demo from the game server after a successful upload.");
@@ -500,9 +507,8 @@ public void OnPluginStart() {
   /** Admin/server commands **/
   RegAdminCmd("get5_loadmatch", Command_LoadMatch, ADMFLAG_CHANGEMAP,
               "Loads a match config file (json or keyvalues) from a file relative to the csgo/ directory");
-  RegAdminCmd(
-    "get5_loadmatch_url", Command_LoadMatchUrl, ADMFLAG_CHANGEMAP,
-    "Loads a JSON config file by sending a GET request to download it. Requires either the SteamWorks extension.");
+  RegAdminCmd("get5_loadmatch_url", Command_LoadMatchUrl, ADMFLAG_CHANGEMAP,
+              "Loads a JSON config file by sending a GET request to download it. Requires the SteamWorks extension.");
   RegAdminCmd("get5_loadteam", Command_LoadTeam, ADMFLAG_CHANGEMAP, "Loads a team data from a file into a team");
   RegAdminCmd("get5_endmatch", Command_EndMatch, ADMFLAG_CHANGEMAP, "Force ends the current match");
   RegAdminCmd("get5_addplayer", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Adds a steamid to a match team");
@@ -530,7 +536,8 @@ public void OnPluginStart() {
   RegAdminCmd("get5_dumpstats", Command_DumpStats, ADMFLAG_CHANGEMAP, "Dumps match stats to a file");
   RegAdminCmd("get5_listbackups", Command_ListBackups, ADMFLAG_CHANGEMAP,
               "Lists get5 match backups for the current matchid or a given one");
-  RegAdminCmd("get5_loadbackup", Command_LoadBackup, ADMFLAG_CHANGEMAP, "Loads a get5 match backup");
+  RegAdminCmd("get5_loadbackup", Command_LoadBackup, ADMFLAG_CHANGEMAP, "Loads a Get5 match backup from a file relative to the csgo directory.");
+  RegAdminCmd("get5_loadbackup_url", Command_LoadBackupUrl, ADMFLAG_CHANGEMAP, "Downloads and loads a Get5 match backup from a URL.");
   RegAdminCmd("get5_debuginfo", Command_DebugInfo, ADMFLAG_CHANGEMAP,
               "Dumps debug info to a file (addons/sourcemod/logs/get5_debuginfo.txt by default)");
 
@@ -843,6 +850,7 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
   // Recording is always automatically stopped on map change, and
   // since there are no hooks to detect tv_stoprecord, we reset
   // our recording var if a map change is performed unexpectedly.
+  g_DemoFilePath = "";
   g_DemoFileName = "";
   DeleteOldBackups();
 
@@ -981,6 +989,8 @@ bool CheckAutoLoadConfig() {
       bool loaded = LoadMatchConfig(autoloadConfig, error);  // return false if match config load fails!
       if (loaded) {
         LogMessage("Match configuration was loaded via get5_autoload_config.");
+      } else {
+        MatchConfigFail(error);
       }
       return loaded;
     }
@@ -1056,6 +1066,7 @@ static Action Command_LoadMatch(int client, int args) {
   if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {
     char error[PLATFORM_MAX_PATH];
     if (!LoadMatchConfig(arg, error)) {
+      MatchConfigFail(error);
       ReplyToCommand(client, error);
     }
   } else {
@@ -1086,8 +1097,9 @@ static Action Command_LoadMatchUrl(int client, int args) {
     GetCmdArg(3, headerBuffer, sizeof(headerBuffer));
     headerValues.PushString(headerBuffer);
   }
-  if (!LoadMatchFromUrl(url, _, _, headerNames, headerValues)) {
-    ReplyToCommand(client, "Failed to initiate request for remote match config. Please see error logs for details.");
+  char error[PLATFORM_MAX_PATH];
+  if (!LoadMatchFromUrl(url, _, _, headerNames, headerValues, error)) {
+    ReplyToCommand(client, "Failed to initiate request for remote match config: %s", error);
   } else {
     ReplyToCommand(client, "Loading match configuration...");
   }
@@ -1193,17 +1205,12 @@ void RestoreLastRound(int client) {
   char lastBackup[PLATFORM_MAX_PATH];
   g_LastGet5BackupCvar.GetString(lastBackup, sizeof(lastBackup));
   if (!StrEqual(lastBackup, "")) {
-    if (RestoreFromBackup(lastBackup)) {
-      char fileFormatted[PLATFORM_MAX_PATH];
-      FormatCvarName(fileFormatted, sizeof(fileFormatted), lastBackup);
-      Get5_MessageToAll("%t", "BackupLoadedInfoMessage", fileFormatted);
-      // Fix the last backup cvar since it gets reset.
-      g_LastGet5BackupCvar.SetString(lastBackup);
-    } else {
-      ReplyToCommand(client, "Failed to load backup %s - check error logs", lastBackup);
+    char error[PLATFORM_MAX_PATH];
+    if (!RestoreFromBackup(lastBackup, error)) {
+      ReplyToCommand(client, error);
     }
   } else {
-    ReplyToCommand(client, "Failed to load backup, as previous round backup does not exist.");
+    ReplyToCommand(client, "Failed to load backup as no backup file from this round exists.");
   }
 }
 

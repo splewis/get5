@@ -69,12 +69,12 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
   char seriesType[64];
   char team1Name[64];
   char team2Name[64];
-
-  int serverId = Get5_GetServerID();
+  char serverId[65];
 
   char seriesTypeSz[sizeof(seriesType) * 2 + 1];
   char team1NameSz[sizeof(team1Name) * 2 + 1];
   char team2NameSz[sizeof(team2Name) * 2 + 1];
+  char serverIdSz[sizeof(serverId) * 2 + 1];
 
   KeyValues tmpStats = new KeyValues("Stats");
 
@@ -88,6 +88,9 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
   tmpStats.GetString(STAT_SERIES_TEAM2NAME, team2Name, sizeof(team2Name));
   db.Escape(team2Name, team2NameSz, sizeof(team2NameSz));
 
+  Get5_GetServerID(serverId, sizeof(serverId));
+  db.Escape(serverId, serverIdSz, sizeof(serverIdSz));
+
   delete tmpStats;
 
   // Match ID defaults to an empty string, so if it's empty we use auto-increment from MySQL.
@@ -100,16 +103,16 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
 
     FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
             (matchid, series_type, team1_name, team2_name, start_time, server_id) VALUES \
-            ('%s', '%s', '%s', '%s', NOW(), %d)",
-             matchIdSz, seriesTypeSz, team1NameSz, team2NameSz, serverId);
+            ('%s', '%s', '%s', '%s', NOW(), '%s')",
+             matchIdSz, seriesTypeSz, team1NameSz, team2NameSz, serverIdSz);
     LogDebug(queryBuffer);
     db.Query(SQLErrorCheckCallback, queryBuffer);
     LogMessage("Starting match with preset ID: %s", matchId);
   } else {
     FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
             (series_type, team1_name, team2_name, start_time, server_id) VALUES \
-            ('%s', '%s', '%s', NOW(), %d)",
-             seriesTypeSz, team1NameSz, team2NameSz, serverId);
+            ('%s', '%s', '%s', NOW(), '%s')",
+             seriesTypeSz, team1NameSz, team2NameSz, serverIdSz);
     LogDebug(queryBuffer);
     db.Query(MatchInitCallback, queryBuffer);
   }

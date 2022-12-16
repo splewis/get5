@@ -72,7 +72,7 @@ Get5 will add these headers to the request in order for your server to handle it
 3. `Get5-RoundNumber` is the zero-indexed round number of the map. If the match is not yet live (warmup, knife), this
    value is `-1`.
 4. `Get5-MatchId` **if** the [match ID](../match_schema#schema) is not an empty string.
-5. `Get5-ServerId` **if** [`get5_server_id`](../configuration#get5_server_id) is set to a positive integer.
+5. `Get5-ServerId` **if** [`get5_server_id`](../configuration#get5_server_id) is not an empty string.
 6. `Get5-Version` is the version of Get5, i.e. `0.12.0`.
 
 #### Authorization

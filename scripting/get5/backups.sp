@@ -1,7 +1,7 @@
-#define TEMP_MATCHCONFIG_BACKUP_PATTERN "get5_match_config_backup%d.txt"
-#define TEMP_REMOTE_BACKUP_PATTERN      "get5_backup_remote%d.txt"
-#define TEMP_VALVE_BACKUP_PATTERN       "get5_temp_backup%d.txt"
-#define TEMP_VALVE_NAMES_FILE_PATTERN   "get5_names%d.txt"
+#define TEMP_MATCHCONFIG_BACKUP_PATTERN "get5_match_config_backup%s.txt"
+#define TEMP_REMOTE_BACKUP_PATTERN      "get5_backup_remote%s.txt"
+#define TEMP_VALVE_BACKUP_PATTERN       "get5_temp_backup%s.txt"
+#define TEMP_VALVE_NAMES_FILE_PATTERN   "get5_names%s.txt"
 
 Action Command_LoadBackupUrl(int client, int args) {
   if (!g_BackupSystemEnabledCvar.BoolValue) {
@@ -87,7 +87,9 @@ Action Command_ListBackups(int client, int args) {
   if (files != null) {
     char backupInfo[256];
     char pattern[PLATFORM_MAX_PATH];
-    FormatEx(pattern, sizeof(pattern), "get5_backup%d_match%s", Get5_GetServerID(), matchID);
+    char serverId[65];
+    g_ServerIdCvar.GetString(serverId, sizeof(serverId));
+    FormatEx(pattern, sizeof(pattern), "get5_backup%s_match%s", serverId, matchID);
 
     char filename[PLATFORM_MAX_PATH];
     while (files.GetNext(filename, sizeof(filename))) {
@@ -206,12 +208,15 @@ void WriteBackup() {
   char variableSubstitutes[][] = {"{MATCHID}"};
   CheckAndCreateFolderPath(g_RoundBackupPathCvar, variableSubstitutes, 1, folder, sizeof(folder));
 
+  char serverId[65];
+  g_ServerIdCvar.GetString(serverId, sizeof(serverId));
+
   char filename[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
-    FormatEx(filename, sizeof(filename), "get5_backup%d_match%s_map%d_round%d.cfg", Get5_GetServerID(), g_MatchID,
+    FormatEx(filename, sizeof(filename), "get5_backup%s_match%s_map%d_round%d.cfg", serverId, g_MatchID,
              g_MapNumber, g_RoundNumber);
   } else {
-    FormatEx(filename, sizeof(filename), "get5_backup%d_match%s_map%d_prelive.cfg", Get5_GetServerID(), g_MatchID,
+    FormatEx(filename, sizeof(filename), "get5_backup%s_match%s_map%d_prelive.cfg", serverId, g_MatchID,
              g_MapNumber);
   }
 

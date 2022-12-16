@@ -1,5 +1,5 @@
 name: Feature Request
-description: If you want a new feature added to Get5.
+description: If you want to request a new feature or a change to an existing feature.
 title: "[Feature Request]: "
 labels: ["feature request"]
 body:
@@ -19,7 +19,9 @@ body:
     attributes:
       label: Get5 Version
       description: |
-        What version of Get5 are you using? Use `get5_status` in your server console to print it. You can download the latest versions [here](https://github.com/splewis/get5/releases).
+        What version of Get5 are you using? Use [`get5_status`](https://splewis.github.io/get5/latest/commands/#get5_status) in your server console to print it. You can download the latest versions [here](https://github.com/splewis/get5/releases).
+        
+        Please note that "latest" is **not** a version.
     validations:
       required: true
   - type: textarea

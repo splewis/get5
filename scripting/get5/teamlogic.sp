@@ -396,14 +396,6 @@ int GetTeamCaptain(Get5Team team) {
   return -1;
 }
 
-int GetNextTeamCaptain(int client) {
-  if (client == g_VetoCaptains[Get5Team_1]) {
-    return g_VetoCaptains[Get5Team_2];
-  } else {
-    return g_VetoCaptains[Get5Team_1];
-  }
-}
-
 ArrayList GetTeamPlayers(Get5Team team) {
   return g_TeamPlayers[team];
 }

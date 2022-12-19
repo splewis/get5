@@ -214,6 +214,7 @@ Get5State g_GameState = Get5State_None;
 ArrayList g_MapsToPlay;
 ArrayList g_MapSides;
 ArrayList g_MapsLeftInVetoPool;
+ArrayList g_MapBanOrder;
 Get5Team g_LastVetoTeam;
 Menu g_ActiveVetoMenu;
 Handle g_InfoTimer = INVALID_HANDLE;
@@ -587,6 +588,7 @@ public void OnPluginStart() {
   g_CvarNames = new ArrayList(MAX_CVAR_LENGTH);
   g_CvarValues = new ArrayList(MAX_CVAR_LENGTH);
   g_TeamScoresPerMap = new ArrayList(MATCHTEAM_COUNT);
+  g_MapBanOrder = new ArrayList();
 
   for (int i = 0; i < sizeof(g_TeamPlayers); i++) {
     g_TeamPlayers[i] = new ArrayList(AUTH_LENGTH);
@@ -1474,6 +1476,7 @@ void ResetMatchConfigVariables(bool backup = false) {
   g_MapPoolList.Clear();
   g_PlayerNames.Clear();
   g_MapsToPlay.Clear();
+  g_MapBanOrder.Clear();
   g_MapSides.Clear();
   g_MapsLeftInVetoPool.Clear();
   g_TeamScoresPerMap.Clear();

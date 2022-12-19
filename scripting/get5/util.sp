@@ -627,7 +627,7 @@ stock bool HelpfulAttack(int attacker, int victim) {
   return attacker != victim && GetClientTeam(attacker) != GetClientTeam(victim);
 }
 
-stock SideChoice SideTypeFromString(const char[] input) {
+stock SideChoice SideTypeFromString(const char[] input, char[] error) {
   if (StrEqual(input, "team1_ct", false) || StrEqual(input, "team2_t", false)) {
     return SideChoice_Team1CT;
   } else if (StrEqual(input, "team1_t", false) || StrEqual(input, "team2_ct", false)) {
@@ -635,8 +635,9 @@ stock SideChoice SideTypeFromString(const char[] input) {
   } else if (StrEqual(input, "knife", false)) {
     return SideChoice_KnifeRound;
   } else {
-    LogError("Invalid side choice \"%s\", falling back to knife round", input);
-    return SideChoice_KnifeRound;
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "Invalid side choice '%s'. Must be one of 'team1_ct', 'team1_t', 'team2_ct', 'team2_t', 'knife'.", input);
+    return SideChoice_Invalid;
   }
 }
 

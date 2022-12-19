@@ -1,5 +1,6 @@
 {
   "num_maps": 3,
+  "skip_veto": true,
   "maplist": {
     "fromfile": "addons/sourcemod/configs/get5/tests/maplist_valid.json"
   },

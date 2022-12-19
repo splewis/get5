@@ -433,17 +433,38 @@ static bool LoadMatchFromKeyValue(KeyValues kv, char[] error) {
   }
   kv.GoBack();
 
-  if (g_SkipVeto) {
-    if (kv.JumpToKey("map_sides")) {
-      if (kv.GotoFirstSubKey(false)) {
-        do {
-          char buffer[64];
-          kv.GetSectionName(buffer, sizeof(buffer));
-          g_MapSides.Push(SideTypeFromString(buffer));
-        } while (kv.GotoNextKey(false));
-        kv.GoBack();
-      }
+  if (g_MapPoolList.Length == g_NumberOfMapsInSeries) {
+    // If the number of maps is equal to the pool size, veto is impossible, so we force disable it.
+    g_SkipVeto = true;
+  } else if (g_MapPoolList.Length < g_NumberOfMapsInSeries) {
+    FormatEx(error, PLATFORM_MAX_PATH, "The map pool (%d) is not large enough to play a series of %d maps.",
+             g_MapPoolList.Length, g_NumberOfMapsInSeries);
+    return false;
+  }
+
+  if (kv.JumpToKey("map_sides")) {
+    if (kv.GotoFirstSubKey(false)) {
+      do {
+        char buffer[64];
+        kv.GetSectionName(buffer, sizeof(buffer));
+        SideChoice sideChoice = SideTypeFromString(buffer, error);
+        if (sideChoice == SideChoice_Invalid) {
+          return false;
+        }
+        g_MapSides.Push(sideChoice);
+      } while (kv.GotoNextKey(false));
       kv.GoBack();
+    }
+    kv.GoBack();
+  }
+
+  if (!g_SkipVeto) {
+    if (kv.JumpToKey("veto_mode")) {
+      if (!LoadVetoDataKeyValues(kv, error)) {
+        return false;
+      }
+    } else if (!GenerateDefaultVetoSetup(error)) {
+      return false;
     }
   }
 
@@ -523,18 +544,41 @@ static bool LoadMatchFromJson(const JSON_Object json, char[] error) {
     return false;
   }
 
-  if (g_SkipVeto) {
-    JSON_Array array = view_as<JSON_Array>(json.GetObject("map_sides"));
-    if (array != null) {
-      if (!array.IsArray) {
-        FormatEx(error, PLATFORM_MAX_PATH, "Expected \"map_sides\" section to be an array, found object.");
+  if (g_MapPoolList.Length == g_NumberOfMapsInSeries) {
+    // If the number of maps is equal to the pool size, veto is impossible, so we force disable it.
+    g_SkipVeto = true;
+  } else if (g_MapPoolList.Length < g_NumberOfMapsInSeries) {
+    FormatEx(error, PLATFORM_MAX_PATH, "The map pool (%d) is not large enough to play a series of %d maps.",
+             g_MapPoolList.Length, g_NumberOfMapsInSeries);
+    return false;
+  }
+
+  JSON_Array array = view_as<JSON_Array>(json.GetObject("map_sides"));
+  if (array != null) {
+    if (!array.IsArray) {
+      FormatEx(error, PLATFORM_MAX_PATH, "Expected \"map_sides\" section to be an array, found object.");
+      return false;
+    }
+    for (int i = 0; i < array.Length; i++) {
+      char buffer[64];
+      array.GetString(i, buffer, sizeof(buffer));
+      SideChoice sideChoice = SideTypeFromString(buffer, error);
+      if (sideChoice == SideChoice_Invalid) {
         return false;
       }
-      for (int i = 0; i < array.Length; i++) {
-        char buffer[64];
-        array.GetString(i, buffer, sizeof(buffer));
-        g_MapSides.Push(SideTypeFromString(buffer));
+      g_MapSides.Push(sideChoice);
+    }
+  }
+
+  if (!g_SkipVeto) {
+    // Must go after loading maplist!
+    JSON_Object mapVetoOrder = json.GetObject("veto_mode");
+    if (mapVetoOrder != null) {
+      if (!LoadVetoDataJSON(mapVetoOrder, error)) {
+        return false;
       }
+    } else if (!GenerateDefaultVetoSetup(error)) {
+      return false;
     }
   }
 
@@ -657,6 +701,221 @@ static bool LoadTeamDataKeyValue(const KeyValues kv, const Get5Team matchTeam, c
   } else {
     return LoadTeamDataFromFile(fromfile, matchTeam, error);
   }
+}
+
+static bool GenerateDefaultVetoSetup(char[] error) {
+  if (g_MapPoolList.Length != 7 && g_MapPoolList.Length != 8) {
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "Map pool must be of size 7 or 8 when no custom veto configuration was provided.");
+    return false;
+  }
+  Get5Team startingVetoTeam = g_LastVetoTeam == Get5Team_1 ? Get5Team_2 : Get5Team_1;
+  int loopLength = g_MapPoolList.Length - 1;  // Last map either played by default or ignored.
+  switch (g_NumberOfMapsInSeries) {
+    case 1:
+      // In Bo1, just ban all the way:
+      for (int i = 0; i < loopLength; i++) {
+        g_MapBanOrder.Push(i % 2 == 0 ? (startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Ban : Get5VetoTypeTeam2Ban)
+                                      : (startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Ban : Get5VetoTypeTeam1Ban));
+      }
+    case 2:
+      // Bo2; team1_ban, team2_ban, team1_ban, team2_ban, team1_pick, team2_pick, last unused
+      for (int i = 0; i < loopLength; i++) {
+        switch (i) {
+          case 0:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Ban : Get5VetoTypeTeam2Ban);
+          case 1:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Ban : Get5VetoTypeTeam1Ban);
+          case 2:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Ban : Get5VetoTypeTeam2Ban);
+          case 3:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Ban : Get5VetoTypeTeam1Ban);
+          case 4:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Pick : Get5VetoTypeTeam2Pick);
+          case 5:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+            // We never reach a 6th case after 2 picks.
+        }
+      }
+    case 3:
+      // Bo3; team1_ban, team2_ban, team1_pick, team2_pick, team1_ban, team2_ban, (team1_ban), last played
+      for (int i = 0; i < loopLength; i++) {
+        switch (i) {
+          case 0:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Ban : Get5VetoTypeTeam2Ban);
+          case 1:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Ban : Get5VetoTypeTeam1Ban);
+          case 2:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Pick : Get5VetoTypeTeam2Pick);
+          case 3:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+          case 4:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Ban : Get5VetoTypeTeam2Ban);
+          case 5:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Ban : Get5VetoTypeTeam1Ban);
+          case 6:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Ban : Get5VetoTypeTeam2Ban);
+        }
+      }
+    case 4:
+      // Bo4; team1_ban, team2_ban, team1_pick, team2_pick, team1_ban, team2_pick, (team1_ban), last played
+      for (int i = 0; i < loopLength; i++) {
+        switch (i) {
+          case 0:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Ban : Get5VetoTypeTeam2Ban);
+          case 1:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Ban : Get5VetoTypeTeam1Ban);
+          case 2:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Pick : Get5VetoTypeTeam2Pick);
+          case 3:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+          case 4:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Ban : Get5VetoTypeTeam2Ban);
+          case 5:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+          case 6:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Ban : Get5VetoTypeTeam2Ban);
+        }
+      }
+    case 5:
+      // Bo5; team1_ban, team2_ban, team1_pick, team2_pick, team1_pick, team2_pick, (team2_ban), last played
+      for (int i = 0; i < loopLength; i++) {
+        switch (i) {
+          case 0:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Ban : Get5VetoTypeTeam2Ban);
+          case 1:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Ban : Get5VetoTypeTeam1Ban);
+          case 2:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Pick : Get5VetoTypeTeam2Pick);
+          case 3:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+          case 4:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Pick : Get5VetoTypeTeam2Pick);
+          case 5:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+          case 6:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Ban : Get5VetoTypeTeam1Ban);
+        }
+      }
+    case 6:
+      // Bo6; team1_ban, team2_pick, team1_pick, team2_pick, team1_pick, team2_pick, (team2_ban), last played
+      for (int i = 0; i < loopLength; i++) {
+        switch (i) {
+          case 0:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Ban : Get5VetoTypeTeam2Ban);
+          case 1:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+          case 2:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Pick : Get5VetoTypeTeam2Pick);
+          case 3:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+          case 4:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Pick : Get5VetoTypeTeam2Pick);
+          case 5:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+          case 6:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Ban : Get5VetoTypeTeam1Ban);
+        }
+      }
+    case 7:
+      // Bo7; team1_pick, team2_pick, team1_pick, team2_pick, team1_pick, team2_pick, (team2_ban), last played
+      for (int i = 0; i < loopLength; i++) {
+        switch (i) {
+          case 0:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Pick : Get5VetoTypeTeam2Pick);
+          case 1:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+          case 2:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Pick : Get5VetoTypeTeam2Pick);
+          case 3:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+          case 4:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam1Pick : Get5VetoTypeTeam2Pick);
+          case 5:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Pick : Get5VetoTypeTeam1Pick);
+          case 6:
+            g_MapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5VetoTypeTeam2Ban : Get5VetoTypeTeam1Ban);
+        }
+      }
+    default: {
+      FormatEx(error, PLATFORM_MAX_PATH, "A series cannot exceed 7 maps without a custom veto configuration.");
+      return false;
+    }
+  }
+  return true;
+}
+
+static bool LoadVetoDataJSON(const JSON_Object json, char[] error) {
+  if (!json.IsArray) {
+    FormatEx(error, PLATFORM_MAX_PATH, "'veto_order' must be array.");
+    return false;
+  }
+
+  JSON_Array array = view_as<JSON_Array>(json);
+  char buffer[32];
+  Get5VetoType type;
+  for (int i = 0; i < array.Length; i++) {
+    array.GetString(i, buffer, sizeof(buffer));
+    type = VetoStringToVetoType(buffer, error);
+    if (type == Get5VetoTypeInvalid) {
+      return false;
+    }
+    g_MapBanOrder.Push(type);
+  }
+  return ValidateMapBanLogic(g_MapPoolList, g_MapBanOrder, g_NumberOfMapsInSeries, error);
+}
+
+static bool LoadVetoDataKeyValues(const KeyValues kv, char[] error) {
+  if (!kv.GotoFirstSubKey(false)) {
+    FormatEx(error, PLATFORM_MAX_PATH, "'veto_order' contains no subkeys.");
+    return false;
+  }
+  char buffer[32];
+  Get5VetoType type;
+  do {
+    kv.GetSectionName(buffer, sizeof(buffer));
+    type = VetoStringToVetoType(buffer, error);
+    if (type == Get5VetoTypeInvalid) {
+      return false;
+    }
+    g_MapBanOrder.Push(type);
+  } while (kv.GotoNextKey(false));
+  kv.GoBack();
+  return ValidateMapBanLogic(g_MapPoolList, g_MapBanOrder, g_NumberOfMapsInSeries, error);
+}
+
+bool ValidateMapBanLogic(const ArrayList mapPool, const ArrayList mapBanPickOrder, int numberOfMapsInSeries,
+                         char[] error) {
+  int numberOfPicks = 0;
+  Get5VetoType vetoType;
+  for (int i = 0; i < mapBanPickOrder.Length; i++) {
+    vetoType = mapBanPickOrder.Get(i);
+    if (vetoType == Get5VetoTypeTeam1Pick || vetoType == Get5VetoTypeTeam2Pick) {
+      numberOfPicks++;
+    }
+    if (numberOfPicks == numberOfMapsInSeries || i == mapPool.Length - 2) {
+      // We have all picks we need or enough bans and picks for the map pool. Delete the remaining options.
+      mapBanPickOrder.Resize(i+1);
+      break;
+    }
+  }
+
+  // Example: In a Bo3, at least 2 of the options must be picks to avoid randomly selecting map order of remaining maps.
+  if (numberOfMapsInSeries > 1 && numberOfPicks < numberOfMapsInSeries - 1) {
+    FormatEx(error, PLATFORM_MAX_PATH, "In a series of %d maps, at least %d veto options must be picks. Found %d pick(s).", numberOfMapsInSeries, numberOfMapsInSeries - 1, numberOfPicks);
+    return false;
+  }
+
+  if (mapPool.Length - 1 != mapBanPickOrder.Length && numberOfPicks != numberOfMapsInSeries) {
+    // Example: Map pool of 7 requires 6 picks/bans *unless* we have picks for all maps.
+    FormatEx(
+      error, PLATFORM_MAX_PATH,
+      "The number of maps in the pool (%d) must be one larger than the number of map picks/bans (%d), unless the number of picks (%d) matches the series length (%d).",
+      mapPool.Length, mapBanPickOrder.Length, numberOfPicks, numberOfMapsInSeries);
+    return false;
+  }
+
+  return true;
 }
 
 static bool LoadTeamDataJson(const JSON_Object json, const Get5Team matchTeam, char[] error, const bool allowFromFile) {

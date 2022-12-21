@@ -50,6 +50,25 @@ enum Get5PauseType {
   Get5PauseType_Backup     // Special type for match pausing during backups.
 };
 
+enum Get5ChatCommand {
+  Get5ChatCommand_Unknown,
+  Get5ChatCommand_Ready,
+  Get5ChatCommand_Unready,
+  Get5ChatCommand_ForceReady,
+  Get5ChatCommand_Tech,
+  Get5ChatCommand_Pause,
+  Get5ChatCommand_Unpause,
+  Get5ChatCommand_Coach,
+  Get5ChatCommand_Stay,
+  Get5ChatCommand_Swap,
+  Get5ChatCommand_T,
+  Get5ChatCommand_CT,
+  Get5ChatCommand_Stop,
+  Get5ChatCommand_Surrender,
+  Get5ChatCommand_FFW,
+  Get5ChatCommand_CancelFFW,
+};
+
 enum MatchSideType {
   MatchSideType_Standard,     // Team that doesn't pick map gets side choice, leftovers go to knife rounds
   MatchSideType_AlwaysKnife,  // All maps use a knife round to pick sides

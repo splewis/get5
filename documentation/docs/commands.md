@@ -88,6 +88,40 @@ server, this stops that timer.
 menu buttons for starting a scrim, force-starting, force-ending, adding a ringer, and loading the most recent backup
 file.
 
+## Customizing Chat Commands {: #custom-chat-commands }
+
+Get5 allows you to customize the chat commands used by players. By default, all of the above commands can be used,
+but you can define your own set of commands by adding aliases to the file at
+`addons/sourcemod/configs/get5/commands.cfg`. This file is empty by default. When you add a new alias for a command,
+that alias will be the one Get5 uses when it references the command in chat.
+
+If you provide an invalid command (on the *right-hand side* in the config file), an error will be thrown. Avoid mapping
+already used commands to other functionality, as it will likely be confusing to players. You may add multiple aliases
+for a single command, but note that the **last** alias to be assigned to the command will be the one Get5 uses in chat.
+
+The chat alias file is only loaded once per plugin boot. If you want to reload it, you must reload Get5.
+
+!!! note "Valid Chat Commands"
+
+    The follwing strings are valid commands, and are all explained in the list of commands above:
+
+    [`ready`](#ready), [`unready`](#unready), [`forceready`](#forceready), [`tech`](#tech), [`pause`](#pause),
+    [`unpause`](#unpause), [`coach`](#coach), [`stay`](#stay), [`swap`](#swap), [`t`](#stay), [`ct`](#stay),
+    [`stop`](#stop), [`surrender`](#surrender), [`ffw`](#ffw), [`cancelffw`](#cancelffw)
+
+!!! example "Example: `addons/sourcemod/configs/get5/commands.cfg`"
+
+    This maps the French word *abandon* to the surrender command. Get5 will also print `!abandon` when it references the
+    surrender command in chat messages. The original commands ([`!surrender`](#surrender) and [`!gg`](#surrender)) will
+    still work. 
+
+    ```
+    "Commands"
+    {
+        "abandon" "surrender"
+    }
+    ```
+
 ## Server/Admin Commands
 
 Please note that these are meant to be used by *admins* in console. The definition is:

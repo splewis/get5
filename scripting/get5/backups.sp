@@ -455,11 +455,10 @@ bool RestoreFromBackup(const char[] path, char[] error) {
   }
 
   bool backupIsForDifferentMap = !StrEqual(currentMap, loadedMapName, false);
-
-  bool shouldRestartRecording = g_GameState != Get5State_Live || g_MapNumber != loadedMapNumber ||
+  bool backupIsForDifferentMatch = g_GameState != Get5State_Live || g_MapNumber != loadedMapNumber ||
                                 backupIsForDifferentMap || !StrEqual(loadedMatchId, g_MatchID);
 
-  if (shouldRestartRecording) {
+  if (backupIsForDifferentMatch) {
     // We must stop recording to fire the Get5_OnDemoFinished event when loading a backup to another match or map, and
     // we must do it before we load the match config, or the g_MatchID, g_MapNumber and g_DemoFilePath variables will be
     // incorrect. This is suppressed if we load to the same match and map ID during a live match, either via
@@ -482,7 +481,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
     kv.GoBack();
   }
 
-  if (g_GameState != Get5State_Live) {
+  if (backupIsForDifferentMatch) {
     // This isn't perfect, but it's better than resetting all pauses used to zero in cases of
     // restore on a new server or a different map. If restoring while live, we just retain the
     // current pauses used, as they should be the "most correct".
@@ -572,23 +571,23 @@ bool RestoreFromBackup(const char[] path, char[] error) {
     ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
     ChangeMap(loadedMapName, 3.0);
   } else {
-    if (valveBackup) {
-      // Same map, but round restore with a Valve backup; do normal restore immediately with no
+    if (valveBackup && !backupIsForDifferentMatch) {
+      // Same map/match, but round restore with a Valve backup; do normal restore immediately with no
       // ready-up and no game-state change. Players' teams are checked after the backup file is loaded.
-      RestoreGet5Backup(shouldRestartRecording);
+      RestoreGet5Backup(false);
     } else {
-      // We are restarting to the same map for prelive; just go back into warmup and let players
-      // ready-up again.
-      ResetReadyStatus();
+      // We are restarting to the same map for prelive or loading from a none-live state; just go back into
+      // warmup and let players ready-up again, either for a restore or for knife/live.
+      // Ready status is reset when loading a match config.
       UnpauseGame(Get5Team_None);
-      ChangeState(Get5State_Warmup);
+      // If we load a valve backup in non-live, we have to go to ready-up, otherwise it's a prelive and we go to warmup.
+      ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
       ExecCfg(g_WarmupCfgCvar);
       StartWarmup();
       // We must assign players to their teams. This is normally done inside LoadMatchConfig, but
       // since we need the team sides to be applied from the backup, we skip it then and do it here.
-      // We *do not* do this before loading from a valve backup, as it will kill every player on the wrong
-      // team and cause various events to misbehave. This is also why it comes after the Get5State_Warmup
-      // state change above, to suppress all live events.
+      // We do this *after* putting the game into warmup, as it may otherwise kill people if they are
+      // moved the other team, which will trigger various events and cause the game to misbehave.
       if (g_CheckAuthsCvar.BoolValue) {
         LOOP_CLIENTS(i) {
           if (IsPlayer(i)) {

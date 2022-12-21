@@ -42,7 +42,8 @@ bool StartRecording() {
 
 void StopRecording(float delay = 0.0) {
   if (StrEqual("", g_DemoFilePath)) {
-    LogDebug("Demo was not recorded by Get5; not firing Get5_OnDemoFinished() or stopping recording.");
+    LogDebug("Demo was not recorded by Get5; not firing Get5_OnDemoFinished().");
+    ServerCommand("tv_stoprecord");
     return;
   }
   char uploadUrl[1024];

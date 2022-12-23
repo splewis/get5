@@ -817,7 +817,7 @@ for a single command, but note that the <strong>last</strong> alias to be assign
 <p class="admonition-title">Example: <code>addons/sourcemod/configs/get5/commands.cfg</code></p>
 <p>This maps the French word <em>abandon</em> to the surrender command. Get5 will also print <code>!abandon</code> when it references the
 surrender command in chat messages. The original commands (<a href="#surrender"><code>!surrender</code></a> and <a href="#surrender"><code>!gg</code></a>) will
-still work. </p>
+still work. <strong>Do not</strong> prefix your alias with <code>!</code> or <code>.</code> - this is done automatically.</p>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>"Commands"
 <a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>{
 <a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>    "abandon" "surrender"

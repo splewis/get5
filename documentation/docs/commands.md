@@ -113,7 +113,7 @@ The chat alias file is only loaded once per plugin boot. If you want to reload i
 
     This maps the French word *abandon* to the surrender command. Get5 will also print `!abandon` when it references the
     surrender command in chat messages. The original commands ([`!surrender`](#surrender) and [`!gg`](#surrender)) will
-    still work. 
+    still work. **Do not** prefix your alias with `!` or `.` - this is done automatically.
 
     ```
     "Commands"

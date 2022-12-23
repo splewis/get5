@@ -446,9 +446,9 @@ static bool LoadMatchFromKeyValue(KeyValues kv, char[] error) {
   }
 
   if (kv.JumpToKey("cvars")) {
-    char name[MAX_CVAR_LENGTH];
-    char value[MAX_CVAR_LENGTH];
     if (kv.GotoFirstSubKey(false)) {
+      char name[MAX_CVAR_LENGTH];
+      char value[MAX_CVAR_LENGTH];
       do {
         kv.GetSectionName(name, sizeof(name));
         ReadEmptyStringInsteadOfPlaceholder(kv, value, sizeof(value));
@@ -1233,8 +1233,8 @@ Action Command_CreateScrim(int client, int args) {
 
   // Also ensure empty string values in cvars get printed to the match config.
   if (kv.JumpToKey("cvars")) {
-    char cVarValue[MAX_CVAR_LENGTH];
     if (kv.GotoFirstSubKey(false)) {
+      char cVarValue[MAX_CVAR_LENGTH];
       do {
         WritePlaceholderInsteadOfEmptyString(kv, cVarValue, sizeof(cVarValue));
       } while (kv.GotoNextKey(false));

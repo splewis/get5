@@ -492,6 +492,7 @@ public void OnPluginStart() {
   MapChatCommand(Get5ChatCommand_Unready, "notready");
   MapChatCommand(Get5ChatCommand_Unready, "unready");
   MapChatCommand(Get5ChatCommand_ForceReady, "forceready");
+  MapChatCommand(Get5ChatCommand_Tech, "tech");
   MapChatCommand(Get5ChatCommand_Pause, "tac");
   MapChatCommand(Get5ChatCommand_Pause, "pause");
   MapChatCommand(Get5ChatCommand_Unpause, "unpause");

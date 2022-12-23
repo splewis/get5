@@ -410,7 +410,8 @@ static Action Timer_PauseTimeCheck(Handle timer) {
           // unpause on their own. The PrintHintText below will inform users that they can now
           // unpause.
           char formattedUnpauseCommand[64];
-          GetChatAliasForCommand(Get5ChatCommand_Unpause, formattedUnpauseCommand, sizeof(formattedUnpauseCommand), true);
+          GetChatAliasForCommand(Get5ChatCommand_Unpause, formattedUnpauseCommand, sizeof(formattedUnpauseCommand),
+                                 true);
           Get5_MessageToAll("%t", "TechPauseRunoutInfoMessage", formattedUnpauseCommand);
         }
       }

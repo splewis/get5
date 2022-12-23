@@ -17,80 +17,63 @@ static void AddChatAlias(const char[] alias, const char[] command) {
 }
 
 void MapChatCommand(const Get5ChatCommand command, const char[] alias) {
-  switch (command)
-  {
-    case Get5ChatCommand_Ready:
-    {
+  switch (command) {
+    case Get5ChatCommand_Ready: {
       AddAliasedCommand(alias, Command_Ready, "Marks the client as ready.");
     }
-    case Get5ChatCommand_Unready:
-    {
+    case Get5ChatCommand_Unready: {
       AddAliasedCommand(alias, Command_NotReady, "Marks the client as not ready.");
     }
-    case Get5ChatCommand_ForceReady:
-    {
+    case Get5ChatCommand_ForceReady: {
       AddAliasedCommand(alias, Command_ForceReadyClient, "Marks the client's entire team as ready.");
     }
-    case Get5ChatCommand_Tech:
-    {
+    case Get5ChatCommand_Tech: {
       AddAliasedCommand(alias, Command_TechPause, "Calls for a technical pause.");
     }
-    case Get5ChatCommand_Pause:
-    {
+    case Get5ChatCommand_Pause: {
       AddAliasedCommand(alias, Command_Pause, "Calls for a tactical pause.");
     }
-    case Get5ChatCommand_Unpause:
-    {
+    case Get5ChatCommand_Unpause: {
       AddAliasedCommand(alias, Command_Unpause, "Unpauses the game.");
     }
-    case Get5ChatCommand_Coach:
-    {
+    case Get5ChatCommand_Coach: {
       AddAliasedCommand(alias, Command_SmCoach, "Requests to become a coach.");
     }
-    case Get5ChatCommand_Stay:
-    {
+    case Get5ChatCommand_Stay: {
       AddAliasedCommand(alias, Command_Stay, "Elects to stay on the current side after winning a knife round.");
     }
-    case Get5ChatCommand_Swap:
-    {
+    case Get5ChatCommand_Swap: {
       AddAliasedCommand(alias, Command_Swap, "Elects to swap to the other side after winning a knife round.");
     }
-    case Get5ChatCommand_T:
-    {
+    case Get5ChatCommand_T: {
       AddAliasedCommand(alias, Command_T, "Elects to start on T side after winning a knife round.");
     }
-    case Get5ChatCommand_CT:
-    {
+    case Get5ChatCommand_CT: {
       AddAliasedCommand(alias, Command_Ct, "Elects to start on CT side after winning a knife round.");
     }
-    case Get5ChatCommand_Stop:
-    {
+    case Get5ChatCommand_Stop: {
       AddAliasedCommand(alias, Command_Stop, "Elects to stop the game to reload a backup file for the current round.");
     }
-    case Get5ChatCommand_Surrender:
-    {
+    case Get5ChatCommand_Surrender: {
       AddAliasedCommand(alias, Command_Surrender, "Starts a vote for surrendering for your team.");
     }
-    case Get5ChatCommand_FFW:
-    {
+    case Get5ChatCommand_FFW: {
       AddAliasedCommand(alias, Command_FFW, "Starts a countdown to win if a full team disconnects from the server.");
     }
-    case Get5ChatCommand_CancelFFW:
-    {
+    case Get5ChatCommand_CancelFFW: {
       AddAliasedCommand(alias, Command_CancelFFW, "Cancels a pending request to win by forfeit.");
     }
-    default:
-    {
+    default: {
       LogError("Failed to map Get5ChatCommand with value %d to a command. It is missing from MapChatCommand.", command);
       return;
     }
   }
 
-  char commandAsString[64]; // "ready"; base command
-  char commandAliasFormatted[64]; // "!readyalias"; the alias to use, with ! in front
+  char commandAsString[64];        // "ready"; base command
+  char commandAliasFormatted[64];  // "!readyalias"; the alias to use, with ! in front
   ChatCommandToString(command, commandAsString, sizeof(commandAsString));
   FormatEx(commandAliasFormatted, sizeof(commandAliasFormatted), "!%s", alias);
-  g_ChatCommands.SetString(commandAsString, commandAliasFormatted); // maps ready -> !readyalias
+  g_ChatCommands.SetString(commandAsString, commandAliasFormatted);  // maps ready -> !readyalias
 }
 
 void GetChatAliasForCommand(const Get5ChatCommand command, char[] buffer, int bufferSize, bool format) {
@@ -116,17 +99,15 @@ int LoadCustomChatAliases(const char[] file) {
 
   KeyValues chatAliases = new KeyValues("Commands");
   if (!chatAliases.ImportFromFile(file)) {
-     LogError("Failed to read chat command aliases file at '%s'.", file);
-     delete chatAliases;
-     return loadedAliases;
+    LogError("Failed to read chat command aliases file at '%s'.", file);
+    delete chatAliases;
+    return loadedAliases;
   }
 
-  if (chatAliases.GotoFirstSubKey(false))
-  {
+  if (chatAliases.GotoFirstSubKey(false)) {
     char alias[255];
     char command[255];
-    do
-    {
+    do {
       chatAliases.GetSectionName(alias, sizeof(alias));
       chatAliases.GetString(NULL_STRING, command, sizeof(command));
 

@@ -777,71 +777,55 @@ stock bool IsDoingRestoreOrMapChange() {
 }
 
 stock void ChatCommandToString(const Get5ChatCommand command, char[] buffer, const int bufferSize) {
-  switch (command)
-  {
-    case Get5ChatCommand_Ready:
-    {
+  switch (command) {
+    case Get5ChatCommand_Ready: {
       FormatEx(buffer, bufferSize, "ready");
     }
-    case Get5ChatCommand_Unready:
-    {
+    case Get5ChatCommand_Unready: {
       FormatEx(buffer, bufferSize, "unready");
     }
-    case Get5ChatCommand_ForceReady:
-    {
+    case Get5ChatCommand_ForceReady: {
       FormatEx(buffer, bufferSize, "forceready");
     }
-    case Get5ChatCommand_Tech:
-    {
+    case Get5ChatCommand_Tech: {
       FormatEx(buffer, bufferSize, "tech");
     }
-    case Get5ChatCommand_Pause:
-    {
+    case Get5ChatCommand_Pause: {
       FormatEx(buffer, bufferSize, "pause");
     }
-    case Get5ChatCommand_Unpause:
-    {
+    case Get5ChatCommand_Unpause: {
       FormatEx(buffer, bufferSize, "unpause");
     }
-    case Get5ChatCommand_Coach:
-    {
+    case Get5ChatCommand_Coach: {
       FormatEx(buffer, bufferSize, "coach");
     }
-    case Get5ChatCommand_Stay:
-    {
+    case Get5ChatCommand_Stay: {
       FormatEx(buffer, bufferSize, "stay");
     }
-    case Get5ChatCommand_Swap:
-    {
+    case Get5ChatCommand_Swap: {
       FormatEx(buffer, bufferSize, "swap");
     }
-    case Get5ChatCommand_T:
-    {
+    case Get5ChatCommand_T: {
       FormatEx(buffer, bufferSize, "t");
     }
-    case Get5ChatCommand_CT:
-    {
+    case Get5ChatCommand_CT: {
       FormatEx(buffer, bufferSize, "ct");
     }
-    case Get5ChatCommand_Stop:
-    {
+    case Get5ChatCommand_Stop: {
       FormatEx(buffer, bufferSize, "stop");
     }
-    case Get5ChatCommand_Surrender:
-    {
+    case Get5ChatCommand_Surrender: {
       FormatEx(buffer, bufferSize, "surrender");
     }
-    case Get5ChatCommand_FFW:
-    {
+    case Get5ChatCommand_FFW: {
       FormatEx(buffer, bufferSize, "ffw");
     }
-    case Get5ChatCommand_CancelFFW:
-    {
+    case Get5ChatCommand_CancelFFW: {
       FormatEx(buffer, bufferSize, "cancelffw");
     }
-    default:
-    {
-      LogError("Failed to map Get5ChatCommand with value %d to a string. It is missing from ChatCommandToString.", command);
+    default: {
+      LogError("Failed to map Get5ChatCommand with value %d to a string. It is missing from ChatCommandToString.",
+               command);
     }
   }
 }
@@ -881,4 +865,3 @@ stock Get5ChatCommand StringToChatCommand(const char[] string) {
     return Get5ChatCommand_Unknown;
   }
 }
-

@@ -542,8 +542,10 @@ public void OnPluginStart() {
   RegAdminCmd("get5_dumpstats", Command_DumpStats, ADMFLAG_CHANGEMAP, "Dumps match stats to a file");
   RegAdminCmd("get5_listbackups", Command_ListBackups, ADMFLAG_CHANGEMAP,
               "Lists get5 match backups for the current matchid or a given one");
-  RegAdminCmd("get5_loadbackup", Command_LoadBackup, ADMFLAG_CHANGEMAP, "Loads a Get5 match backup from a file relative to the csgo directory.");
-  RegAdminCmd("get5_loadbackup_url", Command_LoadBackupUrl, ADMFLAG_CHANGEMAP, "Downloads and loads a Get5 match backup from a URL.");
+  RegAdminCmd("get5_loadbackup", Command_LoadBackup, ADMFLAG_CHANGEMAP,
+              "Loads a Get5 match backup from a file relative to the csgo directory.");
+  RegAdminCmd("get5_loadbackup_url", Command_LoadBackupUrl, ADMFLAG_CHANGEMAP,
+              "Downloads and loads a Get5 match backup from a URL.");
   RegAdminCmd("get5_debuginfo", Command_DebugInfo, ADMFLAG_CHANGEMAP,
               "Dumps debug info to a file (addons/sourcemod/logs/get5_debuginfo.txt by default)");
 

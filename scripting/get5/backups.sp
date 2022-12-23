@@ -456,7 +456,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
 
   bool backupIsForDifferentMap = !StrEqual(currentMap, loadedMapName, false);
   bool backupIsForDifferentMatch = g_GameState != Get5State_Live || g_MapNumber != loadedMapNumber ||
-                                backupIsForDifferentMap || !StrEqual(loadedMatchId, g_MatchID);
+                                   backupIsForDifferentMap || !StrEqual(loadedMatchId, g_MatchID);
 
   if (backupIsForDifferentMatch) {
     // We must stop recording to fire the Get5_OnDemoFinished event when loading a backup to another match or map, and

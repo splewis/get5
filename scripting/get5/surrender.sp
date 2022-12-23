@@ -190,7 +190,8 @@ static void AnnounceRemainingForfeitTime(const int remainingSeconds, const Get5T
 
   if (forfeitingTeam != Get5Team_None) {
     char formattedCancelFFWCommand[64];
-    GetChatAliasForCommand(Get5ChatCommand_CancelFFW, formattedCancelFFWCommand, sizeof(formattedCancelFFWCommand), true);
+    GetChatAliasForCommand(Get5ChatCommand_CancelFFW, formattedCancelFFWCommand, sizeof(formattedCancelFFWCommand),
+                           true);
     Get5_MessageToAll("%t", "WinByForfeitCountdownStarted", g_FormattedTeamNames[OtherMatchTeam(forfeitingTeam)],
                       formattedTimeRemaining, g_FormattedTeamNames[forfeitingTeam], formattedCancelFFWCommand);
   } else {

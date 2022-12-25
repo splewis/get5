@@ -68,25 +68,6 @@ stock float json_object_get_float_safe(JSON_Object json, const char[] key, float
   }
 }
 
-// Used for parsing an Array[String] to a sourcepawn ArrayList of strings
-stock int AddJsonSubsectionArrayToList(JSON_Object json, const char[] key, ArrayList list, int maxValueLength) {
-  if (!json_has_key(json, key, JSON_Type_Object)) {
-    return 0;
-  }
-
-  int count = 0;
-  JSON_Array array = view_as<JSON_Array>(json.GetObject(key));
-  if (array != null) {
-    char[] buffer = new char[maxValueLength];
-    for (int i = 0; i < array.Length; i++) {
-      array.GetString(i, buffer, maxValueLength);
-      list.PushString(buffer);
-      count++;
-    }
-  }
-  return count;
-}
-
 // Used for mapping a keyvalue section
 stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list, int maxValueLength) {
   int count = 0;

@@ -1,0 +1,30 @@
+{
+  "num_maps": 3,
+  "skip_veto": true,
+  "map_sides": [
+    "team1_ct",
+    "team1_t",
+    "knife"
+  ],
+  "maplist": [
+    "de_mirage",
+    "de_dust2",
+    "de_inferno"
+  ],
+  "team1": {
+    "name": "Team A Start T",
+    "flag": "NO",
+    "matchtext": "GG T WIN",
+    "logo": "start_t_logo",
+    "series_score": 1,
+    "players": {
+      "STEAM_0:1:52245092": "PlayerName"
+    }
+  },
+  "team2": {
+    "name": "Team B",
+    "players": [
+      "STEAM_1:1:46796472"
+    ]
+  }
+}

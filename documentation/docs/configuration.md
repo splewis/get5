@@ -14,6 +14,12 @@ cfg/sourcemod/get5.cfg
 You can either set the below parameters in that file, or in the `cvars` section of a match config. As mentioned in
 the explanation of the [match schema](../match_schema), that section will override all other settings.
 
+!!! warning "512 and no more"
+
+    Note that the maximum length of any config parameter is *less than* 512 characters. Depending on where these
+    parameters are set, being close to this limit may cause problems. This applies to things like URLs or HTTP headers,
+    so beware of long strings in these cases.
+
 ### Phase Configuration Files
 
 You should also have three config files. These can be edited, but we recommend not
@@ -46,6 +52,7 @@ cfg/get5/live.cfg # (3)
     mp_warmup_start
     mp_warmuptime
     mp_warmuptime_all_players_connected
+    mp_endwarmup_player_count
     tv_delay
     tv_delay1
     tv_delaymapchange
@@ -67,7 +74,10 @@ native.<br>**`Default: 0`**
 !!! tip "Server ID could be port number"
 
     A good candidate for `get5_server_id` would be the port number the server is bound to, since it uniquely identifies
-    a server instance on a host and ensures that no two instances run with the same server ID at the same time.
+    a server instance on a host and ensures that no two instances run with the same server ID at the same time. You
+    should also **not** put this parameter in your [match configuration](../match_schema#schema) `cvars`, as those
+    parameters will be written to [backup](../backup) files, which would mean that loading a backup created on another
+    server would change the server ID.
 
 ####`get5_kick_immunity`
 :   Whether [admins](../installation#administrators) will be immune to kicks from
@@ -99,6 +109,13 @@ removed from the game, or if in [scrim mode](../getting_started#scrims), put on 
 starts, when Get5 is reloaded or if no match is loaded when a player joins the server. Set to empty string to
 disable.<br>**`Default: ""`**
 
+####`get5_reset_cvars_on_end`
+:  Whether the `cvars` of a [match configuration](../match_schema#schema) as well as
+the [Get5-determined hostname](#get5_hostname_format) are reset to their original values when a series ends. You may
+want to disable this if you only run Get5 on your servers and use `cvars` to
+configure [demos](../gotv), [backups](../backup) or [remote URL logging](../events_and_forwards#http) on a per-match
+basis, as reverting some of those parameters can be problematic.<br>**`Default: 1`**
+
 ####`get5_debug`
 :   Enable or disable verbose debug output from Get5. Intended for development and debugging purposes
 only.<br>**`Default: 0`**
@@ -123,8 +140,12 @@ affect the availability of [`get5_forceready`](../commands#get5_forceready) to a
 :   Whether to set client clan tags to player ready status.<br>**`Default: 1`**
 
 ####`get5_time_to_start`
-:   Time (in seconds) teams have to ready up before forfeiting the match. Set to zero for no limit. If neither team
-becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
+:   Time (in seconds) teams have to ready up for knife/live before forfeiting the match. Set to zero for no limit. If
+neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
+
+####`get5_time_to_start_veto`
+:   Time (in seconds) teams have to ready up for vetoing before forfeiting the match. Set to zero for no limit. If
+neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
 
 ####`get5_time_to_make_knife_decision`
 :   Time (in seconds) a team has to make a [`!stay`](../commands#stay) or [`!swap`](../commands#swap)
@@ -208,7 +229,6 @@ leaves. Set to zero to disable.<br>**`Default: 0`**
     If you always want the pause to trigger if an entire team disconnects, regardless of team size, you can
     set [`get5_auto_tech_pause_missing_players`](#get5_auto_tech_pause_missing_players) to a large value, as setting it
     to a value larger than [`players_per_team`](../match_schema#schema) behaves as if it was set to that value.
-    
 
 !!! warning "Auto-pausing is always enabled"
 
@@ -265,6 +285,16 @@ command as well as the [`get5_loadbackup`](../commands#get5_loadbackup) command.
 ####`get5_stop_command_enabled`
 :   Whether the [`!stop`](../commands#stop) command is enabled.<br>**`Default: 1`**
 
+####`get5_stop_command_no_damage`
+:   Whether the [`!stop`](../commands#stop) command becomes unavailable after a player takes damage during a round. Only
+damage from one team to another counts (no friendly fire, no fall damage etc.). The command may still be used by admins
+via console at any time (`sm_stop`).<br>**`Default: 0`**
+
+####`get5_stop_command_time_limit`
+:   The number of seconds into a round after which the [`!stop`](../commands#stop) command can no longer be used. The
+command may still be used by admins via console at any time (`sm_stop`). Set to zero to remove the
+limit.<br>**`Default: 0`**
+
 ####`get5_max_backup_age`
 :   Number of seconds before a Get5 backup file is automatically deleted. If you define
 [`get5_backup_path`](#get5_backup_path), only files in that path will be deleted. Set to zero to
@@ -290,6 +320,19 @@ exist.<br>**`Default: ""`**
 
     :no_entry: `/backups/{MATCHID}`
 
+####`get5_remote_backup_url`
+:   If defined, Get5 will [automatically send backups](../backup#upload) to this URL in an HTTP `POST` request. If no
+protocol is provided, `http://` will be prepended to this value. Requires the
+[SteamWorks](../installation#steamworks) extension.<br>**`Default: ""`**
+
+####`get5_remote_backup_header_key`
+:   If this **and** [`get5_remote_backup_header_value`](#get5_remote_backup_header_value) are defined, this header name
+and value will be used for your [backup upload HTTP request](#get5_remote_backup_url).<br>**`Default: "Authorization"`**
+
+####`get5_remote_backup_header_value`
+:   If this **and** [`get5_remote_backup_header_key`](#get5_remote_backup_header_key) are defined, this header name and
+value will be used for your [backup upload HTTP request](#get5_remote_backup_url).<br>**`Default: ""`**
+
 ## Formats & Paths
 
 ####`get5_time_format`
@@ -313,9 +356,10 @@ exist.<br>**`Default: ""`**
 disable.<br>**`Default: "get5_matchstats_{MATCHID}.cfg"`**
 
 ####`get5_hostname_format`
-:   The hostname to apply to the server when a match configuration is loaded.
-[State substitutes](#state-substitutes) can be used. Leave blank to disable changing the hostname.<br>
-**`Default: "Get5: {TEAM1} vs {TEAM2}"`**
+:   The hostname to apply to the server. [State substitutes](#state-substitutes) can be used.
+If [`get5_reset_cvars_on_end`](#get5_reset_cvars_on_end) is enabled, the hostname will be reverted to its original value
+when the series ends. The hostname is updated on every round start to allow for the use of team score substitutes. Set
+to an empty string to disable changing the hostname.<br>**`Default: "Get5: {TEAM1} vs {TEAM2}"`**
 
 ####`get5_message_prefix`
 :   The tag applied before plugin messages. Note that at least one character must come before
@@ -384,8 +428,14 @@ must **end with a slash**. Required folders will be created if they do not exist
 ####`get5_demo_name_format`
 :   Format to use for demo files when [recording matches](../gotv#demos). Do not include a file extension (`.dem` is
 added automatically). If you do not include the [`{TIME}`](#tag-time) tag, you will have problems with duplicate files
-if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber)variable is not zero-indexed. Set to
+if restoring a game from a backup. Note that the [`{MAPNUMBER}`](#tag-mapnumber) variable is not zero-indexed. Set to
 empty string to disable recording demos.<br>**`Default: "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}"`**
+
+!!! info "Team score is always zero"
+
+    While it may be tempting to use the [`{TEAM1_SCORE}`](#tag-team1-score) and [`{TEAM2_SCORE}`](#tag-team2-score)
+    variables in the demo name; note that this file is created as the match begins, so the score will always be zero at
+    that stage.
 
 ## Events
 
@@ -432,6 +482,12 @@ placeholder strings that will be replaced by meaningful values when printed. Not
 
 ####`{TEAM2}` {: #tag-team2}
 :   The name of `team2`.
+
+####`{TEAM1_SCORE}` {: #tag-team1-score }
+:   The score of `team1` on the current map.
+
+####`{TEAM2_SCORE}` {: #tag-team2-score }
+:   The score of `team2` on the current map.
 
 ####`{MATCHTITLE}` {: #tag-matchtitle}
 :   The title of the current match.

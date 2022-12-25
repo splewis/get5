@@ -112,6 +112,14 @@
     {
         "pt"            "O pedido de {1} para parar o jogo foi cancelado quando o round terminou."
     }
+    "StopCommandRequiresNoDamage"
+    {
+        "pt"            "Um pedido para reiniciar o round não pode ser dado uma vez que um jogador causou dano a um adversário."
+    }
+    "StopCommandTimeLimitExceeded"
+    {
+        "pt"            "Um pedido para reiniciar o round deve ser feito dentro de {1} após o início do round."
+    }
     "PauseTimeRemainingPrefix"
     {
         "pt"            "Tempo de pausa restante"

@@ -61,6 +61,7 @@ static Action HandlePlayerDamage(int victim, int &attacker, int &inflictor, floa
     if (isUtilityDamage) {
       AddToPlayerStat(attacker, STAT_UTILITY_DAMAGE, damageAsIntCapped);
     }
+    g_PlayerHasTakenDamage = true;
   }
 
   if (!isUtilityDamage) {
@@ -616,55 +617,41 @@ static Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dont
 }
 
 static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBroadcast) {
-  if (IsDoingRestoreOrMapChange()) {
-    return;
-  }
-  int attacker = GetClientOfUserId(event.GetInt("attacker"));
-
-  if (g_GameState != Get5State_Live) {
-    if (g_AutoReadyActivePlayersCvar.BoolValue && IsAuthedPlayer(attacker)) {
-      // HandleReadyCommand checks for game state, so we don't need to do that here as well.
-      HandleReadyCommand(attacker, true);
-    }
-    return;
+  if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {
+    return Plugin_Continue;
   }
 
   int victim = GetClientOfUserId(event.GetInt("userid"));
-  int assister = GetClientOfUserId(event.GetInt("assister"));
-
-  bool validAttacker = IsValidClient(attacker);
-  bool validVictim = IsValidClient(victim);
-  bool validAssister = IsValidClient(assister);
-
-  if (!validVictim) {
-    return;  // Not sure how this would happen, but it's not something we care about.
+  if (!IsValidClient(victim)) {
+    return Plugin_Continue;  // Not sure how this would happen, but it's not something we care about.
   }
+  Get5Player victimPlayer = GetPlayerObject(victim);
+
+  int attacker = GetClientOfUserId(event.GetInt("attacker"));
+  Get5Player attackerPlayer = IsValidClient(attacker) ? GetPlayerObject(attacker) : null;
+  if (g_GameState != Get5State_Live) {
+    if (attacker != victim && g_AutoReadyActivePlayersCvar.BoolValue && attackerPlayer != null) {
+      // HandleReadyCommand checks for game state, so we don't need to do that here as well.
+      HandleReadyCommand(attacker, true);
+    }
+    return Plugin_Continue;
+  }
+
+  Get5Side victimSide = victimPlayer.Side;
+  Get5Side attackerSide = attackerPlayer != null ? attackerPlayer.Side : Get5Side_None;
 
   // Update "clutch" (1vx) data structures to check if the clutcher wins the round
-  int tCount = CountAlivePlayersOnTeam(CS_TEAM_T);
-  int ctCount = CountAlivePlayersOnTeam(CS_TEAM_CT);
-
-  if (tCount == 1 && !g_SetTeamClutching[CS_TEAM_T]) {
-    g_SetTeamClutching[CS_TEAM_T] = true;
-    int clutcher = GetClutchingClient(CS_TEAM_T);
-    g_RoundClutchingEnemyCount[clutcher] = ctCount;
+  int victimSideInt = view_as<int>(victimSide);
+  if (!g_SetTeamClutching[victimSideInt] && CountAlivePlayersOnTeam(victimSide) == 1) {
+    g_SetTeamClutching[victimSideInt] = true;
+    // Don't use attackerSide here as attacker may be invalid, which should still count opposing team correctly.
+    g_RoundClutchingEnemyCount[GetClutchingClient(victimSide)] =
+      CountAlivePlayersOnTeam(victimSide == Get5Side_CT ? Get5Side_T : Get5Side_CT);
   }
-
-  if (ctCount == 1 && !g_SetTeamClutching[CS_TEAM_CT]) {
-    g_SetTeamClutching[CS_TEAM_CT] = true;
-    int clutcher = GetClutchingClient(CS_TEAM_CT);
-    g_RoundClutchingEnemyCount[clutcher] = tCount;
-  }
-
-  bool headshot = event.GetBool("headshot");
 
   char weapon[32];
   event.GetString("weapon", weapon, sizeof(weapon));
-
   CSWeaponID weaponId = CS_AliasToWeaponID(weapon);
-
-  int attackerTeam = validAttacker ? GetClientTeam(attacker) : 0;
-  int victimTeam = GetClientTeam(victim);
 
   // suicide (kill console) is attacker == victim, weapon id 0, weapon "world"
   // fall damage is weapon id 0, attacker 0, weapon "worldspawn"
@@ -675,7 +662,8 @@ static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   // is unreliable. with those in mind, we can determine that suicide must be true if attacker is 0
   // or attacker == victim and it was **not** the bomb.
   bool killedByBomb = StrEqual("planted_c4", weapon);
-  bool isSuicide = (!validAttacker || attacker == victim) && !killedByBomb;
+  bool isSuicide = (attackerPlayer == null || attacker == victim) && !killedByBomb;
+  bool headshot = event.GetBool("headshot");
 
   IncrementPlayerStat(victim, STAT_DEATHS);
   // used for calculating round KAST
@@ -683,18 +671,18 @@ static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
 
   if (!g_FirstDeathDone) {
     g_FirstDeathDone = true;
-    IncrementPlayerStat(victim, (victimTeam == CS_TEAM_CT) ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
+    IncrementPlayerStat(victim, victimSide == Get5Side_CT ? STAT_FIRSTDEATH_CT : STAT_FIRSTDEATH_T);
   }
 
   if (isSuicide) {
     IncrementPlayerStat(victim, STAT_SUICIDES);
   } else if (!killedByBomb) {
-    if (attackerTeam == victimTeam) {
+    if (attackerSide == victimSide) {
       IncrementPlayerStat(attacker, STAT_TEAMKILLS);
     } else {
       if (!g_FirstKillDone) {
         g_FirstKillDone = true;
-        IncrementPlayerStat(attacker, (attackerTeam == CS_TEAM_CT) ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
+        IncrementPlayerStat(attacker, attackerSide == Get5Side_CT ? STAT_FIRSTKILL_CT : STAT_FIRSTKILL_T);
       }
 
       g_RoundKills[attacker]++;
@@ -721,20 +709,21 @@ static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   }
 
   Get5PlayerDeathEvent playerDeathEvent = new Get5PlayerDeathEvent(
-    g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), GetPlayerObject(victim), new Get5Weapon(weapon, weaponId),
-    headshot, validAttacker ? attackerTeam == victimTeam : false, event.GetBool("thrusmoke"), event.GetBool("noscope"),
-    event.GetBool("attackerblind"), isSuicide, event.GetInt("penetrated"), killedByBomb);
+    g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), victimPlayer, new Get5Weapon(weapon, weaponId), headshot,
+    attackerSide == victimSide, event.GetBool("thrusmoke"), event.GetBool("noscope"), event.GetBool("attackerblind"),
+    isSuicide, event.GetInt("penetrated"), killedByBomb);
 
-  if (validAttacker) {
-    playerDeathEvent.Attacker = GetPlayerObject(attacker);
+  if (attackerPlayer != null) {
+    // Setter does not accept null.
+    playerDeathEvent.Attacker = attackerPlayer;
   }
 
-  if (validAssister) {
+  int assister = GetClientOfUserId(event.GetInt("assister"));
+  if (IsValidClient(assister)) {
+    Get5Player assisterPlayer = GetPlayerObject(assister);
+    bool friendlyFire = assisterPlayer.Side == victimSide;
     bool assistedFlash = event.GetBool("assistedflash");
-    bool friendlyFire = GetClientTeam(assister) == victimTeam;
-
-    playerDeathEvent.Assist = new Get5AssisterObject(GetPlayerObject(assister), assistedFlash, friendlyFire);
-
+    playerDeathEvent.Assist = new Get5AssisterObject(assisterPlayer, assistedFlash, friendlyFire);
     // Assists should only count towards opposite team
     if (!friendlyFire) {
       // You cannot flash-assist and regular-assist for the same kill.
@@ -756,6 +745,7 @@ static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   Call_Finish();
 
   EventLogger_LogAndDeleteEvent(playerDeathEvent);
+  return Plugin_Continue;
 }
 
 static void UpdateTradeStat(int attacker, int victim) {
@@ -1040,21 +1030,14 @@ static void GoBackFromPlayer() {
   g_StatsKv.GoBack();
 }
 
-static int GetClutchingClient(int csTeam) {
-  int client = -1;
-  int count = 0;
+// Assumes the team has only one player left when called.
+static int GetClutchingClient(const Get5Side side) {
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == csTeam) {
-      client = i;
-      count++;
+    if (IsValidClient(i) && IsPlayerAlive(i) && view_as<Get5Side>(GetClientTeam(i)) == side) {
+      return i;
     }
   }
-
-  if (count == 1) {
-    return client;
-  } else {
-    return -1;
-  }
+  return 0;
 }
 
 static void DumpToFile() {

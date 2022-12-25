@@ -1,0 +1,33 @@
+name: Feature Request
+description: If you want to request a new feature or a change to an existing feature.
+title: "[Feature Request]: "
+labels: ["feature request"]
+body:
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Prereleases & Documentation
+      description: |
+        Before you submit a feature request, make sure you've read [the documentation](https://splewis.github.io/get5) and that the feature you request has not already been added in a prerelease.
+      options:
+        - label: I have looked in [the documentation](https://splewis.github.io/get5) and I don't see the feature anywhere.
+          required: true
+        - label: I have looked for [pre-releases](https://github.com/splewis/get5/releases) and the feature has not been added.
+          required: true
+  - type: input
+    id: version
+    attributes:
+      label: Get5 Version
+      description: |
+        What version of Get5 are you using? Use [`get5_status`](https://splewis.github.io/get5/latest/commands/#get5_status) in your server console to print it. You can download the latest versions [here](https://github.com/splewis/get5/releases).
+        
+        Please note that "latest" is **not** a version.
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: The Feature
+      description: Explain the feature you want - and why. Remember that a feature should be widely applicable and make sense for other users.
+    validations:
+      required: true

@@ -43,7 +43,7 @@ static Action Timer_VetoCountdown(Handle timer) {
 static void AbortVeto() {
   Get5_MessageToAll("%t", "CaptainLeftOnVetoInfoMessage");
   char readyCommandFormatted[64];
-  FormatChatCommand(readyCommandFormatted, sizeof(readyCommandFormatted), "!ready");
+  GetChatAliasForCommand(Get5ChatCommand_Ready, readyCommandFormatted, sizeof(readyCommandFormatted), true);
   Get5_MessageToAll("%t", "ReadyToResumeVetoInfoMessage", readyCommandFormatted);
   ChangeState(Get5State_PreVeto);
   if (g_ActiveVetoMenu != null) {

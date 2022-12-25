@@ -1,0 +1,46 @@
+name: Bug Report
+description: If you've found a bug or have a problem that you think may be a bug.
+title: "[Bug]: "
+labels: ["unverified bug"]
+body:
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Documentation
+      description: |
+        Before you submit an issue, make sure you've read [the documentation](https://splewis.github.io/get5). You should also check if an issue already exists.
+      options:
+        - label: I have looked in [the documentation](https://splewis.github.io/get5) and cannot find a solution to my problem.
+          required: true
+        - label: I have searched [existing issues](https://github.com/splewis/get5/issues) and this bug has not been addressed.
+          required: true
+  - type: input
+    id: version
+    attributes:
+      label: Get5 Version
+      description: |
+        What version of Get5 are you using? Use [`get5_status`](https://splewis.github.io/get5/latest/commands/#get5_status) in your server console to print it. Note that we only provide support for official builds, so if you compiled Get5 yourself, please run an official build and verify that you still have the problem. You may also download a nightly/prerelease build and verify that you still have the bug then. You can download the latest versions [here](https://github.com/splewis/get5/releases).
+        
+        Please note that "latest" is **not** a version.
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: The Issue
+      description: Explain the problem. Please be detailed.
+    validations:
+      required: true
+  - type: textarea
+    id: match-config
+    attributes:
+      label: Match Configuration
+      description: Please paste the [match configuration](https://splewis.github.io/get5/latest/match_schema/) you loaded, if any.
+      render: log
+  - type: textarea
+    id: logs
+    attributes:
+      label: Debug Info
+      description: Please copy and paste the output from [`get5_debuginfo`](https://splewis.github.io/get5/latest/commands/#get5_debuginfo). The file is located at `addons/sourcemod/logs/get5_debuginfo.txt` by default. You should preferably run this command as you encounter the issue.
+      render: log
+

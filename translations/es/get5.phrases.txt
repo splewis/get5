@@ -176,6 +176,14 @@
     {
         "es"            "La partida está terminada"
     }
+    "StopCommandRequiresNoDamage"
+    {
+        "es"            "Una solicitud para reiniciar una ronda no se puede dar si el jugador ha causado daño a un jugador del equipo opuesto."
+    }
+    "StopCommandTimeLimitExceeded"
+    {
+        "es"            "Una solicitud para reiniciar la ronda se debe dar dentro de {1} despues del comienzo de la ronda."
+    }
     "BackupLoadedInfoMessage"
     {
         "es"            "Backup cargado exitosamente {1}."

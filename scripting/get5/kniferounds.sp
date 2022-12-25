@@ -50,9 +50,9 @@ void PromptForKnifeDecision() {
     return;
   }
   char formattedStayCommand[64];
-  FormatChatCommand(formattedStayCommand, sizeof(formattedStayCommand), "!stay");
+  GetChatAliasForCommand(Get5ChatCommand_Stay, formattedStayCommand, sizeof(formattedStayCommand), true);
   char formattedSwapCommand[64];
-  FormatChatCommand(formattedSwapCommand, sizeof(formattedSwapCommand), "!swap");
+  GetChatAliasForCommand(Get5ChatCommand_Swap, formattedSwapCommand, sizeof(formattedSwapCommand), true);
   Get5_MessageToAll("%t", "WaitingForEnemySwapInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam],
                     formattedStayCommand, formattedSwapCommand);
 }

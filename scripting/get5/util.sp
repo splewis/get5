@@ -40,20 +40,20 @@ stock int GetNumHumansOnTeam(int team) {
   return count;
 }
 
-stock int CountAlivePlayersOnTeam(int csTeam) {
+stock int CountAlivePlayersOnTeam(const Get5Side side) {
   int count = 0;
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == csTeam) {
+    if (IsValidClient(i) && IsPlayerAlive(i) && view_as<Get5Side>(GetClientTeam(i)) == side) {
       count++;
     }
   }
   return count;
 }
 
-stock int SumHealthOfTeam(int team) {
+stock int SumHealthOfTeam(Get5Side side) {
   int sum = 0;
   LOOP_CLIENTS(i) {
-    if (IsPlayer(i) && IsPlayerAlive(i) && GetClientTeam(i) == team) {
+    if (IsValidClient(i) && IsPlayerAlive(i) && view_as<Get5Side>(GetClientTeam(i)) == side) {
       sum += GetClientHealth(i);
     }
   }
@@ -174,6 +174,19 @@ stock bool InFreezeTime() {
   return GameRules_GetProp("m_bFreezePeriod") != 0;
 }
 
+stock bool CheckKeyValuesFile(const char[] file, char[] error, const int errSize) {
+  // Because KeyValues.ImportFromFile does not actually return false if the syntax is invalid, we use the SMC parser to
+  // parse the file before trying to import it, as this correctly detects syntax errors which we can return to the
+  // user, instead of trying to load data from an invalid KV structure.
+  SMCParser parser = new SMCParser();
+  SMCError result = parser.ParseFile(file);
+  if (result != SMCError_Okay) {
+    parser.GetErrorString(result, error, errSize);
+  }
+  delete parser;
+  return result == SMCError_Okay;
+}
+
 stock void StartWarmup(int warmupTime = 0) {
   ServerCommand("mp_do_warmup_period 1");
   ServerCommand("mp_warmuptime_all_players_connected 0");
@@ -199,9 +212,9 @@ stock void RestartGame(int delay = 1) {
   ServerCommand("mp_restartgame %d", delay);
 }
 
-stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "", const char[] logo = "",
-                       const char[] matchstat = "", int series_score = 0) {
-  int team_int = (csTeam == CS_TEAM_CT) ? 1 : 2;
+stock void SetTeamInfo(const Get5Side side, const char[] name, const char[] flag, const char[] logo,
+                       const char[] matchstat, int series_score) {
+  int team_int = (side == Get5Side_CT) ? 1 : 2;
 
   char teamCvarName[MAX_CVAR_LENGTH];
   char flagCvarName[MAX_CVAR_LENGTH];
@@ -218,7 +231,7 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "", co
   char taggedName[MAX_CVAR_LENGTH];
   if (g_ReadyTeamTagCvar.BoolValue) {
     if (IsReadyGameState()) {
-      Get5Team matchTeam = CSTeamToGet5Team(csTeam);
+      Get5Team matchTeam = CSTeamToGet5Team(view_as<int>(side));
       if (IsTeamReady(matchTeam)) {
         FormatEx(taggedName, sizeof(taggedName), "%s %T", name, "ReadyTag", LANG_SERVER);
       } else {
@@ -236,8 +249,11 @@ stock void SetTeamInfo(int csTeam, const char[] name, const char[] flag = "", co
   SetConVarStringSafe(logoCvarName, logo);
   SetConVarStringSafe(textCvarName, matchstat);
 
-  if (g_MapsToWin > 1) {
+  // We do this because IntValue = 0 does not consistently set an empty string, relevant for testing.
+  if (g_MapsToWin > 1 && series_score > 0) {
     SetConVarIntSafe(scoreCvarName, series_score);
+  } else {
+    SetConVarStringSafe(scoreCvarName, "");
   }
 }
 
@@ -352,7 +368,7 @@ stock bool InHalftimePhase() {
   return GetGamePhase() == GamePhase_HalfTime;
 }
 
-stock int AddSubsectionKeysToList(KeyValues kv, const char[] section, ArrayList list, int maxKeyLength) {
+stock int AddSubsectionKeysToList(const KeyValues kv, const char[] section, const ArrayList list, int maxKeyLength) {
   int count = 0;
   if (kv.JumpToKey(section)) {
     count = AddKeysToList(kv, list, maxKeyLength);
@@ -361,7 +377,7 @@ stock int AddSubsectionKeysToList(KeyValues kv, const char[] section, ArrayList 
   return count;
 }
 
-stock int AddKeysToList(KeyValues kv, ArrayList list, int maxKeyLength) {
+stock int AddKeysToList(const KeyValues kv, const ArrayList list, int maxKeyLength) {
   int count = 0;
   char[] buffer = new char[maxKeyLength];
   if (kv.GotoFirstSubKey(false)) {
@@ -375,7 +391,7 @@ stock int AddKeysToList(KeyValues kv, ArrayList list, int maxKeyLength) {
   return count;
 }
 
-stock int AddSubsectionAuthsToList(KeyValues kv, const char[] section, ArrayList list) {
+stock int AddSubsectionAuthsToList(const KeyValues kv, const char[] section, const ArrayList list) {
   int count = 0;
   if (kv.JumpToKey(section)) {
     count = AddAuthsToList(kv, list);
@@ -384,7 +400,7 @@ stock int AddSubsectionAuthsToList(KeyValues kv, const char[] section, ArrayList
   return count;
 }
 
-stock int AddAuthsToList(KeyValues kv, ArrayList list) {
+stock int AddAuthsToList(const KeyValues kv, const ArrayList list) {
   int count = 0;
   char buffer[AUTH_LENGTH];
   char steam64[AUTH_LENGTH];
@@ -404,7 +420,7 @@ stock int AddAuthsToList(KeyValues kv, ArrayList list) {
   return count;
 }
 
-stock bool RemoveStringFromArray(ArrayList list, const char[] str) {
+stock bool RemoveStringFromArray(const ArrayList list, const char[] str) {
   int index = list.FindString(str);
   if (index != -1) {
     list.Erase(index);
@@ -431,16 +447,6 @@ stock bool WritePlaceholderInsteadOfEmptyString(const KeyValues kv, char[] buffe
     return true;
   }
   return false;
-}
-
-stock int OtherCSTeam(int team) {
-  if (team == CS_TEAM_CT) {
-    return CS_TEAM_T;
-  } else if (team == CS_TEAM_T) {
-    return CS_TEAM_CT;
-  } else {
-    return team;
-  }
 }
 
 stock Get5Team OtherMatchTeam(Get5Team team) {
@@ -768,4 +774,94 @@ stock void ConvertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer, c
 
 stock bool IsDoingRestoreOrMapChange() {
   return g_DoingBackupRestoreNow || g_MapChangePending;
+}
+
+stock void ChatCommandToString(const Get5ChatCommand command, char[] buffer, const int bufferSize) {
+  switch (command) {
+    case Get5ChatCommand_Ready: {
+      FormatEx(buffer, bufferSize, "ready");
+    }
+    case Get5ChatCommand_Unready: {
+      FormatEx(buffer, bufferSize, "unready");
+    }
+    case Get5ChatCommand_ForceReady: {
+      FormatEx(buffer, bufferSize, "forceready");
+    }
+    case Get5ChatCommand_Tech: {
+      FormatEx(buffer, bufferSize, "tech");
+    }
+    case Get5ChatCommand_Pause: {
+      FormatEx(buffer, bufferSize, "pause");
+    }
+    case Get5ChatCommand_Unpause: {
+      FormatEx(buffer, bufferSize, "unpause");
+    }
+    case Get5ChatCommand_Coach: {
+      FormatEx(buffer, bufferSize, "coach");
+    }
+    case Get5ChatCommand_Stay: {
+      FormatEx(buffer, bufferSize, "stay");
+    }
+    case Get5ChatCommand_Swap: {
+      FormatEx(buffer, bufferSize, "swap");
+    }
+    case Get5ChatCommand_T: {
+      FormatEx(buffer, bufferSize, "t");
+    }
+    case Get5ChatCommand_CT: {
+      FormatEx(buffer, bufferSize, "ct");
+    }
+    case Get5ChatCommand_Stop: {
+      FormatEx(buffer, bufferSize, "stop");
+    }
+    case Get5ChatCommand_Surrender: {
+      FormatEx(buffer, bufferSize, "surrender");
+    }
+    case Get5ChatCommand_FFW: {
+      FormatEx(buffer, bufferSize, "ffw");
+    }
+    case Get5ChatCommand_CancelFFW: {
+      FormatEx(buffer, bufferSize, "cancelffw");
+    }
+    default: {
+      LogError("Failed to map Get5ChatCommand with value %d to a string. It is missing from ChatCommandToString.",
+               command);
+    }
+  }
+}
+
+stock Get5ChatCommand StringToChatCommand(const char[] string) {
+  if (strcmp(string, "ready") == 0) {
+    return Get5ChatCommand_Ready;
+  } else if (strcmp(string, "unready") == 0) {
+    return Get5ChatCommand_Unready;
+  } else if (strcmp(string, "forceready") == 0) {
+    return Get5ChatCommand_ForceReady;
+  } else if (strcmp(string, "tech") == 0) {
+    return Get5ChatCommand_Tech;
+  } else if (strcmp(string, "pause") == 0) {
+    return Get5ChatCommand_Pause;
+  } else if (strcmp(string, "unpause") == 0) {
+    return Get5ChatCommand_Unpause;
+  } else if (strcmp(string, "coach") == 0) {
+    return Get5ChatCommand_Coach;
+  } else if (strcmp(string, "stay") == 0) {
+    return Get5ChatCommand_Stay;
+  } else if (strcmp(string, "swap") == 0) {
+    return Get5ChatCommand_Swap;
+  } else if (strcmp(string, "t") == 0) {
+    return Get5ChatCommand_T;
+  } else if (strcmp(string, "ct") == 0) {
+    return Get5ChatCommand_CT;
+  } else if (strcmp(string, "stop") == 0) {
+    return Get5ChatCommand_Stop;
+  } else if (strcmp(string, "surrender") == 0) {
+    return Get5ChatCommand_Surrender;
+  } else if (strcmp(string, "ffw") == 0) {
+    return Get5ChatCommand_FFW;
+  } else if (strcmp(string, "cancelffw") == 0) {
+    return Get5ChatCommand_CancelFFW;
+  } else {
+    return Get5ChatCommand_Unknown;
+  }
 }

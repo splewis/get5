@@ -1,8 +1,9 @@
 #define TEMP_MATCHCONFIG_BACKUP_PATTERN "get5_match_config_backup%d.txt"
+#define TEMP_REMOTE_BACKUP_PATTERN      "get5_backup_remote%d.txt"
 #define TEMP_VALVE_BACKUP_PATTERN       "get5_temp_backup%d.txt"
 #define TEMP_VALVE_NAMES_FILE_PATTERN   "get5_names%d.txt"
 
-Action Command_LoadBackup(int client, int args) {
+Action Command_LoadBackupUrl(int client, int args) {
   if (!g_BackupSystemEnabledCvar.BoolValue) {
     ReplyToCommand(client, "The backup system is disabled.");
     return Plugin_Handled;
@@ -18,13 +19,45 @@ Action Command_LoadBackup(int client, int args) {
     return Plugin_Handled;
   }
 
+  char url[PLATFORM_MAX_PATH];
+  if ((args != 1 && args != 3) || !GetCmdArg(1, url, sizeof(url))) {
+    ReplyToCommand(client, "Usage: get5_loadbackup_url <url> [header name] [header value]");
+    return Plugin_Handled;
+  }
+
+  ArrayList headerNames;
+  ArrayList headerValues;
+  if (args == 3) {
+    headerNames = new ArrayList(PLATFORM_MAX_PATH);
+    headerValues = new ArrayList(PLATFORM_MAX_PATH);
+    char headerBuffer[PLATFORM_MAX_PATH];
+    GetCmdArg(2, headerBuffer, sizeof(headerBuffer));
+    headerNames.PushString(headerBuffer);
+    GetCmdArg(3, headerBuffer, sizeof(headerBuffer));
+    headerValues.PushString(headerBuffer);
+  }
+  char error[PLATFORM_MAX_PATH];
+  if (!LoadBackupFromUrl(url, _, _, headerNames, headerValues, error)) {
+    ReplyToCommand(client, "Failed to initiate request for remote backup load: %s", error);
+  } else {
+    ReplyToCommand(client, "Loading backup from remote...");
+  }
+  delete headerNames;
+  delete headerValues;
+  return Plugin_Handled;
+}
+
+Action Command_LoadBackup(int client, int args) {
+  if (!g_BackupSystemEnabledCvar.BoolValue) {
+    ReplyToCommand(client, "The backup system is disabled.");
+    return Plugin_Handled;
+  }
+
   char path[PLATFORM_MAX_PATH];
   if (args >= 1 && GetCmdArg(1, path, sizeof(path))) {
-    if (RestoreFromBackup(path)) {
-      Get5_MessageToAll("%t", "BackupLoadedInfoMessage", path);
-      g_LastGet5BackupCvar.SetString(path);
-    } else {
-      ReplyToCommand(client, "Failed to load backup %s - check error logs", path);
+    char error[PLATFORM_MAX_PATH];
+    if (!RestoreFromBackup(path, error)) {
+      ReplyToCommand(client, error);
     }
   } else {
     ReplyToCommand(client, "Usage: get5_loadbackup <file>");
@@ -173,20 +206,30 @@ void WriteBackup() {
   char variableSubstitutes[][] = {"{MATCHID}"};
   CheckAndCreateFolderPath(g_RoundBackupPathCvar, variableSubstitutes, 1, folder, sizeof(folder));
 
-  char path[PLATFORM_MAX_PATH];
+  char filename[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
-    FormatEx(path, sizeof(path), "%sget5_backup%d_match%s_map%d_round%d.cfg", folder, Get5_GetServerID(), g_MatchID,
+    FormatEx(filename, sizeof(filename), "get5_backup%d_match%s_map%d_round%d.cfg", Get5_GetServerID(), g_MatchID,
              g_MapNumber, g_RoundNumber);
   } else {
-    FormatEx(path, sizeof(path), "%sget5_backup%d_match%s_map%d_prelive.cfg", folder, Get5_GetServerID(), g_MatchID,
+    FormatEx(filename, sizeof(filename), "get5_backup%d_match%s_map%d_prelive.cfg", Get5_GetServerID(), g_MatchID,
              g_MapNumber);
   }
+
+  char path[PLATFORM_MAX_PATH];
+  if (strlen(folder) > 0) {
+    FormatEx(path, sizeof(path), "%s%s", folder, filename);
+  } else {
+    strcopy(path, sizeof(path), filename);
+  }
+
   LogDebug("Writing backup to %s", path);
-  WriteBackupStructure(path);
-  g_LastGet5BackupCvar.SetString(path);
+  if (WriteBackupStructure(path)) {
+    g_LastGet5BackupCvar.SetString(path);
+    UploadBackupFile(path, filename, g_MatchID, g_MapNumber, g_RoundNumber);
+  }
 }
 
-static void WriteBackupStructure(const char[] path) {
+static bool WriteBackupStructure(const char[] path) {
   KeyValues kv = new KeyValues("Backup");
   char timeString[PLATFORM_MAX_PATH];
   FormatTime(timeString, sizeof(timeString), "%Y-%m-%d %H:%M:%S", GetTime());
@@ -246,26 +289,33 @@ static void WriteBackupStructure(const char[] path) {
   WriteMatchToKv(kv);
   kv.GoBack();
 
-  ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
-  if (lastBackupCvar != null) {
+  if (g_GameState == Get5State_Live) {
     char lastBackup[PLATFORM_MAX_PATH];
+    ConVar lastBackupCvar = FindConVar("mp_backup_round_file_last");
     lastBackupCvar.GetString(lastBackup, sizeof(lastBackup));
-    if (strlen(lastBackup) > 0) {
-      if (g_GameState == Get5State_Live) {
-        // Write valve's backup format into the file. This only applies to live rounds, as any pre-live
-        // backups should just restart the game to warmup (post-veto).
-        KeyValues valveBackup = new KeyValues("valve_backup");
-        if (valveBackup.ImportFromFile(lastBackup)) {
-          kv.SetNum("gamestate", view_as<int>(Get5State_Live));
-          kv.JumpToKey("valve_backup", true);
-          KvCopySubkeys(valveBackup, kv);
-          kv.GoBack();
-        }
-        delete valveBackup;
-      }
-      if (DeleteFile(lastBackup)) {
-        lastBackupCvar.SetString("");
-      }
+    if (strlen(lastBackup) == 0) {
+      LogError("Found no Valve backup when attempting to write a backup during the live state. This is a bug!");
+      delete kv;
+      return false;
+    }
+    // Write valve's backup format into the file. This only applies to live rounds, as any pre-live
+    // backups should just restart the game to warmup (post-veto).
+    KeyValues valveBackup = new KeyValues("valve_backup");
+    bool success = valveBackup.ImportFromFile(lastBackup);
+    if (success) {
+      kv.SetNum("gamestate", view_as<int>(Get5State_Live));
+      kv.JumpToKey("valve_backup", true);
+      KvCopySubkeys(valveBackup, kv);
+      kv.GoBack();
+    }
+    delete valveBackup;
+    if (!success) {
+      LogError("Failed to import Valve backup into Get5 backup.");
+      delete kv;
+      return false;
+    }
+    if (DeleteFile(lastBackup)) {
+      lastBackupCvar.SetString("");
     }
   }
 
@@ -274,21 +324,104 @@ static void WriteBackupStructure(const char[] path) {
   KvCopySubkeys(g_StatsKv, kv);
   kv.GoBack();
 
-  kv.ExportToFile(path);
+  bool success = kv.ExportToFile(path);
+  if (!success) {
+    LogError("Failed to write Get5 backup to file \"%s\".", path);
+  }
   delete kv;
+  return success;
 }
 
-bool RestoreFromBackup(const char[] path) {
+static void UploadBackupFile(const char[] file, const char[] filename, const char[] matchId, const int mapNumber,
+                             const int roundNumber) {
+  char backupUrl[1024];
+  g_RemoteBackupURLCvar.GetString(backupUrl, sizeof(backupUrl));
+  if (strlen(backupUrl) == 0) {
+    LogDebug("Not uploading backup file as no URL was set.");
+    return;
+  }
+
+  char error[PLATFORM_MAX_PATH];
+  Handle request = CreateGet5HTTPRequest(k_EHTTPMethodPOST, backupUrl, error);
+  if (request == INVALID_HANDLE || !AddFileAsHttpBody(request, file, error) ||
+      !SetFileNameHeader(request, filename, error) || !SetMatchIdHeader(request, matchId, error) ||
+      !SetMapNumberHeader(request, mapNumber, error) || !SetRoundNumberHeader(request, roundNumber, error)) {
+    LogError(error);
+    delete request;
+    return;
+  }
+
+  char backupUrlHeaderKey[1024];
+  char backupUrlHeaderValue[1024];
+
+  g_RemoteBackupURLHeaderKeyCvar.GetString(backupUrlHeaderKey, sizeof(backupUrlHeaderKey));
+  g_RemoteBackupURLHeaderValueCvar.GetString(backupUrlHeaderValue, sizeof(backupUrlHeaderValue));
+
+  if (strlen(backupUrlHeaderKey) > 0 && strlen(backupUrlHeaderValue) > 0 &&
+      !SetHeaderKeyValuePair(request, backupUrlHeaderKey, backupUrlHeaderValue, error)) {
+    LogError(error);
+    delete request;
+    return;
+  }
+
+  DataPack pack = new DataPack();
+  pack.WriteString(backupUrl);
+  pack.WriteString(filename);
+
+  SteamWorks_SetHTTPRequestContextValue(request, pack);
+  SteamWorks_SetHTTPCallbacks(request, BackupUpload_Callback);
+  SteamWorks_SendHTTPRequest(request);
+}
+
+static void BackupUpload_Callback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
+                                  DataPack pack) {
+  char url[1024];
+  char filename[PLATFORM_MAX_PATH];
+  pack.Reset();
+  pack.ReadString(url, sizeof(url));
+  pack.ReadString(filename, sizeof(filename));
+  delete pack;
+
+  if (failure || !requestSuccessful) {
+    LogError("Failed to upload backup file '%s' to '%s'. Make sure your URL is enclosed in quotes.", filename, url);
+  } else if (!CheckForSuccessfulResponse(request, statusCode)) {
+    LogError("Failed to upload backup file '%s' to '%s'. HTTP status code: %d.", filename, url, statusCode);
+  }
+  delete request;
+}
+
+bool RestoreFromBackup(const char[] path, char[] error) {
+  if (g_PendingSideSwap || InHalftimePhase()) {
+    FormatEx(error, PLATFORM_MAX_PATH, "You cannot load a backup during halftime.");
+    return false;
+  }
+
+  if (IsDoingRestoreOrMapChange()) {
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "A map change or backup restore is in progress. You cannot load a backup right now.");
+    return false;
+  }
+
+  if (!FileExists(path)) {
+    FormatEx(error, PLATFORM_MAX_PATH, "Backup file \"%s\" does not exists or cannot be read.", path);
+    return false;
+  }
+
+  if (!CheckKeyValuesFile(path, error, PLATFORM_MAX_PATH)) {
+    Format(error, PLATFORM_MAX_PATH, "Failed to read backup file \"%s\" as valid KeyValues. Error: %s", path, error);
+    return false;
+  }
+
   KeyValues kv = new KeyValues("Backup");
   if (!kv.ImportFromFile(path)) {
-    LogError("Failed to read backup file \"%s\"", path);
+    FormatEx(error, PLATFORM_MAX_PATH, "Failed to read backup from file: \"%s\".", path);
     delete kv;
     return false;
   }
 
   int loadedMapNumber = kv.GetNum("mapnumber", -1);
   if (loadedMapNumber == -1) {
-    LogError("The backup was created with an earlier version of Get5 and is not compatible.");
+    FormatEx(error, PLATFORM_MAX_PATH, "The backup was created with an earlier version of Get5 and is not compatible.");
     delete kv;
     return false;
   }
@@ -322,13 +455,12 @@ bool RestoreFromBackup(const char[] path) {
   }
 
   bool backupIsForDifferentMap = !StrEqual(currentMap, loadedMapName, false);
+  bool backupIsForDifferentMatch = g_GameState != Get5State_Live || g_MapNumber != loadedMapNumber ||
+                                   backupIsForDifferentMap || !StrEqual(loadedMatchId, g_MatchID);
 
-  bool shouldRestartRecording = g_GameState != Get5State_Live || g_MapNumber != loadedMapNumber ||
-                                backupIsForDifferentMap || !StrEqual(loadedMatchId, g_MatchID);
-
-  if (shouldRestartRecording) {
+  if (backupIsForDifferentMatch) {
     // We must stop recording to fire the Get5_OnDemoFinished event when loading a backup to another match or map, and
-    // we must do it before we load the match config, or the g_MatchID, g_MapNumber and g_DemoFileName variables will be
+    // we must do it before we load the match config, or the g_MatchID, g_MapNumber and g_DemoFilePath variables will be
     // incorrect. This is suppressed if we load to the same match and map ID during a live match, either via
     // get5_loadbackup or the !stop-command, as we want only 1 demo file in those cases.
     StopRecording();
@@ -338,9 +470,8 @@ bool RestoreFromBackup(const char[] path) {
     char tempBackupFile[PLATFORM_MAX_PATH];
     GetTempFilePath(tempBackupFile, sizeof(tempBackupFile), TEMP_MATCHCONFIG_BACKUP_PATTERN);
     kv.ExportToFile(tempBackupFile);
-    if (!LoadMatchConfig(tempBackupFile, true)) {
+    if (!LoadMatchConfig(tempBackupFile, error, true)) {
       delete kv;
-      LogError("Could not restore from match config \"%s\"", tempBackupFile);
       // If the backup load fails, all the game configs will have been reset by LoadMatchConfig,
       // but the game state won't. This ensures we don't end up a in a "live" state with no get5
       // variables set, which would prevent a call to load a new match.
@@ -350,7 +481,7 @@ bool RestoreFromBackup(const char[] path) {
     kv.GoBack();
   }
 
-  if (g_GameState != Get5State_Live) {
+  if (backupIsForDifferentMatch) {
     // This isn't perfect, but it's better than resetting all pauses used to zero in cases of
     // restore on a new server or a different map. If restoring while live, we just retain the
     // current pauses used, as they should be the "most correct".
@@ -440,27 +571,30 @@ bool RestoreFromBackup(const char[] path) {
     ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
     ChangeMap(loadedMapName, 3.0);
   } else {
-    // We must assign players to their teams. This is normally done inside LoadMatchConfig, but
-    // since we need the team sides to be applied from the backup, we skip it then and do it here.
-    if (g_CheckAuthsCvar.BoolValue) {
-      LOOP_CLIENTS(i) {
-        if (IsPlayer(i)) {
-          CheckClientTeam(i);
-        }
-      }
-    }
-    if (valveBackup) {
-      // Same map, but round restore with a Valve backup; do normal restore immediately with no
-      // ready-up and no game-state change.
-      RestoreGet5Backup(shouldRestartRecording);
+    if (valveBackup && !backupIsForDifferentMatch) {
+      // Same map/match, but round restore with a Valve backup; do normal restore immediately with no
+      // ready-up and no game-state change. Players' teams are checked after the backup file is loaded.
+      RestoreGet5Backup(false);
     } else {
-      // We are restarting to the same map for prelive; just go back into warmup and let players
-      // ready-up again.
-      ResetReadyStatus();
+      // We are restarting to the same map for prelive or loading from a none-live state; just go back into
+      // warmup and let players ready-up again, either for a restore or for knife/live.
+      // Ready status is reset when loading a match config.
       UnpauseGame(Get5Team_None);
-      ChangeState(Get5State_Warmup);
+      // If we load a valve backup in non-live, we have to go to ready-up, otherwise it's a prelive and we go to warmup.
+      ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
       ExecCfg(g_WarmupCfgCvar);
       StartWarmup();
+      // We must assign players to their teams. This is normally done inside LoadMatchConfig, but
+      // since we need the team sides to be applied from the backup, we skip it then and do it here.
+      // We do this *after* putting the game into warmup, as it may otherwise kill people if they are
+      // moved the other team, which will trigger various events and cause the game to misbehave.
+      if (g_CheckAuthsCvar.BoolValue) {
+        LOOP_CLIENTS(i) {
+          if (IsPlayer(i)) {
+            CheckClientTeam(i);
+          }
+        }
+      }
     }
   }
 
@@ -475,10 +609,16 @@ bool RestoreFromBackup(const char[] path) {
 
   EventLogger_LogAndDeleteEvent(backupEvent);
 
+  char fileFormatted[PLATFORM_MAX_PATH];
+  FormatCvarName(fileFormatted, sizeof(fileFormatted), path);
+  Get5_MessageToAll("%t", "BackupLoadedInfoMessage", fileFormatted);
+  g_LastGet5BackupCvar.SetString(path);  // Loading a match config resets this Cvar.
   return true;
 }
 
 void RestoreGet5Backup(bool restartRecording) {
+  g_DoingBackupRestoreNow = true;  // reset after the backup has completed, suppresses various
+                                   // events and hooks until then.
   // If you load a backup during a live round, the game might get stuck if there are only bots
   // remaining and no players are alive. Other stuff will probably also go wrong, so we put the game
   // into warmup. We **cannot** restart the game as that causes problems for tournaments using the
@@ -488,8 +628,6 @@ void RestoreGet5Backup(bool restartRecording) {
   }
   ExecCfg(g_LiveCfgCvar);
   PauseGame(Get5Team_None, Get5PauseType_Backup);
-  g_DoingBackupRestoreNow = true;  // reset after the backup has completed, suppresses various
-                                   // events and hooks until then.
   // We add a 2 second delay here to give the server time to
   // flush the current GOTV recording *if* one is running.
   CreateTimer(2.0, Timer_StartRestore, restartRecording, TIMER_FLAG_NO_MAPCHANGE);
@@ -582,4 +720,57 @@ void DeleteOldBackups() {
   } else {
     LogError("Failed to list contents of directory '%s' for backup deletion.", path);
   }
+}
+
+bool LoadBackupFromUrl(const char[] url, const ArrayList paramNames = null, const ArrayList paramValues = null,
+                       const ArrayList headerNames = null, const ArrayList headerValues = null, char[] error) {
+  if (!LibraryExists("SteamWorks")) {
+    FormatEx(error, PLATFORM_MAX_PATH, "The SteamWorks extension is required in order to load backups over HTTP.");
+    return false;
+  }
+
+  Handle request = CreateGet5HTTPRequest(k_EHTTPMethodGET, url, error);
+  if (request == INVALID_HANDLE || !SetMultipleQueryParameters(request, paramNames, paramValues, error) ||
+      !SetMultipleHeaders(request, headerNames, headerValues, error)) {
+    delete request;
+    return false;
+  }
+
+  DataPack pack = new DataPack();
+  pack.WriteString(url);
+
+  SteamWorks_SetHTTPRequestContextValue(request, pack);
+  SteamWorks_SetHTTPCallbacks(request, LoadBackup_Callback);
+  SteamWorks_SendHTTPRequest(request);
+  return true;
+}
+
+static void LoadBackup_Callback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
+                                DataPack pack) {
+
+  char loadedUrl[PLATFORM_MAX_PATH];
+  pack.Reset();
+  pack.ReadString(loadedUrl, sizeof(loadedUrl));
+  delete pack;
+
+  if (failure || !requestSuccessful) {
+    LogError("Failed to load backup file from '%s'. Make sure your URL is enclosed in quotes.", loadedUrl);
+  } else if (!CheckForSuccessfulResponse(request, statusCode)) {
+    LogError("Failed to load backup file from '%s'. HTTP status code: %d.", loadedUrl, statusCode);
+  } else {
+    char remoteBackup[PLATFORM_MAX_PATH];
+    char error[PLATFORM_MAX_PATH];
+    GetTempFilePath(remoteBackup, sizeof(remoteBackup), TEMP_REMOTE_BACKUP_PATTERN);
+    if (SteamWorks_WriteHTTPResponseBodyToFile(request, remoteBackup)) {
+      if (!RestoreFromBackup(remoteBackup, error)) {
+        LogError(error);
+      } else if (FileExists(remoteBackup) && !DeleteFile(remoteBackup)) {
+        // We only delete the file if it loads successfully, as it may be used for debugging otherwise.
+        LogError("Unable to delete temporary backup file '%s'.", remoteBackup);
+      }
+    } else {
+      LogError("Failed to write temporary backup to file '%s'.", remoteBackup);
+    }
+  }
+  delete request;
 }

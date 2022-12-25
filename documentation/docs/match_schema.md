@@ -28,10 +28,11 @@ interface Get5MatchTeam {
     "logo": string | undefined // (19)
     "series_score": number | undefined // (26)
     "matchtext": string | undefined // (27)
+    "fromfile": string | undefined // (28)
 }
 
-interface Get5MatchTeamFromFile {
-    "fromfile": string // (28)
+interface Get5MapListFromFile {
+    "fromfile": string // (35)
 }
 
 interface Get5Match {
@@ -51,12 +52,13 @@ interface Get5Match {
     "spectators": { // (10)
         "name": string | undefined // (29)
         "players": Get5PlayerSet | undefined // (30)
-    } | undefined,
-    "maplist": [string] // (13)
+        "fromfile": string | undefined // (34)
+    } | undefined
+    "maplist": string[] | Get5MapListFromFile // (13)
     "favored_percentage_team1": number | undefined // (14)
     "favored_percentage_text": string | undefined // (15)
-    "team1": Get5MatchTeam | Get5MatchTeamFromFile // (20)
-    "team2": Get5MatchTeam | Get5MatchTeamFromFile // (21)
+    "team1": Get5MatchTeam // (20)
+    "team2": Get5MatchTeam // (21)
     "cvars": { [key: string]: string | number } | undefined // (22)
 }
 ```
@@ -92,7 +94,8 @@ interface Get5Match {
     maps. `standard` and `always_knife` behave similarly when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
 13. _Required_<br>The map pool to pick from, as an array of strings (`["de_dust2", "de_nuke"]` etc.), or if `skip_veto`
     is `true`, the order of maps played (limited by `num_maps`). **This should always be odd-sized if using the in-game
-    [veto system](../veto).**
+    [veto system](../veto).** Similarly to teams, you can set this to an object with a `fromfile` property to load a map
+    list from a separate file.
 14. _Optional_<br>Wrapper for the server's `mp_teamprediction_pct`. This determines the chances of `team1`
     winning.<br><br>**`Default: 0`**
 15. _Optional_<br>Wrapper for the server's `mp_teamprediction_txt`.<br><br>**`Default: ""`**
@@ -110,27 +113,31 @@ interface Get5Match {
 21. _Required_<br>The data for the second team.
 22. _Optional_<br>Various commands to execute on the server when loading the match configuration. This can be both
     regular server-commands and any [`Get5 configuration parameter`](../configuration),
-    i.e. `{"hostname": "Match #3123 - Astralis vs. NaVi"}`.<br><br>**`Default: undefined`**
+    i.e. `{"mp_friendlyfire": "0", "get5_max_pauses": "2"}`.<br><br>When the match ends, these parameters will by
+    default
+    be [reset to the value they had before the match was loaded](../configuration#get5_reset_cvars_on_end).<br><br>You
+    should avoid putting server-specific parameters, such as [`get5_server_id`](../configuration#get5_server_id), in
+    this property, as these are all written to [backups](../backup) and set when restored from.<br><br>
+    **`Default: undefined`**
 23. _Optional_<br>Similarly to `players`, this object maps [coaches](../coaching) using their Steam ID and
     name, locking them to the coach slot unless removed using [`get5_removeplayer`](../commands#get5_removeplayer).
     Setting a Steam ID as coach takes precedence over being set as a player.<br><br>Note that
     if [`sv_coaching_enabled`](https://totalcsgo.com/command/svcoachingenabled) is disabled, anyone defined as a coach
     will be considered a regular player for the team instead.<br><br>**`Default: undefined`**
 24. _Required_<br>The players on the team.
-25. _Optional_<br>Wrapper of the server's `mp_teammatchstat_txt` cvar, but can use `{MAPNUMBER}` and `{MAXMAPS}` as
-    variables that get replaced with their integer values. In a BoX series, you probably don't want to set this since
-    Get5 automatically sets `mp_teamscore` cvars for the current series score, and take the place of
-    the `mp_teammatchstat` cvars.<br><br>**`Default: "Map {MAPNUMBER} of {MAXMAPS}"`**
+25. _Optional_<br>Sets the server's `mp_teammatchstat_txt` ConVar, but lets you use `{MAPNUMBER}` and `{MAXMAPS}` as
+    variables that get replaced with their integer values. You should **not** set `mp_teammatchstat_txt` yourself, as it
+    will be overridden by this parameter.<br><br>**`Default: "Map {MAPNUMBER} of {MAXMAPS}"`**
 26. _Optional_<br>The current score in the series, this can be used to give a team a map advantage or used as a manual
     backup method.<br><br>**`Default: 0`**
-27. _Optional_<br>Wraps `mp_teammatchstat_1` and `mp_teammatchstat_2`. You probably don't want to set this, in BoX
-    series, `mp_teamscore` cvars are automatically set and take the place of the `mp_teammatchstat_x`
-    cvars.<br><br>**`Default: ""`**
-28. Match teams can also be loaded from a separate file, allowing you to easily re-use a match configuration for
-    different sets of teams. A `fromfile` value could be `"addons/sourcemod/configs/get5/team_nip.json"`, and is always
-    relative to the `csgo` directory. The file should contain a valid `Get5MatchTeam` object. Note that the file you
-    point to must be in the same format as the main file, so pointing to a `.cfg` file when the main file is `.json`
-    will **not** work.
+27. _Optional_<br>Assigns values to `mp_teammatchstat_1` and `mp_teammatchstat_2`, respectively. If you don't set this
+    value in a BoX series, it is set to each team's map series score automatically.<br><br>**`Default: ""`**
+28. _Optional_<br>Match teams can also be loaded from a separate file, allowing you to easily re-use a match
+    configuration for different sets of teams. A `fromfile` value could
+    be `"addons/sourcemod/configs/get5/team_nip.json"`, and is always relative to the `csgo` directory. The file should
+    contain a valid `Get5MatchTeam` object. You **are** allowed to mix filetypes, so a JSON file can point to
+    a `fromfile` that's a KeyValue file and vice-versa. If you provide a `fromfile` property, all other properties are
+    ignored and team data is only read from the provided file.
 29. _Optional_<br>The name of the spectator team.<br><br>**`Default: "casters"`**
 30. _Optional_<br>The spectator/caster Steam IDs and names. Setting a Steam ID as spectator takes precedence over being
     set as a player or coach.
@@ -140,6 +147,8 @@ interface Get5Match {
 32. _Optional_<br>If `false`, the entire map list will be played, regardless of score. If `true`, a series will be won
     when the series score for a team exceeds the number of maps divided by two.<br><br>**`Default: true`**
 33. _Optional_<br>Determines if coaches must also [`!ready`](../commands#ready).<br><br>**`Default: false`**
+34. _Optional_<br>Similarly to teams and map list, spectators may also be loaded from another file.
+35. _Required_<br>Similarly to teams and spectators, a map list may also be loaded from another file.
 
 !!! info "Team assignment priority"
 
@@ -382,6 +391,7 @@ These examples are identical in the way they would work if loaded.
     ```
     `fromfile` example:
     ```cfg title="addons/sourcemod/get5/team_navi.cfg"
+    "Team"
     { 
         "name"		"Natus Vincere"
     	"tag"		"NaVi"

@@ -226,8 +226,8 @@ Action Command_ForceReadyClient(int client, int args) {
     char cVarName[MAX_CVAR_LENGTH];
     g_AllowForceReadyCvar.GetName(cVarName, sizeof(cVarName));
     FormatCvarName(cVarName, sizeof(cVarName), cVarName);
-    char forceReadyCommand[MAX_CVAR_LENGTH];
-    FormatChatCommand(forceReadyCommand, sizeof(forceReadyCommand), "!forceready");
+    char forceReadyCommand[64];
+    GetChatAliasForCommand(Get5ChatCommand_ForceReady, forceReadyCommand, sizeof(forceReadyCommand), true);
     Get5_Message(client, "%t", "ForceReadyDisabled", forceReadyCommand, cVarName);
     return;
   }
@@ -300,7 +300,7 @@ static void MissingPlayerInfoMessageTeam(Get5Team team) {
 
   if (playerCount == readyCount && playerCount < playersPerTeam && readyCount >= minimumPlayersForForceReady) {
     char forceReadyFormatted[64];
-    FormatChatCommand(forceReadyFormatted, sizeof(forceReadyFormatted), "!forceready");
+    GetChatAliasForCommand(Get5ChatCommand_ForceReady, forceReadyFormatted, sizeof(forceReadyFormatted), true);
     Get5_MessageToTeam(team, "%t", "ForceReadyInfoMessage", forceReadyFormatted);
   }
 }

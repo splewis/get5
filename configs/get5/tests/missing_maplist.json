@@ -1,0 +1,8 @@
+{
+  "team1": {
+    "fromfile": "addons/sourcemod/configs/get5/tests/team2.json"
+  },
+  "team2": {
+    "fromfile": "addons/sourcemod/configs/get5/tests/team2.json"
+  }
+}

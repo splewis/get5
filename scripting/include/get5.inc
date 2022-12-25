@@ -50,6 +50,25 @@ enum Get5PauseType {
   Get5PauseType_Backup     // Special type for match pausing during backups.
 };
 
+enum Get5ChatCommand {
+  Get5ChatCommand_Unknown,
+  Get5ChatCommand_Ready,
+  Get5ChatCommand_Unready,
+  Get5ChatCommand_ForceReady,
+  Get5ChatCommand_Tech,
+  Get5ChatCommand_Pause,
+  Get5ChatCommand_Unpause,
+  Get5ChatCommand_Coach,
+  Get5ChatCommand_Stay,
+  Get5ChatCommand_Swap,
+  Get5ChatCommand_T,
+  Get5ChatCommand_CT,
+  Get5ChatCommand_Stop,
+  Get5ChatCommand_Surrender,
+  Get5ChatCommand_FFW,
+  Get5ChatCommand_CancelFFW,
+};
+
 enum MatchSideType {
   MatchSideType_Standard,     // Team that doesn't pick map gets side choice, leftovers go to knife rounds
   MatchSideType_AlwaysKnife,  // All maps use a knife round to pick sides
@@ -385,44 +404,6 @@ methodmap Get5Event < JSON_Object {
   }
 }
 
-methodmap Get5PlayerConnectedEvent < Get5Event {
-
-  property Get5Player Player {
-    public get() {
-      return view_as<Get5Player>(this.GetObject("player"));
-    }
-    public set(Get5Player player) {
-      this.SetObject("player", player);
-    }
-  }
-
-  public bool SetIPAddress(const char[] address) {
-    return this.SetString("ip_address", address);
-  }
-
-  public bool GetIPAddress(char[] buffer, const int maxSize) {
-    return this.GetString("ip_address", buffer, maxSize);
-  }
-
-  public Get5PlayerConnectedEvent(const Get5Player player, const char[] ipAddress) {
-    Get5PlayerConnectedEvent self = view_as<Get5PlayerConnectedEvent>(new JSON_Object());
-    self.SetEvent("player_connect");
-    self.Player = player;
-    self.SetIPAddress(ipAddress);
-    return self;
-  }
-}
-
-methodmap Get5PlayerDisconnectedEvent < Get5PlayerConnectedEvent {
-
-  public Get5PlayerDisconnectedEvent(const Get5Player player) {
-    Get5PlayerDisconnectedEvent self = view_as<Get5PlayerDisconnectedEvent>(new JSON_Object());
-    self.SetEvent("player_disconnect");
-    self.Player = player;
-    return self;
-  }
-}
-
 methodmap Get5MatchEvent < Get5Event {
 
   public bool SetMatchId(const char[] matchId) {
@@ -504,18 +485,6 @@ methodmap Get5TimedRoundEvent < Get5RoundEvent {
   }
 }
 
-methodmap Get5PlayerMapEvent < Get5MapEvent {
-
-  property Get5Player Player {
-    public get() {
-      return view_as<Get5Player>(this.GetObject("player"));
-    }
-    public set(Get5Player player) {
-      this.SetObject("player", player);
-    }
-  }
-}
-
 methodmap Get5PlayerRoundEvent < Get5RoundEvent {
 
   property Get5Player Player {
@@ -541,6 +510,45 @@ methodmap Get5PlayerTimedRoundEvent < Get5TimedRoundEvent {
 }
 
 // MATCH CONFIG
+methodmap Get5PlayerDisconnectedEvent < Get5MatchEvent {
+
+  property Get5Player Player {
+    public get() {
+      return view_as<Get5Player>(this.GetObject("player"));
+    }
+    public set(Get5Player player) {
+      this.SetObject("player", player);
+    }
+  }
+
+  public Get5PlayerDisconnectedEvent(const char[] matchId, const Get5Player player) {
+    Get5PlayerDisconnectedEvent self = view_as<Get5PlayerDisconnectedEvent>(new JSON_Object());
+    self.SetMatchId(matchId);
+    self.SetEvent("player_disconnect");
+    self.Player = player;
+    return self;
+  }
+}
+
+methodmap Get5PlayerConnectedEvent < Get5PlayerDisconnectedEvent {
+
+  public bool SetIPAddress(const char[] address) {
+    return this.SetString("ip_address", address);
+  }
+
+  public bool GetIPAddress(char[] buffer, const int maxSize) {
+    return this.GetString("ip_address", buffer, maxSize);
+  }
+
+  public Get5PlayerConnectedEvent(const char[] matchId, const Get5Player player, const char[] ipAddress) {
+    Get5PlayerConnectedEvent self = view_as<Get5PlayerConnectedEvent>(new JSON_Object());
+    self.SetMatchId(matchId);
+    self.SetEvent("player_connect");
+    self.Player = player;
+    self.SetIPAddress(ipAddress);
+    return self;
+  }
+}
 
 methodmap Get5SeriesResultEvent < Get5MatchEvent {
 

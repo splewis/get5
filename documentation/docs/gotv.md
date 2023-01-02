@@ -96,7 +96,7 @@ app.post('/upload-file', function (req, res) {
    }
 
    // Read the Get5 headers to know what to do with the file and potentially identify the server.
-   const filename = req.header('Get5-DemoName');
+   const filename = req.header('Get5-FileName');
    const matchId = req.header('Get5-MatchId');
    const mapNumber = req.header('Get5-MapNumber');
    const serverId = req.header('Get5-ServerId');

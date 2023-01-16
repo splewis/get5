@@ -1729,7 +1729,7 @@ stock void ConvertBombSiteToStringInJson(const JSON_Object obj, const char[] key
 }
 
 // Called each get5-event with JSON formatted event text.
-forward void Get5_OnEvent(const Get5Event, const char[] eventJson);
+forward void Get5_OnEvent(const Get5Event event, const char[] eventJson);
 
 // Called when a series is first setup.
 // Note: Do not rely on the state of any cvars at this point.

@@ -254,8 +254,8 @@ static void DemoRequest_Callback(Handle request, bool failure, bool requestSucce
     if (deleteAfterUpload) {
       LogDebug(
         "get5_demo_delete_after_upload set to true when demo request started; deleting the file from the game server.");
-      if (FileExists(demoFileName) && !DeleteFile(demoFileName)) {
-        LogError("Unable to delete demo file %s.", demoFileName);
+      if (FileExists(demoFilePath) && !DeleteFile(demoFilePath)) {
+        LogError("Unable to delete demo file %s.", demoFilePath);
       }
     }
   }

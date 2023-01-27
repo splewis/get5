@@ -1,6 +1,6 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
         "hu"            "Írd be a {1} parancsot, ha a csapatod készen áll a vétóra."
     }
@@ -40,11 +40,11 @@
     {
         "hu"            "{1} nyerte meg a kés kört. Várakozunk, hogy kiválasszák a megfelelő oldalt. {2} vagy {3}."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
         "hu"            "A pálya akkor fog váltani, ha a GOTV adás befejeződött."
     }
-    "WaitingForGOTVVetoInfoMessage"
+    "WaitingForGOTVMapSelection"
     {
         "hu"            "A pálya akkor fog váltani, ha a GOTV adás megjelenítette a pálya vétókat."
     }
@@ -176,23 +176,23 @@
     {
         "hu"            "A szerveren legalább {1} játékosnak készen kell állnia a kezdéshez."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
         "hu"            "{1} készenáll a vétó megkezdésére."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "hu"            "{1} készen áll a mérkőzés visszaállítására."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "hu"            "{1} készenáll, hogy késeljen az oldalért."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "hu"            "{1} készen áll a mérkőzés megkezdésére."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "hu"            "{1} már nem áll készen."
     }
@@ -304,23 +304,23 @@
     {
         "hu"            "{1}. Pálya: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "hu"            "{1} választotta a {2} {3}. pályának."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "hu"            "{1} választott, hogy kezd {2} oldalon a(z) {3}. pályán."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
         "hu"            "{1} szavazott {2}."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
         "hu"            "A csapatkapitány kilépett a vétó során, a vétó szünetel."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
         "hu"            "Írd be a {1} parancsot ha készenállsz a vétó folytatására."
     }
@@ -348,27 +348,27 @@
     {
         "hu"            "[NEM ÁLL KÉSZEN]"
     }
-    "MapVetoPickMenuText"
+    "MapSelectionPickMenuText"
     {
         "hu"            "Válassz pályát, amin játszanál:"
     }
-    "MapVetoPickConfirmMenuText"
+    "MapSelectionPickConfirmMenuText"
     {
         "hu"            "Erősítse meg, hogy játszana {1}:"
     }
-    "MapVetoBanMenuText"
+    "MapSelectionBanMenuText"
     {
         "hu"            "Válaszon egy pályát amit vétózna:"
     }
-    "MapVetoBanConfirmMenuText"
+    "MapSelectionBanConfirmMenuText"
     {
         "hu"            "Erősítse meg, hogy vétózza a {1} pályát:"
     }
-    "MapVetoSidePickMenuText"
+    "MapSelectionSidePickMenuText"
     {
         "hu"            "Válasszon oldalt {1}:"
     }
-    "MapVetoSidePickConfirmMenuText"
+    "MapSelectionSidePickConfirmMenuText"
     {
         "hu"            "Erősítse meg, hogy {1}-ben kezd:"
     }
@@ -380,7 +380,7 @@
     {
         "hu"            "Nem"
     }
-    "VetoCountdown"
+    "MapSelectionCountdown"
     {
         "hu"            "Kezdődik a vétózás {1} másodperc múlva."
     }

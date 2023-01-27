@@ -331,6 +331,8 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
       strcopy(buffer, len, "Train");
     } else if (StrEqual(buffer, "de_cbble")) {
       strcopy(buffer, len, "Cobblestone");
+    } else if (StrEqual(buffer, "de_anubis")) {
+      strcopy(buffer, len, "Anubis");
     } else if (StrEqual(buffer, "de_overpass")) {
       strcopy(buffer, len, "Overpass");
     } else if (StrEqual(buffer, "de_nuke")) {
@@ -347,6 +349,16 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
       strcopy(buffer, len, "Grind");
     } else if (StrEqual(buffer, "de_mocha")) {
       strcopy(buffer, len, "Mocha");
+    } else if (StrEqual(buffer, "cs_militia")) {
+      strcopy(buffer, len, "Militia");
+    } else if (StrEqual(buffer, "cs_agency")) {
+      strcopy(buffer, len, "Agency");
+    } else if (StrEqual(buffer, "cs_office")) {
+      strcopy(buffer, len, "Office");
+    } else if (StrEqual(buffer, "cs_italy")) {
+      strcopy(buffer, len, "Italy");
+    } else if (StrEqual(buffer, "cs_assault")) {
+      strcopy(buffer, len, "Assault");
     }
   }
   if (color) {

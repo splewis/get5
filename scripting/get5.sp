@@ -685,7 +685,7 @@ static Action Timer_InfoMessages(Handle timer) {
             } else {
               Get5_Message(i, "%t",
                            g_GameState == Get5State_PreVeto
-                             ? "ReadyToVetoInfoMessage"
+                             ? "ReadyForMapSelectionInfoMessage"
                              : (knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage"),
                            readyCommandFormatted);
             }
@@ -703,13 +703,13 @@ static Action Timer_InfoMessages(Handle timer) {
       }
       MissingPlayerInfoMessage();
     } else if (g_GameState == Get5State_Warmup && g_DisplayGotvVetoCvar.BoolValue && GetTvDelay() > 0) {
-      Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
+      Get5_MessageToAll("%t", "WaitingForGOTVMapSelection");
     }
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     PromptForKnifeDecision();
   } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
     // Handle postgame
-    Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
+    Get5_MessageToAll("%t", "WaitingForGOTVBroadcastEnding");
   }
 }
 

@@ -21,7 +21,7 @@ entire language file**.
 !!! example "translations/get5.phrases.txt"
 
     ```yaml
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "#format"  "{1:s},{2:s},{3:d}" # (1)
         "en"       "{1} picked {2} as map {3}." # (2)
@@ -35,12 +35,12 @@ entire language file**.
     2. Use the English strings and the [reference](#reference) below to determine how to translate the string.
 
 As the string implies, this example is used when a team picks a map, and the output is printed to chat and looks like
-this: `Team A picked de_dust2 as map 2.` The French translation file for this string looks like this:
+this: `Team A picked Dust II as map 2.` The French translation file for this string looks like this:
 
 !!! example "translations/fr/get5.phrases.txt"
 
     ```yaml
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "fr"  "{1} a choisi {2} comme map {3}."
     }
@@ -79,7 +79,7 @@ end with a full stop as this is added automatically.
 | String                                      | Example                                                                                                                                                                  | Type       |
 |---------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
 | `WaitingForCastersReadyInfoMessage`         | Waiting for _Team A_ to type _!ready_ to begin.                                                                                                                          | Chat       |
-| `ReadyToVetoInfoMessage`                    | Type _!ready_ when your team is ready to veto.                                                                                                                           | Chat       |
+| `ReadyForMapSelectionInfoMessage`           | Type _!ready_ when your team is ready for map selection.                                                                                                                 | Chat       |
 | `ReadyToRestoreBackupInfoMessage`           | Type _!ready_ when you are ready to restore the match backup.                                                                                                            | Chat       |
 | `ReadyToKnifeInfoMessage`                   | Type _!ready_ when you are ready to knife.                                                                                                                               | Chat       |
 | `ReadyToStartInfoMessage`                   | Type _!ready_ when you are ready to begin.                                                                                                                               | Chat       |
@@ -88,8 +88,8 @@ end with a full stop as this is added automatically.
 | `TypeUnreadyIfNotReady`                     | Type _!unready_ if you are not ready.                                                                                                                                    | Chat       |
 | `YouAreNotReady`                            | You have been marked as NOT ready.                                                                                                                                       | Chat       |
 | `WaitingForEnemySwapInfoMessage`            | _Team A_ won the knife round. Waiting for them to type _!stay_ or _!swap_.                                                                                               | Chat       |
-| `WaitingForGOTVBrodcastEndingInfoMessage`   | The map will change once the GOTV broadcast has ended.                                                                                                                   | Chat       |
-| `WaitingForGOTVVetoInfoMessage`             | The map will change once the GOTV broadcast has displayed the map vetoes.                                                                                                | Chat       |
+| `WaitingForGOTVBroadcastEnding`             | The map will change once GOTV has finished broadcasting.                                                                                                                 | Chat       |
+| `WaitingForGOTVMapSelection`                | The map will change once GOTV has broadcast the map selection.                                                                                                           | Chat       |
 | `NoMatchSetupInfoMessage`                   | No match was set up                                                                                                                                                      | KickedNote |
 | `YouAreNotAPlayerInfoMessage`               | You are not a player in this match                                                                                                                                       | KickedNote |
 | `TeamIsFullInfoMessage`                     | Your team is full                                                                                                                                                        | KickedNote |
@@ -125,11 +125,11 @@ end with a full stop as this is added automatically.
 | `WaitingForUnpauseInfoMessage`              | _Team A_ wants to unpause, waiting for Team B to type _!unpause_.                                                                                                        | Chat       |
 | `PausesLeftInfoMessage`                     | Tactical pauses remaining for _Team A_: _3_                                                                                                                              | Chat       |
 | `TeamFailToReadyMinPlayerCheck`             | You must have at least _3_ player(s) on the server to ready up.                                                                                                          | Chat       |
-| `TeamReadyToVetoInfoMessage`                | _Team A_ is ready to veto.                                                                                                                                               | Chat       |
-| `TeamReadyToRestoreBackupInfoMessage`       | _Team A_ is ready to restore the match backup.                                                                                                                           | Chat       |
-| `TeamReadyToKnifeInfoMessage`               | _Team A_ is ready to knife for sides.                                                                                                                                    | Chat       |
-| `TeamReadyToBeginInfoMessage`               | _Team A_ is ready to begin the match.                                                                                                                                    | Chat       |
-| `TeamNotReadyInfoMessage`                   | _Team A_ is no longer ready.                                                                                                                                             | Chat       |
+| `TeamIsReadyForMapSelection`                | _Team A_ is ready for map selection.                                                                                                                                     | Chat       |
+| `TeamIsReadyToRestoreBackup`                | _Team A_ is ready to restore the match backup.                                                                                                                           | Chat       |
+| `TeamIsReadyToKnife`                        | _Team A_ is ready to knife for sides.                                                                                                                                    | Chat       |
+| `TeamIsReadyToBegin`                        | _Team A_ is ready to begin the match.                                                                                                                                    | Chat       |
+| `TeamIsNoLongerReady`                       | _Team A_ is no longer ready.                                                                                                                                             | Chat       |
 | `ForceReadyInfoMessage`                     | You may type _!forceready_ to force-ready your team.                                                                                                                     | Chat       |
 | `ForceReadyDisabled`                        | The _!forceready_ command is disabled, but can enabled with _get5_allow_force_ready_.                                                                                    | Chat       |
 | `TeammateForceReadied`                      | Your team was force-readied by _PlayerName_.                                                                                                                             | Chat       |
@@ -156,12 +156,12 @@ end with a full stop as this is added automatically.
 | `TeamLostTimeToDecideInfoMessage`           | _Team A_ will stay since they did not make a decision in time.                                                                                                           | Chat       |
 | `ChangingMapInfoMessage`                    | Changing map to _de_nuke_...                                                                                                                                             | Chat       |
 | `MapDecidedInfoMessage`                     | The maps have been decided:                                                                                                                                              | Chat       |
-| `MapIsInfoMessage`                          | Map _1_: _de_nuke_.                                                                                                                                                      | Chat       |
-| `TeamPickedMapInfoMessage`                  | _Team A_ picked _de_nuke_ as map _2_.                                                                                                                                    | Chat       |
-| `TeamSelectSideInfoMessage`                 | _Team A_ has selected to start on _CT_ on _de_nuke_.                                                                                                                     | Chat       |
-| `TeamVetoedMapInfoMessage`                  | _Team A_ vetoed _de_nuke_.                                                                                                                                               | Chat       |
-| `CaptainLeftOnVetoInfoMessage`              | A captain left during the veto, pausing the veto.                                                                                                                        | Chat       |
-| `ReadyToResumeVetoInfoMessage`              | Type _!ready_ when you are ready to resume the veto.                                                                                                                     | Chat       |
+| `MapIsInfoMessage`                          | Map _1_: _Nuke_.                                                                                                                                                         | Chat       |
+| `TeamPickedMap`                             | _Team A_ picked _Nuke_ as map _2_.                                                                                                                                       | Chat       |
+| `TeamSelectedSide`                          | _Team A_ has elected to start as _CT_ on _Nuke_.                                                                                                                         | Chat       |
+| `TeamBannedMap`                             | _Team A_ banned _Nuke_.                                                                                                                                                  | Chat       |
+| `CaptainLeftDuringMapSelection`             | A team captain left during map selection. Map selection is paused.                                                                                                       | Chat       |
+| `ReadyToResumeMapSelection`                 | Type _!ready_ when you are ready to resume map selection.                                                                                                                | Chat       |
 | `MatchConfigLoadedInfoMessage`              | Loaded match config.                                                                                                                                                     | Chat       |
 | `MoveToCoachInfoMessage`                    | You were moved to the coach position as your team is full.                                                                                                               | Chat       |
 | `ExitCoachSlotHelp`                         | Type _!coach_ to exit the coach slot.                                                                                                                                    | Chat       |
@@ -173,15 +173,15 @@ end with a full stop as this is added automatically.
 | `AllCoachSlotsFilledForTeam`                | All coach slots (_2_) are currently filled for your team.                                                                                                                | Chat       |
 | `ReadyTag`                                  | **[READY]** PlayerName: Hey, I'm ready...                                                                                                                                | Chat       |
 | `NotReadyTag`                               | **[NOT READY]** PlayerName: Hey, I'm not ready...                                                                                                                        | Chat       |
-| `MapVetoPickMenuText`                       | Select a map to PLAY:                                                                                                                                                    | Menu       |
-| `MapVetoPickConfirmMenuText`                | Confirm you want to PLAY _de_nuke_:                                                                                                                                      | Menu       |
-| `MapVetoBanMenuText`                        | Select a map to VETO:                                                                                                                                                    | Menu       |
-| `MapVetoBanConfirmMenuText`                 | Confirm you want to VETO _de_nuke_:                                                                                                                                      | Menu       |
-| `MapVetoSidePickMenuText`                   | Select a side for _de_nuke_:                                                                                                                                             | Menu       |
-| `MapVetoSidePickConfirmMenuText`            | Confirm you want to start _CT_:                                                                                                                                          | Menu       |
+| `MapSelectionPickMenuText`                  | Select a map to PLAY:                                                                                                                                                    | Menu       |
+| `MapSelectionPickConfirmMenuText`           | Confirm you want to PLAY _Nuke_:                                                                                                                                         | Menu       |
+| `MapSelectionBanMenuText`                   | Select a map to BAN:                                                                                                                                                     | Menu       |
+| `MapSelectionBanConfirmMenuText`            | Confirm you want to BAN _Nuke_:                                                                                                                                          | Menu       |
+| `MapSelectionSidePickMenuText`              | Select a side for _Nuke_:                                                                                                                                                | Menu       |
+| `MapSelectionSidePickConfirmMenuText`       | Confirm you want to start _CT_:                                                                                                                                          | Menu       |
 | `ConfirmPositiveOptionText`                 | Yes                                                                                                                                                                      | Menu       |
 | `ConfirmNegativeOptionText`                 | No                                                                                                                                                                       | Menu       |
-| `VetoCountdown`                             | Veto commencing in _3_ seconds.                                                                                                                                          | Chat       |
+| `MapSelectionCountdown`                     | Map selection commencing in _3_...                                                                                                                                       | Chat       |
 | `NewVersionAvailable`                       | A newer version of Get5 is available. Please visit _splewis.github.io/get5_ to update.                                                                                   | Chat       |
 | `PrereleaseVersionWarning`                  | You are running an unofficial version of Get5 (_0.9.0-c7af39a_) intended for development and testing only. This message can be disabled with _get5_print_update_notice_. | Chat       |
 | `SurrenderCommandNotEnabled`                | The surrender command is not enabled.                                                                                                                                    | Chat       |

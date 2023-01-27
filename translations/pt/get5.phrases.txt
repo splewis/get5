@@ -1,6 +1,6 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
         "pt"            "Digite {1} quando seu time estiver pronto para o veto."
     }
@@ -40,11 +40,11 @@
     {
         "pt"            "{1} venceu o Round Faca. Esperando pelo time vencedor digitar {2} ou {3}."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
         "pt"            "O mapa vai mudar assim que o transmissão do GOTV acabar."
     }
-    "WaitingForGOTVVetoInfoMessage"
+    "WaitingForGOTVMapSelection"
     {
         "pt"            "O mapa mudará assim que a transmissão da GOTV exibir os vetos do mapa."
     }
@@ -184,23 +184,23 @@
     {
         "pt"            "Você precisa ter pelo menos {1} jogadores conectados no servidor para ficar pronto."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
         "pt"            "{1} está pronto para o veto."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "pt"            "{1} está pronto para restaurar o backup da partida."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "pt"            "{1} está pronto para jogar o Round Faca."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "pt"            "{1} está pronto para começar a partida."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "pt"            "{1} deixou de estar pronto."
     }
@@ -312,23 +312,23 @@
     {
         "pt"            "Mapa {1}: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "pt"            "{1} escolheu {2} como mapa {3}."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "pt"            "{1} escolheu começar no lado {2} em {3}."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
         "pt"            "{1} vetou {2}."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
         "pt"            "Um capitão deixou a partida durante o veto, pausando o veto."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
         "pt"            "Digite {1} quando você estiver pronto para resumir o veto."
     }
@@ -376,27 +376,27 @@
     {
         "pt"            "[NOT READY]"
     }
-    "MapVetoPickMenuText"
+    "MapSelectionPickMenuText"
     {
         "pt"        "Selecione um mapa para JOGAR:"
     }
-    "MapVetoPickConfirmMenuText"
+    "MapSelectionPickConfirmMenuText"
     {
         "pt"        "Confirme que você quer JOGAR {1}:"
     }
-    "MapVetoBanMenuText"
+    "MapSelectionBanMenuText"
     {
         "pt"        "Selecione um mapa para VETAR:"
     }
-    "MapVetoBanConfirmMenuText"
+    "MapSelectionBanConfirmMenuText"
     {
         "pt"        "Confirme que você quer VETAR {1}:"
     }
-    "MapVetoSidePickMenuText"
+    "MapSelectionSidePickMenuText"
     {
         "pt"        "Selecione um lado para {1}:"
     }
-    "MapVetoSidePickConfirmMenuText"
+    "MapSelectionSidePickConfirmMenuText"
     {
         "pt"        "Confirme que você quer começar de {1}:"
     }
@@ -408,7 +408,7 @@
     {
         "pt"        "Não"
     }
-    "VetoCountdown"
+    "MapSelectionCountdown"
     {
         "pt"        "Veto começando em {1} segundos."
     }

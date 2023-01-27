@@ -48,15 +48,15 @@ static Action Timer_VetoCountdown(Handle timer) {
   int secondsRemaining = g_VetoCountdownCvar.IntValue - warningsPrinted + 1;
   char secondsFormatted[32];
   FormatEx(secondsFormatted, sizeof(secondsFormatted), "{GREEN}%d{NORMAL}", secondsRemaining);
-  Get5_MessageToAll("%t", "VetoCountdown", secondsFormatted);
+  Get5_MessageToAll("%t", "MapSelectionCountdown", secondsFormatted);
   return Plugin_Continue;
 }
 
 static void AbortVeto() {
-  Get5_MessageToAll("%t", "CaptainLeftOnVetoInfoMessage");
+  Get5_MessageToAll("%t", "CaptainLeftDuringMapSelection");
   char readyCommandFormatted[64];
   GetChatAliasForCommand(Get5ChatCommand_Ready, readyCommandFormatted, sizeof(readyCommandFormatted), true);
-  Get5_MessageToAll("%t", "ReadyToResumeVetoInfoMessage", readyCommandFormatted);
+  Get5_MessageToAll("%t", "ReadyToResumeMapSelection", readyCommandFormatted);
   ChangeState(Get5State_PreVeto);
   if (g_ActiveVetoMenu != null) {
     g_ActiveVetoMenu.Cancel();
@@ -111,7 +111,7 @@ static void VetoController() {
       g_MapSides.Push(SideChoice_Team1CT);
       VetoController();
     }
-  } else if (g_NumberOfMapsInSeries < g_MapsToPlay.Length) {
+  } else if (g_NumberOfMapsInSeries > g_MapsToPlay.Length) {
     if (g_MapsLeftInVetoPool.Length == 1) {
       // Only 1 map left in the pool, add it be deduction and determine knife logic.
       char mapName[PLATFORM_MAX_PATH];
@@ -148,8 +148,8 @@ static void PickMap(const char[] mapName, const Get5Team team) {
   if (team != Get5Team_None) {
     char mapNameFormatted[PLATFORM_MAX_PATH];
     FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), true, true);
-    Get5_MessageToAll("%t", "TeamPickedMapInfoMessage", g_FormattedTeamNames[team], mapNameFormatted,
-                      g_MapsToPlay.Length);
+    Get5_MessageToAll("%t", "TeamPickedMap", g_FormattedTeamNames[team], mapNameFormatted,
+                      g_MapsToPlay.Length + 1);
   }
   RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
   g_MapsToPlay.PushString(mapName);
@@ -168,7 +168,7 @@ static void VetoMap(const char[] mapName, const Get5Team team) {
   FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), true, false);
   // Add color here as FormatMapName would make the color green.
   Format(mapNameFormatted, sizeof(mapNameFormatted), "{LIGHT_RED}%s{NORMAL}", mapNameFormatted);
-  Get5_MessageToAll("%t", "TeamVetoedMapInfoMessage", g_FormattedTeamNames[team], mapNameFormatted);
+  Get5_MessageToAll("%t", "TeamBannedMap", g_FormattedTeamNames[team], mapNameFormatted);
 
   Get5MapVetoedEvent event = new Get5MapVetoedEvent(g_MatchID, team, mapName);
   LogDebug("Calling Get5_OnMapVetoed()");
@@ -244,7 +244,7 @@ static void GiveMapVetoMenu(int client) {
   }
 
   Menu menu = new Menu(MapVetoMenuHandler);
-  menu.SetTitle("%T", "MapVetoBanMenuText", client);
+  menu.SetTitle("%T", "MapSelectionBanMenuText", client);
   menu.ExitButton = false;
   // Don't paginate the menu if we have 7 maps or less, as they will fit
   // on one page when we don't add the pagination options
@@ -279,7 +279,7 @@ static int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
     }
     // Show a confirmation menu if needed
     if (ConfirmationNeeded()) {
-      GiveConfirmationMenu(client, MapVetoMenuHandler, "MapVetoBanConfirmMenuText", mapName);
+      GiveConfirmationMenu(client, MapVetoMenuHandler, "MapSelectionBanConfirmMenuText", mapName);
       return;
     }
 
@@ -306,7 +306,7 @@ static void GiveMapPickMenu(int client) {
     return;
   }
   Menu menu = new Menu(MapPickMenuHandler);
-  menu.SetTitle("%T", "MapVetoPickMenuText", client);
+  menu.SetTitle("%T", "MapSelectionPickMenuText", client);
   menu.ExitButton = false;
   // Don't paginate the menu if we have 7 maps or less, as they will fit
   // on one page when we don't add the pagination options
@@ -341,7 +341,7 @@ static int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
     }
     // Show a confirmation menu if needed
     if (ConfirmationNeeded()) {
-      GiveConfirmationMenu(client, MapPickMenuHandler, "MapVetoPickConfirmMenuText", mapName);
+      GiveConfirmationMenu(client, MapPickMenuHandler, "MapSelectionPickConfirmMenuText", mapName);
       return;
     }
 
@@ -371,7 +371,7 @@ static void GiveSidePickMenu(int client) {
   menu.ExitButton = false;
   char mapName[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
-  menu.SetTitle("%T", "MapVetoSidePickMenuText", client, mapName);
+  menu.SetTitle("%T", "MapSelectionSidePickMenuText", client, mapName);
   menu.AddItem("CT", "CT");
   menu.AddItem("T", "T");
   g_ActiveVetoMenu = menu;
@@ -396,7 +396,7 @@ static int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
     }
     // Show a confirmation menu if needed
     if (ConfirmationNeeded()) {
-      GiveConfirmationMenu(client, SidePickMenuHandler, "MapVetoSidePickConfirmMenuText", choice);
+      GiveConfirmationMenu(client, SidePickMenuHandler, "MapSelectionSidePickConfirmMenuText", choice);
       return;
     }
 
@@ -413,9 +413,11 @@ static int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
 
     char mapName[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(mapNumber, mapName, sizeof(mapName));
+    char mapNameFormatted[PLATFORM_MAX_PATH];
+    FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), true, true);
 
     Format(choice, sizeof(choice), "{GREEN}%s{NORMAL}", choice);
-    Get5_MessageToAll("%t", "TeamSelectSideInfoMessage", g_FormattedTeamNames[team], choice, mapName);
+    Get5_MessageToAll("%t", "TeamSelectedSide", g_FormattedTeamNames[team], choice, mapNameFormatted);
 
     Get5SidePickedEvent event = new Get5SidePickedEvent(g_MatchID, mapNumber, mapName, team, selectedSide);
 

@@ -1,9 +1,9 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
         "#format"       "{1:s}"
-        "en"            "Type {1} when your team is ready to veto."
+        "en"            "Type {1} when your team is ready for map selection."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -47,13 +47,13 @@
         "#format"       "{1:s},{2:s},{3:s}"
         "en"            "{1} won the knife round. Waiting for them to type {2} or {3}."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
-        "en"            "The map will change once the GOTV broadcast has ended."
+        "en"            "The map will change once GOTV has finished broadcasting."
     }
-    "WaitingForGOTVVetoInfoMessage"
+    "WaitingForGOTVMapSelection"
     {
-        "en"            "The map will change once the GOTV broadcast has displayed the map vetos."
+        "en"            "The map will change once GOTV has broadcast the map selection."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -206,27 +206,27 @@
         "#format"       "{1:d}"
         "en"            "You must have at least {1} player(s) on the server to ready up."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
         "#format"       "{1:s}"
-        "en"            "{1} is ready to veto."
+        "en"            "{1} is ready for map selection."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "#format"       "{1:s}"
         "en"            "{1} is ready to restore the match backup."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "#format"       "{1:s}"
         "en"            "{1} is ready to knife for sides."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "#format"       "{1:s}"
         "en"            "{1} is ready to begin the match."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "#format"       "{1:s}"
         "en"            "{1} is no longer ready."
@@ -375,29 +375,29 @@
         "#format"       "{1:d},{2:s}"
         "en"            "Map {1}: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "#format"       "{1:s},{2:s},{3:d}"
         "en"            "{1} picked {2} as map {3}."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "#format"       "{1:s},{2:s},{3:s}"
-        "en"            "{1} has selected to start on {2} on {3}."
+        "en"            "{1} has elected to start as {2} on {3}."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
         "#format"       "{1:s},{2:s}"
-        "en"            "{1} vetoed {2}."
+        "en"            "{1} banned {2}."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
-        "en"            "A captain left during the veto, pausing the veto."
+        "en"            "A team captain left during map selection. Map selection is paused."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
         "#format"       "{1:s}"
-        "en"            "Type {1} when you are ready to resume the veto."
+        "en"            "Type {1} when you are ready to resume map selection."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -448,30 +448,30 @@
     {
         "en"            "[NOT READY]"
     }
-    "MapVetoPickMenuText"
+    "MapSelectionPickMenuText"
     {
         "en"        "Select a map to PLAY:"
     }
-    "MapVetoPickConfirmMenuText"
+    "MapSelectionPickConfirmMenuText"
     {
         "#format"       "{1:s}"
         "en"        "Confirm you want to PLAY {1}:"
     }
-    "MapVetoBanMenuText"
+    "MapSelectionBanMenuText"
     {
-        "en"        "Select a map to VETO:"
+        "en"        "Select a map to BAN:"
     }
-    "MapVetoBanConfirmMenuText"
+    "MapSelectionBanConfirmMenuText"
     {
         "#format"       "{1:s}"
-        "en"        "Confirm you want to VETO {1}:"
+        "en"        "Confirm you want to BAN {1}:"
     }
-    "MapVetoSidePickMenuText"
+    "MapSelectionSidePickMenuText"
     {
         "#format"       "{1:s}"
         "en"        "Select a side for {1}:"
     }
-    "MapVetoSidePickConfirmMenuText"
+    "MapSelectionSidePickConfirmMenuText"
     {
         "#format"       "{1:s}"
         "en"        "Confirm you want to start {1}:"
@@ -484,10 +484,10 @@
     {
         "en"        "No"
     }
-    "VetoCountdown"
+    "MapSelectionCountdown"
     {
         "#format"   "{1:s}"
-        "en"        "Veto commencing in {1} seconds."
+        "en"        "Map selection commencing in {1}..."
     }
     "SurrenderCommandNotEnabled"
     {

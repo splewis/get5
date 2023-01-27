@@ -1,6 +1,6 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
         "de"            "Tippe {1} wenn dein Team bereit zum Abstimmen ist."
     }
@@ -40,11 +40,11 @@
     {
         "de"            "{1} hat die Messerrunde gewonnen und darf somit die Seite zum starten wählen. Dies muss durch die Eingabe von {2} oder {3} geschehen."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
         "de"            "Die Map wird gewechselt sobald die GOTV Übertragung beendet ist."
     }
-    "WaitingForGOTVVetoInfoMessage"
+    "WaitingForGOTVMapSelection"
     {
         "de"            "Die Map wird gewechselt sobald die Map Vetos von GOTV übertragen wurden."
     }
@@ -180,23 +180,23 @@
     {
         "de"            "Du musst mindestens {1} Spieler im Team haben um das Team als bereit zu markieren."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
         "de"            "{1} ist bereit für das Mapveto."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "de"            "{1} ist bereit eine Spielsicherung wieder einzuspielen."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "de"            "{1} ist bereit für die Messerrunde."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "de"            "{1} ist bereit das Spiel zu beginnen."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "de"            "{1} ist nicht mehr bereit."
     }
@@ -324,23 +324,23 @@
     {
         "de"            "Map {1}: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "de"            "{1} wählte {2} als Map aus {3}."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "de"            "{1} möchte auf {3} als {2} starten."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
         "de"            "{1} legte ein veto gegen {2} ein."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
         "de"            "Der Team Captian hat das Spiel während der Vetophase verlassen, daher wird das Veto pausiert."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
         "de"            "Tippe {1} wenn ihr bereit seid mit der Vetophase fortzufahren."
     }
@@ -388,27 +388,27 @@
     {
         "de"            "[NICHT BEREIT]"
     }
-    "MapVetoPickMenuText"
+    "MapSelectionPickMenuText"
     {
         "de"            "Wähle eine Karte die GESPIELT werden soll:"
     }
-    "MapVetoPickConfirmMenuText"
+    "MapSelectionPickConfirmMenuText"
     {
         "de"            "Bestätige dass {1} GESPIELT werden soll:"
     }
-    "MapVetoBanMenuText"
+    "MapSelectionBanMenuText"
     {
         "de"            "Lege ein Veto gegen eine Karte ein:"
     }
-    "MapVetoBanConfirmMenuText"
+    "MapSelectionBanConfirmMenuText"
     {
         "de"            "Bestätige ein VETO gegen {1} eingelegt werden soll:"
     }
-    "MapVetoSidePickMenuText"
+    "MapSelectionSidePickMenuText"
     {
         "de"            "Wähle die Seite für {1}:"
     }
-    "MapVetoSidePickConfirmMenuText"
+    "MapSelectionSidePickConfirmMenuText"
     {
         "de"            "Bestätige dass ihr auf der Seite {1} starten wollt:"
     }
@@ -420,7 +420,7 @@
     {
         "de"            "Nein"
     }
-    "VetoCountdown"
+    "MapSelectionCountdown"
     {
         "de"            "Die Vetophase beginnt in {1} Sekunden."
     }

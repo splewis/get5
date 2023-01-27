@@ -1,6 +1,6 @@
 #include <string>
 
-#define REMOTE_CONFIG_PATTERN               "remote_config%d.json"
+#define REMOTE_CONFIG_PATTERN               "remote_config%s.json"
 #define CONFIG_MATCHID_DEFAULT              ""  // empty string if no match ID defined in config.
 #define CONFIG_MATCHTITLE_DEFAULT           "Map {MAPNUMBER} of {MAXMAPS}"
 #define CONFIG_PLAYERSPERTEAM_DEFAULT       5
@@ -116,7 +116,9 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   UpdateHostname();
 
   // Set mp_backup_round_file to prevent backup file collisions
-  ServerCommand("mp_backup_round_file backup_%d", Get5_GetServerID());
+  char serverId[65];
+  g_ServerIdCvar.GetString(serverId, sizeof(serverId));
+  ServerCommand("mp_backup_round_file backup_%s", serverId);
 
   if (!restoreBackup) {
     ExecCfg(g_WarmupCfgCvar);

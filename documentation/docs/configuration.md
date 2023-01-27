@@ -65,11 +65,17 @@ cfg/get5/live.cfg # (3)
 ## Server Setup
 
 ####`get5_server_id`
-:   Integer that identifies your server. This is used in temporary and backup files to prevent collisions and added as a
-header to [demo uploads](../gotv#upload) and [event requests](../events_and_forwards#http). You should set this if you
-run multiple servers off the same storage, such as if using [Docker](https://www.docker.com/). This also defines
-the [`{SERVERID}`](#tag-serverid) substitution and the return value of the `Get5_GetServerID`
-native.<br>**`Default: 0`**
+:   A string that identifies your server. This is used in temporary and backup files to prevent collisions and added as
+a header to [demo](../gotv#upload) and [backup](../backup#upload) uploads
+and [event requests](../events_and_forwards#http). You should set this if you run multiple servers off the same storage,
+such as if using [Docker](https://www.docker.com/), or if simply want to be able to tell servers apart. This also
+defines the [`{SERVERID}`](#tag-serverid) substitution and the return value of the `Get5_GetServerID` native.
+**Maximum length is 64 characters**.<br>**`Default: "0"`**
+
+!!! bug "Alphanumeric only and no spaces"
+
+    If you set a custom server ID, **do not** use spaces, slashes or any other odd symbols. The value is used in various
+    commands and filenames, so it **will** cause problems if it contains unexpected symbols.
 
 !!! tip "Server ID could be port number"
 

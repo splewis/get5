@@ -341,7 +341,7 @@ static void ValidMatchConfigTest(const char[] matchConfig) {
 
   g_RoundBackupPathCvar.SetString("addons/sourcemod/configs/get5/tests/backups/{MATCHID}/");
   g_BackupSystemEnabledCvar.BoolValue = true;
-  g_ServerIdCvar.IntValue = 1234;
+  g_ServerIdCvar.SetString("1234");
   WriteBackup();
 
   char backupFilePath[PLATFORM_MAX_PATH];

@@ -134,8 +134,8 @@ native void Get5_GetMatchID(char[] id, int length);
 // Sets the current matchid.
 native void Get5_SetMatchID(const char[] id);
 
-// Returns the server ID as defined by get5_server_id.
-native int Get5_GetServerID();
+// Gets the server ID as defined by get5_server_id.
+native void Get5_GetServerID(char[] id, int length);
 
 // Returns the current map number, 0 being the first in the series.
 native int Get5_GetMapNumber();

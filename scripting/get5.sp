@@ -463,7 +463,7 @@ public void OnPluginStart() {
   g_LiveCfgCvar                         = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to execute when the game goes live.");
   g_PrettyPrintJsonCvar                 = CreateConVar("get5_pretty_print_json", "1", "Whether all JSON output is in pretty-print format.");
   g_PrintUpdateNoticeCvar               = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
-  g_ServerIdCvar                        = CreateConVar("get5_server_id", "0", "Integer that identifies your server. This is used in temporary files to prevent collisions.");
+  g_ServerIdCvar                        = CreateConVar("get5_server_id", "0", "A string that identifies your server. This is used in temporary files to prevent collisions and added as an HTTP header for network requests made by Get5.");
   g_StatsPathFormatCvar                 = CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg", "Where match stats are saved (updated each map end). Set to \"\" to disable.");
   g_WarmupCfgCvar                       = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to execute during warmup periods.");
   g_ResetCvarsOnEndCvar                 = CreateConVar("get5_reset_cvars_on_end", "1", "Whether parameters from the \"cvars\" section of a match configuration and the Get5-determined hostname are restored to their original values when a series ends.");
@@ -1982,6 +1982,8 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len, bool safeTeamNames = 
     ReplaceString(team1Str, sizeof(team1Str), " ", "_");
     ReplaceString(team2Str, sizeof(team2Str), " ", "_");
   }
+  char serverId[65];
+  g_ServerIdCvar.GetString(serverId, sizeof(serverId));
 
   // MATCHTITLE must go first as it can contain other placeholders
   ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle);
@@ -1990,7 +1992,7 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len, bool safeTeamNames = 
   ReplaceStringWithInt(buffer, len, "{MAXMAPS}", g_NumberOfMapsInSeries);
   ReplaceString(buffer, len, "{MATCHID}", g_MatchID);
   ReplaceString(buffer, len, "{MAPNAME}", mapName);
-  ReplaceStringWithInt(buffer, len, "{SERVERID}", g_ServerIdCvar.IntValue);
+  ReplaceString(buffer, len, "{SERVERID}", serverId);
   ReplaceString(buffer, len, "{TIME}", formattedTime);
   ReplaceString(buffer, len, "{TEAM1}", team1Str);
   ReplaceString(buffer, len, "{TEAM2}", team2Str);
@@ -2010,10 +2012,12 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len, bool safeTeamNames = 
   return true;
 }
 
-// Formats a temp file path based ont he server id. The pattern parameter is expected to have a %d
+// Formats a temp file path based ont he server id. The pattern parameter is expected to have a %s
 // token in it.
 void GetTempFilePath(char[] path, int len, const char[] pattern) {
-  FormatEx(path, len, pattern, g_ServerIdCvar.IntValue);
+  char serverId[65];
+  g_ServerIdCvar.GetString(serverId, sizeof(serverId));
+  FormatEx(path, len, pattern, serverId);
 }
 
 int GetRoundTime() {

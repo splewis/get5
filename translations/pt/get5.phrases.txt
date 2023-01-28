@@ -2,7 +2,7 @@
 {
     "ReadyForMapSelectionInfoMessage"
     {
-        "pt"            "Digite {1} quando seu time estiver pronto para o veto."
+        "pt"            "Digite {1} quando seu time estiver pronto para a seleção de mapas."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -46,7 +46,7 @@
     }
     "WaitingForGOTVMapSelection"
     {
-        "pt"            "O mapa mudará assim que a transmissão da GOTV exibir os vetos do mapa."
+        "pt"            "O mapa mudará assim que a GOTV transmitir a seleção do mapa."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -186,7 +186,7 @@
     }
     "TeamIsReadyForMapSelection"
     {
-        "pt"            "{1} está pronto para o veto."
+        "pt"            "{1} está pronto para a seleção de mapa."
     }
     "TeamIsReadyToRestoreBackup"
     {
@@ -322,15 +322,15 @@
     }
     "TeamBannedMap"
     {
-        "pt"            "{1} vetou {2}."
+        "pt"            "{1} baniu {2}."
     }
     "CaptainLeftDuringMapSelection"
     {
-        "pt"            "Um capitão deixou a partida durante o veto, pausando o veto."
+        "pt"            "A seleção de mapas foi pausada porque um capitão de time saiu."
     }
     "ReadyToResumeMapSelection"
     {
-        "pt"            "Digite {1} quando você estiver pronto para resumir o veto."
+        "pt"            "Digite {1} quando você estiver pronto para retomar a seleção de mapas."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -386,11 +386,11 @@
     }
     "MapSelectionBanMenuText"
     {
-        "pt"        "Selecione um mapa para VETAR:"
+        "pt"        "Selecione um mapa para BANIR:"
     }
     "MapSelectionBanConfirmMenuText"
     {
-        "pt"        "Confirme que você quer VETAR {1}:"
+        "pt"        "Confirme que você quer BANIR {1}:"
     }
     "MapSelectionSidePickMenuText"
     {
@@ -410,7 +410,7 @@
     }
     "MapSelectionCountdown"
     {
-        "pt"        "Veto começando em {1} segundos."
+        "pt"        "Seleção de mapas começando em {1}..."
     }
     "SurrenderCommandNotEnabled"
     {

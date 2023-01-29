@@ -214,6 +214,7 @@ Get5State g_GameState = Get5State_None;
 ArrayList g_MapsToPlay;
 ArrayList g_MapSides;
 ArrayList g_MapsLeftInVetoPool;
+ArrayList g_MapBanOrder;
 Get5Team g_LastVetoTeam;
 Menu g_ActiveVetoMenu;
 Handle g_InfoTimer = INVALID_HANDLE;
@@ -587,6 +588,7 @@ public void OnPluginStart() {
   g_CvarNames = new ArrayList(MAX_CVAR_LENGTH);
   g_CvarValues = new ArrayList(MAX_CVAR_LENGTH);
   g_TeamScoresPerMap = new ArrayList(MATCHTEAM_COUNT);
+  g_MapBanOrder = new ArrayList();
 
   for (int i = 0; i < sizeof(g_TeamPlayers); i++) {
     g_TeamPlayers[i] = new ArrayList(AUTH_LENGTH);
@@ -683,7 +685,7 @@ static Action Timer_InfoMessages(Handle timer) {
             } else {
               Get5_Message(i, "%t",
                            g_GameState == Get5State_PreVeto
-                             ? "ReadyToVetoInfoMessage"
+                             ? "ReadyForMapSelectionInfoMessage"
                              : (knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage"),
                            readyCommandFormatted);
             }
@@ -701,13 +703,13 @@ static Action Timer_InfoMessages(Handle timer) {
       }
       MissingPlayerInfoMessage();
     } else if (g_GameState == Get5State_Warmup && g_DisplayGotvVetoCvar.BoolValue && GetTvDelay() > 0) {
-      Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
+      Get5_MessageToAll("%t", "WaitingForGOTVMapSelection");
     }
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     PromptForKnifeDecision();
   } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
     // Handle postgame
-    Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
+    Get5_MessageToAll("%t", "WaitingForGOTVBroadcastEnding");
   }
 }
 
@@ -1145,8 +1147,8 @@ Action Command_Stop(int client, int args) {
 
   // Because a live restore to the same match does not change get5 state to warmup, we have to make sure
   // that successive calls to !stop (spammed by players) does not reload multiple backups.
-  // Don't allow it during freeze time or after the round has ended either.
-  if (g_GameState != Get5State_Live || InHalftimePhase() || InFreezeTime() || g_DoingBackupRestoreNow ||
+  // Don't allow it after the round has ended either.
+  if (g_GameState != Get5State_Live || InHalftimePhase() || g_DoingBackupRestoreNow ||
       GetRoundsPlayed() != g_RoundNumber) {
     return Plugin_Handled;
   }
@@ -1171,12 +1173,21 @@ Action Command_Stop(int client, int args) {
     Get5_MessageToAll("%t", "StopCommandRequiresNoDamage");
     return Plugin_Handled;
   }
-  int stopCommandGrace = g_StopCommandTimeLimitCvar.IntValue;
-  if (stopCommandGrace > 0 && GetRoundTime() / 1000 > stopCommandGrace) {
-    char formattedGracePeriod[32];
-    ConvertSecondsToMinutesAndSeconds(stopCommandGrace, formattedGracePeriod, sizeof(formattedGracePeriod));
-    FormatTimeString(formattedGracePeriod, sizeof(formattedGracePeriod), formattedGracePeriod);
-    Get5_MessageToAll("%t", "StopCommandTimeLimitExceeded", formattedGracePeriod);
+
+  if (!InFreezeTime()) {
+    int stopCommandGrace = g_StopCommandTimeLimitCvar.IntValue;
+    if (stopCommandGrace > 0 && GetRoundTime() / 1000 > stopCommandGrace) {
+      char formattedGracePeriod[32];
+      ConvertSecondsToMinutesAndSeconds(stopCommandGrace, formattedGracePeriod, sizeof(formattedGracePeriod));
+      FormatTimeString(formattedGracePeriod, sizeof(formattedGracePeriod), formattedGracePeriod);
+      Get5_MessageToAll("%t", "StopCommandTimeLimitExceeded", formattedGracePeriod);
+      return Plugin_Handled;
+    }
+  } else if (g_PauseType != Get5PauseType_Backup) {
+    // If in freezetime and the game is not paused for restore, don't allow !stop until the round has started.
+    // A tech pause should instead be used in this case. We allow additional calls to !stop if the game is paused post
+    // restore, so a disconnecting player can be part of another restore process and have their inventory/cash restored
+    // after reconnecting.
     return Plugin_Handled;
   }
 
@@ -1474,6 +1485,7 @@ void ResetMatchConfigVariables(bool backup = false) {
   g_MapPoolList.Clear();
   g_PlayerNames.Clear();
   g_MapsToPlay.Clear();
+  g_MapBanOrder.Clear();
   g_MapSides.Clear();
   g_MapsLeftInVetoPool.Clear();
   g_TeamScoresPerMap.Clear();
@@ -1585,6 +1597,12 @@ static Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
   g_LatestPauseDuration = 0;
   g_PauseType = Get5PauseType_None;
   g_PausingTeam = Get5Team_None;
+
+  LOOP_TEAMS(t) {
+    // Because teams can !stop again during freezetime after loading a backup, we want to make sure no lingering
+    // requests persist after the freezetime ends.
+    g_TeamGivenStopCommand[t] = false;
+  }
 
   // We always want this to be correct, regardless of game state.
   g_RoundStartedTime = GetEngineTime();

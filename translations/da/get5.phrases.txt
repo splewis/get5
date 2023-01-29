@@ -1,8 +1,8 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
-        "da"            "Skriv {1} når dit hold er klar til at veto."
+        "da"            "Skriv {1}, når dit hold er klar til map-valg."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -40,13 +40,13 @@
     {
         "da"            "{1} vandt knife-runden. Venter på, at de skriver {2} eller {3}."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
-        "da"            "Dette map vil skifte når nuværende GOTV broadcast er slut."
+        "da"            "Mappet skifter, når GOTV har vist kampen."
     }
-    "WaitingForGOTVVetoInfoMessage"
+    "WaitingForGOTVMapSelection"
     {
-        "da"            "Dette map vil skifte når nuværende GOTV broadcast har fået map vetos vist."
+        "da"            "Mappet skifter, når GOTV har vist map-valg."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -180,23 +180,23 @@
     {
         "da"            "Der skal være minimum {1} spiller(e) på serveren for at gøre klar."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
-        "da"            "{1} er klar til at veto."
+        "da"            "{1} er klar til map-valg."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
-        "da"            "{1} er klar til at genoprette match fra backup."
+        "da"            "{1} er klar til at genoprette kampen fra backup."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "da"            "{1} er klar til at knife om side."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "da"            "{1} er klar til at begynde kampen."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "da"            "{1} er ikke længere klar."
     }
@@ -324,25 +324,25 @@
     {
         "da"            "Map {1}: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "da"            "{1} valgte {2} som deres {3}. map."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "da"            "{1} har valgt at start som {2} på {3}."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
-        "da"            "{1} vetoed {2}."
+        "da"            "{1} bannede {2}."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
-        "da"            "En kaptajn forlod kampen under veto, pauser vetoen."
+        "da"            "En holdkaptajn forlod kampen under map-valg. Map-valg er på pause."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
-        "da"            "Skriv {1}, når du er klar til at genoptage veto."
+        "da"            "Skriv {1}, når du er klar til at genoptage map-valg."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -388,27 +388,27 @@
     {
         "da"            "[IKKE KLAR]"
     }
-    "MapVetoPickMenuText"
+    "MapSelectionPickMenuText"
     {
-        "da"        "Vælg et map at spille:"
+        "da"        "Vælg et map at SPILLE:"
     }
-    "MapVetoPickConfirmMenuText"
+    "MapSelectionPickConfirmMenuText"
     {
-        "da"        "Bekræft, at du vil spille {1}:"
+        "da"        "Bekræft, at du vil SPILLE {1}:"
     }
-    "MapVetoBanMenuText"
+    "MapSelectionBanMenuText"
     {
-        "da"        "Vælg et map at VETO:"
+        "da"        "Vælg et map at BANNE:"
     }
-    "MapVetoBanConfirmMenuText"
+    "MapSelectionBanConfirmMenuText"
     {
-        "da"        "Bekræft, at du vil VETO {1}:"
+        "da"        "Bekræft, at du vil BANNE {1}:"
     }
-    "MapVetoSidePickMenuText"
+    "MapSelectionSidePickMenuText"
     {
         "da"        "Vælg en side på {1}"
     }
-    "MapVetoSidePickConfirmMenuText"
+    "MapSelectionSidePickConfirmMenuText"
     {
         "da"        "Bekræft, at du vil starte {1}:"
     }
@@ -420,9 +420,9 @@
     {
         "da"        "Nej"
     }
-    "VetoCountdown"
+    "MapSelectionCountdown"
     {
-        "da"        "Veto begynder om {1} sekunder."
+        "da"        "Map-valg begynder om {1} sekunder."
     }
     "SurrenderCommandNotEnabled"
     {

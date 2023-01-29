@@ -1,8 +1,8 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
-        "ru"            "Напишите {1} когда ваша команда будет готова к голосованию."
+        "ru"            "Напишите {1} когда ваша команда будет готова к выбору карты."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -40,13 +40,13 @@
     {
         "ru"            "{1} выиграли раунд. Ожидаем, пока они напишут {2} или {3}."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
         "ru"            "Карта будет изменена, когда закончится трансляция на GOTV."
     }
-    "WaitingForGOTVVetoInfoMessage"
+    "WaitingForGOTVMapSelection"
     {
-        "ru"            "Карта изменится, как только на GOTV будут показаны вето на карты."
+        "ru"            "Карта изменится, как только на GOTV будет показан выбор карты."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -180,23 +180,23 @@
     {
         "ru"            "У вас должно быть по крайней мере {1} игрок(ов) на сервере, чтобы подготовиться."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
-        "ru"            "{1} готовы для голосования."
+        "ru"            "{1} готовы для выбора карты."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "ru"            "{1} готовы загрузить сохраненную игру."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "ru"            "{1} готовы к ножевому раунду."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "ru"            "{1} готовы начать матч."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "ru"            "{1} пока не готовы."
     }
@@ -324,25 +324,25 @@
     {
         "ru"            "Карта {1}: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "ru"            "{1} выбрал {2} как карту {3}."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "ru"            "{1} выбрали начать за {2} на {3}."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
-        "ru"            "{1} вычеркнули {2}."
+        "ru"            "{1} запретили {2}."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
-        "ru"            "Капитан пропал по время голосования, голосование приостановлено."
+        "ru"            "Капитан команды вышел во время выбора карты. Выбор карты приостановлен."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
-        "ru"            "Напишите {1}, когда будете готовы продолжить голосование."
+        "ru"            "Напишите {1}, когда будете готовы продолжить выбор карты."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -388,27 +388,27 @@
     {
         "ru"            "[NOT READY]"
     }
-    "MapVetoPickMenuText"
+    "MapSelectionPickMenuText"
     {
         "ru"        "Выберите карту для ИГРЫ:"
     }
-    "MapVetoPickConfirmMenuText"
+    "MapSelectionPickConfirmMenuText"
     {
         "ru"        "Подтвердите, что вы хотите ИГРАТЬ {1}:"
     }
-    "MapVetoBanMenuText"
+    "MapSelectionBanMenuText"
     {
-        "ru"        "Выберите карту, на которую нужно наложить ВЕТО:"
+        "ru"        "Выберите карту для запрета:"
     }
-    "MapVetoBanConfirmMenuText"
+    "MapSelectionBanConfirmMenuText"
     {
-        "ru"        "Подтвердите, что вы хотите наложить ВЕТО на {1}:"
+        "ru"        "Подтвердите, что вы хотите запретить {1}:"
     }
-    "MapVetoSidePickMenuText"
+    "MapSelectionSidePickMenuText"
     {
         "ru"        "Выберите сторону для {1}:"
     }
-    "MapVetoSidePickConfirmMenuText"
+    "MapSelectionSidePickConfirmMenuText"
     {
         "ru"        "Подтвердите, что вы хотите начать за {1}:"
     }
@@ -420,9 +420,9 @@
     {
         "ru"        "Нет"
     }
-    "VetoCountdown"
+    "MapSelectionCountdown"
     {
-        "ru"        "Наложение вето начинается через {1} сек."
+        "ru"        "Выбор карты начинается через {1}..."
     }
     "SurrenderCommandNotEnabled"
     {

@@ -44,7 +44,7 @@ nav:
   - Basics:
       - Getting Started: getting_started.md
       - Match Schema: match_schema.md
-      - Map Veto: veto.md
+      - Map Selection: veto.md
       - Commands: commands.md
       - Coaching: coaching.md
       - Pausing: pausing.md

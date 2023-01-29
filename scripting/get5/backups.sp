@@ -213,11 +213,10 @@ void WriteBackup() {
 
   char filename[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
-    FormatEx(filename, sizeof(filename), "get5_backup%s_match%s_map%d_round%d.cfg", serverId, g_MatchID,
-             g_MapNumber, g_RoundNumber);
+    FormatEx(filename, sizeof(filename), "get5_backup%s_match%s_map%d_round%d.cfg", serverId, g_MatchID, g_MapNumber,
+             g_RoundNumber);
   } else {
-    FormatEx(filename, sizeof(filename), "get5_backup%s_match%s_map%d_prelive.cfg", serverId, g_MatchID,
-             g_MapNumber);
+    FormatEx(filename, sizeof(filename), "get5_backup%s_match%s_map%d_prelive.cfg", serverId, g_MatchID, g_MapNumber);
   }
 
   char path[PLATFORM_MAX_PATH];

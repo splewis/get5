@@ -47,6 +47,8 @@ interface Get5Match {
     "min_spectators_to_ready": number | undefined // (6)
     "skip_veto": boolean | undefined // (7)
     "veto_first": "team1" | "team2" | "random" | undefined // (11)
+    "veto_mode": ['team1_ban' | 'team2_ban'
+        | 'team1_pick' | 'team2_pick'] | undefined // (36)
     "side_type": "standard" | "always_knife" | "never_knife" | undefined // (12)
     "map_sides": ["team1_ct" | "team1_t" | "knife"] | undefined // (31)
     "spectators": { // (10)
@@ -77,8 +79,8 @@ interface Get5Match {
    themselves.<br><br>**`Default: 0`**
 6. _Optional_<br>The minimum number of spectators that must be [`!ready`](../commands#ready) for the game to
    begin.<br><br>**`Default: 0`**
-7. _Optional_<br>Whether to skip the [veto](../veto) phase. When skipping veto, `map_sides` determines sides, and
-   if `map_sides` is not set, sides are determined by `side_type`.<br><br>**`Default: false`**
+7. _Optional_<br>Whether to skip the [map selection](../veto) phase. If `true`, `num_maps` are simply played in the
+   order they appear in `maplist`, and no map selection is performed by players in-game.<br><br>**`Default: false`**
 8. A player's :material-steam: Steam ID. This can be in any format, but we recommend a string representation of SteamID
    64, i.e. `"76561197987713664"`.
 9. Players are represented each with a mapping of `SteamID -> PlayerName` as a key-value dictionary. The name
@@ -86,16 +88,15 @@ interface Get5Match {
    string array of `SteamID` disable name-locking.
 10. _Optional_<br>The spectators to allow into the game. If not defined, spectators cannot join the
     game.<br><br>**`Default: undefined`**
-11. _Optional_<br>The team that [vetoes](../veto) first.<br><br>**`Default: "team1"`**
-12. _Optional_<br>The method used to determine sides when [vetoing](../veto) **or** if veto is disabled and `map_sides`
-    are not set.<br><br>`standard` means that the team that doesn't pick a map gets the side choice (only if `skip_veto`
-    is `false`).<br><br>`always_knife` means that sides are always determined by a knife-round.<br><br>`never_knife`
-    means that `team1` always starts on CT.<br><br>This parameter is ignored if `map_sides` is set for all
-    maps. `standard` and `always_knife` behave similarly when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
+11. _Optional_<br>The team that makes the first [map selection](../veto) choice.<br><br>**`Default: "team1"`**
+12. _Optional_<br>The method used to determine sides during [map selection](../veto).<br><br>`standard` means that the
+    team that doesn't pick a map gets the side choice (only if `skip_veto` is `false`).<br><br>`always_knife` means that
+    sides are always determined by a knife-round.<br><br>`never_knife` means that `team1` always starts on CT.<br><br>
+    This parameter is ignored if `map_sides` is set for all maps. `standard` and `always_knife` behave similarly (knife)
+    when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
 13. _Required_<br>The map pool to pick from, as an array of strings (`["de_dust2", "de_nuke"]` etc.), or if `skip_veto`
-    is `true`, the order of maps played (limited by `num_maps`). **This should always be odd-sized if using the in-game
-    [veto system](../veto).** Similarly to teams, you can set this to an object with a `fromfile` property to load a map
-    list from a separate file.
+    is `true`, the order of maps played (limited by `num_maps`). Similarly to teams, you can set this to an object
+    with a `fromfile` property to load a map list from a separate file.
 14. _Optional_<br>Wrapper for the server's `mp_teamprediction_pct`. This determines the chances of `team1`
     winning.<br><br>**`Default: 0`**
 15. _Optional_<br>Wrapper for the server's `mp_teamprediction_txt`.<br><br>**`Default: ""`**
@@ -142,13 +143,15 @@ interface Get5Match {
 30. _Optional_<br>The spectator/caster Steam IDs and names. Setting a Steam ID as spectator takes precedence over being
     set as a player or coach.
 31. _Optional_<br>Determines the starting sides for each map. If this array is shorter than `num_maps`, `side_type` will
-    determine the side-behavior of the remaining maps. Ignored if `skip_veto` is `false`.
+    determine the side-behavior of the remaining maps.
     <br><br>**`Default: undefined`**
 32. _Optional_<br>If `false`, the entire map list will be played, regardless of score. If `true`, a series will be won
     when the series score for a team exceeds the number of maps divided by two.<br><br>**`Default: true`**
 33. _Optional_<br>Determines if coaches must also [`!ready`](../commands#ready).<br><br>**`Default: false`**
 34. _Optional_<br>Similarly to teams and map list, spectators may also be loaded from another file.
 35. _Required_<br>Similarly to teams and spectators, a map list may also be loaded from another file.
+36. _Optional_<br>Allows for a [custom configuration](../veto#custom) of map picks/bans. This must be an array of
+    strings consisting of any valid combination of `team1_ban`, `team2_ban`, `team1_pick` and `team2_pick`.
 
 !!! info "Team assignment priority"
 

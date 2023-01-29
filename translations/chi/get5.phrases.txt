@@ -1,6 +1,6 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
         "chi"            "当您的队伍准备好进行Veto(Ban图)时，请输入{1}。"
     }
@@ -32,7 +32,7 @@
     {
         "chi"            "{1}赢得刀局。等待他们输入{2}或是{3}来选择留下还是交换队伍。"
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
         "chi"            "当GOTV播放结束时，地图将被切换。"
     }
@@ -88,23 +88,23 @@
     {
         "chi"            "服务器上至少有{1}名玩家，您才能准备就绪。"
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
         "chi"            "{1}已准备好进行Veto(Ban图)。"
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "chi"            "{1}已准备好恢复比赛至备份档案。"
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "chi"            "{1}已准备好拼刀选边。"
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "chi"            "{1}已准备好开始比赛。"
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "chi"            "{1}已不在准备就绪状态。"
     }
@@ -208,23 +208,23 @@
     {
         "chi"            "地图 {1}： {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "chi"            "{1}挑选了{2}作为地图 {3}"
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "chi"            "{1}已选择在{2}开始 {3}"
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
         "chi"            "{1}vetoed(Ban掉)了{2}"
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
         "chi"            "一个队长在Veto(Ban图)期间离开，暂停Veto(Ban图)"
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
         "chi"            "当您准备好恢复Veto(Ban图)时，请输入{1}。"
     }
@@ -244,27 +244,27 @@
     {
         "chi"            "[未准备]"
     }
-    "MapVetoPickMenuText"
+    "MapSelectionPickMenuText"
     {
         "chi"        "请选择一张想玩的地图："
     }
-    "MapVetoPickConfirmMenuText"
+    "MapSelectionPickConfirmMenuText"
     {
         "chi"        "你确定想玩{1}："
     }
-    "MapVetoBanMenuText"
+    "MapSelectionBanMenuText"
     {
         "chi"        "请选择一张想VETO(Ban图)的地图："
     }
-    "MapVetoBanConfirmMenuText"
+    "MapSelectionBanConfirmMenuText"
     {
         "chi"        "你确定想VETO(Ban图){1}："
     }
-    "MapVetoSidePickMenuText"
+    "MapSelectionSidePickMenuText"
     {
         "chi"        "请为{1}选择队伍"
     }
-    "MapVetoSidePickConfirmMenuText"
+    "MapSelectionSidePickConfirmMenuText"
     {
         "chi"        "你确定想开始{1}："
     }
@@ -276,7 +276,7 @@
     {
         "chi"        "否"
     }
-    "VetoCountdown"
+    "MapSelectionCountdown"
     {
         "chi"        "Veto(Ban图)还剩{1}秒。"
     }

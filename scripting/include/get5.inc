@@ -19,6 +19,14 @@ enum Get5BombSite {
   Get5BombSite_B = 2
 };
 
+enum Get5MapSelectionOption {
+  Get5MapSelectionOption_Invalid,
+  Get5MapSelectionOption_Team1Pick,
+  Get5MapSelectionOption_Team2Pick,
+  Get5MapSelectionOption_Team1Ban,
+  Get5MapSelectionOption_Team2Ban
+}
+
 #define MATCHTEAM_COUNT 4
 
 enum Get5Team {
@@ -79,6 +87,7 @@ enum SideChoice {
   SideChoice_Team1CT,     // Team 1 will start on CT
   SideChoice_Team1T,      // Team 1 will start on T
   SideChoice_KnifeRound,  // There will be a knife round to choose sides
+  SideChoice_Invalid
 };
 
 // Returns the current pug gamestate.

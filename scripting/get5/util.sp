@@ -331,6 +331,8 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
       strcopy(buffer, len, "Train");
     } else if (StrEqual(buffer, "de_cbble")) {
       strcopy(buffer, len, "Cobblestone");
+    } else if (StrEqual(buffer, "de_anubis")) {
+      strcopy(buffer, len, "Anubis");
     } else if (StrEqual(buffer, "de_overpass")) {
       strcopy(buffer, len, "Overpass");
     } else if (StrEqual(buffer, "de_nuke")) {
@@ -347,6 +349,16 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
       strcopy(buffer, len, "Grind");
     } else if (StrEqual(buffer, "de_mocha")) {
       strcopy(buffer, len, "Mocha");
+    } else if (StrEqual(buffer, "cs_militia")) {
+      strcopy(buffer, len, "Militia");
+    } else if (StrEqual(buffer, "cs_agency")) {
+      strcopy(buffer, len, "Agency");
+    } else if (StrEqual(buffer, "cs_office")) {
+      strcopy(buffer, len, "Office");
+    } else if (StrEqual(buffer, "cs_italy")) {
+      strcopy(buffer, len, "Italy");
+    } else if (StrEqual(buffer, "cs_assault")) {
+      strcopy(buffer, len, "Assault");
     }
   }
   if (color) {
@@ -627,7 +639,7 @@ stock bool HelpfulAttack(int attacker, int victim) {
   return attacker != victim && GetClientTeam(attacker) != GetClientTeam(victim);
 }
 
-stock SideChoice SideTypeFromString(const char[] input) {
+stock SideChoice SideTypeFromString(const char[] input, char[] error) {
   if (StrEqual(input, "team1_ct", false) || StrEqual(input, "team2_t", false)) {
     return SideChoice_Team1CT;
   } else if (StrEqual(input, "team1_t", false) || StrEqual(input, "team2_ct", false)) {
@@ -635,8 +647,9 @@ stock SideChoice SideTypeFromString(const char[] input) {
   } else if (StrEqual(input, "knife", false)) {
     return SideChoice_KnifeRound;
   } else {
-    LogError("Invalid side choice \"%s\", falling back to knife round", input);
-    return SideChoice_KnifeRound;
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "Invalid side choice '%s'. Must be one of 'team1_ct', 'team1_t', 'team2_ct', 'team2_t', 'knife'.", input);
+    return SideChoice_Invalid;
   }
 }
 

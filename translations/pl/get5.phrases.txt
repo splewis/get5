@@ -1,6 +1,6 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
         "pl"            "Napisz {1} kiedy Twoja drużyna będzie gotowa do głosowania."
     }
@@ -24,7 +24,7 @@
     {
         "pl"            "{1} wygralo runde nożową. Oczekiwanie na {2} lub {3}."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
         "pl"            "Mapa zostanie zmieniona gdy transmisja GOTV zostanie zakończona."
     }
@@ -84,23 +84,23 @@
     {
         "pl"            "Musi być conajmniej {1} graczy na serwerze aby móc być gotowym."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
         "pl"            "{1} jest gotowe do głosowania."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "pl"            "{1} jest gotowe do przywrócenia meczu."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "pl"            "{1} jest gotowe do nożówki za strony."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "pl"            "{1} jest gotowe do rozpoczęcia meczu."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "pl"            "{1} anulowali swoją gotowość."
     }
@@ -200,23 +200,23 @@
     {
         "pl"            "Mapa {1}: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "pl"            "{1} wybrało {2} jako mapę {3}."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "pl"            "{1} wybrało stronę {2} na {3}."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
         "pl"            "{1} odrzuciło {2}."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
         "pl"            "Kapitan opuścił serwer, głosowanie zostało wstrzymane."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
         "pl"            "Napisz {1} kiedy Twoja drużyna będzie gotowa do wznowienia głosowania."
     }

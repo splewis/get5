@@ -121,6 +121,7 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   ServerCommand("mp_backup_round_file backup_%s", serverId);
 
   if (!restoreBackup) {
+    StopRecording(); // Ensure no recording is running when starting a match, as that prevents Get5 from starting one.
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();
     if (IsPaused()) {
@@ -433,17 +434,38 @@ static bool LoadMatchFromKeyValue(KeyValues kv, char[] error) {
   }
   kv.GoBack();
 
-  if (g_SkipVeto) {
-    if (kv.JumpToKey("map_sides")) {
-      if (kv.GotoFirstSubKey(false)) {
-        do {
-          char buffer[64];
-          kv.GetSectionName(buffer, sizeof(buffer));
-          g_MapSides.Push(SideTypeFromString(buffer));
-        } while (kv.GotoNextKey(false));
-        kv.GoBack();
-      }
+  if (g_MapPoolList.Length == g_NumberOfMapsInSeries) {
+    // If the number of maps is equal to the pool size, veto is impossible, so we force disable it.
+    g_SkipVeto = true;
+  } else if (g_MapPoolList.Length < g_NumberOfMapsInSeries) {
+    FormatEx(error, PLATFORM_MAX_PATH, "The map pool (%d) is not large enough to play a series of %d maps.",
+             g_MapPoolList.Length, g_NumberOfMapsInSeries);
+    return false;
+  }
+
+  if (kv.JumpToKey("map_sides")) {
+    if (kv.GotoFirstSubKey(false)) {
+      do {
+        char buffer[64];
+        kv.GetSectionName(buffer, sizeof(buffer));
+        SideChoice sideChoice = SideTypeFromString(buffer, error);
+        if (sideChoice == SideChoice_Invalid) {
+          return false;
+        }
+        g_MapSides.Push(sideChoice);
+      } while (kv.GotoNextKey(false));
       kv.GoBack();
+    }
+    kv.GoBack();
+  }
+
+  if (!g_SkipVeto) {
+    if (kv.JumpToKey("veto_mode")) {
+      if (!LoadVetoDataKeyValues(kv, error)) {
+        return false;
+      }
+    } else {
+      GenerateDefaultVetoSetup(g_MapPoolList, g_MapBanOrder, g_NumberOfMapsInSeries, g_LastVetoTeam);
     }
   }
 
@@ -523,18 +545,41 @@ static bool LoadMatchFromJson(const JSON_Object json, char[] error) {
     return false;
   }
 
-  if (g_SkipVeto) {
-    JSON_Array array = view_as<JSON_Array>(json.GetObject("map_sides"));
-    if (array != null) {
-      if (!array.IsArray) {
-        FormatEx(error, PLATFORM_MAX_PATH, "Expected \"map_sides\" section to be an array, found object.");
+  if (g_MapPoolList.Length == g_NumberOfMapsInSeries) {
+    // If the number of maps is equal to the pool size, veto is impossible, so we force disable it.
+    g_SkipVeto = true;
+  } else if (g_MapPoolList.Length < g_NumberOfMapsInSeries) {
+    FormatEx(error, PLATFORM_MAX_PATH, "The map pool (%d) is not large enough to play a series of %d maps.",
+             g_MapPoolList.Length, g_NumberOfMapsInSeries);
+    return false;
+  }
+
+  JSON_Array array = view_as<JSON_Array>(json.GetObject("map_sides"));
+  if (array != null) {
+    if (!array.IsArray) {
+      FormatEx(error, PLATFORM_MAX_PATH, "Expected \"map_sides\" section to be an array, found object.");
+      return false;
+    }
+    for (int i = 0; i < array.Length; i++) {
+      char buffer[64];
+      array.GetString(i, buffer, sizeof(buffer));
+      SideChoice sideChoice = SideTypeFromString(buffer, error);
+      if (sideChoice == SideChoice_Invalid) {
         return false;
       }
-      for (int i = 0; i < array.Length; i++) {
-        char buffer[64];
-        array.GetString(i, buffer, sizeof(buffer));
-        g_MapSides.Push(SideTypeFromString(buffer));
+      g_MapSides.Push(sideChoice);
+    }
+  }
+
+  if (!g_SkipVeto) {
+    // Must go after loading maplist!
+    JSON_Object mapVetoOrder = json.GetObject("veto_mode");
+    if (mapVetoOrder != null) {
+      if (!LoadVetoDataJSON(mapVetoOrder, error)) {
+        return false;
       }
+    } else {
+      GenerateDefaultVetoSetup(g_MapPoolList, g_MapBanOrder, g_NumberOfMapsInSeries, g_LastVetoTeam);
     }
   }
 
@@ -657,6 +702,158 @@ static bool LoadTeamDataKeyValue(const KeyValues kv, const Get5Team matchTeam, c
   } else {
     return LoadTeamDataFromFile(fromfile, matchTeam, error);
   }
+}
+
+void GenerateDefaultVetoSetup(const ArrayList mapPool, const ArrayList mapBanOrder, const int numberOfMapsInSeries,
+                              const Get5Team lastVetoTeam) {
+  Get5Team startingVetoTeam = lastVetoTeam == Get5Team_1 ? Get5Team_2 : Get5Team_1;
+  switch (numberOfMapsInSeries) {
+    case 1: {
+      int numberOfBans = g_MapPoolList.Length - 1;  // Last map either played by default or ignored.
+      for (int i = 0; i < numberOfBans; i++) {
+        mapBanOrder.Push(
+          i % 2 == 0
+            ? (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Ban : Get5MapSelectionOption_Team2Ban)
+            : (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Ban : Get5MapSelectionOption_Team1Ban));
+      }
+    }
+    case 2: {
+      if (mapPool.Length < 5) {
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Pick
+                                                        : Get5MapSelectionOption_Team2Pick);
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Pick
+                                                        : Get5MapSelectionOption_Team1Pick);
+      } else {
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Ban
+                                                        : Get5MapSelectionOption_Team2Ban);
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Ban
+                                                        : Get5MapSelectionOption_Team1Ban);
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Pick
+                                                        : Get5MapSelectionOption_Team2Pick);
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Pick
+                                                        : Get5MapSelectionOption_Team1Pick);
+      }
+    }
+    default: {
+      // Bo3 with 7 maps as an example.
+      // For this to work, a Bo3 requires a map pool of at least 5.
+      if (mapPool.Length >= numberOfMapsInSeries + 2) {  // 7 >= 3 + 2
+        int numberOfPicks = numberOfMapsInSeries - 1;    // 2 picks in a Bo3
+        // Determine how many bans before we start picking (may be 0):
+        int numberOfStartBans = mapPool.Length - (numberOfMapsInSeries + 2);  // 7 - (3 + 2) = 2
+        if (numberOfStartBans > 0) {                                          // == 2
+          for (int i = 0; i < numberOfStartBans; i++) {
+            mapBanOrder.Push(
+              mapBanOrder.Length % 2 == 0
+                ? (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Ban : Get5MapSelectionOption_Team2Ban)
+                : (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Ban : Get5MapSelectionOption_Team1Ban));
+          }
+        }
+
+        // After the initial bans, add the picks:
+        for (int i = 0; i < numberOfPicks; i++) {
+          mapBanOrder.Push(
+            mapBanOrder.Length % 2 == 0
+              ? (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Pick : Get5MapSelectionOption_Team2Pick)
+              : (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Pick : Get5MapSelectionOption_Team1Pick));
+        }
+
+        // Determine how many bans to append to the end (may be 0):
+        int numberOfEndBans = mapPool.Length - 1 - numberOfPicks - numberOfStartBans;  // 7 - 2 - 2 - 1 = 2
+        if (numberOfEndBans > 0) {                                                     // == 2
+          for (int i = 0; i < numberOfEndBans; i++) {
+            mapBanOrder.Push(
+              mapBanOrder.Length % 2 == 0
+                ? (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Ban : Get5MapSelectionOption_Team2Ban)
+                : (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Ban : Get5MapSelectionOption_Team1Ban));
+          }
+        }
+      } else {
+        // else we just alternate picks and ignore the last map.
+        for (int i = 0; i < numberOfMapsInSeries; i++) {
+          mapBanOrder.Push(
+            i % 2 == 0
+              ? (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Pick : Get5MapSelectionOption_Team2Pick)
+              : (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Pick : Get5MapSelectionOption_Team1Pick));
+        }
+      }
+    }
+  }
+}
+
+static bool LoadVetoDataJSON(const JSON_Object json, char[] error) {
+  if (!json.IsArray) {
+    FormatEx(error, PLATFORM_MAX_PATH, "'veto_order' must be array.");
+    return false;
+  }
+
+  JSON_Array array = view_as<JSON_Array>(json);
+  char buffer[32];
+  Get5MapSelectionOption type;
+  for (int i = 0; i < array.Length; i++) {
+    array.GetString(i, buffer, sizeof(buffer));
+    type = MapSelectionStringToMapSelection(buffer, error);
+    if (type == Get5MapSelectionOption_Invalid) {
+      return false;
+    }
+    g_MapBanOrder.Push(type);
+  }
+  return ValidateMapBanLogic(g_MapPoolList, g_MapBanOrder, g_NumberOfMapsInSeries, error);
+}
+
+static bool LoadVetoDataKeyValues(const KeyValues kv, char[] error) {
+  if (!kv.GotoFirstSubKey(false)) {
+    FormatEx(error, PLATFORM_MAX_PATH, "'veto_order' contains no subkeys.");
+    return false;
+  }
+  char buffer[32];
+  Get5MapSelectionOption option;
+  do {
+    kv.GetSectionName(buffer, sizeof(buffer));
+    option = MapSelectionStringToMapSelection(buffer, error);
+    if (option == Get5MapSelectionOption_Invalid) {
+      return false;
+    }
+    g_MapBanOrder.Push(option);
+  } while (kv.GotoNextKey(false));
+  kv.GoBack();
+  return ValidateMapBanLogic(g_MapPoolList, g_MapBanOrder, g_NumberOfMapsInSeries, error);
+}
+
+bool ValidateMapBanLogic(const ArrayList mapPool, const ArrayList mapBanPickOrder, int numberOfMapsInSeries,
+                         char[] error) {
+  int numberOfPicks = 0;
+  Get5MapSelectionOption option;
+  for (int i = 0; i < mapBanPickOrder.Length; i++) {
+    option = mapBanPickOrder.Get(i);
+    if (option == Get5MapSelectionOption_Team1Pick || option == Get5MapSelectionOption_Team2Pick) {
+      numberOfPicks++;
+    }
+    if (numberOfPicks == numberOfMapsInSeries || i == mapPool.Length - 2) {
+      // We have all picks we need or enough bans and picks for the map pool. Delete the remaining options.
+      mapBanPickOrder.Resize(i + 1);
+      break;
+    }
+  }
+
+  // Example: In a Bo3, at least 2 of the options must be picks to avoid randomly selecting map order of remaining maps.
+  if (numberOfMapsInSeries > 1 && numberOfPicks < numberOfMapsInSeries - 1) {
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "In a series of %d maps, at least %d veto options must be picks. Found %d pick(s).", numberOfMapsInSeries,
+             numberOfMapsInSeries - 1, numberOfPicks);
+    return false;
+  }
+
+  if (mapPool.Length - 1 != mapBanPickOrder.Length && numberOfPicks != numberOfMapsInSeries) {
+    // Example: Map pool of 7 requires 6 picks/bans *unless* we have picks for all maps.
+    FormatEx(
+      error, PLATFORM_MAX_PATH,
+      "The number of maps in the pool (%d) must be one larger than the number of map picks/bans (%d), unless the number of picks (%d) matches the series length (%d).",
+      mapPool.Length, mapBanPickOrder.Length, numberOfPicks, numberOfMapsInSeries);
+    return false;
+  }
+
+  return true;
 }
 
 static bool LoadTeamDataJson(const JSON_Object json, const Get5Team matchTeam, char[] error, const bool allowFromFile) {

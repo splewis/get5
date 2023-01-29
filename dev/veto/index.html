@@ -9,9 +9,9 @@
 <link href="../match_schema/" rel="prev"/>
 <link href="../commands/" rel="next"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.4.2, mkdocs-material-9.0.6" name="generator"/>
-<title>Map Veto - Get5 Documentation</title>
-<link href="../assets/stylesheets/main.558e4712.min.css" rel="stylesheet"/>
+<meta content="mkdocs-1.4.2, mkdocs-material-9.0.8" name="generator"/>
+<title>Map Selection - Get5 Documentation</title>
+<link href="../assets/stylesheets/main.0d440cfe.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.2505c338.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
@@ -25,7 +25,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#map-veto">
+<a class="md-skip" href="#map-selection">
           Skip to content
         </a>
 </div>
@@ -51,7 +51,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Map Veto
+              Map Selection
             
           </span>
 </div>
@@ -109,12 +109,12 @@
       </a>
 </li>
 <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
-<label aria-expanded="false" class="md-nav__link" for="__nav_2" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
           Setup
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="Setup" class="md-nav" data-md-level="1">
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
 <label class="md-nav__title" for="__nav_2">
 <span class="md-nav__icon md-icon"></span>
           Setup
@@ -134,12 +134,12 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" id="__nav_3" type="checkbox"/>
-<label aria-expanded="true" class="md-nav__link" for="__nav_3" tabindex="0">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
           Basics
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="Basics" class="md-nav" data-md-level="1">
+<nav aria-expanded="true" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
 <label class="md-nav__title" for="__nav_3">
 <span class="md-nav__icon md-icon"></span>
           Basics
@@ -156,13 +156,13 @@
       </a>
 </li>
 <li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
 <label class="md-nav__link md-nav__link--active" for="__toc">
-          Map Veto
+          Map Selection
           <span class="md-nav__icon md-icon"></span>
 </label>
 <a class="md-nav__link md-nav__link--active" href="./">
-        Map Veto
+        Map Selection
       </a>
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">
@@ -176,29 +176,24 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#types">
-    Veto Types
+<a class="md-nav__link" href="#options">
+    Options
   </a>
-<nav aria-label="Veto Types" class="md-nav">
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#default">
+    Default Flow
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#custom">
+    Custom Flow
+  </a>
+<nav aria-label="Custom Flow" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bo1">
-    Single map (Bo1)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo2">
-    Double (Bo2)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo3">
-    Best-of-three (Bo3)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo5">
-    Best-of-five (Bo5)
+<a class="md-nav__link" href="#rules">
+    Rules
   </a>
 </li>
 </ul>
@@ -241,12 +236,12 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" id="__nav_4" type="checkbox"/>
-<label aria-expanded="false" class="md-nav__link" for="__nav_4" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
           Advanced
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="Advanced" class="md-nav" data-md-level="1">
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
 <label class="md-nav__title" for="__nav_4">
 <span class="md-nav__icon md-icon"></span>
           Advanced
@@ -276,12 +271,12 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" id="__nav_5" type="checkbox"/>
-<label aria-expanded="false" class="md-nav__link" for="__nav_5" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
           Social
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="Social" class="md-nav" data-md-level="1">
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
 <label class="md-nav__title" for="__nav_5">
 <span class="md-nav__icon md-icon"></span>
           Social
@@ -315,29 +310,24 @@
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#types">
-    Veto Types
+<a class="md-nav__link" href="#options">
+    Options
   </a>
-<nav aria-label="Veto Types" class="md-nav">
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#default">
+    Default Flow
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#custom">
+    Custom Flow
+  </a>
+<nav aria-label="Custom Flow" class="md-nav">
 <ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#bo1">
-    Single map (Bo1)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo2">
-    Double (Bo2)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo3">
-    Best-of-three (Bo3)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#bo5">
-    Best-of-five (Bo5)
+<a class="md-nav__link" href="#rules">
+    Rules
   </a>
 </li>
 </ul>
@@ -350,40 +340,172 @@
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<h1 id="map-veto"><span class="twemoji"><svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M367.2 412.5 99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192 41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192-41.5 0-79.9 13.1-111.2 35.5l267.7 267.7zM512 256c0 141.4-114.6 256-256 256S0 397.4 0 256 114.6 0 256 0s256 114.6 256 256z"></path></svg></span> Map Veto</h1>
+<h1 id="map-selection"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m15 19-6-2.11V5l6 2.11M20.5 3h-.16L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5a.5.5 0 0 0 .5.5c.05 0 .11 0 .16-.03L9 18.9l6 2.1 5.64-1.9c.21-.1.36-.25.36-.48V3.5a.5.5 0 0 0-.5-.5Z"></path></svg></span> Map Selection</h1>
 <p>If your match is configured to include a veto-phase (setting <a href="../match_schema#schema"><code>skip_veto</code></a> to <code>false</code>), each
-team's captain will ban or pick maps to play using in-game menus. The veto system behaves slightly differently depending
-on the number of maps to play (Bo3, Bo5 etc.).</p>
-<div class="admonition warning">
-<p class="admonition-title">Lucky number seven</p>
-<p>The veto-system assumes the <a href="../match_schema#schema"><code>maplist</code></a> has 7 maps, similarly to the competitive map pool,
-and it may not function properly if this is not the case. We also assume that <a href="../match_schema#schema"><code>side_type</code></a>
-is set to <code>standard</code> when describing side choices.</p>
-</div>
+team's captain will ban or pick maps to play using in-game menus.</p>
 <h2 id="captains">Team Captains</h2>
-<p>Get5 will give veto menus to a player on each team. The player it gives it to will be the first player listed
-in the <a href="../match_schema#schema"><code>players</code></a> section of a match configuration, or a random player on the away-team
-when in <a href="../getting_started#scrims">scrim mode</a>.</p>
+<p>Get5 will give map pick/ban and side choice menus to a player on each team. The player it gives it to will be the first
+player listed in the <a href="../match_schema#schema"><code>players</code></a> section of a match configuration, or a random player on the
+away-team when in <a href="../getting_started#scrims">scrim mode</a>.</p>
+<h2 id="options">Options</h2>
 <p><code>team1</code> vetoes first by default, but you can change this in the match configuration via
 the <a href="../match_schema#schema"><code>veto_first</code></a> parameter, which also supports <code>random</code>.</p>
-<h2 id="types">Veto Types</h2>
-<h3 id="bo1">Single map (Bo1)</h3>
-<p>Each team alternates vetoing, vetoing 3 maps each. The last map standing will be played. A knife round will be used to
-decide starting sides.</p>
-<p><code>ban/ban/ban/ban/ban/ban/last map played</code></p>
-<h3 id="bo2">Double (Bo2)</h3>
-<p>Each team alternates vetoing, vetoing 2 maps each. After those vetoes, each team picks a map, letting the other team
-choose a starting side on it. The last map standing will <strong>not</strong> be played.</p>
-<p><code>ban/ban/ban/ban/pick/pick/last map unused</code></p>
-<h3 id="bo3">Best-of-three (Bo3)</h3>
-<p>Each team vetoes 1 map, then each team picks 1 map. The team that did not pick a map gets the side choice on it. After
-this, each team will veto another map until only 1 map is left. The last map standing will be the 3rd map in the series,
-and a knife round will be used to decide starting sides.</p>
-<p><code>ban/ban/pick/pick/ban/ban/last map is 3rd map in series</code></p>
-<h3 id="bo5">Best-of-five (Bo5)</h3>
-<p>Each team vetoes 1 map, then alternate picking the maps. When a team picks a map, the other team will get the side
-choice. The last map standing will be the 5th map in the series and a knife round will be used to decide starting sides.</p>
-<p><code>ban/ban/pick/pick/pick/pick/last map is 5th map in series</code></p>
+<p>When a team picks a map, the other team gets to choose the side to start on for that map. If a map is selected
+by default by being the last map standing, a knife round is used. This behavior is determined by
+the <a href="../match_schema#schema"><code>side_type</code></a> parameter of your match configuration. Sides may also be predetermined using
+the <a href="../match_schema#schema"><code>map_sides</code></a> parameter.</p>
+<h2 id="default">Default Flow</h2>
+<p>If you don't provide a custom <a href="../match_schema#schema"><code>veto_mode</code></a>, Get5 will create a suitable map selection flow
+depending on your series length (<a href="../match_schema#schema"><code>num_maps</code></a>) and map
+list (<a href="../match_schema#schema"><code>maplist</code></a>). In all cases, the map list must be <strong>at least one larger than the number of
+maps to play</strong>. If not, the veto system is automatically disabled, and the maps are played in the order they appear in
+the map list.</p>
+<div class="admonition info">
+<p class="admonition-title">Legend</p>
+<p>To make the table easier to read, we'll use icons instead of strings to illustrate.</p>
+<p><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <code>team1_pick</code></p>
+<p><img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <code>team2_pick</code></p>
+<p><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <code>team1_ban</code></p>
+<p><img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <code>team2_ban</code></p>
+<p><img alt="🇽" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1fd.svg" title=":regional_indicator_x:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> played by default</p>
+</div>
+<p>Note that these examples assume that <a href="../match_schema#schema"><code>veto_first</code></a> is set to <code>team1</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><input id="__tabbed_1_3" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Single Map</label><label for="__tabbed_1_2">Double Map</label><label for="__tabbed_1_3">Best-of-X</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Teams alternate banning maps until only one map remains.</p>
+<p>5 is used as at the map pool size example here, but the flow is identical for any pool size.</p>
+<table>
+<thead>
+<tr>
+<th>Map Pool Size</th>
+<th>Flow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="🇽" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1fd.svg" title=":regional_indicator_x:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<p>When less than 5 maps are in the pool, each team simply picks one map. At 5 or more maps, each team bans one map
+and then picks one map, regardless of map pool size.</p>
+<table>
+<thead>
+<tr>
+<th>Map Pool Size</th>
+<th>Flow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3-4</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+<tr>
+<td>5+</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<p>If the map pool size is at least 2 larger than the number of maps to play (<code>num_maps</code>), teams alternate banning until there are <code>num_maps + 2</code> (i.e. 5) maps left, at which point teams alternate picking <code>num_maps - 1</code> (i.e. 2), then alternate banning until only one map remains. The remaining map is played last by default.</p>
+<p>If the map pool is only 1 larger than the number of maps to play (<code>num_maps</code>), teams simply alternate picking until all maps are decided. The remaining map is ignored.</p>
+<table>
+<thead>
+<tr>
+<th>Map Pool Size</th>
+<th>Maps</th>
+<th>Flow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td>3</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+<tr>
+<td>5</td>
+<td>3</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="🇽" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1fd.svg" title=":regional_indicator_x:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+<tr>
+<td>6</td>
+<td>3</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="🇽" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1fd.svg" title=":regional_indicator_x:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+<tr>
+<td>7</td>
+<td>3</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="🇽" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1fd.svg" title=":regional_indicator_x:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+<tr>
+<td>8</td>
+<td>3</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="🇽" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1fd.svg" title=":regional_indicator_x:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+<tr>
+<td>5</td>
+<td>4</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+<tr>
+<td>6</td>
+<td>4</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="🇽" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1fd.svg" title=":regional_indicator_x:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+<tr>
+<td>7</td>
+<td>4</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="🇽" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1fd.svg" title=":regional_indicator_x:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+<tr>
+<td>8</td>
+<td>4</td>
+<td><img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="1⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/31-20e3.svg" title=":one:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="2⃣" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/32-20e3.svg" title=":two:"/> <img alt="⛔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26d4.svg" title=":no_entry:"/> <span class="twemoji"><svg viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg></span> <img alt="🇽" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1fd.svg" title=":regional_indicator_x:"/> <img alt="✅" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2705.svg" title=":white_check_mark:"/></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Life ain't fair</p>
+<p>When the the numbers don't add up, one team may ban or pick one more time than the other. This is simply a
+best-effort by Get5 to make any combination work without producing errors. It's up to you to provide reasonable
+combinations of maps to play and map pool sizes.</p>
+</div>
+</div>
+</div>
+</input></input></input></div>
+<h2 id="custom">Custom Flow</h2>
+<p>You may provide a custom ban/pick order using the <a href="../match_schema#schema"><code>veto_mode</code></a> property of a match
+configuration. If you do this, any logically possible combination of picks/bans, number of maps to
+play (<a href="../match_schema#schema"><code>num_maps</code></a>) and map pool size (<a href="../match_schema#schema"><code>maplist</code></a>) is allowed.</p>
+<p>The <a href="../match_schema#schema"><code>veto_mode</code></a> parameter accepts an array of strings:</p>
+<p><code>team1_pick</code>, <code>team1_ban</code>, <code>team2_pick</code> and <code>team2_ban</code>.</p>
+<h3 id="rules">Rules</h3>
+<p>Your array of picks and bans <strong>must</strong> comply with these rules, or your match configuration will fail to load:</p>
+<ol>
+<li>If your series consists of more than one map, the number of picks must be <em>no less</em> than the number of maps to play
+   minus one. This ensures there is no ambiguity in the order of maps, even if the number of maps remaining after bans
+   is correct. I.e. in a Bo3, you must have at least 2 picks.</li>
+<li>If you provide more options (picks or bans) than required, extra options are ignored. I.e. with a map pool of 7, only
+   the first 6 options would be evaluated and used.</li>
+<li>If you provide more picks than required, extra options are ignored. I.e. with a map pool of 7 and 6 picks in a Bo3,
+   only the first 3 picks would be evaluated and used.</li>
+<li>Which team you assign to pick or ban does not matter. If you wanted, you could have one team pick all the maps.</li>
+<li>Either:<ol>
+<li>If the number of picks is less than the series length, you must provide at least
+   "map pool size minus 1" number of options, i.e. no less than 6 options for a pool of 7 maps.</li>
+<li>If the number of picks is <em>equal to</em> (or per rule 3, <em>exceed</em>) the series length, the picks can be positioned
+   before the map pool has been exhausted, and the total number of options can be less than the "map pool size minus
+   1".</li>
+</ol>
+</li>
+</ol>
 </article>
 </div>
 </div>
@@ -406,8 +528,8 @@ choice. The last map standing will be the 5th map in the series and a knife roun
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
-<script src="../assets/javascripts/bundle.51d95adb.min.js"></script>
+<script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+<script src="../assets/javascripts/bundle.a00a7c5e.min.js"></script>
 <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
 <script src="../javascripts/tablesort.js"></script>
 </body>

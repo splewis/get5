@@ -19,12 +19,12 @@ enum Get5BombSite {
   Get5BombSite_B = 2
 };
 
-enum Get5VetoType {
-  Get5VetoTypeInvalid,
-  Get5VetoTypeTeam1Pick,
-  Get5VetoTypeTeam2Pick,
-  Get5VetoTypeTeam1Ban,
-  Get5VetoTypeTeam2Ban
+enum Get5MapSelectionOption {
+  Get5MapSelectionOption_Invalid,
+  Get5MapSelectionOption_Team1Pick,
+  Get5MapSelectionOption_Team2Pick,
+  Get5MapSelectionOption_Team1Ban,
+  Get5MapSelectionOption_Team2Ban
 }
 
 #define MATCHTEAM_COUNT 4

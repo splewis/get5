@@ -63,27 +63,29 @@ Note that these examples assume that [`veto_first`](../match_schema#schema) is s
     | 3-4           | :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark:                                                                         |
     | 5+            | :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: |
 
-=== "Best-of-X (odd-sized series)"
+=== "Best-of-X"
 
-    Alternating bans until there are `num_maps` (i.e. 3) maps left, at which point teams alternate picking `num_maps-1` (i.e. 2) maps. The remaining map is played last by default.
+    If the map pool size is at least 2 larger than the number of maps to play (`num_maps`), teams alternate banning until there are `num_maps + 2` (i.e. 5) maps left, at which point teams alternate picking `num_maps - 1` (i.e. 2), then alternate banning until only one map remains. The remaining map is played last by default.
     
-    | Map Pool Size | Flow                                                                                                                                                                                                      |
-    |---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-    | 4+ (even)     | :one: :no_entry: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :regional_indicator_x: :white_check_mark:                                     |
-    | 5+ (odd)      | :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :regional_indicator_x: :white_check_mark: |
-
-=== "Best-of-X (even-sized series)"
-
-    Alternating bans until there are `num_maps` (i.e. 4) maps left, at which point teams alternate picking `num_maps-1` (i.e. 3) maps. The remaining map is played last by default.
-    
-    | Map Pool Size | Flow                                                                                                                                                                                                                                                  |
-    |---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-    | 5+ (odd)      | :one: :no_entry: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :regional_indicator_x: :white_check_mark:                                     |
-    | 6+ (even)     | :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :regional_indicator_x: :white_check_mark: |
+    If the map pool is only 1 larger than the number of maps to play (`num_maps`), teams simply alternate picking until all maps are decided. The remaining map is ignored.
+        
+    | Map Pool Size | Maps | Flow                                                                                                                                                                                                                                                                                                                          |
+    |---------------|------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | 4             | 3    | :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark:                                                                                                                                                                                                              |
+    | 5             | 3    | :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :regional_indicator_x: :white_check_mark:                                                                                                                     |
+    | 6             | 3    | :one: :no_entry: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :no_entry: :octicons-dash-16: :regional_indicator_x: :white_check_mark:                                                                                 |
+    | 7             | 3    | :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :regional_indicator_x: :white_check_mark:                                             |
+    | 8             | 3    | :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :no_entry: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :no_entry: :octicons-dash-16: :regional_indicator_x: :white_check_mark:         |                                                                                                                                                                                                                                                                                                                               |
+    | 5             | 4    | :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark:                                                                                                                                                                  |
+    | 6             | 4    | :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :regional_indicator_x: :white_check_mark:                                                                         |
+    | 7             | 4    | :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :one: :no_entry: :octicons-dash-16: :regional_indicator_x: :white_check_mark:                                     |
+    | 8             | 4    | :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :regional_indicator_x: :white_check_mark: |
 
     !!! warning "Life ain't fair"
 
-        When the series length is even-sized, the last team to ban will have one map pick less than the other team.
+        When the the numbers don't add up, one team may ban or pick one more time than the other. This is simply a
+        best-effort by Get5 to make any combination work without producing errors. It's up to you to provide reasonable
+        combinations of maps to play and map pool sizes.
 
 ## Custom Flow {: #custom }
 

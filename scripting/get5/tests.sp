@@ -92,24 +92,24 @@ static void MapVetoLogicTest() {
 
   ArrayList mapPool = GetMapPool(7);
   pickOrder = new ArrayList();
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertTrue("Test valid map ban config, bo3 7 maps, 2 picks, 4 bans; last played", success);
 
   mapPool = GetMapPool(8);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertFalse("Test invalid map ban config, bo3 8 maps, 2 picks, 4 bans", success);
@@ -121,11 +121,11 @@ static void MapVetoLogicTest() {
   // Test pick count match; don't care about number of bans
   mapPool = GetMapPool(9);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
-  pickOrder.Push(Get5VetoTypeTeam2Ban); // will be trimmed.
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);  // will be trimmed.
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertTrue("Test valid map ban config; bo3 9 maps, 3 picks, 2 bans", success);
@@ -133,21 +133,21 @@ static void MapVetoLogicTest() {
 
   mapPool = GetMapPool(7);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertTrue("Test valid map ban config; bo3 7 maps, 2 picks, 4 ban, 1 remaining", success);
 
   mapPool = GetMapPool(4);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertTrue("Test valid map ban config; bo3 4 maps, 3 picks, 1 remaining", success);
@@ -155,9 +155,9 @@ static void MapVetoLogicTest() {
 
   mapPool = GetMapPool(4);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertTrue("Test valid map ban config; bo3 4 maps, 2 picks, 1 ban", success);
@@ -165,10 +165,10 @@ static void MapVetoLogicTest() {
 
   mapPool = GetMapPool(7);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Pick);
-  pickOrder.Push(Get5VetoTypeTeam2Pick); // removed
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);  // removed
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertTrue("Test valid map ban config; bo3 7 maps, 4 picks", success);
@@ -176,14 +176,14 @@ static void MapVetoLogicTest() {
 
   mapPool = GetMapPool(7);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertTrue("Test valid map ban config; bo3 7 maps, 4 picks 4 bans", success);
@@ -191,14 +191,14 @@ static void MapVetoLogicTest() {
 
   mapPool = GetMapPool(9);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertTrue("Test valid map ban config; bo3 9 maps, 3 picks, 5 bans", success);
@@ -206,65 +206,185 @@ static void MapVetoLogicTest() {
 
   mapPool = GetMapPool(7);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertFalse("Test invalid map ban config; bo3 7 maps, 2 picks, 3 bans; missing one pick or ban", success);
 
   mapPool = GetMapPool(7);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertFalse("Test invalid map ban config; bo3 7 maps, 1 pick, 4 bans; cannot randomly select remaining two", success);
 
   mapPool = GetMapPool(7);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
   success = ValidateMapBanLogic(mapPool, pickOrder, 1, error);
   delete mapPool;
   AssertTrue("Test valid map ban config; bo1 7 maps, 1 pick, 5 bans", success);
 
   mapPool = GetMapPool(7);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
   success = ValidateMapBanLogic(mapPool, pickOrder, 2, error);
   delete mapPool;
   AssertTrue("Test valid map ban config; bo2 7 maps, 5 bans 1 pick; last map played", success);
 
   mapPool = GetMapPool(7);
   pickOrder.Clear();
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Ban);
-  pickOrder.Push(Get5VetoTypeTeam1Ban);
-  pickOrder.Push(Get5VetoTypeTeam2Pick);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team1Ban);
+  pickOrder.Push(Get5MapSelectionOption_Team2Pick);
   success = ValidateMapBanLogic(mapPool, pickOrder, 3, error);
   delete mapPool;
   AssertFalse("Test invalid map ban config; bo3 7 maps, 5 bans 1 pick; not enough picks", success);
-  AssertStrEq(
-    "Test not enough picks error",
-    "In a series of 3 maps, at least 2 veto options must be picks. Found 1 pick(s).",
-    error);
+  AssertStrEq("Test not enough picks error",
+              "In a series of 3 maps, at least 2 veto options must be picks. Found 1 pick(s).", error);
+
+  mapPool = GetMapPool(7);
+  pickOrder.Clear();
+  GenerateDefaultVetoSetup(mapPool, pickOrder, 3, Get5Team_2);
+  AssertEq("Default pick ban length bo3, 7 maps", pickOrder.Length, 6);
+  for (int i = 0; i < pickOrder.Length; i++) {
+    int t = pickOrder.Get(i);
+    switch (i) {
+      case 0:
+        AssertEq("Check map pick/ban order value 0", t, view_as<int>(Get5MapSelectionOption_Team1Ban));
+      case 1:
+        AssertEq("Check map pick/ban order value 1", t, view_as<int>(Get5MapSelectionOption_Team2Ban));
+      case 2:
+        AssertEq("Check map pick/ban order value 2", t, view_as<int>(Get5MapSelectionOption_Team1Pick));
+      case 3:
+        AssertEq("Check map pick/ban order value 3", t, view_as<int>(Get5MapSelectionOption_Team2Pick));
+      case 4:
+        AssertEq("Check map pick/ban order value 4", t, view_as<int>(Get5MapSelectionOption_Team1Ban));
+      case 5:
+        AssertEq("Check map pick/ban order value 5", t, view_as<int>(Get5MapSelectionOption_Team2Ban));
+    }
+  }
+  AssertTrue("Validate default", ValidateMapBanLogic(mapPool, pickOrder, 3, error));
+  delete mapPool;
+
+  mapPool = GetMapPool(8);
+  pickOrder.Clear();
+  GenerateDefaultVetoSetup(mapPool, pickOrder, 3, Get5Team_2);
+  AssertEq("Default pick ban length bo3, 8 maps", pickOrder.Length, 7);
+  for (int i = 0; i < pickOrder.Length; i++) {
+    int t = pickOrder.Get(i);
+    switch (i) {
+      case 0:
+        AssertEq("Check map pick/ban order value 0", t, view_as<int>(Get5MapSelectionOption_Team1Ban));
+      case 1:
+        AssertEq("Check map pick/ban order value 1", t, view_as<int>(Get5MapSelectionOption_Team2Ban));
+      case 2:
+        AssertEq("Check map pick/ban order value 2", t, view_as<int>(Get5MapSelectionOption_Team1Ban));
+      case 3:
+        AssertEq("Check map pick/ban order value 3", t, view_as<int>(Get5MapSelectionOption_Team2Pick));
+      case 4:
+        AssertEq("Check map pick/ban order value 4", t, view_as<int>(Get5MapSelectionOption_Team1Pick));
+      case 5:
+        AssertEq("Check map pick/ban order value 5", t, view_as<int>(Get5MapSelectionOption_Team2Ban));
+      case 6:
+        AssertEq("Check map pick/ban order value 6", t, view_as<int>(Get5MapSelectionOption_Team1Ban));
+    }
+  }
+  AssertTrue("Validate default", ValidateMapBanLogic(mapPool, pickOrder, 3, error));
+  delete mapPool;
+
+  mapPool = GetMapPool(4);
+  pickOrder.Clear();
+  GenerateDefaultVetoSetup(mapPool, pickOrder, 3, Get5Team_2);
+  AssertEq("Default pick ban length bo3, 4 maps", pickOrder.Length, 3);
+  for (int i = 0; i < pickOrder.Length; i++) {
+    int t = pickOrder.Get(i);
+    switch (i) {
+      case 0:
+        AssertEq("Check map pick/ban order value 0", t, view_as<int>(Get5MapSelectionOption_Team1Pick));
+      case 1:
+        AssertEq("Check map pick/ban order value 1", t, view_as<int>(Get5MapSelectionOption_Team2Pick));
+      case 2:
+        AssertEq("Check map pick/ban order value 2", t, view_as<int>(Get5MapSelectionOption_Team1Pick));
+    }
+  }
+  AssertTrue("Validate default", ValidateMapBanLogic(mapPool, pickOrder, 3, error));
+  delete mapPool;
+
+  mapPool = GetMapPool(8);
+  pickOrder.Clear();
+  GenerateDefaultVetoSetup(mapPool, pickOrder, 2, Get5Team_2);
+  AssertEq("Default pick ban length bo2, 8 maps", pickOrder.Length, 4);
+  for (int i = 0; i < pickOrder.Length; i++) {
+    int t = pickOrder.Get(i);
+    switch (i) {
+      case 0:
+        AssertEq("Check map pick/ban order value 0", t, view_as<int>(Get5MapSelectionOption_Team1Ban));
+      case 1:
+        AssertEq("Check map pick/ban order value 1", t, view_as<int>(Get5MapSelectionOption_Team2Ban));
+      case 2:
+        AssertEq("Check map pick/ban order value 2", t, view_as<int>(Get5MapSelectionOption_Team1Pick));
+      case 3:
+        AssertEq("Check map pick/ban order value 3", t, view_as<int>(Get5MapSelectionOption_Team2Pick));
+    }
+  }
+  AssertTrue("Validate default", ValidateMapBanLogic(mapPool, pickOrder, 2, error));
+  delete mapPool;
+
+  mapPool = GetMapPool(3);
+  pickOrder.Clear();
+  GenerateDefaultVetoSetup(mapPool, pickOrder, 2, Get5Team_2);
+  AssertEq("Default pick ban length bo2, 3 maps", pickOrder.Length, 2);
+  for (int i = 0; i < pickOrder.Length; i++) {
+    int t = pickOrder.Get(i);
+    switch (i) {
+      case 0:
+        AssertEq("Check map pick/ban order value 0", t, view_as<int>(Get5MapSelectionOption_Team1Pick));
+      case 1:
+        AssertEq("Check map pick/ban order value 1", t, view_as<int>(Get5MapSelectionOption_Team2Pick));
+    }
+  }
+  AssertTrue("Validate default", ValidateMapBanLogic(mapPool, pickOrder, 3, error));
+  delete mapPool;
+
+  mapPool = GetMapPool(2);
+  pickOrder.Clear();
+  GenerateDefaultVetoSetup(mapPool, pickOrder, 2, Get5Team_2);
+  AssertEq("Default pick ban length bo2, 2 maps", pickOrder.Length, 2);
+  for (int i = 0; i < pickOrder.Length; i++) {
+    int t = pickOrder.Get(i);
+    switch (i) {
+      case 0:
+        AssertEq("Check map pick/ban order value 0", t, view_as<int>(Get5MapSelectionOption_Team1Pick));
+      case 1:
+        AssertEq("Check map pick/ban order value 1", t, view_as<int>(Get5MapSelectionOption_Team2Pick));
+    }
+  }
+  AssertTrue("Validate default", ValidateMapBanLogic(mapPool, pickOrder, 2, error));
+  delete mapPool;
+
+  delete pickOrder;
 }
 
 static void MissingPropertiesTest() {
@@ -428,13 +548,15 @@ static void CustomVetoConfigTest() {
   SetTestContext("CustomVetoConfigTest");
   char error[PLATFORM_MAX_PATH];
 
-  AssertTrue("Load match config custom veto", LoadMatchConfig("addons/sourcemod/configs/get5/tests/custom_veto.json", error));
+  AssertTrue("Load match config custom veto",
+             LoadMatchConfig("addons/sourcemod/configs/get5/tests/custom_veto.json", error));
   AssertEq("Map ban length after load", g_MapBanOrder.Length, 4);
   EndSeries(Get5Team_None, false, 0.0);
 
-  AssertFalse("Load match config invalid custom veto", LoadMatchConfig("addons/sourcemod/configs/get5/tests/custom_veto_invalid.json", error));
-  AssertStrEq("Load match config invalid custom veto error", "In a series of 3 maps, at least 2 veto options must be picks. Found 0 pick(s).", error);
-
+  AssertFalse("Load match config invalid custom veto",
+              LoadMatchConfig("addons/sourcemod/configs/get5/tests/custom_veto_invalid.json", error));
+  AssertStrEq("Load match config invalid custom veto error",
+              "In a series of 3 maps, at least 2 veto options must be picks. Found 0 pick(s).", error);
 }
 
 static void ValidMatchConfigTest(const char[] matchConfig) {

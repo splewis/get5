@@ -8,25 +8,24 @@
 #define TEAM1_BAN              "team1_ban"
 #define TEAM2_BAN              "team2_ban"
 
-Get5VetoType VetoStringToVetoType(const char[] veto, char[] error) {
-  if (strcmp(veto, TEAM1_PICK) == 0) {
-    return Get5VetoTypeTeam1Pick;
-  } else if (strcmp(veto, TEAM2_PICK) == 0) {
-    return Get5VetoTypeTeam2Pick;
-  } else if (strcmp(veto, TEAM1_BAN) == 0) {
-    return Get5VetoTypeTeam1Ban;
-  } else if (strcmp(veto, TEAM2_BAN) == 0) {
-    return Get5VetoTypeTeam2Ban;
+Get5MapSelectionOption MapSelectionStringToMapSelection(const char[] option, char[] error) {
+  if (strcmp(option, TEAM1_PICK) == 0) {
+    return Get5MapSelectionOption_Team1Pick;
+  } else if (strcmp(option, TEAM2_PICK) == 0) {
+    return Get5MapSelectionOption_Team2Pick;
+  } else if (strcmp(option, TEAM1_BAN) == 0) {
+    return Get5MapSelectionOption_Team1Ban;
+  } else if (strcmp(option, TEAM2_BAN) == 0) {
+    return Get5MapSelectionOption_Team2Ban;
   }
-  FormatEx(error, PLATFORM_MAX_PATH, "Veto order type '%s' is invalid. Must be one of: '%s', '%s', '%s', '%s'.", veto,
-           TEAM1_PICK, TEAM2_PICK, TEAM1_BAN, TEAM2_BAN);
-  return Get5VetoTypeInvalid;
+  FormatEx(error, PLATFORM_MAX_PATH, "Map selection option '%s' is invalid. Must be one of: '%s', '%s', '%s', '%s'.",
+           option, TEAM1_PICK, TEAM2_PICK, TEAM1_BAN, TEAM2_BAN);
+  return Get5MapSelectionOption_Invalid;
 }
 
 void CreateVeto() {
   g_VetoCaptains[Get5Team_1] = GetTeamCaptain(Get5Team_1);
   g_VetoCaptains[Get5Team_2] = GetTeamCaptain(Get5Team_2);
-  ResetReadyStatus();
   if (g_PauseOnVetoCvar.BoolValue) {
     PauseGame(Get5Team_None, Get5PauseType_Admin);
   }
@@ -67,7 +66,6 @@ static void AbortVeto() {
 }
 
 static void VetoFinished() {
-  ChangeState(Get5State_Warmup);
   Get5_MessageToAll("%t", "MapDecidedInfoMessage");
   g_MapsLeftInVetoPool.Clear();
 
@@ -84,16 +82,35 @@ static void VetoFinished() {
     Get5_MessageToAll("%t", "MapIsInfoMessage", i + 1 - mapNumber, map);
   }
 
-  float delay = 10.0;
-  g_MapChangePending = true;
-  if (!g_SkipVeto && g_DisplayGotvVetoCvar.BoolValue) {
-    // Players must wait for GOTV to end before we can change map, but we don't need to record that.
-    g_PendingMapChangeTimer = CreateTimer(float(GetTvDelay()) + delay, Timer_NextMatchMap);
+  char currentMapName[PLATFORM_MAX_PATH];
+  GetCleanMapName(currentMapName, sizeof(currentMapName));
+
+  char mapToPlay[PLATFORM_MAX_PATH];
+  g_MapsToPlay.GetString(0, mapToPlay, sizeof(mapToPlay));
+
+  // In case the sides don't match after selection, we check it here before writing the backup.
+  // Also required if the map doesn't need to change.
+  SetStartingTeams();
+  SetMatchTeamCvars();
+
+  if (!StrEqual(currentMapName, mapToPlay)) {
+    ResetReadyStatus();
+    float delay = 10.0;
+    g_MapChangePending = true;
+    if (g_DisplayGotvVetoCvar.BoolValue) {
+      // Players must wait for GOTV to end before we can change map, but we don't need to record that.
+      g_PendingMapChangeTimer = CreateTimer(float(GetTvDelay()) + delay, Timer_NextMatchMap);
+    } else {
+      g_PendingMapChangeTimer = CreateTimer(delay, Timer_NextMatchMap);
+    }
   } else {
-    g_PendingMapChangeTimer = CreateTimer(delay, Timer_NextMatchMap);
+    LOOP_CLIENTS(i) {
+      if (IsPlayer(i)) {
+        CheckClientTeam(i);
+      }
+    }
   }
-  // Always end recording here; ensures that we can successfully start one after veto.
-  StopRecording(delay);
+  ChangeState(Get5State_Warmup);
   WriteBackup();  // Write first pre-live backup after veto.
 }
 
@@ -129,13 +146,13 @@ static void VetoController() {
       int mapsBanned = g_MapPoolList.Length - (g_MapsLeftInVetoPool.Length + g_MapsToPlay.Length);
       // More than 1 map in the pool and not all maps are picked; present choices as determine by config.
       switch (g_MapBanOrder.Get(g_MapsToPlay.Length + mapsBanned)) {
-        case Get5VetoTypeTeam1Ban:
+        case Get5MapSelectionOption_Team1Ban:
           GiveMapVetoMenu(g_VetoCaptains[Get5Team_1]);
-        case Get5VetoTypeTeam2Ban:
+        case Get5MapSelectionOption_Team2Ban:
           GiveMapVetoMenu(g_VetoCaptains[Get5Team_2]);
-        case Get5VetoTypeTeam1Pick:
+        case Get5MapSelectionOption_Team1Pick:
           GiveMapPickMenu(g_VetoCaptains[Get5Team_1]);
-        case Get5VetoTypeTeam2Pick:
+        case Get5MapSelectionOption_Team2Pick:
           GiveMapPickMenu(g_VetoCaptains[Get5Team_2]);
       }
     }
@@ -148,8 +165,7 @@ static void PickMap(const char[] mapName, const Get5Team team) {
   if (team != Get5Team_None) {
     char mapNameFormatted[PLATFORM_MAX_PATH];
     FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), true, true);
-    Get5_MessageToAll("%t", "TeamPickedMap", g_FormattedTeamNames[team], mapNameFormatted,
-                      g_MapsToPlay.Length + 1);
+    Get5_MessageToAll("%t", "TeamPickedMap", g_FormattedTeamNames[team], mapNameFormatted, g_MapsToPlay.Length + 1);
   }
   RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
   g_MapsToPlay.PushString(mapName);

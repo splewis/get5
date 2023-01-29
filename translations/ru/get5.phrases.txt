@@ -2,7 +2,7 @@
 {
     "ReadyForMapSelectionInfoMessage"
     {
-        "ru"            "Напишите {1} когда ваша команда будет готова к голосованию."
+        "ru"            "Напишите {1} когда ваша команда будет готова к выбору карты."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -46,7 +46,7 @@
     }
     "WaitingForGOTVMapSelection"
     {
-        "ru"            "Карта изменится, как только на GOTV будут показаны вето на карты."
+        "ru"            "Карта изменится, как только на GOTV будет показан выбор карты."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -182,7 +182,7 @@
     }
     "TeamIsReadyForMapSelection"
     {
-        "ru"            "{1} готовы для голосования."
+        "ru"            "{1} готовы для выбора карты."
     }
     "TeamIsReadyToRestoreBackup"
     {
@@ -334,15 +334,15 @@
     }
     "TeamBannedMap"
     {
-        "ru"            "{1} вычеркнули {2}."
+        "ru"            "{1} запретили {2}."
     }
     "CaptainLeftDuringMapSelection"
     {
-        "ru"            "Капитан пропал по время голосования, голосование приостановлено."
+        "ru"            "Капитан команды вышел во время выбора карты. Выбор карты приостановлен."
     }
     "ReadyToResumeMapSelection"
     {
-        "ru"            "Напишите {1}, когда будете готовы продолжить голосование."
+        "ru"            "Напишите {1}, когда будете готовы продолжить выбор карты."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -398,11 +398,11 @@
     }
     "MapSelectionBanMenuText"
     {
-        "ru"        "Выберите карту, на которую нужно наложить ВЕТО:"
+        "ru"        "Выберите карту для запрета:"
     }
     "MapSelectionBanConfirmMenuText"
     {
-        "ru"        "Подтвердите, что вы хотите наложить ВЕТО на {1}:"
+        "ru"        "Подтвердите, что вы хотите запретить {1}:"
     }
     "MapSelectionSidePickMenuText"
     {
@@ -422,7 +422,7 @@
     }
     "MapSelectionCountdown"
     {
-        "ru"        "Наложение вето начинается через {1} сек."
+        "ru"        "Выбор карты начинается через {1}..."
     }
     "SurrenderCommandNotEnabled"
     {

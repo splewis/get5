@@ -47,6 +47,8 @@ interface Get5Match {
     "min_spectators_to_ready": number | undefined // (6)
     "skip_veto": boolean | undefined // (7)
     "veto_first": "team1" | "team2" | "random" | undefined // (11)
+    "veto_mode": ['team1_ban' | 'team2_ban'
+        | 'team1_pick' | 'team2_pick'] | undefined // (36)
     "side_type": "standard" | "always_knife" | "never_knife" | undefined // (12)
     "map_sides": ["team1_ct" | "team1_t" | "knife"] | undefined // (31)
     "spectators": { // (10)
@@ -142,13 +144,15 @@ interface Get5Match {
 30. _Optional_<br>The spectator/caster Steam IDs and names. Setting a Steam ID as spectator takes precedence over being
     set as a player or coach.
 31. _Optional_<br>Determines the starting sides for each map. If this array is shorter than `num_maps`, `side_type` will
-    determine the side-behavior of the remaining maps. Ignored if `skip_veto` is `false`.
+    determine the side-behavior of the remaining maps.
     <br><br>**`Default: undefined`**
 32. _Optional_<br>If `false`, the entire map list will be played, regardless of score. If `true`, a series will be won
     when the series score for a team exceeds the number of maps divided by two.<br><br>**`Default: true`**
 33. _Optional_<br>Determines if coaches must also [`!ready`](../commands#ready).<br><br>**`Default: false`**
 34. _Optional_<br>Similarly to teams and map list, spectators may also be loaded from another file.
 35. _Required_<br>Similarly to teams and spectators, a map list may also be loaded from another file.
+36. _Optional_<br>Allows for a [custom configuration](../veto#custom) of map picks/bans. This must be an array of
+    strings consisting of any valid combination of `team1_ban`, `team2_ban`, `team1_pick` and `team2_pick`.
 
 !!! info "Team assignment priority"
 

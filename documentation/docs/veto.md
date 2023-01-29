@@ -1,51 +1,113 @@
-# :fontawesome-solid-ban: Map Veto
+# :material-map: Map Selection
 
 If your match is configured to include a veto-phase (setting [`skip_veto`](../match_schema#schema) to `false`), each
-team's captain will ban or pick maps to play using in-game menus. The veto system behaves slightly differently depending
-on the number of maps to play (Bo3, Bo5 etc.).
-
-!!! warning "Lucky number seven"
-
-    The veto-system assumes the [`maplist`](../match_schema#schema) has 7 maps, similarly to the competitive map pool,
-    and it may not function properly if this is not the case. We also assume that [`side_type`](../match_schema#schema)
-    is set to `standard` when describing side choices.
+team's captain will ban or pick maps to play using in-game menus.
 
 ## Team Captains {: #captains }
 
-Get5 will give veto menus to a player on each team. The player it gives it to will be the first player listed
-in the [`players`](../match_schema#schema) section of a match configuration, or a random player on the away-team
-when in [scrim mode](../getting_started#scrims).
+Get5 will give map pick/ban and side choice menus to a player on each team. The player it gives it to will be the first
+player listed in the [`players`](../match_schema#schema) section of a match configuration, or a random player on the
+away-team when in [scrim mode](../getting_started#scrims).
+
+## Options {: #options }
 
 `team1` vetoes first by default, but you can change this in the match configuration via
 the [`veto_first`](../match_schema#schema) parameter, which also supports `random`.
 
-## Veto Types {: #types }
+When a team picks a map, the other team gets to choose the side to start on for that map. If a map is selected
+by default by being the last map standing, a knife round is used. This behavior is determined by
+the [`side_type`](../match_schema#schema) parameter of your match configuration. Sides may also be predetermined using
+the [`map_sides`](../match_schema#schema) parameter.
 
-### Single map (Bo1) {: #bo1 }
+## Defaults {: #defaults }
 
-Each team alternates vetoing, vetoing 3 maps each. The last map standing will be played. A knife round will be used to
-decide starting sides.
+If you don't provide a custom [`veto_mode`](../match_schema#schema), Get5 will create a suitable map selection flow
+depending on your series length ([`num_maps`](../match_schema#schema)) and map
+list ([`maplist`](../match_schema#schema)). In all cases, the map list must be **at least one larger than the number of
+maps to play**. If not, the veto system is automatically disabled, and the maps are played in the order they appear in
+the map list.
 
-`ban/ban/ban/ban/ban/ban/last map played`
+!!! info "Legend"
 
-### Double (Bo2) {: #bo2 }
+    To make the table easier to read, we'll use icons instead of strings to illustrate:
 
-Each team alternates vetoing, vetoing 2 maps each. After those vetoes, each team picks a map, letting the other team
-choose a starting side on it. The last map standing will **not** be played.
+    :one: :white_check_mark: :octicons-dash-16: `team1_pick`
+   
+    :two: :white_check_mark: :octicons-dash-16: `team2_pick`
+   
+    :one: :no_entry: :octicons-dash-16: `team1_ban`
+   
+    :two: :no_entry: :octicons-dash-16: `team2_ban`
+   
+    :regional_indicator_x: :white_check_mark: :octicons-dash-16: played by default
 
-`ban/ban/ban/ban/pick/pick/last map unused`
+=== "Single Map"
 
-### Best-of-three (Bo3) {: #bo3 }
+    Teams alternate banning maps until only one map remains.
 
-Each team vetoes 1 map, then each team picks 1 map. The team that did not pick a map gets the side choice on it. After
-this, each team will veto another map until only 1 map is left. The last map standing will be the 3rd map in the series,
-and a knife round will be used to decide starting sides.
+    5 is used as at the map pool size example here, but the flow is identical for any pool size.
 
-`ban/ban/pick/pick/ban/ban/last map is 3rd map in series`
+    | Map Pool Size | Flow                                                                                                                                                                                     |
+    |---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | 5             | :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16::one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :regional_indicator_x: :white_check_mark: |
 
-### Best-of-five (Bo5) {: #bo5 }
+=== "Double Map"
 
-Each team vetoes 1 map, then alternate picking the maps. When a team picks a map, the other team will get the side
-choice. The last map standing will be the 5th map in the series and a knife round will be used to decide starting sides.
+    When less than 5 maps are in the pool, each team simply picks one map. At 5 or more maps, each team bans one map
+    and then picks one map, regardless of map pool size.
+    
+    | Map Pool Size | Flow                                                                                                                                         |
+    |---------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+    | 3-4           | :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark:                                                                         |
+    | 5+            | :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: |
 
-`ban/ban/pick/pick/pick/pick/last map is 5th map in series`
+=== "Best-of-X (odd-sized series)"
+
+    Alternating bans until there are `num_maps` (i.e. 3) maps left, at which point teams alternate picking `num_maps-1` (i.e. 2) maps. The remaining map is played last by default.
+    
+    | Map Pool Size | Flow                                                                                                                                                                                                      |
+    |---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | 4+ (even)     | :one: :no_entry: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :regional_indicator_x: :white_check_mark:                                     |
+    | 5+ (odd)      | :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :regional_indicator_x: :white_check_mark: |
+
+=== "Best-of-X (even-sized series)"
+
+    Alternating bans until there are `num_maps` (i.e. 4) maps left, at which point teams alternate picking `num_maps-1` (i.e. 3) maps. The remaining map is played last by default.
+    
+    | Map Pool Size | Flow                                                                                                                                                                                                                                                  |
+    |---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | 5+ (odd)      | :one: :no_entry: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :regional_indicator_x: :white_check_mark:                                     |
+    | 6+ (even)     | :one: :no_entry: :octicons-dash-16: :two: :no_entry: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :two: :white_check_mark: :octicons-dash-16: :one: :white_check_mark: :octicons-dash-16: :regional_indicator_x: :white_check_mark: |
+
+    !!! warning "Life ain't fair"
+
+        When the series length is even-sized, the last team to ban will have one map pick less than the other team.
+
+## Custom {: #custom }
+
+You may provide a custom ban/pick order using the [`veto_mode`](../match_schema#schema) property of a match
+configuration. If you do this, any logically possible combination of picks/bans, number of maps to
+play ([`num_maps`](../match_schema#schema)) and map pool size ([`maplist`](../match_schema#schema)) is allowed.
+
+The [`veto_mode`](../match_schema#schema) parameter accepts an array of strings:
+
+`team1_pick`, `team1_ban`, `team2_pick` and `team2_ban`, which are fairly self-explanatory.
+
+### Rules {: #rules }
+
+Your array of picks and bans **must** comply with these rules, or your match configuration will fail to load:
+
+1. If your series consists of more than one map, the number of picks must be _no less_ than the number of maps to play
+   minus one. This ensures there is no ambiguity in the order of maps, even if the number of maps remaining after bans
+   is correct. I.e. in a Bo3, you must have at least 2 picks.
+2. If you provide more options (picks or bans) than required, extra options are ignored. I.e. with a map pool of 7, only
+   the first 6 options would be evaluated and used.
+3. If you provide more picks than required, extra options are ignored. I.e. with a map pool of 7 and 6 picks in a Bo3,
+   only the first 3 picks would be evaluated and used.
+4. Which team you assign to pick or ban does not matter. If you wanted, you could have one team pick all the maps.
+5. Either:
+    1. If the number of picks is _equal to_ (or per rule 3, _exceed_) the series length, the picks can be positioned
+       before the map pool has been exhausted, and the total number of options can be less than the "map pool size minus
+       1".
+    2. If the number of picks is less than the series length, you must provide at least
+       "map pool size minus 1" number of options, i.e. no less than 6 options for a pool of 7 maps.

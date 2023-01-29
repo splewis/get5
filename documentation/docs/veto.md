@@ -19,7 +19,7 @@ by default by being the last map standing, a knife round is used. This behavior 
 the [`side_type`](../match_schema#schema) parameter of your match configuration. Sides may also be predetermined using
 the [`map_sides`](../match_schema#schema) parameter.
 
-## Defaults {: #defaults }
+## Default Flow {: #default }
 
 If you don't provide a custom [`veto_mode`](../match_schema#schema), Get5 will create a suitable map selection flow
 depending on your series length ([`num_maps`](../match_schema#schema)) and map
@@ -29,7 +29,7 @@ the map list.
 
 !!! info "Legend"
 
-    To make the table easier to read, we'll use icons instead of strings to illustrate:
+    To make the table easier to read, we'll use icons instead of strings to illustrate.
 
     :one: :white_check_mark: :octicons-dash-16: `team1_pick`
    
@@ -40,6 +40,8 @@ the map list.
     :two: :no_entry: :octicons-dash-16: `team2_ban`
    
     :regional_indicator_x: :white_check_mark: :octicons-dash-16: played by default
+
+Note that these examples assume that [`veto_first`](../match_schema#schema) is set to `team1`.
 
 === "Single Map"
 
@@ -83,7 +85,7 @@ the map list.
 
         When the series length is even-sized, the last team to ban will have one map pick less than the other team.
 
-## Custom {: #custom }
+## Custom Flow {: #custom }
 
 You may provide a custom ban/pick order using the [`veto_mode`](../match_schema#schema) property of a match
 configuration. If you do this, any logically possible combination of picks/bans, number of maps to
@@ -91,7 +93,7 @@ play ([`num_maps`](../match_schema#schema)) and map pool size ([`maplist`](../ma
 
 The [`veto_mode`](../match_schema#schema) parameter accepts an array of strings:
 
-`team1_pick`, `team1_ban`, `team2_pick` and `team2_ban`, which are fairly self-explanatory.
+`team1_pick`, `team1_ban`, `team2_pick` and `team2_ban`.
 
 ### Rules {: #rules }
 
@@ -106,8 +108,9 @@ Your array of picks and bans **must** comply with these rules, or your match con
    only the first 3 picks would be evaluated and used.
 4. Which team you assign to pick or ban does not matter. If you wanted, you could have one team pick all the maps.
 5. Either:
-    1. If the number of picks is _equal to_ (or per rule 3, _exceed_) the series length, the picks can be positioned
+    1. If the number of picks is less than the series length, you must provide at least
+       "map pool size minus 1" number of options, i.e. no less than 6 options for a pool of 7 maps.
+    2. If the number of picks is _equal to_ (or per rule 3, _exceed_) the series length, the picks can be positioned
        before the map pool has been exhausted, and the total number of options can be less than the "map pool size minus
        1".
-    2. If the number of picks is less than the series length, you must provide at least
-       "map pool size minus 1" number of options, i.e. no less than 6 options for a pool of 7 maps.
+

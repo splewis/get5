@@ -2,7 +2,7 @@
 {
     "ReadyForMapSelectionInfoMessage"
     {
-        "fr"            "Taper {1} quand votre équipe est prête pour le tour de veto."
+        "fr"            "Tapez {1} lorsque votre équipe est prête pour la sélection de map."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -10,15 +10,15 @@
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "fr"            "Taper {1} quand vous êtes prêt(e) à restaurer la sauvegarde du match."
+        "fr"            "Tapez {1} quand vous êtes prêt(e) à restaurer la sauvegarde du match."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "fr"            "Taper {1} quand vous êtes prêt(e) à démarrer un round au couteau."
+        "fr"            "Tapez {1} quand vous êtes prêt(e) à démarrer un round au couteau."
     }
     "ReadyToStartInfoMessage"
     {
-        "fr"            "Taper {1} quand vous êtes prêt(e) à commencer."
+        "fr"            "Tapez {1} quand vous êtes prêt(e) à commencer."
     }
     "YouAreReady"
     {
@@ -30,7 +30,7 @@
     }
     "TypeUnreadyIfNotReady"
     {
-        "fr"            "Taper {1} si vous n'êtes pas prêt(e)."
+        "fr"            "Tapez {1} si vous n'êtes pas prêt(e)."
     }
     "YouAreNotReady"
     {
@@ -46,7 +46,7 @@
     }
     "WaitingForGOTVMapSelection"
     {
-        "fr"            "La map changera dès que la diffusion GOTV aura diffusé le tour de veto."
+        "fr"            "La map changera une fois que la GOTV aura diffusé la sélection de map."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -174,7 +174,7 @@
     }
     "TeamIsReadyForMapSelection"
     {
-        "fr"            "{1} est prêt pour le tour de veto."
+        "fr"            "{1} est prête pour la sélection de map."
     }
     "TeamIsReadyToRestoreBackup"
     {
@@ -326,15 +326,15 @@
     }
     "TeamBannedMap"
     {
-        "fr"            "{1} a rejeté {2}."
+        "fr"            "{1} a ban {2}."
     }
     "CaptainLeftDuringMapSelection"
     {
-        "fr"            "Un chef d'équipe a quitté pendant le tour de veto, match en pause."
+        "fr"            "Un capitaine d'équipe est parti lors de la sélection de map. La sélection de map est interrompue."
     }
     "ReadyToResumeMapSelection"
     {
-        "fr"            "Taper {1} quand vous êtes prêt(e) à reprendre le tour de veto."
+        "fr"            "Tapez {1} lorsque vous êtes prêt à reprendre la sélection de map."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -342,11 +342,11 @@
     }
     "ExitCoachSlotHelp"
     {
-        "fr"            "Taper {1} pour sortir du mode coach."
+        "fr"            "Tapez {1} pour sortir du mode coach."
     }
     "EnterCoachSlotHelp"
     {
-        "fr"            "Taper {1} pour devenir le coach de votre équipe."
+        "fr"            "Tapez {1} pour devenir le coach de votre équipe."
     }
     "MoveToCoachInfoMessage"
     {
@@ -386,7 +386,7 @@
     }
     "MapSelectionPickConfirmMenuText"
     {
-        "fr"        "Confirmez que vous souhaitez jouer {1} :"
+        "fr"        "Confirmez que vous souhaitez JOUER {1} :"
     }
     "MapSelectionBanMenuText"
     {
@@ -394,11 +394,11 @@
     }
     "MapSelectionBanConfirmMenuText"
     {
-        "fr"        "Confirmez que vous souhaitez la bannir {1} :"
+        "fr"        "Confirmez que vous souhaitez la BANNIR {1} :"
     }
     "MapSelectionSidePickMenuText"
     {
-        "fr"        "Selectionner un côté pour {1}"
+        "fr"        "Selectionner un côté pour {1} :"
     }
     "MapSelectionSidePickConfirmMenuText"
     {
@@ -414,7 +414,7 @@
     }
     "MapSelectionCountdown"
     {
-        "fr"        "Le veto commencera dans {1} seconde(s)."
+        "fr"        "Selection de la map commençant dans {1}..."
     }
     "SurrenderCommandNotEnabled"
     {

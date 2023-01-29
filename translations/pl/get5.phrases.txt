@@ -2,7 +2,7 @@
 {
     "ReadyForMapSelectionInfoMessage"
     {
-        "pl"            "Napisz {1} kiedy Twoja drużyna będzie gotowa do głosowania."
+        "pl"            "Napisz {1} kiedy twoja drużyna jest gotowa do wyboru mapy."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -27,6 +27,10 @@
     "WaitingForGOTVBroadcastEnding"
     {
         "pl"            "Mapa zostanie zmieniona gdy transmisja GOTV zostanie zakończona."
+    }
+    "WaitingForGOTVMapSelection"
+    {
+        "pl"            "Mapa ulegnie zmianie po nadaniu przez GOTV wyboru mapy."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -82,7 +86,7 @@
     }
     "TeamIsReadyForMapSelection"
     {
-        "pl"            "{1} jest gotowe do głosowania."
+        "pl"            "{1} jest gotowa do wyboru mapy."
     }
     "TeamIsReadyToRestoreBackup"
     {
@@ -206,15 +210,15 @@
     }
     "TeamBannedMap"
     {
-        "pl"            "{1} odrzuciło {2}."
+        "pl"            "{1} odrzuciła {2}."
     }
     "CaptainLeftDuringMapSelection"
     {
-        "pl"            "Kapitan opuścił serwer, głosowanie zostało wstrzymane."
+        "pl"            "Kapitan drużyny wyszedł podczas wybierania mapy. Wybór mapy został wstrzymany."
     }
     "ReadyToResumeMapSelection"
     {
-        "pl"            "Napisz {1} kiedy Twoja drużyna będzie gotowa do wznowienia głosowania."
+        "pl"            "Napisz {1}, gdy będziesz gotowy do wznowienia wyboru mapy."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -231,5 +235,33 @@
     "MoveToCoachInfoMessage"
     {
         "pl"            "Ponieważ Twoja drużyna jest pełna, zostałeś przeniesiony na stanowisko coach'a."
+    }
+    "MapSelectionPickMenuText"
+    {
+        "pl"            "Wybierz mapę do GRANIA:"
+    }
+    "MapSelectionPickConfirmMenuText"
+    {
+        "pl"            "Potwierdź, że chcesz GRAĆ {1}:"
+    }
+    "MapSelectionBanMenuText"
+    {
+        "pl"            "Wybierz mapę do ODRZUCENIA:"
+    }
+    "MapSelectionBanConfirmMenuText"
+    {
+        "pl"            "Potwierdź, że chcesz ODRZUCIĆ {1}:"
+    }
+    "MapSelectionSidePickMenuText"
+    {
+        "pl"            "Wybierz stronę dla {1}:"
+    }
+    "MapSelectionSidePickConfirmMenuText"
+    {
+        "pl"            "Potwierdź, że chcesz rozpocząć po stronie {1}:"
+    }
+    "MapSelectionCountdown"
+    {
+        "pl"            "Wybór mapy rozpoczyna się za {1}..."
     }
 }

@@ -2,7 +2,7 @@
 {
     "ReadyForMapSelectionInfoMessage"
     {
-        "hu"            "Írd be a {1} parancsot, ha a csapatod készen áll a vétóra."
+        "hu"            "Használd a {1} parancsot, ha a csapatod készen áll a pálya választásra."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -10,15 +10,15 @@
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "hu"            "Írd be a {1} parancsot, ha a készen állsz a mérkőzés visszatöltésre."
+        "hu"            "Használd a {1} parancsot, ha a készen állsz a mérkőzés visszatöltésre."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "hu"            "Írd be a {1} parancsot, ha készen állsz a késelésre."
+        "hu"            "Használd a {1} parancsot, ha készen állsz a késelésre."
     }
     "ReadyToStartInfoMessage"
     {
-        "hu"            "Írd be a {1} parancsot, ha készenállsz a kezdésre."
+        "hu"            "Használd a {1} parancsot, ha készenállsz a kezdésre."
     }
     "YouAreReady"
     {
@@ -46,7 +46,7 @@
     }
     "WaitingForGOTVMapSelection"
     {
-        "hu"            "A pálya akkor fog váltani, ha a GOTV adás megjelenítette a pálya vétókat."
+        "hu"            "A pályaváltás azonnal megtörténik, ha a GOTV megkapja a pályaszavazás információit."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -170,7 +170,7 @@
     }
     "TeamIsReadyForMapSelection"
     {
-        "hu"            "{1} készenáll a vétó megkezdésére."
+        "hu"            "{1} készen áll a pálya választásra."
     }
     "TeamIsReadyToRestoreBackup"
     {
@@ -306,15 +306,15 @@
     }
     "TeamBannedMap"
     {
-        "hu"            "{1} szavazott {2}."
+        "hu"            "{1} csapat vétózta a {2} pályát."
     }
     "CaptainLeftDuringMapSelection"
     {
-        "hu"            "A csapatkapitány kilépett a vétó során, a vétó szünetel."
+        "hu"            "A csapatkapitány kilépett a pálya választás alatt. A pálya választás szüneteltetve."
     }
     "ReadyToResumeMapSelection"
     {
-        "hu"            "Írd be a {1} parancsot ha készenállsz a vétó folytatására."
+        "hu"            "Használd a {1} parancsot, hogy folytasd a pálya választást."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -322,11 +322,11 @@
     }
     "ExitCoachSlotHelp"
     {
-        "hu"            "Írd be a {1} parancsot, hogy kilépj az edzői poziccióból."
+        "hu"            "Használd a {1} parancsot, hogy kilépj az edzői poziccióból."
     }
     "EnterCoachSlotHelp"
     {
-        "hu"            "Írd be a {1} parancsot, hogy a csapatod edzője legyél."
+        "hu"            "Használd a {1} parancsot, hogy a csapatod edzője legyél."
     }
     "MoveToCoachInfoMessage"
     {
@@ -342,19 +342,19 @@
     }
     "MapSelectionPickMenuText"
     {
-        "hu"            "Válassz pályát, amin játszanál:"
+        "hu"            "Válassz pályát, amin JÁTSZANÁL:"
     }
     "MapSelectionPickConfirmMenuText"
     {
-        "hu"            "Erősítse meg, hogy játszana {1}:"
+        "hu"            "Erősítse meg, hogy JÁTSZANÁL {1}:"
     }
     "MapSelectionBanMenuText"
     {
-        "hu"            "Válaszon egy pályát amit vétózna:"
+        "hu"            "Válassz ki egy pályát, amit szeretnél VÉTÓZNI:"
     }
     "MapSelectionBanConfirmMenuText"
     {
-        "hu"            "Erősítse meg, hogy vétózza a {1} pályát:"
+        "hu"            "Erősítse meg, hogy kiszeretnéd VÉTÓZNI a {1} pályát:"
     }
     "MapSelectionSidePickMenuText"
     {
@@ -374,6 +374,6 @@
     }
     "MapSelectionCountdown"
     {
-        "hu"            "Kezdődik a vétózás {1} másodperc múlva."
+        "hu"            "A pálya választás hamarosan kezdődik {1}..."
     }
 }

@@ -368,6 +368,54 @@
     {
         "pt"            "[NOT READY]"
     }
+    "MapSelectionTeamChatOnly"
+    {
+        "pt"        "Você só pode digitar no chat durante a seleção de mapas."
+    }
+    "MapSelectionInvalidMap"
+    {
+        "pt"        "{1} não é um mapa válido."
+    }
+    "MapSelectionPickMapHelp"
+    {
+        "pt"        "Use {1} <mapa> para escolher um mapa."
+    }
+    "MapSelectionBanMapHelp"
+    {
+        "pt"        "Use {1} <mapa> para banir um mapa."
+    }
+    "MapSelectionPickSideHelp"
+    {
+        "pt"        "Use {1} ou {2} para escolher um lado."
+    }
+    "MapSelectionAnnounceCaptains"
+    {
+        "pt"        "Capitão do {1}: {2}"
+    }
+    "MapSelectionBan"
+    {
+        "pt"        "BANIR"
+    }
+    "MapSelectionPick"
+    {
+        "pt"        "ESCOLHER"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "pt"        "{1} precisa {2} agora um mapa para jogar como mapa {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "pt"        "{1} precisa {2} um mapa agora."
+    }
+    "MapSelectionPickSide"
+    {
+        "pt"        "{1} precisa escolher um lado agora para jogar em {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "pt"        "Mapas restantes:"
+    }
     "MapSelectionPickMenuText"
     {
         "pt"        "Selecione um mapa para JOGAR:"

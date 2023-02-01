@@ -38,6 +38,7 @@ static void Get5_Test() {
 
   MatchConfigNotFoundTest();
   CustomVetoConfigTest();
+  DuplicateMapPoolTest();
 
   InvalidMatchConfigFile("addons/sourcemod/configs/get5/tests/invalid_config.json");
   InvalidMatchConfigFile("addons/sourcemod/configs/get5/tests/invalid_config.cfg");
@@ -82,6 +83,16 @@ static ArrayList GetMapPool(int size) {
     i++;
   }
   return list;
+}
+
+static void DuplicateMapPoolTest() {
+  SetTestContext("DuplicateMapPoolTest");
+  char error[PLATFORM_MAX_PATH];
+  AssertFalse("Load match config", LoadMatchConfig("addons/sourcemod/configs/get5/tests/maplist_duplicate_map.json", error));
+  AssertStrEq(
+    "Test duplicate maplist error",
+    "Maps in the maplist must be unique. Found duplicate map: 'de_ancient'.",
+    error);
 }
 
 static void MapVetoLogicTest() {

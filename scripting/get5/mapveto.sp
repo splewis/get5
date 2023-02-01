@@ -333,9 +333,11 @@ static void PromptForSideSelectionInChat(const Get5Team team) {
 }
 
 void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize) {
-  char[][] mapsArray = new char[mapPool.Length][64];
+  static int bz = 64; // For some reason, we cannot do sizeof(mapsArray[i])
+  char[][] mapsArray = new char[mapPool.Length][bz];
   for (int i = 0; i < mapPool.Length; i++) {
-    g_MapsLeftInVetoPool.GetString(i, mapsArray[i], 64);
+    g_MapsLeftInVetoPool.GetString(i, mapsArray[i], bz);
+    FormatMapName(mapsArray[i], mapsArray[i], bz, true, false);
   }
   ImplodeStrings(mapsArray, mapPool.Length, ", ", buffer, bufferSize);
 }
@@ -460,8 +462,8 @@ static int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
 }
 
 static bool BanMap(const char[] mapName, const Get5Team team) {
-  char mapNameFromArray[PLATFORM_MAX_PATH]; // correct casing
-  if (!RemoveStringFromArray(g_MapsLeftInVetoPool, mapName, mapNameFromArray, sizeof(mapNameFromArray), false)) {
+  char mapNameFromArray[PLATFORM_MAX_PATH]; // RemoveMapFromMapPool returns correct map name into this, mapName is user input.
+  if (!RemoveMapFromMapPool(g_MapsLeftInVetoPool, mapName, mapNameFromArray, sizeof(mapNameFromArray))) {
     return false;
   }
   char mapNameFormatted[PLATFORM_MAX_PATH];
@@ -544,8 +546,8 @@ static int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
 }
 
 static bool PickMap(const char[] mapName, const Get5Team team) {
-  char mapNameFromArray[PLATFORM_MAX_PATH]; // correct casing
-  if (!RemoveStringFromArray(g_MapsLeftInVetoPool, mapName, mapNameFromArray, sizeof(mapNameFromArray), false)) {
+  char mapNameFromArray[PLATFORM_MAX_PATH]; // RemoveMapFromMapPool returns correct map name into this, mapName is user input.
+  if (!RemoveMapFromMapPool(g_MapsLeftInVetoPool, mapName, mapNameFromArray, sizeof(mapNameFromArray))) {
     return false;
   }
   if (team != Get5Team_None) {
@@ -648,4 +650,25 @@ static void PickSide(const Get5Side side, const Get5Team team) {
   Call_PushCell(event);
   Call_Finish();
   EventLogger_LogAndDeleteEvent(event);
+}
+
+static bool RemoveMapFromMapPool(const ArrayList mapPool, const char[] str, char[] buffer, const int bufferSize) {
+  int eraseIndex = -1;
+  for (int i = 0; i < mapPool.Length; i++) {
+    mapPool.GetString(i, buffer, bufferSize);
+    // Minimum 3 chars unless it's a complete match. Should handle all edge cases.
+    if ((strlen(str) >= 3 && StrContains(buffer, str, false) > -1) || StrEqual(buffer, str, false)) {
+      if (eraseIndex >= 0) {
+        return false; // Only 1 match allowed.
+      }
+      eraseIndex = i;
+    }
+  }
+  if (eraseIndex >= 0) {
+    // Copy the correct map into the buffer!
+    mapPool.GetString(eraseIndex, buffer, bufferSize);
+    mapPool.Erase(eraseIndex);
+    return true;
+  }
+  return false;
 }

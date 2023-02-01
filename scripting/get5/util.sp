@@ -432,18 +432,6 @@ stock int AddAuthsToList(const KeyValues kv, const ArrayList list) {
   return count;
 }
 
-// If the string is found, it is inserted into the buffer.
-stock bool RemoveStringFromArray(const ArrayList list, const char[] str, char[] buffer, const int bufferSize, bool caseSensitive = true) {
-  for(int i = 0; i < list.Length; i++) {
-    list.GetString(i, buffer, bufferSize);
-    if (StrEqual(str, buffer, caseSensitive)) {
-      list.Erase(i);
-      return true;
-    }
-  }
-  return false;
-}
-
 // Because KeyValue cannot write empty strings, we use this to consistently read empty strings and
 // replace our empty-string-placeholder with actual empty string.
 stock bool ReadEmptyStringInsteadOfPlaceholder(const KeyValues kv, char[] buffer, const int bufferSize) {

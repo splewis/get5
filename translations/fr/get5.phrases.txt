@@ -380,6 +380,54 @@
     {
         "fr"            "[PAS PRÊT]"
     }
+    "MapSelectionTeamChatOnly"
+    {
+        "fr"        "Vous ne pouvez écrire que dans le chat d'équipe pendant la sélection de map."
+    }
+    "MapSelectionInvalidMap"
+    {
+        "fr"        "{1} n'est pas une map valide."
+    }
+    "MapSelectionPickMapHelp"
+    {
+        "fr"        "Utilisez {1} <map> pour choisir une map."
+    }
+    "MapSelectionBanMapHelp"
+    {
+        "fr"        "Utilisez {1} <map> pour bannir une map."
+    }
+    "MapSelectionPickSideHelp"
+    {
+        "fr"        "Utilisez {1} ou {2} pour choisir un côté."
+    }
+    "MapSelectionAnnounceCaptains"
+    {
+        "fr"        "Capitaine de {1}: {2}"
+    }
+    "MapSelectionBan"
+    {
+        "fr"        "BANNIR"
+    }
+    "MapSelectionPick"
+    {
+        "fr"        "SÉLECTIONNER"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "fr"        "{1} doit maintenant {2} une map pour jouer en map {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "fr"        "{1} doit maintenant {2} une map."
+    }
+    "MapSelectionPickSide"
+    {
+        "fr"        "{1} doit choisir un côté où jouer sur {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "fr"        "Maps restantes :"
+    }
     "MapSelectionPickMenuText"
     {
         "fr"        "Selectionnez une map à JOUER :"

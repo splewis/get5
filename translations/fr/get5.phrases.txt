@@ -390,7 +390,7 @@
     }
     "MapSelectionPickMapHelp"
     {
-        "fr"        "Utilisez {1} <map> pour choisir une map."
+        "fr"        "Utilisez {1} <map> pour sélectionner une map."
     }
     "MapSelectionBanMapHelp"
     {
@@ -398,7 +398,7 @@
     }
     "MapSelectionPickSideHelp"
     {
-        "fr"        "Utilisez {1} ou {2} pour choisir un côté."
+        "fr"        "Utilisez {1} ou {2} pour sélectionner un côté."
     }
     "MapSelectionAnnounceCaptains"
     {
@@ -422,7 +422,7 @@
     }
     "MapSelectionPickSide"
     {
-        "fr"        "{1} doit choisir un côté où jouer sur {2}."
+        "fr"        "{1} doit sélectionner un côté où jouer sur {2}."
     }
     "MapSelectionRemainingMaps"
     {

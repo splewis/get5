@@ -147,26 +147,33 @@ Action Command_Swap(int client, int args) {
 }
 
 Action Command_Ct(int client, int args) {
-  if (IsPlayer(client)) {
-    if (GetClientTeam(client) == CS_TEAM_CT)
-      FakeClientCommand(client, "sm_stay");
-    else if (GetClientTeam(client) == CS_TEAM_T)
-      FakeClientCommand(client, "sm_swap");
+  if (!IsPlayer(client)) {
+    return Plugin_Handled;
   }
-
-  LogDebug("cs team = %d", GetClientTeam(client));
-  LogDebug("m_iCoachingTeam = %d", GetEntProp(client, Prop_Send, "m_iCoachingTeam"));
-  LogDebug("m_iPendingTeamNum = %d", GetEntProp(client, Prop_Send, "m_iPendingTeamNum"));
-
+  if (g_GameState == Get5State_Veto) {
+    HandleSideChoice(Get5Side_CT, client);
+  } else {
+    if (GetClientTeam(client) == CS_TEAM_CT) {
+      FakeClientCommand(client, "sm_stay");
+    } else if (GetClientTeam(client) == CS_TEAM_T) {
+      FakeClientCommand(client, "sm_swap");
+    }
+  }
   return Plugin_Handled;
 }
 
 Action Command_T(int client, int args) {
-  if (IsPlayer(client)) {
-    if (GetClientTeam(client) == CS_TEAM_T)
-      FakeClientCommand(client, "sm_stay");
-    else if (GetClientTeam(client) == CS_TEAM_CT)
+  if (!IsPlayer(client)) {
+    return Plugin_Handled;
+  }
+  if (g_GameState == Get5State_Veto) {
+    HandleSideChoice(Get5Side_T, client);
+  } else {
+    if (GetClientTeam(client) == CS_TEAM_CT) {
       FakeClientCommand(client, "sm_swap");
+    } else if (GetClientTeam(client) == CS_TEAM_T) {
+      FakeClientCommand(client, "sm_stay");
+    }
   }
   return Plugin_Handled;
 }

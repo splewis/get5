@@ -432,11 +432,14 @@ stock int AddAuthsToList(const KeyValues kv, const ArrayList list) {
   return count;
 }
 
-stock bool RemoveStringFromArray(const ArrayList list, const char[] str) {
-  int index = list.FindString(str);
-  if (index != -1) {
-    list.Erase(index);
-    return true;
+// If the string is found, it is inserted into the buffer.
+stock bool RemoveStringFromArray(const ArrayList list, const char[] str, char[] buffer, const int bufferSize, bool caseSensitive = true) {
+  for(int i = 0; i < list.Length; i++) {
+    list.GetString(i, buffer, bufferSize);
+    if (StrEqual(str, buffer, caseSensitive)) {
+      list.Erase(i);
+      return true;
+    }
   }
   return false;
 }
@@ -836,6 +839,12 @@ stock void ChatCommandToString(const Get5ChatCommand command, char[] buffer, con
     case Get5ChatCommand_CancelFFW: {
       FormatEx(buffer, bufferSize, "cancelffw");
     }
+    case Get5ChatCommand_Pick: {
+      FormatEx(buffer, bufferSize, "pick");
+    }
+    case Get5ChatCommand_Ban: {
+      FormatEx(buffer, bufferSize, "ban");
+    }
     default: {
       LogError("Failed to map Get5ChatCommand with value %d to a string. It is missing from ChatCommandToString.",
                command);
@@ -874,6 +883,10 @@ stock Get5ChatCommand StringToChatCommand(const char[] string) {
     return Get5ChatCommand_FFW;
   } else if (strcmp(string, "cancelffw") == 0) {
     return Get5ChatCommand_CancelFFW;
+  } else if (strcmp(string, "pick") == 0) {
+    return Get5ChatCommand_Pick;
+  } else if (strcmp(string, "ban") == 0) {
+    return Get5ChatCommand_Ban;
   } else {
     return Get5ChatCommand_Unknown;
   }

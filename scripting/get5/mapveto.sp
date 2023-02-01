@@ -40,6 +40,14 @@ static Action Timer_VetoCountdown(Handle timer) {
   }
   if (warningsPrinted >= g_VetoCountdownCvar.IntValue) {
     warningsPrinted = 0;
+    if (!IsPlayer(g_VetoCaptains[Get5Team_1]) || !IsPlayer(g_VetoCaptains[Get5Team_2])) {
+      AbortVeto();
+      return Plugin_Stop;
+    }
+    Get5_MessageToAll("%t", "MapSelectionAnnounceCaptains", g_FormattedTeamNames[Get5Team_1],
+                      g_VetoCaptains[Get5Team_1]);
+    Get5_MessageToAll("%t", "MapSelectionAnnounceCaptains", g_FormattedTeamNames[Get5Team_2],
+                      g_VetoCaptains[Get5Team_2]);
     VetoController();
     return Plugin_Stop;
   }
@@ -51,7 +59,7 @@ static Action Timer_VetoCountdown(Handle timer) {
   return Plugin_Continue;
 }
 
-static void AbortVeto() {
+void AbortVeto() {
   Get5_MessageToAll("%t", "CaptainLeftDuringMapSelection");
   char readyCommandFormatted[64];
   GetChatAliasForCommand(Get5ChatCommand_Ready, readyCommandFormatted, sizeof(readyCommandFormatted), true);
@@ -63,6 +71,9 @@ static void AbortVeto() {
   if (IsPaused()) {
     UnpauseGame();
   }
+  g_VetoCaptains[Get5Team_1] = -1;
+  g_VetoCaptains[Get5Team_2] = -1;
+  SetMatchTeamCvars(); // Resets ready status.
 }
 
 static void VetoFinished() {
@@ -116,11 +127,93 @@ static void VetoFinished() {
 
 // Main Veto Controller
 
+Action Command_Pick(int client, int args) {
+  if (g_GameState != Get5State_Veto || !IsPlayer(client)) {
+    return Plugin_Handled;
+  }
+  Get5Team playerTeam = GetClientMatchTeam(client);
+  Get5Team currentTeamToPick;
+  switch (GetCurrentMapSelectionOption()) {
+    case Get5MapSelectionOption_Team1Pick:
+      currentTeamToPick = Get5Team_1;
+    case Get5MapSelectionOption_Team2Pick:
+      currentTeamToPick = Get5Team_2;
+    case Get5MapSelectionOption_Invalid, Get5MapSelectionOption_Team1Ban, Get5MapSelectionOption_Team2Ban:
+      return Plugin_Handled;
+  }
+
+  if (client != g_VetoCaptains[currentTeamToPick]) {
+    return Plugin_Handled;
+  }
+
+  char mapArg[PLATFORM_MAX_PATH];
+  if (args < 1 || !GetCmdArg(1, mapArg, sizeof(mapArg))) {
+    return Plugin_Handled;
+  }
+
+  if (!PickMap(mapArg, playerTeam)) {
+    Get5_Message(client, "%t", "MapSelectionInvalidMap", mapArg);
+  } else {
+    VetoController();
+  }
+  return Plugin_Handled;
+}
+
+Action Command_Ban(int client, int args) {
+  if (g_GameState != Get5State_Veto || !IsPlayer(client)) {
+    return Plugin_Handled;
+  }
+
+  Get5Team currentTeamToBan;
+  switch (GetCurrentMapSelectionOption()) {
+    case Get5MapSelectionOption_Team1Ban:
+      currentTeamToBan = Get5Team_1;
+    case Get5MapSelectionOption_Team2Ban:
+      currentTeamToBan = Get5Team_2;
+    case Get5MapSelectionOption_Invalid, Get5MapSelectionOption_Team1Pick, Get5MapSelectionOption_Team2Pick:
+      return Plugin_Handled;
+  }
+
+  if (client != g_VetoCaptains[currentTeamToBan]) {
+    return Plugin_Handled;
+  }
+
+  char mapArg[PLATFORM_MAX_PATH];
+  if (args < 1 || !GetCmdArg(1, mapArg, sizeof(mapArg))) {
+    return Plugin_Handled;
+  }
+
+  if (!BanMap(mapArg, currentTeamToBan)) {
+    Get5_Message(client, "%t", "MapSelectionInvalidMap", mapArg);
+  } else {
+    VetoController();
+  }
+  return Plugin_Handled;
+}
+
+void HandleSideChoice(const Get5Side side, int client) {
+  if (g_MatchSideType != MatchSideType_Standard || g_MapSides.Length >= g_MapsToPlay.Length) {
+    // No side selection is done by players in this case.
+    return;
+  }
+  Get5Team pickingTeam = OtherMatchTeam(g_LastVetoTeam);
+  if (client != g_VetoCaptains[pickingTeam]) {
+    // Only captain can select a side.
+    return;
+  }
+  PickSide(side, pickingTeam);
+  VetoController();
+}
+
 static void VetoController() {
   // As long as sides are not set for a map, either give side pick or auto-decide sides and recursively call this.
   if (g_MapSides.Length < g_MapsToPlay.Length) {
     if (g_MatchSideType == MatchSideType_Standard) {
-      GiveSidePickMenu(g_VetoCaptains[OtherMatchTeam(g_LastVetoTeam)]);
+      if (g_MapSelectionViaChatCvar.BoolValue) {
+        PromptForSideSelectionInChat(OtherMatchTeam(g_LastVetoTeam));
+      } else {
+        GiveSidePickMenu(g_VetoCaptains[OtherMatchTeam(g_LastVetoTeam)]);
+      }
     } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
       g_MapSides.Push(SideChoice_KnifeRound);
       VetoController();
@@ -141,19 +234,20 @@ static void VetoController() {
       }
       VetoFinished();
     } else {
-      // Number of banned maps must be: original pool - (current pool + picked);
-      // 7 - (4 + 2) = 1; if 4 are left and 2 were picked, 1 must have been banned.
-      int mapsBanned = g_MapPoolList.Length - (g_MapsLeftInVetoPool.Length + g_MapsToPlay.Length);
       // More than 1 map in the pool and not all maps are picked; present choices as determine by config.
-      switch (g_MapBanOrder.Get(g_MapsToPlay.Length + mapsBanned)) {
-        case Get5MapSelectionOption_Team1Ban:
-          GiveMapVetoMenu(g_VetoCaptains[Get5Team_1]);
-        case Get5MapSelectionOption_Team2Ban:
-          GiveMapVetoMenu(g_VetoCaptains[Get5Team_2]);
-        case Get5MapSelectionOption_Team1Pick:
-          GiveMapPickMenu(g_VetoCaptains[Get5Team_1]);
-        case Get5MapSelectionOption_Team2Pick:
-          GiveMapPickMenu(g_VetoCaptains[Get5Team_2]);
+      if (g_MapSelectionViaChatCvar.BoolValue) {
+        PromptForMapSelectionInChat(GetCurrentMapSelectionOption());
+      } else {
+        switch (GetCurrentMapSelectionOption()) {
+          case Get5MapSelectionOption_Team1Ban:
+            GiveMapVetoMenu(g_VetoCaptains[Get5Team_1]);
+          case Get5MapSelectionOption_Team2Ban:
+            GiveMapVetoMenu(g_VetoCaptains[Get5Team_2]);
+          case Get5MapSelectionOption_Team1Pick:
+            GiveMapPickMenu(g_VetoCaptains[Get5Team_1]);
+          case Get5MapSelectionOption_Team2Pick:
+            GiveMapPickMenu(g_VetoCaptains[Get5Team_2]);
+        }
       }
     }
   } else {
@@ -161,37 +255,89 @@ static void VetoController() {
   }
 }
 
-static void PickMap(const char[] mapName, const Get5Team team) {
-  if (team != Get5Team_None) {
-    char mapNameFormatted[PLATFORM_MAX_PATH];
-    FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), true, true);
-    Get5_MessageToAll("%t", "TeamPickedMap", g_FormattedTeamNames[team], mapNameFormatted, g_MapsToPlay.Length + 1);
+static Get5MapSelectionOption GetCurrentMapSelectionOption() {
+  // Number of banned maps must be: original pool - (current pool + picked);
+  // 7 - (4 + 2) = 1; if 4 are left and 2 were picked, 1 must have been banned.
+  int mapsBanned = g_MapPoolList.Length - (g_MapsLeftInVetoPool.Length + g_MapsToPlay.Length);
+  int index = g_MapsToPlay.Length + mapsBanned;
+  if (index > g_MapBanOrder.Length - 1) {
+    return Get5MapSelectionOption_Invalid;
   }
-  RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
-  g_MapsToPlay.PushString(mapName);
-
-  Get5MapPickedEvent event = new Get5MapPickedEvent(g_MatchID, team, mapName, g_MapsToPlay.Length - 1);
-  LogDebug("Calling Get5_OnMapPicked()");
-  Call_StartForward(g_OnMapPicked);
-  Call_PushCell(event);
-  Call_Finish();
-  EventLogger_LogAndDeleteEvent(event);
+  return g_MapBanOrder.Get(index);
 }
 
-static void VetoMap(const char[] mapName, const Get5Team team) {
-  RemoveStringFromArray(g_MapsLeftInVetoPool, mapName);
-  char mapNameFormatted[PLATFORM_MAX_PATH];
-  FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), true, false);
-  // Add color here as FormatMapName would make the color green.
-  Format(mapNameFormatted, sizeof(mapNameFormatted), "{LIGHT_RED}%s{NORMAL}", mapNameFormatted);
-  Get5_MessageToAll("%t", "TeamBannedMap", g_FormattedTeamNames[team], mapNameFormatted);
+static void PromptForMapSelectionInChat(const Get5MapSelectionOption option) {
+  char action[64];
+  switch (option) {
+    case Get5MapSelectionOption_Team1Ban, Get5MapSelectionOption_Team2Ban:
+      FormatEx(action, sizeof(action), "{DARK_RED}%t{NORMAL}", "MapSelectionBan");
+    case Get5MapSelectionOption_Team1Pick, Get5MapSelectionOption_Team2Pick:
+      FormatEx(action, sizeof(action), "{GREEN}%t{NORMAL}", "MapSelectionPick");
+  }
+  switch (option) {
+    case Get5MapSelectionOption_Team1Ban:
+      Get5_MessageToAll("%t", "MapSelectionTurnToBan", g_FormattedTeamNames[Get5Team_1], action);
+    case Get5MapSelectionOption_Team2Ban:
+      Get5_MessageToAll("%t", "MapSelectionTurnToBan", g_FormattedTeamNames[Get5Team_2], action);
+    case Get5MapSelectionOption_Team1Pick:
+      Get5_MessageToAll("%t", "MapSelectionTurnToPick", g_FormattedTeamNames[Get5Team_1], action,
+                        g_MapsToPlay.Length + 1);
+    case Get5MapSelectionOption_Team2Pick:
+      Get5_MessageToAll("%t", "MapSelectionTurnToPick", g_FormattedTeamNames[Get5Team_2], action,
+                        g_MapsToPlay.Length + 1);
+  }
+  char mapListAsString[PLATFORM_MAX_PATH];
+  ImplodeMapArrayToString(g_MapsLeftInVetoPool, mapListAsString, sizeof(mapListAsString));
+  Get5_MessageToAll("%t %s.", "MapSelectionRemainingMaps", mapListAsString);
 
-  Get5MapVetoedEvent event = new Get5MapVetoedEvent(g_MatchID, team, mapName);
-  LogDebug("Calling Get5_OnMapVetoed()");
-  Call_StartForward(g_OnMapVetoed);
-  Call_PushCell(event);
-  Call_Finish();
-  EventLogger_LogAndDeleteEvent(event);
+  int client;
+  switch (option) {
+    case Get5MapSelectionOption_Team1Ban, Get5MapSelectionOption_Team1Pick:
+      client = g_VetoCaptains[Get5Team_1];
+    case Get5MapSelectionOption_Team2Ban, Get5MapSelectionOption_Team2Pick:
+      client = g_VetoCaptains[Get5Team_2];
+  }
+  if (!IsPlayer(client)) {
+    return;
+  }
+
+  char formattedCommand[64];
+  switch (option) {
+    case Get5MapSelectionOption_Team1Ban, Get5MapSelectionOption_Team2Ban: {
+      GetChatAliasForCommand(Get5ChatCommand_Ban, formattedCommand, sizeof(formattedCommand), true);
+      Get5_Message(client, "%t", "MapSelectionBanMapHelp", formattedCommand);
+    }
+    case Get5MapSelectionOption_Team1Pick, Get5MapSelectionOption_Team2Pick: {
+      GetChatAliasForCommand(Get5ChatCommand_Pick, formattedCommand, sizeof(formattedCommand), true);
+      Get5_Message(client, "%t", "MapSelectionPickMapHelp", formattedCommand);
+    }
+  }
+}
+
+static void PromptForSideSelectionInChat(const Get5Team team) {
+  char mapName[PLATFORM_MAX_PATH];
+  g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
+  char formattedMapName[PLATFORM_MAX_PATH];
+  FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), true, true);
+  Get5_MessageToAll("%t", "MapSelectionPickSide", g_FormattedTeamNames[team], formattedMapName);
+
+  int client = g_VetoCaptains[team];
+  if (!IsPlayer(client)) {
+    return;
+  }
+  char formattedCommandCT[64];
+  char formattedCommandT[64];
+  GetChatAliasForCommand(Get5ChatCommand_CT, formattedCommandCT, sizeof(formattedCommandCT), true);
+  GetChatAliasForCommand(Get5ChatCommand_T, formattedCommandT, sizeof(formattedCommandT), true);
+  Get5_Message(client, "%t", "MapSelectionPickSideHelp", formattedCommandCT, formattedCommandT);
+}
+
+void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize) {
+  char[][] mapsArray = new char[mapPool.Length][64];
+  for (int i = 0; i < mapPool.Length; i++) {
+    g_MapsLeftInVetoPool.GetString(i, mapsArray[i], 64);
+  }
+  ImplodeStrings(mapsArray, mapPool.Length, ", ", buffer, bufferSize);
 }
 
 // Confirmations
@@ -299,8 +445,7 @@ static int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
       return;
     }
 
-    VetoMap(mapName, team);
-    g_LastVetoTeam = team;
+    BanMap(mapName, team);
     VetoController();
   } else if (action == MenuAction_Cancel) {
     if (g_GameState == Get5State_Veto) {
@@ -312,6 +457,29 @@ static int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int para
     }
     delete menu;
   }
+}
+
+static bool BanMap(const char[] mapName, const Get5Team team) {
+  char mapNameFromArray[PLATFORM_MAX_PATH]; // correct casing
+  if (!RemoveStringFromArray(g_MapsLeftInVetoPool, mapName, mapNameFromArray, sizeof(mapNameFromArray), false)) {
+    return false;
+  }
+  char mapNameFormatted[PLATFORM_MAX_PATH];
+  FormatMapName(mapNameFromArray, mapNameFormatted, sizeof(mapNameFormatted), true, false);
+  // Add color here as FormatMapName would make the color green.
+  Format(mapNameFormatted, sizeof(mapNameFormatted), "{LIGHT_RED}%s{NORMAL}", mapNameFormatted);
+  Get5_MessageToAll("%t", "TeamBannedMap", g_FormattedTeamNames[team], mapNameFormatted);
+
+  Get5MapVetoedEvent event = new Get5MapVetoedEvent(g_MatchID, team, mapNameFromArray);
+  LogDebug("Calling Get5_OnMapVetoed()");
+  Call_StartForward(g_OnMapVetoed);
+  Call_PushCell(event);
+  Call_Finish();
+  EventLogger_LogAndDeleteEvent(event);
+
+  g_LastVetoTeam = team;
+
+  return true;
 }
 
 // Map Picks
@@ -362,7 +530,6 @@ static int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
     }
 
     PickMap(mapName, team);
-    g_LastVetoTeam = team;
     VetoController();
   } else if (action == MenuAction_Cancel) {
     if (g_GameState == Get5State_Veto) {
@@ -374,6 +541,31 @@ static int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int para
     }
     delete menu;
   }
+}
+
+static bool PickMap(const char[] mapName, const Get5Team team) {
+  char mapNameFromArray[PLATFORM_MAX_PATH]; // correct casing
+  if (!RemoveStringFromArray(g_MapsLeftInVetoPool, mapName, mapNameFromArray, sizeof(mapNameFromArray), false)) {
+    return false;
+  }
+  if (team != Get5Team_None) {
+    char mapNameFormatted[PLATFORM_MAX_PATH];
+    FormatMapName(mapNameFromArray, mapNameFormatted, sizeof(mapNameFormatted), true, true);
+    Get5_MessageToAll("%t", "TeamPickedMap", g_FormattedTeamNames[team], mapNameFormatted, g_MapsToPlay.Length + 1);
+  }
+
+  g_MapsToPlay.PushString(mapNameFromArray);
+
+  Get5MapPickedEvent event = new Get5MapPickedEvent(g_MatchID, team, mapNameFromArray, g_MapsToPlay.Length - 1);
+  LogDebug("Calling Get5_OnMapPicked()");
+  Call_StartForward(g_OnMapPicked);
+  Call_PushCell(event);
+  Call_Finish();
+  EventLogger_LogAndDeleteEvent(event);
+
+  g_LastVetoTeam = team;
+
+  return true;
 }
 
 // Side Picks
@@ -416,33 +608,7 @@ static int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
       return;
     }
 
-    Get5Side selectedSide;
-    if (StrEqual(choice, "CT")) {
-      selectedSide = Get5Side_CT;
-      g_MapSides.Push(team == Get5Team_1 ? SideChoice_Team1CT : SideChoice_Team1T);
-    } else {
-      selectedSide = Get5Side_T;
-      g_MapSides.Push(team == Get5Team_1 ? SideChoice_Team1T : SideChoice_Team1CT);
-    }
-
-    int mapNumber = g_MapsToPlay.Length - 1;
-
-    char mapName[PLATFORM_MAX_PATH];
-    g_MapsToPlay.GetString(mapNumber, mapName, sizeof(mapName));
-    char mapNameFormatted[PLATFORM_MAX_PATH];
-    FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), true, true);
-
-    Format(choice, sizeof(choice), "{GREEN}%s{NORMAL}", choice);
-    Get5_MessageToAll("%t", "TeamSelectedSide", g_FormattedTeamNames[team], choice, mapNameFormatted);
-
-    Get5SidePickedEvent event = new Get5SidePickedEvent(g_MatchID, mapNumber, mapName, team, selectedSide);
-
-    LogDebug("Calling Get5_OnSidePicked()");
-    Call_StartForward(g_OnSidePicked);
-    Call_PushCell(event);
-    Call_Finish();
-    EventLogger_LogAndDeleteEvent(event);
-
+    PickSide(StrEqual(choice, "CT") ? Get5Side_CT : Get5Side_T, team);
     VetoController();
 
   } else if (action == MenuAction_Cancel) {
@@ -455,4 +621,31 @@ static int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int par
     }
     delete menu;
   }
+}
+
+static void PickSide(const Get5Side side, const Get5Team team) {
+  if (side == Get5Side_CT) {
+    g_MapSides.Push(team == Get5Team_1 ? SideChoice_Team1CT : SideChoice_Team1T);
+  } else {
+    g_MapSides.Push(team == Get5Team_1 ? SideChoice_Team1T : SideChoice_Team1CT);
+  }
+
+  int mapNumber = g_MapsToPlay.Length - 1;
+
+  char mapName[PLATFORM_MAX_PATH];
+  g_MapsToPlay.GetString(mapNumber, mapName, sizeof(mapName));
+  char mapNameFormatted[PLATFORM_MAX_PATH];
+  FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), true, true);
+
+  char sideFormatted[32];
+  FormatEx(sideFormatted, sizeof(sideFormatted), "{GREEN}%s{NORMAL}", side == Get5Side_CT ? "CT" : "T");
+
+  Get5_MessageToAll("%t", "TeamSelectedSide", g_FormattedTeamNames[team], sideFormatted, mapNameFormatted);
+
+  Get5SidePickedEvent event = new Get5SidePickedEvent(g_MatchID, mapNumber, mapName, team, side);
+  LogDebug("Calling Get5_OnSidePicked()");
+  Call_StartForward(g_OnSidePicked);
+  Call_PushCell(event);
+  Call_Finish();
+  EventLogger_LogAndDeleteEvent(event);
 }

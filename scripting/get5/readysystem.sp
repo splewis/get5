@@ -69,6 +69,11 @@ bool IsTeamReady(Get5Team team) {
   int playerCount = GetTeamPlayerCount(team, g_CoachesMustReady);
   int readyCount = GetTeamReadyCount(team, g_CoachesMustReady);
 
+  if (g_GameState == Get5State_PreVeto && playerCount == 0) {
+    // We cannot ready for veto with no players, regardless of force status or min_players_to_ready.
+    return false;
+  }
+
   if (team == Get5Team_Spec && minReady == 0) {
     return true;
   }
@@ -192,25 +197,29 @@ Action Command_NotReady(int client, int args) {
   }
 
   Get5_Message(client, "%t", "YouAreNotReady");
-
-  bool teamWasReady = IsTeamReady(team);
   SetClientReady(client, false);
+  UnreadyTeam(team);
+  return Plugin_Handled;
+}
+
+void UnreadyTeam(Get5Team team) {
+  bool teamWasReady = IsTeamReady(team);
   SetTeamForcedReady(team, false);
-  if (teamWasReady) {
-    Get5TeamReadyStatusChangedEvent readyEvent =
-      new Get5TeamReadyStatusChangedEvent(g_MatchID, team, false, Get5_GetGameState());
-
-    LogDebug("Calling Get5_OnTeamReadyStatusChanged()");
-
-    Call_StartForward(g_OnTeamReadyStatusChanged);
-    Call_PushCell(readyEvent);
-    Call_Finish();
-
-    SetMatchTeamCvars();
-    Get5_MessageToAll("%t", "TeamIsNoLongerReady", g_FormattedTeamNames[team]);
+  if (!teamWasReady) {
+    return;
   }
 
-  return Plugin_Handled;
+  Get5TeamReadyStatusChangedEvent readyEvent =
+      new Get5TeamReadyStatusChangedEvent(g_MatchID, team, false, Get5_GetGameState());
+
+  LogDebug("Calling Get5_OnTeamReadyStatusChanged()");
+
+  Call_StartForward(g_OnTeamReadyStatusChanged);
+  Call_PushCell(readyEvent);
+  Call_Finish();
+
+  SetMatchTeamCvars();
+  Get5_MessageToAll("%t", "TeamIsNoLongerReady", g_FormattedTeamNames[team]);
 }
 
 Action Command_ForceReadyClient(int client, int args) {

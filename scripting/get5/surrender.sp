@@ -117,7 +117,18 @@ Action Command_FFW(int client, int args) {
   return Plugin_Handled;
 }
 
-Action Timer_DisconnectCheck(Handle timer) {
+Action Timer_DisconnectCheck(Handle timer, int disconnectingClient) {
+  if (g_GameState == Get5State_Veto) {
+    if (disconnectingClient == g_VetoCaptains[Get5Team_1]) {
+      UnreadyTeam(Get5Team_1);
+      AbortVeto();
+    } else if (disconnectingClient == g_VetoCaptains[Get5Team_2]) {
+      UnreadyTeam(Get5Team_2);
+      AbortVeto();
+    }
+    return Plugin_Handled;
+  }
+
   if (g_GameState <= Get5State_Warmup || g_GameState > Get5State_Live || IsDoingRestoreOrMapChange()) {
     // If we're in warmup or veto, the "time to ready" logic should be used instead of leave-surrender.
     // Postgame/restore also should not trigger any of this logic.

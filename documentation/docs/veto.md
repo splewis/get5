@@ -1,11 +1,25 @@
 # :material-map: Map Selection
 
 If your match is configured to include a veto-phase (setting [`skip_veto`](../match_schema#schema) to `false`), each
-team's captain will ban or pick maps to play using in-game menus.
+team's captain will ban or pick maps from your configured map pool. 
+
+## Interface
+
+By default, Get5 uses the in-game menus (1-9 on the keyboard) to ban/pick maps and select sides. You may instead
+enable [`get5_map_selection_via_chat`](../configuration#get5_map_selection_via_chat) to make Get5 use the chat
+commands [`!pick`](../commands#pick), [`!ban`](../commands#pick), [`!ct`](../commands#ct) and [`!t`](../commands#t).
+The chat system is slightly more verbose, but also much less likely to result in user error, as there is a distinct
+command for each action and no accidental selections.
+
+!!! hint "Silence!"
+
+    Except for the team captains, players can only talk in **team chat** during chat based map selection. This is to
+    reduce clutter, as a lot of text is already printed during this phase. You can enable all-chat for everyone by
+    disabling [`get5_mute_allchat_during_map_selection`](../configuration#get5_mute_allchat_during_map_selection).
 
 ## Team Captains {: #captains }
 
-Get5 will give map pick/ban and side choice menus to a player on each team. The player it gives it to will be the first
+Get5 will give map pick/ban and side choices to a player on each team. The player it gives it to will be the first
 player listed in the [`players`](../match_schema#schema) section of a match configuration, or a random player on the
 away-team when in [scrim mode](../getting_started#scrims).
 

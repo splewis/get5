@@ -94,7 +94,7 @@ defines the [`{SERVERID}`](#tag-serverid) substitution and the return value of t
 using [`get5_endmatch`](../commands#get5_endmatch).<br>**`Default: 0`**
 
 ####`get5_display_gotv_veto`
-:   Whether to wait for [map vetoes](../veto) to be broadcast to [GOTV](../gotv) before changing
+:   Whether to wait for [map selection](../veto) to be broadcast to [GOTV](../gotv) before changing
 map.<br>**`Default: 0`**
 
 ####`get5_check_auths`
@@ -165,6 +165,14 @@ countdown.<br>**`Default: 5`**
 ####`get5_veto_confirmation_time`
 :   Time (in seconds) from presenting a [veto](../veto) menu to a selection being made, during which a confirmation will
 be required. 0 to disable.<br>**`Default: 2.0`**
+
+####`get5_map_selection_via_chat`
+:   Whether [map selection](../veto) is controlled using [`!ban`](../commands#ban), [`!pick`](../commands#pick)
+and [`!ct`](../commands#ct)/[`!t`](../commands#t) in chat instead of in-game menus.<br>**`Default: 0`**
+
+####`get5_mute_allchat_during_map_selection`
+:   Suppresses all chat messages not sent in the team-channel for everyone but the team captains
+during [chat based map selection](#get5_map_selection_via_chat).<br>**`Default: 1`**
 
 ####`get5_print_damage`
 :   Whether to print damage reports when a round ends. The format is determined

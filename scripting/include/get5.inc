@@ -75,6 +75,8 @@ enum Get5ChatCommand {
   Get5ChatCommand_Surrender,
   Get5ChatCommand_FFW,
   Get5ChatCommand_CancelFFW,
+  Get5ChatCommand_Pick,
+  Get5ChatCommand_Ban
 };
 
 enum MatchSideType {

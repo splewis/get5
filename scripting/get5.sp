@@ -87,6 +87,8 @@ ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunityCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
+ConVar g_MapSelectionViaChatCvar;
+ConVar g_MuteAllChatDuringMapSelectionCvar;
 ConVar g_WarmupCfgCvar;
 ConVar g_KnifeCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
@@ -390,7 +392,6 @@ public void OnPluginStart() {
   g_MaxPauseTimeCvar                    = CreateConVar("get5_max_pause_time", "0", "Maximum number of seconds a game can spend under tactical pause for each team. 0 = unlimited.");
   g_MaxTechPausesCvar                   = CreateConVar("get5_max_tech_pauses", "0", "Number of technical pauses a team can use. 0 = unlimited.");
   g_PausingEnabledCvar                  = CreateConVar("get5_pausing_enabled", "1", "Whether tactical pauses are allowed by players.");
-  g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "0", "Whether the game pauses during the veto phase.");
   g_ResetPausesEachHalfCvar             = CreateConVar("get5_reset_pauses_each_half", "1", "Whether tactical pause limits will be reset on halftime.");
   g_MaxTechPauseDurationCvar            = CreateConVar("get5_tech_pause_time", "0", "Number of seconds before anyone can call !unpause during a technical timeout. 0 = unlimited.");
 
@@ -458,10 +459,15 @@ public void OnPluginStart() {
   g_VetoConfirmationTimeCvar            = CreateConVar("get5_veto_confirmation_time", "2.0", "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required. 0 to disable.");
   g_VetoCountdownCvar                   = CreateConVar("get5_veto_countdown", "5", "Seconds to countdown before veto process commences. 0 to skip countdown.");
 
+  // Veto
+  g_MapSelectionViaChatCvar             = CreateConVar("get5_map_selection_via_chat", "0", "Whether map selection is done via chat commands or in-game menus.");
+  g_MuteAllChatDuringMapSelectionCvar   = CreateConVar("get5_mute_allchat_during_map_selection", "1", "If enabled, only the team captains can type in all-chat during chat-based veto.");
+  g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "0", "Whether the game pauses during the veto phase.");
+  g_DisplayGotvVetoCvar                 = CreateConVar("get5_display_gotv_veto", "0", "Whether to wait for map vetos to be printed to GOTV before changing map.");
+
   // Server config
   g_AutoLoadConfigCvar                  = CreateConVar("get5_autoload_config", "", "The path/name of a match config file to automatically load when the server loads or when the first player joins.");
   g_CheckAuthsCvar                      = CreateConVar("get5_check_auths", "1", "Whether players are forced onto the correct teams based on their Steam IDs.");
-  g_DisplayGotvVetoCvar                 = CreateConVar("get5_display_gotv_veto", "0", "Whether to wait for map vetos to be printed to GOTV before changing map.");
   g_SetHostnameCvar                     = CreateConVar("get5_hostname_format", "Get5: {TEAM1} vs {TEAM2}", "The server hostname to use when a match is loaded. Set to \"\" to disable/use existing.");
   g_KickClientImmunityCvar              = CreateConVar("get5_kick_immunity", "1", "Whether admins with the 'changemap' flag will be immune to kicks from \"get5_kick_when_no_match_loaded\".");
   g_KickClientsWithNoMatchCvar          = CreateConVar("get5_kick_when_no_match_loaded", "0", "Whether the plugin kicks players when no match is loaded and when a match ends.");
@@ -513,6 +519,8 @@ public void OnPluginStart() {
   MapChatCommand(Get5ChatCommand_Surrender, "surrender");
   MapChatCommand(Get5ChatCommand_FFW, "ffw");
   MapChatCommand(Get5ChatCommand_CancelFFW, "cancelffw");
+  MapChatCommand(Get5ChatCommand_Pick, "pick");
+  MapChatCommand(Get5ChatCommand_Ban, "ban");
 
   LoadCustomChatAliases("addons/sourcemod/configs/get5/commands.cfg");
 
@@ -765,6 +773,16 @@ public void OnClientPostAdminCheck(int client) {
   }
 }
 
+public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
+  if (g_GameState == Get5State_Veto && g_MuteAllChatDuringMapSelectionCvar.BoolValue && StrEqual(command, "say")) {
+    if (client != g_VetoCaptains[Get5Team_1] && client != g_VetoCaptains[Get5Team_2]) {
+      Get5_Message(client, "%t", "MapSelectionTeamChatOnly");
+      return Plugin_Stop;
+    }
+  }
+  return Plugin_Continue;
+}
+
 public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs) {
   if (g_GameState != Get5State_None && (StrEqual(command, "say") || StrEqual(command, "say_team"))) {
     if (IsValidClient(client)) {
@@ -814,19 +832,20 @@ static Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
 static Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
   g_ClientPendingTeamCheck[client] = false;
-  if (g_GameState != Get5State_None && IsPlayer(client)) {
-    Get5PlayerDisconnectedEvent disconnectEvent = new Get5PlayerDisconnectedEvent(g_MatchID, GetPlayerObject(client));
-
-    LogDebug("Calling Get5_OnPlayerDisconnected()");
-    Call_StartForward(g_OnPlayerDisconnected);
-    Call_PushCell(disconnectEvent);
-    Call_Finish();
-    EventLogger_LogAndDeleteEvent(disconnectEvent);
-
-    // Because the disconnect event fires before the user leaves the server, we have to put this on a short callback
-    // to get the right "number of players per team" in CheckForForfeitOnDisconnect().
-    CreateTimer(0.1, Timer_DisconnectCheck, _, TIMER_FLAG_NO_MAPCHANGE);
+  if (g_GameState == Get5State_None || !IsPlayer(client)) {
+    return Plugin_Continue;
   }
+  Get5PlayerDisconnectedEvent disconnectEvent = new Get5PlayerDisconnectedEvent(g_MatchID, GetPlayerObject(client));
+
+  LogDebug("Calling Get5_OnPlayerDisconnected()");
+  Call_StartForward(g_OnPlayerDisconnected);
+  Call_PushCell(disconnectEvent);
+  Call_Finish();
+  EventLogger_LogAndDeleteEvent(disconnectEvent);
+
+  // Because the disconnect event fires before the user leaves the server, we have to put this on a short callback
+  // to get the right "number of players per team" in CheckForForfeitOnDisconnect().
+  CreateTimer(0.1, Timer_DisconnectCheck, client, TIMER_FLAG_NO_MAPCHANGE);
   return Plugin_Continue;
 }
 
@@ -928,6 +947,7 @@ static Action Timer_CheckReady(Handle timer) {
       ChangeState(Get5State_Veto);
       RestartGame();
       CreateVeto();
+      SetMatchTeamCvars(); // Removes ready status.
     }
   } else if (g_GameState == Get5State_PendingRestore) {
     // We don't wait for spectators when restoring backups

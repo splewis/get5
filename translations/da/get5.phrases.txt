@@ -388,6 +388,54 @@
     {
         "da"            "[IKKE KLAR]"
     }
+    "MapSelectionTeamChatOnly"
+    {
+        "da"        "Du kan kun skrive i dit eget holds chatkanal under chatbaseret mapvalg."
+    }
+    "MapSelectionInvalidMap"
+    {
+        "da"        "{1} er ikke et gyldigt map."
+    }
+    "MapSelectionPickMapHelp"
+    {
+        "da"        "Brug {1} <map> til at vælge et map."
+    }
+    "MapSelectionBanMapHelp"
+    {
+        "da"        "Brug {1} <map> til at banne et map."
+    }
+    "MapSelectionPickSideHelp"
+    {
+        "da"        "Brug {1} eller {2} til at vælge en side."
+    }
+    "MapSelectionAnnounceCaptains"
+    {
+        "da"        "Holdkaptajn for {1}: {2}"
+    }
+    "MapSelectionBan"
+    {
+        "da"        "BANNE"
+    }
+    "MapSelectionPick"
+    {
+        "da"        "VÆLGE"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "da"        "{1} skal {2} et map at spille som map nr. {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "da"        "{1} skal {2} et map."
+    }
+    "MapSelectionPickSide"
+    {
+        "da"        "{1} skal vælge en startside på {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "da"        "Tilbageværende maps:"
+    }
     "MapSelectionPickMenuText"
     {
         "da"        "Vælg et map at SPILLE:"

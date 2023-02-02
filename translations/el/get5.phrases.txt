@@ -27,7 +27,7 @@
     "YouAreReadyAuto"
     {
         "el"            "ΣΗΜΕΙΩΣΗ: Έχεις σημειωθεί ως έτοιμος λόγω της δραστηριότητας σου."
-    }
+    
     "TypeUnreadyIfNotReady"
     {
         "el"            "Γράψε {1} εάν δεν είσαι έτοιμος."
@@ -387,6 +387,55 @@
     "NotReadyTag"
     {
         "el"            "[ΑΝΕΤΟΙΜΟΣ/Η]"
+    }
+    "MapSelectionTeamChatOnly"
+    {
+        "el"        "Μπορείς να γράψεις μόνο στο chat της ομάδας σου κατά την επιλογή map."
+    }
+    "MapSelectionInvalidMap"
+    {
+        "el"        "{1} δεν είναι έγκυρο map."
+    }
+    "MapSelectionPickMapHelp"
+    {
+        "el"        "Χρησιμοποιήστε {1} <map> για να διαλέξετε ένα map."
+    }
+    "MapSelectionBanMapHelp"
+    {
+        "el"        "Χρησιμοποιήστε {1} <map> για να κάνετε ban ένα map."
+    }
+    "MapSelectionPickSideHelp"
+    {
+        "el"        "Χρησιμοποιήστε {1} η {2} για να διαλέξετε πλευρά."
+    }
+    "MapSelectionAnnounceCaptains"
+    {
+        "el"        "Αρχηγός για {1}: {2}"
+    }
+    "MapSelectionBan"
+    {
+        "el"        "BAN"
+    }
+    "MapSelectionPick"
+    {
+        "el"        "PICK"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "el"        "{1} πρέπει τώρα να {2}-άρει ένα map ως το map {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "el"        "{1} πρέπει τώρα να κάνει {2} ένα map."
+    }
+    "MapSelectionPickSide"
+    {
+        "#format"   "{1:s},{2:s}"
+        "el"        "{1} πρέπει τώρα να διαλέξει σε ποία μεριά θα ξεκινήσει {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "el"        "Παραμένων maps:"
     }
     "MapSelectionPickMenuText"
     {

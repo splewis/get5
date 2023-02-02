@@ -342,13 +342,19 @@
 <article class="md-content__inner md-typeset">
 <h1 id="map-selection"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m15 19-6-2.11V5l6 2.11M20.5 3h-.16L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5a.5.5 0 0 0 .5.5c.05 0 .11 0 .16-.03L9 18.9l6 2.1 5.64-1.9c.21-.1.36-.25.36-.48V3.5a.5.5 0 0 0-.5-.5Z"></path></svg></span> Map Selection</h1>
 <p>If your match is configured to include a veto-phase (setting <a href="../match_schema#schema"><code>skip_veto</code></a> to <code>false</code>), each
-team's captain will ban or pick maps to play using in-game menus.</p>
+team's captain will ban or pick maps from your configured map pool.</p>
+<div class="admonition hint">
+<p class="admonition-title">Silence!</p>
+<p>Except for the team captains, players can only talk in <strong>team chat</strong> during map selection. This is to reduce
+clutter, as a lot of text is already printed during this phase. You can enable all-chat for everyone by
+disabling <a href="../configuration#get5_mute_allchat_during_map_selection"><code>get5_mute_allchat_during_map_selection</code></a>.</p>
+</div>
 <h2 id="captains">Team Captains</h2>
-<p>Get5 will give map pick/ban and side choice menus to a player on each team. The player it gives it to will be the first
+<p>Get5 will give map pick/ban and side choices to a player on each team. The player it gives it to will be the first
 player listed in the <a href="../match_schema#schema"><code>players</code></a> section of a match configuration, or a random player on the
 away-team when in <a href="../getting_started#scrims">scrim mode</a>.</p>
 <h2 id="options">Options</h2>
-<p><code>team1</code> vetoes first by default, but you can change this in the match configuration via
+<p><code>team1</code> starts by default, but you can change this in the match configuration via
 the <a href="../match_schema#schema"><code>veto_first</code></a> parameter, which also supports <code>random</code>.</p>
 <p>When a team picks a map, the other team gets to choose the side to start on for that map. If a map is selected
 by default by being the last map standing, a knife round is used. This behavior is determined by

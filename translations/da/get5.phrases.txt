@@ -390,7 +390,7 @@
     }
     "MapSelectionTeamChatOnly"
     {
-        "da"        "Du kan kun skrive i dit eget holds chatkanal under chatbaseret mapvalg."
+        "da"        "Du kan kun skrive i dit eget holds chatkanal under map-valg."
     }
     "MapSelectionInvalidMap"
     {

@@ -146,38 +146,6 @@ Action Command_Swap(int client, int args) {
   return Plugin_Handled;
 }
 
-Action Command_Ct(int client, int args) {
-  if (!IsPlayer(client)) {
-    return Plugin_Handled;
-  }
-  if (g_GameState == Get5State_Veto) {
-    HandleSideChoice(Get5Side_CT, client);
-  } else {
-    if (GetClientTeam(client) == CS_TEAM_CT) {
-      FakeClientCommand(client, "sm_stay");
-    } else if (GetClientTeam(client) == CS_TEAM_T) {
-      FakeClientCommand(client, "sm_swap");
-    }
-  }
-  return Plugin_Handled;
-}
-
-Action Command_T(int client, int args) {
-  if (!IsPlayer(client)) {
-    return Plugin_Handled;
-  }
-  if (g_GameState == Get5State_Veto) {
-    HandleSideChoice(Get5Side_T, client);
-  } else {
-    if (GetClientTeam(client) == CS_TEAM_CT) {
-      FakeClientCommand(client, "sm_swap");
-    } else if (GetClientTeam(client) == CS_TEAM_T) {
-      FakeClientCommand(client, "sm_stay");
-    }
-  }
-  return Plugin_Handled;
-}
-
 static Action Timer_ForceKnifeDecision(Handle timer) {
   g_KnifeDecisionTimer = INVALID_HANDLE;
   if (g_GameState == Get5State_WaitingForKnifeRoundDecision && g_KnifeWinnerTeam != Get5Team_None) {

@@ -125,7 +125,7 @@ The chat alias file is only loaded once per plugin boot. If you want to reload i
 
     [`ready`](#ready), [`unready`](#unready), [`forceready`](#forceready), [`tech`](#tech), [`pause`](#pause),
     [`unpause`](#unpause), [`coach`](#coach), [`stay`](#stay), [`swap`](#swap), [`t`](#stay), [`ct`](#stay),
-    [`stop`](#stop), [`surrender`](#surrender), [`ffw`](#ffw), [`cancelffw`](#cancelffw)
+    [`stop`](#stop), [`surrender`](#surrender), [`ffw`](#ffw), [`cancelffw`](#cancelffw), [`ban`](#ban), [`pick`](#pick)
 
 !!! example "Example: `addons/sourcemod/configs/get5/commands.cfg`"
 
@@ -267,8 +267,8 @@ from the server immediately.
        <br><br>**`none`**<br>No Get5 configuration was loaded and Get5 will only interfere if
        [`get5_autoload_config`](../configuration#get5_autoload_config) is defined.
        <br><br>**`pre_veto`**<br>The game is in warmup, waiting for players to [`!ready`](../commands#ready) for
-       [vetoing](../veto).
-       <br><br>**`veto`**<br>The game is in warmup with the [veto](../veto) phase currently ongoing.
+       [map selection](../veto).
+       <br><br>**`veto`**<br>The game is in warmup with the [map selecton](../veto) phase currently ongoing.
        <br><br>**`warmup`**<br>The game is in warmup, waiting for players to [`!ready`](../commands#ready) for either
        the knife-round or live.
        <br><br>**`knife`**<br>The knife-round is ongoing.

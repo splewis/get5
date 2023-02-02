@@ -52,7 +52,7 @@ equivalent) at any stage. Due to the way Get5 handles pausing, you must use `sm_
 track all details and configurations related to pausing in the system. Similarly, `sm_unpause` must be used to unpause.
 Pauses initiated by administrators via console **cannot** be [`!unpause`'ed](../commands#unpause) by players. Also note
 that an [`admin` pause event](../events_and_forwards) is fired when the game
-is [paused during veto](../configuration#get5_pause_on_veto).
+is [paused during map selection](../configuration#get5_pause_on_veto).
 
 !!! question "I'm an admin on my server, but I cannot call admin pause?"
 

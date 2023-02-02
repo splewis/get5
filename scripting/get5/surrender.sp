@@ -117,84 +117,7 @@ Action Command_FFW(int client, int args) {
   return Plugin_Handled;
 }
 
-Action Timer_DisconnectCheck(Handle timer, int disconnectingClient) {
-  if (g_GameState == Get5State_Veto) {
-    if (disconnectingClient == g_VetoCaptains[Get5Team_1]) {
-      UnreadyTeam(Get5Team_1);
-      AbortVeto();
-    } else if (disconnectingClient == g_VetoCaptains[Get5Team_2]) {
-      UnreadyTeam(Get5Team_2);
-      AbortVeto();
-    }
-    return Plugin_Handled;
-  }
-
-  if (g_GameState <= Get5State_Warmup || g_GameState > Get5State_Live || IsDoingRestoreOrMapChange()) {
-    // If we're in warmup or veto, the "time to ready" logic should be used instead of leave-surrender.
-    // Postgame/restore also should not trigger any of this logic.
-    return Plugin_Handled;
-  }
-
-  if (g_ForfeitTimer != INVALID_HANDLE) {
-    LogDebug("Forfeit timer already started on player disconnect, ignoring.");
-    return Plugin_Handled;
-  }
-
-  int team1Count = GetTeamPlayerCount(Get5Team_1);
-  int team2Count = GetTeamPlayerCount(Get5Team_2);
-
-  if (g_AutoTechPauseMissingPlayersCvar.BoolValue) {
-    int playerCountTriggeringTechPause = g_PlayersPerTeam - g_AutoTechPauseMissingPlayersCvar.IntValue;
-    if (playerCountTriggeringTechPause < 0) {
-      playerCountTriggeringTechPause = 0;
-    }
-    if (team1Count > 0 && team2Count <= playerCountTriggeringTechPause) {
-      TriggerAutomaticTechPause(Get5Team_2);
-    } else if (team2Count > 0 && team1Count <= playerCountTriggeringTechPause) {
-      TriggerAutomaticTechPause(Get5Team_1);
-    }
-  }
-
-  if (team1Count > 0 && team2Count > 0) {
-    // If both teams still have at least one player; no forfeit.
-    return Plugin_Handled;
-  }
-
-  // The rest of the forfeit system can be disabled!
-  if (!g_ForfeitEnabledCvar.BoolValue) {
-    return Plugin_Handled;
-  }
-
-  Get5Team forfeitingTeam = Get5Team_None;
-  if (team1Count == g_PlayersPerTeam) {
-    // team2 has no players, team1 is full
-    forfeitingTeam = Get5Team_2;
-  } else if (team2Count == g_PlayersPerTeam) {
-    // team1 has no players, team2 is full
-    forfeitingTeam = Get5Team_1;
-  }
-
-  if (forfeitingTeam == Get5Team_None) {
-    // End here if no players are left or one team is partially full.
-    AnnounceRemainingForfeitTime(GetForfeitGracePeriod(), Get5Team_None);
-    StartForfeitTimer(Get5Team_None);
-    return Plugin_Handled;
-  }
-
-  if (g_GameState != Get5State_Live) {
-    // !ffw can only be used in live, not in knife.
-    return Plugin_Handled;
-  }
-
-  // One team is full, the other team left; announce that they can request to !ffw
-  char winCommandFormatted[64];
-  GetChatAliasForCommand(Get5ChatCommand_FFW, winCommandFormatted, sizeof(winCommandFormatted), true);
-  Get5_MessageToAll("%t", "WinByForfeitAvailable", g_FormattedTeamNames[forfeitingTeam],
-                    g_FormattedTeamNames[OtherMatchTeam(forfeitingTeam)], winCommandFormatted);
-  return Plugin_Handled;
-}
-
-static void AnnounceRemainingForfeitTime(const int remainingSeconds, const Get5Team forfeitingTeam) {
+void AnnounceRemainingForfeitTime(const int remainingSeconds, const Get5Team forfeitingTeam) {
   char formattedTimeRemaining[32];
   ConvertSecondsToMinutesAndSeconds(remainingSeconds, formattedTimeRemaining, sizeof(formattedTimeRemaining));
   FormatTimeString(formattedTimeRemaining, sizeof(formattedTimeRemaining), formattedTimeRemaining);
@@ -227,7 +150,7 @@ void ResetForfeitTimer() {
   g_ForfeitingTeam = Get5Team_None;
 }
 
-static void StartForfeitTimer(const Get5Team forfeitingTeam) {
+void StartForfeitTimer(const Get5Team forfeitingTeam) {
   g_ForfeitSecondsPassed = 0;
   g_ForfeitingTeam = forfeitingTeam;
   g_ForfeitTimer = CreateTimer(1.0, Timer_ForfeitCountdownCheck, _, TIMER_REPEAT);
@@ -345,7 +268,7 @@ static Action Timer_ForfeitCountdownCheck(Handle timer) {
   return Plugin_Stop;
 }
 
-static int GetForfeitGracePeriod() {
+int GetForfeitGracePeriod() {
   int forfeitGracePeriod = g_ForfeitCountdownTimeCvar.IntValue;
   if (forfeitGracePeriod < 30) {
     forfeitGracePeriod = 30;

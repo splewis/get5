@@ -5,8 +5,8 @@ team's captain will ban or pick maps from your configured map pool.
 
 !!! hint "Silence!"
 
-    Except for the team captains, players can only talk in **team chat** during chat based map selection. This is to
-    reduce clutter, as a lot of text is already printed during this phase. You can enable all-chat for everyone by
+    Except for the team captains, players can only talk in **team chat** during map selection. This is to reduce
+    clutter, as a lot of text is already printed during this phase. You can enable all-chat for everyone by
     disabling [`get5_mute_allchat_during_map_selection`](../configuration#get5_mute_allchat_during_map_selection).
 
 ## Team Captains {: #captains }
@@ -17,7 +17,7 @@ away-team when in [scrim mode](../getting_started#scrims).
 
 ## Options {: #options }
 
-`team1` vetoes first by default, but you can change this in the match configuration via
+`team1` starts by default, but you can change this in the match configuration via
 the [`veto_first`](../match_schema#schema) parameter, which also supports `random`.
 
 When a team picks a map, the other team gets to choose the side to start on for that map. If a map is selected

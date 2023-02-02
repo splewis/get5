@@ -260,6 +260,10 @@
     {
         "de"            "Das stop Kommando ist nicht aktiviert."
     }
+    "StopCommandOnlyAfterRoundStart"
+    {
+        "de"            "Ein Rundenneustart kann nicht angefordert werden bevor die Runde gestartet wurde."
+    }
     "StopCommandVotingReset"
     {
         "de"            "Die Anfrage von {1} das Spiel zu stoppen wurde abgebrochen da die Runde zu Ende ist."

@@ -370,7 +370,7 @@
     }
     "MapSelectionTeamChatOnly"
     {
-        "pt"        "Você só pode digitar no chat durante a seleção de mapas."
+        "pt"        "Você só pode digitar no chat do time durante a seleção de mapas."
     }
     "MapSelectionInvalidMap"
     {
@@ -390,7 +390,7 @@
     }
     "MapSelectionAnnounceCaptains"
     {
-        "pt"        "Capitão do {1}: {2}"
+        "pt"        "Capitão do time {1}: {2}"
     }
     "MapSelectionBan"
     {
@@ -402,15 +402,15 @@
     }
     "MapSelectionTurnToPick"
     {
-        "pt"        "{1} precisa {2} agora um mapa para jogar como mapa {3}."
+        "pt"        "{1} agora precisa {2} um mapa para jogar como mapa {3}."
     }
     "MapSelectionTurnToBan"
     {
-        "pt"        "{1} precisa {2} um mapa agora."
+        "pt"        "{1} agora precisa {2} um mapa."
     }
     "MapSelectionPickSide"
     {
-        "pt"        "{1} precisa escolher um lado agora para jogar em {2}."
+        "pt"        "{1} agora precisa escolher um lado para jogar em {2}."
     }
     "MapSelectionRemainingMaps"
     {

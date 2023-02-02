@@ -406,7 +406,7 @@
     }
     "MapSelectionAnnounceCaptains"
     {
-        "de"        "Captain für das Team {1}: {2}"
+        "de"        "Captain für {1}: {2}"
     }
     "MapSelectionBan"
     {

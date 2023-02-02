@@ -206,11 +206,8 @@ static void HandleVetoStep() {
   if (g_MapSides.Length < g_MapsToPlay.Length) {
     if (g_MatchSideType == MatchSideType_Standard) {
       PromptForSideSelectionInChat(OtherMatchTeam(g_LastVetoTeam));
-    } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
-      g_MapSides.Push(SideChoice_KnifeRound);
-      HandleVetoStep();
-    } else {
-      g_MapSides.Push(SideChoice_Team1CT);
+    } else  {
+      g_MapSides.Push(g_MatchSideType == MatchSideType_AlwaysKnife ? SideChoice_KnifeRound : SideChoice_Team1CT);
       HandleVetoStep();
     }
   } else if (g_NumberOfMapsInSeries > g_MapsToPlay.Length) {

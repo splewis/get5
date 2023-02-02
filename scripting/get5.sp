@@ -194,7 +194,7 @@ bool g_IsChangingPauseState = false;  // Used to prevent mp_pause_match and mp_u
 Get5Team g_PausingTeam = Get5Team_None;          // The team that last called for a pause.
 Get5PauseType g_PauseType = Get5PauseType_None;  // The type of pause last initiated.
 Handle g_PauseTimer = INVALID_HANDLE;
-int g_LatestPauseDuration = 1;
+int g_LatestPauseDuration = -1;
 bool g_TeamReadyForUnpause[MATCHTEAM_COUNT];
 bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
 int g_TacticalPauseTimeUsed[MATCHTEAM_COUNT];

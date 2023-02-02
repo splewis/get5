@@ -130,7 +130,7 @@
     }
     "PauseRequestCanceled"
     {
-        "en"            "{1} ακύρωσε την αίτηση παύσης του."
+        "el"            "{1} ακύρωσε την αίτηση παύσης του."
     }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {

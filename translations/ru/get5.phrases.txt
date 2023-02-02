@@ -380,6 +380,54 @@
     {
         "ru"            "[NOT READY]"
     }
+    "MapSelectionTeamChatOnly"
+    {
+        "ru"        "Вы можете писать в командном чате только во время выбора карты."
+    }
+    "MapSelectionInvalidMap"
+    {
+        "ru"        "{1} не является корректной картой."
+    }
+    "MapSelectionPickMapHelp"
+    {
+        "ru"        "Используйте {1} <карта> для выбора карты."
+    }
+    "MapSelectionBanMapHelp"
+    {
+        "ru"        "Используйте {1} <карта> для запрета карты."
+    }
+    "MapSelectionPickSideHelp"
+    {
+        "ru"        "Используйте {1} или {2} для выбора стороны."
+    }
+    "MapSelectionAnnounceCaptains"
+    {
+        "ru"        "Капитан для {1}: {2}"
+    }
+    "MapSelectionBan"
+    {
+        "ru"        "ЗАПРЕТИТЬ"
+    }
+    "MapSelectionPick"
+    {
+        "ru"        "ВЫБРАТЬ"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "ru"        "{1} теперь должны {2} карту для игры на карте {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "ru"        "{1} теперь должны {2} карту."
+    }
+    "MapSelectionPickSide"
+    {
+        "ru"        "{1} должны выбрать сторону для игры на {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "ru"        "Оставшиеся карты:"
+    }
     "MapSelectionPickMenuText"
     {
         "ru"        "Выберите карту для ИГРЫ:"

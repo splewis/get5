@@ -2,10 +2,10 @@
  * Map vetoing functions
  */
 
-#define TEAM1_PICK             "team1_pick"
-#define TEAM2_PICK             "team2_pick"
-#define TEAM1_BAN              "team1_ban"
-#define TEAM2_BAN              "team2_ban"
+#define TEAM1_PICK "team1_pick"
+#define TEAM2_PICK "team2_pick"
+#define TEAM1_BAN  "team1_ban"
+#define TEAM2_BAN  "team2_ban"
 
 Get5MapSelectionOption MapSelectionStringToMapSelection(const char[] option, char[] error) {
   if (strcmp(option, TEAM1_PICK) == 0) {
@@ -69,7 +69,7 @@ void AbortVeto() {
   }
   g_VetoCaptains[Get5Team_1] = -1;
   g_VetoCaptains[Get5Team_2] = -1;
-  SetMatchTeamCvars(); // Resets ready status.
+  SetMatchTeamCvars();  // Resets ready status.
 }
 
 static void FinishVeto() {
@@ -206,21 +206,17 @@ static void HandleVetoStep() {
   if (g_MapSides.Length < g_MapsToPlay.Length) {
     if (g_MatchSideType == MatchSideType_Standard) {
       PromptForSideSelectionInChat(OtherMatchTeam(g_LastVetoTeam));
-    } else  {
-      g_MapSides.Push(g_MatchSideType == MatchSideType_AlwaysKnife ? SideChoice_KnifeRound : SideChoice_Team1CT);
+    } else {
+      g_MapSides.Push(g_MatchSideType == MatchSideType_NeverKnife ? SideChoice_Team1CT : SideChoice_KnifeRound);
       HandleVetoStep();
     }
   } else if (g_NumberOfMapsInSeries > g_MapsToPlay.Length) {
     if (g_MapsLeftInVetoPool.Length == 1) {
-      // Only 1 map left in the pool, add it be deduction and determine knife logic.
+      // Only 1 map left in the pool, add it by deduction and determine knife logic.
       char mapName[PLATFORM_MAX_PATH];
       g_MapsLeftInVetoPool.GetString(0, mapName, sizeof(mapName));
       PickMap(mapName, Get5Team_None);
-      if (g_MatchSideType == MatchSideType_Standard || g_MatchSideType == MatchSideType_AlwaysKnife) {
-        g_MapSides.Push(SideChoice_KnifeRound);
-      } else {
-        g_MapSides.Push(SideChoice_Team1CT);
-      }
+      g_MapSides.Push(g_MatchSideType == MatchSideType_NeverKnife ? SideChoice_Team1CT : SideChoice_KnifeRound);
       FinishVeto();
     } else {
       // More than 1 map in the pool and not all maps are picked; present choices as determine by config.
@@ -229,7 +225,7 @@ static void HandleVetoStep() {
   } else {
     FinishVeto();
   }
-  RestartInfoTimer(); // Prevents stacking chat messages if timed poorly.
+  RestartInfoTimer();  // Prevents stacking chat messages if timed poorly.
 }
 
 void PrintVetoHelpMessage() {
@@ -316,8 +312,8 @@ static void PromptForSideSelectionInChat(const Get5Team team) {
   Get5_Message(client, "%t", "MapSelectionPickSideHelp", formattedCommandCT, formattedCommandT);
 }
 
-void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize) {
-  static int bz = 64; // For some reason, we cannot do sizeof(mapsArray[i])
+static void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize) {
+  static const int bz = 64;  // For some reason, we cannot do sizeof(mapsArray[i])
   char[][] mapsArray = new char[mapPool.Length][bz];
   for (int i = 0; i < mapPool.Length; i++) {
     g_MapsLeftInVetoPool.GetString(i, mapsArray[i], bz);
@@ -329,7 +325,8 @@ void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int b
 // Map Vetos
 
 static bool BanMap(const char[] mapName, const Get5Team team) {
-  char mapNameFromArray[PLATFORM_MAX_PATH]; // RemoveMapFromMapPool returns correct map name into this, mapName is user input.
+  char mapNameFromArray[PLATFORM_MAX_PATH];  // RemoveMapFromMapPool returns correct map name into this, mapName is user
+                                             // input.
   if (!RemoveMapFromMapPool(g_MapsLeftInVetoPool, mapName, mapNameFromArray, sizeof(mapNameFromArray))) {
     return false;
   }
@@ -354,7 +351,8 @@ static bool BanMap(const char[] mapName, const Get5Team team) {
 // Map Picks
 
 static bool PickMap(const char[] mapName, const Get5Team team) {
-  char mapNameFromArray[PLATFORM_MAX_PATH]; // RemoveMapFromMapPool returns correct map name into this, mapName is user input.
+  char mapNameFromArray[PLATFORM_MAX_PATH];  // RemoveMapFromMapPool returns correct map name into this, mapName is user
+                                             // input.
   if (!RemoveMapFromMapPool(g_MapsLeftInVetoPool, mapName, mapNameFromArray, sizeof(mapNameFromArray))) {
     return false;
   }
@@ -414,7 +412,7 @@ static bool RemoveMapFromMapPool(const ArrayList mapPool, const char[] str, char
     // Minimum 3 chars unless it's a complete match. Should handle all edge cases.
     if ((strlen(str) >= 3 && StrContains(buffer, str, false) > -1) || StrEqual(buffer, str, false)) {
       if (eraseIndex >= 0) {
-        return false; // Only 1 match allowed.
+        return false;  // Only 1 match allowed.
       }
       eraseIndex = i;
     }

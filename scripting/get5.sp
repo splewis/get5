@@ -943,7 +943,7 @@ static Action Timer_CheckReady(Handle timer) {
       ChangeState(Get5State_Veto);
       RestartGame();
       CreateVeto();
-      SetMatchTeamCvars(); // Removes ready status.
+      SetMatchTeamCvars();  // Removes ready status.
     }
   } else if (g_GameState == Get5State_PendingRestore) {
     // We don't wait for spectators when restoring backups

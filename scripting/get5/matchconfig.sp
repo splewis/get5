@@ -61,8 +61,7 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   for (int i = 0; i < g_MapPoolList.Length; i++) {
     g_MapPoolList.GetString(i, mapName, sizeof(mapName));
     if (g_MapsLeftInVetoPool.FindString(mapName) > -1) {
-      FormatEx(error, PLATFORM_MAX_PATH, "Maps in the maplist must be unique. Found duplicate map: '%s'.",
-             mapName);
+      FormatEx(error, PLATFORM_MAX_PATH, "Maps in the maplist must be unique. Found duplicate map: '%s'.", mapName);
       return false;
     }
     g_MapsLeftInVetoPool.PushString(mapName);

@@ -210,7 +210,7 @@ void UnreadyTeam(Get5Team team) {
   }
 
   Get5TeamReadyStatusChangedEvent readyEvent =
-      new Get5TeamReadyStatusChangedEvent(g_MatchID, team, false, Get5_GetGameState());
+    new Get5TeamReadyStatusChangedEvent(g_MatchID, team, false, Get5_GetGameState());
 
   LogDebug("Calling Get5_OnTeamReadyStatusChanged()");
 

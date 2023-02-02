@@ -11,7 +11,7 @@ a [minimum number of votes](../configuration#get5_surrender_required_votes) must
 within [the defined time limit](../configuration#get5_surrender_time_limit). A team can only vote to surrender if they
 are [sufficiently behind on points](../configuration#get5_surrender_minimum_round_deficit).
 
-You can only surrender during the live phase; not during warmup, [veto](../veto) or the knife round.
+You can only surrender during the live phase; not during warmup, [map selection](../veto) or the knife round.
 
 The surrender feature is [disabled by default](../configuration#get5_surrender_enabled).
 
@@ -40,8 +40,8 @@ server to do it.
     If one team has left and the other team has partially left, Get5 will consider it to be equal to both teams
     leaving, under the assumption that players are leaving at the same time.
 
-The forfeit system is disabled during the warmup and [veto](../veto) phases. You can instead set a restriction on
-the [time a team has to become ready](../configuration#get5_time_to_start).
+The forfeit system is disabled during the warmup and [map selection](../veto) phases. You can instead set a restriction
+on the [time a team has to become ready](../configuration#get5_time_to_start).
 
 The forfeit feature is [enabled by default](../configuration#get5_forfeit_enabled).
 

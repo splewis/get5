@@ -432,15 +432,6 @@ stock int AddAuthsToList(const KeyValues kv, const ArrayList list) {
   return count;
 }
 
-stock bool RemoveStringFromArray(const ArrayList list, const char[] str) {
-  int index = list.FindString(str);
-  if (index != -1) {
-    list.Erase(index);
-    return true;
-  }
-  return false;
-}
-
 // Because KeyValue cannot write empty strings, we use this to consistently read empty strings and
 // replace our empty-string-placeholder with actual empty string.
 stock bool ReadEmptyStringInsteadOfPlaceholder(const KeyValues kv, char[] buffer, const int bufferSize) {
@@ -836,6 +827,12 @@ stock void ChatCommandToString(const Get5ChatCommand command, char[] buffer, con
     case Get5ChatCommand_CancelFFW: {
       FormatEx(buffer, bufferSize, "cancelffw");
     }
+    case Get5ChatCommand_Pick: {
+      FormatEx(buffer, bufferSize, "pick");
+    }
+    case Get5ChatCommand_Ban: {
+      FormatEx(buffer, bufferSize, "ban");
+    }
     default: {
       LogError("Failed to map Get5ChatCommand with value %d to a string. It is missing from ChatCommandToString.",
                command);
@@ -874,6 +871,10 @@ stock Get5ChatCommand StringToChatCommand(const char[] string) {
     return Get5ChatCommand_FFW;
   } else if (strcmp(string, "cancelffw") == 0) {
     return Get5ChatCommand_CancelFFW;
+  } else if (strcmp(string, "pick") == 0) {
+    return Get5ChatCommand_Pick;
+  } else if (strcmp(string, "ban") == 0) {
+    return Get5ChatCommand_Ban;
   } else {
     return Get5ChatCommand_Unknown;
   }

@@ -63,6 +63,12 @@ void MapChatCommand(const Get5ChatCommand command, const char[] alias) {
     case Get5ChatCommand_CancelFFW: {
       AddAliasedCommand(alias, Command_CancelFFW, "Cancels a pending request to win by forfeit.");
     }
+    case Get5ChatCommand_Pick: {
+      AddAliasedCommand(alias, Command_Pick, "Picks a map to play from the map pool.");
+    }
+    case Get5ChatCommand_Ban: {
+      AddAliasedCommand(alias, Command_Ban, "Bans a map from the map pool.");
+    }
     default: {
       LogError("Failed to map Get5ChatCommand with value %d to a command. It is missing from MapChatCommand.", command);
       return;

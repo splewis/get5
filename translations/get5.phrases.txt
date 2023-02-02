@@ -447,41 +447,61 @@
     {
         "en"            "[NOT READY]"
     }
-    "MapSelectionPickMenuText"
+    "MapSelectionTeamChatOnly"
     {
-        "en"        "Select a map to PLAY:"
+        "en"        "You can only type in team chat during map selection."
     }
-    "MapSelectionPickConfirmMenuText"
+    "MapSelectionInvalidMap"
     {
-        "#format"       "{1:s}"
-        "en"        "Confirm you want to PLAY {1}:"
+        "#format"   "{1:s}"
+        "en"        "{1} is not a valid map."
     }
-    "MapSelectionBanMenuText"
+    "MapSelectionPickMapHelp"
     {
-        "en"        "Select a map to BAN:"
+        "#format"   "{1:s}"
+        "en"        "Use {1} <map> to pick a map."
     }
-    "MapSelectionBanConfirmMenuText"
+    "MapSelectionBanMapHelp"
     {
-        "#format"       "{1:s}"
-        "en"        "Confirm you want to BAN {1}:"
+        "#format"   "{1:s}"
+        "en"        "Use {1} <map> to ban a map."
     }
-    "MapSelectionSidePickMenuText"
+    "MapSelectionPickSideHelp"
     {
-        "#format"       "{1:s}"
-        "en"        "Select a side for {1}:"
+        "#format"   "{1:s},{2:s}"
+        "en"        "Use {1} or {2} to pick a side."
     }
-    "MapSelectionSidePickConfirmMenuText"
+    "MapSelectionAnnounceCaptains"
     {
-        "#format"       "{1:s}"
-        "en"        "Confirm you want to start {1}:"
+        "#format"   "{1:s},{2:N}"
+        "en"        "Captain for {1}: {2}"
     }
-    "ConfirmPositiveOptionText"
+    "MapSelectionBan"
     {
-        "en"        "Yes"
+        "en"        "BAN"
     }
-    "ConfirmNegativeOptionText"
+    "MapSelectionPick"
     {
-        "en"        "No"
+        "en"        "PICK"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "#format"   "{1:s},{2:s},{3:d}"
+        "en"        "{1} must now {2} a map to play as map {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "#format"   "{1:s},{2:s}"
+        "en"        "{1} must now {2} a map."
+    }
+    "MapSelectionPickSide"
+    {
+        "#format"   "{1:s},{2:s}"
+        "en"        "{1} must now pick a side to play on {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "en"        "Remaining maps:"
     }
     "MapSelectionCountdown"
     {

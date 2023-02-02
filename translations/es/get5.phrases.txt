@@ -268,38 +268,6 @@
     {
         "es"            "[NO LISTO]"
     }
-    "MapSelectionPickMenuText"
-    {
-        "es"        "Seleccionar una mapa para el juego:"
-    }
-    "MapSelectionPickConfirmMenuText"
-    {
-        "es"        "Confirmar que quiere jugar {1}:"
-    }
-    "MapSelectionBanMenuText"
-    {
-        "es"        "Seleccionar un mapa a banear:"
-    }
-    "MapSelectionBanConfirmMenuText"
-    {
-        "es"        "Confirmar que quiere banear {1}:"
-    }
-    "MapSelectionSidePickMenuText"
-    {
-        "es"        "Seleccionar un lado para {1}"
-    }
-    "MapSelectionSidePickConfirmMenuText"
-    {
-        "es"        "Confirmar que quiere empezar {1}:"
-    }
-    "ConfirmPositiveOptionText"
-    {
-        "es"        "Sí"
-    }
-    "ConfirmNegativeOptionText"
-    {
-        "es"        "No"
-    }
     "MapSelectionCountdown"
     {
         "es"        "El veto comenzará en {1} segundos."

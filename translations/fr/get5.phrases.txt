@@ -380,37 +380,53 @@
     {
         "fr"            "[PAS PRÊT]"
     }
-    "MapSelectionPickMenuText"
+    "MapSelectionTeamChatOnly"
     {
-        "fr"        "Selectionnez une map à JOUER :"
+        "fr"        "Vous ne pouvez écrire que dans le chat d'équipe pendant la sélection de map."
     }
-    "MapSelectionPickConfirmMenuText"
+    "MapSelectionInvalidMap"
     {
-        "fr"        "Confirmez que vous souhaitez JOUER {1} :"
+        "fr"        "{1} n'est pas une map valide."
     }
-    "MapSelectionBanMenuText"
+    "MapSelectionPickMapHelp"
     {
-        "fr"        "Selectionnez une map à BANNIR :"
+        "fr"        "Utilisez {1} <map> pour sélectionner une map."
     }
-    "MapSelectionBanConfirmMenuText"
+    "MapSelectionBanMapHelp"
     {
-        "fr"        "Confirmez que vous souhaitez la BANNIR {1} :"
+        "fr"        "Utilisez {1} <map> pour bannir une map."
     }
-    "MapSelectionSidePickMenuText"
+    "MapSelectionPickSideHelp"
     {
-        "fr"        "Selectionner un côté pour {1} :"
+        "fr"        "Utilisez {1} ou {2} pour sélectionner un côté."
     }
-    "MapSelectionSidePickConfirmMenuText"
+    "MapSelectionAnnounceCaptains"
     {
-        "fr"        "Confirmez que vous voulez commencer {1} :"
+        "fr"        "Capitaine de {1}: {2}"
     }
-    "ConfirmPositiveOptionText"
+    "MapSelectionBan"
     {
-        "fr"        "Oui"
+        "fr"        "BANNIR"
     }
-    "ConfirmNegativeOptionText"
+    "MapSelectionPick"
     {
-        "fr"        "Non"
+        "fr"        "SÉLECTIONNER"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "fr"        "{1} doit maintenant {2} une map pour jouer en map {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "fr"        "{1} doit maintenant {2} une map."
+    }
+    "MapSelectionPickSide"
+    {
+        "fr"        "{1} doit sélectionner un côté où jouer sur {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "fr"        "Maps restantes :"
     }
     "MapSelectionCountdown"
     {

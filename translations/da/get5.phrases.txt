@@ -388,41 +388,57 @@
     {
         "da"            "[IKKE KLAR]"
     }
-    "MapSelectionPickMenuText"
+    "MapSelectionTeamChatOnly"
     {
-        "da"        "Vælg et map at SPILLE:"
+        "da"        "Du kan kun skrive i dit eget holds chatkanal under map-valg."
     }
-    "MapSelectionPickConfirmMenuText"
+    "MapSelectionInvalidMap"
     {
-        "da"        "Bekræft, at du vil SPILLE {1}:"
+        "da"        "{1} er ikke et gyldigt map."
     }
-    "MapSelectionBanMenuText"
+    "MapSelectionPickMapHelp"
     {
-        "da"        "Vælg et map at BANNE:"
+        "da"        "Brug {1} <map> til at vælge et map."
     }
-    "MapSelectionBanConfirmMenuText"
+    "MapSelectionBanMapHelp"
     {
-        "da"        "Bekræft, at du vil BANNE {1}:"
+        "da"        "Brug {1} <map> til at banne et map."
     }
-    "MapSelectionSidePickMenuText"
+    "MapSelectionPickSideHelp"
     {
-        "da"        "Vælg en side på {1}"
+        "da"        "Brug {1} eller {2} til at vælge en side."
     }
-    "MapSelectionSidePickConfirmMenuText"
+    "MapSelectionAnnounceCaptains"
     {
-        "da"        "Bekræft, at du vil starte {1}:"
+        "da"        "Holdkaptajn for {1}: {2}"
     }
-    "ConfirmPositiveOptionText"
+    "MapSelectionBan"
     {
-        "da"        "Ja"
+        "da"        "BANNE"
     }
-    "ConfirmNegativeOptionText"
+    "MapSelectionPick"
     {
-        "da"        "Nej"
+        "da"        "VÆLGE"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "da"        "{1} skal {2} et map at spille som map nr. {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "da"        "{1} skal {2} et map."
+    }
+    "MapSelectionPickSide"
+    {
+        "da"        "{1} skal vælge en startside på {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "da"        "Tilbageværende maps:"
     }
     "MapSelectionCountdown"
     {
-        "da"        "Map-valg begynder om {1} sekunder."
+        "da"        "Map-valg begynder om {1}..."
     }
     "SurrenderCommandNotEnabled"
     {

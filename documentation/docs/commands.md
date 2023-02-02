@@ -41,6 +41,16 @@ if possible. Can only be used during warmup.
 
 :   Elects to swap team side after a knife round win. This can be substituted by `!ct` or `!t` to select a side.
 
+####`!ct` {: #ct }
+
+:   Used by the team captain to select CT as the starting side during [map selection](../veto) or by any team member to
+choose the CT side after winning the knife round.
+
+####`!t` {: #t }
+
+:   Used by the team captain to select T as the starting side during [map selection](../veto) or by any team member to
+choose the T side after winning the knife round.
+
 ####`!stop`
 
 :   Asks to reload the last match backup file, i.e. restart the current round. The opposing team must confirm before the
@@ -62,6 +72,14 @@ with [`get5_allow_force_ready`](../configuration#get5_allow_force_ready).
 ####`!scrim`
 
 :   Alias for [`get5_scrim`](#get5_scrim).
+
+####`!pick <map>` {: #pick }
+
+:   Picks a map during [map selection](../veto). Can only be used by the team's captain when it's their turn to pick.
+
+####`!ban <map>` {: #ban }
+
+:   Bans a map during [map selection](../veto). Can only be used by the team's captain when it's their turn to ban.
 
 ####`!surrender` or `!gg` {: #surrender }
 
@@ -107,7 +125,7 @@ The chat alias file is only loaded once per plugin boot. If you want to reload i
 
     [`ready`](#ready), [`unready`](#unready), [`forceready`](#forceready), [`tech`](#tech), [`pause`](#pause),
     [`unpause`](#unpause), [`coach`](#coach), [`stay`](#stay), [`swap`](#swap), [`t`](#stay), [`ct`](#stay),
-    [`stop`](#stop), [`surrender`](#surrender), [`ffw`](#ffw), [`cancelffw`](#cancelffw)
+    [`stop`](#stop), [`surrender`](#surrender), [`ffw`](#ffw), [`cancelffw`](#cancelffw), [`ban`](#ban), [`pick`](#pick)
 
 !!! example "Example: `addons/sourcemod/configs/get5/commands.cfg`"
 
@@ -249,8 +267,8 @@ from the server immediately.
        <br><br>**`none`**<br>No Get5 configuration was loaded and Get5 will only interfere if
        [`get5_autoload_config`](../configuration#get5_autoload_config) is defined.
        <br><br>**`pre_veto`**<br>The game is in warmup, waiting for players to [`!ready`](../commands#ready) for
-       [vetoing](../veto).
-       <br><br>**`veto`**<br>The game is in warmup with the [veto](../veto) phase currently ongoing.
+       [map selection](../veto).
+       <br><br>**`veto`**<br>The game is in warmup with the [map selecton](../veto) phase currently ongoing.
        <br><br>**`warmup`**<br>The game is in warmup, waiting for players to [`!ready`](../commands#ready) for either
        the knife-round or live.
        <br><br>**`knife`**<br>The knife-round is ongoing.

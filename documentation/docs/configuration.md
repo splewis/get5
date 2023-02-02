@@ -33,7 +33,7 @@ cfg/get5/knife.cfg # (2)
 cfg/get5/live.cfg # (3)
 ```
 
-1. Executed when the warmup/veto phase begins.
+1. Executed when the warmup or map selection phase begins.
 2. Executed when the knife-round starts.
 3. Executed when the game goes live.
 
@@ -93,10 +93,6 @@ defines the [`{SERVERID}`](#tag-serverid) substitution and the return value of t
 :   Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
 using [`get5_endmatch`](../commands#get5_endmatch).<br>**`Default: 0`**
 
-####`get5_display_gotv_veto`
-:   Whether to wait for [map vetoes](../veto) to be broadcast to [GOTV](../gotv) before changing
-map.<br>**`Default: 0`**
-
 ####`get5_check_auths`
 :   Whether the Steam IDs from the `players`, `coaches` and `spectators` sections of
 a [match configuration](../match_schema#schema) are used to force players onto teams. Anyone not defined will be
@@ -135,7 +131,7 @@ only.<br>**`Default: 0`**
 :   Number of seconds used to count down when a match is going live.<br>**`Default: 10`**
 
 ####`get5_auto_ready_active_players`
-:   Whether to automatically mark players as ready if they kill anyone in the warmup or [veto](../veto)
+:   Whether to automatically mark players as ready if they kill anyone in the warmup or [map selection](../veto)
 phase.<br>**`Default: 0`**
 
 ####`get5_allow_force_ready`
@@ -149,22 +145,10 @@ affect the availability of [`get5_forceready`](../commands#get5_forceready) to a
 :   Time (in seconds) teams have to ready up for knife/live before forfeiting the match. Set to zero for no limit. If
 neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
 
-####`get5_time_to_start_veto`
-:   Time (in seconds) teams have to ready up for vetoing before forfeiting the match. Set to zero for no limit. If
-neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
-
 ####`get5_time_to_make_knife_decision`
 :   Time (in seconds) a team has to make a [`!stay`](../commands#stay) or [`!swap`](../commands#swap)
 decision after winning knife round. Cannot be set lower than 10 if non-zero. Set to zero to remove
 limit.<br>**`Default: 60`**
-
-####`get5_veto_countdown`
-:   Time (in seconds) to countdown before the [veto](../veto) process commences. Set to zero to move to veto without a
-countdown.<br>**`Default: 5`**
-
-####`get5_veto_confirmation_time`
-:   Time (in seconds) from presenting a [veto](../veto) menu to a selection being made, during which a confirmation will
-be required. 0 to disable.<br>**`Default: 2.0`**
 
 ####`get5_print_damage`
 :   Whether to print damage reports when a round ends. The format is determined
@@ -190,6 +174,27 @@ messages.<br>**`Default: "{PINK}"`**
 ####`get5_spec_color`
 :   The [color](#color-substitutes) to use when printing the name of `spectators` in chat
 messages.<br>**`Default: "{NORMAL}"`**
+
+## Map Selection {: #map-selection }
+
+####`get5_display_gotv_veto`
+:   Whether to wait for [map selection](../veto) to be broadcast to [GOTV](../gotv) before changing
+map.<br>**`Default: 0`**
+
+####`get5_mute_allchat_during_map_selection`
+:   Suppresses all chat messages not sent in the team-channel for everyone but the team captains
+during [map selection](../veto).<br>**`Default: 1`**
+
+####`get5_pause_on_veto`
+:   Whether to freeze players during the [map selection](../veto) phase.<br>**`Default: 0`**
+
+####`get5_time_to_start_veto`
+:   Time (in seconds) teams have to ready up for vetoing before forfeiting the match. Set to zero for no limit. If
+neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
+
+####`get5_veto_countdown`
+:   Time (in seconds) to countdown before the [map selection](../veto) process commences. Set to zero to move to veto
+without a countdown.<br>**`Default: 5`**
 
 ## Pausing
 
@@ -252,9 +257,6 @@ leaves. Set to zero to disable.<br>**`Default: 0`**
 
     Automatic tech pauses are still limited by [`get5_max_tech_pauses`](#get5_max_tech_pauses), so you can set that to a
     non-zero value to prevent abuse.
-
-####`get5_pause_on_veto`
-:   Whether to freeze players during the [veto](../veto) phase.<br>**`Default: 0`**
 
 ####`get5_reset_pauses_each_half`
 :   Whether [tactical pause](../pausing#tactical) limits (time used and count) are reset each halftime period.

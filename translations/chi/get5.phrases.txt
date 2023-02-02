@@ -240,38 +240,6 @@
     {
         "chi"            "[未准备]"
     }
-    "MapSelectionPickMenuText"
-    {
-        "chi"        "请选择一张想玩的地图："
-    }
-    "MapSelectionPickConfirmMenuText"
-    {
-        "chi"        "你确定想玩{1}："
-    }
-    "MapSelectionBanMenuText"
-    {
-        "chi"        "请选择一张想VETO(Ban图)的地图："
-    }
-    "MapSelectionBanConfirmMenuText"
-    {
-        "chi"        "你确定想VETO(Ban图){1}："
-    }
-    "MapSelectionSidePickMenuText"
-    {
-        "chi"        "请为{1}选择队伍"
-    }
-    "MapSelectionSidePickConfirmMenuText"
-    {
-        "chi"        "你确定想开始{1}："
-    }
-    "ConfirmPositiveOptionText"
-    {
-        "chi"        "是"
-    }
-    "ConfirmNegativeOptionText"
-    {
-        "chi"        "否"
-    }
     "MapSelectionCountdown"
     {
         "chi"        "Veto(Ban图)还剩{1}秒。"

@@ -1,0 +1,23 @@
+{
+  "matchid": "test_match_duplicate_map",
+  "num_maps": 3,
+  "maplist": [
+    "de_dust2",
+    "de_mirage",
+    "de_vertigo",
+    "de_ancient",
+    "de_ancient"
+  ],
+  "team1": {
+    "name": "Team A Default",
+    "players": {
+      "76561197996413459": "PlayerAName1"
+    }
+  },
+  "team2": {
+    "name": "Team B Default",
+    "players": {
+      "76561197996413459": "PlayerAName1"
+    }
+  }
+}

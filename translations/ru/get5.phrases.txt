@@ -380,37 +380,53 @@
     {
         "ru"            "[NOT READY]"
     }
-    "MapSelectionPickMenuText"
+    "MapSelectionTeamChatOnly"
     {
-        "ru"        "Выберите карту для ИГРЫ:"
+        "ru"        "Вы можете писать в командном чате только во время выбора карты."
     }
-    "MapSelectionPickConfirmMenuText"
+    "MapSelectionInvalidMap"
     {
-        "ru"        "Подтвердите, что вы хотите ИГРАТЬ {1}:"
+        "ru"        "{1} не является корректной картой."
     }
-    "MapSelectionBanMenuText"
+    "MapSelectionPickMapHelp"
     {
-        "ru"        "Выберите карту для запрета:"
+        "ru"        "Используйте {1} <карта> для выбора карты."
     }
-    "MapSelectionBanConfirmMenuText"
+    "MapSelectionBanMapHelp"
     {
-        "ru"        "Подтвердите, что вы хотите запретить {1}:"
+        "ru"        "Используйте {1} <карта> для запрета карты."
     }
-    "MapSelectionSidePickMenuText"
+    "MapSelectionPickSideHelp"
     {
-        "ru"        "Выберите сторону для {1}:"
+        "ru"        "Используйте {1} или {2} для выбора стороны."
     }
-    "MapSelectionSidePickConfirmMenuText"
+    "MapSelectionAnnounceCaptains"
     {
-        "ru"        "Подтвердите, что вы хотите начать за {1}:"
+        "ru"        "Капитан для {1}: {2}"
     }
-    "ConfirmPositiveOptionText"
+    "MapSelectionBan"
     {
-        "ru"        "Да"
+        "ru"        "ЗАПРЕТИТЬ"
     }
-    "ConfirmNegativeOptionText"
+    "MapSelectionPick"
     {
-        "ru"        "Нет"
+        "ru"        "ВЫБРАТЬ"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "ru"        "{1} теперь должны {2} карту для игры на карте {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "ru"        "{1} теперь должны {2} карту."
+    }
+    "MapSelectionPickSide"
+    {
+        "ru"        "{1} должны выбрать сторону для игры на {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "ru"        "Оставшиеся карты:"
     }
     "MapSelectionCountdown"
     {

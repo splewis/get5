@@ -1,17 +1,23 @@
 # :material-map: Map Selection
 
 If your match is configured to include a veto-phase (setting [`skip_veto`](../match_schema#schema) to `false`), each
-team's captain will ban or pick maps to play using in-game menus.
+team's captain will ban or pick maps from your configured map pool.
+
+!!! hint "Silence!"
+
+    Except for the team captains, players can only talk in **team chat** during map selection. This is to reduce
+    clutter, as a lot of text is already printed during this phase. You can enable all-chat for everyone by
+    disabling [`get5_mute_allchat_during_map_selection`](../configuration#get5_mute_allchat_during_map_selection).
 
 ## Team Captains {: #captains }
 
-Get5 will give map pick/ban and side choice menus to a player on each team. The player it gives it to will be the first
+Get5 will give map pick/ban and side choices to a player on each team. The player it gives it to will be the first
 player listed in the [`players`](../match_schema#schema) section of a match configuration, or a random player on the
 away-team when in [scrim mode](../getting_started#scrims).
 
 ## Options {: #options }
 
-`team1` vetoes first by default, but you can change this in the match configuration via
+`team1` starts by default, but you can change this in the match configuration via
 the [`veto_first`](../match_schema#schema) parameter, which also supports `random`.
 
 When a team picks a map, the other team gets to choose the side to start on for that map. If a map is selected

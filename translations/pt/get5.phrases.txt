@@ -368,37 +368,53 @@
     {
         "pt"            "[NOT READY]"
     }
-    "MapSelectionPickMenuText"
+    "MapSelectionTeamChatOnly"
     {
-        "pt"        "Selecione um mapa para JOGAR:"
+        "pt"        "Você só pode digitar no chat do time durante a seleção de mapas."
     }
-    "MapSelectionPickConfirmMenuText"
+    "MapSelectionInvalidMap"
     {
-        "pt"        "Confirme que você quer JOGAR {1}:"
+        "pt"        "{1} não é um mapa válido."
     }
-    "MapSelectionBanMenuText"
+    "MapSelectionPickMapHelp"
     {
-        "pt"        "Selecione um mapa para BANIR:"
+        "pt"        "Use {1} <mapa> para escolher um mapa."
     }
-    "MapSelectionBanConfirmMenuText"
+    "MapSelectionBanMapHelp"
     {
-        "pt"        "Confirme que você quer BANIR {1}:"
+        "pt"        "Use {1} <mapa> para banir um mapa."
     }
-    "MapSelectionSidePickMenuText"
+    "MapSelectionPickSideHelp"
     {
-        "pt"        "Selecione um lado para {1}:"
+        "pt"        "Use {1} ou {2} para escolher um lado."
     }
-    "MapSelectionSidePickConfirmMenuText"
+    "MapSelectionAnnounceCaptains"
     {
-        "pt"        "Confirme que você quer começar de {1}:"
+        "pt"        "Capitão do time {1}: {2}"
     }
-    "ConfirmPositiveOptionText"
+    "MapSelectionBan"
     {
-        "pt"        "Sim"
+        "pt"        "BANIR"
     }
-    "ConfirmNegativeOptionText"
+    "MapSelectionPick"
     {
-        "pt"        "Não"
+        "pt"        "ESCOLHER"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "pt"        "{1} agora precisa {2} um mapa para jogar como mapa {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "pt"        "{1} agora precisa {2} um mapa."
+    }
+    "MapSelectionPickSide"
+    {
+        "pt"        "{1} agora precisa escolher um lado para jogar em {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "pt"        "Mapas restantes:"
     }
     "MapSelectionCountdown"
     {

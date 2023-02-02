@@ -1,0 +1,535 @@
+"Phrases"
+{
+    "ReadyForMapSelectionInfoMessage"
+    {
+        "tr"            "Takımınız harita seçimine hazır olduğunda {1} yazın."
+    }
+    "WaitingForCastersReadyInfoMessage"
+    {
+        "tr"            "Başlamak için {1}'nın {2} yazması bekleniyor."
+    }
+    "ReadyToRestoreBackupInfoMessage"
+    {
+        "tr"            "Karşılaşma yedeğini geri yüklemeye hazır olduğunuzda {1} yazın."
+    }
+    "ReadyToKnifeInfoMessage"
+    {
+        "tr"            "Bıçak raunduna hazır olduğunuzda {1} yazın."
+    }
+    "ReadyToStartInfoMessage"
+    {
+        "tr"            "Başlamaya hazır olduğunuzda {1} yazın."
+    }
+    "YouAreReady"
+    {
+        "tr"            "Hazır olarak işaretlendiniz."
+    }
+    "YouAreReadyAuto"
+    {
+        "tr"            "NOT: Oyun etkinliğinden dolayı hazır olarak işaretlendin."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "tr"            "Hazır değilseniz {1} yazın."
+    }
+    "YouAreNotReady"
+    {
+        "tr"            "HAZIR DEĞİL olarak işaretlendiniz."
+    }
+    "WaitingForEnemySwapInfoMessage"
+    {
+        "tr"            "{1} bıçak raundunu kazandı. {2} veya {3} yazmaları bekleniyor."
+    }
+    "WaitingForGOTVBroadcastEnding"
+    {
+        "tr"            "GOTV yayını tamamlandığında harita değişecektir."
+    }
+    "WaitingForGOTVMapSelection"
+    {
+        "tr"            "GOTV harita seçimini yayınladıktan sonra harita değişecektir."
+    }
+    "NoMatchSetupInfoMessage"
+    {
+        "tr"            "Herhangi bir karşılaşma kurulmadı."
+    }
+    "YouAreNotAPlayerInfoMessage"
+    {
+        "tr"            "Bu karşılaşmada bulunan bir oyuncu değilsin"
+    }
+    "TeamIsFullInfoMessage"
+    {
+        "tr"            "Takımınız dolu"
+    }
+    "TeamForfeitInfoMessage"
+    {
+        "tr"            "{1} zamanında hazırlanamadı ve hükmen mağlup oldu."
+    }
+    "TeamMustBeReadyOrForfeit"
+    {
+        "tr"            "{1}, {2} içinde hazır olmalıdır, yoksa karşılaşmadan hükmen mağlup olacaktır."
+    }
+    "TeamsMustBeReadyOrTie"
+    {
+        "tr"            "Takımlar {1} içinde hazır olmalıdır, aksi takdirde karşılaşma berabere biter."
+    }
+    "MaxPausesUsedInfoMessage"
+    {
+        "tr"            "{2}, tüm taktik duraklatmalarını kullandı ({1})."
+    }
+    "MaxPausesTimeUsedInfoMessage"
+    {
+        "tr"            "{2}, tüm taktiksel duraklatma süresini ({1}) kullandı."
+    }
+    "MatchPausedByTeamMessage"
+    {
+        "tr"            "{1} taktiksel bir duraklatma çağrısı yaptı."
+    }
+    "MatchTechPausedByTeamMessage"
+    {
+        "tr"            "{1} teknik bir duraklatma çağrısında bulundu."
+    }
+    "PausesNotEnabled"
+    {
+        "tr"            "Duraklatmalar etkin değil."
+    }
+    "TechPausesNotEnabled"
+    {
+        "tr"            "Teknik duraklatmalar etkin değil."
+    }
+    "TechnicalPauseMidSentence"
+    {
+        "tr"            "teknik duraklatma"
+    }
+    "TacticalPauseMidSentence"
+    {
+        "tr"            "taktik duraklatma"
+    }
+    "TimeRemainingBeforeAnyoneCanUnpausePrefix"
+    {
+        "tr"            "Herhangi birinin duraklatmayı kaldırabilmesi için kalan süre"
+    }
+    "PauseTimeRemainingPrefix"
+    {
+        "tr"            "Kalan duraklatma süresi"
+    }
+    "AwaitingUnpause"
+    {
+        "tr"            "Duraklatmanın kaldırılması bekleniyor"
+    }
+    "PausedByAdministrator"
+    {
+        "tr"            "Bir yönetici karşılaşmayı duraklattı."
+    }
+    "PausedForBackup"
+    {
+        "tr"            "Oyun bir yedekten geri yüklendi. Devam etmek için her iki takım da duraklatmayı kaldırmalıdır."
+    }
+    "UserCannotUnpauseAdmin"
+    {
+        "tr"            "Bu duraklatma bir yönetici tarafından çağrıda bulunduğundan, sadece bir yönetici duraklatmayı kaldırabilir."
+    }
+    "PauseRequestCanceled"
+    {
+        "tr"            "{1} duraklatma talebini iptal etti."
+    }
+    "PausingTeamCannotUnpauseUntilFreezeTime"
+    {
+        "tr"            "Duraklatmanız başlamadan önce duraklatmayı geri alamazsınız."
+    }
+    "PauseRunoutInfoMessage"
+    {
+        "tr"            "{1} duraklatma süresini doldurdu. Karşılaşmanın duraklatılması kaldırılıyor."
+    }
+    "TechPauseRunoutInfoMessage"
+    {
+        "tr"            "Maksimum teknik duraklatma süresine ulaşıldı. Şimdi herkes {1} olabilir."
+    }
+    "TechPauseNoTimeRemaining"
+    {
+        "tr"            "{1} artık teknik duraklatma süresine sahip değil. Lütfen taktik duraklatmaları kullanın."
+    }
+    "TechPauseNoPausesRemaining"
+    {
+        "tr"            "{1} artık teknik duraklatması kalmadı. Lütfen taktik duraklatmaları kullanın."
+    }
+    "TechPauseAutomaticallyStarted"
+    {
+        "tr"            "{1} için otomatik olarak teknik bir duraklatma başlatıldı."
+    }
+    "MatchUnpauseInfoMessage"
+    {
+        "tr"            "{1} karşılaşmanın duraklatmasını kaldırdı."
+    }
+    "WaitingForUnpauseInfoMessage"
+    {
+        "tr"            "{1} duraklatmayı kaldırmak istiyor, {2}'nin {3} yazması bekleniyor."
+    }
+    "PrereleaseVersionWarning"
+    {
+        "tr"            "Get5'in ({1}) yalnızca geliştirme ve test amaçlı resmi olmayan bir sürümünü çalıştırıyorsunuz. Bu mesaj {2} ile devre dışı bırakılabilir."
+    }
+    "NewVersionAvailable"
+    {
+        "tr"            "Get5'in daha yeni bir sürümü mevcut. Güncellemek için lütfen {1} adresini ziyaret edin."
+    }
+    "TeamFailToReadyMinPlayerCheck"
+    {
+        "tr"            "Hazır olmak için sunucuda en az {1} oyuncuya sahip olmalısınız."
+    }
+    "TeamIsReadyForMapSelection"
+    {
+        "tr"            "{1} harita seçimi için hazır."
+    }
+    "TeamIsReadyToRestoreBackup"
+    {
+        "tr"            "{1} karşılaşma yedeğini geri yüklemeye hazır."
+    }
+    "TeamIsReadyToKnife"
+    {
+        "tr"            "{1} taraf seçimi için bıçak raunduna hazır."
+    }
+    "TeamIsReadyToBegin"
+    {
+        "tr"            "{1} karşılaşmaya başlamak için hazır."
+    }
+    "TeamIsNoLongerReady"
+    {
+        "tr"            "{1} artık hazır değil."
+    }
+    "ForceReadyInfoMessage"
+    {
+        "tr"            "Takımınızı zorla hazır işaretlemek için {1} yazabilirsiniz."
+    }
+    "ForceReadyDisabled"
+    {
+        "tr"            "{1} komutu devre dışı bırakıldı, ancak {2} ile etkinleştirilebilir."
+    }
+    "TeammateForceReadied"
+    {
+        "tr"            "Takımınız {1} tarafından zorla hazır olarak işaretlendi."
+    }
+    "AdminForceReadyInfoMessage"
+    {
+        "tr"            "Bir yönetici, tüm takımları zorla hazır olarak işaretledi."
+    }
+    "AdminForceEndInfoMessage"
+    {
+        "tr"            "Bir yönetici karşılaşmayı zorla bitirdi."
+    }
+    "AdminForcePauseInfoMessage"
+    {
+        "tr"            "Bir yönetici karşılaşmayı duraklattı."
+    }
+    "AdminForceEndWithWinnerInfoMessage"
+    {
+        "tr"            "Bir yönetici karşılaşmayı zorla bitirdi, {1} kazanan olarak belirleniyor."
+    }
+    "AdminForceUnPauseInfoMessage"
+    {
+        "tr"            "Bir yönetici karşılaşmanın duraklatmasını kaldırdı."
+    }
+    "TeamWantsToReloadCurrentRound"
+    {
+        "tr"            "{1} oyunu mevcut turun başına geri döndürmek istiyor. {2}, {3} ile onaylamalıdır."
+    }
+    "TeamWinningSeriesInfoMessage"
+    {
+        "tr"            "{1} seriyi {2}-{3} kazanıyor."
+    }
+    "SeriesTiedInfoMessage"
+    {
+        "tr"            "Seri {1}-{2} berabere."
+    }
+    "NextSeriesMapInfoMessage"
+    {
+        "tr"            "Serideki bir sonraki harita {1} ve {2} içinde başlayacak."
+    }
+    "TeamWonMatchInfoMessage"
+    {
+        "tr"            "{1} karşılaşmayı kazandı."
+    }
+    "TeamTiedMatchInfoMessage"
+    {
+        "tr"            "{1} ve {2} karşılaşmada berabere oldu."
+    }
+    "TeamWonSeriesInfoMessage"
+    {
+        "tr"            "{1} karşılaşmanın galibi oldu {2}-{3}."
+    }
+    "MatchFinishedInfoMessage"
+    {
+        "tr"            "Karşılaşma sona erdi"
+    }
+    "StopCommandNotEnabled"
+    {
+        "tr"            "Durdur komutu etkin değil."
+    }
+    "StopCommandOnlyAfterRoundStart"
+    {
+        "tr"            "Raunt başlamadan önce raundu yeniden başlatma talebi verilemez."
+    }
+    "StopCommandVotingReset"
+    {
+        "tr"            "{1} tarafından yapılan oyunu durdurma talebi, tur sona erdiğinde iptal edildi."
+    }
+    "StopCommandRequiresNoDamage"
+    {
+        "tr"            "Bir oyuncu herhangi bir rakip oyuncuya hasar verdiğinde raundu yeniden başlatma talebi verilemez."
+    }
+    "StopCommandTimeLimitExceeded"
+    {
+        "tr"            "Raundu yeniden başlatma talebi raund başladıktan sonra {1} içinde verilmelidir"
+    }
+    "BackupLoadedInfoMessage"
+    {
+        "tr"            "{1} yedeği başarıyla yüklendi."
+    }
+    "MatchBeginInSecondsInfoMessage"
+    {
+        "tr"            "Karşılaşma {1} saniye içinde başlayacak."
+    }
+    "MatchIsLiveInfoMessage"
+    {
+        "tr"            "Karşılaşma {GREEN}BAŞLADI"
+    }
+    "KnifeIn5SecInfoMessage"
+    {
+        "tr"            "Bıçak raundu 5 saniye içinde başlayacak."
+    }
+    "KnifeInfoMessage"
+    {
+        "tr"            "Bıç!"
+    }
+    "TeamDecidedToStayInfoMessage"
+    {
+        "tr"            "{1} takımları değiştirmiyor."
+    }
+    "TeamDecidedToSwapInfoMessage"
+    {
+        "tr"            "{1} takımları değiştiriyor."
+    }
+    "TeamLostTimeToDecideInfoMessage"
+    {
+        "tr"            "{1} zamanında karar vermedikleri için takımlar değişmiyor."
+    }
+    "ChangingMapInfoMessage"
+    {
+        "tr"            "Harita {1} olarak değiştiriliyor..."
+    }
+    "MapDecidedInfoMessage"
+    {
+        "tr"            "Haritalar belirlendi:"
+    }
+    "MapIsInfoMessage"
+    {
+        "tr"            "Harita {1}: {2}"
+    }
+    "TeamPickedMap"
+    {
+        "tr"            "{1}, {3}.haritayı {2} seçti."
+    }
+    "TeamSelectedSide"
+    {
+        "tr"            "{1} {3} haritasında {2} olarak başlamayı seçti."
+    }
+    "TeamBannedMap"
+    {
+        "tr"            "{1} yasakladı: {2}."
+    }
+    "CaptainLeftDuringMapSelection"
+    {
+        "tr"            "Harita seçimi sırasında bir takım kaptanı ayrıldı. Harita seçimi duraklatıldı."
+    }
+    "ReadyToResumeMapSelection"
+    {
+        "tr"            "Harita seçimine devam etmeye hazır olduğunuzda {1} yazın."
+    }
+    "MatchConfigLoadedInfoMessage"
+    {
+        "tr"            "Karşılaşma ayarları yüklendi"
+    }
+    "ExitCoachSlotHelp"
+    {
+        "tr"            "Koç slotundan ayrılmak için {1} yazın."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "tr"            "Takımınızda koç olmak için {1} yazın."
+    }
+    "MoveToCoachInfoMessage"
+    {
+        "tr"            "Takımınız dolu olduğu için koç pozisyonuna atandınız."
+    }
+    "CannotLeaveCoachingTeamIsFull"
+    {
+        "tr"            "Takımınız dolu olduğu için koç pozisyonundan ayrılamazsınız."
+    }
+    "CoachingNotEnabled"
+    {
+        "tr"            "Koçluk etkin değil. {1} öğesini 1 olarak ayarlamalısınız."
+    }
+    "PlayerIsCoachingTeam"
+    {
+        "tr"            "{1}, {2} takımına koçluk yapıyor."
+    }
+    "CanOnlyCoachDuringWarmup"
+    {
+        "tr"            "Sadece ısınma sırasında koç slotuna geçebilir veya ayrılabilirsiniz."
+    }
+    "AllCoachSlotsFilledForTeam"
+    {
+        "tr"            "Şu anda takımınız için tüm koç slotları ({1}) dolu."
+    }
+    "ReadyTag"
+    {
+        "tr"            "[HAZIR]"
+    }
+    "NotReadyTag"
+    {
+        "tr"            "[HAZIR DEĞİL]"
+    }
+    "MapSelectionTeamChatOnly"
+    {
+        "tr"        "Harita seçimi sırasında sadece takım sohbeti kullanılabilir."
+    }
+    "MapSelectionInvalidMap"
+    {
+        "tr"        "{1} geçerli bir harita değildir."
+    }
+    "MapSelectionPickMapHelp"
+    {
+        "tr"        "Bir harita seçmek için {1} <map> kullanın."
+    }
+    "MapSelectionBanMapHelp"
+    {
+        "tr"        "Bir harita yasaklamak için {1} <map> kullanın."
+    }
+    "MapSelectionPickSideHelp"
+    {
+        "tr"        "Taraf seçmek için {1} veya {2} kullanın."
+    }
+    "MapSelectionAnnounceCaptains"
+    {
+        "tr"        "{1} takımının kaptanı: {2}"
+    }
+    "MapSelectionBan"
+    {
+        "tr"        "YASAKLAMALIDIR"
+    }
+    "MapSelectionPick"
+    {
+        "tr"        "SEÇMELİDİR"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "tr"        "{1} şimdi {3}.harita olarak oynamak için bir harita {2}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "tr"        "{1} şimdi bir harita {2}."
+    }
+    "MapSelectionPickSide"
+    {
+        "tr"        "{1} şimdi {2} haritası için bir taraf seçmelidir."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "tr"        "Kalan haritalar:"
+    }
+    "MapSelectionPickMenuText"
+    {
+        "tr"        "OYNAMAK için bir harita seçin:"
+    }
+    "MapSelectionPickConfirmMenuText"
+    {
+        "tr"        "{1} OYNAMAK istediğinizi onaylayın:"
+    }
+    "MapSelectionBanMenuText"
+    {
+        "tr"        "YASAKLAMAK için bir harita seçin:"
+    }
+    "MapSelectionBanConfirmMenuText"
+    {
+        "tr"        "{1} haritasını YASAKLAMAK istediğinizi onaylayın:"
+    }
+    "MapSelectionSidePickMenuText"
+    {
+        "tr"        "{1} için taraf seçin:"
+    }
+    "MapSelectionSidePickConfirmMenuText"
+    {
+        "tr"        "{1} olarak başlamak istediğinizi onaylayın:"
+    }
+    "ConfirmPositiveOptionText"
+    {
+        "tr"        "Evet"
+    }
+    "ConfirmNegativeOptionText"
+    {
+        "tr"        "Hayır"
+    }
+    "MapSelectionCountdown"
+    {
+        "tr"        "Harita seçimi {1} içinde başlıyor..."
+    }
+    "SurrenderCommandNotEnabled"
+    {
+        "tr"        "Teslim olma komutu etkin değil."
+    }
+    "SurrenderMinimumRoundDeficit"
+    {
+        "tr"        "Teslim olmak için en az {1} tur geride olmalısınız."
+    }
+    "SurrenderInitiated"
+    {
+        "tr"        "{1} tarafından bir teslim olma oylaması başlatıldı. Takımınız {3} saniye içinde {2} oya ulaşmalıdır."
+    }
+    "SurrenderVoteStatus"
+    {
+        "tr"        "Gerekli {2} teslim oyundan {1} tanesi verildi."
+    }
+    "SurrenderSuccessful"
+    {
+        "tr"        "{1} teslim oldu."
+    }
+    "SurrenderVoteFailed"
+    {
+        "tr"        "Takımınızdaki yeterli sayıda oyuncu teslim olmak için oy kullanmadı."
+    }
+    "SurrenderOnCooldown"
+    {
+        "tr"        "Teslim olmak üzere yeni bir oylama başlatmak için {1} beklemelisiniz."
+    }
+    "WinByForfeitAvailable"
+    {
+        "tr"        "{1} sunucudan ayrıldı. {2}, takımları dolu olduğu sürece kazanmak üzere bir geri sayım başlatmak için artık {3} yazabilir."
+    }
+    "WinByForfeitRequiresFullTeam"
+    {
+        "tr"        "Hükmen bir galibiyet talep etmek veya iptal etmek için takımınız tam olmalıdır."
+    }
+    "WinByForfeitAlreadyRequested"
+    {
+        "tr"        "Hükmen kazanma talebi zaten beklemede."
+    }
+    "WinByForfeitCountdownStarted"
+    {
+        "tr"        "{3}'ten bir oyuncu oyuna yeniden katılmadığı sürece {2} içinde {1} kazanacak. Bu istek {4} ile iptal edilebilir."
+    }
+    "WinByForfeitCountdownCanceled"
+    {
+        "tr"        "{1} tarafından hükmen kazanma talebi iptal edildi."
+    }
+    "TeamForfeited"
+    {
+        "tr"        "{1} seriyi hükmen kaybetti."
+    }
+    "AllPlayersLeftTieCountdown"
+    {
+        "tr"        "Her iki takım da sunucuyu terk etti. Her takımdan en az bir oyuncunun {1} içinde yeniden katılması gerekir, aksi takdirde seri berabere biter."
+    }
+    "TieCountdownCanceled"
+    {
+        "tr"        "Artık iki takımın da oyuncuları olduğu için beraberlik için geri sayım iptal edildi."
+    }
+}

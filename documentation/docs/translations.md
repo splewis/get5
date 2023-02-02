@@ -228,3 +228,5 @@ GitHub. Most languages are incomplete, and if a translation string is missing, t
 #### :flag_pt: [Portuguese](https://github.com/splewis/get5/tree/development/translations/pt/get5.phrases.txt) {: #pt }
 
 #### :flag_ru: [Russian](https://github.com/splewis/get5/tree/development/translations/ru/get5.phrases.txt) {: #ru }
+
+#### :flag_tr: [Turkish](https://github.com/splewis/get5/tree/development/translations/tr/get5.phrases.txt) {: #tr }

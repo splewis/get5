@@ -430,7 +430,6 @@
     }
     "MapSelectionPickSide"
     {
-        "#format"   "{1:s},{2:s}"
         "el"        "{1} πρέπει τώρα να διαλέξει σε ποία μεριά θα ξεκινήσει {2}."
     }
     "MapSelectionRemainingMaps"

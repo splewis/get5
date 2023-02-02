@@ -449,7 +449,7 @@
     }
     "MapSelectionTeamChatOnly"
     {
-        "en"        "You can only type in team chat during chat based map selection."
+        "en"        "You can only type in team chat during map selection."
     }
     "MapSelectionInvalidMap"
     {

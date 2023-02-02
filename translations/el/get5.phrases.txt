@@ -436,38 +436,6 @@
     {
         "el"        "Παραμένων maps:"
     }
-    "MapSelectionPickMenuText"
-    {
-        "el"        "Επέλεξε map:"
-    }
-    "MapSelectionPickConfirmMenuText"
-    {
-        "el"        "Επιβεβαίωσε ότι θέλεις να παίξεις {1}:"
-    }
-    "MapSelectionBanMenuText"
-    {
-        "el"        "Επέλεξε ένα map για να κάνεις BAN:"
-    }
-    "MapSelectionBanConfirmMenuText"
-    {
-        "el"        "Επιβεβαίωσε ότι θέλεις να κάνεις BAN το {1}:"
-    }
-    "MapSelectionSidePickMenuText"
-    {
-        "el"        "Επέλεξε πλευρά για το {1}:"
-    }
-    "MapSelectionSidePickConfirmMenuText"
-    {
-        "el"        "Επιβεβαίωσε ότι θέλεις να ξεκινήσεις ως {1}:"
-    }
-    "ConfirmPositiveOptionText"
-    {
-        "el"        "Ναι"
-    }
-    "ConfirmNegativeOptionText"
-    {
-        "el"        "Όχι"
-    }
     "MapSelectionCountdown"
     {
         "el"        "Η επιλογή για map αρχίζει σε {1}..."

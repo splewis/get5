@@ -554,7 +554,7 @@ end with a full stop as this is added automatically.</dd>
 <p class="admonition-title">Warning</p>
 <p>Some translations are used as sentence components. These are exemplified in <strong>bold</strong>, in
 which case you are only expected to provide the bolded part of the sentence in the translation string.
-<em>Cursive</em> text indicates an injected variable.</p>
+[<em>Bracketed cursive</em>] indicates an injected variable or component from another string.</p>
 </div>
 <table>
 <thead>
@@ -567,27 +567,27 @@ which case you are only expected to provide the bolded part of the sentence in t
 <tbody>
 <tr>
 <td><code>WaitingForCastersReadyInfoMessage</code></td>
-<td>Waiting for <em>Team A</em> to type <em>!ready</em> to begin.</td>
+<td>Waiting for [<em>TeamName</em>] to type [<em>!ready</em>] to begin.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>ReadyForMapSelectionInfoMessage</code></td>
-<td>Type <em>!ready</em> when your team is ready for map selection.</td>
+<td>Type [<em>!ready</em>] when your team is ready for map selection.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>ReadyToRestoreBackupInfoMessage</code></td>
-<td>Type <em>!ready</em> when you are ready to restore the match backup.</td>
+<td>Type [<em>!ready</em>] when you are ready to restore the match backup.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>ReadyToKnifeInfoMessage</code></td>
-<td>Type <em>!ready</em> when you are ready to knife.</td>
+<td>Type [<em>!ready</em>] when you are ready to knife.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>ReadyToStartInfoMessage</code></td>
-<td>Type <em>!ready</em> when you are ready to begin.</td>
+<td>Type [<em>!ready</em>] when you are ready to begin.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -602,7 +602,7 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>TypeUnreadyIfNotReady</code></td>
-<td>Type <em>!unready</em> if you are not ready.</td>
+<td>Type [<em>!unready</em>] if you are not ready.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -612,7 +612,7 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>WaitingForEnemySwapInfoMessage</code></td>
-<td><em>Team A</em> won the knife round. Waiting for them to type <em>!stay</em> or <em>!swap</em>.</td>
+<td>[<em>TeamName</em>] won the knife round. Waiting for them to type [<em>!stay</em>] or [<em>!swap</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -642,37 +642,37 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>TeamForfeitInfoMessage</code></td>
-<td><em>Team A</em> failed to ready up in time and has forfeit.</td>
+<td>[<em>TeamName</em>] failed to ready up in time and has forfeit.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamMustBeReadyOrForfeit</code></td>
-<td><em>Team A</em> must be ready within <em>2:30</em> or they will forfeit the match.</td>
+<td>[<em>TeamName</em>] must be ready within [<em>2:30</em>] or they will forfeit the match.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamsMustBeReadyOrTie</code></td>
-<td>Teams must be ready within <em>5:00</em> or the match will end in a tie.</td>
+<td>Teams must be ready within [<em>5:00</em>] or the match will end in a tie.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>MaxPausesUsedInfoMessage</code></td>
-<td><em>Team A</em> has used all their tactical pauses (<em>3</em>).</td>
+<td>[<em>TeamName</em>] has used all their tactical pauses ([<em>3</em>]).</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>MaxPausesTimeUsedInfoMessage</code></td>
-<td><em>Team A</em> has used all their tactical pause time (<em>2:30</em>).</td>
+<td>[<em>TeamName</em>] has used all their tactical pause time ([<em>2:30</em>]).</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>MatchPausedByTeamMessage</code></td>
-<td><em>PlayerName</em> has called for a tactical pause.</td>
+<td>[<em>PlayerName</em>] has called for a tactical pause.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>MatchTechPausedByTeamMessage</code></td>
-<td><em>PlayerName</em> has called for a technical pause.</td>
+<td>[<em>PlayerName</em>] has called for a technical pause.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -682,17 +682,17 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>TechnicalPauseMidSentence</code></td>
-<td><em>Team A</em> (<em>CT</em>) <strong>technical pause</strong> (<em>1</em>/<em>2</em>).</td>
+<td>[<em>TeamName</em>] ([<em>CT</em>]) <strong>technical pause</strong> ([<em>1</em>]/[<em>2</em>]).</td>
 <td>HintText</td>
 </tr>
 <tr>
 <td><code>TacticalPauseMidSentence</code></td>
-<td><em>Team A</em> (<em>CT</em>) <strong>tactical pause</strong> (<em>1</em>/<em>2</em>).</td>
+<td>[<em>TeamName</em>] ([<em>CT</em>]) <strong>tactical pause</strong> ([<em>1</em>]/[<em>2</em>]).</td>
 <td>HintText</td>
 </tr>
 <tr>
 <td><code>TimeRemainingBeforeAnyoneCanUnpausePrefix</code></td>
-<td><em>Team A</em> (<em>CT</em>) technical pause (<em>1</em>/<em>2</em>). <strong>Time remaining before anyone can unpause</strong>: <em>2:30</em></td>
+<td>[<em>TeamName</em>] ([<em>CT</em>]) technical pause ([<em>1</em>]/[<em>2</em>]). <strong>Time remaining before anyone can unpause</strong>: [<em>2:30</em>]</td>
 <td>HintText</td>
 </tr>
 <tr>
@@ -707,7 +707,7 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>StopCommandVotingReset</code></td>
-<td>The request by <em>Team A</em> to stop the game was canceled as the round ended.</td>
+<td>The request by [<em>TeamName</em>] to stop the game was canceled as the round ended.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -717,12 +717,12 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>StopCommandTimeLimitExceeded</code></td>
-<td>A request to restart the round must be given within <em>0:30</em> after the round has started.</td>
+<td>A request to restart the round must be given within [<em>0:30</em>] after the round has started.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>PauseTimeRemainingPrefix</code></td>
-<td><em>Team A</em> (<em>CT</em>) tactical pause. <strong>Remaining pause time</strong>: <em>2:15</em></td>
+<td>[<em>TeamName</em>] ([<em>CT</em>]) tactical pause. <strong>Remaining pause time</strong>: [<em>2:15</em>]</td>
 <td>HintText</td>
 </tr>
 <tr>
@@ -732,7 +732,7 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>AwaitingUnpause</code></td>
-<td><em>Team A</em> (<em>CT</em>) tactical pause. <strong>Awaiting unpause</strong>.</td>
+<td>[<em>TeamName</em>] ([<em>CT</em>]) tactical pause. <strong>Awaiting unpause</strong>.</td>
 <td>HintText</td>
 </tr>
 <tr>
@@ -752,7 +752,7 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>PauseRequestCanceled</code></td>
-<td><em>Team A</em> canceled their request for a pause.</td>
+<td>[<em>TeamName</em>] canceled their request for a pause.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -762,82 +762,82 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>PauseRunoutInfoMessage</code></td>
-<td><em>Team A</em> has run out of pause time. Unpausing the match.</td>
+<td>[<em>TeamName</em>] has run out of pause time. Unpausing the match.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TechPauseRunoutInfoMessage</code></td>
-<td>Maximum technical pause length has been reached. Anyone may <em>!unpause</em> now.</td>
+<td>Maximum technical pause length has been reached. Anyone may [<em>!unpause</em>] now.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TechPauseNoTimeRemaining</code></td>
-<td><em>Team A</em> has no more tech pause time. Please use tactical pauses.</td>
+<td>[<em>TeamName</em>] has no more tech pause time. Please use tactical pauses.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TechPauseNoPausesRemaining</code></td>
-<td><em>Team B</em> has no more tech pauses. Please use tactical pauses.</td>
+<td>[<em>TeamName</em>] has no more tech pauses. Please use tactical pauses.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TechPauseAutomaticallyStarted</code></td>
-<td>A technical pause was automatically started for <em>Team A</em>.</td>
+<td>A technical pause was automatically started for [<em>TeamName</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>MatchUnpauseInfoMessage</code></td>
-<td><em>PlayerName</em> unpaused the match.</td>
+<td>[<em>PlayerName</em>] unpaused the match.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>WaitingForUnpauseInfoMessage</code></td>
-<td><em>Team A</em> wants to unpause, waiting for Team B to type <em>!unpause</em>.</td>
+<td>[<em>TeamName</em>] wants to unpause, waiting for Team B to type [<em>!unpause</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamFailToReadyMinPlayerCheck</code></td>
-<td>You must have at least <em>3</em> player(s) on the server to ready up.</td>
+<td>You must have at least [<em>3</em>] player(s) on the server to ready up.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamIsReadyForMapSelection</code></td>
-<td><em>Team A</em> is ready for map selection.</td>
+<td>[<em>TeamName</em>] is ready for map selection.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamIsReadyToRestoreBackup</code></td>
-<td><em>Team A</em> is ready to restore the match backup.</td>
+<td>[<em>TeamName</em>] is ready to restore the match backup.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamIsReadyToKnife</code></td>
-<td><em>Team A</em> is ready to knife for sides.</td>
+<td>[<em>TeamName</em>] is ready to knife for sides.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamIsReadyToBegin</code></td>
-<td><em>Team A</em> is ready to begin the match.</td>
+<td>[<em>TeamName</em>] is ready to begin the match.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamIsNoLongerReady</code></td>
-<td><em>Team A</em> is no longer ready.</td>
+<td>[<em>TeamName</em>] is no longer ready.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>ForceReadyInfoMessage</code></td>
-<td>You may type <em>!forceready</em> to force-ready your team.</td>
+<td>You may type [<em>!forceready</em>] to force-ready your team.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>ForceReadyDisabled</code></td>
-<td>The <em>!forceready</em> command is disabled, but can enabled with <em>get5_allow_force_ready</em>.</td>
+<td>The [<em>!forceready</em>] command is disabled, but can enabled with [<em>get5_allow_force_ready</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeammateForceReadied</code></td>
-<td>Your team was force-readied by <em>PlayerName</em>.</td>
+<td>Your team was force-readied by [<em>PlayerName</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -852,7 +852,7 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>AdminForceEndWithWinnerInfoMessage</code></td>
-<td>An admin force-ended the match, setting <em>Team 1</em> as the winner.</td>
+<td>An admin force-ended the match, setting [<em>Team 1</em>] as the winner.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -867,37 +867,37 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>TeamWantsToReloadCurrentRound</code></td>
-<td><em>Team A</em> wants to restore the game to the beginning of the current round. <em>Team B</em> must confirm with <em>!stop</em>.</td>
+<td>[<em>TeamName</em>] wants to restore the game to the beginning of the current round. [<em>TeamName</em>] must confirm with [<em>!stop</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamWinningSeriesInfoMessage</code></td>
-<td><em>Team A</em> is winning the series <em>2</em>-<em>1</em>.</td>
+<td>[<em>TeamName</em>] is winning the series [<em>2</em>]-[<em>1</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>SeriesTiedInfoMessage</code></td>
-<td>The series is tied at <em>1</em>-<em>1</em>.</td>
+<td>The series is tied at [<em>1</em>]-[<em>1</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>NextSeriesMapInfoMessage</code></td>
-<td>The next map in the series is <em>de_nuke</em> and it will start in <em>1:30</em>.</td>
+<td>The next map in the series is [<em>Nuke</em>] and it will start in [<em>1:30</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamWonMatchInfoMessage</code></td>
-<td><em>Team A</em> has won the match.</td>
+<td>[<em>TeamName</em>] has won the match.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamTiedMatchInfoMessage</code></td>
-<td><em>Team A</em> and <em>Team B</em> have tied the match.</td>
+<td>[<em>TeamName</em>] and [<em>TeamName</em>] have tied the match.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamWonSeriesInfoMessage</code></td>
-<td><em>Team A</em> has won the series <em>2</em>-<em>1</em>.</td>
+<td>[<em>TeamName</em>] has won the series [<em>2</em>]-[<em>1</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -907,12 +907,12 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>BackupLoadedInfoMessage</code></td>
-<td>Successfully loaded backup <em>backup_file_03.cfg</em>.</td>
+<td>Successfully loaded backup [<em>backup_file_03.cfg</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>MatchBeginInSecondsInfoMessage</code></td>
-<td>The match will begin in <em>3</em> seconds.</td>
+<td>The match will begin in [<em>3</em>] seconds.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -932,22 +932,22 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>TeamDecidedToStayInfoMessage</code></td>
-<td><em>Team A</em> has decided to stay.</td>
+<td>[<em>TeamName</em>] has decided to stay.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamDecidedToSwapInfoMessage</code></td>
-<td><em>Team A</em> has decided to swap.</td>
+<td>[<em>TeamName</em>] has decided to swap.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamLostTimeToDecideInfoMessage</code></td>
-<td><em>Team A</em> will stay since they did not make a decision in time.</td>
+<td>[<em>TeamName</em>] will stay since they did not make a decision in time.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>ChangingMapInfoMessage</code></td>
-<td>Changing map to <em>de_nuke</em>...</td>
+<td>Changing map to [<em>Nuke</em>]...</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -957,22 +957,22 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>MapIsInfoMessage</code></td>
-<td>Map <em>1</em>: <em>Nuke</em>.</td>
+<td>Map [<em>1</em>]: [<em>Nuke</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamPickedMap</code></td>
-<td><em>Team A</em> picked <em>Nuke</em> as map <em>2</em>.</td>
+<td>[<em>TeamName</em>] picked [<em>Nuke</em>] as map [<em>2</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamSelectedSide</code></td>
-<td><em>Team A</em> has elected to start as <em>CT</em> on <em>Nuke</em>.</td>
+<td>[<em>TeamName</em>] has elected to start as [<em>CT</em>] on [<em>Nuke</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamBannedMap</code></td>
-<td><em>Team A</em> banned <em>Nuke</em>.</td>
+<td>[<em>TeamName</em>] banned [<em>Nuke</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -982,7 +982,7 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>ReadyToResumeMapSelection</code></td>
-<td>Type <em>!ready</em> when you are ready to resume map selection.</td>
+<td>Type [<em>!ready</em>] when you are ready to resume map selection.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -997,12 +997,12 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>ExitCoachSlotHelp</code></td>
-<td>Type <em>!coach</em> to exit the coach slot.</td>
+<td>Type [<em>!coach</em>] to exit the coach slot.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>EnterCoachSlotHelp</code></td>
-<td>Type <em>!coach</em> to become a coach for your team.</td>
+<td>Type [<em>!coach</em>] to become a coach for your team.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -1012,12 +1012,12 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>CoachingNotEnabled</code></td>
-<td>Coaching is not enabled. You must set <em>sv_coaching_enabled</em> to 1.</td>
+<td>Coaching is not enabled. You must set [<em>sv_coaching_enabled</em>] to 1.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>PlayerIsCoachingTeam</code></td>
-<td><em>PlayerName</em> is coaching <em>Team A</em>.</td>
+<td>[<em>PlayerName</em>] is coaching [<em>TeamName</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -1027,7 +1027,7 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>AllCoachSlotsFilledForTeam</code></td>
-<td>All coach slots (<em>2</em>) are currently filled for your team.</td>
+<td>All coach slots ([<em>2</em>]) are currently filled for your team.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -1041,18 +1041,78 @@ which case you are only expected to provide the bolded part of the sentence in t
 <td>Chat</td>
 </tr>
 <tr>
+<td><code>MapSelectionTeamChatOnly</code></td>
+<td>You can only type in team chat during map selection.</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>MapSelectionInvalidMap</code></td>
+<td>[<em>de_dst2</em>] is not a valid map.</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>MapSelectionPickMapHelp</code></td>
+<td>Use [<em>!pick</em>] <map> to pick a map.</map></td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>MapSelectionBanMapHelp</code></td>
+<td>Use [<em>!ban</em>] <map> to pick a map.</map></td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>MapSelectionPickSideHelp</code></td>
+<td>Use [<em>!ct</em>] or [<em>!t</em>] to pick a side.</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>MapSelectionAnnounceCaptains</code></td>
+<td>Captain for [<em>TeamName</em>]: [<em>PlayerName</em>]</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>MapSelectionBan</code></td>
+<td>[<em>TeamName</em>] must now <strong>BAN</strong> a map.</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>MapSelectionPick</code></td>
+<td>[<em>TeamName</em>] must now <strong>PICK</strong> a map to play as map 1.</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>MapSelectionTurnToPick</code></td>
+<td>[<em>TeamName</em>] must now [<em>PICK</em>] a map to play as map [<em>1</em>].</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>MapSelectionTurnToBan</code></td>
+<td>[<em>TeamName</em>] must now [<em>BAN</em>] a map.</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>MapSelectionPickSide</code></td>
+<td>[<em>TeamName</em>] must now pick a side to play on [<em>Nuke</em>].</td>
+<td>Chat</td>
+</tr>
+<tr>
+<td><code>MapSelectionRemainingMaps</code></td>
+<td><strong>Remaining maps:</strong> Dust II, Nuke, Inferno.</td>
+<td>Chat</td>
+</tr>
+<tr>
 <td><code>MapSelectionCountdown</code></td>
-<td>Map selection commencing in <em>3</em>...</td>
+<td>Map selection commencing in [<em>3</em>]...</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>NewVersionAvailable</code></td>
-<td>A newer version of Get5 is available. Please visit <em>splewis.github.io/get5</em> to update.</td>
+<td>A newer version of Get5 is available. Please visit [<em>splewis.github.io/get5</em>] to update.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>PrereleaseVersionWarning</code></td>
-<td>You are running an unofficial version of Get5 (<em>0.9.0-c7af39a</em>) intended for development and testing only. This message can be disabled with <em>get5_print_update_notice</em>.</td>
+<td>You are running an unofficial version of Get5 ([<em>0.9.0-c7af39a</em>]) intended for development and testing only. This message can be disabled with [<em>get5_print_update_notice</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -1062,22 +1122,22 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>SurrenderMinimumRoundDeficit</code></td>
-<td>You must be behind by at least <em>3</em> round(s) in order to surrender.</td>
+<td>You must be behind by at least [<em>3</em>] round(s) in order to surrender.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>SurrenderInitiated</code></td>
-<td>A vote to surrender was initiated by <em>PlayerName</em>. Your team must reach <em>3</em> votes within <em>15</em> seconds.</td>
+<td>A vote to surrender was initiated by [<em>PlayerName</em>]. Your team must reach [<em>3</em>] votes within [<em>15</em>] seconds.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>SurrenderVoteStatus</code></td>
-<td><em>2</em> of <em>3</em> required surrender votes have been cast.</td>
+<td>[<em>2</em>] of [<em>3</em>] required surrender votes have been cast.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>SurrenderSuccessful</code></td>
-<td><em>Team A</em> has surrendered.</td>
+<td>[<em>TeamName</em>] has surrendered.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -1087,12 +1147,12 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>SurrenderOnCooldown</code></td>
-<td>You must wait <em>1:30</em> to initiate a new vote to surrender.</td>
+<td>You must wait [<em>1:30</em>] to initiate a new vote to surrender.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>WinByForfeitAvailable</code></td>
-<td><em>Team A</em> left the server. <em>Team B</em> can now type <em>!ffw</em> to initiate a countdown to win as long as their team is full.</td>
+<td>[<em>TeamName</em>] left the server. [<em>TeamName</em>] can now type [<em>!ffw</em>] to initiate a countdown to win as long as their team is full.</td>
 <td>Chat</td>
 </tr>
 <tr>
@@ -1107,22 +1167,22 @@ which case you are only expected to provide the bolded part of the sentence in t
 </tr>
 <tr>
 <td><code>WinByForfeitCountdownStarted</code></td>
-<td><em>Team B</em> will win in <em>0:45</em> unless a player from <em>Team A</em> rejoins the game. This request can be canceled with <em>!cancelffw</em>.</td>
+<td>[<em>TeamName</em>] will win in [<em>0:45</em>] unless a player from [<em>TeamName</em>] rejoins the game. This request can be canceled with [<em>!cancelffw</em>].</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>WinByForfeitCountdownCanceled</code></td>
-<td>The request from <em>Team B</em> to win by forfeit was canceled.</td>
+<td>The request from [<em>TeamName</em>] to win by forfeit was canceled.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>TeamForfeited</code></td>
-<td><em>Team A</em> forfeited the series.</td>
+<td>[<em>TeamName</em>] forfeited the series.</td>
 <td>Chat</td>
 </tr>
 <tr>
 <td><code>AllPlayersLeftTieCountdown</code></td>
-<td>Both teams have left the server. At least one player from each team must rejoin within <em>0:45</em> or the series will end in a tie.</td>
+<td>Both teams have left the server. At least one player from each team must rejoin within [<em>0:45</em>] or the series will end in a tie.</td>
 <td>Chat</td>
 </tr>
 <tr>

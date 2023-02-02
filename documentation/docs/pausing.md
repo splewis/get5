@@ -7,8 +7,11 @@ the [pause configuration](../configuration#pausing) parameters.
 !!! warning "Not a democracy"
 
     No pauses require voting. If a player calls [`!pause`](../commands#pause) or [`!tech`](../commands#tech), the
-    pause will be triggered and a pause count will be consumed (if defined). You cannot cancel a request for pause. Do
-    **not** enable [`sv_allow_votes`](https://totalcsgo.com/command/svallowvotes) as it will mess up the pausing system.
+    pause will be triggered and a pause count will be consumed (if defined) as soon as freezetime starts, or immediately
+    if already in freezetime. If a player from the pausing team calls [`!unpause`](../commands#unpause) before a
+    live round ends, the pause request is [canceled](../configuration#get5_allow_pause_cancellation) without consuming a
+    pause. Do **not** enable [`sv_allow_votes`](https://totalcsgo.com/command/svallowvotes) as it will mess up the
+    pausing system.
 
 ## :material-message-question-outline: Tactical {: #tactical }
 
@@ -16,11 +19,11 @@ If [pauses are allowed](../configuration#get5_pausing_enabled), tactical pauses 
 member of a team using the [`!pause` or `!tac`](../commands#pause) command.
 This initiates a pause at the beginning of the following round (or immediately if still in
 freeze-time). If [fixed pause time](../configuration#get5_fixed_pause_time) is set, the pauses will always be of
-that length, unless both teams call [`!unpause`](../commands#unpause). If instead
-[a maximum pause time](../configuration#get5_max_pause_time) is set, the game is automatically unpaused if the pausing
-team runs out of pause time *or* if both teams unpause. Note that maximum pause time is across **all tactical pauses**
-and does not reset for each pause. If neither fixed pause time nor maximum pause are set, both teams must call unpause
-and tactical pauses will have no time restrictions. You can
+that length, [unless](../configuration#get5_allow_unpausing_fixed_pauses) both teams
+call [`!unpause`](../commands#unpause). If instead [a maximum pause time](../configuration#get5_max_pause_time) is set,
+the game is automatically unpaused if the pausing team runs out of pause time *or* if both teams unpause. Note that
+maximum pause time is across **all tactical pauses** and does not reset for each pause. If neither fixed pause time nor
+maximum pause are set, both teams must call unpause and tactical pauses will have no time restrictions. You can
 set [the maximum number of tactical pauses](../configuration#get5_max_pauses) and also decide if you want the tactical
 pause restrictions to [reset on halftime](../configuration#get5_reset_pauses_each_half).
 

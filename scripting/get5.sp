@@ -61,6 +61,7 @@
 #pragma dynamic 32000
 
 /** ConVar handles **/
+ConVar g_AllowPauseCancellationCvar;
 ConVar g_AllowTechPauseCvar;
 ConVar g_MaxTechPauseDurationCvar;
 ConVar g_MaxTechPausesCvar;
@@ -94,6 +95,7 @@ ConVar g_MaxTacticalPausesCvar;
 ConVar g_MaxPauseTimeCvar;
 ConVar g_MessagePrefixCvar;
 ConVar g_PauseOnVetoCvar;
+ConVar g_AllowUnpausingFixedPausesCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_PrettyPrintJsonCvar;
 ConVar g_ReadyTeamTagCvar;
@@ -192,7 +194,7 @@ bool g_IsChangingPauseState = false;  // Used to prevent mp_pause_match and mp_u
 Get5Team g_PausingTeam = Get5Team_None;          // The team that last called for a pause.
 Get5PauseType g_PauseType = Get5PauseType_None;  // The type of pause last initiated.
 Handle g_PauseTimer = INVALID_HANDLE;
-int g_LatestPauseDuration = 0;
+int g_LatestPauseDuration = -1;
 bool g_TeamReadyForUnpause[MATCHTEAM_COUNT];
 bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
 int g_TacticalPauseTimeUsed[MATCHTEAM_COUNT];
@@ -307,6 +309,7 @@ Handle g_OnKnifeRoundStarted = INVALID_HANDLE;
 Handle g_OnKnifeRoundWon = INVALID_HANDLE;
 Handle g_OnMatchPaused = INVALID_HANDLE;
 Handle g_OnMatchUnpaused = INVALID_HANDLE;
+Handle g_OnPauseBegan = INVALID_HANDLE;
 Handle g_OnPlayerConnected = INVALID_HANDLE;
 Handle g_OnPlayerDisconnected = INVALID_HANDLE;
 Handle g_OnPlayerDeath = INVALID_HANDLE;
@@ -378,13 +381,15 @@ public void OnPluginStart() {
   // clang-format off
 
   // Pauses
-  g_AllowTechPauseCvar                  = CreateConVar("get5_allow_technical_pause", "1", "Whether technical pauses are allowed.");
+  g_AllowPauseCancellationCvar          = CreateConVar("get5_allow_pause_cancellation", "1", "Whether requests for pauses can be canceled by the pausing team using !unpause before freezetime begins.");
+  g_AllowTechPauseCvar                  = CreateConVar("get5_allow_technical_pause", "1", "Whether technical pauses are allowed by players.");
+  g_AllowUnpausingFixedPausesCvar       = CreateConVar("get5_allow_unpausing_fixed_pauses", "1", "Whether fixed-length tactical pauses can be stopped early if both teams !unpause.");
   g_AutoTechPauseMissingPlayersCvar     = CreateConVar("get5_auto_tech_pause_missing_players", "0", "The number of players that must leave a team to trigger an automatic technical pause. Set to 0 to disable.");
-  g_FixedPauseTimeCvar                  = CreateConVar("get5_fixed_pause_time", "0", "The fixed duration of tactical pauses in seconds. 0 = unlimited.");
+  g_FixedPauseTimeCvar                  = CreateConVar("get5_fixed_pause_time", "60", "The fixed duration of tactical pauses in seconds. Cannot be set lower than 15 if non-zero.");
   g_MaxTacticalPausesCvar               = CreateConVar("get5_max_pauses", "0", "Number of tactical pauses a team can use. 0 = unlimited.");
-  g_MaxPauseTimeCvar                    = CreateConVar("get5_max_pause_time", "300", "Maximum number of seconds a game can spend under tactical pause for each team. 0 = unlimited.");
+  g_MaxPauseTimeCvar                    = CreateConVar("get5_max_pause_time", "0", "Maximum number of seconds a game can spend under tactical pause for each team. 0 = unlimited.");
   g_MaxTechPausesCvar                   = CreateConVar("get5_max_tech_pauses", "0", "Number of technical pauses a team can use. 0 = unlimited.");
-  g_PausingEnabledCvar                  = CreateConVar("get5_pausing_enabled", "1", "Whether pausing (both kinds) is allowed by players.");
+  g_PausingEnabledCvar                  = CreateConVar("get5_pausing_enabled", "1", "Whether tactical pauses are allowed by players.");
   g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "0", "Whether the game pauses during the veto phase.");
   g_ResetPausesEachHalfCvar             = CreateConVar("get5_reset_pauses_each_half", "1", "Whether tactical pause limits will be reset on halftime.");
   g_MaxTechPauseDurationCvar            = CreateConVar("get5_tech_pause_time", "0", "Number of seconds before anyone can call !unpause during a technical timeout. 0 = unlimited.");
@@ -637,6 +642,7 @@ public void OnPluginStart() {
   g_OnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_Cell);
   g_OnMatchPaused = CreateGlobalForward("Get5_OnMatchPaused", ET_Ignore, Param_Cell);
   g_OnMatchUnpaused = CreateGlobalForward("Get5_OnMatchUnpaused", ET_Ignore, Param_Cell);
+  g_OnPauseBegan = CreateGlobalForward("Get5_OnPauseBegan", ET_Ignore, Param_Cell);
 
   /** Start any repeating timers **/
   CreateTimer(CHECK_READY_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
@@ -1033,7 +1039,7 @@ static Action Command_EndMatch(int client, int args) {
   }
 
   if (IsPaused()) {
-    UnpauseGame(Get5Team_None);
+    UnpauseGame();
   }
 
   // Call game-ending forwards.
@@ -1188,6 +1194,7 @@ Action Command_Stop(int client, int args) {
     // A tech pause should instead be used in this case. We allow additional calls to !stop if the game is paused post
     // restore, so a disconnecting player can be part of another restore process and have their inventory/cash restored
     // after reconnecting.
+    Get5_MessageToAll("%t", "StopCommandOnlyAfterRoundStart");
     return Plugin_Handled;
   }
 
@@ -1280,7 +1287,7 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
   if (g_GameState == Get5State_Live) {
     // If someone called for a pause in the last round; cancel it.
     if (IsPaused()) {
-      UnpauseGame(Get5Team_None);
+      UnpauseGame();
     }
     // Figure out who won
     int t1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
@@ -1467,7 +1474,7 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
   ResetForfeitTimer();
   EndSurrenderTimers();
   if (IsPaused()) {
-    UnpauseGame(Get5Team_None);
+    UnpauseGame();
   }
   ResetMatchConfigVariables(false);
 }
@@ -1594,7 +1601,7 @@ static Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
   // If someone changes the map while in a pause, we have to make sure we reset this state, as the
   // UnpauseGame function will not be called to do it. FreezeTimeEnd is always called when the map
   // initially loads.
-  g_LatestPauseDuration = 0;
+  g_LatestPauseDuration = -1;
   g_PauseType = Get5PauseType_None;
   g_PausingTeam = Get5Team_None;
 
@@ -1630,6 +1637,11 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
   g_PlayerHasTakenDamage = false;
   RestartInfoTimer();
+  if (g_PauseType != Get5PauseType_None && g_LatestPauseDuration == -1) {
+    // Make sure the pause timer starts at 0.00 if the match is paused, as the timer can be offset by up to 1 second.
+    // But don't do this if the pause has already ticked (i.e. pause from knife going to live).
+    RestartPauseTimer();
+  }
 
   if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {
     // Get5_OnRoundStart() is fired from within the backup event when loading the valve backup.

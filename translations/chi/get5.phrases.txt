@@ -80,10 +80,6 @@
     {
         "chi"            "{1}想要取消暂停，正在等待{2}输入{3}来取消暂停。"
     }
-    "PausesLeftInfoMessage"
-    {
-        "chi"            "{1}剩余{2}次pauses暂停次数。"
-    }
     "TeamFailToReadyMinPlayerCheck"
     {
         "chi"            "服务器上至少有{1}名玩家，您才能准备就绪。"

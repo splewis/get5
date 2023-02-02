@@ -130,7 +130,7 @@
     }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {
-        "fr"            "Vous ne pouvez pas demander une fin de pause avant que votre pause n'ait commencée. Une demande de pause n'est pas annulable."
+        "fr"            "Vous ne pouvez pas demander une fin de pause avant que votre pause n'ait commencée."
     }
     "PauseRunoutInfoMessage"
     {
@@ -148,10 +148,6 @@
     {
         "fr"            "{1} n'a plus de pause technique. Utilisez des pauses tactiques."
     }
-    "TechPausePausesRemaining"
-    {
-        "fr"            "Pauses techniques restantes pour {1}: {2}"
-    }
     "TechPauseAutomaticallyStarted"
     {
         "fr"            "Une pause technique a été automatiquement démarée pour {1}."
@@ -163,10 +159,6 @@
     "WaitingForUnpauseInfoMessage"
     {
         "fr"            "{1} désire reprendre le match, en attente que {2} tape {3}."
-    }
-    "PausesLeftInfoMessage"
-    {
-        "fr"            "{1} dispose encore de {2} pause(s)."
     }
      "PrereleaseVersionWarning"
     {

@@ -130,7 +130,11 @@
     }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {
-        "da"            "Du kan ikke afbryde din pause, før den er startet. Pauseanmodninger kan ikke annulleres."
+        "da"            "Du kan ikke afbryde jeres pause, før den er startet."
+    }
+    "PauseRequestCanceled"
+    {
+        "da"            "{1} har annulleret deres anmodning om pause."
     }
     "PauseRunoutInfoMessage"
     {
@@ -148,10 +152,6 @@
     {
         "da"            "{1} har ikke flere tekniske pauser. Brug taktisk pause i stedet."
     }
-    "TechPausePausesRemaining"
-    {
-        "da"            "Tekniske pauser tilbage for {1}: {2}"
-    }
     "TechPauseAutomaticallyStarted"
     {
         "da"            "En teknisk pause blev automatisk startet for {1}."
@@ -163,10 +163,6 @@
     "WaitingForUnpauseInfoMessage"
     {
         "da"            "{1} vil gerne fortsætte kampen. Afventer {3} fra {2}."
-    }
-    "PausesLeftInfoMessage"
-    {
-        "da"            "Taktiske pauser tilbage for {1}: {2}"
     }
     "PrereleaseVersionWarning"
     {
@@ -267,6 +263,10 @@
     "StopCommandNotEnabled"
     {
         "da"            "Stop-kommandoen er ikke aktiveret."
+    }
+    "StopCommandOnlyAfterRoundStart"
+    {
+        "da"            "Anmodning om at genstarte runden kan ikke gives før runden er startet."
     }
     "StopCommandVotingReset"
     {

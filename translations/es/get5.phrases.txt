@@ -92,10 +92,6 @@
     {
         "es"            "{1} quiere retomar la partida, esperando a que {2} teclee {3}."
     }
-    "PausesLeftInfoMessage"
-    {
-        "es"            "{1} aún dispone de {2} pausa."
-    }
     "TeamFailToReadyMinPlayerCheck"
     {
         "es"            "Necesita por lo menos {1} jugadores en el servidor para declararse listo."

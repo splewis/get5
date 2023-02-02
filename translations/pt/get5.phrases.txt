@@ -146,7 +146,7 @@
     }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {
-        "pt"            "Você não pode despausar antes de sua pausa começar. Solicitações de pausa não podem ser canceladas."
+        "pt"            "Você não pode despausar antes de sua pausa começar."
     }
     "PauseRunoutInfoMessage"
     {
@@ -164,10 +164,6 @@
     {
         "pt"            "{1} não tem mais pausas técnicas. Por favor, use pausas táticas."
     }
-    "TechPausePausesRemaining"
-    {
-        "pt"            "Pausas técnicas restando para {1}: {2}"
-    }
     "MatchUnpauseInfoMessage"
     {
         "pt"            "{1} resumiu a partida."
@@ -175,10 +171,6 @@
     "WaitingForUnpauseInfoMessage"
     {
         "pt"            "{1} quer resumir a partida, mas esperando por {2} digitar {3}."
-    }
-    "PausesLeftInfoMessage"
-    {
-        "pt"            "{1} tem {2} pausas sobrando."
     }
     "TeamFailToReadyMinPlayerCheck"
     {

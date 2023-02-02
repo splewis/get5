@@ -1,15 +1,7 @@
 # :material-map: Map Selection
 
 If your match is configured to include a veto-phase (setting [`skip_veto`](../match_schema#schema) to `false`), each
-team's captain will ban or pick maps from your configured map pool. 
-
-## Interface
-
-By default, Get5 uses the in-game menus (1-9 on the keyboard) to ban/pick maps and select sides. You may instead
-enable [`get5_map_selection_via_chat`](../configuration#get5_map_selection_via_chat) to make Get5 use the chat
-commands [`!pick`](../commands#pick), [`!ban`](../commands#pick), [`!ct`](../commands#ct) and [`!t`](../commands#t).
-The chat system is slightly more verbose, but also much less likely to result in user error, as there is a distinct
-command for each action and no accidental selections.
+team's captain will ban or pick maps from your configured map pool.
 
 !!! hint "Silence!"
 

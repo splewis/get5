@@ -428,38 +428,6 @@
     {
         "ru"        "Оставшиеся карты:"
     }
-    "MapSelectionPickMenuText"
-    {
-        "ru"        "Выберите карту для ИГРЫ:"
-    }
-    "MapSelectionPickConfirmMenuText"
-    {
-        "ru"        "Подтвердите, что вы хотите ИГРАТЬ {1}:"
-    }
-    "MapSelectionBanMenuText"
-    {
-        "ru"        "Выберите карту для запрета:"
-    }
-    "MapSelectionBanConfirmMenuText"
-    {
-        "ru"        "Подтвердите, что вы хотите запретить {1}:"
-    }
-    "MapSelectionSidePickMenuText"
-    {
-        "ru"        "Выберите сторону для {1}:"
-    }
-    "MapSelectionSidePickConfirmMenuText"
-    {
-        "ru"        "Подтвердите, что вы хотите начать за {1}:"
-    }
-    "ConfirmPositiveOptionText"
-    {
-        "ru"        "Да"
-    }
-    "ConfirmNegativeOptionText"
-    {
-        "ru"        "Нет"
-    }
     "MapSelectionCountdown"
     {
         "ru"        "Выбор карты начинается через {1}..."

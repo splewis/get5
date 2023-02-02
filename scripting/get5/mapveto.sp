@@ -2,7 +2,6 @@
  * Map vetoing functions
  */
 
-#define CONFIRM_NEGATIVE_VALUE "_"
 #define TEAM1_PICK             "team1_pick"
 #define TEAM2_PICK             "team2_pick"
 #define TEAM1_BAN              "team1_ban"
@@ -48,7 +47,7 @@ static Action Timer_VetoCountdown(Handle timer) {
                       g_VetoCaptains[Get5Team_1]);
     Get5_MessageToAll("%t", "MapSelectionAnnounceCaptains", g_FormattedTeamNames[Get5Team_2],
                       g_VetoCaptains[Get5Team_2]);
-    VetoController();
+    HandleVetoStep();
     return Plugin_Stop;
   }
   warningsPrinted++;
@@ -65,9 +64,6 @@ void AbortVeto() {
   GetChatAliasForCommand(Get5ChatCommand_Ready, readyCommandFormatted, sizeof(readyCommandFormatted), true);
   Get5_MessageToAll("%t", "ReadyToResumeMapSelection", readyCommandFormatted);
   ChangeState(Get5State_PreVeto);
-  if (g_ActiveVetoMenu != null) {
-    g_ActiveVetoMenu.Cancel();
-  }
   if (IsPaused()) {
     UnpauseGame();
   }
@@ -76,7 +72,7 @@ void AbortVeto() {
   SetMatchTeamCvars(); // Resets ready status.
 }
 
-static void VetoFinished() {
+static void FinishVeto() {
   Get5_MessageToAll("%t", "MapDecidedInfoMessage");
   g_MapsLeftInVetoPool.Clear();
 
@@ -154,7 +150,7 @@ Action Command_Pick(int client, int args) {
   if (!PickMap(mapArg, playerTeam)) {
     Get5_Message(client, "%t", "MapSelectionInvalidMap", mapArg);
   } else {
-    VetoController();
+    HandleVetoStep();
   }
   return Plugin_Handled;
 }
@@ -186,7 +182,7 @@ Action Command_Ban(int client, int args) {
   if (!BanMap(mapArg, currentTeamToBan)) {
     Get5_Message(client, "%t", "MapSelectionInvalidMap", mapArg);
   } else {
-    VetoController();
+    HandleVetoStep();
   }
   return Plugin_Handled;
 }
@@ -202,24 +198,20 @@ void HandleSideChoice(const Get5Side side, int client) {
     return;
   }
   PickSide(side, pickingTeam);
-  VetoController();
+  HandleVetoStep();
 }
 
-static void VetoController() {
+static void HandleVetoStep() {
   // As long as sides are not set for a map, either give side pick or auto-decide sides and recursively call this.
   if (g_MapSides.Length < g_MapsToPlay.Length) {
     if (g_MatchSideType == MatchSideType_Standard) {
-      if (g_MapSelectionViaChatCvar.BoolValue) {
-        PromptForSideSelectionInChat(OtherMatchTeam(g_LastVetoTeam));
-      } else {
-        GiveSidePickMenu(g_VetoCaptains[OtherMatchTeam(g_LastVetoTeam)]);
-      }
+      PromptForSideSelectionInChat(OtherMatchTeam(g_LastVetoTeam));
     } else if (g_MatchSideType == MatchSideType_AlwaysKnife) {
       g_MapSides.Push(SideChoice_KnifeRound);
-      VetoController();
+      HandleVetoStep();
     } else {
       g_MapSides.Push(SideChoice_Team1CT);
-      VetoController();
+      HandleVetoStep();
     }
   } else if (g_NumberOfMapsInSeries > g_MapsToPlay.Length) {
     if (g_MapsLeftInVetoPool.Length == 1) {
@@ -232,29 +224,24 @@ static void VetoController() {
       } else {
         g_MapSides.Push(SideChoice_Team1CT);
       }
-      VetoFinished();
+      FinishVeto();
     } else {
       // More than 1 map in the pool and not all maps are picked; present choices as determine by config.
-      if (g_MapSelectionViaChatCvar.BoolValue) {
-        PromptForMapSelectionInChat(GetCurrentMapSelectionOption());
-      } else {
-        switch (GetCurrentMapSelectionOption()) {
-          case Get5MapSelectionOption_Team1Ban:
-            GiveMapVetoMenu(g_VetoCaptains[Get5Team_1]);
-          case Get5MapSelectionOption_Team2Ban:
-            GiveMapVetoMenu(g_VetoCaptains[Get5Team_2]);
-          case Get5MapSelectionOption_Team1Pick:
-            GiveMapPickMenu(g_VetoCaptains[Get5Team_1]);
-          case Get5MapSelectionOption_Team2Pick:
-            GiveMapPickMenu(g_VetoCaptains[Get5Team_2]);
-        }
-      }
+      PromptForMapSelectionInChat(GetCurrentMapSelectionOption());
     }
   } else {
-    VetoFinished();
+    FinishVeto();
   }
+  RestartInfoTimer(); // Prevents stacking chat messages if timed poorly.
 }
 
+void PrintVetoHelpMessage() {
+  if (g_MapSides.Length < g_MapsToPlay.Length && g_MatchSideType == MatchSideType_Standard) {
+    PromptForSideSelectionInChat(OtherMatchTeam(g_LastVetoTeam));
+  } else if (g_NumberOfMapsInSeries > g_MapsToPlay.Length) {
+    PromptForMapSelectionInChat(GetCurrentMapSelectionOption());
+  }
+}
 static Get5MapSelectionOption GetCurrentMapSelectionOption() {
   // Number of banned maps must be: original pool - (current pool + picked);
   // 7 - (4 + 2) = 1; if 4 are left and 2 were picked, 1 must have been banned.
@@ -342,124 +329,7 @@ void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int b
   ImplodeStrings(mapsArray, mapPool.Length, ", ", buffer, bufferSize);
 }
 
-// Confirmations
-
-static void GiveConfirmationMenu(int client, MenuHandler handler, const char[] title, const char[] confirmChoice) {
-  // Figure out text for positive and negative values
-  char positiveBuffer[1024], negativeBuffer[1024];
-  FormatEx(positiveBuffer, sizeof(positiveBuffer), "%T", "ConfirmPositiveOptionText", client);
-  FormatEx(negativeBuffer, sizeof(negativeBuffer), "%T", "ConfirmNegativeOptionText", client);
-
-  // Create menu
-  Menu menu = new Menu(handler);
-  menu.SetTitle("%T", title, client, confirmChoice);
-  menu.ExitButton = false;
-  menu.Pagination = MENU_NO_PAGINATION;
-
-  // Add rows of padding to move selection out of "danger zone"
-  for (int i = 0; i < 7; i++) {
-    menu.AddItem(CONFIRM_NEGATIVE_VALUE, "", ITEMDRAW_NOTEXT);
-  }
-
-  // Add actual choices
-  menu.AddItem(confirmChoice, positiveBuffer);
-  menu.AddItem(CONFIRM_NEGATIVE_VALUE, negativeBuffer);
-
-  // Show menu and disable confirmations
-  g_ActiveVetoMenu = menu;
-  menu.Display(client, MENU_TIME_FOREVER);
-  SetConfirmationTime(false);
-}
-
-static void SetConfirmationTime(bool enabled) {
-  if (enabled) {
-    g_VetoMenuTime = GetTickedTime();
-  } else {
-    // Set below 0 to signal that we don't want confirmation
-    g_VetoMenuTime = -1.0;
-  }
-}
-
-static bool ConfirmationNeeded() {
-  // Don't give confirmations if it's been disabled
-  if (g_VetoConfirmationTimeCvar.FloatValue <= 0.0) {
-    return false;
-  }
-  // Don't give confirmation if the veto time is less than 0
-  // (in case we're presenting a menu that doesn't need confirmation)
-  if (g_VetoMenuTime < 0.0) {
-    return false;
-  }
-
-  float diff = GetTickedTime() - g_VetoMenuTime;
-  return diff <= g_VetoConfirmationTimeCvar.FloatValue;
-}
-
-static bool ConfirmationNegative(const char[] choice) {
-  return StrEqual(choice, CONFIRM_NEGATIVE_VALUE);
-}
-
 // Map Vetos
-
-static void GiveMapVetoMenu(int client) {
-  if (!IsPlayer(client) || !IsPlayerTeam(GetClientMatchTeam(client))) {
-    AbortVeto();
-    return;
-  }
-
-  Menu menu = new Menu(MapVetoMenuHandler);
-  menu.SetTitle("%T", "MapSelectionBanMenuText", client);
-  menu.ExitButton = false;
-  // Don't paginate the menu if we have 7 maps or less, as they will fit
-  // on one page when we don't add the pagination options
-  if (g_MapsLeftInVetoPool.Length <= 7) {
-    menu.Pagination = MENU_NO_PAGINATION;
-  }
-
-  char mapName[PLATFORM_MAX_PATH];
-  for (int i = 0; i < g_MapsLeftInVetoPool.Length; i++) {
-    g_MapsLeftInVetoPool.GetString(i, mapName, sizeof(mapName));
-    menu.AddItem(mapName, mapName);
-  }
-  g_ActiveVetoMenu = menu;
-  menu.Display(client, MENU_TIME_FOREVER);
-  SetConfirmationTime(true);
-}
-
-static int MapVetoMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
-  if (action == MenuAction_Select) {
-    if (g_GameState != Get5State_Veto) {
-      return;
-    }
-    int client = param1;
-    Get5Team team = GetClientMatchTeam(client);
-    char mapName[PLATFORM_MAX_PATH];
-    menu.GetItem(param2, mapName, sizeof(mapName));
-
-    // Go back if we were called from a confirmation menu and client selected no
-    if (ConfirmationNegative(mapName)) {
-      GiveMapVetoMenu(client);
-      return;
-    }
-    // Show a confirmation menu if needed
-    if (ConfirmationNeeded()) {
-      GiveConfirmationMenu(client, MapVetoMenuHandler, "MapSelectionBanConfirmMenuText", mapName);
-      return;
-    }
-
-    BanMap(mapName, team);
-    VetoController();
-  } else if (action == MenuAction_Cancel) {
-    if (g_GameState == Get5State_Veto) {
-      AbortVeto();
-    }
-  } else if (action == MenuAction_End) {
-    if (menu == g_ActiveVetoMenu) {
-      g_ActiveVetoMenu = null;
-    }
-    delete menu;
-  }
-}
 
 static bool BanMap(const char[] mapName, const Get5Team team) {
   char mapNameFromArray[PLATFORM_MAX_PATH]; // RemoveMapFromMapPool returns correct map name into this, mapName is user input.
@@ -485,65 +355,6 @@ static bool BanMap(const char[] mapName, const Get5Team team) {
 }
 
 // Map Picks
-
-static void GiveMapPickMenu(int client) {
-  if (!IsPlayer(client) || !IsPlayerTeam(GetClientMatchTeam(client))) {
-    AbortVeto();
-    return;
-  }
-  Menu menu = new Menu(MapPickMenuHandler);
-  menu.SetTitle("%T", "MapSelectionPickMenuText", client);
-  menu.ExitButton = false;
-  // Don't paginate the menu if we have 7 maps or less, as they will fit
-  // on one page when we don't add the pagination options
-  if (g_MapsLeftInVetoPool.Length <= 7) {
-    menu.Pagination = MENU_NO_PAGINATION;
-  }
-
-  char mapName[PLATFORM_MAX_PATH];
-  for (int i = 0; i < g_MapsLeftInVetoPool.Length; i++) {
-    g_MapsLeftInVetoPool.GetString(i, mapName, sizeof(mapName));
-    menu.AddItem(mapName, mapName);
-  }
-  g_ActiveVetoMenu = menu;
-  menu.Display(client, MENU_TIME_FOREVER);
-  SetConfirmationTime(true);
-}
-
-static int MapPickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
-  if (action == MenuAction_Select) {
-    if (g_GameState != Get5State_Veto) {
-      return;
-    }
-    int client = param1;
-    Get5Team team = GetClientMatchTeam(client);
-    char mapName[PLATFORM_MAX_PATH];
-    menu.GetItem(param2, mapName, sizeof(mapName));
-
-    // Go back if we were called from a confirmation menu and client selected no
-    if (ConfirmationNegative(mapName)) {
-      GiveMapPickMenu(client);
-      return;
-    }
-    // Show a confirmation menu if needed
-    if (ConfirmationNeeded()) {
-      GiveConfirmationMenu(client, MapPickMenuHandler, "MapSelectionPickConfirmMenuText", mapName);
-      return;
-    }
-
-    PickMap(mapName, team);
-    VetoController();
-  } else if (action == MenuAction_Cancel) {
-    if (g_GameState == Get5State_Veto) {
-      AbortVeto();
-    }
-  } else if (action == MenuAction_End) {
-    if (menu == g_ActiveVetoMenu) {
-      g_ActiveVetoMenu = null;
-    }
-    delete menu;
-  }
-}
 
 static bool PickMap(const char[] mapName, const Get5Team team) {
   char mapNameFromArray[PLATFORM_MAX_PATH]; // RemoveMapFromMapPool returns correct map name into this, mapName is user input.
@@ -571,59 +382,6 @@ static bool PickMap(const char[] mapName, const Get5Team team) {
 }
 
 // Side Picks
-
-static void GiveSidePickMenu(int client) {
-  if (!IsPlayer(client) || !IsPlayerTeam(GetClientMatchTeam(client))) {
-    AbortVeto();
-    return;
-  }
-  Menu menu = new Menu(SidePickMenuHandler);
-  menu.ExitButton = false;
-  char mapName[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
-  menu.SetTitle("%T", "MapSelectionSidePickMenuText", client, mapName);
-  menu.AddItem("CT", "CT");
-  menu.AddItem("T", "T");
-  g_ActiveVetoMenu = menu;
-  menu.Display(client, MENU_TIME_FOREVER);
-  SetConfirmationTime(true);
-}
-
-static int SidePickMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
-  if (action == MenuAction_Select) {
-    if (g_GameState != Get5State_Veto) {
-      return;
-    }
-    int client = param1;
-    Get5Team team = GetClientMatchTeam(client);
-    char choice[PLATFORM_MAX_PATH];
-    menu.GetItem(param2, choice, sizeof(choice));
-
-    // Go back if we were called from a confirmation menu and client selected no
-    if (ConfirmationNegative(choice)) {
-      GiveSidePickMenu(client);
-      return;
-    }
-    // Show a confirmation menu if needed
-    if (ConfirmationNeeded()) {
-      GiveConfirmationMenu(client, SidePickMenuHandler, "MapSelectionSidePickConfirmMenuText", choice);
-      return;
-    }
-
-    PickSide(StrEqual(choice, "CT") ? Get5Side_CT : Get5Side_T, team);
-    VetoController();
-
-  } else if (action == MenuAction_Cancel) {
-    if (g_GameState == Get5State_Veto) {
-      AbortVeto();
-    }
-  } else if (action == MenuAction_End) {
-    if (menu == g_ActiveVetoMenu) {
-      g_ActiveVetoMenu = null;
-    }
-    delete menu;
-  }
-}
 
 static void PickSide(const Get5Side side, const Get5Team team) {
   if (side == Get5Side_CT) {

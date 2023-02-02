@@ -162,14 +162,6 @@ limit.<br>**`Default: 60`**
 :   Time (in seconds) to countdown before the [veto](../veto) process commences. Set to zero to move to veto without a
 countdown.<br>**`Default: 5`**
 
-####`get5_veto_confirmation_time`
-:   Time (in seconds) from presenting a [veto](../veto) menu to a selection being made, during which a confirmation will
-be required. 0 to disable.<br>**`Default: 2.0`**
-
-####`get5_map_selection_via_chat`
-:   Whether [map selection](../veto) is controlled using [`!ban`](../commands#ban), [`!pick`](../commands#pick)
-and [`!ct`](../commands#ct)/[`!t`](../commands#t) in chat instead of in-game menus.<br>**`Default: 0`**
-
 ####`get5_mute_allchat_during_map_selection`
 :   Suppresses all chat messages not sent in the team-channel for everyone but the team captains
 during [chat based map selection](#get5_map_selection_via_chat).<br>**`Default: 1`**

@@ -436,41 +436,9 @@
     {
         "da"        "Tilbageværende maps:"
     }
-    "MapSelectionPickMenuText"
-    {
-        "da"        "Vælg et map at SPILLE:"
-    }
-    "MapSelectionPickConfirmMenuText"
-    {
-        "da"        "Bekræft, at du vil SPILLE {1}:"
-    }
-    "MapSelectionBanMenuText"
-    {
-        "da"        "Vælg et map at BANNE:"
-    }
-    "MapSelectionBanConfirmMenuText"
-    {
-        "da"        "Bekræft, at du vil BANNE {1}:"
-    }
-    "MapSelectionSidePickMenuText"
-    {
-        "da"        "Vælg en side på {1}"
-    }
-    "MapSelectionSidePickConfirmMenuText"
-    {
-        "da"        "Bekræft, at du vil starte {1}:"
-    }
-    "ConfirmPositiveOptionText"
-    {
-        "da"        "Ja"
-    }
-    "ConfirmNegativeOptionText"
-    {
-        "da"        "Nej"
-    }
     "MapSelectionCountdown"
     {
-        "da"        "Map-valg begynder om {1} sekunder."
+        "da"        "Map-valg begynder om {1}..."
     }
     "SurrenderCommandNotEnabled"
     {

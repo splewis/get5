@@ -87,7 +87,6 @@ ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunityCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
-ConVar g_MapSelectionViaChatCvar;
 ConVar g_MuteAllChatDuringMapSelectionCvar;
 ConVar g_WarmupCfgCvar;
 ConVar g_KnifeCfgCvar;
@@ -115,7 +114,6 @@ ConVar g_TeamTimeToKnifeDecisionCvar;
 ConVar g_TimeToStartCvar;
 ConVar g_TimeToStartVetoCvar;
 ConVar g_TimeFormatCvar;
-ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
 ConVar g_PrintUpdateNoticeCvar;
 ConVar g_RoundBackupPathCvar;
@@ -178,7 +176,6 @@ float g_BombPlantedTime = 0.0;
 Get5BombSite g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
 bool g_SkipVeto = false;
-float g_VetoMenuTime = 0.0;
 MatchSideType g_MatchSideType = MatchSideType_Standard;
 ArrayList g_CvarNames;
 ArrayList g_CvarValues;
@@ -220,7 +217,6 @@ ArrayList g_MapSides;
 ArrayList g_MapsLeftInVetoPool;
 ArrayList g_MapBanOrder;
 Get5Team g_LastVetoTeam;
-Menu g_ActiveVetoMenu;
 Handle g_InfoTimer = INVALID_HANDLE;
 Handle g_MatchConfigExecTimer = INVALID_HANDLE;
 Handle g_ResetCvarsTimer = INVALID_HANDLE;
@@ -456,11 +452,9 @@ public void OnPluginStart() {
   g_TimeToStartCvar                     = CreateConVar("get5_time_to_start", "0", "Time (in seconds) teams have to ready up for live/knife before forfeiting the match. 0 = unlimited.");
   g_TimeToStartVetoCvar                 = CreateConVar("get5_time_to_start_veto", "0", "Time (in seconds) teams have to ready up for vetoing before forfeiting the match. 0 = unlimited.");
   g_TeamTimeToKnifeDecisionCvar         = CreateConVar("get5_time_to_make_knife_decision", "60", "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round. 0 = unlimited.");
-  g_VetoConfirmationTimeCvar            = CreateConVar("get5_veto_confirmation_time", "2.0", "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required. 0 to disable.");
   g_VetoCountdownCvar                   = CreateConVar("get5_veto_countdown", "5", "Seconds to countdown before veto process commences. 0 to skip countdown.");
 
   // Veto
-  g_MapSelectionViaChatCvar             = CreateConVar("get5_map_selection_via_chat", "0", "Whether map selection is done via chat commands or in-game menus.");
   g_MuteAllChatDuringMapSelectionCvar   = CreateConVar("get5_mute_allchat_during_map_selection", "1", "If enabled, only the team captains can type in all-chat during chat-based veto.");
   g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "0", "Whether the game pauses during the veto phase.");
   g_DisplayGotvVetoCvar                 = CreateConVar("get5_display_gotv_veto", "0", "Whether to wait for map vetos to be printed to GOTV before changing map.");
@@ -719,6 +713,8 @@ static Action Timer_InfoMessages(Handle timer) {
     } else if (g_GameState == Get5State_Warmup && g_DisplayGotvVetoCvar.BoolValue && GetTvDelay() > 0) {
       Get5_MessageToAll("%t", "WaitingForGOTVMapSelection");
     }
+  } else if (g_GameState == Get5State_Veto) {
+    PrintVetoHelpMessage();
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     PromptForKnifeDecision();
   } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
@@ -1476,12 +1472,6 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
     delete g_KnifeDecisionTimer;
   }
 
-  // If a veto menu was open when the match ended, close it;
-  if (g_ActiveVetoMenu != null) {
-    LogDebug("Deleted g_ActiveVetoMenu.");
-    g_ActiveVetoMenu.Cancel();
-  }
-
   // If a config exec callback is in progress, stop it;
   if (g_MatchConfigExecTimer != INVALID_HANDLE) {
     LogDebug("Killing g_MatchConfigExecTimer as match was ended.");
@@ -1638,7 +1628,7 @@ static Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
   }
 }
 
-static void RestartInfoTimer() {
+void RestartInfoTimer() {
   // We restart this on each round start to make sure we don't double-print info messages
   // right on top of manually printed messages, such as "waiting for knife decision".
   if (g_InfoTimer != INVALID_HANDLE) {

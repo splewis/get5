@@ -432,38 +432,6 @@
     {
         "de"        "Verbleibende Karten:"
     }
-    "MapSelectionPickMenuText"
-    {
-        "de"            "Wähle eine Karte die GESPIELT werden soll:"
-    }
-    "MapSelectionPickConfirmMenuText"
-    {
-        "de"            "Bestätige dass {1} GESPIELT werden soll:"
-    }
-    "MapSelectionBanMenuText"
-    {
-        "de"            "Lege ein Veto gegen eine Karte ein:"
-    }
-    "MapSelectionBanConfirmMenuText"
-    {
-        "de"            "Bestätige dass ein VETO gegen {1} eingelegt werden soll:"
-    }
-    "MapSelectionSidePickMenuText"
-    {
-        "de"            "Wähle die Seite für {1}:"
-    }
-    "MapSelectionSidePickConfirmMenuText"
-    {
-        "de"            "Bestätige dass ihr auf der Seite {1} starten wollt:"
-    }
-    "ConfirmPositiveOptionText"
-    {
-        "de"            "Ja"
-    }
-    "ConfirmNegativeOptionText"
-    {
-        "de"            "Nein"
-    }
     "MapSelectionCountdown"
     {
         "de"            "Die Kartenauswahl beginnt in {1} Sekunden."

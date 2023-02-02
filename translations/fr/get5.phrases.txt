@@ -428,38 +428,6 @@
     {
         "fr"        "Maps restantes :"
     }
-    "MapSelectionPickMenuText"
-    {
-        "fr"        "Selectionnez une map à JOUER :"
-    }
-    "MapSelectionPickConfirmMenuText"
-    {
-        "fr"        "Confirmez que vous souhaitez JOUER {1} :"
-    }
-    "MapSelectionBanMenuText"
-    {
-        "fr"        "Selectionnez une map à BANNIR :"
-    }
-    "MapSelectionBanConfirmMenuText"
-    {
-        "fr"        "Confirmez que vous souhaitez la BANNIR {1} :"
-    }
-    "MapSelectionSidePickMenuText"
-    {
-        "fr"        "Selectionner un côté pour {1} :"
-    }
-    "MapSelectionSidePickConfirmMenuText"
-    {
-        "fr"        "Confirmez que vous voulez commencer {1} :"
-    }
-    "ConfirmPositiveOptionText"
-    {
-        "fr"        "Oui"
-    }
-    "ConfirmNegativeOptionText"
-    {
-        "fr"        "Non"
-    }
     "MapSelectionCountdown"
     {
         "fr"        "Selection de la map commençant dans {1}..."

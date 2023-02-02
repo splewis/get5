@@ -340,38 +340,6 @@
     {
         "hu"            "[NEM ÁLL KÉSZEN]"
     }
-    "MapSelectionPickMenuText"
-    {
-        "hu"            "Válassz pályát, amin JÁTSZANÁL:"
-    }
-    "MapSelectionPickConfirmMenuText"
-    {
-        "hu"            "Erősítse meg, hogy JÁTSZANÁL {1}:"
-    }
-    "MapSelectionBanMenuText"
-    {
-        "hu"            "Válassz ki egy pályát, amit szeretnél VÉTÓZNI:"
-    }
-    "MapSelectionBanConfirmMenuText"
-    {
-        "hu"            "Erősítse meg, hogy kiszeretnéd VÉTÓZNI a {1} pályát:"
-    }
-    "MapSelectionSidePickMenuText"
-    {
-        "hu"            "Válasszon oldalt {1}:"
-    }
-    "MapSelectionSidePickConfirmMenuText"
-    {
-        "hu"            "Erősítse meg, hogy {1}-ben kezd:"
-    }
-    "ConfirmPositiveOptionText"
-    {
-        "hu"            "Igen"
-    }
-    "ConfirmNegativeOptionText"
-    {
-        "hu"            "Nem"
-    }
     "MapSelectionCountdown"
     {
         "hu"            "A pálya választás hamarosan kezdődik {1}..."

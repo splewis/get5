@@ -503,42 +503,6 @@
     {
         "en"        "Remaining maps:"
     }
-    "MapSelectionPickMenuText"
-    {
-        "en"        "Select a map to PLAY:"
-    }
-    "MapSelectionPickConfirmMenuText"
-    {
-        "#format"       "{1:s}"
-        "en"        "Confirm you want to PLAY {1}:"
-    }
-    "MapSelectionBanMenuText"
-    {
-        "en"        "Select a map to BAN:"
-    }
-    "MapSelectionBanConfirmMenuText"
-    {
-        "#format"       "{1:s}"
-        "en"        "Confirm you want to BAN {1}:"
-    }
-    "MapSelectionSidePickMenuText"
-    {
-        "#format"       "{1:s}"
-        "en"        "Select a side for {1}:"
-    }
-    "MapSelectionSidePickConfirmMenuText"
-    {
-        "#format"       "{1:s}"
-        "en"        "Confirm you want to start {1}:"
-    }
-    "ConfirmPositiveOptionText"
-    {
-        "en"        "Yes"
-    }
-    "ConfirmNegativeOptionText"
-    {
-        "en"        "No"
-    }
     "MapSelectionCountdown"
     {
         "#format"   "{1:s}"

@@ -9,7 +9,7 @@
 <link href="../coaching/" rel="prev"/>
 <link href="../surrender-forfeit/" rel="next"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.4.2, mkdocs-material-9.0.8" name="generator"/>
+<meta content="mkdocs-1.4.2, mkdocs-material-9.0.10" name="generator"/>
 <title>Pausing - Get5 Documentation</title>
 <link href="../assets/stylesheets/main.0d440cfe.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.2505c338.min.css" rel="stylesheet"/>
@@ -329,19 +329,22 @@ the <a href="../configuration#pausing">pause configuration</a> parameters.</p>
 <div class="admonition warning">
 <p class="admonition-title">Not a democracy</p>
 <p>No pauses require voting. If a player calls <a href="../commands#pause"><code>!pause</code></a> or <a href="../commands#tech"><code>!tech</code></a>, the
-pause will be triggered and a pause count will be consumed (if defined). You cannot cancel a request for pause. Do
-<strong>not</strong> enable <a href="https://totalcsgo.com/command/svallowvotes"><code>sv_allow_votes</code></a> as it will mess up the pausing system.</p>
+pause will be triggered and a pause count will be consumed (if defined) as soon as freezetime starts, or immediately
+if already in freezetime. If a player from the pausing team calls <a href="../commands#unpause"><code>!unpause</code></a> before a
+live round ends, the pause request is <a href="../configuration#get5_allow_pause_cancellation">canceled</a> without consuming a
+pause. Do <strong>not</strong> enable <a href="https://totalcsgo.com/command/svallowvotes"><code>sv_allow_votes</code></a> as it will mess up the
+pausing system.</p>
 </div>
 <h2 id="tactical"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 14H5.2L4 17.2V4h16v12M12.2 5.5c-.9 0-1.6.2-2.1.5-.6.4-.9 1-.8 1.7h2c0-.3.1-.5.3-.6.2-.1.4-.2.7-.2.3 0 .6.1.8.3.2.2.3.4.3.7 0 .3-.1.5-.2.7-.2.2-.4.4-.6.5-.5.3-.9.6-1.1.8-.4.3-.5.6-.5 1.1h2c0-.3.1-.5.1-.7.1-.2.3-.3.5-.5.5-.2.8-.5 1.1-.9.3-.4.4-.8.4-1.2 0-.7-.3-1.3-.8-1.7-.4-.3-1.2-.5-2.1-.5M11 12v2h2v-2h-2Z"></path></svg></span> Tactical</h2>
 <p>If <a href="../configuration#get5_pausing_enabled">pauses are allowed</a>, tactical pauses can be requested by any
 member of a team using the <a href="../commands#pause"><code>!pause</code> or <code>!tac</code></a> command.
 This initiates a pause at the beginning of the following round (or immediately if still in
 freeze-time). If <a href="../configuration#get5_fixed_pause_time">fixed pause time</a> is set, the pauses will always be of
-that length, unless both teams call <a href="../commands#unpause"><code>!unpause</code></a>. If instead
-<a href="../configuration#get5_max_pause_time">a maximum pause time</a> is set, the game is automatically unpaused if the pausing
-team runs out of pause time <em>or</em> if both teams unpause. Note that maximum pause time is across <strong>all tactical pauses</strong>
-and does not reset for each pause. If neither fixed pause time nor maximum pause are set, both teams must call unpause
-and tactical pauses will have no time restrictions. You can
+that length, <a href="../configuration#get5_allow_unpausing_fixed_pauses">unless</a> both teams
+call <a href="../commands#unpause"><code>!unpause</code></a>. If instead <a href="../configuration#get5_max_pause_time">a maximum pause time</a> is set,
+the game is automatically unpaused if the pausing team runs out of pause time <em>or</em> if both teams unpause. Note that
+maximum pause time is across <strong>all tactical pauses</strong> and does not reset for each pause. If neither fixed pause time nor
+maximum pause are set, both teams must call unpause and tactical pauses will have no time restrictions. You can
 set <a href="../configuration#get5_max_pauses">the maximum number of tactical pauses</a> and also decide if you want the tactical
 pause restrictions to <a href="../configuration#get5_reset_pauses_each_half">reset on halftime</a>.</p>
 <h2 id="technical"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m22.61 19-9.08-9.09c.93-2.34.47-5.1-1.44-7C9.79.61 6.21.4 3.66 2.26L7.5 6.11 6.08 7.5 2.25 3.69C.39 6.23.6 9.82 2.9 12.11c1.86 1.86 4.57 2.35 6.89 1.48l9.11 9.11c.39.39 1.02.39 1.41 0l2.3-2.3c.39-.4.39-1.01 0-1.4m-3 1.59-9.46-9.46c-.61.45-1.29.72-2 .82-1.36.2-2.79-.21-3.83-1.25C3.37 9.76 2.93 8.5 3 7.26l3.09 3.09 4.24-4.24L7.24 3c1.26-.05 2.49.39 3.44 1.33a4.469 4.469 0 0 1 1.24 3.96 4.35 4.35 0 0 1-.88 1.96l9.46 9.45-.89.89Z"></path></svg></span> Technical</h2>
@@ -393,7 +396,7 @@ allow you to call administrative pauses.</p>
 <div class="md-dialog__inner md-typeset"></div>
 </div>
 <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
-<script src="../assets/javascripts/bundle.a00a7c5e.min.js"></script>
+<script src="../assets/javascripts/bundle.6df46069.min.js"></script>
 <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
 <script src="../javascripts/tablesort.js"></script>
 </body>

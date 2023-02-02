@@ -9,7 +9,7 @@
 <link href="../surrender-forfeit/" rel="prev"/>
 <link href="../gotv/" rel="next"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.4.2, mkdocs-material-9.0.8" name="generator"/>
+<meta content="mkdocs-1.4.2, mkdocs-material-9.0.10" name="generator"/>
 <title>Backup System - Get5 Documentation</title>
 <link href="../assets/stylesheets/main.0d440cfe.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.2505c338.min.css" rel="stylesheet"/>
@@ -383,10 +383,10 @@ with <a href="../configuration#get5_backup_system_enabled"><code>get5_backup_sys
 <p>Every time a round starts, CS:GO automatically writes a round backup file into the root of the <code>csgo</code> directory based on
 the value of <a href="https://totalcsgo.com/command/mpbackuproundfile"><code>mp_backup_round_file</code></a>, which Get5 will <a href="../configuration#get5_server_id">automatically
 adjust to prevent file collisions</a>. Get5 reads this file, copies it into its
-own file called <code>get5_backup%d_match%s_map%d_round%d.cfg</code>, where the arguments
+own file called <code>get5_backup%s_match%s_map%d_round%d.cfg</code>, where the arguments
 are <a href="..configuration/#get5_server_id"><code>get5_server_id</code></a>, <code>matchid</code>, <code>mapnumber</code> and <code>roundnumber</code>, respectively, and
 then deletes the original backup file. A special backup
-called <code>get5_backup%d_match%s_map%d_prelive.cfg</code> is created and should be used if you want to restore to the beginning
+called <code>get5_backup%s_match%s_map%d_prelive.cfg</code> is created and should be used if you want to restore to the beginning
 of the map, before the knife round.</p>
 <h3 id="example">Example</h3>
 <p>When in a match, you can call <a href="../commands#get5_listbackups"><code>get5_listbackups</code></a> to view all backups for the current
@@ -469,7 +469,7 @@ backup from scratch, the consumed pauses defined in the backup file will be set.
 <div class="md-dialog__inner md-typeset"></div>
 </div>
 <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
-<script src="../assets/javascripts/bundle.a00a7c5e.min.js"></script>
+<script src="../assets/javascripts/bundle.6df46069.min.js"></script>
 <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
 <script src="../javascripts/tablesort.js"></script>
 </body>

@@ -222,6 +222,26 @@ void UnreadyTeam(Get5Team team) {
   Get5_MessageToAll("%t", "TeamIsNoLongerReady", g_FormattedTeamNames[team]);
 }
 
+Action Command_AddReadyTime(int client, int args) {
+  if (!IsReadyGameState()) {
+    return Plugin_Handled;
+  }
+  char arg[32];
+  if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {
+    int seconds = StringToInt(arg);
+    if (seconds > 0) {
+      g_ReadyTimeWaitingUsed = g_ReadyTimeWaitingUsed - seconds;
+      if (g_ReadyTimeWaitingUsed < 0) {
+        g_ReadyTimeWaitingUsed = 0;
+      }
+      ReplyToCommand(client, "Deducted %d second(s) from used ready time. Now: %d.", seconds, g_ReadyTimeWaitingUsed);
+      return Plugin_Handled;
+    }
+  }
+  ReplyToCommand(client, "Usage: get5_add_ready_time <seconds>");
+  return Plugin_Handled;
+}
+
 Action Command_ForceReadyClient(int client, int args) {
   if (!IsReadyGameState() || client == 0) {
     return;

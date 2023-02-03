@@ -534,6 +534,9 @@ public void OnPluginStart() {
               "Removes the last kicked steamid from a match team");
   RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP,
               "Creates and loads a match using the players currently on the server as a Bo1");
+  RegAdminCmd(
+    "get5_add_ready_time", Command_AddReadyTime, ADMFLAG_CHANGEMAP,
+    "Adds additional ready-time by deducting the provided seconds from the time already used during a ready-phase.");
 
   RegAdminCmd("get5_scrim", Command_CreateScrim, ADMFLAG_CHANGEMAP,
               "Creates and loads a match using the scrim template");

@@ -366,6 +366,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_add_ready_time">
+    get5_add_ready_time &lt;seconds&gt;
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_forceready">
     get5_forceready
   </a>
@@ -699,6 +704,11 @@
   </a>
 </li>
 <li class="md-nav__item">
+<a class="md-nav__link" href="#get5_add_ready_time">
+    get5_add_ready_time &lt;seconds&gt;
+  </a>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#get5_forceready">
     get5_forceready
   </a>
@@ -974,6 +984,12 @@ from the server immediately.</dd>
 <h4 id="get5_removekickedplayer"><code>get5_removekickedplayer &lt;team1|team2|spec&gt;</code></h4>
 <dl>
 <dd>Removes the last kicked Steam ID from all teams. Cannot be used in scrim mode.</dd>
+</dl>
+<h4 id="get5_add_ready_time"><code>get5_add_ready_time &lt;seconds&gt;</code></h4>
+<dl>
+<dd>Adds additional time-to-ready, limited by <a href="../configuration#get5_time_to_start"><code>get5_time_to_start</code></a>
+or <a href="../configuration#get5_time_to_start_veto"><code>get5_time_to_start_veto</code></a>, depending on the game state. Can only be used
+during ready-up phases.</dd>
 </dl>
 <h4 id="get5_forceready"><code>get5_forceready</code></h4>
 <dl>

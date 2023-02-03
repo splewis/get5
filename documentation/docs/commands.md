@@ -225,6 +225,11 @@ from the server immediately.
 ####`get5_removekickedplayer <team1|team2|spec>` {: #get5_removekickedplayer }
 :   Removes the last kicked Steam ID from all teams. Cannot be used in scrim mode.
 
+####`get5_add_ready_time <seconds>` {: #get5_add_ready_time }
+:   Adds additional time-to-ready, limited by [`get5_time_to_start`](../configuration#get5_time_to_start)
+or [`get5_time_to_start_veto`](../configuration#get5_time_to_start_veto), depending on the game state. Can only be used
+during ready-up phases.
+
 ####`get5_forceready`
 :   Marks all teams as ready. `get5_forcestart` does the same thing.
 

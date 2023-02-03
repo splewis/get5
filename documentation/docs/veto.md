@@ -3,17 +3,13 @@
 If your match is configured to include a veto-phase (setting [`skip_veto`](../match_schema#schema) to `false`), each
 team's captain will ban or pick maps from your configured map pool.
 
-!!! hint "Silence!"
-
-    Except for the team captains, players can only talk in **team chat** during map selection. This is to reduce
-    clutter, as a lot of text is already printed during this phase. You can enable all-chat for everyone by
-    disabling [`get5_mute_allchat_during_map_selection`](../configuration#get5_mute_allchat_during_map_selection).
-
 ## Team Captains {: #captains }
 
 Get5 will give map pick/ban and side choices to a player on each team. The player it gives it to will be the first
 player listed in the [`players`](../match_schema#schema) section of a match configuration, or a random player on the
-away-team when in [scrim mode](../getting_started#scrims).
+away-team when in [scrim mode](../getting_started#scrims). Except for the team captains, players
+can [only talk in **team chat**](../configuration#get5_mute_allchat_during_map_selection) during map selection. This is
+to reduce clutter, as a lot of text is already printed during this phase.
 
 ## Options {: #options }
 

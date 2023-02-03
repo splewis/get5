@@ -359,6 +359,15 @@ public Plugin myinfo = {
  * Core SourceMod forwards,
  */
 
+public void OnAllPluginsLoaded() {
+  Handle h = FindPluginByFile("basebans.smx");
+  if (h != INVALID_HANDLE) {
+    LogMessage("Basebans plugin detected. You should remove this plugin as it conflicts with Get5. Unloading...");
+    ServerCommand("sm plugins unload basebans");
+    LogMessage("Unloaded basebans.smx.");
+  }
+}
+
 public void OnPluginStart() {
   InitDebugLog(DEBUG_CVAR, "get5");
   LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);

@@ -76,6 +76,14 @@ is just to indicate what the correct structure looks like.
     strings, and Get5 will error if it cannot find the strings it expects in these folders. The folder only contains
     Get5's translations, so it won't override translations for any other plugins.
 
+!!! danger "Avoid installing the `basebans.smx` plugin"
+
+    The `basebans.smx` plugin conflicts with Get5's [map selection](../veto) system, as it also uses
+    the [`!ban`](../commands#ban) command. You should disable this plugin either by moving it to the `disabled` folder
+    or by simply deleting the file from the `plugins` folder. You can remove all
+    the [default SourceMod plugins](https://wiki.alliedmods.net/Base_Plugins_(SourceMod)), as they are not required for
+    Get5 to function. If you do not remove the `basebans.smx` plugin, Get5 will unload it automatically.
+
 ???+ example "Server folder structure"
 
     ```yaml
@@ -103,7 +111,7 @@ is just to indicate what the correct structure looks like.
           - adminhelp.smx
           - adminmenu.smx
           - antiflood.smx
-          - basebans.smx
+          - basebans.smx # (26)
           - basechat.smx
           - basecommands.smx
           - basecomm.smx
@@ -215,6 +223,8 @@ is just to indicate what the correct structure looks like.
     23. Contains the [phase configuration files](../configuration#phase-configuration-files) for Get5.
     24. The default SourceMod config file and Warmode (included with SourceMod) configs. You can ignore these files.
     25. The rest of these folders are already in your `csgo` directory.
+    26. :warning: The `basebans.smx` plugin conflicts with Get5's [map selection](../veto) system and should not be
+        installed. Remove this file or move it to the `disabled` folder.
 
 !!! success "So far, so good..."
 

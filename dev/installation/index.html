@@ -430,6 +430,14 @@ optionally <code>get5_mysqlstats.smx</code> or <code>get5_apistats.smx</code>) t
 strings, and Get5 will error if it cannot find the strings it expects in these folders. The folder only contains
 Get5's translations, so it won't override translations for any other plugins.</p>
 </div>
+<div class="admonition danger">
+<p class="admonition-title">Avoid installing the <code>basebans.smx</code> plugin</p>
+<p>The <code>basebans.smx</code> plugin conflicts with Get5's <a href="../veto">map selection</a> system, as it also uses
+the <a href="../commands#ban"><code>!ban</code></a> command. You should disable this plugin either by moving it to the <code>disabled</code> folder
+or by simply deleting the file from the <code>plugins</code> folder. You can remove all
+the <a href="https://wiki.alliedmods.net/Base_Plugins_(SourceMod)">default SourceMod plugins</a>, as they are not required for
+Get5 to function. If you do not remove the <code>basebans.smx</code> plugin, Get5 will unload it automatically.</p>
+</div>
 <details class="example" open="open">
 <summary>Server folder structure</summary>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="nt">addons</span><span class="p">:</span>
@@ -456,7 +464,7 @@ Get5's translations, so it won't override translations for any other plugins.</p
 <a href="#__codelineno-0-22" id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adminhelp.smx</span>
 <a href="#__codelineno-0-23" id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">adminmenu.smx</span>
 <a href="#__codelineno-0-24" id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">antiflood.smx</span>
-<a href="#__codelineno-0-25" id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basebans.smx</span>
+<a href="#__codelineno-0-25" id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basebans.smx</span><span class="w"> </span><span class="c1"># (26)</span>
 <a href="#__codelineno-0-26" id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basechat.smx</span>
 <a href="#__codelineno-0-27" id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basecommands.smx</span>
 <a href="#__codelineno-0-28" id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basecomm.smx</span>
@@ -568,6 +576,8 @@ Get5's translations, so it won't override translations for any other plugins.</p
 <li>Contains the <a href="../configuration#phase-configuration-files">phase configuration files</a> for Get5.</li>
 <li>The default SourceMod config file and Warmode (included with SourceMod) configs. You can ignore these files.</li>
 <li>The rest of these folders are already in your <code>csgo</code> directory.</li>
+<li><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:"/> The <code>basebans.smx</code> plugin conflicts with Get5's <a href="../veto">map selection</a> system and should not be
+    installed. Remove this file or move it to the <code>disabled</code> folder.</li>
 </ol>
 </details>
 <div class="admonition success">

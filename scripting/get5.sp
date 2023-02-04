@@ -1506,6 +1506,10 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
     char nextMap[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(Get5_GetMapNumber(), nextMap, sizeof(nextMap));
+    if (StrContains(nextMap, "workshop", false) == 0) {
+      LogDebug("Added 20 seconds to mp_match_restart_delay to ensure workshop map can download in time.");
+      SetCurrentMatchRestartDelay(requiredDelay + 20);
+    }
 
     char timeToMapChangeFormatted[8];
     ConvertSecondsToMinutesAndSeconds(RoundToFloor(restartDelay), timeToMapChangeFormatted,
@@ -1524,15 +1528,16 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 }
 
 Action Timer_NextMatchMap(Handle timer) {
-  g_PendingMapChangeTimer = INVALID_HANDLE;
-  if (g_GameState == Get5State_None) {
-    return;
+  if (g_GameState == Get5State_None || timer != g_PendingMapChangeTimer) {
+    return Plugin_Handled;
   }
+  g_PendingMapChangeTimer = INVALID_HANDLE;
   char map[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(Get5_GetMapNumber(), map, sizeof(map));
   // If you change these 3 seconds for whatever reason, you must adjust the counter-offset in
   // Event_MatchOver.
   ChangeMap(map, 3.0);
+  return Plugin_Handled;
 }
 
 void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay, bool kickPlayers = true) {

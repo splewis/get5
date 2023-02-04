@@ -33,27 +33,27 @@ Partial Example:
 ```
 "Stats"
 {
-	"series_type"       "bo1"
-	"team1_name"        "EnvyUs"
-	"team2_name"        "Fnatic"
-	"map0"
-	{
-		"mapname"		"de_mirage"
-		"demo_filename" "304_map1_de_mirage.dem"
-		"winner"		"team1"
-		"team1"
-		{
-			"score"		"5"
-			"73613643164646"
-			{
-				"name"		"xyz"
-				"kills"		"0"
-				"deaths"    "1"
-				"assists"	"5"
-				"damage"	"352"
-			}
-		}
-	}
+    "series_type"       "bo1"
+    "team1_name"        "EnvyUs"
+    "team2_name"        "Fnatic"
+    "map0"
+    {
+        "mapname"       "de_mirage"
+        "demo_filename" "304_map1_de_mirage.dem"
+        "winner"        "team1"
+        "team1"
+        {
+            "score"          "5"
+            "73613643164646"
+            {
+                "name"    "xyz"
+                "kills"   "0"
+                "deaths"  "1"
+                "assists" "5"
+                "damage"  "352"
+            }
+        }
+    }
 }
 ```
 
@@ -115,11 +115,11 @@ Raw text link can be found [here](https://raw.githubusercontent.com/splewis/get5
     ```
     "get5"
     {
-        "driver"			"mysql"
-        "host"				"127.0.0.1"
-        "database"			"get5"
-        "user"				"get5_db_user"
-        "pass"				"super_secret_password"
-        "port"			    "3306"
+        "driver"   "mysql"
+        "host"     "127.0.0.1"
+        "database" "get5"
+        "user"     "get5_db_user"
+        "pass"     "super_secret_password"
+        "port"     "3306"
     }
     ```

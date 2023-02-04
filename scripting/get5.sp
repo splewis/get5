@@ -87,6 +87,7 @@ ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunityCvar;
 ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_LiveCfgCvar;
+ConVar g_LiveWingmanCfgCvar;
 ConVar g_MuteAllChatDuringMapSelectionCvar;
 ConVar g_WarmupCfgCvar;
 ConVar g_KnifeCfgCvar;
@@ -145,6 +146,7 @@ ConVar g_CoachingEnabledCvar;
 /** Series config game-state **/
 int g_MapsToWin = 1;  // Maps needed to win the series.
 bool g_SeriesCanClinch = true;
+bool g_Wingman = false;
 int g_RoundNumber = -1;  // The round number, 0-indexed. -1 if the match is not live.
 // The active map number, used by stats. Required as the calculated round number changes immediately
 // as a map ends, but before the map changes to the next.
@@ -476,6 +478,7 @@ public void OnPluginStart() {
   g_KickClientsWithNoMatchCvar          = CreateConVar("get5_kick_when_no_match_loaded", "0", "Whether the plugin kicks players when no match is loaded and when a match ends.");
   g_KnifeCfgCvar                        = CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to execute for the knife round.");
   g_LiveCfgCvar                         = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to execute when the game goes live.");
+  g_LiveWingmanCfgCvar                  = CreateConVar("get5_live_wingman_cfg", "get5/live_wingman.cfg", "Config file to execute when the game goes live, but for wingman mode.");
   g_PrettyPrintJsonCvar                 = CreateConVar("get5_pretty_print_json", "1", "Whether all JSON output is in pretty-print format.");
   g_PrintUpdateNoticeCvar               = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
   g_ServerIdCvar                        = CreateConVar("get5_server_id", "0", "A string that identifies your server. This is used in temporary files to prevent collisions and added as an HTTP header for network requests made by Get5.");
@@ -857,6 +860,38 @@ static Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBr
   return Plugin_Continue;
 }
 
+// This runs before OnConfigsExecuted and should not contain anything that reads game state because of the above
+// mentioned hibernate race conditions.
+public void OnMapStart() {
+  LogDebug("OnMapStart");
+  g_MapChangePending = false;
+  g_DoingBackupRestoreNow = false;
+  g_ReadyTimeWaitingUsed = 0;
+  g_KnifeWinnerTeam = Get5Team_None;
+  g_HasKnifeRoundStarted = false;
+
+  LOOP_TEAMS(team) {
+    g_TeamGivenStopCommand[team] = false;
+    g_TeamReadyForUnpause[team] = false;
+    if (g_GameState != Get5State_PendingRestore) {
+      g_TacticalPauseTimeUsed[team] = 0;
+      g_TacticalPausesUsed[team] = 0;
+      g_TechnicalPausesUsed[team] = 0;
+    }
+  }
+
+  // If the map is changed while a map timer is counting down, kill the timer. This could happen if
+  // a too long mp_match_restart_delay was set and admins decide to manually intervene.
+  if (g_PendingMapChangeTimer != INVALID_HANDLE) {
+    delete g_PendingMapChangeTimer;
+    LogDebug("Killed g_PendingMapChangeTimer as map was changed.");
+  }
+
+  EndSurrenderTimers();
+  // Always reset ready status on map start
+  ResetReadyStatus();
+}
+
 // This runs every time a map starts *or* when the plugin is reloaded.
 public void OnConfigsExecuted() {
   LogDebug("OnConfigsExecuted");
@@ -885,11 +920,6 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
     }
   }
 
-  g_MapChangePending = false;
-  g_DoingBackupRestoreNow = false;
-  g_ReadyTimeWaitingUsed = 0;
-  g_KnifeWinnerTeam = Get5Team_None;
-  g_HasKnifeRoundStarted = false;
   // Recording is always automatically stopped on map change, and
   // since there are no hooks to detect tv_stoprecord, we reset
   // our recording var if a map change is performed unexpectedly.
@@ -897,24 +927,10 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
   g_DemoFileName = "";
   DeleteOldBackups();
 
-  EndSurrenderTimers();
-  // Always reset ready status on map start
-  ResetReadyStatus();
-
   if (CheckAutoLoadConfig()) {
     // If gamestate is none and a config was autoloaded, a match config will set all of the below
     // state.
-    return;
-  }
-
-  LOOP_TEAMS(team) {
-    g_TeamGivenStopCommand[team] = false;
-    g_TeamReadyForUnpause[team] = false;
-    if (g_GameState != Get5State_PendingRestore) {
-      g_TacticalPauseTimeUsed[team] = 0;
-      g_TacticalPausesUsed[team] = 0;
-      g_TechnicalPausesUsed[team] = 0;
-    }
+    return Plugin_Handled;
   }
 
   // On map start, always put the game in warmup mode.
@@ -926,13 +942,7 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
   if (g_GameState != Get5State_PendingRestore) {
     SetStartingTeams();
   }
-
-  // If the map is changed while a map timer is counting down, kill the timer. This could happen if
-  // a too long mp_match_restart_delay was set and admins decide to manually intervene.
-  if (g_PendingMapChangeTimer != INVALID_HANDLE) {
-    delete g_PendingMapChangeTimer;
-    LogDebug("Killed g_PendingMapChangeTimer as map was changed.");
-  }
+  return Plugin_Handled;
 }
 
 static Action Timer_CheckReady(Handle timer) {
@@ -1049,7 +1059,7 @@ bool CheckAutoLoadConfig() {
 static Action Command_EndMatch(int client, int args) {
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "No match is configured; nothing to end.");
-    return;
+    return Plugin_Handled;
   }
 
   Get5Team winningTeam = Get5Team_None;  // defaults to tie
@@ -1062,7 +1072,7 @@ static Action Command_EndMatch(int client, int args) {
       winningTeam = Get5Team_2;
     } else {
       ReplyToCommand(client, "Usage: get5_endmatch <team1|team2> (omit team for tie)");
-      return;
+      return Plugin_Handled;
     }
   }
 
@@ -1098,6 +1108,7 @@ static Action Command_EndMatch(int client, int args) {
   }
 
   RestartGame();
+  return Plugin_Handled;
 }
 
 static Action Command_LoadMatch(int client, int args) {
@@ -1518,8 +1529,9 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     // g_MapChangePending is set in ChangeMap, but since we want to announce now and change the
     // state immediately while waiting for the restartDelay, we set it here also.
     g_MapChangePending = true;
-    FormatMapName(nextMap, nextMap, sizeof(nextMap), true, true);
-    Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap, timeToMapChangeFormatted);
+    char nextMapFormatted[PLATFORM_MAX_PATH];
+    FormatMapName(nextMap, nextMapFormatted, sizeof(nextMapFormatted), true, true);
+    Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMapFormatted, timeToMapChangeFormatted);
     ChangeState(Get5State_PostGame);
     // Subtracting 4 seconds makes the map change 1 second before the timer expires, as there is a 3
     // second built-in delay in the ChangeMap function called by Timer_NextMatchMap.
@@ -1528,15 +1540,17 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 }
 
 Action Timer_NextMatchMap(Handle timer) {
-  if (g_GameState == Get5State_None || timer != g_PendingMapChangeTimer) {
+  if (timer != g_PendingMapChangeTimer) {
     return Plugin_Handled;
   }
   g_PendingMapChangeTimer = INVALID_HANDLE;
-  char map[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(Get5_GetMapNumber(), map, sizeof(map));
-  // If you change these 3 seconds for whatever reason, you must adjust the counter-offset in
-  // Event_MatchOver.
-  ChangeMap(map, 3.0);
+  if (g_GameState != Get5State_None) {
+    char map[PLATFORM_MAX_PATH];
+    g_MapsToPlay.GetString(Get5_GetMapNumber(), map, sizeof(map));
+    // If you change these 3 seconds for whatever reason, you must adjust the counter-offset in
+    // Event_MatchOver.
+    ChangeMap(map, 3.0);
+  }
   return Plugin_Handled;
 }
 
@@ -1625,6 +1639,7 @@ void ResetMatchConfigVariables(bool backup = false) {
   g_MatchSideType = MatchSideType_Standard;
   g_MapsToWin = 1;
   g_SeriesCanClinch = true;
+  g_Wingman = false;
   g_LastVetoTeam = Get5Team_2;
   g_NumberOfMapsInSeries = 0;
   g_MapPoolList.Clear();
@@ -2024,7 +2039,8 @@ static void StartGame(bool knifeRound) {
   LogDebug("StartGame");
 
   if (knifeRound) {
-    ExecCfg(g_LiveCfgCvar);  // live first, then apply and save knife cvars in callback
+    ExecCfg(g_Wingman ? g_LiveWingmanCfgCvar
+                      : g_LiveCfgCvar);  // live first, then apply and save knife cvars in callback
     LogDebug("StartGame: about to begin knife round");
     ChangeState(Get5State_KnifeRound);
     CreateTimer(0.5, StartKnifeRound);

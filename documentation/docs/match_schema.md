@@ -95,8 +95,16 @@ interface Get5Match {
     This parameter is ignored if `map_sides` is set for all maps. `standard` and `always_knife` behave similarly (knife)
     when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
 13. _Required_<br>The map pool to pick from, as an array of strings (`["de_dust2", "de_nuke"]` etc.), or if `skip_veto`
-    is `true`, the order of maps played (limited by `num_maps`). Similarly to teams, you can set this to an object
-    with a `fromfile` property to load a map list from a separate file.
+    is `true`, the order of maps played (limited by `num_maps`).<br><br>You can load maps from workshop collections by
+    using the syntax `"workshop/map_id/map_name"`, i.e. `"workshop/1193875520/Old Aztec"`. The name parameter is used to
+    present the map in the [map selection](../veto) phase. If you provide maps from the community workshop, you must
+    have a [Steam Web API key](https://steamcommunity.com/dev) configured for your server, or the match config will fail
+    to load.<br><br>Similarly to teams, you can set this to an object with a `fromfile` property to load a map list from
+    a separate file.<br><br>If you use workshop maps, it is recommended that you
+    set [`mp_match_end_restart 1`](https://totalcsgo.com/command/mpmatchendrestart) on your server, so a new map does
+    not load in case it takes a long time to download a workshop map. You can also set `sv_broadcast_ugc_downloads 1`
+    and `sv_broadcast_ugc_download_progress_interval 1` if you want to inform players that a workshop map is being
+    downloaded. In the vast majority of cases, this process should only take a few seconds.
 14. _Optional_<br>Wrapper for the server's `mp_teamprediction_pct`. This determines the chances of `team1`
     winning.<br><br>**`Default: 0`**
 15. _Optional_<br>Wrapper for the server's `mp_teamprediction_txt`.<br><br>**`Default: ""`**
@@ -201,6 +209,7 @@ These examples are identical in the way they would work if loaded.
       "maplist": [
         "de_dust2",
         "de_nuke",
+        "workshop/1193875520/Old Aztec",
         "de_inferno",
         "de_mirage",
         "de_vertigo",
@@ -280,7 +289,16 @@ These examples are identical in the way they would work if loaded.
                 "76561197987511774": "Anders Blume"
             }
         },
-        "maplist": ["de_dust2", "de_nuke", "de_inferno", "de_mirage", "de_vertigo", "de_ancient", "de_overpass"],
+        "maplist": [
+            "de_dust2",
+            "de_nuke",
+            "workshop/1193875520/Old Aztec",
+            "de_inferno",
+            "de_mirage",
+            "de_vertigo",
+            "de_ancient",
+            "de_overpass"
+        ],
         "map_sides": ["team1_ct", "team2_ct", "knife"], // Example; would only work with "skip_veto": true
         "team1": {
             "fromfile": "addons/sourcemod/get5/team_navi.json"
@@ -324,92 +342,93 @@ These examples are identical in the way they would work if loaded.
     ```cfg title="addons/sourcemod/get5/astralis_vs_navi_3123.cfg"
     "Match"
     {
-    	"match_title"               "Astralis vs. NaVi"
-    	"matchid"		            "3123"
-        "clinch_series"             "1"
-    	"num_maps"		            "3"
-    	"players_per_team"          "5"
-    	"coaches_per_team"          "2"
-        "coaches_must_ready"        "1"
-    	"min_players_to_ready"      "2"
-    	"min_spectators_to_ready"   "0"
-    	"skip_veto"		            "0"
-    	"veto_first"	            "team1"
-        "side_type"		            "standard"
-    	"spectators"    
-    	{
-    	    "name" "Blast PRO 2021"
-    		"players"
-    		{
-    			"76561197987511774"	"Anders Blume"
-    		}
-    	}
-    	"maplist"
-    	{
-    		"de_dust2"		""
-    		"de_nuke"		""
-    		"de_inferno"	""
-    		"de_mirage"		""
-    		"de_vertigo"	""
-    		"de_ancient"	""
-    		"de_overpass"	""
-    	}
-    	"map_sides"  // Example; would only work with "skip_veto" "1"
-    	{
-    	    "team1_ct" ""
-    	    "team2_ct" ""
-    	    "knife"    ""
-    	}
-    	"team1"
-    	{
-            "fromfile"  "addons/sourcemod/get5/team_navi.cfg"
-    	}
-    	"team2"
-    	{
-    		"name"		"Astralis"
-    		"tag"		"Astralis"
-    		"flag"		"DK"
-    		"logo"		"astr"
-    		"players"
-    		{
+        "match_title"             "Astralis vs. NaVi"
+        "matchid"                 "3123"
+        "clinch_series"           "1"
+        "num_maps"                "3"
+        "players_per_team"        "5"
+        "coaches_per_team"        "2"
+        "coaches_must_ready"      "1"
+        "min_players_to_ready"    "2"
+        "min_spectators_to_ready" "0"
+        "skip_veto"               "0"
+        "veto_first"              "team1"
+        "side_type"               "standard"
+        "spectators"    
+        {
+            "name" "Blast PRO 2021"
+            "players"
+            {
+                "76561197987511774" "Anders Blume"
+            }
+        }
+        "maplist"
+        {
+            "de_dust2"                      ""
+            "de_nuke"                       ""
+            "workshop/1193875520/Old Aztec" ""
+            "de_inferno"                    ""
+            "de_mirage"                     ""
+            "de_vertigo"                    ""
+            "de_ancient"                    ""
+            "de_overpass"                   ""
+        }
+        "map_sides"  // Example; would only work with "skip_veto" "1"
+        {
+            "team1_ct" ""
+            "team2_ct" ""
+            "knife"    ""
+        }
+        "team1"
+        {
+            "fromfile" "addons/sourcemod/get5/team_navi.cfg"
+        }
+        "team2"
+        {
+            "name" "Astralis"
+            "tag"  "Astralis"
+            "flag" "DK"
+            "logo" "astr"
+            "players"
+            {
                 "76561197990682262" "Xyp9x"
                 "76561198010511021" "gla1ve"
                 "76561197979669175" "K0nfig"
                 "76561198028458803" "BlameF"
                 "76561198024248129" "farlig"
-    		}
-    		"coaches"
-    		{
+            }
+            "coaches"
+            {
                 "76561197987144812" "Trace"
             }
-    	}
-    	"cvars"
-    	{
+        }
+        "cvars"
+        {
             "hostname"                       "Get5 Match #3123"
             "mp_friendly_fire"               "0"
             "get5_stop_command_enabled"      "0"
             "sm_practicemode_can_be_started" "0"
-    	}
+        }
     }
     ```
     `fromfile` example:
     ```cfg title="addons/sourcemod/get5/team_navi.cfg"
     "Team"
     { 
-        "name"		"Natus Vincere"
-    	"tag"		"NaVi"
-    	"flag"		"UA"
-    	"logo"		"navi"
-    	"players"
-    	{
+        "name" "Natus Vincere"
+        "tag"  "NaVi"
+        "flag" "UA"
+        "logo" "navi"
+        "players"
+        {
             "76561198034202275" "s1mple"
             "76561198044045107" "electronic"
             "76561198246607476" "b1t"
             "76561198121220486" "Perfecto"
             "76561198040577200" "sdy"
-    	}
-    	"coaches"
-    	{
+        }
+        "coaches"
+        {
             "76561198013523865" "B1ad3"
         }
     }

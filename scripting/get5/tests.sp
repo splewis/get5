@@ -395,6 +395,25 @@ static void MapVetoLogicTest() {
   delete mapPool;
 
   delete pickOrder;
+
+  mapPool = GetMapPool(3);
+  mapPool.PushString("de_dust");  // Subset of "de_dust2"
+
+  AssertFalse("Check map pool match no match", RemoveMapFromMapPool(mapPool, "not_a_map", error, sizeof(error)));
+  AssertEq("Check map pool match no match, size 4", 4, mapPool.Length);
+  AssertFalse("Check map pool match double match, ambiguous",
+              RemoveMapFromMapPool(mapPool, "dust", error, sizeof(error)));
+  AssertEq("Check map pool match double match, size 4", 4, mapPool.Length);
+  AssertTrue("Check map pool match double match, precise",
+             RemoveMapFromMapPool(mapPool, "de_dust", error, sizeof(error)));
+  AssertEq("Check map pool match precise match, size 3", 3, mapPool.Length);
+  AssertTrue("Check map pool match single, subset", RemoveMapFromMapPool(mapPool, "mirage", error, sizeof(error)));
+  AssertEq("Check map pool match precise match, size 2", 2, mapPool.Length);
+  AssertTrue("Check map pool match single, subset after double match removed",
+             RemoveMapFromMapPool(mapPool, "dust", error, sizeof(error)));
+  AssertEq("Check map pool match precise match, size 1", 1, mapPool.Length);
+
+  delete mapPool;
 }
 
 static void MissingPropertiesTest() {
@@ -817,6 +836,23 @@ static void Utils_Test() {
   expected = "76561198064755913";
   AssertTrue("ConvertAuthToSteam64_4_return", ConvertAuthToSteam64(input, output));
   AssertStrEq("ConvertAuthToSteam64_4_value", output, expected);
+
+  char mapName[64] = "workshop/3374744/Old Aztec";
+  char formattedMapName[64];
+  FormatMapName(mapName, formattedMapName, sizeof(formattedMapName));
+  AssertStrEq("Check workshop map name correctly formatted", "Old Aztec", formattedMapName);
+  AssertEq("Check workshop map ID extraction", GetMapIdFromString(mapName), 3374744);
+
+  mapName = "workshop/837575";  // name missing
+  FormatMapName(mapName, formattedMapName, sizeof(formattedMapName));
+  AssertStrEq("Check workshop map name incorrectly formatted", "837575", formattedMapName);
+  AssertEq("Check workshop map ID extraction", GetMapIdFromString(mapName), 837575);
+
+  mapName = "de_dust2";
+  FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), true);
+  AssertStrEq("Check regular map name correctly formatted", "Dust II", formattedMapName);
+  FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), true, true);
+  AssertStrEq("Check regular map name correctly formatted and colored", "{GREEN}Dust II{NORMAL}", formattedMapName);
 }
 
 static void AssertConVarEquals(const char[] conVarName, const char[] expectedValue) {

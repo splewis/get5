@@ -318,7 +318,7 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
   mapStringIndex = (numSplits > 0) ? (numSplits - 1) : (0);
   strcopy(buffer, len, buffers[mapStringIndex]);
 
-  if (cleanName) {
+  if (cleanName && StrContains("workshop", mapName, false) != 0) {
     if (StrEqual(buffer, "de_cache")) {
       strcopy(buffer, len, "Cache");
     } else if (StrEqual(buffer, "de_inferno")) {

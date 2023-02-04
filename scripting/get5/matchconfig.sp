@@ -57,6 +57,7 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   }
 
   // Copy all the maps into the veto pool.
+  bool usesWorkShopMap = false;
   char mapName[PLATFORM_MAX_PATH];
   for (int i = 0; i < g_MapPoolList.Length; i++) {
     g_MapPoolList.GetString(i, mapName, sizeof(mapName));
@@ -64,10 +65,24 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
       FormatEx(error, PLATFORM_MAX_PATH, "Maps in the maplist must be unique. Found duplicate map: '%s'.", mapName);
       return false;
     }
+    if (!IsMapValid(mapName)) {
+      if (StrContains(mapName, "workshop") != 0) {
+        FormatEx(error, PLATFORM_MAX_PATH, "Maplist contains invalid map '%s'.", mapName);
+        return false;
+      } else {
+        usesWorkShopMap = true;
+      }
+    }
     g_MapsLeftInVetoPool.PushString(mapName);
     g_TeamScoresPerMap.Push(0);
     g_TeamScoresPerMap.Set(g_TeamScoresPerMap.Length - 1, 0, 0);
     g_TeamScoresPerMap.Set(g_TeamScoresPerMap.Length - 1, 0, 1);
+  }
+
+  if (usesWorkShopMap && !FindCommandLineParam("-authkey")) {
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "Maplist contains a Workshop map, but no Steam Web API Key was provided to the server.");
+    return false;
   }
 
   if (g_SkipVeto) {

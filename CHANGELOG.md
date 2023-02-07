@@ -83,7 +83,7 @@ native void Get5_GetServerID(char[] id, int length);
    does not begin until the next round.
 7. If the map the server is on also happens to be the first map to be played after map selection, the server will not
    reload and ask everyone to ready, but instead simply start the match.
-8. Get5 now speaks Greek and Turkish.
+8. Get5 now speaks Greek and Turkish. (Thanks @GekasD and AliOnIce).
 9. You can now add Workshop maps to the [`maplist`](https://splewis.github.io/get5/dev/match_schema/#schema).
 
 - [0183ade](http://github.com/splewis/get5/commit/0183adeb3eca5e380054f1237bdf22eba25ddfaa) - Wrong param order
@@ -166,7 +166,7 @@ to [the documentation](https://splewis.github.io/get5/latest/translations/) for 
 8. If you use `fromfile`, make sure to always have JSON files end with `.json`, or Get5 will assume they are KeyValues,
    regardless of the format of the match config.
 
-### Exciting New Features 🎉
+### New Features 🎉
 
 1. You can now opt to disable the [`!stop`](https://splewis.github.io/get5/latest/commands#stop) command
    using [`get5_stop_command_no_damage`](https://splewis.github.io/get5/latest/configuration/#get5_stop_command_no_damage)
@@ -223,6 +223,30 @@ to [the documentation](https://splewis.github.io/get5/latest/translations/) for 
 
 ## What's Changed
 
+* Improved communication to players about the use/availability of `!coach`, `!ready` and `!unready` commands during
+  warmup, depending on match and individual player state.
+* Doubled duration of
+  the [auto ready](https://splewis.github.io/get5/latest/configuration/#get5_auto_ready_active_players) hint so players
+  are less likely to miss it.
+* Consumed pauses are now included in backups, so they can be properly restored if the game state is lost or if a new
+  server is needed.
+* The [`Get5_OnSeriesResult`](https://splewis.github.io/get5/latest/events_and_forwards/) event/forward now has
+  a `time_to_restore` property, letting you know how long until Get5 no longer manages the server and GOTV broadcast has
+  ended.
+* Demos are no longer split into two files if you
+  use [`get5_loadbackup`](https://splewis.github.io/get5/latest/commands/#get5_loadbackup) for the **same match and map
+  ** during the live phase.
+* Prevent suicide via console using `kill` or `explode`.
+* Updated German translation. (Thanks @Apfelwurm)
+* Updated French translation. (Thanks @Iwhite67 @Gryfenfer97 @Maruchun0)
+* Updated Russian translation. (Thanks @Saph1s)
+* Updated Hungarian translation. (Thanks @enerbewow)
+* Updated Portuguese transaltion. (Thanks @SidiBecker and Nathy)
+* Updated Danish translation. (@nickdnk)
+* Improved Polish and Spanish translation. (Thanks axsusxd)
+* Lots of improvements to [the documentation](https://splewis.github.io/get5/latest).
+* Lots of improvements to CI (Thanks @PhlexPlexico @Apfelwurm).
+
 ### Breaking Changes 🛠
 
 * The format of Get5 [backup files](https://splewis.github.io/get5/latest/backup/#how-to) has changed to now
@@ -238,7 +262,7 @@ to [the documentation](https://splewis.github.io/get5/latest/translations/) for 
 * Removed `get5_end_match_on_empty_server` as it was unreliable and buggy. You should instead use the
   new [forfeiting system](https://splewis.github.io/get5/latest/surrender-forfeit/#forfeit) for similar behavior.
 
-### Exciting New Features 🎉
+### New Features 🎉
 
 * Access to the [`!forceready`](https://splewis.github.io/get5/latest/commands/#forceready) command can now be disabled
   with [`get5_allow_force_ready`](https://splewis.github.io/get5/latest/configuration/#get5_allow_force_ready). (
@@ -278,32 +302,6 @@ to [the documentation](https://splewis.github.io/get5/latest/translations/) for 
 * We no longer stop recording demos right after a match ends if there is a non-zero `tv_delay`, as it would cause the
   GOTV broadcast to freeze when the file is flushed to disk. This is a Valve bug we can only work around.
 
-### Other Changes
-
-* Improved communication to players about the use/availability of `!coach`, `!ready` and `!unready` commands during
-  warmup, depending on match and individual player state.
-* Doubled duration of
-  the [auto ready](https://splewis.github.io/get5/latest/configuration/#get5_auto_ready_active_players) hint so players
-  are less likely to miss it.
-* Consumed pauses are now included in backups, so they can be properly restored if the game state is lost or if a new
-  server is needed.
-* The [`Get5_OnSeriesResult`](https://splewis.github.io/get5/latest/events_and_forwards/) event/forward now has
-  a `time_to_restore` property, letting you know how long until Get5 no longer manages the server and GOTV broadcast has
-  ended.
-* Demos are no longer split into two files if you
-  use [`get5_loadbackup`](https://splewis.github.io/get5/latest/commands/#get5_loadbackup) for the **same match and map
-  ** during the live phase.
-* Prevent suicide via console using `kill` or `explode`.
-* Updated German translation. (Thanks @Apfelwurm)
-* Updated French translation. (Thanks @Iwhite67 @Gryfenfer97 @Maruchun0)
-* Updated Russian translation. (Thanks @Saph1s)
-* Updated Hungarian translation. (Thanks @enerbewow)
-* Updated Portuguese transaltion. (Thanks @SidiBecker and Nathy)
-* Updated Danish translation. (@nickdnk)
-* Improved Polish and Spanish translation. (Thanks axsusxd)
-* Lots of improvements to [the documentation](https://splewis.github.io/get5/latest).
-* Lots of improvements to CI (Thanks @PhlexPlexico @Apfelwurm).
-
 ...and many, many more minor adjustments and tweaks. As always, big thanks to everyone who helped test and provide
 feedback on all the changes since 0.10, especially to OmegaSkid from SCL and @LukasW1337 from HLTV for daring to run
 nightly builds in production.
@@ -316,9 +314,9 @@ If I forgot to tag someone for something you helped with, @nickdnk.
 
 #### 2022-10-04
 
-Small hotfix. Should have been in 0.10.4, but hindsight 20/20.
-
 ## What's Changed
+
+Small hotfix. Should have been in 0.10.4, but hindsight 20/20.
 
 ### Bug Fixes 🐞
 
@@ -399,9 +397,9 @@ countdown, with an incorrect round number for the `Get5_OnRoundStart` event/forw
 
 #### 2022-09-11
 
-A minor release here fixing some discovered problems with 0.10.0. There are no breaking changes.
-
 ## What's Changed
+
+A minor release here fixing some discovered problems with 0.10.0. There are no breaking changes.
 
 ### Bug Fixes 🐞
 
@@ -432,11 +430,11 @@ A minor release here fixing some discovered problems with 0.10.0. There are no b
 
 #### 2022-09-03
 
+## What's Changed
+
 Version 0.10.0 is now completed. **A lot** has changed in this release and many bugs have been fixed. This is probably
 what version 0.9.0 *should* have been, so we strongly encourage everyone on 0.9.0 to upgrade to this version as soon as
 possible.
-
-## What's Changed
 
 ### Breaking Changes 🛠
 
@@ -502,7 +500,7 @@ possible.
   contain logic for surrendering. We recommend you disable `get5_end_match_on_empty_server` or live with this
   consequence.
 
-### Issues fixed since 0.9
+### Bug Fixes 🐞
 
 * Player stats are now initialized to zero: https://github.com/splewis/get5/pull/814
 * Don't allow the use of `!ready` when a map change is pending: https://github.com/splewis/get5/pull/832
@@ -571,7 +569,7 @@ possible.
 * A lot of translations have been adjusted, so you **must** merge in the `translations` folder to your SourceMod
   translations folder (`addons/sourcemod/translations`) if you update from an earlier version of Get5!
 
-### Exciting New Features 🎉
+### New Features 🎉
 
 * **A lot** of new information has been added to the events and forward system, including grenades thrown and their
   victims, every player death and bomb plants/defuses. (@nickdnk)
@@ -591,7 +589,7 @@ possible.
 Breaking changes were merged into master after 0.7, and these ran under the 0.8.0 version internally in Get5, but no
 release was ever made, so we jumped straight to 0.9 instead of retconning 0.8.
 
-### Bugs fixed
+### Bug Fixes 🐞
 
 This list is simply too long to go over. But it's a lot. We've closed around 50 issues since 0.7.2, and some of the
 changes can be found in these commits and pull requests:

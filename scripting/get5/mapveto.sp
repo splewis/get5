@@ -124,7 +124,7 @@ static void FinishVeto() {
 // Main Veto Controller
 
 Action Command_Pick(int client, int args) {
-  if (g_GameState != Get5State_Veto || !IsPlayer(client)) {
+  if (g_GameState != Get5State_Veto || !IsPlayer(client) || SidePickPending()) {
     return Plugin_Handled;
   }
   Get5Team playerTeam = GetClientMatchTeam(client);
@@ -156,7 +156,7 @@ Action Command_Pick(int client, int args) {
 }
 
 Action Command_Ban(int client, int args) {
-  if (g_GameState != Get5State_Veto || !IsPlayer(client)) {
+  if (g_GameState != Get5State_Veto || !IsPlayer(client) || SidePickPending()) {
     return Plugin_Handled;
   }
 
@@ -188,7 +188,7 @@ Action Command_Ban(int client, int args) {
 }
 
 void HandleSideChoice(const Get5Side side, int client) {
-  if (g_MatchSideType != MatchSideType_Standard || g_MapSides.Length >= g_MapsToPlay.Length) {
+  if (!SidePickPending()) {
     // No side selection is done by players in this case.
     return;
   }
@@ -229,7 +229,7 @@ static void HandleVetoStep() {
 }
 
 void PrintVetoHelpMessage() {
-  if (g_MapSides.Length < g_MapsToPlay.Length && g_MatchSideType == MatchSideType_Standard) {
+  if (SidePickPending()) {
     PromptForSideSelectionInChat(OtherMatchTeam(g_LastVetoTeam));
   } else if (g_NumberOfMapsInSeries > g_MapsToPlay.Length) {
     PromptForMapSelectionInChat(GetCurrentMapSelectionOption());
@@ -244,6 +244,10 @@ static Get5MapSelectionOption GetCurrentMapSelectionOption() {
     return Get5MapSelectionOption_Invalid;
   }
   return g_MapBanOrder.Get(index);
+}
+
+static bool SidePickPending() {
+  return g_MapSides.Length < g_MapsToPlay.Length && g_MatchSideType == MatchSideType_Standard;
 }
 
 static void PromptForMapSelectionInChat(const Get5MapSelectionOption option) {

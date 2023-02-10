@@ -447,7 +447,7 @@ public void OnPluginStart() {
 
   // Ready system
   g_AllowForceReadyCvar                 = CreateConVar("get5_allow_force_ready", "1", "Allows players to use the !forceready command.");
-  g_AutoReadyActivePlayersCvar          = CreateConVar("get5_auto_ready_active_players", "0", "Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase.");
+  g_AutoReadyActivePlayersCvar          = CreateConVar("get5_auto_ready_active_players", "0", "Whether to automatically mark players as ready if they kill anyone in the warmup or map selection phase.");
   g_ReadyTeamTagCvar                    = CreateConVar("get5_ready_team_tag", "1", "Adds [READY]/[NOT READY] tags to team names.");
   g_SetClientClanTagCvar                = CreateConVar("get5_set_client_clan_tags", "1", "Whether to set client clan tags to player ready status.");
 
@@ -461,14 +461,14 @@ public void OnPluginStart() {
   // Countdown/timers
   g_LiveCountdownTimeCvar               = CreateConVar("get5_live_countdown_time", "10", "Number of seconds used to count down when a match is going live.", 0, true, 5.0, true, 60.0);
   g_TimeToStartCvar                     = CreateConVar("get5_time_to_start", "0", "Time (in seconds) teams have to ready up for live/knife before forfeiting the match. 0 = unlimited.");
-  g_TimeToStartVetoCvar                 = CreateConVar("get5_time_to_start_veto", "0", "Time (in seconds) teams have to ready up for vetoing before forfeiting the match. 0 = unlimited.");
+  g_TimeToStartVetoCvar                 = CreateConVar("get5_time_to_start_veto", "0", "Time (in seconds) teams have to ready up for map selection before forfeiting the match. 0 = unlimited.");
   g_TeamTimeToKnifeDecisionCvar         = CreateConVar("get5_time_to_make_knife_decision", "60", "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round. 0 = unlimited.");
   g_VetoCountdownCvar                   = CreateConVar("get5_veto_countdown", "5", "Seconds to countdown before veto process commences. 0 to skip countdown.");
 
   // Veto
-  g_MuteAllChatDuringMapSelectionCvar   = CreateConVar("get5_mute_allchat_during_map_selection", "1", "If enabled, only the team captains can type in all-chat during chat-based veto.");
-  g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "0", "Whether the game pauses during the veto phase.");
-  g_DisplayGotvVetoCvar                 = CreateConVar("get5_display_gotv_veto", "0", "Whether to wait for map vetos to be printed to GOTV before changing map.");
+  g_MuteAllChatDuringMapSelectionCvar   = CreateConVar("get5_mute_allchat_during_map_selection", "1", "If enabled, only the team captains can type in all-chat during map selection.");
+  g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "1", "Whether the game pauses during map selection.");
+  g_DisplayGotvVetoCvar                 = CreateConVar("get5_display_gotv_veto", "0", "Whether to wait for map selection to be broadcast to GOTV before changing map.");
 
   // Server config
   g_AutoLoadConfigCvar                  = CreateConVar("get5_autoload_config", "", "The path/name of a match config file to automatically load when the server loads or when the first player joins.");

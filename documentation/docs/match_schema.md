@@ -127,8 +127,9 @@ interface Get5Match {
     default
     be [reset to the value they had before the match was loaded](../configuration#get5_reset_cvars_on_end).<br><br>You
     should avoid putting server-specific parameters, such as [`get5_server_id`](../configuration#get5_server_id), in
-    this property, as these are all written to [backups](../backup) and set when restored from.<br><br>
-    **`Default: undefined`**
+    this property, as these are all written to [backups](../backup) and set when restored from.<br><br>These commands
+    are always executed **after** the [phase configuration files](../configuration#phase-configuration-files), so you
+    can also use this to override a specific parameter - such as friendly fire.<br><br>**`Default: undefined`**
 23. _Optional_<br>Similarly to `players`, this object maps [coaches](../coaching) using their Steam ID and
     name, locking them to the coach slot unless removed using [`get5_removeplayer`](../commands#get5_removeplayer).
     Setting a Steam ID as coach takes precedence over being set as a player.<br><br>Note that
@@ -233,6 +234,7 @@ These examples are identical in the way they would work if loaded.
         "tag": "Astralis",
         "flag": "DK",
         "logo": "astr",
+        "matchtext": "Defending Champions",
         "players": {
           "76561197990682262": "Xyp9x",
           "76561198010511021": "gla1ve",
@@ -313,6 +315,7 @@ These examples are identical in the way they would work if loaded.
             "tag": "Astralis",
             "flag": "DK",
             "logo": "astr",
+            "matchtext": "Defending Champions",
             "players": {
                 "76561197990682262": "Xyp9x",
                 "76561198010511021": "gla1ve",
@@ -395,6 +398,7 @@ These examples are identical in the way they would work if loaded.
             "tag"  "Astralis"
             "flag" "DK"
             "logo" "astr"
+            "matchtext" "Defending Champions"
             "players"
             {
                 "76561197990682262" "Xyp9x"
@@ -425,6 +429,7 @@ These examples are identical in the way they would work if loaded.
         "tag"  "NaVi"
         "flag" "UA"
         "logo" "navi"
+        "matchtext" "Challengers"
         "players"
         {
             "76561198034202275" "s1mple"

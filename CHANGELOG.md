@@ -87,6 +87,8 @@ native void Get5_GetServerID(char[] id, int length);
 10. Get5 now officially supports [Wingman](https://splewis.github.io/get5/dev/wingman). If you are upgrading a Get5
     installation, remember to copy in the new wingman config file from `cfg/get5/live_wingman.cfg` if you want to run
     Wingman matches.
+11. [`get5_pause_on_veto`](https://splewis.github.io/get5/dev/configuration/#get5_pause_on_veto) now defaults to enabled
+    for new installations.
 
 # 0.12.1
 

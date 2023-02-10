@@ -186,7 +186,7 @@ map.<br>**`Default: 0`**
 during [map selection](../veto).<br>**`Default: 1`**
 
 ####`get5_pause_on_veto`
-:   Whether to freeze players during the [map selection](../veto) phase.<br>**`Default: 0`**
+:   Whether to freeze players during the [map selection](../veto) phase.<br>**`Default: 1`**
 
 ####`get5_time_to_start_veto`
 :   Time (in seconds) teams have to ready up for vetoing before forfeiting the match. Set to zero for no limit. If

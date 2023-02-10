@@ -410,7 +410,7 @@ better support in various programming languages than Valve's KeyValue format (wh
     when <code>skip_veto</code> is <code>true</code>.<br/><br/><strong><code>Default: "standard"</code></strong></li>
 <li><em>Required</em><br/>The map pool to pick from, as an array of strings (<code>["de_dust2", "de_nuke"]</code> etc.), or if <code>skip_veto</code>
     is <code>true</code>, the order of maps played (limited by <code>num_maps</code>).<br/><br/>You can load maps from workshop collections by
-    using the syntax <code>"workshop/map_id/map_name"</code>, i.e. <code>"workshop/1193875520/Old Aztec"</code>. The name parameter is used to
+    using the syntax <code>"workshop/map_id/map_name"</code>, i.e. <code>"workshop/1193875520/de_aztec"</code>. The name parameter is used to
     present the map in the <a href="../veto">map selection</a> phase. If you provide maps from the community workshop, you must
     have a <a href="https://steamcommunity.com/dev">Steam Web API key</a> configured for your server, or the match config will fail
     to load.<br/><br/>Similarly to teams, you can set this to an object with a <code>fromfile</code> property to load a map list from
@@ -524,7 +524,7 @@ in <a href="../getting_started#scrims">scrim mode</a>.</p>
 <a href="#__codelineno-1-21" id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="w">  </span><span class="nt">"maplist"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <a href="#__codelineno-1-22" id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="w">    </span><span class="s2">"de_dust2"</span><span class="p">,</span>
 <a href="#__codelineno-1-23" id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="w">    </span><span class="s2">"de_nuke"</span><span class="p">,</span>
-<a href="#__codelineno-1-24" id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="w">    </span><span class="s2">"workshop/1193875520/Old Aztec"</span><span class="p">,</span>
+<a href="#__codelineno-1-24" id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="w">    </span><span class="s2">"workshop/1193875520/de_aztec"</span><span class="p">,</span>
 <a href="#__codelineno-1-25" id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="w">    </span><span class="s2">"de_inferno"</span><span class="p">,</span>
 <a href="#__codelineno-1-26" id="__codelineno-1-26" name="__codelineno-1-26"></a><span class="w">    </span><span class="s2">"de_mirage"</span><span class="p">,</span>
 <a href="#__codelineno-1-27" id="__codelineno-1-27" name="__codelineno-1-27"></a><span class="w">    </span><span class="s2">"de_vertigo"</span><span class="p">,</span>
@@ -605,7 +605,7 @@ in <a href="../getting_started#scrims">scrim mode</a>.</p>
 <a href="#__codelineno-3-21" id="__codelineno-3-21" name="__codelineno-3-21"></a><span class="w">    </span><span class="s2">"maplist"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
 <a href="#__codelineno-3-22" id="__codelineno-3-22" name="__codelineno-3-22"></a><span class="w">        </span><span class="s2">"de_dust2"</span><span class="p">,</span>
 <a href="#__codelineno-3-23" id="__codelineno-3-23" name="__codelineno-3-23"></a><span class="w">        </span><span class="s2">"de_nuke"</span><span class="p">,</span>
-<a href="#__codelineno-3-24" id="__codelineno-3-24" name="__codelineno-3-24"></a><span class="w">        </span><span class="s2">"workshop/1193875520/Old Aztec"</span><span class="p">,</span>
+<a href="#__codelineno-3-24" id="__codelineno-3-24" name="__codelineno-3-24"></a><span class="w">        </span><span class="s2">"workshop/1193875520/de_aztec"</span><span class="p">,</span>
 <a href="#__codelineno-3-25" id="__codelineno-3-25" name="__codelineno-3-25"></a><span class="w">        </span><span class="s2">"de_inferno"</span><span class="p">,</span>
 <a href="#__codelineno-3-26" id="__codelineno-3-26" name="__codelineno-3-26"></a><span class="w">        </span><span class="s2">"de_mirage"</span><span class="p">,</span>
 <a href="#__codelineno-3-27" id="__codelineno-3-27" name="__codelineno-3-27"></a><span class="w">        </span><span class="s2">"de_vertigo"</span><span class="p">,</span>
@@ -678,7 +678,7 @@ empty strings as values in dictionaries (<code>maplist</code> and <code>map_side
 <a href="#__codelineno-4-25" id="__codelineno-4-25" name="__codelineno-4-25"></a><span class="w">    </span><span class="na">{</span>
 <a href="#__codelineno-4-26" id="__codelineno-4-26" name="__codelineno-4-26"></a><span class="w">        </span><span class="na">"de_dust2"                      ""</span>
 <a href="#__codelineno-4-27" id="__codelineno-4-27" name="__codelineno-4-27"></a><span class="w">        </span><span class="na">"de_nuke"                       ""</span>
-<a href="#__codelineno-4-28" id="__codelineno-4-28" name="__codelineno-4-28"></a><span class="w">        </span><span class="na">"workshop/1193875520/Old Aztec" ""</span>
+<a href="#__codelineno-4-28" id="__codelineno-4-28" name="__codelineno-4-28"></a><span class="w">        </span><span class="na">"workshop/1193875520/de_aztec" ""</span>
 <a href="#__codelineno-4-29" id="__codelineno-4-29" name="__codelineno-4-29"></a><span class="w">        </span><span class="na">"de_inferno"                    ""</span>
 <a href="#__codelineno-4-30" id="__codelineno-4-30" name="__codelineno-4-30"></a><span class="w">        </span><span class="na">"de_mirage"                     ""</span>
 <a href="#__codelineno-4-31" id="__codelineno-4-31" name="__codelineno-4-31"></a><span class="w">        </span><span class="na">"de_vertigo"                    ""</span>

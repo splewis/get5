@@ -5,12 +5,12 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<link href="https://splewis.github.io/get5/dev/coaching/" rel="canonical"/>
-<link href="../commands/" rel="prev"/>
-<link href="../pausing/" rel="next"/>
+<link href="https://splewis.github.io/get5/dev/wingman/" rel="canonical"/>
+<link href="../surrender-forfeit/" rel="prev"/>
+<link href="../backup/" rel="next"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.4.2, mkdocs-material-9.0.12" name="generator"/>
-<title>Coaching - Get5 Documentation</title>
+<title>Wingman - Get5 Documentation</title>
 <link href="../assets/stylesheets/main.0d440cfe.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.2505c338.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -25,7 +25,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#coaching">
+<a class="md-skip" href="#wingman">
           Skip to content
         </a>
 </div>
@@ -51,7 +51,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Coaching
+              Wingman
             
           </span>
 </div>
@@ -165,38 +165,10 @@
         Commands
       </a>
 </li>
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
-          Coaching
-          <span class="md-nav__icon md-icon"></span>
-</label>
-<a class="md-nav__link md-nav__link--active" href="./">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../coaching/">
         Coaching
       </a>
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#requirements">
-    Server requirements
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#howto">
-    Becoming a coach
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#scrims">
-    Coaching in scrims
-  </a>
-</li>
-</ul>
-</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../pausing/">
@@ -208,8 +180,9 @@
         Surrender &amp; Forfeit
       </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../wingman/">
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<a class="md-nav__link md-nav__link--active" href="./">
         Wingman
       </a>
 </li>
@@ -290,90 +263,23 @@
 <div class="md-sidebar__scrollwrap">
 <div class="md-sidebar__inner">
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#requirements">
-    Server requirements
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#howto">
-    Becoming a coach
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#scrims">
-    Coaching in scrims
-  </a>
-</li>
-</ul>
 </nav>
 </div>
 </div>
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<h1 id="coaching"><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 1c-5 0-9 4-9 9v7a3 3 0 0 0 3 3h3v-8H5v-2a7 7 0 0 1 7-7 7 7 0 0 1 7 7v2h-4v8h4v1h-7v2h6a3 3 0 0 0 3-3V10c0-5-4.03-9-9-9Z"></path></svg></span> Coaching</h1>
-<p>Get5 ships with mechanics to manage coaches, but the behavior differs <em>slightly</em> from the built-in coaching
-system found in the game, which avoids a
-few <a href="https://en.wikipedia.org/wiki/Counter-Strike_coaching_bug_scandal">"minor" bugs</a>.</p>
-<h3 id="requirements">Server requirements</h3>
-<ol>
-<li><a href="https://totalcsgo.com/command/svcoachingenabled"><code>sv_coaching_enabled</code></a> must be set to 1.</li>
-<li><a href="../match_schema#schema"><code>coaches_per_team</code></a> in your match configuration
-   or <a href="../getting_started#scrims">scrim</a> template must be larger than 0.</li>
-<li>The <a href="https://developer.valvesoftware.com/wiki/Maxplayers"><code>-maxplayers_override</code></a>
-   launch parameter must be defined on your server to allow for the number of connected clients you expect, including
-   all players, spectators and coaches.</li>
-</ol>
-<h3 id="howto">Becoming a coach</h3>
-<p>Due to internal conflicts with how <a href="../backup">backups</a> and auto-assignment to teams works in Get5, the default
-<a href="https://counterstrike.fandom.com/wiki/Coaching"><code>coach</code></a> console command is disabled. You can become a coach in one of
-three ways:</p>
-<ol>
-<li>Use the <a href="../commands#coach"><code>!coach</code></a> chat command during warmup.</li>
-<li>Be defined as a coach in the <a href="../match_schema#schema">match configuration</a> or
-   via <a href="../commands#get5_addcoach"><code>get5_addcoach</code></a>.</li>
-<li>Join a game where the team is already full (determined by <a href="../match_schema#schema"><code>players_per_team</code></a>) and where a
-   coach slot is available.</li>
-</ol>
-<div class="admonition warning">
-<p class="admonition-title">Coaching is permanent after warmup</p>
-<p>Once a game begins (goes past the warmup-phase), you cannot enter or leave the coach slot unless you are removed
-from coaching using <a href="../commands#get5_removeplayer"><code>get5_removeplayer</code></a>.</p>
-</div>
-<p>If the current number of coaches exceeds or equals <a href="../match_schema#schema"><code>coaches_per_team</code></a>, including if it is
-zero, additional players will be kicked from the match. However, if a connecting player is defined
-in <a href="../match_schema#schema"><code>players</code></a>, the team is full and a coach slot is open, they will be moved to coaching for
-the series and can only stop coaching if the game is still in warmup.</p>
-<p>This behavior allows you to define as many coaches and players in the match configuration as you want: As long as the
-number of players and coaches on the server don't exceed <a href="../match_schema#schema"><code>players_per_team</code></a>
-and <a href="../match_schema#schema"><code>coaches_per_team</code></a>, respectively, Get5 will fill the
-game's slots with the appropriate number of players and coaches and kick the rest. Being defined
-in <a href="../match_schema#schema"><code>coaches</code></a> takes precedence over being defined
-in <a href="../match_schema#schema"><code>players</code></a>. If <a href="https://totalcsgo.com/command/svcoachingenabled"><code>sv_coaching_enabled</code></a> is
-disabled, anyone defined as a coach will be considered a regular player for the team instead.</p>
-<div class="admonition note">
-<p class="admonition-title">Decreasing the number of players</p>
-<p>If a match configuration with <a href="../match_schema#schema"><code>players_per_team</code></a> or
-<a href="../match_schema#schema"><code>coaches_per_team</code></a> set to a number <em>lower</em> than the number of players <strong>already connected
-to the server</strong>, the entire team's players or coaches (whichever is exceeded) will be kicked and must reconnect.</p>
-</div>
-<h3 id="scrims">Coaching in scrims</h3>
-<p>When in <a href="../getting_started#scrims">scrim mode</a>, you cannot set the <a href="../match_schema#schema"><code>coaches</code></a> key, and
-players are never <em>locked</em> to the coaching slot. This means that to become a coach in a scrim, you must always
-call <a href="../commands#coach"><code>!coach</code></a> or join a team that already has <a href="../match_schema#schema"><code>players_per_team</code></a>
-players (i.e. is full).</p>
-<div class="admonition danger">
-<p class="admonition-title"><code>players_per_team</code> matters!</p>
-<p>Do not set <a href="../match_schema#schema"><code>players_per_team</code></a> in your scrim template to a value larger than the number of
-players you expect. If you do this, a coach - or any player defined in your scrim template - (re)connecting after
-warmup will be put on the team and won't be able to become a coach.</p>
-</div>
+<h1 id="wingman"><span class="twemoji"><svg viewbox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M270.7 9.7C268.2 3.8 262.4 0 256 0s-12.2 3.8-14.7 9.7l-44.1 102.9c-3.4 8-5.2 16.5-5.2 25.2v77l-144 84V280c0-13.3-10.7-24-24-24S0 266.7 0 280v112c0 13.3 10.7 24 24 24s24-10.7 24-24v-8h144v32.7L133.5 468c-3.5 3-5.5 7.4-5.5 12v16c0 8.8 7.2 16 16 16h96v-64c0-8.8 7.2-16 16-16s16 7.2 16 16v64h96c8.8 0 16-7.2 16-16v-16c0-4.6-2-9-5.5-12L320 416.7V384h144v8c0 13.3 10.7 24 24 24s24-10.7 24-24V280c0-13.3-10.7-24-24-24s-24 10.7-24 24v18.8l-144-84v-77c0-8.7-1.8-17.2-5.2-25.2L270.7 9.7z"></path></svg></span> Wingman</h1>
+<p>Get5 can be configured to run in Wingman mode. For this, you only need to set <code>wingman</code> to <code>true</code>, <code>players_per_team</code>
+to <code>2</code> and use <a href="https://counterstrike.fandom.com/wiki/Wingman#Supported_Maps">maps that support Wingman mode</a> for
+the <code>maplist</code> property in your <a href="../match_schema#schema">match configuration</a>.</p>
+<p>When a match is configured for Wingman, Get5 will check if
+the <a href="https://developer.valvesoftware.com/wiki/CS:GO_Game_Modes"><code>game_mode</code> and <code>game_type</code></a> parameters on your server
+are set correctly, and if not, set them and reload the map. This allows you to switch between Wingman and normal 5v5
+without having to worry about these parameters.</p>
+<p>When in Wingman mode, a separate <a href="../configuration#get5_live_wingman_cfg">live config</a> file is executed with the Wingman
+ruleset. Get5 ships with the default parameters, but similarly to the 5v5 live config, you can change these however you
+want.</p>
 </article>
 </div>
 </div>

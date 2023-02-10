@@ -458,7 +458,14 @@ bool RestoreFromBackup(const char[] path, char[] error) {
     kv.GoBack();
   }
 
-  bool backupIsForDifferentMap = !StrEqual(currentMap, loadedMapName, false);
+  // Determine the game mode of the match we're loading before we load it.
+  bool didLoadWingman = false;
+  if (kv.JumpToKey("Match")) {
+    didLoadWingman = kv.GetNum("wingman", 0) == 1;
+    kv.GoBack();
+  }
+  bool backupIsForDifferentMap =
+    !StrEqual(currentMap, loadedMapName, false) || IsMapReloadRequiredForGameMode(didLoadWingman);
   bool backupIsForDifferentMatch = g_GameState != Get5State_Live || g_MapNumber != loadedMapNumber ||
                                    backupIsForDifferentMap || !StrEqual(loadedMatchId, g_MatchID);
 
@@ -572,6 +579,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
     // If a map is to be changed, we want to suppress all stats events immediately, as the
     // Get5_OnBackupRestore is called now and we don't want events firing after this until the game
     // is live again.
+    SetCorrectGameMode();
     ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
     ChangeMap(loadedMapName, 3.0);
   } else {
@@ -630,7 +638,7 @@ void RestoreGet5Backup(bool restartRecording) {
   if (!InWarmup()) {
     StartWarmup();
   }
-  ExecCfg(g_LiveCfgCvar);
+  ExecCfg(g_Wingman ? g_LiveWingmanCfgCvar : g_LiveCfgCvar);
   PauseGame(Get5Team_None, Get5PauseType_Backup);
   // We add a 2 second delay here to give the server time to
   // flush the current GOTV recording *if* one is running.

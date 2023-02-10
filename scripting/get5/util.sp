@@ -3,6 +3,9 @@
 #define MAX_INTEGER_STRING_LENGTH 16
 #define MAX_FLOAT_STRING_LENGTH   32
 #define AUTH_LENGTH               64
+#define GAME_MODE_WINGMAN         2
+#define GAME_MODE_COMPETITIVE     1
+#define GAME_TYPE_CLASSIC         0
 
 // Dummy value for when we need to write a KeyValue string, but we don't care about the value *or*
 // when the value is an empty string. Trying to write an empty string results in the KeyValue not
@@ -58,6 +61,30 @@ stock int SumHealthOfTeam(Get5Side side) {
     }
   }
   return sum;
+}
+
+stock int GetGameMode() {
+  ConVar conVar = FindConVar("game_mode");
+  if (conVar != INVALID_HANDLE) {
+    return conVar.IntValue;
+  }
+  return -1;
+}
+
+stock int GetGameType() {
+  ConVar conVar = FindConVar("game_type");
+  if (conVar != INVALID_HANDLE) {
+    return conVar.IntValue;
+  }
+  return -1;
+}
+
+stock void SetGameMode(int mode) {
+  SetConVarIntSafe("game_mode", mode);
+}
+
+stock void SetGameTypeClassic() {
+  SetConVarIntSafe("game_type", GAME_TYPE_CLASSIC);
 }
 
 stock int ConvertCSTeamToDefaultWinReason(int side) {

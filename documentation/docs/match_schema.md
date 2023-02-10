@@ -40,6 +40,7 @@ interface Get5Match {
     "matchid": string | undefined // (1)
     "clinch_series": boolean | undefined // (32)
     "num_maps": number | undefined // (2)
+    "wingman": boolean | undefined // (37)
     "players_per_team": number | undefined // (3)
     "coaches_per_team": number | undefined // (4)
     "coaches_must_ready": boolean | undefined // (33)
@@ -72,7 +73,7 @@ interface Get5Match {
    matches.<br><br>**`Default: ""`**
 2. _Optional_<br>The number of maps to play in the series.<br><br>**`Default: 3`**
 3. _Optional_<br>The number of players per team. You should **never** set this to a value higher than the number of
-   players you want to actually play in a game, *excluding* coaches.<br><br>**`Default: 5`**
+   players you want to actually play in a game, *excluding* coaches.<br><br>**`Default: 5 (2 in wingman)`**
 4. _Optional_<br>The maximum number of [coaches](../coaching) per team.<br><br>**`Default: 2`**
 5. _Optional_<br>The minimum number of players that must be present for the [`!forceready`](../commands#forceready)
    command to succeed. If not forcing a team ready, **all** players must [`!ready`](../commands#ready) up
@@ -160,6 +161,8 @@ interface Get5Match {
 35. _Required_<br>Similarly to teams and spectators, a map list may also be loaded from another file.
 36. _Optional_<br>Allows for a [custom configuration](../veto#custom) of map picks/bans. This must be an array of
     strings consisting of any valid combination of `team1_ban`, `team2_ban`, `team1_pick` and `team2_pick`.
+37. _Optional_<br>Whether to configure the match for [Wingman mode](../wingman). If this is enabled, `players_per_team`
+    defaults to `2` instead of `5`.<br><br>**`Default: false`**
 
 !!! info "Team assignment priority"
 
@@ -192,6 +195,7 @@ These examples are identical in the way they would work if loaded.
       "matchid": "3123",
       "clinch_series": true,
       "num_maps": 3,
+      "wingman": false,
       "players_per_team": 5,
       "coaches_per_team": 2,
       "coaches_must_ready": true,
@@ -275,6 +279,7 @@ These examples are identical in the way they would work if loaded.
         "matchid": "3123",
         "clinch_series": true,
         "num_maps": 3,
+        "wingman": false,
         "players_per_team": 5,
         "coaches_per_team": 2,
         "coaches_must_ready": true,
@@ -346,6 +351,7 @@ These examples are identical in the way they would work if loaded.
         "matchid"                 "3123"
         "clinch_series"           "1"
         "num_maps"                "3"
+        "wingman"                 "0"
         "players_per_team"        "5"
         "coaches_per_team"        "2"
         "coaches_must_ready"      "1"

@@ -409,6 +409,10 @@ if [`get5_print_damage`](#get5_print_damage) is disabled.<br>
 ####`get5_live_cfg`
 :   Config file executed when the game goes live, relative to `csgo/cfg`.<br>**`Default: "get5/live.cfg"`**
 
+####`get5_live_wingman_cfg`
+:   Config file executed when the game goes live, relative to `csgo/cfg`, but for [wingman](../wingman)
+mode.<br>**`Default: "get5/live_wingman.cfg"`**
+
 ####`get5_warmup_cfg`
 :   Config file executed in warmup periods, relative to `csgo/cfg`.<br>**`Default: "get5/warmup.cfg"`**
 

@@ -38,7 +38,6 @@ static void Get5_Test() {
 
   MatchConfigNotFoundTest();
   CustomVetoConfigTest();
-  DuplicateMapPoolTest();
 
   InvalidMatchConfigFile("addons/sourcemod/configs/get5/tests/invalid_config.json");
   InvalidMatchConfigFile("addons/sourcemod/configs/get5/tests/invalid_config.cfg");
@@ -83,15 +82,6 @@ static ArrayList GetMapPool(int size) {
     i++;
   }
   return list;
-}
-
-static void DuplicateMapPoolTest() {
-  SetTestContext("DuplicateMapPoolTest");
-  char error[PLATFORM_MAX_PATH];
-  AssertFalse("Load match config",
-              LoadMatchConfig("addons/sourcemod/configs/get5/tests/maplist_duplicate_map.json", error));
-  AssertStrEq("Test duplicate maplist error", "Maps in the maplist must be unique. Found duplicate map: 'de_ancient'.",
-              error);
 }
 
 static void MapVetoLogicTest() {
@@ -399,7 +389,10 @@ static void MapVetoLogicTest() {
   mapPool = GetMapPool(3);
   mapPool.PushString("de_dust");  // Subset of "de_dust2"
 
-  AssertFalse("Check map pool match no match", RemoveMapFromMapPool(mapPool, "not_a_map", error, sizeof(error)));
+  char mapNameExtracted[64];
+
+  AssertFalse("Check map pool match no match",
+              RemoveMapFromMapPool(mapPool, "not_a_map", mapNameExtracted, sizeof(mapNameExtracted)));
   AssertEq("Check map pool match no match, size 4", 4, mapPool.Length);
   AssertFalse("Check map pool match double match, ambiguous",
               RemoveMapFromMapPool(mapPool, "dust", error, sizeof(error)));
@@ -407,7 +400,10 @@ static void MapVetoLogicTest() {
   AssertTrue("Check map pool match double match, precise",
              RemoveMapFromMapPool(mapPool, "de_dust", error, sizeof(error)));
   AssertEq("Check map pool match precise match, size 3", 3, mapPool.Length);
-  AssertTrue("Check map pool match single, subset", RemoveMapFromMapPool(mapPool, "mirage", error, sizeof(error)));
+  AssertStrEq("Check correct map removed 1", "de_dust", mapNameExtracted);
+  AssertTrue("Check map pool match single, subset",
+             RemoveMapFromMapPool(mapPool, "mirage", mapNameExtracted, sizeof(mapNameExtracted)));
+  AssertStrEq("Check correct map removed 2", "de_mirage", mapNameExtracted);
   AssertEq("Check map pool match precise match, size 2", 2, mapPool.Length);
   AssertTrue("Check map pool match single, subset after double match removed",
              RemoveMapFromMapPool(mapPool, "dust", error, sizeof(error)));
@@ -697,6 +693,7 @@ static void ValidMatchConfigTest(const char[] matchConfig) {
   AssertEq("Min players to ready", g_MinPlayersToReady, 3);
   AssertEq("Min spectators to ready", g_MinSpectatorsToReady, 1);
   AssertEq("Clinch series", g_SeriesCanClinch, true);
+  AssertEq("Wingman", g_Wingman, false);
   AssertEq("Sides type", view_as<int>(g_MatchSideType), view_as<int>(MatchSideType_NeverKnife));
   AssertEq("Veto first", view_as<int>(g_LastVetoTeam), view_as<int>(Get5Team_1));
   AssertEq("Skip veto", g_SkipVeto, true);

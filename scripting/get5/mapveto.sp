@@ -411,21 +411,21 @@ static void PickSide(const Get5Side side, const Get5Team team) {
 
 bool RemoveMapFromMapPool(const ArrayList mapPool, const char[] str, char[] buffer, const int bufferSize) {
   int eraseIndex = -1;
-  bool duplicateMatches = false;
-  for (int i = 0; i < mapPool.Length; i++) {
-    mapPool.GetString(i, buffer, bufferSize);
-    // Minimum 3 chars unless it's a complete match
-    if ((strlen(str) >= 3 && StrContains(buffer, str, false) > -1) || StrEqual(buffer, str, false)) {
-      if (eraseIndex >= 0) {
-        duplicateMatches = true;
-        break;
+  // First check if we have a single match with a substring.
+  if (strlen(str) >= 3) {
+    for (int i = 0; i < mapPool.Length; i++) {
+      mapPool.GetString(i, buffer, bufferSize);
+      if (StrContains(buffer, str, false) > -1) {
+        if (eraseIndex >= 0) {
+          eraseIndex = -1;  // If more than one match, reset and break.
+          break;
+        }
+        eraseIndex = i;
       }
-      eraseIndex = i;
     }
   }
-  // Restart, this time only matching the full string.
-  if (duplicateMatches) {
-    eraseIndex = -1;
+  // If no match or more than one match on substring, restart, this time only matching the full string.
+  if (eraseIndex == -1) {
     for (int i = 0; i < mapPool.Length; i++) {
       mapPool.GetString(i, buffer, bufferSize);
       if (StrEqual(buffer, str, false)) {

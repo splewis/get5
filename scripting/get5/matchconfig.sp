@@ -4,6 +4,7 @@
 #define CONFIG_MATCHID_DEFAULT              ""  // empty string if no match ID defined in config.
 #define CONFIG_MATCHTITLE_DEFAULT           "Map {MAPNUMBER} of {MAXMAPS}"
 #define CONFIG_PLAYERSPERTEAM_DEFAULT       5
+#define CONFIG_PLAYERSPERTEAM_DEFAULT_WM    2
 #define CONFIG_COACHESPERTEAM_DEFAULT       2
 #define CONFIG_MINPLAYERSTOREADY_DEFAULT    0
 #define CONFIG_MINSPECTATORSTOREADY_DEFAULT 0
@@ -12,6 +13,7 @@
 #define CONFIG_SKIPVETO_DEFAULT             false
 #define CONFIG_COACHES_MUST_READY_DEFAULT   false
 #define CONFIG_CLINCH_SERIES_DEFAULT        true
+#define CONFIG_WINGMAN_DEFAULT              false
 #define CONFIG_VETOFIRST_DEFAULT            "team1"
 #define CONFIG_SIDETYPE_DEFAULT             "standard"
 
@@ -61,12 +63,8 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   char mapName[PLATFORM_MAX_PATH];
   for (int i = 0; i < g_MapPoolList.Length; i++) {
     g_MapPoolList.GetString(i, mapName, sizeof(mapName));
-    if (g_MapsLeftInVetoPool.FindString(mapName) > -1) {
-      FormatEx(error, PLATFORM_MAX_PATH, "Maps in the maplist must be unique. Found duplicate map: '%s'.", mapName);
-      return false;
-    }
     if (!IsMapValid(mapName)) {
-      if (StrContains(mapName, "workshop") != 0) {
+      if (StrContains(mapName, "workshop", false) != 0) {
         FormatEx(error, PLATFORM_MAX_PATH, "Maplist contains invalid map '%s'.", mapName);
         return false;
       } else {
@@ -84,6 +82,8 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
              "Maplist contains a Workshop map, but no Steam Web API Key was provided to the server.");
     return false;
   }
+
+  bool gameModeReloadRequired = IsMapReloadRequiredForGameMode(g_Wingman);
 
   if (g_SkipVeto) {
     // Copy the first k maps from the maplist to the final match maps.
@@ -108,6 +108,8 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
       char currentMap[PLATFORM_MAX_PATH];
       GetCurrentMap(currentMap, sizeof(currentMap));
       if (!StrEqual(mapName, currentMap)) {
+        gameModeReloadRequired = false;  // we can skip this when the map is changed here.
+        SetCorrectGameMode();
         ChangeMap(mapName);
       }
     }
@@ -194,6 +196,12 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
 
   Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
+
+  if (gameModeReloadRequired && !restoreBackup) {
+    GetCurrentMap(mapName, sizeof(mapName));
+    SetCorrectGameMode();
+    ChangeMap(mapName, 3.0);
+  }
   return true;
 }
 
@@ -333,6 +341,7 @@ void WriteMatchToKv(KeyValues kv) {
   kv.SetNum("min_spectators_to_ready", g_MinSpectatorsToReady);
   kv.SetString("match_title", g_MatchTitle);
   kv.SetNum("clinch_series", g_SeriesCanClinch);
+  kv.SetNum("wingman", g_Wingman);
 
   kv.SetNum("favored_percentage_team1", g_FavoredTeamPercentage);
   kv.SetString("favored_percentage_text", g_FavoredTeamText);
@@ -397,8 +406,10 @@ static bool LoadMatchFromKeyValue(KeyValues kv, char[] error) {
   kv.GetString("matchid", g_MatchID, sizeof(g_MatchID), CONFIG_MATCHID_DEFAULT);
   g_InScrimMode = kv.GetNum("scrim") != 0;
   g_SeriesCanClinch = kv.GetNum("clinch_series", CONFIG_CLINCH_SERIES_DEFAULT) != 0;
+  g_Wingman = kv.GetNum("wingman", CONFIG_WINGMAN_DEFAULT) != 0;
   kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
-  g_PlayersPerTeam = kv.GetNum("players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
+  g_PlayersPerTeam =
+    kv.GetNum("players_per_team", g_Wingman ? CONFIG_PLAYERSPERTEAM_DEFAULT_WM : CONFIG_PLAYERSPERTEAM_DEFAULT);
   g_CoachesPerTeam = kv.GetNum("coaches_per_team", CONFIG_COACHESPERTEAM_DEFAULT);
   g_MinPlayersToReady = kv.GetNum("min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
   g_MinSpectatorsToReady = kv.GetNum("min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
@@ -509,9 +520,11 @@ static bool LoadMatchFromKeyValue(KeyValues kv, char[] error) {
 static bool LoadMatchFromJson(const JSON_Object json, char[] error) {
   json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID), CONFIG_MATCHID_DEFAULT);
   g_InScrimMode = json_object_get_bool_safe(json, "scrim", false);
-  g_SeriesCanClinch = json_object_get_bool_safe(json, "clinch_series", true);
+  g_SeriesCanClinch = json_object_get_bool_safe(json, "clinch_series", CONFIG_CLINCH_SERIES_DEFAULT);
+  g_Wingman = json_object_get_bool_safe(json, "wingman", CONFIG_WINGMAN_DEFAULT);
   json_object_get_string_safe(json, "match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
-  g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
+  g_PlayersPerTeam = json_object_get_int_safe(
+    json, "players_per_team", g_Wingman ? CONFIG_PLAYERSPERTEAM_DEFAULT_WM : CONFIG_PLAYERSPERTEAM_DEFAULT);
   g_CoachesPerTeam = json_object_get_int_safe(json, "coaches_per_team", CONFIG_COACHESPERTEAM_DEFAULT);
   g_MinPlayersToReady = json_object_get_int_safe(json, "min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
   g_MinSpectatorsToReady =
@@ -1607,4 +1620,17 @@ void UpdateHostname() {
   if (FormatCvarString(g_SetHostnameCvar, formattedHostname, sizeof(formattedHostname), false)) {
     SetConVarStringSafe("hostname", formattedHostname);
   }
+}
+
+void SetCorrectGameMode() {
+  SetGameMode(g_Wingman ? GAME_MODE_WINGMAN : GAME_MODE_COMPETITIVE);
+  SetGameTypeClassic();
+}
+
+bool IsMapReloadRequiredForGameMode(bool wingman) {
+  int expectedMode = wingman ? GAME_MODE_WINGMAN : GAME_MODE_COMPETITIVE;
+  if (GetGameMode() != expectedMode || GetGameType() != GAME_TYPE_CLASSIC) {
+    return true;
+  }
+  return false;
 }

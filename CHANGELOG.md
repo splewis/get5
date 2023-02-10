@@ -27,15 +27,14 @@ tracking down bugs based on that specific version.
    now unload the default `basebans.smx` SourceMod plugin to prevent conflicts, as this also uses the `!ban` command.
    You are encouraged to instead simply remove this plugin from your server (delete it or move it to the `disabled`
    folder).
-2. Because of the new veto system, a match configuration's map list cannot contain duplicate maps.
-3. `Get5_OnMatchUnpaused`'s `team` property now always reflects the team that started the pause. Previously, this would
+2. `Get5_OnMatchUnpaused`'s `team` property now always reflects the team that started the pause. Previously, this would
    be the team that triggered the unpause.
-4. Technical pauses can now be enabled without enabling tactical pauses. Previously, you would have to enable tactical
+3. Technical pauses can now be enabled without enabling tactical pauses. Previously, you would have to enable tactical
    pauses via [`get5_pausing_enabled`](https://splewis.github.io/get5/dev/configuration/#get5_pausing_enabled) to have
    access to technical pauses
    via [`get5_allow_technical_pause`](https://splewis.github.io/get5/dev/configuration/#get5_allow_technical_pause).
    These have now been decoupled.
-5. [`get5_server_id`](https://splewis.github.io/get5/dev/configuration/#get5_server_id) is now a string instead of an
+4. [`get5_server_id`](https://splewis.github.io/get5/dev/configuration/#get5_server_id) is now a string instead of an
    integer, which changes a few things:
 
 a. If you use the default MySQL extension for stats, you must run this command to make your `server_id` column accept a
@@ -85,31 +84,9 @@ native void Get5_GetServerID(char[] id, int length);
    reload and ask everyone to ready, but instead simply start the match.
 8. Get5 now speaks Greek and Turkish. (Thanks @GekasD and AliOnIce).
 9. You can now add Workshop maps to the [`maplist`](https://splewis.github.io/get5/dev/match_schema/#schema).
-
-- [0183ade](http://github.com/splewis/get5/commit/0183adeb3eca5e380054f1237bdf22eba25ddfaa) - Wrong param order
-- [150c834](http://github.com/splewis/get5/commit/150c834e8ba0c5079c45c9d4f7742a0882687ff2) - Allow workshop maps in
-  maplist (#974)
-- [a564ea8](http://github.com/splewis/get5/commit/a564ea8a11079177aab34a7d5f8095f66c45a8ff) - Minor doc fix
-- [75af85c](http://github.com/splewis/get5/commit/75af85cfefed53b1f1e7156aa8fe2575f81c26fb) - Add get5_add_ready_time (
-  #972)
-- [a8fb67a](http://github.com/splewis/get5/commit/a8fb67ad71db8a64ebca3e7b5a9db6af26b0ec1f) - Unload basebans.smx as it
-  conflicts with chat veto
-- [237c4a1](http://github.com/splewis/get5/commit/237c4a1a6cf73601a7252c2668f5d37690eaad61) - Adjust greek for rebase
-  Add to doc
-- [239ab53](http://github.com/splewis/get5/commit/239ab5396ac94272b4fc05c8410a4289d2f86789) - Added Greek translation (
-  #970)
-- [f165dd8](http://github.com/splewis/get5/commit/f165dd831e3505141f7e2dbf49213f55279ea3aa) - Add Turkish translation (
-  #971)
-- [11a22bb](http://github.com/splewis/get5/commit/11a22bb8a3bf9b36f8cd297701d81cfd63aff126) - Fix translation table
-- [7b76ace](http://github.com/splewis/get5/commit/7b76acecabe701db53760029f6c87fc28ba96545) - Create chat-based map
-  selection system (#969)
-- [e82ed13](http://github.com/splewis/get5/commit/e82ed132a00f7bbecc5d2bc457f33383e05c49c5) - Fix translations (#968)
-- [72e28a6](http://github.com/splewis/get5/commit/72e28a6886f860562620671e583836da528149d1) - Don't consume pauses until
-  they start + GSI support + Pause begin forward/event (#910)
-- [6560baa](http://github.com/splewis/get5/commit/6560baa40b5026d214270454301843c68612c853) - Add custom veto logic
-  support + Rename VETO to BAN (#962)
-- [53494a3](http://github.com/splewis/get5/commit/53494a3ef4655a6e6a5c940522402d70161967f2) - Make `get5_server_id` a
-  string (#958)
+10. Get5 now officially supports [Wingman](https://splewis.github.io/get5/dev/wingman). If you are upgrading a Get5
+    installation, remember to copy in the new wingman config file from `cfg/get5/live_wingman.cfg` if you want to run
+    Wingman matches.
 
 # 0.12.1
 

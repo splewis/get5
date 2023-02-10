@@ -17,7 +17,7 @@ better support in various programming languages than Valve's KeyValue format (wh
 
 ```typescript title="TypeScript interface definition of a match configuration"
 type SteamID = string // (8)
-type Get5PlayerSet = { [key: SteamID]: string } | [SteamID] // (9)
+type Get5PlayerSet = { [key: SteamID]: string } | SteamID[] // (9)
 
 interface Get5MatchTeam {
     "players": Get5PlayerSet // (24)
@@ -86,7 +86,7 @@ interface Get5Match {
    64, i.e. `"76561197987713664"`.
 9. Players are represented each with a mapping of `SteamID -> PlayerName` as a key-value dictionary. The name
    is optional and should be set to an empty string to let players decide their own name. You can also provide a simple
-   string array of `SteamID` disable name-locking.
+   string array of `SteamID` to disable name-locking.
 10. _Optional_<br>The spectators to allow into the game. If not defined, spectators cannot join the
     game.<br><br>**`Default: undefined`**
 11. _Optional_<br>The team that makes the first [map selection](../veto) choice.<br><br>**`Default: "team1"`**
@@ -246,7 +246,7 @@ These examples are identical in the way they would work if loaded.
       },
       "cvars": {
         "hostname": "Get5 Match #3123",
-        "mp_friendly_fire": "0",
+        "mp_friendlyfire": "0",
         "get5_stop_command_enabled": "0",
         "sm_practicemode_can_be_started": "0"
       }
@@ -326,7 +326,7 @@ These examples are identical in the way they would work if loaded.
         },
         "cvars": {
             "hostname": "Get5 Match #3123",
-            "mp_friendly_fire": "0",
+            "mp_friendlyfire": "0",
             "get5_stop_command_enabled": "0",
             "sm_practicemode_can_be_started": "0"
         }
@@ -372,7 +372,7 @@ These examples are identical in the way they would work if loaded.
         {
             "de_dust2"                      ""
             "de_nuke"                       ""
-            "workshop/1193875520/de_aztec" ""
+            "workshop/1193875520/de_aztec"  ""
             "de_inferno"                    ""
             "de_mirage"                     ""
             "de_vertigo"                    ""
@@ -411,7 +411,7 @@ These examples are identical in the way they would work if loaded.
         "cvars"
         {
             "hostname"                       "Get5 Match #3123"
-            "mp_friendly_fire"               "0"
+            "mp_friendlyfire"                "0"
             "get5_stop_command_enabled"      "0"
             "sm_practicemode_can_be_started" "0"
         }

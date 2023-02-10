@@ -24,7 +24,7 @@ the explanation of the [match schema](../match_schema), that section will overri
 
 You should also have three config files. These can be edited, but we recommend not
 blindly pasting another config in (e.g. ESL, CEVO). These must only include commands you would run in the console (such
-as `mp_friendly_fire 1`) and should determine the rules for those three stage of your match. You can
+as `mp_friendlyfire 1`) and should determine the rules for those three stage of your match. You can
 also [point to other files](#config-files) by editing the main config file.
 
 ```yaml

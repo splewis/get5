@@ -97,7 +97,7 @@ interface Get5Match {
     when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
 13. _Required_<br>The map pool to pick from, as an array of strings (`["de_dust2", "de_nuke"]` etc.), or if `skip_veto`
     is `true`, the order of maps played (limited by `num_maps`).<br><br>You can load maps from workshop collections by
-    using the syntax `"workshop/map_id/map_name"`, i.e. `"workshop/1193875520/Old Aztec"`. The name parameter is used to
+    using the syntax `"workshop/map_id/map_name"`, i.e. `"workshop/1193875520/de_aztec"`. The name parameter is used to
     present the map in the [map selection](../veto) phase. If you provide maps from the community workshop, you must
     have a [Steam Web API key](https://steamcommunity.com/dev) configured for your server, or the match config will fail
     to load.<br><br>Similarly to teams, you can set this to an object with a `fromfile` property to load a map list from
@@ -213,7 +213,7 @@ These examples are identical in the way they would work if loaded.
       "maplist": [
         "de_dust2",
         "de_nuke",
-        "workshop/1193875520/Old Aztec",
+        "workshop/1193875520/de_aztec",
         "de_inferno",
         "de_mirage",
         "de_vertigo",
@@ -297,7 +297,7 @@ These examples are identical in the way they would work if loaded.
         "maplist": [
             "de_dust2",
             "de_nuke",
-            "workshop/1193875520/Old Aztec",
+            "workshop/1193875520/de_aztec",
             "de_inferno",
             "de_mirage",
             "de_vertigo",
@@ -372,7 +372,7 @@ These examples are identical in the way they would work if loaded.
         {
             "de_dust2"                      ""
             "de_nuke"                       ""
-            "workshop/1193875520/Old Aztec" ""
+            "workshop/1193875520/de_aztec" ""
             "de_inferno"                    ""
             "de_mirage"                     ""
             "de_vertigo"                    ""

@@ -20,7 +20,7 @@ static Action Timer_DelayedChangeMap(Handle timer, Handle pack) {
   ResetPack(pack);
   ReadPackString(pack, map, sizeof(map));
   CloseHandle(pack);
-  if (StrContains(map, "workshop", false) == 0) {
+  if (IsMapWorkshop(map)) {
     ServerCommand("host_workshop_map %d", GetMapIdFromString(map));
   } else {
     ServerCommand("changelevel %s", map);

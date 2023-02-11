@@ -200,13 +200,21 @@ void HandleSideChoice(const Get5Side side, int client) {
   HandleVetoStep();
 }
 
+static void HandleAutomaticSideSelection() {
+  if (g_MatchSideType == MatchSideType_Random) {
+    g_MapSides.Push(GetRandomInt(0, 1) == 0 ? SideChoice_Team1CT : SideChoice_Team1T);
+  } else {
+    g_MapSides.Push(g_MatchSideType == MatchSideType_NeverKnife ? SideChoice_Team1CT : SideChoice_KnifeRound);
+  }
+}
+
 static void HandleVetoStep() {
   // As long as sides are not set for a map, either give side pick or auto-decide sides and recursively call this.
   if (g_MapSides.Length < g_MapsToPlay.Length) {
     if (g_MatchSideType == MatchSideType_Standard) {
       PromptForSideSelectionInChat(OtherMatchTeam(g_LastVetoTeam));
     } else {
-      g_MapSides.Push(g_MatchSideType == MatchSideType_NeverKnife ? SideChoice_Team1CT : SideChoice_KnifeRound);
+      HandleAutomaticSideSelection();
       HandleVetoStep();
     }
   } else if (g_NumberOfMapsInSeries > g_MapsToPlay.Length) {
@@ -215,7 +223,7 @@ static void HandleVetoStep() {
       char mapName[PLATFORM_MAX_PATH];
       g_MapsLeftInVetoPool.GetString(0, mapName, sizeof(mapName));
       PickMap(mapName, Get5Team_None);
-      g_MapSides.Push(g_MatchSideType == MatchSideType_NeverKnife ? SideChoice_Team1CT : SideChoice_KnifeRound);
+      HandleAutomaticSideSelection();
       FinishVeto();
     } else {
       // More than 1 map in the pool and not all maps are picked; present choices as determine by config.
@@ -315,12 +323,14 @@ static void PromptForSideSelectionInChat(const Get5Team team) {
   Get5_Message(client, "%t", "MapSelectionPickSideHelp", formattedCommandCT, formattedCommandT);
 }
 
-static void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize) {
+void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize) {
   char[][] mapsArray = new char[mapPool.Length][PLATFORM_MAX_PATH];
   for (int i = 0; i < mapPool.Length; i++) {
     mapPool.GetString(i, mapsArray[i], PLATFORM_MAX_PATH);
     FormatMapName(mapsArray[i], mapsArray[i], PLATFORM_MAX_PATH, true, false);
   }
+  // Sort alphabetically.
+  SortStrings(mapsArray, mapPool.Length, Sort_Ascending);
   ImplodeStrings(mapsArray, mapPool.Length, ", ", buffer, bufferSize);
 }
 

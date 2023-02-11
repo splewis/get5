@@ -41,6 +41,7 @@ interface Get5Match {
     "matchid": string | undefined // (1)
     "clinch_series": boolean | undefined // (32)
     "num_maps": number | undefined // (2)
+    "scrim": boolean | undefined // (39)
     "wingman": boolean | undefined // (37)
     "players_per_team": number | undefined // (3)
     "coaches_per_team": number | undefined // (4)
@@ -51,7 +52,8 @@ interface Get5Match {
     "veto_first": "team1" | "team2" | "random" | undefined // (11)
     "veto_mode": ['team1_ban' | 'team2_ban'
         | 'team1_pick' | 'team2_pick'] | undefined // (36)
-    "side_type": "standard" | "always_knife" | "never_knife" | undefined // (12)
+    "side_type": "standard" | "always_knife"
+        | "never_knife" | "random" | undefined // (12)
     "map_sides": ["team1_ct" | "team1_t" | "knife"] | undefined // (31)
     "spectators": { // (10)
         "name": string | undefined // (29)
@@ -87,15 +89,17 @@ interface Get5Match {
    64, i.e. `"76561197987713664"`.
 9. Players are represented each with a mapping of `SteamID -> PlayerName` as a key-value dictionary. The name
    is optional and should be set to an empty string to let players decide their own name. You can also provide a simple
-   string array of `SteamID` to disable name-locking.
+   string array of `SteamID` to disable name-locking.<br><br>I.e.:<br>`["76561197996426755", "76561356896422767"]`
+   <br>and<br>`{"76561197996426755": "PlayerName", "76561356896422767": "PlayerName"}` are both valid values.
 10. _Optional_<br>The spectators to allow into the game. If not defined, spectators cannot join the
     game.<br><br>**`Default: undefined`**
 11. _Optional_<br>The team that makes the first [map selection](../veto) choice.<br><br>**`Default: "team1"`**
 12. _Optional_<br>The method used to determine sides during [map selection](../veto).<br><br>`standard` means that the
     team that doesn't pick a map gets the side choice (only if `skip_veto` is `false`).<br><br>`always_knife` means that
-    sides are always determined by a knife-round.<br><br>`never_knife` means that `team1` always starts on CT.<br><br>
-    This parameter is ignored if `map_sides` is set for all maps. `standard` and `always_knife` behave similarly (knife)
-    when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
+    sides are always determined by a knife-round.<br><br>`never_knife` means that `team1` always starts on
+    CT.<br><br>`random` means that teams are randomly assigned a side.<br><br> This parameter is ignored if `map_sides`
+    has already set the sides for a map. `standard` and `always_knife` behave similarly (knife) when `skip_veto` is
+    `true`.<br><br>**`Default: "standard"`**
 13. _Required_<br>The map pool to pick from, as an array of strings (`["de_dust2", "de_nuke"]` etc.), or if `skip_veto`
     is `true`, the order of maps played (limited by `num_maps`).<br><br>You can load maps from workshop collections by
     using the syntax `"workshop/map_id/map_name"`, i.e. `"workshop/1193875520/de_aztec"`. The name parameter is used to
@@ -121,7 +125,7 @@ interface Get5Match {
 19. _Optional_<br>The team logo (wraps `mp_teamlogo_1` or `mp_teamlogo_2`), which requires to be on a FastDL in order
     for clients to see.<br><br>**`Default: ""`**
 20. _Required_<br>The data for the first team.
-21. _Required_<br>The data for the second team.
+21. _Required_<br>The data for the second team. Not required if `scrim` is `true`.
 22. _Optional_<br>Various commands to execute on the server when loading the match configuration. This can be both
     regular server-commands and any [`Get5 configuration parameter`](../configuration),
     i.e. `{"mp_friendlyfire": "0", "get5_max_pauses": "2"}`.<br><br>When the match ends, these parameters will by
@@ -135,7 +139,9 @@ interface Get5Match {
     name, locking them to the coach slot unless removed using [`get5_removeplayer`](../commands#get5_removeplayer).
     Setting a Steam ID as coach takes precedence over being set as a player.<br><br>Note that
     if [`sv_coaching_enabled`](https://totalcsgo.com/command/svcoachingenabled) is disabled, anyone defined as a coach
-    will be considered a regular player for the team instead.<br><br>**`Default: undefined`**
+    will be considered a regular player for the team instead.<br><br>Also note that `coaches` is ignored if `scrim`
+    is `true`, in which case you should put everyone in `players` and have them use
+    the [`!coach`](../commands#coach) command instead.<br><br>**`Default: undefined`**
 24. _Required_<br>The players on the team.
 25. _Optional_<br>Sets the server's `mp_teammatchstat_txt` ConVar, but lets you use `{MAPNUMBER}` and `{MAXMAPS}` as
     variables that get replaced with their integer values. You should **not** set `mp_teammatchstat_txt` yourself, as it
@@ -167,6 +173,8 @@ interface Get5Match {
     defaults to `2` instead of `5`.<br><br>**`Default: false`**
 38. _Optional_<br>The ID of the team. This can be used to link the team to an external resource, such as a database ID.
     The ID is included in the event system for events that include a team.
+39. _Optional_<br>Configures the match for [scrim mode](../getting_started#scrims). In this configuration, `team2` is
+    ignored and not required, and `coaches` cannot be set for `team1`.<br><br>**`Default: false`**
 
 !!! info "Team assignment priority"
 

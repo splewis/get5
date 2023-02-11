@@ -1,0 +1,33 @@
+{
+  "default": [
+    "de_ancient",
+    "de_anubis",
+    "de_inferno",
+    "de_mirage",
+    "de_nuke",
+    "de_overpass",
+    "de_vertigo"
+  ],
+  "extended": [
+    "de_ancient",
+    "de_anubis",
+    "de_dust2",
+    "de_inferno",
+    "de_mirage",
+    "de_nuke",
+    "de_overpass",
+    "de_train",
+    "de_vertigo"
+  ],
+  "wingman": [
+    "de_boyard",
+    "de_chalice",
+    "de_cbble",
+    "de_inferno",
+    "de_overpass",
+    "de_shortdust",
+    "de_shortnuke",
+    "de_train",
+    "de_vertigo"
+  ]
+}

@@ -73,6 +73,9 @@ ConVar g_KickClientsWithNoMatchCvar;
 ConVar g_KickOnForceEndCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_LiveWingmanCfgCvar;
+ConVar g_TeamsFileCvar;
+ConVar g_MapsFileCvar;
+ConVar g_CvarsFileCvar;
 ConVar g_MuteAllChatDuringMapSelectionCvar;
 ConVar g_WarmupCfgCvar;
 ConVar g_KnifeCfgCvar;
@@ -265,6 +268,27 @@ bool g_MapChangePending = false;
 bool g_PendingSideSwap = false;
 Handle g_PendingMapChangeTimer = INVALID_HANDLE;
 bool g_ClientPendingTeamCheck[MAXPLAYERS + 1];
+
+/** Setup menu state **/
+Menu g_ActiveSetupMenu = null;
+bool g_SetupMenuWingman = false;
+int g_SetupMenuPlayersPerTeam = 5;
+bool g_SetupMenuFriendlyFire = true;
+bool g_SetupMenuClinch = true;
+bool g_SetupMenuOvertime = true;
+Get5SetupMenu_MapSelectionMode g_SetupMenuMapSelection = Get5SetupMenu_MapSelectionMode_PickBan;
+Get5SetupMenu_TeamSelectionMode g_SetupMenuTeamSelection = Get5SetupMenu_TeamSelectionMode_Current;
+MatchSideType g_SetupMenuSideType = MatchSideType_Standard;
+int g_SetupMenuSeriesLength = 1;
+ArrayList g_SetupMenuSelectedMaps;
+JSON_Object g_SetupMenuMapPool;
+char g_SetupMenuSelectedMapPool[64];
+int g_SetupMenuTeam1Captain = -1;
+int g_SetupMenuTeam2Captain = -1;
+char g_SetupMenuTeamForTeam1[64] = "";
+char g_SetupMenuTeamForTeam2[64] = "";
+JSON_Object g_SetupMenuAvailableTeams;
+// int g_SetupMenuLeader = -1;
 
 // version check state
 bool g_RunningPrereleaseVersion = false;
@@ -470,6 +494,9 @@ public void OnPluginStart() {
   g_KnifeCfgCvar                        = CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to execute for the knife round.");
   g_LiveCfgCvar                         = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to execute when the game goes live.");
   g_LiveWingmanCfgCvar                  = CreateConVar("get5_live_wingman_cfg", "get5/live_wingman.cfg", "Config file to execute when the game goes live, but for wingman mode.");
+  g_TeamsFileCvar                       = CreateConVar("get5_teams_file", "get5/teams.json", "The JSON file that contains teams selectable in the Get5 setup menu.");
+  g_MapsFileCvar                        = CreateConVar("get5_maps_file", "get5/maps.json", "The JSON file that contains maps selectable in the Get5 setup menu.");
+  g_CvarsFileCvar                       = CreateConVar("get5_cvars_file", "get5/cvars.json", "The JSON file that contains sets of ConVars selectable when using the get5_creatematch CLI.");
   g_PrettyPrintJsonCvar                 = CreateConVar("get5_pretty_print_json", "1", "Whether all JSON output is in pretty-print format.");
   g_PrintUpdateNoticeCvar               = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
   g_ServerIdCvar                        = CreateConVar("get5_server_id", "0", "A string that identifies your server. This is used in temporary files to prevent collisions and added as an HTTP header for network requests made by Get5.");
@@ -536,7 +563,7 @@ public void OnPluginStart() {
   RegAdminCmd("get5_removekickedplayer", Command_RemoveKickedPlayer, ADMFLAG_CHANGEMAP,
               "Removes the last kicked steamid from a match team");
   RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP,
-              "Creates and loads a match using the players currently on the server as a Bo1");
+              "Creates and loads a match using the provided command-line parameters.");
   RegAdminCmd(
     "get5_add_ready_time", Command_AddReadyTime, ADMFLAG_CHANGEMAP,
     "Adds additional ready-time by deducting the provided seconds from the time already used during a ready-phase.");
@@ -1020,7 +1047,7 @@ static bool CheckReadyWaitingTimes() {
   }
 
   Stats_Forfeit();
-  EndSeries(winningTeam, winningTeam == Get5Team_None, 0.0);
+  EndSeries(winningTeam, winningTeam == Get5Team_None, 5.0);
   return false;
 }
 
@@ -1099,16 +1126,19 @@ static Action Command_EndMatch(int client, int args) {
 
   StopRecording(1.0);  // must go before EndSeries as it depends on g_MatchID.
 
+  if (winningTeam == Get5Team_None) {
+    Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
+  } else {
+    // If we end the match before it has started, teams may have empty names,
+    // so we fix that here.
+    FormatTeamName(winningTeam);
+    Get5_MessageToAll("%t", "AdminForceEndWithWinnerInfoMessage", g_FormattedTeamNames[winningTeam]);
+  }
+
   bool kick = g_KickOnForceEndCvar.BoolValue;
   EndSeries(winningTeam, false, kick ? 5.0 : 0.0, kick);
 
   UpdateClanTags();
-
-  if (winningTeam == Get5Team_None) {
-    Get5_MessageToAll("%t", "AdminForceEndInfoMessage");
-  } else {
-    Get5_MessageToAll("%t", "AdminForceEndWithWinnerInfoMessage", g_FormattedTeamNames[winningTeam]);
-  }
 
   RestartGame();
   return Plugin_Handled;
@@ -1533,7 +1563,7 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
     char nextMap[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(Get5_GetMapNumber(), nextMap, sizeof(nextMap));
-    if (StrContains(nextMap, "workshop", false) == 0) {
+    if (IsMapWorkshop(nextMap)) {
       LogDebug("Added 20 seconds to mp_match_restart_delay to ensure workshop map can download in time.");
       SetCurrentMatchRestartDelay(requiredDelay + 20);
     }

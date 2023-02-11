@@ -317,11 +317,10 @@ static void PromptForSideSelectionInChat(const Get5Team team) {
 }
 
 static void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize) {
-  static const int bz = 64;  // For some reason, we cannot do sizeof(mapsArray[i])
-  char[][] mapsArray = new char[mapPool.Length][bz];
+  char[][] mapsArray = new char[mapPool.Length][PLATFORM_MAX_PATH];
   for (int i = 0; i < mapPool.Length; i++) {
-    g_MapsLeftInVetoPool.GetString(i, mapsArray[i], bz);
-    FormatMapName(mapsArray[i], mapsArray[i], bz, true, false);
+    mapPool.GetString(i, mapsArray[i], PLATFORM_MAX_PATH);
+    FormatMapName(mapsArray[i], mapsArray[i], PLATFORM_MAX_PATH, true, false);
   }
   ImplodeStrings(mapsArray, mapPool.Length, ", ", buffer, bufferSize);
 }

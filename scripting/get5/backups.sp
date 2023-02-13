@@ -270,6 +270,7 @@ static bool WriteBackupStructure(const char[] path) {
   kv.JumpToKey("maps", true);
   for (int i = 0; i < g_MapsToPlay.Length; i++) {
     g_MapsToPlay.GetString(i, mapName, sizeof(mapName));
+    EscapeKeyValueKeyWrite(mapName, sizeof(mapName));
     kv.SetNum(mapName, view_as<int>(g_MapSides.Get(i)));
   }
   kv.GoBack();
@@ -449,6 +450,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
       do {
         if (index == loadedMapNumber) {
           kv.GetSectionName(loadedMapName, sizeof(loadedMapName));
+          EscapeKeyValueKeyRead(loadedMapName, sizeof(loadedMapName));
           break;
         }
         index++;
@@ -529,6 +531,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
     if (kv.GotoFirstSubKey(false)) {
       do {
         kv.GetSectionName(mapName, sizeof(mapName));
+        EscapeKeyValueKeyRead(mapName, sizeof(mapName));
         SideChoice sides = view_as<SideChoice>(kv.GetNum(NULL_STRING));
         g_MapsToPlay.PushString(mapName);
         g_MapSides.Push(sides);

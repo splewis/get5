@@ -354,6 +354,7 @@ void WriteMatchToKv(KeyValues kv) {
   for (int i = 0; i < g_MapPoolList.Length; i++) {
     char map[PLATFORM_MAX_PATH];
     g_MapPoolList.GetString(i, map, sizeof(map));
+    EscapeKeyValueKeyWrite(map, sizeof(map));
     kv.SetString(map, KEYVALUE_STRING_PLACEHOLDER);
   }
   kv.GoBack();
@@ -680,6 +681,7 @@ static bool ReadKeyValueMaplistSection(const KeyValues kv, char[] buffer, char[]
     FormatEx(error, PLATFORM_MAX_PATH, "\"maplist\" property contains invalid map name in match config KeyValues.");
     return false;
   }
+  EscapeKeyValueKeyRead(buffer, PLATFORM_MAX_PATH);
   return true;
 }
 
@@ -1360,6 +1362,7 @@ Action Command_CreateMatch(int client, int args) {
   kv.SetNum("clinch_series", 1);
 
   kv.JumpToKey("maplist", true);
+  EscapeKeyValueKeyWrite(matchMap, sizeof(matchMap));
   kv.SetString(matchMap, KEYVALUE_STRING_PLACEHOLDER);
   kv.GoBack();
 
@@ -1429,6 +1432,7 @@ Action Command_CreateScrim(int client, int args) {
   kv.SetString("matchid", matchid);
   kv.SetNum("scrim", 1);
   kv.JumpToKey("maplist", true);
+  EscapeKeyValueKeyWrite(matchMap, sizeof(matchMap));
   kv.SetString(matchMap, KEYVALUE_STRING_PLACEHOLDER);
   kv.GoBack();
 

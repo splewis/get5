@@ -669,13 +669,13 @@ static void ValidMatchConfigTest(const char[] matchConfig) {
   AssertStrEq("Spectator Team Name", g_TeamNames[Get5Team_Spec], "Spectator Team Name");
 
   AssertEq("Map List Length", g_MapsToPlay.Length, 3);
-  char mapName[32];
+  char mapName[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(0, mapName, sizeof(mapName));
   AssertStrEq("Map 1 Name", mapName, "de_dust2");
   g_MapsToPlay.GetString(1, mapName, sizeof(mapName));
   AssertStrEq("Map 2 Name", mapName, "de_mirage");
   g_MapsToPlay.GetString(2, mapName, sizeof(mapName));
-  AssertStrEq("Map 3 Name", mapName, "de_inferno");
+  AssertStrEq("Map 3 Name", mapName, "workshop/1193875520/de_aztec");
 
   AssertEq("Map sides length", g_MapSides.Length, 3);
   AssertEq("Sides 0", view_as<int>(g_MapSides.Get(0)), view_as<int>(SideChoice_KnifeRound));
@@ -752,6 +752,7 @@ static void ValidMatchConfigTest(const char[] matchConfig) {
     do {
       index++;
       AssertTrue("Read map name from backup", backup.GetSectionName(mapName, sizeof(mapName)));
+      EscapeKeyValueKeyRead(mapName, sizeof(mapName));
       if (index == 0) {
         AssertStrEq("Check map name 1 in backup", mapName, "de_dust2");
         AssertEq("Check map side 1 in backup", backup.GetNum(NULL_STRING), view_as<int>(SideChoice_KnifeRound));
@@ -759,7 +760,7 @@ static void ValidMatchConfigTest(const char[] matchConfig) {
         AssertStrEq("Check map name 2 in backup", mapName, "de_mirage");
         AssertEq("Check map side 2 in backup", backup.GetNum(NULL_STRING), view_as<int>(SideChoice_Team1T));
       } else if (index == 2) {
-        AssertStrEq("Check map name 3 in backup", mapName, "de_inferno");
+        AssertStrEq("Check map name 3 in backup", mapName, "workshop/1193875520/de_aztec");
         AssertEq("Check map side 3 in backup", backup.GetNum(NULL_STRING), view_as<int>(SideChoice_Team1CT));
       }
     } while (backup.GotoNextKey(false));

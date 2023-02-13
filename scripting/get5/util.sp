@@ -479,6 +479,17 @@ stock bool WritePlaceholderInsteadOfEmptyString(const KeyValues kv, char[] buffe
   return false;
 }
 
+// For some odd reason, KeyValues cannot write key names with forward slashes in them.
+// If one attempts this, it simply creates a new key for each slash, so we have to escape this in order
+// for workshop maps to work with backups.
+stock void EscapeKeyValueKeyRead(char[] buffer, const int bufferSize) {
+ ReplaceString(buffer, bufferSize, "__slash__", "/");
+}
+
+stock void EscapeKeyValueKeyWrite(char[] buffer, const int bufferSize) {
+  ReplaceString(buffer, bufferSize, "/", "__slash__");
+}
+
 stock Get5Team OtherMatchTeam(Get5Team team) {
   if (team == Get5Team_1) {
     return Get5Team_2;

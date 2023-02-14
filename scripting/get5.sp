@@ -275,6 +275,7 @@ char g_DemoFilePath[PLATFORM_MAX_PATH];  // full path to demo file being recorde
 char g_DemoFileName[PLATFORM_MAX_PATH];  // the file name of the demo file, including .dem extension
 bool g_MapChangePending = false;
 bool g_PendingSideSwap = false;
+bool g_DidDoLiveRestart = true;
 Handle g_PendingMapChangeTimer = INVALID_HANDLE;
 bool g_ClientPendingTeamCheck[MAXPLAYERS + 1];
 
@@ -1676,6 +1677,7 @@ void ResetMatchConfigVariables(bool backup = false) {
   g_MinSpectatorsToReady = 0;
   g_ReadyTimeWaitingUsed = 0;
   g_HasKnifeRoundStarted = false;
+  g_DidDoLiveRestart = true; // Always set to false before live restart, so we default to true.
   g_KnifeWinnerTeam = Get5Team_None;
   g_RoundStartedTime = 0.0;
   g_BombPlantedTime = 0.0;
@@ -1766,7 +1768,7 @@ static Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
 
   // We always want this to be correct, regardless of game state.
   g_RoundStartedTime = GetEngineTime();
-  if (g_GameState == Get5State_Live && !IsDoingRestoreOrMapChange()) {
+  if (g_GameState == Get5State_Live && !IsDoingRestoreOrMapChange() && g_DidDoLiveRestart) {
     Stats_RoundStart();
   }
 }
@@ -1798,7 +1800,7 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
 
   if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {
     // Get5_OnRoundStart() is fired from within the backup event when loading the valve backup.
-    return;
+    return Plugin_Continue;
   }
 
   // Update server hostname as it may contain team score variables.
@@ -1825,20 +1827,22 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
       ChangeState(Get5State_WaitingForKnifeRoundDecision);
       PromptForKnifeDecision();
       StartKnifeTimer();
-      return;
+      return Plugin_Continue;
     }
     if (g_GameState == Get5State_GoingLive) {
       LogDebug("Changed to live.");
       ChangeState(Get5State_Live);
+      g_DidDoLiveRestart = false;
       // We add an extra restart to clear lingering state from the knife round, such as the round
       // indicator in the middle of the scoreboard not being reset. This also tightly couples the
       // live-announcement to the actual live start.
       RestartGame();
       CreateTimer(3.0, Timer_MatchLive, _, TIMER_FLAG_NO_MAPCHANGE);
-      return;  // Next round start will take care of below, such as writing backup.
+      return Plugin_Continue;  // Next round start will take care of below, such as writing backup.
     }
   }
 
+  g_DidDoLiveRestart = true;
   WriteBackup();
 
   // Ensures that players who connect during halftime/team swap are placed in their correct slots as
@@ -1856,13 +1860,13 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   }
 
   if (g_GameState != Get5State_Live) {
-    return;
+    return Plugin_Continue;
   }
 
   if (g_PendingSurrenderTeam != Get5Team_None) {
     SurrenderMap(g_PendingSurrenderTeam);
     g_PendingSurrenderTeam = Get5Team_None;
-    return;
+    return Plugin_Continue;
   }
 
   Get5RoundStartedEvent startEvent = new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
@@ -1871,6 +1875,8 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   Call_PushCell(startEvent);
   Call_Finish();
   EventLogger_LogAndDeleteEvent(startEvent);
+
+  return Plugin_Continue;
 }
 
 static Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroadcast) {

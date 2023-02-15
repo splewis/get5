@@ -36,31 +36,32 @@ tracking down bugs based on that specific version.
    These have now been decoupled.
 4. [`get5_server_id`](https://splewis.github.io/get5/dev/configuration/#get5_server_id) is now a string instead of an
    integer, which changes a few things:
+
+   4.a. If you use the default MySQL extension for stats, you must run this command to make your `server_id` column accept a
+   string. If you don't run this, **and** you set a non-integer value as your `get5_server_id`, your server will error. If
+   you continue to use a regular integer for the cvar, it will still work without modifying your database
+   schema. `get5_server_id` also still defaults to `"0"` for backwards compatibility.
+   
+   ```mysql
+   ALTER TABLE `get5_stats_matches`
+       MODIFY COLUMN `server_id` VARCHAR(64) NOT NULL DEFAULT '0'
+   ```
+   
+   4.b. The native has changed from:
+   
+   ```c
+   native int Get5_GetServerID();
+   ```
+   
+   to this, accepting a buffer instead of returning an integer:
+   
+   ```c
+   native void Get5_GetServerID(char[] id, int length);
+   ```
+
 5. [`get5_surrender_required_votes`](https://splewis.github.io/get5/dev/configuration/#get5_surrender_required_votes) is
    now limited by the value provided to `players_per_team`, so you will not have a situation where you don't have enough
    players to successfully vote to surrender.
-
-a. If you use the default MySQL extension for stats, you must run this command to make your `server_id` column accept a
-string. If you don't run this, **and** you set a non-integer value as your `get5_server_id`, your server will error. If
-you continue to use a regular integer for the cvar, it will still work without modifying your database
-schema. `get5_server_id` also still defaults to `"0"` for backwards compatibility.
-
-```mysql
-ALTER TABLE `get5_stats_matches`
-    MODIFY COLUMN `server_id` VARCHAR(64) NOT NULL DEFAULT '0'
-```
-
-b. The native has changed from:
-
-```c
-native int Get5_GetServerID();
-```
-
-to this, accepting a buffer instead of returning an integer:
-
-```c
-native void Get5_GetServerID(char[] id, int length);
-```
 
 ## New Features / Changes
 

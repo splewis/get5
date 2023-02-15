@@ -273,7 +273,8 @@ to [surrender](../surrender-forfeit#surrender). This cannot be set lower than `1
 
 ####`get5_surrender_required_votes`
 :   The number of votes required to [surrender](../surrender-forfeit#surrender) as a team. If set to `1` or below, any
-attempt to surrender will immediately succeed.<br>**`Default: 3`**
+attempt to surrender will immediately succeed. This value is practically limited to the value
+of [`players_per_team`](../match_schema#schema).<br>**`Default: 3`**
 
 ####`get5_surrender_time_limit`
 :   The number of seconds a team has to vote to [surrender](../surrender-forfeit#surrender) after the first vote is

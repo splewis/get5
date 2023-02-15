@@ -483,7 +483,7 @@ stock bool WritePlaceholderInsteadOfEmptyString(const KeyValues kv, char[] buffe
 // If one attempts this, it simply creates a new key for each slash, so we have to escape this in order
 // for workshop maps to work with backups.
 stock void EscapeKeyValueKeyRead(char[] buffer, const int bufferSize) {
- ReplaceString(buffer, bufferSize, "__slash__", "/");
+  ReplaceString(buffer, bufferSize, "__slash__", "/");
 }
 
 stock void EscapeKeyValueKeyWrite(char[] buffer, const int bufferSize) {

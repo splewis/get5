@@ -51,11 +51,12 @@ Action Command_Surrender(int client, int args) {
     }
   }
 
+  int requiredVotes = GetRequiredSurrenderVotes();
+
   // Player has already voted for surrender.
   if (g_SurrenderedPlayers[client]) {
     LogDebug("Player client %d has already voted to surrender.", client);
-    Get5_MessageToTeam(team, "%t", "SurrenderVoteStatus", g_SurrenderVotes[team],
-                       g_VotesRequiredForSurrenderCvar.IntValue);
+    Get5_MessageToTeam(team, "%t", "SurrenderVoteStatus", g_SurrenderVotes[team], requiredVotes);
     return Plugin_Handled;
   }
 
@@ -64,23 +65,21 @@ Action Command_Surrender(int client, int args) {
 
   // On first surrender vote, start a timer
   if (g_SurrenderVotes[team] == 1) {
-    if (g_VotesRequiredForSurrenderCvar.IntValue > 1) {
+    if (requiredVotes > 1) {
       int surrenderTimeLimit = g_SurrenderVoteTimeLimitCvar.IntValue;
       if (surrenderTimeLimit < 10) {
         surrenderTimeLimit = 10;
       }
       char playerNameFormatted[MAX_NAME_LENGTH];
       FormatPlayerName(playerNameFormatted, sizeof(playerNameFormatted), client, team);
-      Get5_MessageToTeam(team, "%t", "SurrenderInitiated", playerNameFormatted,
-                         g_VotesRequiredForSurrenderCvar.IntValue, surrenderTimeLimit);
+      Get5_MessageToTeam(team, "%t", "SurrenderInitiated", playerNameFormatted, requiredVotes, surrenderTimeLimit);
       g_SurrenderTimers[team] = CreateTimer(float(surrenderTimeLimit), Timer_SurrenderFailed, team);
     }
   } else {
-    Get5_MessageToTeam(team, "%t", "SurrenderVoteStatus", g_SurrenderVotes[team],
-                       g_VotesRequiredForSurrenderCvar.IntValue);
+    Get5_MessageToTeam(team, "%t", "SurrenderVoteStatus", g_SurrenderVotes[team], requiredVotes);
   }
 
-  if (g_SurrenderVotes[team] >= g_VotesRequiredForSurrenderCvar.IntValue) {
+  if (g_SurrenderVotes[team] >= requiredVotes) {
     EndSurrenderTimers();
     Get5_MessageToAll("%t", "SurrenderSuccessful", g_FormattedTeamNames[team]);
     if (GetRoundsPlayed() != g_RoundNumber) {
@@ -274,4 +273,13 @@ int GetForfeitGracePeriod() {
     forfeitGracePeriod = 30;
   }
   return forfeitGracePeriod;
+}
+
+static int GetRequiredSurrenderVotes() {
+  int requiredVotes = g_VotesRequiredForSurrenderCvar.IntValue;
+  if (g_PlayersPerTeam < requiredVotes) {
+    // Don't exceed the number of players on a team.
+    requiredVotes = g_PlayersPerTeam;
+  }
+  return requiredVotes > 0 ? requiredVotes : 1;
 }

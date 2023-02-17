@@ -1,0 +1,503 @@
+"Phrases"
+{
+    "ReadyForMapSelectionInfoMessage"
+    {
+        "se"            "Skriv {1} när ditt lag är redo att välja kartor."
+    }
+    "WaitingForCastersReadyInfoMessage"
+    {
+        "se"            "Väntar på {1} att skriva {2} för att starta."
+    }
+    "ReadyToRestoreBackupInfoMessage"
+    {
+        "se"            "Skriv {1} när ni är redo att återskapa match backup."
+    }
+    "ReadyToKnifeInfoMessage"
+    {
+        "se"            "Skriv {1} när ni är redo att starta knivrunda."
+    }
+    "ReadyToStartInfoMessage"
+    {
+        "se"            "Skriv {1} när ni är redo att starta."
+    }
+    "YouAreReady"
+    {
+        "se"            "Ni har markerats som redo."
+    }
+    "YouAreReadyAuto"
+    {
+        "se"            "NOTERA: Ni har markerats som redo på grund av spelaktivitet."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "se"            "Skriv {1} om ni inte är redo."
+    }
+    "YouAreNotReady"
+    {
+        "se"            "Ni har markerats som EJ redo."
+    }
+    "WaitingForEnemySwapInfoMessage"
+    {
+        "se"            "{1} vann knivrundan. Väntar på att de ska skriva {2} eller {3}."
+    }
+    "WaitingForGOTVBroadcastEnding"
+    {
+        "se"            "Kartan kommer bytas när GOTV inspelningen är klar."
+    }
+    "WaitingForGOTVMapSelection"
+    {
+        "se"            "Kartan kommer bytas när GOTV inspelningen plockat upp valet utav kartor."
+    }
+    "NoMatchSetupInfoMessage"
+    {
+        "se"            "Det finns ingen match tillgänglig"
+    }
+    "YouAreNotAPlayerInfoMessage"
+    {
+        "se"            "Du är inte en spelare i denna match"
+    }
+    "TeamIsFullInfoMessage"
+    {
+        "se"            "Ditt lag är fullt"
+    }
+    "TeamForfeitInfoMessage"
+    {
+        "se"            "{1} misslyckades med att markera sig som redo och har förlorat."
+    }
+    "TeamMustBeReadyOrForfeit"
+    {
+        "se"            "{1} måste markeras som redo inom {2} eller så kommer de förlora matchen."
+    }
+    "TeamsMustBeReadyOrTie"
+    {
+        "se"            "Lagen måste markeras som redo inom {1} eller så kommer matchen bli oavgjord."
+    }
+    "MaxPausesUsedInfoMessage"
+    {
+        "se"            "{2} har använt alla sina taktiska pauser ({1})."
+    }
+    "MaxPausesTimeUsedInfoMessage"
+    {
+        "se"            "{2} har använt all sin taktiska paustid ({1})."
+    }
+    "MatchPausedByTeamMessage"
+    {
+        "se"            "{1} har begärd en taktisk paus."
+    }
+    "MatchTechPausedByTeamMessage"
+    {
+        "se"            "{1} har begärt en teknisk paus."
+    }
+    "PausesNotEnabled"
+    {
+        "se"            "Pauser är inte tillgängliga."
+    }
+    "TechPausesNotEnabled"
+    {
+        "se"            "Tekniska pauser är inte tillgängliga."
+    }
+    "TechnicalPauseMidSentence"
+    {
+        "se"            "teknisk paus"
+    }
+    "TacticalPauseMidSentence"
+    {
+        "se"            "taktisk paus"
+    }
+    "TimeRemainingBeforeAnyoneCanUnpausePrefix"
+    {
+        "se"            "Tid kvar innan någon kan unpausa:"
+    }
+    "PauseTimeRemainingPrefix"
+    {
+        "se"            "Återstående paustid"
+    }
+    "AwaitingUnpause"
+    {
+        "se"            "Väntar på unpause"
+    }
+    "PausedByAdministrator"
+    {
+        "se"            "En administratör has pausat matchen."
+    }
+    "PausedForBackup"
+    {
+        "se"            "Matchen har återskapats från en backup. Båda lag måste unpausa för att fortsätta."
+    }
+    "UserCannotUnpauseAdmin"
+    {
+        "se"            "Eftersom att en admin har pausat, måste också en admin unpausa."
+    }
+    "PausingTeamCannotUnpauseUntilFreezeTime"
+    {
+        "se"            "Du kan inte unpausa innan din paus börjat."
+    }
+    "PauseRequestCanceled"
+    {
+        "se"            "{1} har avbrytit som förfrågan om att pausa."
+    }
+    "PauseRunoutInfoMessage"
+    {
+        "se"            "{1} har ingen paustid kvar. Matchen har unpausats."
+    }
+    "TechPauseRunoutInfoMessage"
+    {
+        "se"            "Maxlängen av en teknisk paus är uppfylld. Vem som helst kan {1} nu."
+    }
+    "TechPauseNoTimeRemaining"
+    {
+        "se"            "{1} har ingen mer teknisk paustid. Vänligen använd taktisk paus."
+    }
+    "TechPauseNoPausesRemaining"
+    {
+        "se"            "{1} har inga fler tekniska pauser. Vänligen använd taktisk paus."
+    }
+    "TechPauseAutomaticallyStarted"
+    {
+        "se"            "En teknisk paus har automatiskt start för {1}."
+    }
+    "MatchUnpauseInfoMessage"
+    {
+        "se"            "{1} unpausade matchen."
+    }
+    "WaitingForUnpauseInfoMessage"
+    {
+        "se"            "{1} vill unpausa. Väntar på {2} att skriva {3}."
+    }
+    "PrereleaseVersionWarning"
+    {
+        "se"            "Du kör just nu en inofficiell version av Get5 ({1}) som enbart är till för utveckling och tester. Du kan stänga av detta meddelande genom {2}."
+    }
+    "NewVersionAvailable"
+    {
+        "se"            "En nyare version av Get5 finns tillgänglig. Vänligen besök {1} för att uppdatera."
+    }
+    "TeamFailToReadyMinPlayerCheck"
+    {
+        "se"            "Du nåste ha minst {1} spelare på servern för att markera er som redo."
+    }
+    "TeamIsReadyForMapSelection"
+    {
+        "se"            "{1} är redo för att välja kartor."
+    }
+    "TeamIsReadyToRestoreBackup"
+    {
+        "se"            "{1} är redo för att återskapa match backup."
+    }
+    "TeamIsReadyToKnife"
+    {
+        "se"            "{1} är redo för att starta knivrunda."
+    }
+    "TeamIsReadyToBegin"
+    {
+        "se"            "{1} är redo för att starta matchen."
+    }
+    "TeamIsNoLongerReady"
+    {
+        "se"            "{1} är inte längre redo."
+    }
+    "ForceReadyInfoMessage"
+    {
+        "se"            "Du kan skriva {1} för att tvångsmarkera ditt lag som redo."
+    }
+    "ForceReadyDisabled"
+    {
+        "se"            "Kommandot {1} är inaktiverat, men kan aktiveras genom {2}."
+    }
+    "TeammateForceReadied"
+    {
+        "se"            "Ditt lag tvångsmarkerades som redo av {1}."
+    }
+    "AdminForceReadyInfoMessage"
+    {
+        "se"            "En administratör har tvångsmarkerat alla lag som redo."
+    }
+    "AdminForceEndInfoMessage"
+    {
+        "se"            "En administratör har tvångsavslutat matchen."
+    }
+    "AdminForceEndWithWinnerInfoMessage"
+    {
+        "se"            "En administratör har tvångsavslutat matchen, och valt {1} som vinnare."
+    }
+    "AdminForcePauseInfoMessage"
+    {
+        "se"            "En administratör has pausat matchen."
+    }
+    "AdminForceUnPauseInfoMessage"
+    {
+        "se"            "En administratör har unpausat matchen."
+    }
+    "TeamWantsToReloadCurrentRound"
+    {
+        "se"            "{1} vill spela om denna runda, genom att återskapa backup. {2} måste bekräfta genom {3}."
+    }
+    "TeamWinningSeriesInfoMessage"
+    {
+        "se"            "{1} vinner just nu serien med {2}-{3}."
+    }
+    "SeriesTiedInfoMessage"
+    {
+        "se"            "Serien är just nu lika med {1}-{2}."
+    }
+    "NextSeriesMapInfoMessage"
+    {
+        "se"            "Nästa karta i serien är {1} och kommer börja om {2}."
+    }
+    "TeamWonMatchInfoMessage"
+    {
+        "se"            "{1} har vunnit matchen."
+    }
+    "TeamTiedMatchInfoMessage"
+    {
+        "se"            "{1} och {2} har spelat lika."
+    }
+    "TeamWonSeriesInfoMessage"
+    {
+        "se"            "{1} har vunnit serien med {2}-{3}."
+    }
+    "MatchFinishedInfoMessage"
+    {
+        "se"            "Matchen är avslutad"
+    }
+    "StopCommandNotEnabled"
+    {
+        "se"            "Kommandot stop är inte tillgängligt."
+    }
+    "StopCommandOnlyAfterRoundStart"
+    {
+        "se"            "Förfrågan om att spela om rundan kan inte skickas före rundan har börjat."
+    }
+    "StopCommandVotingReset"
+    {
+        "se"            "Förfrågan av {1}, gällande att spela om rundan avbröts i samband med att rundan blev klar."
+    }
+    "StopCommandRequiresNoDamage"
+    {
+        "se"            "Förfrågan om att starta om en runda kan inte göras efter att en spelare skadat en motståndare."
+    }
+    "StopCommandTimeLimitExceeded"
+    {
+        "se"            "Förfrågan om att starta om rundan måste ske inom {1} efter att rundan startat."
+    }
+    "BackupLoadedInfoMessage"
+    {
+        "se"            "Laddade backup {1}."
+    }
+    "MatchBeginInSecondsInfoMessage"
+    {
+        "se"            "Matchen kommer påbörjas inom {1} sekunder."
+    }
+    "MatchIsLiveInfoMessage"
+    {
+        "se"            "Matchen är {GREEN}LIVE"
+    }
+    "KnifeIn5SecInfoMessage"
+    {
+        "se"            "Knivrundan kommer starta inom 5 sekunder."
+    }
+    "KnifeInfoMessage"
+    {
+        "se"            "Kniv!"
+    }
+    "TeamDecidedToStayInfoMessage"
+    {
+        "se"            "{1} har valt att stanna."
+    }
+    "TeamDecidedToSwapInfoMessage"
+    {
+        "se"            "{1} har valt att byta sida."
+    }
+    "TeamLostTimeToDecideInfoMessage"
+    {
+        "se"            "{1} kommer stanna på sin sida eftersom att de aldrig gjorde ett val."
+    }
+    "ChangingMapInfoMessage"
+    {
+        "se"            "Ändrar karta till {1}..."
+    }
+    "MapDecidedInfoMessage"
+    {
+        "se"            "Följande kartor har valts:"
+    }
+    "MapIsInfoMessage"
+    {
+        "se"            "Karta {1}: {2}"
+    }
+    "TeamPickedMap"
+    {
+        "se"            "{1} valde {2} som karta {3}."
+    }
+    "TeamSelectedSide"
+    {
+        "se"            "{1} har valt att starta som {2} på {3}."
+    }
+    "TeamBannedMap"
+    {
+        "se"            "{1} bannade {2}."
+    }
+    "CaptainLeftDuringMapSelection"
+    {
+        "se"            "En kapten har lämnat under val av kartor. Val av kartor har pausats."
+    }
+    "ReadyToResumeMapSelection"
+    {
+        "se"            "Skriv {1} när du är redo att fortsätta val av kartor."
+    }
+    "MatchConfigLoadedInfoMessage"
+    {
+        "se"            "Laddade match konfiguration."
+    }
+    "ExitCoachSlotHelp"
+    {
+        "se"            "Skriv {1} för att lämna coach platsen."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "se"            "Skriv {1} för att bli coach för ditt lag."
+    }
+    "MoveToCoachInfoMessage"
+    {
+        "se"            "Du flyttades automatiskt till coach platsen eftersom att ditt lag är fullt."
+    }
+    "CannotLeaveCoachingTeamIsFull"
+    {
+        "se"            "Du kan inte lämna coach platsen under tiden ditt lag är fullt."
+    }
+    "CoachingNotEnabled"
+    {
+        "se"            "Coach är inte tillgängligt. Du måste sätta {1} till 1."
+    }
+    "PlayerIsCoachingTeam"
+    {
+        "se"            "{1} coachar {2}."
+    }
+    "CanOnlyCoachDuringWarmup"
+    {
+        "se"            "Du kan endast bli coach eller lämna coach platsen under uppvärmning."
+    }
+    "AllCoachSlotsFilledForTeam"
+    {
+        "se"            "Alla coach platser ({1}) är just nu upptagna i ditt lag."
+    }
+    "ReadyTag"
+    {
+        "se"            "[REDO]"
+    }
+    "NotReadyTag"
+    {
+        "se"            "[EJ REDO]"
+    }
+    "MapSelectionTeamChatOnly"
+    {
+        "se"        "Du kan endast skriva i lag chatten under val av kartor."
+    }
+    "MapSelectionInvalidMap"
+    {
+        "se"        "{1} är inte en giltig karta."
+    }
+    "MapSelectionPickMapHelp"
+    {
+        "se"        "Använd {1} <map> för att välja en karta."
+    }
+    "MapSelectionBanMapHelp"
+    {
+        "se"        "Använd {1} <map> för att banna en karta."
+    }
+    "MapSelectionPickSideHelp"
+    {
+        "se"        "Använd {1} eller {2} för att välja en sida."
+    }
+    "MapSelectionAnnounceCaptains"
+    {
+        "se"        "Kapten för {1}: {2}"
+    }
+    "MapSelectionBan"
+    {
+        "se"        "BANNA"
+    }
+    "MapSelectionPick"
+    {
+        "se"        "VÄLJA"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "se"        "{1} måste nu {2} en karta att spela som karta {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "se"        "{1} måste nu {2} en karta."
+    }
+    "MapSelectionPickSide"
+    {
+        "se"        "{1} måste nu välja en sida att spela på {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "se"        "Återstående kartor:"
+    }
+    "MapSelectionCountdown"
+    {
+        "se"        "Val att kartor börjar om {1}..."
+    }
+    "SurrenderCommandNotEnabled"
+    {
+        "se"        "Kommandot för att kapitulera är inte tillgängligt."
+    }
+    "SurrenderMinimumRoundDeficit"
+    {
+        "se"        "Ni måste ligga bakom med minst {1} rundor för att kunna kapitulera."
+    }
+    "SurrenderInitiated"
+    {
+        "se"        "En röstning för att kapitulera har skapats av {1}. Ditt lag måste nå {2} röster inom {3} sekunder."
+    }
+    "SurrenderVoteStatus"
+    {
+        "se"        "{1} av {2} röster för kapitulering har gjorts."
+    }
+    "SurrenderSuccessful"
+    {
+        "se"        "{1} har kapitulerat."
+    }
+    "SurrenderVoteFailed"
+    {
+        "se"        "Det var inte tillräckligt många spelare som röstade för att kapitulera."
+    }
+    "SurrenderOnCooldown"
+    {
+        "se"        "Du måste vänta {1} för att starta en ny röstning om kapitulation."
+    }
+    "WinByForfeitAvailable"
+    {
+        "se"        "{1} har lämnat servern. {2} kan nu skriva {3} för att starta en nedräkning till vinst, förutsatt att laget är fullt."
+    }
+    "WinByForfeitRequiresFullTeam"
+    {
+        "se"        "Du måste ha fullt lag för att förfråga eller avbryta vinst genom kapitulation."
+    }
+    "WinByForfeitAlreadyRequested"
+    {
+        "se"        "En förfrågan efter vinst för kapitulation är redan gjord."
+    }
+    "WinByForfeitCountdownStarted"
+    {
+        "se"        "{1} kommer vinna inom {2} om inte en spelare från {3} kommer tillbaka. Denna förfrågan kan avbrytas genom {4}."
+    }
+    "WinByForfeitCountdownCanceled"
+    {
+        "se"        "Förfrågan av {1} för att vinna genom kapitulation avbröts."
+    }
+    "TeamForfeited"
+    {
+        "se"        "{1} har kapitulerat serien."
+    }
+    "AllPlayersLeftTieCountdown"
+    {
+        "se"        "Båda lag har lämnat servern. Minst 1 spelare måste komma tillbaka inom {1} annars kommer serien markeras som oavgjord."
+    }
+    "TieCountdownCanceled"
+    {
+        "se"        "Nedräkningen till oavgjort match har avbröts, då båda lagen har kommit tillbaka."
+    }
+}

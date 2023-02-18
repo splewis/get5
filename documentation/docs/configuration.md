@@ -149,7 +149,9 @@ affect the availability of [`get5_forceready`](../commands#get5_forceready) to a
 
 ####`get5_time_to_start`
 :   Time (in seconds) teams have to ready up for knife/live before forfeiting the match. Set to zero for no limit. If
-neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
+neither team becomes ready in time, the series is ended in a tie.
+Note that the [time to ready for map selection](../configuration#get5_time_to_start_veto) is set separately to allow for
+shorter ready-up-periods in multi-map series.<br>**`Default: 0`**
 
 ####`get5_time_to_make_knife_decision`
 :   Time (in seconds) a team has to make a [`!stay`](../commands#stay) or [`!swap`](../commands#swap)
@@ -195,8 +197,8 @@ during [map selection](../veto).<br>**`Default: 1`**
 :   Whether to freeze players during the [map selection](../veto) phase.<br>**`Default: 1`**
 
 ####`get5_time_to_start_veto`
-:   Time (in seconds) teams have to ready up for vetoing before forfeiting the match. Set to zero for no limit. If
-neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
+:   Time (in seconds) teams have to ready up for [map selection](../veto) before forfeiting the match. Set to zero for
+no limit. If neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
 
 ####`get5_veto_countdown`
 :   Time (in seconds) to countdown before the [map selection](../veto) process commences. Set to zero to move to veto

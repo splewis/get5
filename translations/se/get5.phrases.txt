@@ -106,7 +106,7 @@
     }
     "TimeRemainingBeforeAnyoneCanUnpausePrefix"
     {
-        "se"            "Tid kvar innan någon kan unpausa:"
+        "se"            "Tid kvar innan någon kan unpausa"
     }
     "PauseTimeRemainingPrefix"
     {

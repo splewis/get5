@@ -55,6 +55,9 @@ details.
 5. [`get5_surrender_required_votes`](https://splewis.github.io/get5/latest/configuration/#get5_surrender_required_votes)
    is now limited by the value provided to `players_per_team`, so you will not have a situation where you don't have
    enough players to successfully vote to surrender.
+6. Pauses are not consumed until they actually start, which means they can be canceled if you `!unpause` before the
+   round ends. This behavior can be controlled
+   via [`get5_allow_pause_cancellation`](https://splewis.github.io/get5/latest/configuration/#get5_allow_pause_cancellation).
 
 ## New Features / Changes 🎉
 
@@ -66,29 +69,26 @@ details.
    a total pause time of 300
    via [`get5_max_pause_time`](https://splewis.github.io/get5/latest/configuration/#get5_max_pause_time). This changes
    nothing for existing servers and only affects new installations of Get5.
-3. Pauses are not consumed until they actually start, which means they can be canceled if you `!unpause` before the
-   round ends. This behavior can be controlled
-   via [`get5_allow_pause_cancellation`](https://splewis.github.io/get5/latest/configuration/#get5_allow_pause_cancellation).
-4. The in-game pause counters are now used for tactical timeouts, which makes them work properly with various GOTV
+3. The in-game pause counters are now used for tactical timeouts, which makes them work properly with various GOTV
    overlays.
-5. To bring pauses more in line with the built-in ones, the ability to unpause fixed-duration tactical pauses if both
+4. To bring pauses more in line with the built-in ones, the ability to unpause fixed-duration tactical pauses if both
    teams `!unpause` can now be disabled
    via [`get5_allow_unpausing_fixed_pauses`](https://splewis.github.io/get5/latest/configuration/#get5_allow_unpausing_fixed_pauses).
-6. There is a new [forward/event](https://splewis.github.io/get5/latest/events_and_forwards/)
+5. There is a new [forward/event](https://splewis.github.io/get5/latest/events_and_forwards/)
    called `Get5_OnPauseBegan`, which fires when a pause begins, unlike `Get5_OnMatchPaused`, which fires when pause is
    called by a player, even if it does not begin until the next round.
-7. If the map the server is on also happens to be the first map to be played after map selection, the server will not
+6. If the map the server is on also happens to be the first map to be played after map selection, the server will not
    reload and ask everyone to ready, but instead simply start the match.
-8. Get5 now speaks Greek, Turkish and Swedish. (Thanks @GekasD, AliOnIce and OmegaSkid, respectively).
-9. You can now add Workshop maps to the [`maplist`](https://splewis.github.io/get5/latest/match_schema/#schema). Please
+7. Get5 now speaks Greek, Turkish and Swedish. (Thanks @GekasD, AliOnIce and OmegaSkid, respectively).
+8. You can now add Workshop maps to the [`maplist`](https://splewis.github.io/get5/latest/match_schema/#schema). Please
    note that this *requires* a [Steam Web API key](https://steamcommunity.com/dev), or your match configuration will
    fail to load.
-10. Get5 now officially supports [Wingman](https://splewis.github.io/get5/latest/wingman). If you are upgrading a Get5
-    installation, remember to copy in the new wingman config file from `cfg/get5/live_wingman.cfg` if you want to run
-    Wingman matches.
-11. [`get5_pause_on_veto`](https://splewis.github.io/get5/latest/configuration/#get5_pause_on_veto) now defaults to
+9. Get5 now officially supports [Wingman](https://splewis.github.io/get5/latest/wingman). If you are upgrading a Get5
+   installation, remember to copy in the new wingman config file from `cfg/get5/live_wingman.cfg` if you want to run
+   Wingman matches.
+10. [`get5_pause_on_veto`](https://splewis.github.io/get5/latest/configuration/#get5_pause_on_veto) now defaults to
     enabled for new installations.
-12. You can now
+11. You can now
     set [`get5_kick_on_force_end 1`](https://splewis.github.io/get5/latest/configuration/#get5_kick_on_force_end)
     if you want [`get5_endmatch`](https://splewis.github.io/get5/latest/commands/#get5_endmatch) to adhere to the value
     of [`get5_kick_when_no_match_loaded`](https://splewis.github.io/get5/latest/configuration/#get5_kick_when_no_match_loaded).

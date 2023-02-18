@@ -240,8 +240,56 @@
     {
         "chi"            "[未准备]"
     }
+    "MapSelectionTeamChatOnly"
+    {
+        "chi"        "在地图选择期间，您只能在团队聊天中输入信息。"
+    }
+    "MapSelectionInvalidMap"
+    {
+        "chi"        "{1}不是有效的地图指令。"
+    }
+    "MapSelectionPickMapHelp"
+    {
+        "chi"        "使用{1} <地图>选择地图。"
+    }
+    "MapSelectionBanMapHelp"
+    {
+        "chi"        "使用{1} <地图>进行地图禁用。"
+    }
+    "MapSelectionPickSideHelp"
+    {
+        "chi"        "使用{1}或{2}进行选边。"
+    }
+    "MapSelectionAnnounceCaptains"
+    {
+        "chi"        "{1}队长：{2}"
+    }
+    "MapSelectionBan"
+    {
+        "chi"        "禁用"
+    }
+    "MapSelectionPick"
+    {
+        "chi"        "选"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "chi"        "{1}现在必须{2}一张地图作为第{3}张地图进行比赛。"
+    }
+    "MapSelectionTurnToBan"
+    {
+        "chi"        "{1}现在必须{2}一张地图作为禁用的地图。"
+    }
+    "MapSelectionPickSide"
+    {
+        "chi"        "{1}现在必须选择一方在{2}上进行比赛。"
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "chi"        "剩余地图："
+    }
     "MapSelectionCountdown"
     {
-        "chi"        "Veto(Ban图)还剩{1}秒。"
+        "chi"        "地图选择将在{1}秒后开始。"
     }
 }

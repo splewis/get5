@@ -31,11 +31,13 @@ also [point to other files](#config-files) by editing the main config file.
 cfg/get5/warmup.cfg # (1)
 cfg/get5/knife.cfg # (2)
 cfg/get5/live.cfg # (3)
+cfg/get5/live_wingman.cfg # (4)
 ```
 
 1. Executed when the warmup or map selection phase begins.
 2. Executed when the knife-round starts.
-3. Executed when the game goes live.
+3. Executed when the game goes live during competitive matches.
+4. Executed when the game goes live during wingman matches.
 
 !!! danger "Prohibited options"
 

@@ -10,92 +10,88 @@ details.
 
 # 0.13.0
 
-⚠️ PRERELEASE
-
-#### 2022-02-05
-
-Please note while these are compiled nightly builds, bugs may still exist in the software.
-When reporting an issue, please include the debug log by calling `get5_debuginfo` and attach
-the file located at `addons/sourcemod/logs/get5_debuginfo.txt`. This will help speed up the process of
-tracking down bugs based on that specific version.
+#### 2022-02-18
 
 ### Breaking Changes 🛠
 
-1. The [map selection](https://splewis.github.io/get5/dev/veto/) ("veto") system has been entirely reworked and can now
-   be customized. Please see the development [documentation](https://splewis.github.io/get5/dev/veto/) for details. It
-   is now also chat-based instead of using in-game menus. As the map selection system uses the `!ban` command, Get5 will
-   now unload the default `basebans.smx` SourceMod plugin to prevent conflicts, as this also uses the `!ban` command.
-   You are encouraged to instead simply remove this plugin from your server (delete it or move it to the `disabled`
-   folder).
+1. The [map selection](https://splewis.github.io/get5/latest/veto/) ("veto") system has been entirely reworked and can
+   now be customized. Please see the development [documentation](https://splewis.github.io/get5/latest/veto/) for
+   details. It is now also chat-based instead of using in-game menus. As the map selection system uses the `!ban`
+   command, Get5 will now unload the default `basebans.smx` SourceMod plugin to prevent conflicts, as this also uses
+   the `!ban` command. You are encouraged to instead simply remove this plugin from your server (delete it or move it to
+   the `disabled` folder).
 2. `Get5_OnMatchUnpaused`'s `team` property now always reflects the team that started the pause. Previously, this would
    be the team that triggered the unpause.
 3. Technical pauses can now be enabled without enabling tactical pauses. Previously, you would have to enable tactical
-   pauses via [`get5_pausing_enabled`](https://splewis.github.io/get5/dev/configuration/#get5_pausing_enabled) to have
-   access to technical pauses
-   via [`get5_allow_technical_pause`](https://splewis.github.io/get5/dev/configuration/#get5_allow_technical_pause).
+   pauses via [`get5_pausing_enabled`](https://splewis.github.io/get5/latest/configuration/#get5_pausing_enabled) to
+   have access to technical pauses
+   via [`get5_allow_technical_pause`](https://splewis.github.io/get5/latest/configuration/#get5_allow_technical_pause).
    These have now been decoupled.
-4. [`get5_server_id`](https://splewis.github.io/get5/dev/configuration/#get5_server_id) is now a string instead of an
+4. [`get5_server_id`](https://splewis.github.io/get5/latest/configuration/#get5_server_id) is now a string instead of an
    integer, which changes a few things:
 
-   4.a. If you use the default MySQL extension for stats, you must run this command to make your `server_id` column accept a
-   string. If you don't run this, **and** you set a non-integer value as your `get5_server_id`, your server will error. If
-   you continue to use a regular integer for the cvar, it will still work without modifying your database
+   4.a. If you use the default MySQL extension for stats, you must run this command to make your `server_id` column
+   accept a string. If you don't run this, **and** you set a non-integer value as your `get5_server_id`, your server
+   will error. If you continue to use a regular integer for the cvar, it will still work without modifying your database
    schema. `get5_server_id` also still defaults to `"0"` for backwards compatibility.
-   
+
    ```mysql
    ALTER TABLE `get5_stats_matches`
        MODIFY COLUMN `server_id` VARCHAR(64) NOT NULL DEFAULT '0'
    ```
-   
+
    4.b. The native has changed from:
-   
+
    ```c
    native int Get5_GetServerID();
    ```
-   
+
    to this, accepting a buffer instead of returning an integer:
-   
+
    ```c
    native void Get5_GetServerID(char[] id, int length);
    ```
 
-5. [`get5_surrender_required_votes`](https://splewis.github.io/get5/dev/configuration/#get5_surrender_required_votes) is
-   now limited by the value provided to `players_per_team`, so you will not have a situation where you don't have enough
-   players to successfully vote to surrender.
+5. [`get5_surrender_required_votes`](https://splewis.github.io/get5/latest/configuration/#get5_surrender_required_votes)
+   is now limited by the value provided to `players_per_team`, so you will not have a situation where you don't have
+   enough players to successfully vote to surrender.
 
-## New Features / Changes
+## New Features / Changes 🎉
 
 1. Admins can now use the
-   command [`get5_add_ready_time`](https://splewis.github.io/get5/dev/commands/#get5_add_ready_time) to add more time
+   command [`get5_add_ready_time`](https://splewis.github.io/get5/latest/commands/#get5_add_ready_time) to add more time
    during ready-up phases if a team needs more time.
 2. Tactical pauses now default to 60 seconds fixed-duration
-   via [`get5_fixed_pause_time`](https://splewis.github.io/get5/dev/configuration/#get5_fixed_pause_time) instead of a
-   total pause time of 300
-   via [`get5_max_pause_time`](https://splewis.github.io/get5/dev/configuration/#get5_max_pause_time). This changes
+   via [`get5_fixed_pause_time`](https://splewis.github.io/get5/latest/configuration/#get5_fixed_pause_time) instead of
+   a total pause time of 300
+   via [`get5_max_pause_time`](https://splewis.github.io/get5/latest/configuration/#get5_max_pause_time). This changes
    nothing for existing servers and only affects new installations of Get5.
 3. Pauses are not consumed until they actually start, which means they can be canceled if you `!unpause` before the
    round ends. This behavior can be controlled
-   via [`get5_allow_pause_cancellation`](https://splewis.github.io/get5/dev/configuration/#get5_allow_pause_cancellation).
+   via [`get5_allow_pause_cancellation`](https://splewis.github.io/get5/latest/configuration/#get5_allow_pause_cancellation).
 4. The in-game pause counters are now used for tactical timeouts, which makes them work properly with various GOTV
    overlays.
 5. To bring pauses more in line with the built-in ones, the ability to unpause fixed-duration tactical pauses if both
    teams `!unpause` can now be disabled
-   via [`get5_allow_unpausing_fixed_pauses`](https://splewis.github.io/get5/dev/configuration/#get5_allow_unpausing_fixed_pauses).
-6. There is a new [forward/event](https://splewis.github.io/get5/dev/events_and_forwards/) called `Get5_OnPauseBegan`,
-   which fires when a pause begins. The `Get5_OnMatchPaused` event fires when pause is called by a player, even if it
-   does not begin until the next round.
+   via [`get5_allow_unpausing_fixed_pauses`](https://splewis.github.io/get5/latest/configuration/#get5_allow_unpausing_fixed_pauses).
+6. There is a new [forward/event](https://splewis.github.io/get5/latest/events_and_forwards/)
+   called `Get5_OnPauseBegan`, which fires when a pause begins, unlike `Get5_OnMatchPaused`, which fires when pause is
+   called by a player, even if it does not begin until the next round.
 7. If the map the server is on also happens to be the first map to be played after map selection, the server will not
    reload and ask everyone to ready, but instead simply start the match.
-8. Get5 now speaks Greek and Turkish. (Thanks @GekasD and AliOnIce).
-9. You can now add Workshop maps to the [`maplist`](https://splewis.github.io/get5/dev/match_schema/#schema).
-10. Get5 now officially supports [Wingman](https://splewis.github.io/get5/dev/wingman). If you are upgrading a Get5
+8. Get5 now speaks Greek, Turkish and Swedish. (Thanks @GekasD, AliOnIce and OmegaSkid, respectively).
+9. You can now add Workshop maps to the [`maplist`](https://splewis.github.io/get5/latest/match_schema/#schema). Please
+   note that this *requires* a [Steam Web API key](https://steamcommunity.com/dev), or your match configuration will
+   fail to load.
+10. Get5 now officially supports [Wingman](https://splewis.github.io/get5/latest/wingman). If you are upgrading a Get5
     installation, remember to copy in the new wingman config file from `cfg/get5/live_wingman.cfg` if you want to run
     Wingman matches.
-11. [`get5_pause_on_veto`](https://splewis.github.io/get5/dev/configuration/#get5_pause_on_veto) now defaults to enabled
-    for new installations.
-12. You can now set [`get5_kick_on_force_end 1`](https://splewis.github.io/get5/dev/configuration/#get5_kick_on_force_end)
-    if you want [`get5_endmatch`](https://splewis.github.io/get5/dev/commands/#get5_endmatch) to adhere to the value
-    of [`get5_kick_when_no_match_loaded`](https://splewis.github.io/get5/dev/configuration/#get5_kick_when_no_match_loaded).
+11. [`get5_pause_on_veto`](https://splewis.github.io/get5/latest/configuration/#get5_pause_on_veto) now defaults to
+    enabled for new installations.
+12. You can now
+    set [`get5_kick_on_force_end 1`](https://splewis.github.io/get5/latest/configuration/#get5_kick_on_force_end)
+    if you want [`get5_endmatch`](https://splewis.github.io/get5/latest/commands/#get5_endmatch) to adhere to the value
+    of [`get5_kick_when_no_match_loaded`](https://splewis.github.io/get5/latest/configuration/#get5_kick_when_no_match_loaded).
 
 # 0.12.1
 

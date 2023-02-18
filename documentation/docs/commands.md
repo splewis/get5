@@ -194,7 +194,8 @@ should put all arguments inside quotation marks (`""`).
 
 ####`get5_endmatch [team1|team2]` {: #get5_endmatch }
 :   Force-ends the current match. The team argument will force the winner of the series and the current map to be set
-to that team. Omitting the team argument sets no winner (tie).
+to that team. Omitting the team argument sets no winner (tie). This command can be configured to
+also [kick players](../configuration#get5_kick_on_force_end).
 
 ####`get5_creatematch [map name] [matchid]` {: #get5_creatematch }
 :   Creates a BO1 match with the current players on the server. `map name` defaults to the current map and `matchid`

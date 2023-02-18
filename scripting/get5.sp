@@ -86,6 +86,7 @@ ConVar g_EventLogRemoteHeaderValueCvar;
 ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunityCvar;
 ConVar g_KickClientsWithNoMatchCvar;
+ConVar g_KickOnForceEndCvar;
 ConVar g_LiveCfgCvar;
 ConVar g_LiveWingmanCfgCvar;
 ConVar g_MuteAllChatDuringMapSelectionCvar;
@@ -476,6 +477,7 @@ public void OnPluginStart() {
   g_SetHostnameCvar                     = CreateConVar("get5_hostname_format", "Get5: {TEAM1} vs {TEAM2}", "The server hostname to use when a match is loaded. Set to \"\" to disable/use existing.");
   g_KickClientImmunityCvar              = CreateConVar("get5_kick_immunity", "1", "Whether admins with the 'changemap' flag will be immune to kicks from \"get5_kick_when_no_match_loaded\".");
   g_KickClientsWithNoMatchCvar          = CreateConVar("get5_kick_when_no_match_loaded", "0", "Whether the plugin kicks players when no match is loaded and when a match ends.");
+  g_KickOnForceEndCvar                  = CreateConVar("get5_kick_on_force_end", "0", "Whether players are kicked from the server when a match is forcefully ended. Requires get5_kick_when_no_match_loaded to be enabled also.");
   g_KnifeCfgCvar                        = CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to execute for the knife round.");
   g_LiveCfgCvar                         = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to execute when the game goes live.");
   g_LiveWingmanCfgCvar                  = CreateConVar("get5_live_wingman_cfg", "get5/live_wingman.cfg", "Config file to execute when the game goes live, but for wingman mode.");
@@ -1096,8 +1098,8 @@ static Action Command_EndMatch(int client, int args) {
 
   StopRecording(1.0);  // must go before EndSeries as it depends on g_MatchID.
 
-  // No delay required when not kicking players.
-  EndSeries(winningTeam, false, 0.0, false);
+  bool kick = g_KickOnForceEndCvar.BoolValue;
+  EndSeries(winningTeam, false, kick ? 5.0 : 0.0, kick);
 
   UpdateClanTags();
 
@@ -1585,7 +1587,6 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
   ChangeState(Get5State_None);
 
   if (restoreDelay < 0.1) {
-    // When force-ending the match there is no delay.
     ResetMatchCvarsAndHostnameAndKickPlayers(kickPlayers);
   } else {
     // If we restore cvars immediately, it might change the tv_ params or set the

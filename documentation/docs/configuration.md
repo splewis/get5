@@ -90,8 +90,12 @@ defines the [`{SERVERID}`](#tag-serverid) substitution and the return value of t
 [`get5_kick_when_no_match_loaded`](#get5_kick_when_no_match_loaded).<br>**`Default: 1`**
 
 ####`get5_kick_when_no_match_loaded`
-:   Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
-using [`get5_endmatch`](../commands#get5_endmatch).<br>**`Default: 0`**
+:   Whether to kick all clients and prevent anyone from joining the server if no match is loaded. This can
+be [suppressed for administrators](#get5_kick_immunity).<br>**`Default: 0`**
+
+####`get5_kick_on_force_end`
+:   Whether players are kicked from the server when a match is [forcefully ended](../commands#get5_endmatch). This only
+applies if players are [kicked when no match is loaded](#get5_kick_when_no_match_loaded).<br>**`Default: 0`**
 
 ####`get5_check_auths`
 :   Whether the Steam IDs from the `players`, `coaches` and `spectators` sections of

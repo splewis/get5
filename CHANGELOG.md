@@ -93,6 +93,9 @@ tracking down bugs based on that specific version.
     Wingman matches.
 11. [`get5_pause_on_veto`](https://splewis.github.io/get5/dev/configuration/#get5_pause_on_veto) now defaults to enabled
     for new installations.
+12. You can now set [`get5_kick_on_force_end 1`](https://splewis.github.io/get5/dev/configuration/#get5_kick_on_force_end)
+    if you want [`get5_endmatch`](https://splewis.github.io/get5/dev/commands/#get5_endmatch) to adhere to the value
+    of [`get5_kick_when_no_match_loaded`](https://splewis.github.io/get5/dev/configuration/#get5_kick_when_no_match_loaded).
 
 # 0.12.1
 

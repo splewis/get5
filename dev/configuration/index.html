@@ -1556,7 +1556,9 @@ affect the availability of <a href="../commands#get5_forceready"><code>get5_forc
 <h4 id="get5_time_to_start"><code>get5_time_to_start</code></h4>
 <dl>
 <dd>Time (in seconds) teams have to ready up for knife/live before forfeiting the match. Set to zero for no limit. If
-neither team becomes ready in time, the series is ended in a tie.<br/><strong><code>Default: 0</code></strong></dd>
+neither team becomes ready in time, the series is ended in a tie.
+Note that the <a href="../configuration#get5_time_to_start_veto">time to ready for map selection</a> is set separately to allow for
+shorter ready-up-periods in multi-map series.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_time_to_make_knife_decision"><code>get5_time_to_make_knife_decision</code></h4>
 <dl>
@@ -1612,8 +1614,8 @@ during <a href="../veto">map selection</a>.<br/><strong><code>Default: 1</code><
 </dl>
 <h4 id="get5_time_to_start_veto"><code>get5_time_to_start_veto</code></h4>
 <dl>
-<dd>Time (in seconds) teams have to ready up for vetoing before forfeiting the match. Set to zero for no limit. If
-neither team becomes ready in time, the series is ended in a tie.<br/><strong><code>Default: 0</code></strong></dd>
+<dd>Time (in seconds) teams have to ready up for <a href="../veto">map selection</a> before forfeiting the match. Set to zero for
+no limit. If neither team becomes ready in time, the series is ended in a tie.<br/><strong><code>Default: 0</code></strong></dd>
 </dl>
 <h4 id="get5_veto_countdown"><code>get5_veto_countdown</code></h4>
 <dl>

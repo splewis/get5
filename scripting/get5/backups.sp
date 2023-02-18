@@ -1,7 +1,7 @@
-#define TEMP_MATCHCONFIG_BACKUP_PATTERN "get5_match_config_backup%d.txt"
-#define TEMP_REMOTE_BACKUP_PATTERN      "get5_backup_remote%d.txt"
-#define TEMP_VALVE_BACKUP_PATTERN       "get5_temp_backup%d.txt"
-#define TEMP_VALVE_NAMES_FILE_PATTERN   "get5_names%d.txt"
+#define TEMP_MATCHCONFIG_BACKUP_PATTERN "get5_match_config_backup%s.txt"
+#define TEMP_REMOTE_BACKUP_PATTERN      "get5_backup_remote%s.txt"
+#define TEMP_VALVE_BACKUP_PATTERN       "get5_temp_backup%s.txt"
+#define TEMP_VALVE_NAMES_FILE_PATTERN   "get5_names%s.txt"
 
 Action Command_LoadBackupUrl(int client, int args) {
   if (!g_BackupSystemEnabledCvar.BoolValue) {
@@ -87,7 +87,9 @@ Action Command_ListBackups(int client, int args) {
   if (files != null) {
     char backupInfo[256];
     char pattern[PLATFORM_MAX_PATH];
-    FormatEx(pattern, sizeof(pattern), "get5_backup%d_match%s", Get5_GetServerID(), matchID);
+    char serverId[65];
+    g_ServerIdCvar.GetString(serverId, sizeof(serverId));
+    FormatEx(pattern, sizeof(pattern), "get5_backup%s_match%s", serverId, matchID);
 
     char filename[PLATFORM_MAX_PATH];
     while (files.GetNext(filename, sizeof(filename))) {
@@ -206,13 +208,15 @@ void WriteBackup() {
   char variableSubstitutes[][] = {"{MATCHID}"};
   CheckAndCreateFolderPath(g_RoundBackupPathCvar, variableSubstitutes, 1, folder, sizeof(folder));
 
+  char serverId[65];
+  g_ServerIdCvar.GetString(serverId, sizeof(serverId));
+
   char filename[PLATFORM_MAX_PATH];
   if (g_GameState == Get5State_Live) {
-    FormatEx(filename, sizeof(filename), "get5_backup%d_match%s_map%d_round%d.cfg", Get5_GetServerID(), g_MatchID,
-             g_MapNumber, g_RoundNumber);
+    FormatEx(filename, sizeof(filename), "get5_backup%s_match%s_map%d_round%d.cfg", serverId, g_MatchID, g_MapNumber,
+             g_RoundNumber);
   } else {
-    FormatEx(filename, sizeof(filename), "get5_backup%d_match%s_map%d_prelive.cfg", Get5_GetServerID(), g_MatchID,
-             g_MapNumber);
+    FormatEx(filename, sizeof(filename), "get5_backup%s_match%s_map%d_prelive.cfg", serverId, g_MatchID, g_MapNumber);
   }
 
   char path[PLATFORM_MAX_PATH];
@@ -266,6 +270,7 @@ static bool WriteBackupStructure(const char[] path) {
   kv.JumpToKey("maps", true);
   for (int i = 0; i < g_MapsToPlay.Length; i++) {
     g_MapsToPlay.GetString(i, mapName, sizeof(mapName));
+    EscapeKeyValueKeyWrite(mapName, sizeof(mapName));
     kv.SetNum(mapName, view_as<int>(g_MapSides.Get(i)));
   }
   kv.GoBack();
@@ -445,6 +450,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
       do {
         if (index == loadedMapNumber) {
           kv.GetSectionName(loadedMapName, sizeof(loadedMapName));
+          EscapeKeyValueKeyRead(loadedMapName, sizeof(loadedMapName));
           break;
         }
         index++;
@@ -454,7 +460,14 @@ bool RestoreFromBackup(const char[] path, char[] error) {
     kv.GoBack();
   }
 
-  bool backupIsForDifferentMap = !StrEqual(currentMap, loadedMapName, false);
+  // Determine the game mode of the match we're loading before we load it.
+  bool didLoadWingman = false;
+  if (kv.JumpToKey("Match")) {
+    didLoadWingman = kv.GetNum("wingman", 0) == 1;
+    kv.GoBack();
+  }
+  bool backupIsForDifferentMap =
+    !StrEqual(currentMap, loadedMapName, false) || IsMapReloadRequiredForGameMode(didLoadWingman);
   bool backupIsForDifferentMatch = g_GameState != Get5State_Live || g_MapNumber != loadedMapNumber ||
                                    backupIsForDifferentMap || !StrEqual(loadedMatchId, g_MatchID);
 
@@ -518,6 +531,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
     if (kv.GotoFirstSubKey(false)) {
       do {
         kv.GetSectionName(mapName, sizeof(mapName));
+        EscapeKeyValueKeyRead(mapName, sizeof(mapName));
         SideChoice sides = view_as<SideChoice>(kv.GetNum(NULL_STRING));
         g_MapsToPlay.PushString(mapName);
         g_MapSides.Push(sides);
@@ -568,6 +582,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
     // If a map is to be changed, we want to suppress all stats events immediately, as the
     // Get5_OnBackupRestore is called now and we don't want events firing after this until the game
     // is live again.
+    SetCorrectGameMode();
     ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
     ChangeMap(loadedMapName, 3.0);
   } else {
@@ -579,7 +594,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
       // We are restarting to the same map for prelive or loading from a none-live state; just go back into
       // warmup and let players ready-up again, either for a restore or for knife/live.
       // Ready status is reset when loading a match config.
-      UnpauseGame(Get5Team_None);
+      UnpauseGame();
       // If we load a valve backup in non-live, we have to go to ready-up, otherwise it's a prelive and we go to warmup.
       ChangeState(valveBackup ? Get5State_PendingRestore : Get5State_Warmup);
       ExecCfg(g_WarmupCfgCvar);
@@ -626,7 +641,7 @@ void RestoreGet5Backup(bool restartRecording) {
   if (!InWarmup()) {
     StartWarmup();
   }
-  ExecCfg(g_LiveCfgCvar);
+  ExecCfg(g_Wingman ? g_LiveWingmanCfgCvar : g_LiveCfgCvar);
   PauseGame(Get5Team_None, Get5PauseType_Backup);
   // We add a 2 second delay here to give the server time to
   // flush the current GOTV recording *if* one is running.

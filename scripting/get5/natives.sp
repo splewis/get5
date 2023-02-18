@@ -223,7 +223,10 @@ public int Native_SetMatchID(Handle plugin, int numParams) {
 }
 
 public int Native_GetServerID(Handle plugin, int numParams) {
-  return g_ServerIdCvar.IntValue;
+  char serverId[65];
+  g_ServerIdCvar.GetString(serverId, sizeof(serverId));
+  SetNativeString(1, serverId, GetNativeCell(2));
+  return 0;
 }
 
 public int Native_GetMapNumber(Handle plugin, int numParams) {

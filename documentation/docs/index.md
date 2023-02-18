@@ -13,7 +13,7 @@ Highlights of Get5 include:
 
 - [Locking players to their correct team and side by their Steam ID](./match_schema)
 - Automatically setting team names/logos/match text values for spectator/GOTV clients
-- [In-game map-veto](./veto) support from the match's list of maps
+- [In-game map-selection](./veto) support from the match's list of maps
 - Support for multi-map series (Bo1, Bo2, Bo3, Bo5, etc.)
 - Warmup and [`!ready`](./commands#ready)-system for each team
 - [Automatic GOTV demo recording](./gotv)

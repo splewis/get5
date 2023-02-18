@@ -33,6 +33,7 @@ jobs:
           echo "last_nightly=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_ENV
           echo "sha_short=${sha_short}" >> $GITHUB_ENV
           echo "get5_version=${get5_version}" >> $GITHUB_ENV
+          echo "get5_version_no_dots=${get5_version//./}" >> $GITHUB_ENV
           if [ ${{ github.ref }} == 'refs/heads/master' ]
           then
             echo "get5_build_filename=get5-v${get5_version}" >> $GITHUB_ENV
@@ -66,6 +67,7 @@ jobs:
           path: artifacts
     outputs:
       get5-version: ${{ env.get5_version }}
+      get5-version-no-dots: ${{ env.get5_version_no_dots }}
       sha-short: ${{ env.sha_short }}
       filename: ${{ env.get5_build_filename }}
 
@@ -98,10 +100,15 @@ jobs:
           tag: "v${{ needs.build.outputs.get5-version }}-${{ needs.build.outputs.sha-short }}"
           name: "Nightly ${{ needs.build.outputs.get5-version }}-${{ needs.build.outputs.sha-short }}"
           body: |
-            Please note while these are compiled nightly builds, bugs may still exist in the software.
-            When reporting an issue, please include the debug log by calling `get5_debuginfo` and attach
-            the file located at `addons/sourcemod/logs/get5_debuginfo.txt`. This will help speed up the process of
-            tracking down bugs based on that specific version.  
+            ### :warning: Prereleases are not considered stable!
+            
+            You should only use prerelease versions if you understand the implications or if you want to contribute to
+            testing and development. Prereleases are updated more frequently and only one prerelease is available for 
+            download at any time.
+            
+            Please see the [`CHANGELOG.md`](https://github.com/splewis/get5/blob/development/CHANGELOG.md#${{ needs.build.outputs.get5-version-no-dots }}) for details on changes.
+            
+            Commits included in this release:
             ${{ steps.changelog.outputs.changelog }}
 
   deploy-stable:
@@ -133,4 +140,7 @@ jobs:
           tag: "v${{ needs.build.outputs.get5-version }}"
           name: "Version ${{ needs.build.outputs.get5-version }}"
           body: |
+            Please see the [`CHANGELOG.md`](https://github.com/splewis/get5/blob/master/CHANGELOG.md#${{ needs.build.outputs.get5-version-no-dots }}) for changes.
+            
+            Commits included in this release:
             ${{ steps.changelog.outputs.changelog }}

@@ -1,8 +1,8 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
-        "pt"            "Digite {1} quando seu time estiver pronto para o veto."
+        "pt"            "Digite {1} quando seu time estiver pronto para a seleção de mapas."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -40,13 +40,13 @@
     {
         "pt"            "{1} venceu o Round Faca. Esperando pelo time vencedor digitar {2} ou {3}."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
         "pt"            "O mapa vai mudar assim que o transmissão do GOTV acabar."
     }
-    "WaitingForGOTVVetoInfoMessage"
+    "WaitingForGOTVMapSelection"
     {
-        "pt"            "O mapa mudará assim que a transmissão da GOTV exibir os vetos do mapa."
+        "pt"            "O mapa mudará assim que a GOTV transmitir a seleção do mapa."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -146,7 +146,7 @@
     }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {
-        "pt"            "Você não pode despausar antes de sua pausa começar. Solicitações de pausa não podem ser canceladas."
+        "pt"            "Você não pode despausar antes de sua pausa começar."
     }
     "PauseRunoutInfoMessage"
     {
@@ -164,10 +164,6 @@
     {
         "pt"            "{1} não tem mais pausas técnicas. Por favor, use pausas táticas."
     }
-    "TechPausePausesRemaining"
-    {
-        "pt"            "Pausas técnicas restando para {1}: {2}"
-    }
     "MatchUnpauseInfoMessage"
     {
         "pt"            "{1} resumiu a partida."
@@ -176,31 +172,27 @@
     {
         "pt"            "{1} quer resumir a partida, mas esperando por {2} digitar {3}."
     }
-    "PausesLeftInfoMessage"
-    {
-        "pt"            "{1} tem {2} pausas sobrando."
-    }
     "TeamFailToReadyMinPlayerCheck"
     {
         "pt"            "Você precisa ter pelo menos {1} jogadores conectados no servidor para ficar pronto."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
-        "pt"            "{1} está pronto para o veto."
+        "pt"            "{1} está pronto para a seleção de mapa."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "pt"            "{1} está pronto para restaurar o backup da partida."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "pt"            "{1} está pronto para jogar o Round Faca."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "pt"            "{1} está pronto para começar a partida."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "pt"            "{1} deixou de estar pronto."
     }
@@ -312,25 +304,25 @@
     {
         "pt"            "Mapa {1}: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "pt"            "{1} escolheu {2} como mapa {3}."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "pt"            "{1} escolheu começar no lado {2} em {3}."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
-        "pt"            "{1} vetou {2}."
+        "pt"            "{1} baniu {2}."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
-        "pt"            "Um capitão deixou a partida durante o veto, pausando o veto."
+        "pt"            "A seleção de mapas foi pausada porque um capitão de time saiu."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
-        "pt"            "Digite {1} quando você estiver pronto para resumir o veto."
+        "pt"            "Digite {1} quando você estiver pronto para retomar a seleção de mapas."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -376,41 +368,57 @@
     {
         "pt"            "[NOT READY]"
     }
-    "MapVetoPickMenuText"
+    "MapSelectionTeamChatOnly"
     {
-        "pt"        "Selecione um mapa para JOGAR:"
+        "pt"        "Você só pode digitar no chat do time durante a seleção de mapas."
     }
-    "MapVetoPickConfirmMenuText"
+    "MapSelectionInvalidMap"
     {
-        "pt"        "Confirme que você quer JOGAR {1}:"
+        "pt"        "{1} não é um mapa válido."
     }
-    "MapVetoBanMenuText"
+    "MapSelectionPickMapHelp"
     {
-        "pt"        "Selecione um mapa para VETAR:"
+        "pt"        "Use {1} <mapa> para escolher um mapa."
     }
-    "MapVetoBanConfirmMenuText"
+    "MapSelectionBanMapHelp"
     {
-        "pt"        "Confirme que você quer VETAR {1}:"
+        "pt"        "Use {1} <mapa> para banir um mapa."
     }
-    "MapVetoSidePickMenuText"
+    "MapSelectionPickSideHelp"
     {
-        "pt"        "Selecione um lado para {1}:"
+        "pt"        "Use {1} ou {2} para escolher um lado."
     }
-    "MapVetoSidePickConfirmMenuText"
+    "MapSelectionAnnounceCaptains"
     {
-        "pt"        "Confirme que você quer começar de {1}:"
+        "pt"        "Capitão do time {1}: {2}"
     }
-    "ConfirmPositiveOptionText"
+    "MapSelectionBan"
     {
-        "pt"        "Sim"
+        "pt"        "BANIR"
     }
-    "ConfirmNegativeOptionText"
+    "MapSelectionPick"
     {
-        "pt"        "Não"
+        "pt"        "ESCOLHER"
     }
-    "VetoCountdown"
+    "MapSelectionTurnToPick"
     {
-        "pt"        "Veto começando em {1} segundos."
+        "pt"        "{1} agora precisa {2} um mapa para jogar como mapa {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "pt"        "{1} agora precisa {2} um mapa."
+    }
+    "MapSelectionPickSide"
+    {
+        "pt"        "{1} agora precisa escolher um lado para jogar em {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "pt"        "Mapas restantes:"
+    }
+    "MapSelectionCountdown"
+    {
+        "pt"        "Seleção de mapas começando em {1}..."
     }
     "SurrenderCommandNotEnabled"
     {

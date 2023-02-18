@@ -1,0 +1,503 @@
+"Phrases"
+{
+    "ReadyForMapSelectionInfoMessage"
+    {
+        "el"            "Γράψε {1} όταν η ομάδα σου είναι για την επιλογή Map."
+    }
+    "WaitingForCastersReadyInfoMessage"
+    {
+        "el"            "Σε αναμονή για {1} να γράψει {2} για να ξεκινήσουμε."
+    }
+    "ReadyToRestoreBackupInfoMessage"
+    {
+        "el"            "Γράψε {1} όταν είσαι έτοιμος να επαναφέρεις το backup του match."
+    }
+    "ReadyToKnifeInfoMessage"
+    {
+        "el"            "Γράψε {1} όταν είσαι έτοιμος να παίξεις το knife round."
+    }
+    "ReadyToStartInfoMessage"
+    {
+        "el"            "Γράψε {1} όταν είσαι έτοιμος να ξεκινήσεις."
+    }
+    "YouAreReady"
+    {
+        "el"            "Έχεις σημειωθεί ως έτοιμος."
+    }
+    "YouAreReadyAuto"
+    {
+        "el"            "ΣΗΜΕΙΩΣΗ: Έχεις σημειωθεί ως έτοιμος λόγω της δραστηριότητας σου."
+    }
+    "TypeUnreadyIfNotReady"
+    {
+        "el"            "Γράψε {1} εάν δεν είσαι έτοιμος."
+    }
+    "YouAreNotReady"
+    {
+        "el"            "Έχεις σημειωθεί ως ανέτοιμος."
+    }
+    "WaitingForEnemySwapInfoMessage"
+    {
+        "el"            "{1} Νίκησε το knife round. Περιμένουμε να γράψουν {2} η {3}."
+    }
+    "WaitingForGOTVBroadcastEnding"
+    {
+        "el"            "Το map θα αλλάξει όταν το GOTV τελειώσει την μετάδοση."
+    }
+    "WaitingForGOTVMapSelection"
+    {
+        "el"            "Το map θα αλλάξει όταν το GOTV έχει μεταδώσει την επιλογή του map."
+    }
+    "NoMatchSetupInfoMessage"
+    {
+        "el"            "Δεν οργανώθηκε κάποιο match"
+    }
+    "YouAreNotAPlayerInfoMessage"
+    {
+        "el"            "Δεν είσαι μέλος αυτού του match"
+    }
+    "TeamIsFullInfoMessage"
+    {
+        "el"            "H ομάδα σου είναι γεμάτη"
+    }
+    "TeamForfeitInfoMessage"
+    {
+        "el"            "{1} Απέτυχε να ετοιμαστεί στην ώρα της και έχασε."
+    }
+    "TeamMustBeReadyOrForfeit"
+    {
+        "el"            "{1} πρέπει να ετοιμαστούν σε {2} αλλιώς θα παραδώσουν το match."
+    }
+    "TeamsMustBeReadyOrTie"
+    {
+        "el"            "Οι ομάδες πρέπει να ετοιμαστούν σε {1} αλλιώς το match θα λήξει σε ισοπαλία."
+    }
+    "MaxPausesUsedInfoMessage"
+    {
+        "el"            "{2} Χρησιμοποίησαν όλες τους τις τακτικές παύσεις ({1})."
+    }
+    "MaxPausesTimeUsedInfoMessage"
+    {
+        "el"            "{2} Χρησιμοποίησαν όλη την ώρα τακτικής παύσης τους ({1})."
+    }
+    "MatchPausedByTeamMessage"
+    {
+        "el"            "{1} κάλεσαν τακτική παύση."
+    }
+    "MatchTechPausedByTeamMessage"
+    {
+        "el"            "{1} κάλεσαν τεχνική παύση."
+    }
+    "PausesNotEnabled"
+    {
+        "el"            "Οι παύσεις είναι απενεργοποιημένες."
+    }
+    "TechPausesNotEnabled"
+    {
+        "el"            "Οι τεχνικές παύσεις είναι απενεργοποιημένες."
+    }
+    "TechnicalPauseMidSentence"
+    {
+        "el"            "τεχνική παύση"
+    }
+    "TacticalPauseMidSentence"
+    {
+        "el"            "τακτική παύση"
+    }
+    "TimeRemainingBeforeAnyoneCanUnpausePrefix"
+    {
+        "el"            "Χρόνος που απομένει πριν μπορεί οποιοσδήποτε να σταματήσει την παύση"
+    }
+    "PauseTimeRemainingPrefix"
+    {
+        "el"            "Χρόνος παύσης που απομένει"
+    }
+    "AwaitingUnpause"
+    {
+        "el"            "Αναμονή κατάργησης παύσης."
+    }
+    "PausedByAdministrator"
+    {
+        "el"            "Ένας διαχειριστής έχει βάλει το match σε παύση."
+    }
+    "PausedForBackup"
+    {
+        "el"            "Το match έχει επαναφερθεί απο backup. Και οι 2 ομάδες πρέπει να σταματήσουν την παύση για να συνεχίσουμε."
+    }
+    "UserCannotUnpauseAdmin"
+    {
+        "el"            "Μόνο ένας διαχειριστής μπορεί να σταματήσει αυτή την παύση, γιατί έχει γίνει απο διαχειριστή."
+    }
+    "PauseRequestCanceled"
+    {
+        "el"            "{1} ακύρωσε την αίτηση παύσης του."
+    }
+    "PausingTeamCannotUnpauseUntilFreezeTime"
+    {
+        "el"            "Δεν μπορείς να διακόψεις την παύση πριν ξεκινήσει η παύση σου."
+    }
+    "PauseRunoutInfoMessage"
+    {
+        "el"            "{1} έχει ξεμείνει απο χρόνο παύσης. Συνεχίσουμε το match."
+    }
+    "TechPauseRunoutInfoMessage"
+    {
+        "el"            "Ο μέγιστος χρόνος τεχνικής παύσης έχει επιτευχθεί. Οποιοσδήποτε μπορεί να κάνει {1} τώρα."
+    }
+    "TechPauseNoTimeRemaining"
+    {
+        "el"            "{1} Δεν έχει άλλο χρόνο τεχνικής παύσης. Παρακαλώ χρησιμοποιήστε τακτικές παύσεις."
+    }
+    "TechPauseNoPausesRemaining"
+    {
+        "el"            "{1} Δεν έχει άλλες τεχνικές παύσεις. Παρακαλώ χρησιμοποιήστε τακτικές παύσεις."
+    }
+    "TechPauseAutomaticallyStarted"
+    {
+        "el"            "Μία τεχνική παύση ξεκίνησε αυτόματα για την {1}."
+    }
+    "MatchUnpauseInfoMessage"
+    {
+        "el"            "{1} ξανά ξεκίνησε το match."
+    }
+    "WaitingForUnpauseInfoMessage"
+    {
+        "el"            "{1} θέλει να τελειώσει την παύση, περιμένουμε για την {2} να γράψει {3}."
+    }
+    "PrereleaseVersionWarning"
+    {
+        "el"            "Τρέχεις μια ανεπίσημη έκδοση του Get5 ({1}) που προορίζεται μόνο για ελέγχους και ανάπτυξη του κώδικα. Αυτό το μήνυμα μπορεί να απενεργοποιηθεί με {2}."
+    }
+    "NewVersionAvailable"
+    {
+        "el"            "Υπάρχει μια νεότερη έκδοση του Get5. Παρακαλώ επισκεφθείτε στο {1} για να την κατεβάσετε."
+    }
+    "TeamFailToReadyMinPlayerCheck"
+    {
+        "el"            "Πρέπει να έχετε τουλάχιστον {1} παίκτη/ες στον server για να γίνετε έτοιμοι."
+    }
+    "TeamIsReadyForMapSelection"
+    {
+        "el"            "{1} είναι έτοιμη να διαλέξει map."
+    }
+    "TeamIsReadyToRestoreBackup"
+    {
+        "el"            "{1} είναι έτοιμη για την επαναφορά το backup."
+    }
+    "TeamIsReadyToKnife"
+    {
+        "el"            "{1} είναι έτοιμη να παίξει το knife round."
+    }
+    "TeamIsReadyToBegin"
+    {
+        "el"            "{1} είναι έτοιμη να ξεκινήσει το match."
+    }
+    "TeamIsNoLongerReady"
+    {
+        "el"            "{1} δεν είναι πλέον έτοιμη."
+    }
+    "ForceReadyInfoMessage"
+    {
+        "el"            "Μπορείς να γράψει {1} για να αναγκάσεις την ομάδα σου να γίνει	έτυμη."
+    }
+    "ForceReadyDisabled"
+    {
+        "el"            "Η εντολή {1} είναι απενεργοποιημένη, αλλά μπορεί να ενεργοποιηθεί με {2}."
+    }
+    "TeammateForceReadied"
+    {
+        "el"            "Η ομάδα σου έχει αναγκαστεί να γίνει έτυμη απο τον {1}."
+    }
+    "AdminForceReadyInfoMessage"
+    {
+        "el"            "Ένας διαχειριστής έχει αναγκάσει τις ομάδες να γίνουν έτοιμες."
+    }
+    "AdminForceEndInfoMessage"
+    {
+        "el"            "Το match τερματίστηκε απο έναν διαχειριστή."
+    }
+    "AdminForcePauseInfoMessage"
+    {
+        "el"            "Ένας διαχειριστής έβαλε το match σε αναμονή."
+    }
+    "AdminForceEndWithWinnerInfoMessage"
+    {
+        "el"            "Το match τερματίστηκε απο έναν διαχειριστή, ορίζοντας τους {1} ως του νικητές."
+    }
+    "AdminForceUnPauseInfoMessage"
+    {
+        "el"            "Ένας διαχειριστής έβγαλε την αναμονή του match."
+    }
+    "TeamWantsToReloadCurrentRound"
+    {
+        "el"            "{1} θέλει να ξανά επαναφέρει το παιχνίδι στην αρχή του τρέχον γύρου. {2} πρέπει να επιβεβαιώσει με {3}."
+    }
+    "TeamWinningSeriesInfoMessage"
+    {
+        "el"            "{1} νικάει την σειρά {2}-{3}."
+    }
+    "SeriesTiedInfoMessage"
+    {
+        "el"            "Η σειρά είναι ισοπαλία στα {1}-{2}."
+    }
+    "NextSeriesMapInfoMessage"
+    {
+        "el"            "Το επόμενο map στην σειρά είναι {1} και θα ξεκινήσει σε {2}."
+    }
+    "TeamWonMatchInfoMessage"
+    {
+        "el"            "{1} έχει νικήσει το match."
+    }
+    "TeamTiedMatchInfoMessage"
+    {
+        "el"            "{1} και {2} έχουν κάνει ισοπαλία."
+    }
+    "TeamWonSeriesInfoMessage"
+    {
+        "el"            "{1} νίκησε την σειρά {2}-{3}."
+    }
+    "MatchFinishedInfoMessage"
+    {
+        "el"            "Το match έχει τελειώσει"
+    }
+    "StopCommandNotEnabled"
+    {
+        "el"            "Η εντολή stop δεν είναι ενεργοποιημένη."
+    }
+    "StopCommandOnlyAfterRoundStart"
+    {
+        "el"            "Αίτηση επανεκκίνησης του γύρου δεν μπορεί να δοθεί πριν ξεκινήσει ο γύρος."
+    }
+    "StopCommandVotingReset"
+    {
+        "el"            "Το αίτημα από τον {1} για να σταματήσει το παιχνίδια έχει ακυρωθεί εφόσον ο γύρος έχει τελειώσει."
+    }
+    "StopCommandRequiresNoDamage"
+    {
+        "el"            "Ένα αίτημα για επανεκκίνηση του γύρου δεν μπορεί να δοθεί εφόσον ένας παίκτης έχει κάνει ζημιά σε αντίπαλο παίκτη."
+    }
+    "StopCommandTimeLimitExceeded"
+    {
+        "el"            "Μια αίτηση για να γίνει επανεκκίνηση του γύρου πρέπει να δοθεί ανάμεσα σε {1} μετά του ξεκίνημα του γύρου."
+    }
+    "BackupLoadedInfoMessage"
+    {
+        "el"            "Επιτυχώς φόρτισε το backup {1}."
+    }
+    "MatchBeginInSecondsInfoMessage"
+    {
+        "el"            "Το match θα ξεκινήσει σε {1} δευτερόλεπτο/α."
+    }
+    "MatchIsLiveInfoMessage"
+    {
+        "el"            "Το match είναι {GREEN}LIVE"
+    }
+    "KnifeIn5SecInfoMessage"
+    {
+        "el"            "Το knife round θα ξεκινήσει σε 5 δευτερόλεπτα."
+    }
+    "KnifeInfoMessage"
+    {
+        "el"            "Knife!"
+    }
+    "TeamDecidedToStayInfoMessage"
+    {
+        "el"            "{1} αποφάσισαν να μείνουν στην ίδια μεριά."
+    }
+    "TeamDecidedToSwapInfoMessage"
+    {
+        "el"            "{1} αποφάσισαν να αλλάξουν μεριά."
+    }
+    "TeamLostTimeToDecideInfoMessage"
+    {
+        "el"            "{1} Θα μείνει επειδή δεν πήραν απόφαση στο χρόνο που έπρεπε."
+    }
+    "ChangingMapInfoMessage"
+    {
+        "el"            "Αλλάζοντας σε map {1}..."
+    }
+    "MapDecidedInfoMessage"
+    {
+        "el"            "Τα maps έχουν αποφασιστεί:"
+    }
+    "MapIsInfoMessage"
+    {
+        "el"            "Map {1}: {2}"
+    }
+    "TeamPickedMap"
+    {
+        "el"            "{1} έχει επιλέξει {2} ως το map {3}."
+    }
+    "TeamSelectedSide"
+    {
+        "el"            "{1} έχει επιλέξει να ξεκινήσει ως {2} στο {3}."
+    }
+    "TeamBannedMap"
+    {
+        "el"            "{1} έκανε ban το {2}."
+    }
+    "CaptainLeftDuringMapSelection"
+    {
+        "el"            "Ένας αρχηγός της ομάδας έφυγε κατά την διάρκεια της επιλογής του map. Η επιλογή του map είναι σε παύση."
+    }
+    "ReadyToResumeMapSelection"
+    {
+        "el"            "Γράψε {1} όταν είσαι έτοιμος να επιστρέψεις στην επιλογή του map."
+    }
+    "MatchConfigLoadedInfoMessage"
+    {
+        "el"            "Φορτώθηκαν οι ρυθμίσεις του match."
+    }
+    "ExitCoachSlotHelp"
+    {
+        "el"            "Πάτα {1} για να βγεις απο την θέση του προπονητή."
+    }
+    "EnterCoachSlotHelp"
+    {
+        "el"            "Πάτα {1} για να γίνεις προπονητής για την ομάδα σου."
+    }
+    "MoveToCoachInfoMessage"
+    {
+        "el"            "Μεταφέρθηκες στην θέση του προπονητή εφόσον η ομάδα σου είναι γεμάτη."
+    }
+    "CannotLeaveCoachingTeamIsFull"
+    {
+        "el"            "Δεν μπορείς να φύγεις την θέση του προπονητή εφόσον η ομάδα σου είναι γεμάτη."
+    }
+    "CoachingNotEnabled"
+    {
+        "el"            "Ο προπονητής δεν είναι ενεργοποιημένος. Πρέπει να βάλεις το {1} στο 1."
+    }
+    "PlayerIsCoachingTeam"
+    {
+        "el"            "{1} προπονεί την {2}."
+    }
+    "CanOnlyCoachDuringWarmup"
+    {
+        "el"            "Μπορείς να αλλάξεις σε ή από προπονητή μόνο κατά την διάρκεια της προπόνησης."
+    }
+    "AllCoachSlotsFilledForTeam"
+    {
+        "el"            "Όλες οι θέσεις για προπονητή ({1}) είναι είδη γεμάτες για την ομάδα σου."
+    }
+    "ReadyTag"
+    {
+        "el"            "[ΕΤΟΙΜΟΣ/Η]"
+    }
+    "NotReadyTag"
+    {
+        "el"            "[ΑΝΕΤΟΙΜΟΣ/Η]"
+    }
+    "MapSelectionTeamChatOnly"
+    {
+        "el"        "Μπορείς να γράψεις μόνο στο chat της ομάδας σου κατά την επιλογή map."
+    }
+    "MapSelectionInvalidMap"
+    {
+        "el"        "{1} δεν είναι έγκυρο map."
+    }
+    "MapSelectionPickMapHelp"
+    {
+        "el"        "Χρησιμοποιήστε {1} <map> για να διαλέξετε ένα map."
+    }
+    "MapSelectionBanMapHelp"
+    {
+        "el"        "Χρησιμοποιήστε {1} <map> για να κάνετε ban ένα map."
+    }
+    "MapSelectionPickSideHelp"
+    {
+        "el"        "Χρησιμοποιήστε {1} η {2} για να διαλέξετε πλευρά."
+    }
+    "MapSelectionAnnounceCaptains"
+    {
+        "el"        "Αρχηγός για {1}: {2}"
+    }
+    "MapSelectionBan"
+    {
+        "el"        "BAN"
+    }
+    "MapSelectionPick"
+    {
+        "el"        "PICK"
+    }
+    "MapSelectionTurnToPick"
+    {
+        "el"        "{1} πρέπει τώρα να {2}-άρει ένα map ως το map {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "el"        "{1} πρέπει τώρα να κάνει {2} ένα map."
+    }
+    "MapSelectionPickSide"
+    {
+        "el"        "{1} πρέπει τώρα να διαλέξει σε ποία μεριά θα ξεκινήσει {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "el"        "Παραμένων maps:"
+    }
+    "MapSelectionCountdown"
+    {
+        "el"        "Η επιλογή για map αρχίζει σε {1}..."
+    }
+    "SurrenderCommandNotEnabled"
+    {
+        "el"        "Η εντολή της παράδοσης δεν είναι ενεργοποιημένη."
+    }
+    "SurrenderMinimumRoundDeficit"
+    {
+        "el"        "Πρέπει να είστε πίσω τουλάχιστον {1} γύρο/ους για παραδοθείτε."
+    }
+    "SurrenderInitiated"
+    {
+        "el"        "Η ψηφοφορία για παράδοση είχε ξεκινήσει από το {1}. Η ομάδα σου πρέπει να φτάσει {2} ψήφους σε {3} δευτερόλεπτα."
+    }
+    "SurrenderVoteStatus"
+    {
+        "el"        "{1} απο τους {2} απαιτούμενους ψήφους για παράδοση έχουν ψηφιστεί."
+    }
+    "SurrenderSuccessful"
+    {
+        "el"        "{1} παραδόθηκε."
+    }
+    "SurrenderVoteFailed"
+    {
+        "el"        "Δεν ψήφισαν αρκετοί παίκτες στην ομάδα σου για παράδοση."
+    }
+    "SurrenderOnCooldown"
+    {
+        "el"        "Πρέπει να περιμένεις {1} για να ξεκινήσει μια νεα ψηφοφορία για παράδοση"
+    }
+    "WinByForfeitAvailable"
+    {
+        "el"        "{1} έφυγε απο τον server. {2} μπορεί να πληκτρολογήσει {3} για να ξεκινήσει μια αντίστροφη μέτρηση για νικήσει όσο η ομάδα είναι γεμάτη."
+    }
+    "WinByForfeitRequiresFullTeam"
+    {
+        "el"        "Πρέπει να έχεις μια γεμάτη ομάδα για να μπορείς να ζητήσεις αίτημα ακύρωσης η νίκης απο παράδοση."
+    }
+    "WinByForfeitAlreadyRequested"
+    {
+        "el"        "Ένα αίτημα νίκης απο παράδοση είναι είδη σε εκκρεμότητα."
+    }
+    "WinByForfeitCountdownStarted"
+    {
+        "el"        "{1} Θα νικήσει σε {2} εκτός αν ο παίκτης {3} συνδεθεί ξανά στο παιχνίδι. Αυτό το αίτημα μπορεί να ακυρωθεί με {4}."
+    }
+    "WinByForfeitCountdownCanceled"
+    {
+        "el"        "Το αίτημα απο {1} για να νικήσει απο παράδοση έχει ακυρωθεί."
+    }
+    "TeamForfeited"
+    {
+        "el"        "{1} Έχει παραδώσει την σειρά."
+    }
+    "AllPlayersLeftTieCountdown"
+    {
+        "el"        "Και οι 2 ομάδες έφυγαν απο τον server. Τουλάχιστον ένας παίχτης απο κάθε ομάδα πρέπει να ξανά συνδεθεί σε {1} αλλιώς η σειρά θα τελειώσει σε ισοπαλία."
+    }
+    "TieCountdownCanceled"
+    {
+        "el"        "Η αντίστροφη μέτρηση για ισοπαλία έχει ακυρωθεί επειδή και οι 2 ομάδες έχουν παίχτες τώρα."
+    }
+}

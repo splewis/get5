@@ -146,31 +146,6 @@ Action Command_Swap(int client, int args) {
   return Plugin_Handled;
 }
 
-Action Command_Ct(int client, int args) {
-  if (IsPlayer(client)) {
-    if (GetClientTeam(client) == CS_TEAM_CT)
-      FakeClientCommand(client, "sm_stay");
-    else if (GetClientTeam(client) == CS_TEAM_T)
-      FakeClientCommand(client, "sm_swap");
-  }
-
-  LogDebug("cs team = %d", GetClientTeam(client));
-  LogDebug("m_iCoachingTeam = %d", GetEntProp(client, Prop_Send, "m_iCoachingTeam"));
-  LogDebug("m_iPendingTeamNum = %d", GetEntProp(client, Prop_Send, "m_iPendingTeamNum"));
-
-  return Plugin_Handled;
-}
-
-Action Command_T(int client, int args) {
-  if (IsPlayer(client)) {
-    if (GetClientTeam(client) == CS_TEAM_T)
-      FakeClientCommand(client, "sm_stay");
-    else if (GetClientTeam(client) == CS_TEAM_CT)
-      FakeClientCommand(client, "sm_swap");
-  }
-  return Plugin_Handled;
-}
-
 static Action Timer_ForceKnifeDecision(Handle timer) {
   g_KnifeDecisionTimer = INVALID_HANDLE;
   if (g_GameState == Get5State_WaitingForKnifeRoundDecision && g_KnifeWinnerTeam != Get5Team_None) {

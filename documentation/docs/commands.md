@@ -41,6 +41,16 @@ if possible. Can only be used during warmup.
 
 :   Elects to swap team side after a knife round win. This can be substituted by `!ct` or `!t` to select a side.
 
+####`!ct` {: #ct }
+
+:   Used by the team captain to select CT as the starting side during [map selection](../veto) or by any team member to
+choose the CT side after winning the knife round.
+
+####`!t` {: #t }
+
+:   Used by the team captain to select T as the starting side during [map selection](../veto) or by any team member to
+choose the T side after winning the knife round.
+
 ####`!stop`
 
 :   Asks to reload the last match backup file, i.e. restart the current round. The opposing team must confirm before the
@@ -62,6 +72,14 @@ with [`get5_allow_force_ready`](../configuration#get5_allow_force_ready).
 ####`!scrim`
 
 :   Alias for [`get5_scrim`](#get5_scrim).
+
+####`!pick <map>` {: #pick }
+
+:   Picks a map during [map selection](../veto). Can only be used by the team's captain when it's their turn to pick.
+
+####`!ban <map>` {: #ban }
+
+:   Bans a map during [map selection](../veto). Can only be used by the team's captain when it's their turn to ban.
 
 ####`!surrender` or `!gg` {: #surrender }
 
@@ -107,7 +125,7 @@ The chat alias file is only loaded once per plugin boot. If you want to reload i
 
     [`ready`](#ready), [`unready`](#unready), [`forceready`](#forceready), [`tech`](#tech), [`pause`](#pause),
     [`unpause`](#unpause), [`coach`](#coach), [`stay`](#stay), [`swap`](#swap), [`t`](#stay), [`ct`](#stay),
-    [`stop`](#stop), [`surrender`](#surrender), [`ffw`](#ffw), [`cancelffw`](#cancelffw)
+    [`stop`](#stop), [`surrender`](#surrender), [`ffw`](#ffw), [`cancelffw`](#cancelffw), [`ban`](#ban), [`pick`](#pick)
 
 !!! example "Example: `addons/sourcemod/configs/get5/commands.cfg`"
 
@@ -176,7 +194,8 @@ should put all arguments inside quotation marks (`""`).
 
 ####`get5_endmatch [team1|team2]` {: #get5_endmatch }
 :   Force-ends the current match. The team argument will force the winner of the series and the current map to be set
-to that team. Omitting the team argument sets no winner (tie).
+to that team. Omitting the team argument sets no winner (tie). This command can be configured to
+also [kick players](../configuration#get5_kick_on_force_end).
 
 ####`get5_creatematch [map name] [matchid]` {: #get5_creatematch }
 :   Creates a BO1 match with the current players on the server. `map name` defaults to the current map and `matchid`
@@ -206,6 +225,11 @@ from the server immediately.
 
 ####`get5_removekickedplayer <team1|team2|spec>` {: #get5_removekickedplayer }
 :   Removes the last kicked Steam ID from all teams. Cannot be used in scrim mode.
+
+####`get5_add_ready_time <seconds>` {: #get5_add_ready_time }
+:   Adds additional time-to-ready, limited by [`get5_time_to_start`](../configuration#get5_time_to_start)
+or [`get5_time_to_start_veto`](../configuration#get5_time_to_start_veto), depending on the game state. Can only be used
+during ready-up phases.
 
 ####`get5_forceready`
 :   Marks all teams as ready. `get5_forcestart` does the same thing.
@@ -249,8 +273,8 @@ from the server immediately.
        <br><br>**`none`**<br>No Get5 configuration was loaded and Get5 will only interfere if
        [`get5_autoload_config`](../configuration#get5_autoload_config) is defined.
        <br><br>**`pre_veto`**<br>The game is in warmup, waiting for players to [`!ready`](../commands#ready) for
-       [vetoing](../veto).
-       <br><br>**`veto`**<br>The game is in warmup with the [veto](../veto) phase currently ongoing.
+       [map selection](../veto).
+       <br><br>**`veto`**<br>The game is in warmup with the [map selecton](../veto) phase currently ongoing.
        <br><br>**`warmup`**<br>The game is in warmup, waiting for players to [`!ready`](../commands#ready) for either
        the knife-round or live.
        <br><br>**`knife`**<br>The knife-round is ongoing.

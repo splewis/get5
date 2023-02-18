@@ -17,7 +17,7 @@ better support in various programming languages than Valve's KeyValue format (wh
 
 ```typescript title="TypeScript interface definition of a match configuration"
 type SteamID = string // (8)
-type Get5PlayerSet = { [key: SteamID]: string } | [SteamID] // (9)
+type Get5PlayerSet = { [key: SteamID]: string } | SteamID[] // (9)
 
 interface Get5MatchTeam {
     "players": Get5PlayerSet // (24)
@@ -40,6 +40,7 @@ interface Get5Match {
     "matchid": string | undefined // (1)
     "clinch_series": boolean | undefined // (32)
     "num_maps": number | undefined // (2)
+    "wingman": boolean | undefined // (37)
     "players_per_team": number | undefined // (3)
     "coaches_per_team": number | undefined // (4)
     "coaches_must_ready": boolean | undefined // (33)
@@ -47,6 +48,8 @@ interface Get5Match {
     "min_spectators_to_ready": number | undefined // (6)
     "skip_veto": boolean | undefined // (7)
     "veto_first": "team1" | "team2" | "random" | undefined // (11)
+    "veto_mode": ['team1_ban' | 'team2_ban'
+        | 'team1_pick' | 'team2_pick'] | undefined // (36)
     "side_type": "standard" | "always_knife" | "never_knife" | undefined // (12)
     "map_sides": ["team1_ct" | "team1_t" | "knife"] | undefined // (31)
     "spectators": { // (10)
@@ -70,32 +73,39 @@ interface Get5Match {
    matches.<br><br>**`Default: ""`**
 2. _Optional_<br>The number of maps to play in the series.<br><br>**`Default: 3`**
 3. _Optional_<br>The number of players per team. You should **never** set this to a value higher than the number of
-   players you want to actually play in a game, *excluding* coaches.<br><br>**`Default: 5`**
+   players you want to actually play in a game, *excluding* coaches.<br><br>**`Default: 5 (2 in wingman)`**
 4. _Optional_<br>The maximum number of [coaches](../coaching) per team.<br><br>**`Default: 2`**
 5. _Optional_<br>The minimum number of players that must be present for the [`!forceready`](../commands#forceready)
    command to succeed. If not forcing a team ready, **all** players must [`!ready`](../commands#ready) up
    themselves.<br><br>**`Default: 0`**
 6. _Optional_<br>The minimum number of spectators that must be [`!ready`](../commands#ready) for the game to
    begin.<br><br>**`Default: 0`**
-7. _Optional_<br>Whether to skip the [veto](../veto) phase. When skipping veto, `map_sides` determines sides, and
-   if `map_sides` is not set, sides are determined by `side_type`.<br><br>**`Default: false`**
+7. _Optional_<br>Whether to skip the [map selection](../veto) phase. If `true`, `num_maps` are simply played in the
+   order they appear in `maplist`, and no map selection is performed by players in-game.<br><br>**`Default: false`**
 8. A player's :material-steam: Steam ID. This can be in any format, but we recommend a string representation of SteamID
    64, i.e. `"76561197987713664"`.
 9. Players are represented each with a mapping of `SteamID -> PlayerName` as a key-value dictionary. The name
    is optional and should be set to an empty string to let players decide their own name. You can also provide a simple
-   string array of `SteamID` disable name-locking.
+   string array of `SteamID` to disable name-locking.
 10. _Optional_<br>The spectators to allow into the game. If not defined, spectators cannot join the
     game.<br><br>**`Default: undefined`**
-11. _Optional_<br>The team that [vetoes](../veto) first.<br><br>**`Default: "team1"`**
-12. _Optional_<br>The method used to determine sides when [vetoing](../veto) **or** if veto is disabled and `map_sides`
-    are not set.<br><br>`standard` means that the team that doesn't pick a map gets the side choice (only if `skip_veto`
-    is `false`).<br><br>`always_knife` means that sides are always determined by a knife-round.<br><br>`never_knife`
-    means that `team1` always starts on CT.<br><br>This parameter is ignored if `map_sides` is set for all
-    maps. `standard` and `always_knife` behave similarly when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
+11. _Optional_<br>The team that makes the first [map selection](../veto) choice.<br><br>**`Default: "team1"`**
+12. _Optional_<br>The method used to determine sides during [map selection](../veto).<br><br>`standard` means that the
+    team that doesn't pick a map gets the side choice (only if `skip_veto` is `false`).<br><br>`always_knife` means that
+    sides are always determined by a knife-round.<br><br>`never_knife` means that `team1` always starts on CT.<br><br>
+    This parameter is ignored if `map_sides` is set for all maps. `standard` and `always_knife` behave similarly (knife)
+    when `skip_veto` is `true`.<br><br>**`Default: "standard"`**
 13. _Required_<br>The map pool to pick from, as an array of strings (`["de_dust2", "de_nuke"]` etc.), or if `skip_veto`
-    is `true`, the order of maps played (limited by `num_maps`). **This should always be odd-sized if using the in-game
-    [veto system](../veto).** Similarly to teams, you can set this to an object with a `fromfile` property to load a map
-    list from a separate file.
+    is `true`, the order of maps played (limited by `num_maps`).<br><br>You can load maps from workshop collections by
+    using the syntax `"workshop/map_id/map_name"`, i.e. `"workshop/1193875520/de_aztec"`. The name parameter is used to
+    present the map in the [map selection](../veto) phase. If you provide maps from the community workshop, you must
+    have a [Steam Web API key](https://steamcommunity.com/dev) configured for your server, or the match config will fail
+    to load.<br><br>Similarly to teams, you can set this to an object with a `fromfile` property to load a map list from
+    a separate file.<br><br>If you use workshop maps, it is recommended that you
+    set [`mp_match_end_restart 1`](https://totalcsgo.com/command/mpmatchendrestart) on your server, so a new map does
+    not load in case it takes a long time to download a workshop map. You can also set `sv_broadcast_ugc_downloads 1`
+    and `sv_broadcast_ugc_download_progress_interval 1` if you want to inform players that a workshop map is being
+    downloaded. In the vast majority of cases, this process should only take a few seconds.
 14. _Optional_<br>Wrapper for the server's `mp_teamprediction_pct`. This determines the chances of `team1`
     winning.<br><br>**`Default: 0`**
 15. _Optional_<br>Wrapper for the server's `mp_teamprediction_txt`.<br><br>**`Default: ""`**
@@ -117,8 +127,9 @@ interface Get5Match {
     default
     be [reset to the value they had before the match was loaded](../configuration#get5_reset_cvars_on_end).<br><br>You
     should avoid putting server-specific parameters, such as [`get5_server_id`](../configuration#get5_server_id), in
-    this property, as these are all written to [backups](../backup) and set when restored from.<br><br>
-    **`Default: undefined`**
+    this property, as these are all written to [backups](../backup) and set when restored from.<br><br>These commands
+    are always executed **after** the [phase configuration files](../configuration#phase-configuration-files), so you
+    can also use this to override a specific parameter - such as friendly fire.<br><br>**`Default: undefined`**
 23. _Optional_<br>Similarly to `players`, this object maps [coaches](../coaching) using their Steam ID and
     name, locking them to the coach slot unless removed using [`get5_removeplayer`](../commands#get5_removeplayer).
     Setting a Steam ID as coach takes precedence over being set as a player.<br><br>Note that
@@ -142,13 +153,17 @@ interface Get5Match {
 30. _Optional_<br>The spectator/caster Steam IDs and names. Setting a Steam ID as spectator takes precedence over being
     set as a player or coach.
 31. _Optional_<br>Determines the starting sides for each map. If this array is shorter than `num_maps`, `side_type` will
-    determine the side-behavior of the remaining maps. Ignored if `skip_veto` is `false`.
+    determine the side-behavior of the remaining maps.
     <br><br>**`Default: undefined`**
 32. _Optional_<br>If `false`, the entire map list will be played, regardless of score. If `true`, a series will be won
     when the series score for a team exceeds the number of maps divided by two.<br><br>**`Default: true`**
 33. _Optional_<br>Determines if coaches must also [`!ready`](../commands#ready).<br><br>**`Default: false`**
 34. _Optional_<br>Similarly to teams and map list, spectators may also be loaded from another file.
 35. _Required_<br>Similarly to teams and spectators, a map list may also be loaded from another file.
+36. _Optional_<br>Allows for a [custom configuration](../veto#custom) of map picks/bans. This must be an array of
+    strings consisting of any valid combination of `team1_ban`, `team2_ban`, `team1_pick` and `team2_pick`.
+37. _Optional_<br>Whether to configure the match for [Wingman mode](../wingman). If this is enabled, `players_per_team`
+    defaults to `2` instead of `5`.<br><br>**`Default: false`**
 
 !!! info "Team assignment priority"
 
@@ -181,6 +196,7 @@ These examples are identical in the way they would work if loaded.
       "matchid": "3123",
       "clinch_series": true,
       "num_maps": 3,
+      "wingman": false,
       "players_per_team": 5,
       "coaches_per_team": 2,
       "coaches_must_ready": true,
@@ -198,6 +214,7 @@ These examples are identical in the way they would work if loaded.
       "maplist": [
         "de_dust2",
         "de_nuke",
+        "workshop/1193875520/de_aztec",
         "de_inferno",
         "de_mirage",
         "de_vertigo",
@@ -217,6 +234,7 @@ These examples are identical in the way they would work if loaded.
         "tag": "Astralis",
         "flag": "DK",
         "logo": "astr",
+        "matchtext": "Defending Champions",
         "players": {
           "76561197990682262": "Xyp9x",
           "76561198010511021": "gla1ve",
@@ -230,7 +248,7 @@ These examples are identical in the way they would work if loaded.
       },
       "cvars": {
         "hostname": "Get5 Match #3123",
-        "mp_friendly_fire": "0",
+        "mp_friendlyfire": "0",
         "get5_stop_command_enabled": "0",
         "sm_practicemode_can_be_started": "0"
       }
@@ -263,6 +281,7 @@ These examples are identical in the way they would work if loaded.
         "matchid": "3123",
         "clinch_series": true,
         "num_maps": 3,
+        "wingman": false,
         "players_per_team": 5,
         "coaches_per_team": 2,
         "coaches_must_ready": true,
@@ -277,7 +296,16 @@ These examples are identical in the way they would work if loaded.
                 "76561197987511774": "Anders Blume"
             }
         },
-        "maplist": ["de_dust2", "de_nuke", "de_inferno", "de_mirage", "de_vertigo", "de_ancient", "de_overpass"],
+        "maplist": [
+            "de_dust2",
+            "de_nuke",
+            "workshop/1193875520/de_aztec",
+            "de_inferno",
+            "de_mirage",
+            "de_vertigo",
+            "de_ancient",
+            "de_overpass"
+        ],
         "map_sides": ["team1_ct", "team2_ct", "knife"], // Example; would only work with "skip_veto": true
         "team1": {
             "fromfile": "addons/sourcemod/get5/team_navi.json"
@@ -287,6 +315,7 @@ These examples are identical in the way they would work if loaded.
             "tag": "Astralis",
             "flag": "DK",
             "logo": "astr",
+            "matchtext": "Defending Champions",
             "players": {
                 "76561197990682262": "Xyp9x",
                 "76561198010511021": "gla1ve",
@@ -300,7 +329,7 @@ These examples are identical in the way they would work if loaded.
         },
         "cvars": {
             "hostname": "Get5 Match #3123",
-            "mp_friendly_fire": "0",
+            "mp_friendlyfire": "0",
             "get5_stop_command_enabled": "0",
             "sm_practicemode_can_be_started": "0"
         }
@@ -321,92 +350,96 @@ These examples are identical in the way they would work if loaded.
     ```cfg title="addons/sourcemod/get5/astralis_vs_navi_3123.cfg"
     "Match"
     {
-    	"match_title"               "Astralis vs. NaVi"
-    	"matchid"		            "3123"
-        "clinch_series"             "1"
-    	"num_maps"		            "3"
-    	"players_per_team"          "5"
-    	"coaches_per_team"          "2"
-        "coaches_must_ready"        "1"
-    	"min_players_to_ready"      "2"
-    	"min_spectators_to_ready"   "0"
-    	"skip_veto"		            "0"
-    	"veto_first"	            "team1"
-        "side_type"		            "standard"
-    	"spectators"    
-    	{
-    	    "name" "Blast PRO 2021"
-    		"players"
-    		{
-    			"76561197987511774"	"Anders Blume"
-    		}
-    	}
-    	"maplist"
-    	{
-    		"de_dust2"		""
-    		"de_nuke"		""
-    		"de_inferno"	""
-    		"de_mirage"		""
-    		"de_vertigo"	""
-    		"de_ancient"	""
-    		"de_overpass"	""
-    	}
-    	"map_sides"  // Example; would only work with "skip_veto" "1"
-    	{
-    	    "team1_ct" ""
-    	    "team2_ct" ""
-    	    "knife"    ""
-    	}
-    	"team1"
-    	{
-            "fromfile"  "addons/sourcemod/get5/team_navi.cfg"
-    	}
-    	"team2"
-    	{
-    		"name"		"Astralis"
-    		"tag"		"Astralis"
-    		"flag"		"DK"
-    		"logo"		"astr"
-    		"players"
-    		{
+        "match_title"             "Astralis vs. NaVi"
+        "matchid"                 "3123"
+        "clinch_series"           "1"
+        "num_maps"                "3"
+        "wingman"                 "0"
+        "players_per_team"        "5"
+        "coaches_per_team"        "2"
+        "coaches_must_ready"      "1"
+        "min_players_to_ready"    "2"
+        "min_spectators_to_ready" "0"
+        "skip_veto"               "0"
+        "veto_first"              "team1"
+        "side_type"               "standard"
+        "spectators"    
+        {
+            "name" "Blast PRO 2021"
+            "players"
+            {
+                "76561197987511774" "Anders Blume"
+            }
+        }
+        "maplist"
+        {
+            "de_dust2"                      ""
+            "de_nuke"                       ""
+            "workshop/1193875520/de_aztec"  ""
+            "de_inferno"                    ""
+            "de_mirage"                     ""
+            "de_vertigo"                    ""
+            "de_ancient"                    ""
+            "de_overpass"                   ""
+        }
+        "map_sides"  // Example; would only work with "skip_veto" "1"
+        {
+            "team1_ct" ""
+            "team2_ct" ""
+            "knife"    ""
+        }
+        "team1"
+        {
+            "fromfile" "addons/sourcemod/get5/team_navi.cfg"
+        }
+        "team2"
+        {
+            "name" "Astralis"
+            "tag"  "Astralis"
+            "flag" "DK"
+            "logo" "astr"
+            "matchtext" "Defending Champions"
+            "players"
+            {
                 "76561197990682262" "Xyp9x"
                 "76561198010511021" "gla1ve"
                 "76561197979669175" "K0nfig"
                 "76561198028458803" "BlameF"
                 "76561198024248129" "farlig"
-    		}
-    		"coaches"
-    		{
+            }
+            "coaches"
+            {
                 "76561197987144812" "Trace"
             }
-    	}
-    	"cvars"
-    	{
+        }
+        "cvars"
+        {
             "hostname"                       "Get5 Match #3123"
-            "mp_friendly_fire"               "0"
+            "mp_friendlyfire"                "0"
             "get5_stop_command_enabled"      "0"
             "sm_practicemode_can_be_started" "0"
-    	}
+        }
     }
     ```
     `fromfile` example:
     ```cfg title="addons/sourcemod/get5/team_navi.cfg"
     "Team"
     { 
-        "name"		"Natus Vincere"
-    	"tag"		"NaVi"
-    	"flag"		"UA"
-    	"logo"		"navi"
-    	"players"
-    	{
+        "name" "Natus Vincere"
+        "tag"  "NaVi"
+        "flag" "UA"
+        "logo" "navi"
+        "matchtext" "Challengers"
+        "players"
+        {
             "76561198034202275" "s1mple"
             "76561198044045107" "electronic"
             "76561198246607476" "b1t"
             "76561198121220486" "Perfecto"
             "76561198040577200" "sdy"
-    	}
-    	"coaches"
-    	{
+        }
+        "coaches"
+        {
             "76561198013523865" "B1ad3"
         }
     }

@@ -3,6 +3,9 @@
 #define MAX_INTEGER_STRING_LENGTH 16
 #define MAX_FLOAT_STRING_LENGTH   32
 #define AUTH_LENGTH               64
+#define GAME_MODE_WINGMAN         2
+#define GAME_MODE_COMPETITIVE     1
+#define GAME_TYPE_CLASSIC         0
 
 // Dummy value for when we need to write a KeyValue string, but we don't care about the value *or*
 // when the value is an empty string. Trying to write an empty string results in the KeyValue not
@@ -58,6 +61,30 @@ stock int SumHealthOfTeam(Get5Side side) {
     }
   }
   return sum;
+}
+
+stock int GetGameMode() {
+  ConVar conVar = FindConVar("game_mode");
+  if (conVar != INVALID_HANDLE) {
+    return conVar.IntValue;
+  }
+  return -1;
+}
+
+stock int GetGameType() {
+  ConVar conVar = FindConVar("game_type");
+  if (conVar != INVALID_HANDLE) {
+    return conVar.IntValue;
+  }
+  return -1;
+}
+
+stock void SetGameMode(int mode) {
+  SetConVarIntSafe("game_mode", mode);
+}
+
+stock void SetGameTypeClassic() {
+  SetConVarIntSafe("game_type", GAME_TYPE_CLASSIC);
 }
 
 stock int ConvertCSTeamToDefaultWinReason(int side) {
@@ -318,7 +345,7 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
   mapStringIndex = (numSplits > 0) ? (numSplits - 1) : (0);
   strcopy(buffer, len, buffers[mapStringIndex]);
 
-  if (cleanName) {
+  if (cleanName && StrContains(mapName, "workshop", false) != 0) {
     if (StrEqual(buffer, "de_cache")) {
       strcopy(buffer, len, "Cache");
     } else if (StrEqual(buffer, "de_inferno")) {
@@ -331,6 +358,8 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
       strcopy(buffer, len, "Train");
     } else if (StrEqual(buffer, "de_cbble")) {
       strcopy(buffer, len, "Cobblestone");
+    } else if (StrEqual(buffer, "de_anubis")) {
+      strcopy(buffer, len, "Anubis");
     } else if (StrEqual(buffer, "de_overpass")) {
       strcopy(buffer, len, "Overpass");
     } else if (StrEqual(buffer, "de_nuke")) {
@@ -347,6 +376,16 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
       strcopy(buffer, len, "Grind");
     } else if (StrEqual(buffer, "de_mocha")) {
       strcopy(buffer, len, "Mocha");
+    } else if (StrEqual(buffer, "cs_militia")) {
+      strcopy(buffer, len, "Militia");
+    } else if (StrEqual(buffer, "cs_agency")) {
+      strcopy(buffer, len, "Agency");
+    } else if (StrEqual(buffer, "cs_office")) {
+      strcopy(buffer, len, "Office");
+    } else if (StrEqual(buffer, "cs_italy")) {
+      strcopy(buffer, len, "Italy");
+    } else if (StrEqual(buffer, "cs_assault")) {
+      strcopy(buffer, len, "Assault");
     }
   }
   if (color) {
@@ -420,15 +459,6 @@ stock int AddAuthsToList(const KeyValues kv, const ArrayList list) {
   return count;
 }
 
-stock bool RemoveStringFromArray(const ArrayList list, const char[] str) {
-  int index = list.FindString(str);
-  if (index != -1) {
-    list.Erase(index);
-    return true;
-  }
-  return false;
-}
-
 // Because KeyValue cannot write empty strings, we use this to consistently read empty strings and
 // replace our empty-string-placeholder with actual empty string.
 stock bool ReadEmptyStringInsteadOfPlaceholder(const KeyValues kv, char[] buffer, const int bufferSize) {
@@ -447,6 +477,17 @@ stock bool WritePlaceholderInsteadOfEmptyString(const KeyValues kv, char[] buffe
     return true;
   }
   return false;
+}
+
+// For some odd reason, KeyValues cannot write key names with forward slashes in them.
+// If one attempts this, it simply creates a new key for each slash, so we have to escape this in order
+// for workshop maps to work with backups.
+stock void EscapeKeyValueKeyRead(char[] buffer, const int bufferSize) {
+  ReplaceString(buffer, bufferSize, "__slash__", "/");
+}
+
+stock void EscapeKeyValueKeyWrite(char[] buffer, const int bufferSize) {
+  ReplaceString(buffer, bufferSize, "/", "__slash__");
 }
 
 stock Get5Team OtherMatchTeam(Get5Team team) {
@@ -627,7 +668,7 @@ stock bool HelpfulAttack(int attacker, int victim) {
   return attacker != victim && GetClientTeam(attacker) != GetClientTeam(victim);
 }
 
-stock SideChoice SideTypeFromString(const char[] input) {
+stock SideChoice SideTypeFromString(const char[] input, char[] error) {
   if (StrEqual(input, "team1_ct", false) || StrEqual(input, "team2_t", false)) {
     return SideChoice_Team1CT;
   } else if (StrEqual(input, "team1_t", false) || StrEqual(input, "team2_ct", false)) {
@@ -635,8 +676,9 @@ stock SideChoice SideTypeFromString(const char[] input) {
   } else if (StrEqual(input, "knife", false)) {
     return SideChoice_KnifeRound;
   } else {
-    LogError("Invalid side choice \"%s\", falling back to knife round", input);
-    return SideChoice_KnifeRound;
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "Invalid side choice '%s'. Must be one of 'team1_ct', 'team1_t', 'team2_ct', 'team2_t', 'knife'.", input);
+    return SideChoice_Invalid;
   }
 }
 
@@ -823,6 +865,12 @@ stock void ChatCommandToString(const Get5ChatCommand command, char[] buffer, con
     case Get5ChatCommand_CancelFFW: {
       FormatEx(buffer, bufferSize, "cancelffw");
     }
+    case Get5ChatCommand_Pick: {
+      FormatEx(buffer, bufferSize, "pick");
+    }
+    case Get5ChatCommand_Ban: {
+      FormatEx(buffer, bufferSize, "ban");
+    }
     default: {
       LogError("Failed to map Get5ChatCommand with value %d to a string. It is missing from ChatCommandToString.",
                command);
@@ -861,6 +909,10 @@ stock Get5ChatCommand StringToChatCommand(const char[] string) {
     return Get5ChatCommand_FFW;
   } else if (strcmp(string, "cancelffw") == 0) {
     return Get5ChatCommand_CancelFFW;
+  } else if (strcmp(string, "pick") == 0) {
+    return Get5ChatCommand_Pick;
+  } else if (strcmp(string, "ban") == 0) {
+    return Get5ChatCommand_Ban;
   } else {
     return Get5ChatCommand_Unknown;
   }

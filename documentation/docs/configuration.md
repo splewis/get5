@@ -24,18 +24,20 @@ the explanation of the [match schema](../match_schema), that section will overri
 
 You should also have three config files. These can be edited, but we recommend not
 blindly pasting another config in (e.g. ESL, CEVO). These must only include commands you would run in the console (such
-as `mp_friendly_fire 1`) and should determine the rules for those three stage of your match. You can
+as `mp_friendlyfire 1`) and should determine the rules for those three stage of your match. You can
 also [point to other files](#config-files) by editing the main config file.
 
 ```yaml
 cfg/get5/warmup.cfg # (1)
 cfg/get5/knife.cfg # (2)
 cfg/get5/live.cfg # (3)
+cfg/get5/live_wingman.cfg # (4)
 ```
 
-1. Executed when the warmup/veto phase begins.
+1. Executed when the warmup or map selection phase begins.
 2. Executed when the knife-round starts.
-3. Executed when the game goes live.
+3. Executed when the game goes live during competitive matches.
+4. Executed when the game goes live during wingman matches.
 
 !!! danger "Prohibited options"
 
@@ -65,11 +67,17 @@ cfg/get5/live.cfg # (3)
 ## Server Setup
 
 ####`get5_server_id`
-:   Integer that identifies your server. This is used in temporary and backup files to prevent collisions and added as a
-header to [demo uploads](../gotv#upload) and [event requests](../events_and_forwards#http). You should set this if you
-run multiple servers off the same storage, such as if using [Docker](https://www.docker.com/). This also defines
-the [`{SERVERID}`](#tag-serverid) substitution and the return value of the `Get5_GetServerID`
-native.<br>**`Default: 0`**
+:   A string that identifies your server. This is used in temporary and backup files to prevent collisions and added as
+a header to [demo](../gotv#upload) and [backup](../backup#upload) uploads
+and [event requests](../events_and_forwards#http). You should set this if you run multiple servers off the same storage,
+such as if using [Docker](https://www.docker.com/), or if simply want to be able to tell servers apart. This also
+defines the [`{SERVERID}`](#tag-serverid) substitution and the return value of the `Get5_GetServerID` native.
+**Maximum length is 64 characters**.<br>**`Default: "0"`**
+
+!!! bug "Alphanumeric only and no spaces"
+
+    If you set a custom server ID, **do not** use spaces, slashes or any other odd symbols. The value is used in various
+    commands and filenames, so it **will** cause problems if it contains unexpected symbols.
 
 !!! tip "Server ID could be port number"
 
@@ -84,12 +92,12 @@ native.<br>**`Default: 0`**
 [`get5_kick_when_no_match_loaded`](#get5_kick_when_no_match_loaded).<br>**`Default: 1`**
 
 ####`get5_kick_when_no_match_loaded`
-:   Whether to kick all clients if no match is loaded. Players will not be kicked if a match is forcefully ended
-using [`get5_endmatch`](../commands#get5_endmatch).<br>**`Default: 0`**
+:   Whether to kick all clients and prevent anyone from joining the server if no match is loaded. This can
+be [suppressed for administrators](#get5_kick_immunity).<br>**`Default: 0`**
 
-####`get5_display_gotv_veto`
-:   Whether to wait for [map vetoes](../veto) to be broadcast to [GOTV](../gotv) before changing
-map.<br>**`Default: 0`**
+####`get5_kick_on_force_end`
+:   Whether players are kicked from the server when a match is [forcefully ended](../commands#get5_endmatch). This only
+applies if players are [kicked when no match is loaded](#get5_kick_when_no_match_loaded).<br>**`Default: 0`**
 
 ####`get5_check_auths`
 :   Whether the Steam IDs from the `players`, `coaches` and `spectators` sections of
@@ -129,7 +137,7 @@ only.<br>**`Default: 0`**
 :   Number of seconds used to count down when a match is going live.<br>**`Default: 10`**
 
 ####`get5_auto_ready_active_players`
-:   Whether to automatically mark players as ready if they kill anyone in the warmup or [veto](../veto)
+:   Whether to automatically mark players as ready if they kill anyone in the warmup or [map selection](../veto)
 phase.<br>**`Default: 0`**
 
 ####`get5_allow_force_ready`
@@ -141,24 +149,14 @@ affect the availability of [`get5_forceready`](../commands#get5_forceready) to a
 
 ####`get5_time_to_start`
 :   Time (in seconds) teams have to ready up for knife/live before forfeiting the match. Set to zero for no limit. If
-neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
-
-####`get5_time_to_start_veto`
-:   Time (in seconds) teams have to ready up for vetoing before forfeiting the match. Set to zero for no limit. If
-neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
+neither team becomes ready in time, the series is ended in a tie.
+Note that the [time to ready for map selection](../configuration#get5_time_to_start_veto) is set separately to allow for
+shorter ready-up-periods in multi-map series.<br>**`Default: 0`**
 
 ####`get5_time_to_make_knife_decision`
 :   Time (in seconds) a team has to make a [`!stay`](../commands#stay) or [`!swap`](../commands#swap)
 decision after winning knife round. Cannot be set lower than 10 if non-zero. Set to zero to remove
 limit.<br>**`Default: 60`**
-
-####`get5_veto_countdown`
-:   Time (in seconds) to countdown before the [veto](../veto) process commences. Set to zero to move to veto without a
-countdown.<br>**`Default: 5`**
-
-####`get5_veto_confirmation_time`
-:   Time (in seconds) from presenting a [veto](../veto) menu to a selection being made, during which a confirmation will
-be required. 0 to disable.<br>**`Default: 2.0`**
 
 ####`get5_print_damage`
 :   Whether to print damage reports when a round ends. The format is determined
@@ -185,10 +183,31 @@ messages.<br>**`Default: "{PINK}"`**
 :   The [color](#color-substitutes) to use when printing the name of `spectators` in chat
 messages.<br>**`Default: "{NORMAL}"`**
 
+## Map Selection {: #map-selection }
+
+####`get5_display_gotv_veto`
+:   Whether to wait for [map selection](../veto) to be broadcast to [GOTV](../gotv) before changing
+map.<br>**`Default: 0`**
+
+####`get5_mute_allchat_during_map_selection`
+:   Suppresses all chat messages not sent in the team-channel for everyone but the team captains
+during [map selection](../veto).<br>**`Default: 1`**
+
+####`get5_pause_on_veto`
+:   Whether to freeze players during the [map selection](../veto) phase.<br>**`Default: 1`**
+
+####`get5_time_to_start_veto`
+:   Time (in seconds) teams have to ready up for [map selection](../veto) before forfeiting the match. Set to zero for
+no limit. If neither team becomes ready in time, the series is ended in a tie.<br>**`Default: 0`**
+
+####`get5_veto_countdown`
+:   Time (in seconds) to countdown before the [map selection](../veto) process commences. Set to zero to move to veto
+without a countdown.<br>**`Default: 5`**
+
 ## Pausing
 
 ####`get5_pausing_enabled`
-:   Whether [pauses](../pausing) are available to clients or not.<br>**`Default: 1`**
+:   Whether [tactical pauses](../pausing) are available to clients or not.<br>**`Default: 1`**
 
 ####`get5_max_pauses`
 :   Number of [tactical pauses](../pausing#tactical) a team can use. Set to zero to remove limit.<br>**`Default: 0`**
@@ -198,16 +217,23 @@ messages.<br>**`Default: "{NORMAL}"`**
 unlimited and when [`get5_fixed_pause_time`](#get5_fixed_pause_time) is zero, both teams
 must call [`!unpause`](../commands#unpause) to continue the match. This parameter is ignored
 if [`get5_fixed_pause_time`](#get5_fixed_pause_time) is set to a non-zero
-value. Set to zero to remove limit.<br>**`Default: 300`**
+value. Set to zero to remove limit.<br>**`Default: 0`**
 
 ####`get5_fixed_pause_time`
 :   If non-zero, the fixed length in seconds of all [tactical pauses](../pausing#tactical). This takes precedence over
 the [`get5_max_pause_time`](#get5_max_pause_time) parameter, which will be ignored. Cannot be set lower than 15
-seconds if non-zero.<br>**`Default: 0`**
+seconds if non-zero.<br>**`Default: 60`**
+
+####`get5_allow_unpausing_fixed_pauses`
+:   Whether fixed-duration [tactical pauses](../pausing#tactical) can be stopped early if both teams choose
+to [`!unpause`](../commands#unpause).<br>**`Default: 1`**
 
 ####`get5_allow_technical_pause`
-:   Whether [technical pauses](../pausing#technical) are available to clients or not. Note that this depends
-on [`get5_pausing_enabled`](#get5_pausing_enabled) being enabled as well.<br>**`Default: 1`**
+:   Whether [technical pauses](../pausing#technical) are available to clients or not.<br>**`Default: 1`**
+
+####`get5_allow_pause_cancellation`
+:   Whether a pending pause can be canceled by the pausing team using [`!unpause`](../commands#unpause) before
+freezetime begins.<br>**`Default: 1`**
 
 ####`get5_max_tech_pauses`
 :   Number of [technical pauses](../pausing#technical) a team is allowed to have. Set to zero to remove
@@ -240,9 +266,6 @@ leaves. Set to zero to disable.<br>**`Default: 0`**
     Automatic tech pauses are still limited by [`get5_max_tech_pauses`](#get5_max_tech_pauses), so you can set that to a
     non-zero value to prevent abuse.
 
-####`get5_pause_on_veto`
-:   Whether to freeze players during the [veto](../veto) phase.<br>**`Default: 0`**
-
 ####`get5_reset_pauses_each_half`
 :   Whether [tactical pause](../pausing#tactical) limits (time used and count) are reset each halftime period.
 [Technical pauses](../pausing#technical) are not reset.<br>**`Default: 1`**
@@ -258,7 +281,8 @@ to [surrender](../surrender-forfeit#surrender). This cannot be set lower than `1
 
 ####`get5_surrender_required_votes`
 :   The number of votes required to [surrender](../surrender-forfeit#surrender) as a team. If set to `1` or below, any
-attempt to surrender will immediately succeed.<br>**`Default: 3`**
+attempt to surrender will immediately succeed. This value is practically limited to the value
+of [`players_per_team`](../match_schema#schema).<br>**`Default: 3`**
 
 ####`get5_surrender_time_limit`
 :   The number of seconds a team has to vote to [surrender](../surrender-forfeit#surrender) after the first vote is
@@ -393,6 +417,10 @@ if [`get5_print_damage`](#get5_print_damage) is disabled.<br>
 
 ####`get5_live_cfg`
 :   Config file executed when the game goes live, relative to `csgo/cfg`.<br>**`Default: "get5/live.cfg"`**
+
+####`get5_live_wingman_cfg`
+:   Config file executed when the game goes live, relative to `csgo/cfg`, but for [wingman](../wingman)
+mode.<br>**`Default: "get5/live_wingman.cfg"`**
 
 ####`get5_warmup_cfg`
 :   Config file executed in warmup periods, relative to `csgo/cfg`.<br>**`Default: "get5/warmup.cfg"`**

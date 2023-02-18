@@ -1,8 +1,8 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
-        "ru"            "Напишите {1} когда ваша команда будет готова к голосованию."
+        "ru"            "Напишите {1} когда ваша команда будет готова к выбору карты."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -40,13 +40,13 @@
     {
         "ru"            "{1} выиграли раунд. Ожидаем, пока они напишут {2} или {3}."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
         "ru"            "Карта будет изменена, когда закончится трансляция на GOTV."
     }
-    "WaitingForGOTVVetoInfoMessage"
+    "WaitingForGOTVMapSelection"
     {
-        "ru"            "Карта изменится, как только на GOTV будут показаны вето на карты."
+        "ru"            "Карта изменится, как только на GOTV будет показан выбор карты."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -130,7 +130,7 @@
     }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {
-        "ru"            "Вы не можете отменить паузу до того, как она начнется. Запросы на приостановку не могут быть отменены."
+        "ru"            "Вы не можете отменить паузу до того, как она начнется."
     }
     "PauseRunoutInfoMessage"
     {
@@ -148,10 +148,6 @@
     {
         "ru"            "{1} больше не имеют технических пауз. Пожалуйста, используйте тактические паузы."
     }
-    "TechPausePausesRemaining"
-    {
-        "ru"            "Количество технических пауз, оставшихся для {1}: {2}"
-    }
     "TechPauseAutomaticallyStarted"
     {
         "ru"            "Для {1} автоматически началась техническая пауза."
@@ -163,10 +159,6 @@
     "WaitingForUnpauseInfoMessage"
     {
         "ru"            "{1} желает снять паузу, ожидаем когда {2} напишут {3}."
-    }
-    "PausesLeftInfoMessage"
-    {
-        "ru"            "Количество тактических пауз, оставшихся для {1}: {2}"
     }
     "PrereleaseVersionWarning"
     {
@@ -180,23 +172,23 @@
     {
         "ru"            "У вас должно быть по крайней мере {1} игрок(ов) на сервере, чтобы подготовиться."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
-        "ru"            "{1} готовы для голосования."
+        "ru"            "{1} готовы для выбора карты."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "ru"            "{1} готовы загрузить сохраненную игру."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "ru"            "{1} готовы к ножевому раунду."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "ru"            "{1} готовы начать матч."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "ru"            "{1} пока не готовы."
     }
@@ -324,25 +316,25 @@
     {
         "ru"            "Карта {1}: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "ru"            "{1} выбрал {2} как карту {3}."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "ru"            "{1} выбрали начать за {2} на {3}."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
-        "ru"            "{1} вычеркнули {2}."
+        "ru"            "{1} запретили {2}."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
-        "ru"            "Капитан пропал по время голосования, голосование приостановлено."
+        "ru"            "Капитан команды вышел во время выбора карты. Выбор карты приостановлен."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
-        "ru"            "Напишите {1}, когда будете готовы продолжить голосование."
+        "ru"            "Напишите {1}, когда будете готовы продолжить выбор карты."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -388,41 +380,57 @@
     {
         "ru"            "[NOT READY]"
     }
-    "MapVetoPickMenuText"
+    "MapSelectionTeamChatOnly"
     {
-        "ru"        "Выберите карту для ИГРЫ:"
+        "ru"        "Вы можете писать в командном чате только во время выбора карты."
     }
-    "MapVetoPickConfirmMenuText"
+    "MapSelectionInvalidMap"
     {
-        "ru"        "Подтвердите, что вы хотите ИГРАТЬ {1}:"
+        "ru"        "{1} не является корректной картой."
     }
-    "MapVetoBanMenuText"
+    "MapSelectionPickMapHelp"
     {
-        "ru"        "Выберите карту, на которую нужно наложить ВЕТО:"
+        "ru"        "Используйте {1} <карта> для выбора карты."
     }
-    "MapVetoBanConfirmMenuText"
+    "MapSelectionBanMapHelp"
     {
-        "ru"        "Подтвердите, что вы хотите наложить ВЕТО на {1}:"
+        "ru"        "Используйте {1} <карта> для запрета карты."
     }
-    "MapVetoSidePickMenuText"
+    "MapSelectionPickSideHelp"
     {
-        "ru"        "Выберите сторону для {1}:"
+        "ru"        "Используйте {1} или {2} для выбора стороны."
     }
-    "MapVetoSidePickConfirmMenuText"
+    "MapSelectionAnnounceCaptains"
     {
-        "ru"        "Подтвердите, что вы хотите начать за {1}:"
+        "ru"        "Капитан для {1}: {2}"
     }
-    "ConfirmPositiveOptionText"
+    "MapSelectionBan"
     {
-        "ru"        "Да"
+        "ru"        "ЗАПРЕТИТЬ"
     }
-    "ConfirmNegativeOptionText"
+    "MapSelectionPick"
     {
-        "ru"        "Нет"
+        "ru"        "ВЫБРАТЬ"
     }
-    "VetoCountdown"
+    "MapSelectionTurnToPick"
     {
-        "ru"        "Наложение вето начинается через {1} сек."
+        "ru"        "{1} теперь должны {2} карту для игры на карте {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "ru"        "{1} теперь должны {2} карту."
+    }
+    "MapSelectionPickSide"
+    {
+        "ru"        "{1} должны выбрать сторону для игры на {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "ru"        "Оставшиеся карты:"
+    }
+    "MapSelectionCountdown"
+    {
+        "ru"        "Выбор карты начинается через {1}..."
     }
     "SurrenderCommandNotEnabled"
     {

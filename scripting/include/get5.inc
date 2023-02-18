@@ -19,6 +19,14 @@ enum Get5BombSite {
   Get5BombSite_B = 2
 };
 
+enum Get5MapSelectionOption {
+  Get5MapSelectionOption_Invalid,
+  Get5MapSelectionOption_Team1Pick,
+  Get5MapSelectionOption_Team2Pick,
+  Get5MapSelectionOption_Team1Ban,
+  Get5MapSelectionOption_Team2Ban
+}
+
 #define MATCHTEAM_COUNT 4
 
 enum Get5Team {
@@ -67,6 +75,8 @@ enum Get5ChatCommand {
   Get5ChatCommand_Surrender,
   Get5ChatCommand_FFW,
   Get5ChatCommand_CancelFFW,
+  Get5ChatCommand_Pick,
+  Get5ChatCommand_Ban
 };
 
 enum MatchSideType {
@@ -79,6 +89,7 @@ enum SideChoice {
   SideChoice_Team1CT,     // Team 1 will start on CT
   SideChoice_Team1T,      // Team 1 will start on T
   SideChoice_KnifeRound,  // There will be a knife round to choose sides
+  SideChoice_Invalid
 };
 
 // Returns the current pug gamestate.
@@ -134,8 +145,8 @@ native void Get5_GetMatchID(char[] id, int length);
 // Sets the current matchid.
 native void Get5_SetMatchID(const char[] id);
 
-// Returns the server ID as defined by get5_server_id.
-native int Get5_GetServerID();
+// Gets the server ID as defined by get5_server_id.
+native void Get5_GetServerID(char[] id, int length);
 
 // Returns the current map number, 0 being the first in the series.
 native int Get5_GetMapNumber();
@@ -934,6 +945,19 @@ methodmap Get5MatchPauseEvent < Get5MapTeamEvent {
       this.SetHidden("pause_type_int", true);
       ConvertGet5PauseTypeToStringInJson(this, "pause_type", type);
     }
+  }
+}
+
+methodmap Get5MatchPauseBeganEvent < Get5MatchPauseEvent {
+
+  public Get5MatchPauseBeganEvent(const char[] matchId, const int mapNumber, const Get5Team team, const Get5PauseType pauseType) {
+    Get5MatchPauseBeganEvent self = view_as<Get5MatchPauseBeganEvent>(new JSON_Object());
+    self.SetEvent("pause_began");
+    self.SetMatchId(matchId);
+    self.MapNumber = mapNumber;
+    self.Team = team;
+    self.PauseType = pauseType;
+    return self;
   }
 }
 
@@ -1834,6 +1858,9 @@ forward void Get5_OnMatchPaused(const Get5MatchPausedEvent event);
 
 // Called when a match is unpaused.
 forward void Get5_OnMatchUnpaused(const Get5MatchUnpausedEvent event);
+
+// Called when a pause begins.
+forward void Get5_OnPauseBegan(const Get5MatchPauseBeganEvent event);
 
 // Called when a match backup is restored.
 // Note that the match ID, map number and round number is the one being restored *to*, not the current game state at the

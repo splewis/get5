@@ -16,10 +16,10 @@ with [`get5_backup_system_enabled`](../configuration#get5_backup_system_enabled)
 Every time a round starts, CS:GO automatically writes a round backup file into the root of the `csgo` directory based on
 the value of [`mp_backup_round_file`](https://totalcsgo.com/command/mpbackuproundfile), which Get5 will [automatically
 adjust to prevent file collisions](../configuration#get5_server_id). Get5 reads this file, copies it into its
-own file called `get5_backup%d_match%s_map%d_round%d.cfg`, where the arguments
+own file called `get5_backup%s_match%s_map%d_round%d.cfg`, where the arguments
 are [`get5_server_id`](..configuration/#get5_server_id), `matchid`, `mapnumber` and `roundnumber`, respectively, and
 then deletes the original backup file. A special backup
-called `get5_backup%d_match%s_map%d_prelive.cfg` is created and should be used if you want to restore to the beginning
+called `get5_backup%s_match%s_map%d_prelive.cfg` is created and should be used if you want to restore to the beginning
 of the map, before the knife round.
 
 ### Example
@@ -72,7 +72,7 @@ Get5 will add these headers to the request in order for your server to handle it
 3. `Get5-RoundNumber` is the zero-indexed round number of the map. If the match is not yet live (warmup, knife), this
    value is `-1`.
 4. `Get5-MatchId` **if** the [match ID](../match_schema#schema) is not an empty string.
-5. `Get5-ServerId` **if** [`get5_server_id`](../configuration#get5_server_id) is set to a positive integer.
+5. `Get5-ServerId` **if** [`get5_server_id`](../configuration#get5_server_id) is not an empty string.
 6. `Get5-Version` is the version of Get5, i.e. `0.12.0`.
 
 #### Authorization

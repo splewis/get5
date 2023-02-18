@@ -1,8 +1,8 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
-        "fr"            "Taper {1} quand votre équipe est prête pour le tour de veto."
+        "fr"            "Tapez {1} lorsque votre équipe est prête pour la sélection de map."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -10,15 +10,15 @@
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "fr"            "Taper {1} quand vous êtes prêt(e) à restaurer la sauvegarde du match."
+        "fr"            "Tapez {1} quand vous êtes prêt(e) à restaurer la sauvegarde du match."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "fr"            "Taper {1} quand vous êtes prêt(e) à démarrer un round au couteau."
+        "fr"            "Tapez {1} quand vous êtes prêt(e) à démarrer un round au couteau."
     }
     "ReadyToStartInfoMessage"
     {
-        "fr"            "Taper {1} quand vous êtes prêt(e) à commencer."
+        "fr"            "Tapez {1} quand vous êtes prêt(e) à commencer."
     }
     "YouAreReady"
     {
@@ -30,7 +30,7 @@
     }
     "TypeUnreadyIfNotReady"
     {
-        "fr"            "Taper {1} si vous n'êtes pas prêt(e)."
+        "fr"            "Tapez {1} si vous n'êtes pas prêt(e)."
     }
     "YouAreNotReady"
     {
@@ -40,13 +40,13 @@
     {
         "fr"            "{1} a gagné le round au couteau. En attente de leur choix entre {2} et {3}."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
         "fr"            "La map changera dès que la diffusion GOTV sera terminée."
     }
-    "WaitingForGOTVVetoInfoMessage"
+    "WaitingForGOTVMapSelection"
     {
-        "fr"            "La map changera dès que la diffusion GOTV aura diffusé le tour de veto."
+        "fr"            "La map changera une fois que la GOTV aura diffusé la sélection de map."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -130,7 +130,7 @@
     }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {
-        "fr"            "Vous ne pouvez pas demander une fin de pause avant que votre pause n'ait commencée. Une demande de pause n'est pas annulable."
+        "fr"            "Vous ne pouvez pas demander une fin de pause avant que votre pause n'ait commencée."
     }
     "PauseRunoutInfoMessage"
     {
@@ -148,10 +148,6 @@
     {
         "fr"            "{1} n'a plus de pause technique. Utilisez des pauses tactiques."
     }
-    "TechPausePausesRemaining"
-    {
-        "fr"            "Pauses techniques restantes pour {1}: {2}"
-    }
     "TechPauseAutomaticallyStarted"
     {
         "fr"            "Une pause technique a été automatiquement démarée pour {1}."
@@ -163,10 +159,6 @@
     "WaitingForUnpauseInfoMessage"
     {
         "fr"            "{1} désire reprendre le match, en attente que {2} tape {3}."
-    }
-    "PausesLeftInfoMessage"
-    {
-        "fr"            "{1} dispose encore de {2} pause(s)."
     }
      "PrereleaseVersionWarning"
     {
@@ -180,23 +172,23 @@
     {
         "fr"            "Vous devez disposer d'au moins {1} joueur(s) sur le serveur pour vous déclarer prêt(e)."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
-        "fr"            "{1} est prêt pour le tour de veto."
+        "fr"            "{1} est prête pour la sélection de map."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "fr"            "{1} est prêt à restaurer la sauvegarde du match."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "fr"            "{1} est prêt pour le knife round."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "fr"            "{1} est prêt à commencer le match."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "fr"            "{1} n'est plus prêt."
     }
@@ -324,25 +316,25 @@
     {
         "fr"            "Map {1}: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "fr"            "{1} a choisi {2} comme map {3}."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "fr"            "{1} a choisi de commencer en {2} sur {3}."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
-        "fr"            "{1} a rejeté {2}."
+        "fr"            "{1} a ban {2}."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
-        "fr"            "Un chef d'équipe a quitté pendant le tour de veto, match en pause."
+        "fr"            "Un capitaine d'équipe est parti lors de la sélection de map. La sélection de map est interrompue."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
-        "fr"            "Taper {1} quand vous êtes prêt(e) à reprendre le tour de veto."
+        "fr"            "Tapez {1} lorsque vous êtes prêt à reprendre la sélection de map."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -350,11 +342,11 @@
     }
     "ExitCoachSlotHelp"
     {
-        "fr"            "Taper {1} pour sortir du mode coach."
+        "fr"            "Tapez {1} pour sortir du mode coach."
     }
     "EnterCoachSlotHelp"
     {
-        "fr"            "Taper {1} pour devenir le coach de votre équipe."
+        "fr"            "Tapez {1} pour devenir le coach de votre équipe."
     }
     "MoveToCoachInfoMessage"
     {
@@ -388,41 +380,57 @@
     {
         "fr"            "[PAS PRÊT]"
     }
-    "MapVetoPickMenuText"
+    "MapSelectionTeamChatOnly"
     {
-        "fr"        "Selectionnez une map à JOUER :"
+        "fr"        "Vous ne pouvez écrire que dans le chat d'équipe pendant la sélection de map."
     }
-    "MapVetoPickConfirmMenuText"
+    "MapSelectionInvalidMap"
     {
-        "fr"        "Confirmez que vous souhaitez jouer {1} :"
+        "fr"        "{1} n'est pas une map valide."
     }
-    "MapVetoBanMenuText"
+    "MapSelectionPickMapHelp"
     {
-        "fr"        "Selectionnez une map à BANNIR :"
+        "fr"        "Utilisez {1} <map> pour sélectionner une map."
     }
-    "MapVetoBanConfirmMenuText"
+    "MapSelectionBanMapHelp"
     {
-        "fr"        "Confirmez que vous souhaitez la bannir {1} :"
+        "fr"        "Utilisez {1} <map> pour bannir une map."
     }
-    "MapVetoSidePickMenuText"
+    "MapSelectionPickSideHelp"
     {
-        "fr"        "Selectionner un côté pour {1}"
+        "fr"        "Utilisez {1} ou {2} pour sélectionner un côté."
     }
-    "MapVetoSidePickConfirmMenuText"
+    "MapSelectionAnnounceCaptains"
     {
-        "fr"        "Confirmez que vous voulez commencer {1} :"
+        "fr"        "Capitaine de {1}: {2}"
     }
-    "ConfirmPositiveOptionText"
+    "MapSelectionBan"
     {
-        "fr"        "Oui"
+        "fr"        "BANNIR"
     }
-    "ConfirmNegativeOptionText"
+    "MapSelectionPick"
     {
-        "fr"        "Non"
+        "fr"        "SÉLECTIONNER"
     }
-    "VetoCountdown"
+    "MapSelectionTurnToPick"
     {
-        "fr"        "Le veto commencera dans {1} seconde(s)."
+        "fr"        "{1} doit maintenant {2} une map pour jouer en map {3}."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "fr"        "{1} doit maintenant {2} une map."
+    }
+    "MapSelectionPickSide"
+    {
+        "fr"        "{1} doit sélectionner un côté où jouer sur {2}."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "fr"        "Maps restantes :"
+    }
+    "MapSelectionCountdown"
+    {
+        "fr"        "Selection de la map commençant dans {1}..."
     }
     "SurrenderCommandNotEnabled"
     {

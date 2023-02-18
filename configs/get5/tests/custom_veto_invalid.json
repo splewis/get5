@@ -1,0 +1,42 @@
+{
+  "matchid": "test_match_valid_custom_veto",
+  "num_maps": 3,
+  "maplist": [
+    "de_dust2",
+    "de_mirage",
+    "de_inferno",
+    "de_ancient",
+    "de_vertigo"
+  ],
+  "veto_mode": [
+    "team1_ban",
+    "team2_ban",
+    "team1_ban",
+    "team2_ban",
+    "team1_pick",
+    "team2_pick"
+  ],
+  "map_sides": [
+    "team2_ct",
+    "team1_ct",
+    "knife"
+  ],
+  "team1": {
+    "name": "Team A Default",
+    "players": {
+      "76561197996413459": "PlayerAName1"
+    },
+    "coaches": {
+      "76561197996426735": "CoachAName1"
+    }
+  },
+  "team2": {
+    "name": "Team B Default",
+    "players": {
+      "76561197996413459": "PlayerBName1"
+    },
+    "coaches": {
+      "76561197996426735": "CoachBName1"
+    }
+  }
+}

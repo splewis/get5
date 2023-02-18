@@ -61,6 +61,7 @@
 #pragma dynamic 32000
 
 /** ConVar handles **/
+ConVar g_AllowPauseCancellationCvar;
 ConVar g_AllowTechPauseCvar;
 ConVar g_MaxTechPauseDurationCvar;
 ConVar g_MaxTechPausesCvar;
@@ -85,7 +86,10 @@ ConVar g_EventLogRemoteHeaderValueCvar;
 ConVar g_FixedPauseTimeCvar;
 ConVar g_KickClientImmunityCvar;
 ConVar g_KickClientsWithNoMatchCvar;
+ConVar g_KickOnForceEndCvar;
 ConVar g_LiveCfgCvar;
+ConVar g_LiveWingmanCfgCvar;
+ConVar g_MuteAllChatDuringMapSelectionCvar;
 ConVar g_WarmupCfgCvar;
 ConVar g_KnifeCfgCvar;
 ConVar g_LiveCountdownTimeCvar;
@@ -94,6 +98,7 @@ ConVar g_MaxTacticalPausesCvar;
 ConVar g_MaxPauseTimeCvar;
 ConVar g_MessagePrefixCvar;
 ConVar g_PauseOnVetoCvar;
+ConVar g_AllowUnpausingFixedPausesCvar;
 ConVar g_PausingEnabledCvar;
 ConVar g_PrettyPrintJsonCvar;
 ConVar g_ReadyTeamTagCvar;
@@ -111,7 +116,6 @@ ConVar g_TeamTimeToKnifeDecisionCvar;
 ConVar g_TimeToStartCvar;
 ConVar g_TimeToStartVetoCvar;
 ConVar g_TimeFormatCvar;
-ConVar g_VetoConfirmationTimeCvar;
 ConVar g_VetoCountdownCvar;
 ConVar g_PrintUpdateNoticeCvar;
 ConVar g_RoundBackupPathCvar;
@@ -143,6 +147,7 @@ ConVar g_CoachingEnabledCvar;
 /** Series config game-state **/
 int g_MapsToWin = 1;  // Maps needed to win the series.
 bool g_SeriesCanClinch = true;
+bool g_Wingman = false;
 int g_RoundNumber = -1;  // The round number, 0-indexed. -1 if the match is not live.
 // The active map number, used by stats. Required as the calculated round number changes immediately
 // as a map ends, but before the map changes to the next.
@@ -174,7 +179,6 @@ float g_BombPlantedTime = 0.0;
 Get5BombSite g_BombSiteLastPlanted = Get5BombSite_Unknown;
 
 bool g_SkipVeto = false;
-float g_VetoMenuTime = 0.0;
 MatchSideType g_MatchSideType = MatchSideType_Standard;
 ArrayList g_CvarNames;
 ArrayList g_CvarValues;
@@ -192,7 +196,7 @@ bool g_IsChangingPauseState = false;  // Used to prevent mp_pause_match and mp_u
 Get5Team g_PausingTeam = Get5Team_None;          // The team that last called for a pause.
 Get5PauseType g_PauseType = Get5PauseType_None;  // The type of pause last initiated.
 Handle g_PauseTimer = INVALID_HANDLE;
-int g_LatestPauseDuration = 0;
+int g_LatestPauseDuration = -1;
 bool g_TeamReadyForUnpause[MATCHTEAM_COUNT];
 bool g_TeamGivenStopCommand[MATCHTEAM_COUNT];
 int g_TacticalPauseTimeUsed[MATCHTEAM_COUNT];
@@ -214,8 +218,8 @@ Get5State g_GameState = Get5State_None;
 ArrayList g_MapsToPlay;
 ArrayList g_MapSides;
 ArrayList g_MapsLeftInVetoPool;
+ArrayList g_MapBanOrder;
 Get5Team g_LastVetoTeam;
-Menu g_ActiveVetoMenu;
 Handle g_InfoTimer = INVALID_HANDLE;
 Handle g_MatchConfigExecTimer = INVALID_HANDLE;
 Handle g_ResetCvarsTimer = INVALID_HANDLE;
@@ -306,6 +310,7 @@ Handle g_OnKnifeRoundStarted = INVALID_HANDLE;
 Handle g_OnKnifeRoundWon = INVALID_HANDLE;
 Handle g_OnMatchPaused = INVALID_HANDLE;
 Handle g_OnMatchUnpaused = INVALID_HANDLE;
+Handle g_OnPauseBegan = INVALID_HANDLE;
 Handle g_OnPlayerConnected = INVALID_HANDLE;
 Handle g_OnPlayerDisconnected = INVALID_HANDLE;
 Handle g_OnPlayerDeath = INVALID_HANDLE;
@@ -357,6 +362,15 @@ public Plugin myinfo = {
  * Core SourceMod forwards,
  */
 
+public void OnAllPluginsLoaded() {
+  Handle h = FindPluginByFile("basebans.smx");
+  if (h != INVALID_HANDLE) {
+    LogMessage("Basebans plugin detected. You should remove this plugin as it conflicts with Get5. Unloading...");
+    ServerCommand("sm plugins unload basebans");
+    LogMessage("Unloaded basebans.smx.");
+  }
+}
+
 public void OnPluginStart() {
   InitDebugLog(DEBUG_CVAR, "get5");
   LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
@@ -377,14 +391,15 @@ public void OnPluginStart() {
   // clang-format off
 
   // Pauses
-  g_AllowTechPauseCvar                  = CreateConVar("get5_allow_technical_pause", "1", "Whether technical pauses are allowed.");
+  g_AllowPauseCancellationCvar          = CreateConVar("get5_allow_pause_cancellation", "1", "Whether requests for pauses can be canceled by the pausing team using !unpause before freezetime begins.");
+  g_AllowTechPauseCvar                  = CreateConVar("get5_allow_technical_pause", "1", "Whether technical pauses are allowed by players.");
+  g_AllowUnpausingFixedPausesCvar       = CreateConVar("get5_allow_unpausing_fixed_pauses", "1", "Whether fixed-length tactical pauses can be stopped early if both teams !unpause.");
   g_AutoTechPauseMissingPlayersCvar     = CreateConVar("get5_auto_tech_pause_missing_players", "0", "The number of players that must leave a team to trigger an automatic technical pause. Set to 0 to disable.");
-  g_FixedPauseTimeCvar                  = CreateConVar("get5_fixed_pause_time", "0", "The fixed duration of tactical pauses in seconds. 0 = unlimited.");
+  g_FixedPauseTimeCvar                  = CreateConVar("get5_fixed_pause_time", "60", "The fixed duration of tactical pauses in seconds. Cannot be set lower than 15 if non-zero.");
   g_MaxTacticalPausesCvar               = CreateConVar("get5_max_pauses", "0", "Number of tactical pauses a team can use. 0 = unlimited.");
-  g_MaxPauseTimeCvar                    = CreateConVar("get5_max_pause_time", "300", "Maximum number of seconds a game can spend under tactical pause for each team. 0 = unlimited.");
+  g_MaxPauseTimeCvar                    = CreateConVar("get5_max_pause_time", "0", "Maximum number of seconds a game can spend under tactical pause for each team. 0 = unlimited.");
   g_MaxTechPausesCvar                   = CreateConVar("get5_max_tech_pauses", "0", "Number of technical pauses a team can use. 0 = unlimited.");
-  g_PausingEnabledCvar                  = CreateConVar("get5_pausing_enabled", "1", "Whether pausing (both kinds) is allowed by players.");
-  g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "0", "Whether the game pauses during the veto phase.");
+  g_PausingEnabledCvar                  = CreateConVar("get5_pausing_enabled", "1", "Whether tactical pauses are allowed by players.");
   g_ResetPausesEachHalfCvar             = CreateConVar("get5_reset_pauses_each_half", "1", "Whether tactical pause limits will be reset on halftime.");
   g_MaxTechPauseDurationCvar            = CreateConVar("get5_tech_pause_time", "0", "Number of seconds before anyone can call !unpause during a technical timeout. 0 = unlimited.");
 
@@ -433,7 +448,7 @@ public void OnPluginStart() {
 
   // Ready system
   g_AllowForceReadyCvar                 = CreateConVar("get5_allow_force_ready", "1", "Allows players to use the !forceready command.");
-  g_AutoReadyActivePlayersCvar          = CreateConVar("get5_auto_ready_active_players", "0", "Whether to automatically mark players as ready if they kill anyone in the warmup or veto phase.");
+  g_AutoReadyActivePlayersCvar          = CreateConVar("get5_auto_ready_active_players", "0", "Whether to automatically mark players as ready if they kill anyone in the warmup or map selection phase.");
   g_ReadyTeamTagCvar                    = CreateConVar("get5_ready_team_tag", "1", "Adds [READY]/[NOT READY] tags to team names.");
   g_SetClientClanTagCvar                = CreateConVar("get5_set_client_clan_tags", "1", "Whether to set client clan tags to player ready status.");
 
@@ -447,23 +462,28 @@ public void OnPluginStart() {
   // Countdown/timers
   g_LiveCountdownTimeCvar               = CreateConVar("get5_live_countdown_time", "10", "Number of seconds used to count down when a match is going live.", 0, true, 5.0, true, 60.0);
   g_TimeToStartCvar                     = CreateConVar("get5_time_to_start", "0", "Time (in seconds) teams have to ready up for live/knife before forfeiting the match. 0 = unlimited.");
-  g_TimeToStartVetoCvar                 = CreateConVar("get5_time_to_start_veto", "0", "Time (in seconds) teams have to ready up for vetoing before forfeiting the match. 0 = unlimited.");
+  g_TimeToStartVetoCvar                 = CreateConVar("get5_time_to_start_veto", "0", "Time (in seconds) teams have to ready up for map selection before forfeiting the match. 0 = unlimited.");
   g_TeamTimeToKnifeDecisionCvar         = CreateConVar("get5_time_to_make_knife_decision", "60", "Time (in seconds) a team has to make a !stay/!swap decision after winning knife round. 0 = unlimited.");
-  g_VetoConfirmationTimeCvar            = CreateConVar("get5_veto_confirmation_time", "2.0", "Time (in seconds) from presenting a veto menu to a selection being made, during which a confirmation will be required. 0 to disable.");
   g_VetoCountdownCvar                   = CreateConVar("get5_veto_countdown", "5", "Seconds to countdown before veto process commences. 0 to skip countdown.");
+
+  // Veto
+  g_MuteAllChatDuringMapSelectionCvar   = CreateConVar("get5_mute_allchat_during_map_selection", "1", "If enabled, only the team captains can type in all-chat during map selection.");
+  g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "1", "Whether the game pauses during map selection.");
+  g_DisplayGotvVetoCvar                 = CreateConVar("get5_display_gotv_veto", "0", "Whether to wait for map selection to be broadcast to GOTV before changing map.");
 
   // Server config
   g_AutoLoadConfigCvar                  = CreateConVar("get5_autoload_config", "", "The path/name of a match config file to automatically load when the server loads or when the first player joins.");
   g_CheckAuthsCvar                      = CreateConVar("get5_check_auths", "1", "Whether players are forced onto the correct teams based on their Steam IDs.");
-  g_DisplayGotvVetoCvar                 = CreateConVar("get5_display_gotv_veto", "0", "Whether to wait for map vetos to be printed to GOTV before changing map.");
   g_SetHostnameCvar                     = CreateConVar("get5_hostname_format", "Get5: {TEAM1} vs {TEAM2}", "The server hostname to use when a match is loaded. Set to \"\" to disable/use existing.");
   g_KickClientImmunityCvar              = CreateConVar("get5_kick_immunity", "1", "Whether admins with the 'changemap' flag will be immune to kicks from \"get5_kick_when_no_match_loaded\".");
   g_KickClientsWithNoMatchCvar          = CreateConVar("get5_kick_when_no_match_loaded", "0", "Whether the plugin kicks players when no match is loaded and when a match ends.");
+  g_KickOnForceEndCvar                  = CreateConVar("get5_kick_on_force_end", "0", "Whether players are kicked from the server when a match is forcefully ended. Requires get5_kick_when_no_match_loaded to be enabled also.");
   g_KnifeCfgCvar                        = CreateConVar("get5_knife_cfg", "get5/knife.cfg", "Config file to execute for the knife round.");
   g_LiveCfgCvar                         = CreateConVar("get5_live_cfg", "get5/live.cfg", "Config file to execute when the game goes live.");
+  g_LiveWingmanCfgCvar                  = CreateConVar("get5_live_wingman_cfg", "get5/live_wingman.cfg", "Config file to execute when the game goes live, but for wingman mode.");
   g_PrettyPrintJsonCvar                 = CreateConVar("get5_pretty_print_json", "1", "Whether all JSON output is in pretty-print format.");
   g_PrintUpdateNoticeCvar               = CreateConVar("get5_print_update_notice", "1", "Whether to print to chat when the game goes live if a new version of Get5 is available.");
-  g_ServerIdCvar                        = CreateConVar("get5_server_id", "0", "Integer that identifies your server. This is used in temporary files to prevent collisions.");
+  g_ServerIdCvar                        = CreateConVar("get5_server_id", "0", "A string that identifies your server. This is used in temporary files to prevent collisions and added as an HTTP header for network requests made by Get5.");
   g_StatsPathFormatCvar                 = CreateConVar("get5_stats_path_format", "get5_matchstats_{MATCHID}.cfg", "Where match stats are saved (updated each map end). Set to \"\" to disable.");
   g_WarmupCfgCvar                       = CreateConVar("get5_warmup_cfg", "get5/warmup.cfg", "Config file to execute during warmup periods.");
   g_ResetCvarsOnEndCvar                 = CreateConVar("get5_reset_cvars_on_end", "1", "Whether parameters from the \"cvars\" section of a match configuration and the Get5-determined hostname are restored to their original values when a series ends.");
@@ -507,6 +527,8 @@ public void OnPluginStart() {
   MapChatCommand(Get5ChatCommand_Surrender, "surrender");
   MapChatCommand(Get5ChatCommand_FFW, "ffw");
   MapChatCommand(Get5ChatCommand_CancelFFW, "cancelffw");
+  MapChatCommand(Get5ChatCommand_Pick, "pick");
+  MapChatCommand(Get5ChatCommand_Ban, "ban");
 
   LoadCustomChatAliases("addons/sourcemod/configs/get5/commands.cfg");
 
@@ -526,6 +548,9 @@ public void OnPluginStart() {
               "Removes the last kicked steamid from a match team");
   RegAdminCmd("get5_creatematch", Command_CreateMatch, ADMFLAG_CHANGEMAP,
               "Creates and loads a match using the players currently on the server as a Bo1");
+  RegAdminCmd(
+    "get5_add_ready_time", Command_AddReadyTime, ADMFLAG_CHANGEMAP,
+    "Adds additional ready-time by deducting the provided seconds from the time already used during a ready-phase.");
 
   RegAdminCmd("get5_scrim", Command_CreateScrim, ADMFLAG_CHANGEMAP,
               "Creates and loads a match using the scrim template");
@@ -587,6 +612,7 @@ public void OnPluginStart() {
   g_CvarNames = new ArrayList(MAX_CVAR_LENGTH);
   g_CvarValues = new ArrayList(MAX_CVAR_LENGTH);
   g_TeamScoresPerMap = new ArrayList(MATCHTEAM_COUNT);
+  g_MapBanOrder = new ArrayList();
 
   for (int i = 0; i < sizeof(g_TeamPlayers); i++) {
     g_TeamPlayers[i] = new ArrayList(AUTH_LENGTH);
@@ -635,6 +661,7 @@ public void OnPluginStart() {
   g_OnSeriesResult = CreateGlobalForward("Get5_OnSeriesResult", ET_Ignore, Param_Cell);
   g_OnMatchPaused = CreateGlobalForward("Get5_OnMatchPaused", ET_Ignore, Param_Cell);
   g_OnMatchUnpaused = CreateGlobalForward("Get5_OnMatchUnpaused", ET_Ignore, Param_Cell);
+  g_OnPauseBegan = CreateGlobalForward("Get5_OnPauseBegan", ET_Ignore, Param_Cell);
 
   /** Start any repeating timers **/
   CreateTimer(CHECK_READY_TIMER_INTERVAL, Timer_CheckReady, _, TIMER_REPEAT);
@@ -683,7 +710,7 @@ static Action Timer_InfoMessages(Handle timer) {
             } else {
               Get5_Message(i, "%t",
                            g_GameState == Get5State_PreVeto
-                             ? "ReadyToVetoInfoMessage"
+                             ? "ReadyForMapSelectionInfoMessage"
                              : (knifeRound ? "ReadyToKnifeInfoMessage" : "ReadyToStartInfoMessage"),
                            readyCommandFormatted);
             }
@@ -701,13 +728,15 @@ static Action Timer_InfoMessages(Handle timer) {
       }
       MissingPlayerInfoMessage();
     } else if (g_GameState == Get5State_Warmup && g_DisplayGotvVetoCvar.BoolValue && GetTvDelay() > 0) {
-      Get5_MessageToAll("%t", "WaitingForGOTVVetoInfoMessage");
+      Get5_MessageToAll("%t", "WaitingForGOTVMapSelection");
     }
+  } else if (g_GameState == Get5State_Veto) {
+    PrintVetoHelpMessage();
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     PromptForKnifeDecision();
   } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
     // Handle postgame
-    Get5_MessageToAll("%t", "WaitingForGOTVBrodcastEndingInfoMessage");
+    Get5_MessageToAll("%t", "WaitingForGOTVBroadcastEnding");
   }
 }
 
@@ -755,6 +784,16 @@ public void OnClientPostAdminCheck(int client) {
       }
     }
   }
+}
+
+public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
+  if (g_GameState == Get5State_Veto && g_MuteAllChatDuringMapSelectionCvar.BoolValue && StrEqual(command, "say")) {
+    if (client != g_VetoCaptains[Get5Team_1] && client != g_VetoCaptains[Get5Team_2]) {
+      Get5_Message(client, "%t", "MapSelectionTeamChatOnly");
+      return Plugin_Stop;
+    }
+  }
+  return Plugin_Continue;
 }
 
 public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs) {
@@ -806,20 +845,53 @@ static Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
 static Action Event_PlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
   int client = GetClientOfUserId(event.GetInt("userid"));
   g_ClientPendingTeamCheck[client] = false;
-  if (g_GameState != Get5State_None && IsPlayer(client)) {
-    Get5PlayerDisconnectedEvent disconnectEvent = new Get5PlayerDisconnectedEvent(g_MatchID, GetPlayerObject(client));
-
-    LogDebug("Calling Get5_OnPlayerDisconnected()");
-    Call_StartForward(g_OnPlayerDisconnected);
-    Call_PushCell(disconnectEvent);
-    Call_Finish();
-    EventLogger_LogAndDeleteEvent(disconnectEvent);
-
-    // Because the disconnect event fires before the user leaves the server, we have to put this on a short callback
-    // to get the right "number of players per team" in CheckForForfeitOnDisconnect().
-    CreateTimer(0.1, Timer_DisconnectCheck, _, TIMER_FLAG_NO_MAPCHANGE);
+  if (g_GameState == Get5State_None || !IsPlayer(client)) {
+    return Plugin_Continue;
   }
+  Get5PlayerDisconnectedEvent disconnectEvent = new Get5PlayerDisconnectedEvent(g_MatchID, GetPlayerObject(client));
+
+  LogDebug("Calling Get5_OnPlayerDisconnected()");
+  Call_StartForward(g_OnPlayerDisconnected);
+  Call_PushCell(disconnectEvent);
+  Call_Finish();
+  EventLogger_LogAndDeleteEvent(disconnectEvent);
+
+  // Because the disconnect event fires before the user leaves the server, we have to put this on a short callback
+  // to get the right "number of players per team" in CheckForForfeitOnDisconnect().
+  CreateTimer(0.1, Timer_DisconnectCheck, client, TIMER_FLAG_NO_MAPCHANGE);
   return Plugin_Continue;
+}
+
+// This runs before OnConfigsExecuted and should not contain anything that reads game state because of the above
+// mentioned hibernate race conditions.
+public void OnMapStart() {
+  LogDebug("OnMapStart");
+  g_MapChangePending = false;
+  g_DoingBackupRestoreNow = false;
+  g_ReadyTimeWaitingUsed = 0;
+  g_KnifeWinnerTeam = Get5Team_None;
+  g_HasKnifeRoundStarted = false;
+
+  LOOP_TEAMS(team) {
+    g_TeamGivenStopCommand[team] = false;
+    g_TeamReadyForUnpause[team] = false;
+    if (g_GameState != Get5State_PendingRestore) {
+      g_TacticalPauseTimeUsed[team] = 0;
+      g_TacticalPausesUsed[team] = 0;
+      g_TechnicalPausesUsed[team] = 0;
+    }
+  }
+
+  // If the map is changed while a map timer is counting down, kill the timer. This could happen if
+  // a too long mp_match_restart_delay was set and admins decide to manually intervene.
+  if (g_PendingMapChangeTimer != INVALID_HANDLE) {
+    delete g_PendingMapChangeTimer;
+    LogDebug("Killed g_PendingMapChangeTimer as map was changed.");
+  }
+
+  EndSurrenderTimers();
+  // Always reset ready status on map start
+  ResetReadyStatus();
 }
 
 // This runs every time a map starts *or* when the plugin is reloaded.
@@ -850,11 +922,6 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
     }
   }
 
-  g_MapChangePending = false;
-  g_DoingBackupRestoreNow = false;
-  g_ReadyTimeWaitingUsed = 0;
-  g_KnifeWinnerTeam = Get5Team_None;
-  g_HasKnifeRoundStarted = false;
   // Recording is always automatically stopped on map change, and
   // since there are no hooks to detect tv_stoprecord, we reset
   // our recording var if a map change is performed unexpectedly.
@@ -862,24 +929,10 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
   g_DemoFileName = "";
   DeleteOldBackups();
 
-  EndSurrenderTimers();
-  // Always reset ready status on map start
-  ResetReadyStatus();
-
   if (CheckAutoLoadConfig()) {
     // If gamestate is none and a config was autoloaded, a match config will set all of the below
     // state.
-    return;
-  }
-
-  LOOP_TEAMS(team) {
-    g_TeamGivenStopCommand[team] = false;
-    g_TeamReadyForUnpause[team] = false;
-    if (g_GameState != Get5State_PendingRestore) {
-      g_TacticalPauseTimeUsed[team] = 0;
-      g_TacticalPausesUsed[team] = 0;
-      g_TechnicalPausesUsed[team] = 0;
-    }
+    return Plugin_Handled;
   }
 
   // On map start, always put the game in warmup mode.
@@ -891,13 +944,7 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
   if (g_GameState != Get5State_PendingRestore) {
     SetStartingTeams();
   }
-
-  // If the map is changed while a map timer is counting down, kill the timer. This could happen if
-  // a too long mp_match_restart_delay was set and admins decide to manually intervene.
-  if (g_PendingMapChangeTimer != INVALID_HANDLE) {
-    delete g_PendingMapChangeTimer;
-    LogDebug("Killed g_PendingMapChangeTimer as map was changed.");
-  }
+  return Plugin_Handled;
 }
 
 static Action Timer_CheckReady(Handle timer) {
@@ -920,6 +967,7 @@ static Action Timer_CheckReady(Handle timer) {
       ChangeState(Get5State_Veto);
       RestartGame();
       CreateVeto();
+      SetMatchTeamCvars();  // Removes ready status.
     }
   } else if (g_GameState == Get5State_PendingRestore) {
     // We don't wait for spectators when restoring backups
@@ -1013,7 +1061,7 @@ bool CheckAutoLoadConfig() {
 static Action Command_EndMatch(int client, int args) {
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "No match is configured; nothing to end.");
-    return;
+    return Plugin_Handled;
   }
 
   Get5Team winningTeam = Get5Team_None;  // defaults to tie
@@ -1026,12 +1074,12 @@ static Action Command_EndMatch(int client, int args) {
       winningTeam = Get5Team_2;
     } else {
       ReplyToCommand(client, "Usage: get5_endmatch <team1|team2> (omit team for tie)");
-      return;
+      return Plugin_Handled;
     }
   }
 
   if (IsPaused()) {
-    UnpauseGame(Get5Team_None);
+    UnpauseGame();
   }
 
   // Call game-ending forwards.
@@ -1050,8 +1098,8 @@ static Action Command_EndMatch(int client, int args) {
 
   StopRecording(1.0);  // must go before EndSeries as it depends on g_MatchID.
 
-  // No delay required when not kicking players.
-  EndSeries(winningTeam, false, 0.0, false);
+  bool kick = g_KickOnForceEndCvar.BoolValue;
+  EndSeries(winningTeam, false, kick ? 5.0 : 0.0, kick);
 
   UpdateClanTags();
 
@@ -1062,6 +1110,7 @@ static Action Command_EndMatch(int client, int args) {
   }
 
   RestartGame();
+  return Plugin_Handled;
 }
 
 static Action Command_LoadMatch(int client, int args) {
@@ -1137,6 +1186,40 @@ static Action Command_DumpStats(int client, int args) {
   }
 }
 
+Action Command_Ct(int client, int args) {
+  if (!IsPlayer(client)) {
+    return Plugin_Handled;
+  }
+  if (g_GameState == Get5State_Veto) {
+    HandleSideChoice(Get5Side_CT, client);
+  } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
+    int clientTeam = GetClientTeam(client);
+    if (clientTeam == CS_TEAM_CT) {
+      FakeClientCommand(client, "sm_stay");
+    } else if (clientTeam == CS_TEAM_T) {
+      FakeClientCommand(client, "sm_swap");
+    }
+  }
+  return Plugin_Handled;
+}
+
+Action Command_T(int client, int args) {
+  if (!IsPlayer(client)) {
+    return Plugin_Handled;
+  }
+  if (g_GameState == Get5State_Veto) {
+    HandleSideChoice(Get5Side_T, client);
+  } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
+    int clientTeam = GetClientTeam(client);
+    if (clientTeam == CS_TEAM_CT) {
+      FakeClientCommand(client, "sm_swap");
+    } else if (clientTeam == CS_TEAM_T) {
+      FakeClientCommand(client, "sm_stay");
+    }
+  }
+  return Plugin_Handled;
+}
+
 Action Command_Stop(int client, int args) {
   if (!g_StopCommandEnabledCvar.BoolValue) {
     Get5_MessageToAll("%t", "StopCommandNotEnabled");
@@ -1145,8 +1228,8 @@ Action Command_Stop(int client, int args) {
 
   // Because a live restore to the same match does not change get5 state to warmup, we have to make sure
   // that successive calls to !stop (spammed by players) does not reload multiple backups.
-  // Don't allow it during freeze time or after the round has ended either.
-  if (g_GameState != Get5State_Live || InHalftimePhase() || InFreezeTime() || g_DoingBackupRestoreNow ||
+  // Don't allow it after the round has ended either.
+  if (g_GameState != Get5State_Live || InHalftimePhase() || g_DoingBackupRestoreNow ||
       GetRoundsPlayed() != g_RoundNumber) {
     return Plugin_Handled;
   }
@@ -1171,12 +1254,22 @@ Action Command_Stop(int client, int args) {
     Get5_MessageToAll("%t", "StopCommandRequiresNoDamage");
     return Plugin_Handled;
   }
-  int stopCommandGrace = g_StopCommandTimeLimitCvar.IntValue;
-  if (stopCommandGrace > 0 && GetRoundTime() / 1000 > stopCommandGrace) {
-    char formattedGracePeriod[32];
-    ConvertSecondsToMinutesAndSeconds(stopCommandGrace, formattedGracePeriod, sizeof(formattedGracePeriod));
-    FormatTimeString(formattedGracePeriod, sizeof(formattedGracePeriod), formattedGracePeriod);
-    Get5_MessageToAll("%t", "StopCommandTimeLimitExceeded", formattedGracePeriod);
+
+  if (!InFreezeTime()) {
+    int stopCommandGrace = g_StopCommandTimeLimitCvar.IntValue;
+    if (stopCommandGrace > 0 && GetRoundTime() / 1000 > stopCommandGrace) {
+      char formattedGracePeriod[32];
+      ConvertSecondsToMinutesAndSeconds(stopCommandGrace, formattedGracePeriod, sizeof(formattedGracePeriod));
+      FormatTimeString(formattedGracePeriod, sizeof(formattedGracePeriod), formattedGracePeriod);
+      Get5_MessageToAll("%t", "StopCommandTimeLimitExceeded", formattedGracePeriod);
+      return Plugin_Handled;
+    }
+  } else if (g_PauseType != Get5PauseType_Backup) {
+    // If in freezetime and the game is not paused for restore, don't allow !stop until the round has started.
+    // A tech pause should instead be used in this case. We allow additional calls to !stop if the game is paused post
+    // restore, so a disconnecting player can be part of another restore process and have their inventory/cash restored
+    // after reconnecting.
+    Get5_MessageToAll("%t", "StopCommandOnlyAfterRoundStart");
     return Plugin_Handled;
   }
 
@@ -1226,6 +1319,83 @@ void RestoreLastRound(int client) {
  * Game Events *not* related to the stats tracking system.
  */
 
+Action Timer_DisconnectCheck(Handle timer, int disconnectingClient) {
+  if (g_GameState == Get5State_Veto) {
+    if (disconnectingClient == g_VetoCaptains[Get5Team_1]) {
+      UnreadyTeam(Get5Team_1);
+      AbortVeto();
+    } else if (disconnectingClient == g_VetoCaptains[Get5Team_2]) {
+      UnreadyTeam(Get5Team_2);
+      AbortVeto();
+    }
+    return Plugin_Handled;
+  }
+
+  if (g_GameState <= Get5State_Warmup || g_GameState > Get5State_Live || IsDoingRestoreOrMapChange()) {
+    // If we're in warmup or veto, the "time to ready" logic should be used instead of leave-surrender.
+    // Postgame/restore also should not trigger any of this logic.
+    return Plugin_Handled;
+  }
+
+  if (g_ForfeitTimer != INVALID_HANDLE) {
+    LogDebug("Forfeit timer already started on player disconnect, ignoring.");
+    return Plugin_Handled;
+  }
+
+  int team1Count = GetTeamPlayerCount(Get5Team_1);
+  int team2Count = GetTeamPlayerCount(Get5Team_2);
+
+  if (g_AutoTechPauseMissingPlayersCvar.BoolValue) {
+    int playerCountTriggeringTechPause = g_PlayersPerTeam - g_AutoTechPauseMissingPlayersCvar.IntValue;
+    if (playerCountTriggeringTechPause < 0) {
+      playerCountTriggeringTechPause = 0;
+    }
+    if (team1Count > 0 && team2Count <= playerCountTriggeringTechPause) {
+      TriggerAutomaticTechPause(Get5Team_2);
+    } else if (team2Count > 0 && team1Count <= playerCountTriggeringTechPause) {
+      TriggerAutomaticTechPause(Get5Team_1);
+    }
+  }
+
+  if (team1Count > 0 && team2Count > 0) {
+    // If both teams still have at least one player; no forfeit.
+    return Plugin_Handled;
+  }
+
+  // The rest of the forfeit system can be disabled!
+  if (!g_ForfeitEnabledCvar.BoolValue) {
+    return Plugin_Handled;
+  }
+
+  Get5Team forfeitingTeam = Get5Team_None;
+  if (team1Count == g_PlayersPerTeam) {
+    // team2 has no players, team1 is full
+    forfeitingTeam = Get5Team_2;
+  } else if (team2Count == g_PlayersPerTeam) {
+    // team1 has no players, team2 is full
+    forfeitingTeam = Get5Team_1;
+  }
+
+  if (forfeitingTeam == Get5Team_None) {
+    // End here if no players are left or one team is partially full.
+    AnnounceRemainingForfeitTime(GetForfeitGracePeriod(), Get5Team_None);
+    StartForfeitTimer(Get5Team_None);
+    return Plugin_Handled;
+  }
+
+  if (g_GameState != Get5State_Live) {
+    // !ffw can only be used in live, not in knife.
+    return Plugin_Handled;
+  }
+
+  // One team is full, the other team left; announce that they can request to !ffw
+  char winCommandFormatted[64];
+  GetChatAliasForCommand(Get5ChatCommand_FFW, winCommandFormatted, sizeof(winCommandFormatted), true);
+  Get5_MessageToAll("%t", "WinByForfeitAvailable", g_FormattedTeamNames[forfeitingTeam],
+                    g_FormattedTeamNames[OtherMatchTeam(forfeitingTeam)], winCommandFormatted);
+  return Plugin_Handled;
+}
+
 static Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_None && g_GameState < Get5State_KnifeRound) {
     int client = GetClientOfUserId(event.GetInt("userid"));
@@ -1269,7 +1439,7 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
   if (g_GameState == Get5State_Live) {
     // If someone called for a pause in the last round; cancel it.
     if (IsPaused()) {
-      UnpauseGame(Get5Team_None);
+      UnpauseGame();
     }
     // Figure out who won
     int t1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
@@ -1349,6 +1519,10 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 
     char nextMap[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(Get5_GetMapNumber(), nextMap, sizeof(nextMap));
+    if (StrContains(nextMap, "workshop", false) == 0) {
+      LogDebug("Added 20 seconds to mp_match_restart_delay to ensure workshop map can download in time.");
+      SetCurrentMatchRestartDelay(requiredDelay + 20);
+    }
 
     char timeToMapChangeFormatted[8];
     ConvertSecondsToMinutesAndSeconds(RoundToFloor(restartDelay), timeToMapChangeFormatted,
@@ -1357,8 +1531,9 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     // g_MapChangePending is set in ChangeMap, but since we want to announce now and change the
     // state immediately while waiting for the restartDelay, we set it here also.
     g_MapChangePending = true;
-    FormatMapName(nextMap, nextMap, sizeof(nextMap), true, true);
-    Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMap, timeToMapChangeFormatted);
+    char nextMapFormatted[PLATFORM_MAX_PATH];
+    FormatMapName(nextMap, nextMapFormatted, sizeof(nextMapFormatted), true, true);
+    Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMapFormatted, timeToMapChangeFormatted);
     ChangeState(Get5State_PostGame);
     // Subtracting 4 seconds makes the map change 1 second before the timer expires, as there is a 3
     // second built-in delay in the ChangeMap function called by Timer_NextMatchMap.
@@ -1367,15 +1542,18 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
 }
 
 Action Timer_NextMatchMap(Handle timer) {
-  g_PendingMapChangeTimer = INVALID_HANDLE;
-  if (g_GameState == Get5State_None) {
-    return;
+  if (timer != g_PendingMapChangeTimer) {
+    return Plugin_Handled;
   }
-  char map[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(Get5_GetMapNumber(), map, sizeof(map));
-  // If you change these 3 seconds for whatever reason, you must adjust the counter-offset in
-  // Event_MatchOver.
-  ChangeMap(map, 3.0);
+  g_PendingMapChangeTimer = INVALID_HANDLE;
+  if (g_GameState != Get5State_None) {
+    char map[PLATFORM_MAX_PATH];
+    g_MapsToPlay.GetString(Get5_GetMapNumber(), map, sizeof(map));
+    // If you change these 3 seconds for whatever reason, you must adjust the counter-offset in
+    // Event_MatchOver.
+    ChangeMap(map, 3.0);
+  }
+  return Plugin_Handled;
 }
 
 void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay, bool kickPlayers = true) {
@@ -1409,7 +1587,6 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
   ChangeState(Get5State_None);
 
   if (restoreDelay < 0.1) {
-    // When force-ending the match there is no delay.
     ResetMatchCvarsAndHostnameAndKickPlayers(kickPlayers);
   } else {
     // If we restore cvars immediately, it might change the tv_ params or set the
@@ -1438,12 +1615,6 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
     delete g_KnifeDecisionTimer;
   }
 
-  // If a veto menu was open when the match ended, close it;
-  if (g_ActiveVetoMenu != null) {
-    LogDebug("Deleted g_ActiveVetoMenu.");
-    g_ActiveVetoMenu.Cancel();
-  }
-
   // If a config exec callback is in progress, stop it;
   if (g_MatchConfigExecTimer != INVALID_HANDLE) {
     LogDebug("Killing g_MatchConfigExecTimer as match was ended.");
@@ -1456,7 +1627,7 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
   ResetForfeitTimer();
   EndSurrenderTimers();
   if (IsPaused()) {
-    UnpauseGame(Get5Team_None);
+    UnpauseGame();
   }
   ResetMatchConfigVariables(false);
 }
@@ -1469,11 +1640,13 @@ void ResetMatchConfigVariables(bool backup = false) {
   g_MatchSideType = MatchSideType_Standard;
   g_MapsToWin = 1;
   g_SeriesCanClinch = true;
+  g_Wingman = false;
   g_LastVetoTeam = Get5Team_2;
   g_NumberOfMapsInSeries = 0;
   g_MapPoolList.Clear();
   g_PlayerNames.Clear();
   g_MapsToPlay.Clear();
+  g_MapBanOrder.Clear();
   g_MapSides.Clear();
   g_MapsLeftInVetoPool.Clear();
   g_TeamScoresPerMap.Clear();
@@ -1582,9 +1755,15 @@ static Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
   // If someone changes the map while in a pause, we have to make sure we reset this state, as the
   // UnpauseGame function will not be called to do it. FreezeTimeEnd is always called when the map
   // initially loads.
-  g_LatestPauseDuration = 0;
+  g_LatestPauseDuration = -1;
   g_PauseType = Get5PauseType_None;
   g_PausingTeam = Get5Team_None;
+
+  LOOP_TEAMS(t) {
+    // Because teams can !stop again during freezetime after loading a backup, we want to make sure no lingering
+    // requests persist after the freezetime ends.
+    g_TeamGivenStopCommand[t] = false;
+  }
 
   // We always want this to be correct, regardless of game state.
   g_RoundStartedTime = GetEngineTime();
@@ -1593,7 +1772,7 @@ static Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
   }
 }
 
-static void RestartInfoTimer() {
+void RestartInfoTimer() {
   // We restart this on each round start to make sure we don't double-print info messages
   // right on top of manually printed messages, such as "waiting for knife decision".
   if (g_InfoTimer != INVALID_HANDLE) {
@@ -1612,6 +1791,11 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   g_BombSiteLastPlanted = Get5BombSite_Unknown;
   g_PlayerHasTakenDamage = false;
   RestartInfoTimer();
+  if (g_PauseType != Get5PauseType_None && g_LatestPauseDuration == -1) {
+    // Make sure the pause timer starts at 0.00 if the match is paused, as the timer can be offset by up to 1 second.
+    // But don't do this if the pause has already ticked (i.e. pause from knife going to live).
+    RestartPauseTimer();
+  }
 
   if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {
     // Get5_OnRoundStart() is fired from within the backup event when loading the valve backup.
@@ -1856,7 +2040,8 @@ static void StartGame(bool knifeRound) {
   LogDebug("StartGame");
 
   if (knifeRound) {
-    ExecCfg(g_LiveCfgCvar);  // live first, then apply and save knife cvars in callback
+    ExecCfg(g_Wingman ? g_LiveWingmanCfgCvar
+                      : g_LiveCfgCvar);  // live first, then apply and save knife cvars in callback
     LogDebug("StartGame: about to begin knife round");
     ChangeState(Get5State_KnifeRound);
     CreateTimer(0.5, StartKnifeRound);
@@ -1982,6 +2167,8 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len, bool safeTeamNames = 
     ReplaceString(team1Str, sizeof(team1Str), " ", "_");
     ReplaceString(team2Str, sizeof(team2Str), " ", "_");
   }
+  char serverId[65];
+  g_ServerIdCvar.GetString(serverId, sizeof(serverId));
 
   // MATCHTITLE must go first as it can contain other placeholders
   ReplaceString(buffer, len, "{MATCHTITLE}", g_MatchTitle);
@@ -1990,7 +2177,7 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len, bool safeTeamNames = 
   ReplaceStringWithInt(buffer, len, "{MAXMAPS}", g_NumberOfMapsInSeries);
   ReplaceString(buffer, len, "{MATCHID}", g_MatchID);
   ReplaceString(buffer, len, "{MAPNAME}", mapName);
-  ReplaceStringWithInt(buffer, len, "{SERVERID}", g_ServerIdCvar.IntValue);
+  ReplaceString(buffer, len, "{SERVERID}", serverId);
   ReplaceString(buffer, len, "{TIME}", formattedTime);
   ReplaceString(buffer, len, "{TEAM1}", team1Str);
   ReplaceString(buffer, len, "{TEAM2}", team2Str);
@@ -2010,10 +2197,12 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len, bool safeTeamNames = 
   return true;
 }
 
-// Formats a temp file path based ont he server id. The pattern parameter is expected to have a %d
+// Formats a temp file path based ont he server id. The pattern parameter is expected to have a %s
 // token in it.
 void GetTempFilePath(char[] path, int len, const char[] pattern) {
-  FormatEx(path, len, pattern, g_ServerIdCvar.IntValue);
+  char serverId[65];
+  g_ServerIdCvar.GetString(serverId, sizeof(serverId));
+  FormatEx(path, len, pattern, serverId);
 }
 
 int GetRoundTime() {

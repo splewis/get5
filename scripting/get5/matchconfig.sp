@@ -1,9 +1,10 @@
 #include <string>
 
-#define REMOTE_CONFIG_PATTERN               "remote_config%d.json"
+#define REMOTE_CONFIG_PATTERN               "remote_config%s.json"
 #define CONFIG_MATCHID_DEFAULT              ""  // empty string if no match ID defined in config.
 #define CONFIG_MATCHTITLE_DEFAULT           "Map {MAPNUMBER} of {MAXMAPS}"
 #define CONFIG_PLAYERSPERTEAM_DEFAULT       5
+#define CONFIG_PLAYERSPERTEAM_DEFAULT_WM    2
 #define CONFIG_COACHESPERTEAM_DEFAULT       2
 #define CONFIG_MINPLAYERSTOREADY_DEFAULT    0
 #define CONFIG_MINSPECTATORSTOREADY_DEFAULT 0
@@ -12,6 +13,7 @@
 #define CONFIG_SKIPVETO_DEFAULT             false
 #define CONFIG_COACHES_MUST_READY_DEFAULT   false
 #define CONFIG_CLINCH_SERIES_DEFAULT        true
+#define CONFIG_WINGMAN_DEFAULT              false
 #define CONFIG_VETOFIRST_DEFAULT            "team1"
 #define CONFIG_SIDETYPE_DEFAULT             "standard"
 
@@ -57,14 +59,31 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   }
 
   // Copy all the maps into the veto pool.
+  bool usesWorkShopMap = false;
   char mapName[PLATFORM_MAX_PATH];
   for (int i = 0; i < g_MapPoolList.Length; i++) {
     g_MapPoolList.GetString(i, mapName, sizeof(mapName));
+    if (!IsMapValid(mapName)) {
+      if (StrContains(mapName, "workshop", false) != 0) {
+        FormatEx(error, PLATFORM_MAX_PATH, "Maplist contains invalid map '%s'.", mapName);
+        return false;
+      } else {
+        usesWorkShopMap = true;
+      }
+    }
     g_MapsLeftInVetoPool.PushString(mapName);
     g_TeamScoresPerMap.Push(0);
     g_TeamScoresPerMap.Set(g_TeamScoresPerMap.Length - 1, 0, 0);
     g_TeamScoresPerMap.Set(g_TeamScoresPerMap.Length - 1, 0, 1);
   }
+
+  if (usesWorkShopMap && !FindCommandLineParam("-authkey")) {
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "Maplist contains a Workshop map, but no Steam Web API Key was provided to the server.");
+    return false;
+  }
+
+  bool gameModeReloadRequired = IsMapReloadRequiredForGameMode(g_Wingman);
 
   if (g_SkipVeto) {
     // Copy the first k maps from the maplist to the final match maps.
@@ -89,6 +108,8 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
       char currentMap[PLATFORM_MAX_PATH];
       GetCurrentMap(currentMap, sizeof(currentMap));
       if (!StrEqual(mapName, currentMap)) {
+        gameModeReloadRequired = false;  // we can skip this when the map is changed here.
+        SetCorrectGameMode();
         ChangeMap(mapName);
       }
     }
@@ -116,14 +137,17 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   UpdateHostname();
 
   // Set mp_backup_round_file to prevent backup file collisions
-  ServerCommand("mp_backup_round_file backup_%d", Get5_GetServerID());
+  char serverId[65];
+  g_ServerIdCvar.GetString(serverId, sizeof(serverId));
+  ServerCommand("mp_backup_round_file backup_%s", serverId);
 
   if (!restoreBackup) {
+    StopRecording();  // Ensure no recording is running when starting a match, as that prevents Get5 from starting one.
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();
     if (IsPaused()) {
       LogDebug("Match was paused when loading match config. Unpausing.");
-      UnpauseGame(Get5Team_None);
+      UnpauseGame();
     }
 
     Stats_InitSeries();
@@ -172,6 +196,12 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
 
   Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
+
+  if (gameModeReloadRequired && !restoreBackup) {
+    GetCurrentMap(mapName, sizeof(mapName));
+    SetCorrectGameMode();
+    ChangeMap(mapName, 3.0);
+  }
   return true;
 }
 
@@ -311,6 +341,7 @@ void WriteMatchToKv(KeyValues kv) {
   kv.SetNum("min_spectators_to_ready", g_MinSpectatorsToReady);
   kv.SetString("match_title", g_MatchTitle);
   kv.SetNum("clinch_series", g_SeriesCanClinch);
+  kv.SetNum("wingman", g_Wingman);
 
   kv.SetNum("favored_percentage_team1", g_FavoredTeamPercentage);
   kv.SetString("favored_percentage_text", g_FavoredTeamText);
@@ -323,6 +354,7 @@ void WriteMatchToKv(KeyValues kv) {
   for (int i = 0; i < g_MapPoolList.Length; i++) {
     char map[PLATFORM_MAX_PATH];
     g_MapPoolList.GetString(i, map, sizeof(map));
+    EscapeKeyValueKeyWrite(map, sizeof(map));
     kv.SetString(map, KEYVALUE_STRING_PLACEHOLDER);
   }
   kv.GoBack();
@@ -375,8 +407,10 @@ static bool LoadMatchFromKeyValue(KeyValues kv, char[] error) {
   kv.GetString("matchid", g_MatchID, sizeof(g_MatchID), CONFIG_MATCHID_DEFAULT);
   g_InScrimMode = kv.GetNum("scrim") != 0;
   g_SeriesCanClinch = kv.GetNum("clinch_series", CONFIG_CLINCH_SERIES_DEFAULT) != 0;
+  g_Wingman = kv.GetNum("wingman", CONFIG_WINGMAN_DEFAULT) != 0;
   kv.GetString("match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
-  g_PlayersPerTeam = kv.GetNum("players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
+  g_PlayersPerTeam =
+    kv.GetNum("players_per_team", g_Wingman ? CONFIG_PLAYERSPERTEAM_DEFAULT_WM : CONFIG_PLAYERSPERTEAM_DEFAULT);
   g_CoachesPerTeam = kv.GetNum("coaches_per_team", CONFIG_COACHESPERTEAM_DEFAULT);
   g_MinPlayersToReady = kv.GetNum("min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
   g_MinSpectatorsToReady = kv.GetNum("min_spectators_to_ready", CONFIG_MINSPECTATORSTOREADY_DEFAULT);
@@ -431,17 +465,38 @@ static bool LoadMatchFromKeyValue(KeyValues kv, char[] error) {
   }
   kv.GoBack();
 
-  if (g_SkipVeto) {
-    if (kv.JumpToKey("map_sides")) {
-      if (kv.GotoFirstSubKey(false)) {
-        do {
-          char buffer[64];
-          kv.GetSectionName(buffer, sizeof(buffer));
-          g_MapSides.Push(SideTypeFromString(buffer));
-        } while (kv.GotoNextKey(false));
-        kv.GoBack();
-      }
+  if (g_MapPoolList.Length == g_NumberOfMapsInSeries) {
+    // If the number of maps is equal to the pool size, veto is impossible, so we force disable it.
+    g_SkipVeto = true;
+  } else if (g_MapPoolList.Length < g_NumberOfMapsInSeries) {
+    FormatEx(error, PLATFORM_MAX_PATH, "The map pool (%d) is not large enough to play a series of %d maps.",
+             g_MapPoolList.Length, g_NumberOfMapsInSeries);
+    return false;
+  }
+
+  if (kv.JumpToKey("map_sides")) {
+    if (kv.GotoFirstSubKey(false)) {
+      do {
+        char buffer[64];
+        kv.GetSectionName(buffer, sizeof(buffer));
+        SideChoice sideChoice = SideTypeFromString(buffer, error);
+        if (sideChoice == SideChoice_Invalid) {
+          return false;
+        }
+        g_MapSides.Push(sideChoice);
+      } while (kv.GotoNextKey(false));
       kv.GoBack();
+    }
+    kv.GoBack();
+  }
+
+  if (!g_SkipVeto) {
+    if (kv.JumpToKey("veto_mode")) {
+      if (!LoadVetoDataKeyValues(kv, error)) {
+        return false;
+      }
+    } else {
+      GenerateDefaultVetoSetup(g_MapPoolList, g_MapBanOrder, g_NumberOfMapsInSeries, g_LastVetoTeam);
     }
   }
 
@@ -466,9 +521,11 @@ static bool LoadMatchFromKeyValue(KeyValues kv, char[] error) {
 static bool LoadMatchFromJson(const JSON_Object json, char[] error) {
   json_object_get_string_safe(json, "matchid", g_MatchID, sizeof(g_MatchID), CONFIG_MATCHID_DEFAULT);
   g_InScrimMode = json_object_get_bool_safe(json, "scrim", false);
-  g_SeriesCanClinch = json_object_get_bool_safe(json, "clinch_series", true);
+  g_SeriesCanClinch = json_object_get_bool_safe(json, "clinch_series", CONFIG_CLINCH_SERIES_DEFAULT);
+  g_Wingman = json_object_get_bool_safe(json, "wingman", CONFIG_WINGMAN_DEFAULT);
   json_object_get_string_safe(json, "match_title", g_MatchTitle, sizeof(g_MatchTitle), CONFIG_MATCHTITLE_DEFAULT);
-  g_PlayersPerTeam = json_object_get_int_safe(json, "players_per_team", CONFIG_PLAYERSPERTEAM_DEFAULT);
+  g_PlayersPerTeam = json_object_get_int_safe(
+    json, "players_per_team", g_Wingman ? CONFIG_PLAYERSPERTEAM_DEFAULT_WM : CONFIG_PLAYERSPERTEAM_DEFAULT);
   g_CoachesPerTeam = json_object_get_int_safe(json, "coaches_per_team", CONFIG_COACHESPERTEAM_DEFAULT);
   g_MinPlayersToReady = json_object_get_int_safe(json, "min_players_to_ready", CONFIG_MINPLAYERSTOREADY_DEFAULT);
   g_MinSpectatorsToReady =
@@ -521,18 +578,41 @@ static bool LoadMatchFromJson(const JSON_Object json, char[] error) {
     return false;
   }
 
-  if (g_SkipVeto) {
-    JSON_Array array = view_as<JSON_Array>(json.GetObject("map_sides"));
-    if (array != null) {
-      if (!array.IsArray) {
-        FormatEx(error, PLATFORM_MAX_PATH, "Expected \"map_sides\" section to be an array, found object.");
+  if (g_MapPoolList.Length == g_NumberOfMapsInSeries) {
+    // If the number of maps is equal to the pool size, veto is impossible, so we force disable it.
+    g_SkipVeto = true;
+  } else if (g_MapPoolList.Length < g_NumberOfMapsInSeries) {
+    FormatEx(error, PLATFORM_MAX_PATH, "The map pool (%d) is not large enough to play a series of %d maps.",
+             g_MapPoolList.Length, g_NumberOfMapsInSeries);
+    return false;
+  }
+
+  JSON_Array array = view_as<JSON_Array>(json.GetObject("map_sides"));
+  if (array != null) {
+    if (!array.IsArray) {
+      FormatEx(error, PLATFORM_MAX_PATH, "Expected \"map_sides\" section to be an array, found object.");
+      return false;
+    }
+    for (int i = 0; i < array.Length; i++) {
+      char buffer[64];
+      array.GetString(i, buffer, sizeof(buffer));
+      SideChoice sideChoice = SideTypeFromString(buffer, error);
+      if (sideChoice == SideChoice_Invalid) {
         return false;
       }
-      for (int i = 0; i < array.Length; i++) {
-        char buffer[64];
-        array.GetString(i, buffer, sizeof(buffer));
-        g_MapSides.Push(SideTypeFromString(buffer));
+      g_MapSides.Push(sideChoice);
+    }
+  }
+
+  if (!g_SkipVeto) {
+    // Must go after loading maplist!
+    JSON_Object mapVetoOrder = json.GetObject("veto_mode");
+    if (mapVetoOrder != null) {
+      if (!LoadVetoDataJSON(mapVetoOrder, error)) {
+        return false;
       }
+    } else {
+      GenerateDefaultVetoSetup(g_MapPoolList, g_MapBanOrder, g_NumberOfMapsInSeries, g_LastVetoTeam);
     }
   }
 
@@ -601,6 +681,7 @@ static bool ReadKeyValueMaplistSection(const KeyValues kv, char[] buffer, char[]
     FormatEx(error, PLATFORM_MAX_PATH, "\"maplist\" property contains invalid map name in match config KeyValues.");
     return false;
   }
+  EscapeKeyValueKeyRead(buffer, PLATFORM_MAX_PATH);
   return true;
 }
 
@@ -655,6 +736,158 @@ static bool LoadTeamDataKeyValue(const KeyValues kv, const Get5Team matchTeam, c
   } else {
     return LoadTeamDataFromFile(fromfile, matchTeam, error);
   }
+}
+
+void GenerateDefaultVetoSetup(const ArrayList mapPool, const ArrayList mapBanOrder, const int numberOfMapsInSeries,
+                              const Get5Team lastVetoTeam) {
+  Get5Team startingVetoTeam = lastVetoTeam == Get5Team_1 ? Get5Team_2 : Get5Team_1;
+  switch (numberOfMapsInSeries) {
+    case 1: {
+      int numberOfBans = g_MapPoolList.Length - 1;  // Last map either played by default or ignored.
+      for (int i = 0; i < numberOfBans; i++) {
+        mapBanOrder.Push(
+          i % 2 == 0
+            ? (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Ban : Get5MapSelectionOption_Team2Ban)
+            : (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Ban : Get5MapSelectionOption_Team1Ban));
+      }
+    }
+    case 2: {
+      if (mapPool.Length < 5) {
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Pick
+                                                        : Get5MapSelectionOption_Team2Pick);
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Pick
+                                                        : Get5MapSelectionOption_Team1Pick);
+      } else {
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Ban
+                                                        : Get5MapSelectionOption_Team2Ban);
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Ban
+                                                        : Get5MapSelectionOption_Team1Ban);
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Pick
+                                                        : Get5MapSelectionOption_Team2Pick);
+        mapBanOrder.Push(startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Pick
+                                                        : Get5MapSelectionOption_Team1Pick);
+      }
+    }
+    default: {
+      // Bo3 with 7 maps as an example.
+      // For this to work, a Bo3 requires a map pool of at least 5.
+      if (mapPool.Length >= numberOfMapsInSeries + 2) {  // 7 >= 3 + 2
+        int numberOfPicks = numberOfMapsInSeries - 1;    // 2 picks in a Bo3
+        // Determine how many bans before we start picking (may be 0):
+        int numberOfStartBans = mapPool.Length - (numberOfMapsInSeries + 2);  // 7 - (3 + 2) = 2
+        if (numberOfStartBans > 0) {                                          // == 2
+          for (int i = 0; i < numberOfStartBans; i++) {
+            mapBanOrder.Push(
+              mapBanOrder.Length % 2 == 0
+                ? (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Ban : Get5MapSelectionOption_Team2Ban)
+                : (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Ban : Get5MapSelectionOption_Team1Ban));
+          }
+        }
+
+        // After the initial bans, add the picks:
+        for (int i = 0; i < numberOfPicks; i++) {
+          mapBanOrder.Push(
+            mapBanOrder.Length % 2 == 0
+              ? (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Pick : Get5MapSelectionOption_Team2Pick)
+              : (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Pick : Get5MapSelectionOption_Team1Pick));
+        }
+
+        // Determine how many bans to append to the end (may be 0):
+        int numberOfEndBans = mapPool.Length - 1 - numberOfPicks - numberOfStartBans;  // 7 - 2 - 2 - 1 = 2
+        if (numberOfEndBans > 0) {                                                     // == 2
+          for (int i = 0; i < numberOfEndBans; i++) {
+            mapBanOrder.Push(
+              mapBanOrder.Length % 2 == 0
+                ? (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Ban : Get5MapSelectionOption_Team2Ban)
+                : (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Ban : Get5MapSelectionOption_Team1Ban));
+          }
+        }
+      } else {
+        // else we just alternate picks and ignore the last map.
+        for (int i = 0; i < numberOfMapsInSeries; i++) {
+          mapBanOrder.Push(
+            i % 2 == 0
+              ? (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team1Pick : Get5MapSelectionOption_Team2Pick)
+              : (startingVetoTeam == Get5Team_1 ? Get5MapSelectionOption_Team2Pick : Get5MapSelectionOption_Team1Pick));
+        }
+      }
+    }
+  }
+}
+
+static bool LoadVetoDataJSON(const JSON_Object json, char[] error) {
+  if (!json.IsArray) {
+    FormatEx(error, PLATFORM_MAX_PATH, "'veto_order' must be array.");
+    return false;
+  }
+
+  JSON_Array array = view_as<JSON_Array>(json);
+  char buffer[32];
+  Get5MapSelectionOption type;
+  for (int i = 0; i < array.Length; i++) {
+    array.GetString(i, buffer, sizeof(buffer));
+    type = MapSelectionStringToMapSelection(buffer, error);
+    if (type == Get5MapSelectionOption_Invalid) {
+      return false;
+    }
+    g_MapBanOrder.Push(type);
+  }
+  return ValidateMapBanLogic(g_MapPoolList, g_MapBanOrder, g_NumberOfMapsInSeries, error);
+}
+
+static bool LoadVetoDataKeyValues(const KeyValues kv, char[] error) {
+  if (!kv.GotoFirstSubKey(false)) {
+    FormatEx(error, PLATFORM_MAX_PATH, "'veto_order' contains no subkeys.");
+    return false;
+  }
+  char buffer[32];
+  Get5MapSelectionOption option;
+  do {
+    kv.GetSectionName(buffer, sizeof(buffer));
+    option = MapSelectionStringToMapSelection(buffer, error);
+    if (option == Get5MapSelectionOption_Invalid) {
+      return false;
+    }
+    g_MapBanOrder.Push(option);
+  } while (kv.GotoNextKey(false));
+  kv.GoBack();
+  return ValidateMapBanLogic(g_MapPoolList, g_MapBanOrder, g_NumberOfMapsInSeries, error);
+}
+
+bool ValidateMapBanLogic(const ArrayList mapPool, const ArrayList mapBanPickOrder, int numberOfMapsInSeries,
+                         char[] error) {
+  int numberOfPicks = 0;
+  Get5MapSelectionOption option;
+  for (int i = 0; i < mapBanPickOrder.Length; i++) {
+    option = mapBanPickOrder.Get(i);
+    if (option == Get5MapSelectionOption_Team1Pick || option == Get5MapSelectionOption_Team2Pick) {
+      numberOfPicks++;
+    }
+    if (numberOfPicks == numberOfMapsInSeries || i == mapPool.Length - 2) {
+      // We have all picks we need or enough bans and picks for the map pool. Delete the remaining options.
+      mapBanPickOrder.Resize(i + 1);
+      break;
+    }
+  }
+
+  // Example: In a Bo3, at least 2 of the options must be picks to avoid randomly selecting map order of remaining maps.
+  if (numberOfMapsInSeries > 1 && numberOfPicks < numberOfMapsInSeries - 1) {
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "In a series of %d maps, at least %d veto options must be picks. Found %d pick(s).", numberOfMapsInSeries,
+             numberOfMapsInSeries - 1, numberOfPicks);
+    return false;
+  }
+
+  if (mapPool.Length - 1 != mapBanPickOrder.Length && numberOfPicks != numberOfMapsInSeries) {
+    // Example: Map pool of 7 requires 6 picks/bans *unless* we have picks for all maps.
+    FormatEx(
+      error, PLATFORM_MAX_PATH,
+      "The number of maps in the pool (%d) must be one larger than the number of map picks/bans (%d), unless the number of picks (%d) matches the series length (%d).",
+      mapPool.Length, mapBanPickOrder.Length, numberOfPicks, numberOfMapsInSeries);
+    return false;
+  }
+
+  return true;
 }
 
 static bool LoadTeamDataJson(const JSON_Object json, const Get5Team matchTeam, char[] error, const bool allowFromFile) {
@@ -1129,6 +1362,7 @@ Action Command_CreateMatch(int client, int args) {
   kv.SetNum("clinch_series", 1);
 
   kv.JumpToKey("maplist", true);
+  EscapeKeyValueKeyWrite(matchMap, sizeof(matchMap));
   kv.SetString(matchMap, KEYVALUE_STRING_PLACEHOLDER);
   kv.GoBack();
 
@@ -1198,6 +1432,7 @@ Action Command_CreateScrim(int client, int args) {
   kv.SetString("matchid", matchid);
   kv.SetNum("scrim", 1);
   kv.JumpToKey("maplist", true);
+  EscapeKeyValueKeyWrite(matchMap, sizeof(matchMap));
   kv.SetString(matchMap, KEYVALUE_STRING_PLACEHOLDER);
   kv.GoBack();
 
@@ -1389,4 +1624,17 @@ void UpdateHostname() {
   if (FormatCvarString(g_SetHostnameCvar, formattedHostname, sizeof(formattedHostname), false)) {
     SetConVarStringSafe("hostname", formattedHostname);
   }
+}
+
+void SetCorrectGameMode() {
+  SetGameMode(g_Wingman ? GAME_MODE_WINGMAN : GAME_MODE_COMPETITIVE);
+  SetGameTypeClassic();
+}
+
+bool IsMapReloadRequiredForGameMode(bool wingman) {
+  int expectedMode = wingman ? GAME_MODE_WINGMAN : GAME_MODE_COMPETITIVE;
+  if (GetGameMode() != expectedMode || GetGameType() != GAME_TYPE_CLASSIC) {
+    return true;
+  }
+  return false;
 }

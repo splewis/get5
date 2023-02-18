@@ -14,7 +14,10 @@ Handle CreateGet5HTTPRequest(const EHTTPMethod method, const char[] url, char[] 
     FormatEx(error, PLATFORM_MAX_PATH, "Failed to create HTTP request for URL: %s", formattedUrl);
     return INVALID_HANDLE;
   }
-  SetGet5ServerIdHeader(request);
+  if (!SetGet5ServerIdHeader(request, error)) {
+    delete request;
+    return INVALID_HANDLE;
+  }
   SetGet5UserAgent(request);
   return request;
 }
@@ -67,14 +70,13 @@ static bool SetHeaderKeyValuePairInt(const Handle request, const char[] header, 
   return SetHeaderKeyValuePair(request, header, strValue, error);
 }
 
-static bool SetGet5ServerIdHeader(const Handle request) {
-  char serverIdString[32];
-  int serverId = Get5_GetServerID();
-  if (serverId < 1) {
+static bool SetGet5ServerIdHeader(const Handle request, char[] error) {
+  char serverId[65];
+  g_ServerIdCvar.GetString(serverId, sizeof(serverId));
+  if (strlen(serverId) == 0) {
     return true;
   }
-  IntToString(serverId, serverIdString, sizeof(serverIdString));
-  return SteamWorks_SetHTTPRequestHeaderValue(request, GET5_HEADER_SERVERID, serverIdString);
+  return SetHeaderKeyValuePair(request, GET5_HEADER_SERVERID, serverId, error);
 }
 
 bool AddFileAsHttpBody(const Handle request, const char[] file, char[] error) {

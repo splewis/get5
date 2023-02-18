@@ -1,8 +1,8 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
-        "pl"            "Napisz {1} kiedy Twoja drużyna będzie gotowa do głosowania."
+        "pl"            "Napisz {1} kiedy twoja drużyna jest gotowa do wyboru mapy."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -24,9 +24,13 @@
     {
         "pl"            "{1} wygralo runde nożową. Oczekiwanie na {2} lub {3}."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
         "pl"            "Mapa zostanie zmieniona gdy transmisja GOTV zostanie zakończona."
+    }
+    "WaitingForGOTVMapSelection"
+    {
+        "pl"            "Mapa ulegnie zmianie po nadaniu przez GOTV wyboru mapy."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -76,31 +80,27 @@
     {
         "pl"            "{1} chce wznowić rozgrywkę, oczekiwanie na {2} na wpisanie {3}."
     }
-    "PausesLeftInfoMessage"
-    {
-        "pl"            "{1} pozostały {2} pauzy."
-    }
     "TeamFailToReadyMinPlayerCheck"
     {
         "pl"            "Musi być conajmniej {1} graczy na serwerze aby móc być gotowym."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
-        "pl"            "{1} jest gotowe do głosowania."
+        "pl"            "{1} jest gotowa do wyboru mapy."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "pl"            "{1} jest gotowe do przywrócenia meczu."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "pl"            "{1} jest gotowe do nożówki za strony."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "pl"            "{1} jest gotowe do rozpoczęcia meczu."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "pl"            "{1} anulowali swoją gotowość."
     }
@@ -200,25 +200,25 @@
     {
         "pl"            "Mapa {1}: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "pl"            "{1} wybrało {2} jako mapę {3}."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "pl"            "{1} wybrało stronę {2} na {3}."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
-        "pl"            "{1} odrzuciło {2}."
+        "pl"            "{1} odrzuciła {2}."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
-        "pl"            "Kapitan opuścił serwer, głosowanie zostało wstrzymane."
+        "pl"            "Kapitan drużyny wyszedł podczas wybierania mapy. Wybór mapy został wstrzymany."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
-        "pl"            "Napisz {1} kiedy Twoja drużyna będzie gotowa do wznowienia głosowania."
+        "pl"            "Napisz {1}, gdy będziesz gotowy do wznowienia wyboru mapy."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -235,5 +235,33 @@
     "MoveToCoachInfoMessage"
     {
         "pl"            "Ponieważ Twoja drużyna jest pełna, zostałeś przeniesiony na stanowisko coach'a."
+    }
+    "MapSelectionPickMenuText"
+    {
+        "pl"            "Wybierz mapę do GRANIA:"
+    }
+    "MapSelectionPickConfirmMenuText"
+    {
+        "pl"            "Potwierdź, że chcesz GRAĆ {1}:"
+    }
+    "MapSelectionBanMenuText"
+    {
+        "pl"            "Wybierz mapę do ODRZUCENIA:"
+    }
+    "MapSelectionBanConfirmMenuText"
+    {
+        "pl"            "Potwierdź, że chcesz ODRZUCIĆ {1}:"
+    }
+    "MapSelectionSidePickMenuText"
+    {
+        "pl"            "Wybierz stronę dla {1}:"
+    }
+    "MapSelectionSidePickConfirmMenuText"
+    {
+        "pl"            "Potwierdź, że chcesz rozpocząć po stronie {1}:"
+    }
+    "MapSelectionCountdown"
+    {
+        "pl"            "Wybór mapy rozpoczyna się za {1}..."
     }
 }

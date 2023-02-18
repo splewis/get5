@@ -1,8 +1,8 @@
 "Phrases"
 {
-    "ReadyToVetoInfoMessage"
+    "ReadyForMapSelectionInfoMessage"
     {
-        "hu"            "Írd be a {1} parancsot, ha a csapatod készen áll a vétóra."
+        "hu"            "Használd a {1} parancsot, ha a csapatod készen áll a pálya választásra."
     }
     "WaitingForCastersReadyInfoMessage"
     {
@@ -10,15 +10,15 @@
     }
     "ReadyToRestoreBackupInfoMessage"
     {
-        "hu"            "Írd be a {1} parancsot, ha a készen állsz a mérkőzés visszatöltésre."
+        "hu"            "Használd a {1} parancsot, ha a készen állsz a mérkőzés visszatöltésre."
     }
     "ReadyToKnifeInfoMessage"
     {
-        "hu"            "Írd be a {1} parancsot, ha készen állsz a késelésre."
+        "hu"            "Használd a {1} parancsot, ha készen állsz a késelésre."
     }
     "ReadyToStartInfoMessage"
     {
-        "hu"            "Írd be a {1} parancsot, ha készenállsz a kezdésre."
+        "hu"            "Használd a {1} parancsot, ha készenállsz a kezdésre."
     }
     "YouAreReady"
     {
@@ -30,7 +30,7 @@
     }
     "TypeUnreadyIfNotReady"
     {
-        "hu"            "Írd be, hogy {1} ha nem állsz még készen."
+        "hu"            "Használd a {1} parancsot, hogy ha nem állsz még készen."
     }
     "YouAreNotReady"
     {
@@ -40,13 +40,13 @@
     {
         "hu"            "{1} nyerte meg a kés kört. Várakozunk, hogy kiválasszák a megfelelő oldalt. {2} vagy {3}."
     }
-    "WaitingForGOTVBrodcastEndingInfoMessage"
+    "WaitingForGOTVBroadcastEnding"
     {
         "hu"            "A pálya akkor fog váltani, ha a GOTV adás befejeződött."
     }
-    "WaitingForGOTVVetoInfoMessage"
+    "WaitingForGOTVMapSelection"
     {
-        "hu"            "A pálya akkor fog váltani, ha a GOTV adás megjelenítette a pálya vétókat."
+        "hu"            "A pályaváltás azonnal megtörténik, ha a GOTV megkapja a pályaszavazás információit."
     }
     "NoMatchSetupInfoMessage"
     {
@@ -126,7 +126,11 @@
     }
     "UserCannotUnpauseAdmin"
     {
-        "hu"            "Egy admin kérte ezt az időkérést, ő is fogja tudni folytatni."
+        "hu"            "Egy admin kezdeményezte ezt az időkérést, ő is fogja tudni folytatni."
+    }
+    "PauseRequestCanceled"
+    {
+        "hu"            "{1} visszavonták az időkérést."
     }
     "PausingTeamCannotUnpauseUntilFreezeTime"
     {
@@ -148,9 +152,9 @@
     {
         "hu"            "A {1} csapatnak, nem maradt több technikai időkérése. Használja a taktikai időkérést."
     }
-    "TechPausePausesRemaining"
+    "TechPauseAutomaticallyStarted"
     {
-        "hu"            "Megmaradt technikai időkérések a {1} csapatnak: {2}"
+        "hu"            "Autómata technikai szünet elindítva a {1} csapatnak."
     }
     "MatchUnpauseInfoMessage"
     {
@@ -160,11 +164,7 @@
     {
         "hu"            "{1} szeretné folytatni. Várakozunk a {2} csapatra, hogy beírják a {3} parancsot."
     }
-    "PausesLeftInfoMessage"
-    {
-        "hu"            "Megmaradt taktikai időkérések a {1} csapatnak: {2}"
-    }
-	"PrereleaseVersionWarning"
+    "PrereleaseVersionWarning"
     {
         "hu"            "A Get5 ({1}) változatát futtatod, ami kifejezetten fejlesztésre és tesztelésre van. Ez az üzenet kikapcsolható a {2} parancs segítségével."
     }
@@ -176,23 +176,23 @@
     {
         "hu"            "A szerveren legalább {1} játékosnak készen kell állnia a kezdéshez."
     }
-    "TeamReadyToVetoInfoMessage"
+    "TeamIsReadyForMapSelection"
     {
-        "hu"            "{1} készenáll a vétó megkezdésére."
+        "hu"            "{1} készen áll a pálya választásra."
     }
-    "TeamReadyToRestoreBackupInfoMessage"
+    "TeamIsReadyToRestoreBackup"
     {
         "hu"            "{1} készen áll a mérkőzés visszaállítására."
     }
-    "TeamReadyToKnifeInfoMessage"
+    "TeamIsReadyToKnife"
     {
         "hu"            "{1} készenáll, hogy késeljen az oldalért."
     }
-    "TeamReadyToBeginInfoMessage"
+    "TeamIsReadyToBegin"
     {
         "hu"            "{1} készen áll a mérkőzés megkezdésére."
     }
-    "TeamNotReadyInfoMessage"
+    "TeamIsNoLongerReady"
     {
         "hu"            "{1} már nem áll készen."
     }
@@ -210,19 +210,23 @@
     }
     "AdminForceReadyInfoMessage"
     {
-        "hu"            "Egy admin, minden csapatot felkészített."
+        "hu"            "Egy admin minden csapatot felkészített."
     }
     "AdminForceEndInfoMessage"
     {
-        "hu"            "Egy admin, véget vetett a mérkőzésnek."
+        "hu"            "Egy admin véget vetett a mérkőzésnek."
     }
     "AdminForcePauseInfoMessage"
     {
-        "hu"            "Egy admin, szüneteli a mérkőzést."
+        "hu"            "Egy admin szüneteli a mérkőzést."
+    }
+    "AdminForceEndWithWinnerInfoMessage"
+    {
+        "hu"            "Egy admin véget vetett a mérkőzésnek és a {1} csapatot állította be győztesnek."
     }
     "AdminForceUnPauseInfoMessage"
     {
-        "hu"            "Egy admin, a mérkőzés folytatását hajtotta végre."
+        "hu"            "Egy admin a mérkőzés folytatását hajtotta végre."
     }
     "TeamWantsToReloadCurrentRound"
     {
@@ -259,6 +263,22 @@
     "StopCommandNotEnabled"
     {
         "hu"            "A stop parancs nincs engedélyezve."
+    }
+    "StopCommandOnlyAfterRoundStart"
+    {
+        "hu"            "A kör újraindítását nem lehet kérni, mielőtt egy új kör el nem kezdődne."
+    }
+    "StopCommandVotingReset"
+    {
+        "hu"            "A {1} általi kérés, hogy megálljon a mérkőzés, vissza lesz vonva a kör végén."
+    }
+    "StopCommandRequiresNoDamage"
+    {
+        "hu"            "A kör újraindítását nem lehet kérni, ha egy játékos sebzést okoz egy ellenséges játékosnak."
+    }
+    "StopCommandTimeLimitExceeded"
+    {
+        "hu"            "A kör újraindítási kérelmet maximum {1} lehet kikérni, miután a kör elindult."
     }
     "BackupLoadedInfoMessage"
     {
@@ -304,25 +324,25 @@
     {
         "hu"            "{1}. Pálya: {2}"
     }
-    "TeamPickedMapInfoMessage"
+    "TeamPickedMap"
     {
         "hu"            "{1} választotta a {2} {3}. pályának."
     }
-    "TeamSelectSideInfoMessage"
+    "TeamSelectedSide"
     {
         "hu"            "{1} választott, hogy kezd {2} oldalon a(z) {3}. pályán."
     }
-    "TeamVetoedMapInfoMessage"
+    "TeamBannedMap"
     {
-        "hu"            "{1} szavazott {2}."
+        "hu"            "{1} csapat vétózta a {2} pályát."
     }
-    "CaptainLeftOnVetoInfoMessage"
+    "CaptainLeftDuringMapSelection"
     {
-        "hu"            "A csapatkapitány kilépett a vétó során, a vétó szünetel."
+        "hu"            "A csapatkapitány kilépett a pálya választás alatt. A pálya választás szüneteltetve."
     }
-    "ReadyToResumeVetoInfoMessage"
+    "ReadyToResumeMapSelection"
     {
-        "hu"            "Írd be a {1} parancsot ha készenállsz a vétó folytatására."
+        "hu"            "Használd a {1} parancsot, hogy folytasd a pálya választást."
     }
     "MatchConfigLoadedInfoMessage"
     {
@@ -330,15 +350,35 @@
     }
     "ExitCoachSlotHelp"
     {
-        "hu"            "Írd be a {1} parancsot, hogy kilépj az edzői poziccióból."
+        "hu"            "Használd a {1} parancsot, hogy kilépj az edzői poziccióból."
     }
     "EnterCoachSlotHelp"
     {
-        "hu"            "Írd be a {1} parancsot, hogy a csapatod edzője legyél."
+        "hu"            "Használd a {1} parancsot, hogy a csapatod edzője legyél."
     }
     "MoveToCoachInfoMessage"
     {
         "hu"            "Mivel a csapatod megtelt, így edzői poziccióba lettél átmozgatva."
+    }
+    "CannotLeaveCoachingTeamIsFull"
+    {
+        "hu"            "Nem hagyhatod el az edzői pozicciód, ameddig a csapatod teljes."
+    }
+    "CoachingNotEnabled"
+    {
+        "hu"            "Az edzői pozicció nincs engedélyezve.Be kell, hogy állítsd a {1} parancsot 1-es értékre."
+    }
+    "PlayerIsCoachingTeam"
+    {
+        "hu"            "{1} ezdző a {2} csapatnak."
+    }
+    "CanOnlyCoachDuringWarmup"
+    {
+        "hu"            "Csak bemelegítés alatt válthatsz vagy hagyhatod el, az edzői pozicciót."
+    }
+    "AllCoachSlotsFilledForTeam"
+    {
+        "hu"            "Minden edzői pozicció ({1}) megtelt a csapatban."
     }
     "ReadyTag"
     {
@@ -348,40 +388,116 @@
     {
         "hu"            "[NEM ÁLL KÉSZEN]"
     }
-    "MapVetoPickMenuText"
+    "MapSelectionTeamChatOnly"
     {
-        "hu"            "Válassz pályát, amin játszanál:"
+        "hu"            "Csak csapat csevegőben írhatsz, pályaválasztás alatt."
     }
-    "MapVetoPickConfirmMenuText"
+    "MapSelectionInvalidMap"
     {
-        "hu"            "Erősítse meg, hogy játszana {1}:"
+        "hu"            "{1} nem érvényes pálya."
     }
-    "MapVetoBanMenuText"
+    "MapSelectionPickMapHelp"
     {
-        "hu"            "Válaszon egy pályát amit vétózna:"
+        "hu"            "Használd a {1} <pálya> parancsot, hogy pályát kiválaszd."
     }
-    "MapVetoBanConfirmMenuText"
+    "MapSelectionBanMapHelp"
     {
-        "hu"            "Erősítse meg, hogy vétózza a {1} pályát:"
+        "hu"            "Használd a {1} <pálya> parancsot, hogy pályát eltávolítsd."
     }
-    "MapVetoSidePickMenuText"
+    "MapSelectionPickSideHelp"
     {
-        "hu"            "Válasszon oldalt {1}:"
+        "hu"            "Használd a {1} vagy a {2} parancsot az oldalválasztáshoz."
     }
-    "MapVetoSidePickConfirmMenuText"
+    "MapSelectionAnnounceCaptains"
     {
-        "hu"            "Erősítse meg, hogy {1}-ben kezd:"
+        "hu"            "Csapatkapitánya a {1}: {2}"
     }
-    "ConfirmPositiveOptionText"
+    "MapSelectionBan"
     {
-        "hu"            "Igen"
+        "hu"            "ELTÁVOLÍT"
     }
-    "ConfirmNegativeOptionText"
+    "MapSelectionPick"
     {
-        "hu"            "Nem"
+        "hu"            "VÁLASZT"
     }
-    "VetoCountdown"
+    "MapSelectionTurnToPick"
     {
-        "hu"            "Kezdődik a vétózás {1} másodperc múlva."
+        "hu"            "{1} most {2} egy pályát {3}. pályának."
+    }
+    "MapSelectionTurnToBan"
+    {
+        "hu"            "{1} most {2} egy pályát."
+    }
+    "MapSelectionPickSide"
+    {
+        "hu"            "{1} most ki kell válassza melyik oldalon kezd a {2} pályán."
+    }
+    "MapSelectionRemainingMaps"
+    {
+        "hu"            "Hátralévő pályák:"
+    }
+    "MapSelectionCountdown"
+    {
+        "hu"            "A pálya választás hamarosan kezdődik {1}..."
+    }
+    "SurrenderCommandNotEnabled"
+    {
+        "hu"            "A feladás parancs nincs engedélyezve."
+    }
+    "SurrenderMinimumRoundDeficit"
+    {
+        "hu"            "Legalább {1} körrel kell vesztésre állnod, hogy feladd a mérkőzést."
+    }
+    "SurrenderInitiated"
+    {
+        "hu"            "A feladásra egy szavazás elindult {1} által. A csapatodnak el kell érnie {2} szavazatot, {3} másodpercen belül."
+    }
+    "SurrenderVoteStatus"
+    {
+        "hu"            "{1} a {2}-ből szavazat leadva."
+    }
+    "SurrenderSuccessful"
+    { 
+        "hu"            "{1} feladta."
+    }
+    "SurrenderVoteFailed"
+    {
+        "hu"            "Nem elegen szavazták meg a csapatodban a mérkőzés feladását."
+    }
+    "SurrenderOnCooldown"
+    {
+        "hu"            "Várnod kell {1}, hogy új mérkőzés feladása szavazást indíts."
+    }
+    "WinByForfeitAvailable"
+    {
+        "hu"            "{1} elhagyta a szervert. {2} beírhatja {3}, hogy visszaszámlálást kérjen a győzelemért, ameddig a csapatuk teljes."
+    }
+    "WinByForfeitRequiresFullTeam"
+    {
+        "hu"            "Teljesnek kell legyen a csapatlétszámnak, hogy győzelmet kérj vagy vonj vissza, a másik fél feladása miatt."
+    }
+    "WinByForfeitAlreadyRequested"
+    {
+        "hu"            "Győzelem kérelem az ellenfél mérkőzés feladásának miatt, már folyamatban van."
+    }
+    "WinByForfeitCountdownStarted"
+    {
+        "hu"            "{1} győzni fog {2} időn belül, hacsak egy játékos a {3} csapatból, vissza nem csatlakozik a játékba. Ez a kérelem visszavonható {4}."
+    }
+    "WinByForfeitCountdownCanceled"
+    {
+        "hu"            "A kérelem {1} csapattól, az ellenfél feladása miatti győzelem kérés, vissz lett vonva."
+    }
+    "TeamForfeited"
+    {   
+         "hu"            "{1} feladta a szériát."
+    }
+    "AllPlayersLeftTieCountdown"
+    {
+        "hu"            "Mind a két csapat elhagyta a szervert. Legalább egy játékosnak a két csapatból, vissza kell csatlakozzon {1} időn belül, különben a széria döntetlennel végetér."
+    }
+    "TieCountdownCanceled"
+    {
+        "hu"            "Visszaszámlálás a döntetlenig, visszavonva, mind a két csapatban van játékos."
     }
 }

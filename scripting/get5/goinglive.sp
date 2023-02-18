@@ -1,6 +1,6 @@
 void StartGoingLive() {
   LogDebug("StartGoingLive");
-  ExecCfg(g_LiveCfgCvar);
+  ExecCfg(g_Wingman ? g_LiveWingmanCfgCvar : g_LiveCfgCvar);
   // This ensures that we can send send the game to warmup and count down *even if* someone had put
   // "mp_warmup_end", or something else that would mess up warmup, in their live config, which they
   // shouldn't. But we can't be sure.

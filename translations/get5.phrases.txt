@@ -95,12 +95,12 @@
     "MatchPausedByTeamMessage"
     {
         "#format"       "{1:s}"
-        "en"            "{1} has called for a tactical pause."
+        "en"            "{1} called for a tactical pause."
     }
     "MatchTechPausedByTeamMessage"
     {
         "#format"       "{1:s}"
-        "en"            "{1} has called for a technical pause."
+        "en"            "{1} called for a technical pause."
     }
     "PausesNotEnabled"
     {
@@ -132,7 +132,7 @@
     }
     "PausedByAdministrator"
     {
-        "en"            "An administrator has paused the match."
+        "en"            "An administrator paused the match."
     }
     "PausedForBackup"
     {
@@ -140,7 +140,7 @@
     }
     "UserCannotUnpauseAdmin"
     {
-        "en"            "As an admin has called for this pause, it must also be unpaused by an admin."
+        "en"            "As an admin started this pause, it must also be unpaused by an admin."
     }
     "PauseRequestCanceled"
     {
@@ -382,7 +382,7 @@
     "TeamSelectedSide"
     {
         "#format"       "{1:s},{2:s},{3:s}"
-        "en"            "{1} has elected to start as {2} on {3}."
+        "en"            "{1} elected to start as {2} on {3}."
     }
     "TeamBannedMap"
     {
@@ -530,7 +530,7 @@
     "SurrenderSuccessful"
     {
         "#format"   "{1:s}"
-        "en"        "{1} has surrendered."
+        "en"        "{1} surrendered."
     }
     "SurrenderVoteFailed"
     {

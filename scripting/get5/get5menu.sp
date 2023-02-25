@@ -47,6 +47,7 @@ static int AdminMenuHandler(Menu menu, MenuAction action, int param1, int param2
   } else if (action == MenuAction_End) {
     delete menu;
   }
+  return 0;
 }
 
 static void GiveRingerMenu(int client) {
@@ -84,4 +85,5 @@ static int RingerMenuHandler(Menu menu, MenuAction action, int param1, int param
   } else if (action == MenuAction_End) {
     delete menu;
   }
+  return 0;
 }

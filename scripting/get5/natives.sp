@@ -33,7 +33,7 @@ public int Native_GetGameState(Handle plugin, int numParams) {
 public int Native_Message(Handle plugin, int numParams) {
   int client = GetNativeCell(1);
   if (client != 0 && !IsClientInGame(client))
-    return;
+    return 0;
 
   char buffer[1024];
   int bytesWritten = 0;
@@ -56,6 +56,7 @@ public int Native_Message(Handle plugin, int numParams) {
     Colorize(finalMsg, sizeof(finalMsg));
     PrintToChat(client, finalMsg);
   }
+  return 0;
 }
 
 public int Native_MessageToTeam(Handle plugin, int numParams) {
@@ -83,6 +84,7 @@ public int Native_MessageToTeam(Handle plugin, int numParams) {
     Colorize(finalMsg, sizeof(finalMsg));
     PrintToChat(i, finalMsg);
   }
+  return 0;
 }
 
 public int Native_MessageToAll(Handle plugin, int numParams) {
@@ -114,6 +116,7 @@ public int Native_MessageToAll(Handle plugin, int numParams) {
       PrintToChat(i, finalMsg);
     }
   }
+  return 0;
 }
 
 public int Native_LoadMatchConfig(Handle plugin, int numParams) {
@@ -123,6 +126,7 @@ public int Native_LoadMatchConfig(Handle plugin, int numParams) {
   if (!LoadMatchConfig(filename, error)) {
     MatchConfigFail(error);
   }
+  return 0;
 }
 
 public int Native_LoadMatchConfigFromURL(Handle plugin, int numParams) {
@@ -136,6 +140,7 @@ public int Native_LoadMatchConfigFromURL(Handle plugin, int numParams) {
   if (!LoadMatchFromUrl(url, paramNames, paramValues, headerNames, headerValues, error)) {
     LogError(error);
   }
+  return 0;
 }
 
 public int Native_LoadBackupFromURL(Handle plugin, int numParams) {
@@ -149,6 +154,7 @@ public int Native_LoadBackupFromURL(Handle plugin, int numParams) {
   if (!LoadBackupFromUrl(url, paramNames, paramValues, headerNames, headerValues, error)) {
     LogError(error);
   }
+  return 0;
 }
 
 public int Native_AddPlayerToTeam(Handle plugin, int numParams) {
@@ -175,6 +181,7 @@ public int Native_SetPlayerName(Handle plugin, int numParams) {
       LoadPlayerNames();
     }
   }
+  return 0;
 }
 
 public int Native_RemovePlayerFromTeam(Handle plugin, int numParams) {
@@ -209,6 +216,7 @@ public int Native_GetTeamScores(Handle plugin, int numParams) {
     SetNativeCellRef(2, g_TeamSeriesScores[team]);
     SetNativeCellRef(3, CS_GetTeamScore(Get5TeamToCSTeam(team)));
   }
+  return 0;
 }
 
 public int Native_GetMatchID(Handle plugin, int numParams) {

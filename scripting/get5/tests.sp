@@ -861,11 +861,6 @@ static void AssertConVarEquals(const char[] conVarName, const char[] expectedVal
   AssertStrEq(testName, convarBuffer, expectedValue);
 }
 
-// TODO: Remove when compiling with SM 1.11 as it's built-in.
-static void AssertStrEq(const char[] text, const char[] value, const char[] expected) {
-  AssertTrue(text, StrEqual(value, expected));
-}
-
 /*
 static void AssertStrContains(const char[] text, const char[] value, const char[] contains) {
   AssertTrue(text, StrContains(value, contains));

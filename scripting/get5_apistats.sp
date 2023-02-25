@@ -110,7 +110,7 @@ void ApiInfoChanged(ConVar convar, const char[] oldValue, const char[] newValue)
   LogDebug("get5_web_api_url now set to %s", g_APIURL);
 }
 
-static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:...) {
+static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any...) {
   char url[1024];
   FormatEx(url, sizeof(url), "%s%s", g_APIURL, apiMethod);
 
@@ -135,13 +135,12 @@ static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:
   }
 }
 
-int RequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode) {
+void RequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode) {
   if (failure || !requestSuccessful) {
     LogError("API request failed, HTTP status code = %d", statusCode);
     char response[1024];
     SteamWorks_GetHTTPResponseBodyData(request, response, sizeof(response));
     LogError(response);
-    return;
   }
 }
 
@@ -193,7 +192,7 @@ static void CheckForLogo(const char[] logo) {
   }
 }
 
-static int LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status, int data) {
+static void LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status, int data) {
   if (failure || !successful) {
     LogError("Logo request failed, status code = %d", status);
     return;

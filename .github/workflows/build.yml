@@ -14,7 +14,7 @@ jobs:
       OUTPUT_PATH: output/get5
       OUTPUT_SM_PATH: output/get5/addons/sourcemod
       SM_JSON_INC_PATH: get5/dependencies/sm-json/addons/sourcemod/scripting/include
-      STEAMWORKS_URL: https://raw.githubusercontent.com/PhlexPlexico/SteamWorks/master/Pawn/includes/SteamWorks.inc
+      STEAMWORKS_URL: https://raw.githubusercontent.com/hexa-core-eu/SteamWorks/main/Pawn/includes/SteamWorks.inc
     steps:
       - uses: actions/checkout@v3
         with:
@@ -23,7 +23,7 @@ jobs:
 
       - uses: rumblefrog/setup-sp@master
         with:
-          version: '1.10.x'
+          version: '1.11.x'
 
       - name: Get shorthand commit.
         id: vars

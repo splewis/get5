@@ -39,7 +39,7 @@ void SendEventJSONToURL(const char[] event) {
   SteamWorks_SendHTTPRequest(eventRequest);
 }
 
-static int EventRequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode) {
+static void EventRequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode) {
   if (failure || !requestSuccessful) {
     LogError(
       "Event HTTP request failed due to a network or configuration error. Make sure you have enclosed your event URL in quotes.");

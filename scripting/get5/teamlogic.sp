@@ -156,7 +156,7 @@ void CoachingChangedHook(ConVar convar, const char[] oldValue, const char[] newV
 
 Action Command_SmCoach(int client, int args) {
   if (g_GameState == Get5State_None || !IsPlayer(client)) {
-    return;
+    return Plugin_Handled;
   }
 
   if (!g_CheckAuthsCvar.BoolValue) {
@@ -166,25 +166,25 @@ Action Command_SmCoach(int client, int args) {
     } else if (side == Get5Side_T) {
       FakeClientCommand(client, "coach t");
     }
-    return;
+    return Plugin_Handled;
   }
 
   if (!g_CoachingEnabledCvar.BoolValue) {
     char formattedCoachingCvar[64];
     FormatCvarName(formattedCoachingCvar, sizeof(formattedCoachingCvar), "sv_coaching_enabled");
     Get5_Message(client, "%t", "CoachingNotEnabled", formattedCoachingCvar);
-    return;
+    return Plugin_Handled;
   }
 
   Get5Team matchTeam = GetClientMatchTeam(client);
 
   if (matchTeam == Get5Team_None || matchTeam == Get5Team_Spec) {
-    return;
+    return Plugin_Handled;
   }
 
   if (g_GameState > Get5State_Warmup) {
     Get5_Message(client, "%t", "CanOnlyCoachDuringWarmup");
-    return;
+    return Plugin_Handled;
   }
 
   // These counts are excluding the client, so >=.
@@ -196,36 +196,37 @@ Action Command_SmCoach(int client, int args) {
     if (IsClientCoaching(client)) {
       if (playerSlotsFull) {
         Get5_Message(client, "%t", "CannotLeaveCoachingTeamIsFull");
-        return;
+        return Plugin_Handled;
       }
       // Fall-through to CheckClientTeam(i) below, which moves the player back on the team because
       // they are not defined as a coach in auth.
     } else {
       if (coachSlotsFull) {
         Get5_Message(client, "%t", "AllCoachSlotsFilledForTeam", g_CoachesPerTeam);
-        return;
+        return Plugin_Handled;
       }
       // We use SetClientCoaching instead of fall-though because of missing auth.
       SetClientCoaching(client, view_as<Get5Side>(Get5TeamToCSTeam(matchTeam)));
-      return;
+      return Plugin_Handled;
     }
   } else {
     if (IsClientCoachForTeam(client, matchTeam)) {
       if (playerSlotsFull) {
         Get5_Message(client, "%t", "CannotLeaveCoachingTeamIsFull");
-        return;
+        return Plugin_Handled;
       }
       MoveCoachToPlayerInConfig(client, matchTeam);
     } else {
       if (coachSlotsFull) {
         Get5_Message(client, "%t", "AllCoachSlotsFilledForTeam", g_CoachesPerTeam);
-        return;
+        return Plugin_Handled;
       }
       MovePlayerToCoachInConfig(client, matchTeam);
     }
   }
   // Move the player. This would potentially kick them if we did not perform above checks.
   CheckClientTeam(client);
+  return Plugin_Handled;
 }
 
 static void MovePlayerToCoachInConfig(const int client, const Get5Team team) {

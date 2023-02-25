@@ -1,39 +1,21 @@
-FROM debian:11
-MAINTAINER Alexander Volz (Alexander@volzit.de)
+FROM debian:11-slim
+ENV SMVERSION 1.11
 
-ENV SMVERSION 1.10
+RUN apt-get update -y \
+    && apt-get install -y wget git lib32stdc++6 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ENV _clean="rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*"
-ENV _apt_clean="eval apt-get clean && $_clean"
-
-# Install support pkgs
-RUN apt-get update -qqy && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    curl wget nano net-tools gnupg2 git lib32stdc++6 python \
-    tar bash  && $_apt_clean
-# Install pip2
-RUN wget https://bootstrap.pypa.io/pip/2.7/get-pip.py && python2 get-pip.py
-
-RUN mkdir /get5
-RUN mkdir /runscripts
-RUN mkdir /get5src
+RUN mkdir /runscripts /get5 /get5_src /get5_build
 COPY dockerrunscript.sh /runscripts
 WORKDIR /get5
 
-RUN git clone https://github.com/splewis/sm-builder
-WORKDIR /get5/sm-builder
-RUN pip install --user -r requirements.txt
-RUN python setup.py install --prefix=~/.local
-WORKDIR /get5
-
 ENV SMPACKAGE http://sourcemod.net/latest.php?os=linux&version=${SMVERSION}
-RUN wget -q ${SMPACKAGE}
-RUN tar xfz $(basename ${SMPACKAGE})
+RUN wget ${SMPACKAGE} -O - | tar -xz
 RUN chmod +x /get5/addons/sourcemod/scripting/spcomp
-ENV PATH "$PATH:/get5/addons/sourcemod/scripting:/root/.local/bin"
+ENV PATH "$PATH:/get5/addons/sourcemod/scripting"
 WORKDIR /get5/addons/sourcemod/scripting/include
-RUN wget https://raw.githubusercontent.com/PhlexPlexico/SteamWorks/master/Pawn/includes/SteamWorks.inc
+RUN wget https://raw.githubusercontent.com/hexa-core-eu/SteamWorks/main/Pawn/includes/SteamWorks.inc
 WORKDIR /get5
 
-VOLUME /get5/builds
-VOLUME /get5src
-CMD ["/runscripts/dockerrunscript.sh"]
+ENTRYPOINT ["/runscripts/dockerrunscript.sh"]

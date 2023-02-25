@@ -1,12 +1,21 @@
 #include <sdktools>
 
-#define MAX_INTEGER_STRING_LENGTH 16
-#define MAX_FLOAT_STRING_LENGTH   32
-#define AUTH_LENGTH               64
-#define GAME_MODE_WINGMAN         2
-#define GAME_MODE_COMPETITIVE     1
-#define GAME_TYPE_CLASSIC         0
-
+#define LATEST_VERSION_URL          "https://raw.githubusercontent.com/splewis/get5/master/scripting/get5/version.sp"
+#define GET5_GITHUB_PAGE            "splewis.github.io/get5"
+#define MAX_CVAR_LENGTH             513  // 512 + 1 for buffers
+#define MAX_INTEGER_STRING_LENGTH   16
+#define MAX_FLOAT_STRING_LENGTH     32
+#define AUTH_LENGTH                 64
+#define GAME_MODE_WINGMAN           2
+#define GAME_MODE_COMPETITIVE       1
+#define GAME_TYPE_CLASSIC           0
+#define CHECK_READY_TIMER_INTERVAL  1.0
+#define INFO_MESSAGE_TIMER_INTERVAL 20.0
+#define DEBUG_CVAR                  "get5_debug"
+#define MATCH_ID_LENGTH             64
+#define TEAM1_STARTING_SIDE         CS_TEAM_CT
+#define TEAM2_STARTING_SIDE         CS_TEAM_T
+#define DEFAULT_TAG                 "[{YELLOW}Get5{NORMAL}]"
 // Dummy value for when we need to write a KeyValue string, but we don't care about the value *or*
 // when the value is an empty string. Trying to write an empty string results in the KeyValue not
 // being written, so we use this.
@@ -179,16 +188,6 @@ stock void ReplaceStringWithInt(char[] buffer, int len, const char[] replace, in
   ReplaceString(buffer, len, replace, intString, caseSensitive);
 }
 
-stock void AnnouncePhaseChange(const char[] format, const char[] message) {
-  int count = g_PhaseAnnouncementCountCvar.IntValue;
-  if (count > 10) {
-    count = 10;
-  }
-  for (int i = 0; i < count; i++) {
-    Get5_MessageToAll(format, message);
-  }
-}
-
 stock bool InWarmup() {
   return GameRules_GetProp("m_bWarmupPeriod") != 0;
 }
@@ -237,51 +236,6 @@ stock bool IsPaused() {
 
 stock void RestartGame(int delay = 1) {
   ServerCommand("mp_restartgame %d", delay);
-}
-
-stock void SetTeamInfo(const Get5Side side, const char[] name, const char[] flag, const char[] logo,
-                       const char[] matchstat, int series_score) {
-  int team_int = (side == Get5Side_CT) ? 1 : 2;
-
-  char teamCvarName[MAX_CVAR_LENGTH];
-  char flagCvarName[MAX_CVAR_LENGTH];
-  char logoCvarName[MAX_CVAR_LENGTH];
-  char textCvarName[MAX_CVAR_LENGTH];
-  char scoreCvarName[MAX_CVAR_LENGTH];
-  FormatEx(teamCvarName, sizeof(teamCvarName), "mp_teamname_%d", team_int);
-  FormatEx(flagCvarName, sizeof(flagCvarName), "mp_teamflag_%d", team_int);
-  FormatEx(logoCvarName, sizeof(logoCvarName), "mp_teamlogo_%d", team_int);
-  FormatEx(textCvarName, sizeof(textCvarName), "mp_teammatchstat_%d", team_int);
-  FormatEx(scoreCvarName, sizeof(scoreCvarName), "mp_teamscore_%d", team_int);
-
-  // Add Ready/Not ready tags to team name if in warmup.
-  char taggedName[MAX_CVAR_LENGTH];
-  if (g_ReadyTeamTagCvar.BoolValue) {
-    if (IsReadyGameState()) {
-      Get5Team matchTeam = CSTeamToGet5Team(view_as<int>(side));
-      if (IsTeamReady(matchTeam)) {
-        FormatEx(taggedName, sizeof(taggedName), "%s %T", name, "ReadyTag", LANG_SERVER);
-      } else {
-        FormatEx(taggedName, sizeof(taggedName), "%s %T", name, "NotReadyTag", LANG_SERVER);
-      }
-    } else {
-      strcopy(taggedName, sizeof(taggedName), name);
-    }
-  } else {
-    strcopy(taggedName, sizeof(taggedName), name);
-  }
-
-  SetConVarStringSafe(teamCvarName, taggedName);
-  SetConVarStringSafe(flagCvarName, flag);
-  SetConVarStringSafe(logoCvarName, logo);
-  SetConVarStringSafe(textCvarName, matchstat);
-
-  // We do this because IntValue = 0 does not consistently set an empty string, relevant for testing.
-  if (g_MapsToWin > 1 && series_score > 0) {
-    SetConVarIntSafe(scoreCvarName, series_score);
-  } else {
-    SetConVarStringSafe(scoreCvarName, "");
-  }
 }
 
 stock void SetConVarIntSafe(const char[] name, int value) {
@@ -736,43 +690,6 @@ stock bool CreateFolderStructure(const char[] path) {
   return true;
 }
 
-stock void CheckAndCreateFolderPath(const ConVar cvar, const char[][] varsToReplace, const int varListSize,
-                                    char outputFolder[PLATFORM_MAX_PATH], const int outputFolderSize) {
-  char path[PLATFORM_MAX_PATH];
-  char cvarName[MAX_CVAR_LENGTH];
-
-  cvar.GetName(cvarName, sizeof(cvarName));
-  cvar.GetString(path, sizeof(path));
-
-  for (int i = 0; i < varListSize; i++) {
-    if (StrEqual("{MATCHID}", varsToReplace[i])) {
-      ReplaceString(path, sizeof(path), varsToReplace[i], g_MatchID);
-    } else if (StrEqual("{DATE}", varsToReplace[i])) {
-      char dateFormat[64];
-      char formattedDate[64];
-      int timeStamp = GetTime();
-      g_DateFormatCvar.GetString(dateFormat, sizeof(dateFormat));
-
-      FormatTime(formattedDate, sizeof(formattedDate), dateFormat, timeStamp);
-      ReplaceString(path, sizeof(path), varsToReplace[i], formattedDate);
-    }
-  }
-
-  int folderLength = strlen(path);
-
-  if (folderLength > 0 &&
-      (path[0] == '/' || path[0] == '.' || path[folderLength - 1] != '/' || StrContains(path, "//") != -1)) {
-    LogError(
-      "%s must end with a slash and must not start with a slash or dot. It will be reset to an empty string! Current value: %s",
-      cvarName, path);
-    path = "";
-    cvar.SetString(path, false, false);
-  } else {
-    CreateFolderStructure(path);
-  }
-  Format(outputFolder, outputFolderSize, "%s", path);
-}
-
 stock int GetMilliSecondsPassedSince(float timestamp) {
   return RoundToFloor((GetEngineTime() - timestamp) * 1000);
 }
@@ -812,10 +729,6 @@ stock void ConvertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer, c
     seconds = timeAsSeconds % 60;
   }
   FormatEx(buffer, bufferSize, seconds < 10 ? "%d:0%d" : "%d:%d", minutes, seconds);
-}
-
-stock bool IsDoingRestoreOrMapChange() {
-  return g_DoingBackupRestoreNow || g_MapChangePending;
 }
 
 stock void ChatCommandToString(const Get5ChatCommand command, char[] buffer, const int bufferSize) {

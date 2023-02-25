@@ -375,7 +375,7 @@ public void Get5_OnSeriesResult(const Get5SeriesResultEvent event) {
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-static int SQLErrorCheckCallback(Handle owner, Handle hndl, const char[] error, int data) {
+static void SQLErrorCheckCallback(Handle owner, Handle hndl, const char[] error, int data) {
   if (!StrEqual("", error)) {
     LogError("Last Connect SQL Error: %s", error);
   }

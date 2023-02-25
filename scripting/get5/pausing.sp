@@ -42,6 +42,7 @@ void RestartPauseTimer() {
 
 static Action Timer_ResetPauseRestriction(Handle timer, int data) {
   g_IsChangingPauseState = false;
+  return Plugin_Handled;
 }
 
 void UnpauseGame() {

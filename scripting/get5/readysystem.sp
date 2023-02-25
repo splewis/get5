@@ -244,11 +244,11 @@ Action Command_AddReadyTime(int client, int args) {
 
 Action Command_ForceReadyClient(int client, int args) {
   if (!IsReadyGameState() || client == 0) {
-    return;
+    return Plugin_Handled;
   }
   Get5Team team = GetClientMatchTeam(client);
   if (team == Get5Team_None || IsTeamReady(team)) {
-    return;
+    return Plugin_Handled;
   }
 
   if (!g_AllowForceReadyCvar.BoolValue) {
@@ -258,7 +258,7 @@ Action Command_ForceReadyClient(int client, int args) {
     char forceReadyCommand[64];
     GetChatAliasForCommand(Get5ChatCommand_ForceReady, forceReadyCommand, sizeof(forceReadyCommand), true);
     Get5_Message(client, "%t", "ForceReadyDisabled", forceReadyCommand, cVarName);
-    return;
+    return Plugin_Handled;
   }
 
   int minReady = GetTeamMinReady(team);
@@ -266,7 +266,7 @@ Action Command_ForceReadyClient(int client, int args) {
 
   if (playerCount < minReady) {
     Get5_Message(client, "%t", "TeamFailToReadyMinPlayerCheck", minReady);
-    return;
+    return Plugin_Handled;
   }
   char formattedClientName[MAX_NAME_LENGTH];
   FormatPlayerName(formattedClientName, sizeof(formattedClientName), client, team);
@@ -279,6 +279,7 @@ Action Command_ForceReadyClient(int client, int args) {
   SetTeamForcedReady(team, true);
   SetMatchTeamCvars();
   HandleReadyMessage(team);
+  return Plugin_Handled;
 }
 
 // Messages

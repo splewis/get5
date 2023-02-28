@@ -9,9 +9,9 @@
 <link href="../gotv/" rel="prev"/>
 <link href="../events_and_forwards/" rel="next"/>
 <link href="../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.4.2, mkdocs-material-9.0.13" name="generator"/>
+<meta content="mkdocs-1.4.2, mkdocs-material-9.0.15" name="generator"/>
 <title>Developers - Get5 Documentation</title>
-<link href="../assets/stylesheets/main.ffa9267a.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/main.113286f1.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.a0c5b2b5.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
@@ -339,10 +339,29 @@
 Get5 <a href="https://github.com/splewis/get5">from source</a>. A precompiled image is available:</p>
 <div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>nickdnk/get5-build:latest
 </code></pre></div>
-<p>If run from the repository root, this would put the compiled plugin into a <code>builds</code> folder. You could of course replace
-<code>$PWD/builds</code> with any other path to move the output there.</p>
-<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span><span class="nv">$PWD</span>:/get5src<span class="w"> </span>-v<span class="w"> </span><span class="nv">$PWD</span>/builds:/get5/builds<span class="w"> </span>nickdnk/get5-build:latest
+<p>Before you build, please ensure you have installed the <a href="https://github.com/clugg/sm-json"><code>sm-json</code></a> dependency, which
+is configured as a submodule. The Docker container does not do this because it can cause file permission issues with
+the repository.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init
 </code></pre></div>
+<p>You must mount two volumes for the build to succeed:</p>
+<ol>
+<li><code>/get5_src</code> should be mounted to the repository root.</li>
+<li><code>/get5_build</code> should be mounted where you want the output build files. Note that this directory and all its files may
+   belong to <code>root</code>.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>-v<span class="w"> </span><span class="nv">$PWD</span>:/get5_src<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>-v<span class="w"> </span><span class="nv">$PWD</span>/build:/get5_build<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>nickdnk/get5-build:latest<span class="w"> </span><span class="se">\</span>
+<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>get5
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Good to know</p>
+<p><code>$PWD</code> means "current directory", so in this case, this command would assume you are in the repository root, and the
+output will end up in a folder called <code>/build</code> within there. <code>\</code> in the script just escapes the new-line, so the
+command is easier to read.</p>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Custom builds are unsupported</p>
 <p>Note that while building Get5 yourself may seem easy, we do not provide support for custom builds. If you want to

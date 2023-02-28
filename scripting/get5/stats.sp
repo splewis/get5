@@ -410,13 +410,13 @@ static void EndFlashbangEvent(const char[] flashKey) {
 
 static Action Stats_DecoyStartedEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   int attacker = GetClientOfUserId(event.GetInt("userid"));
 
   if (!IsValidClient(attacker)) {
-    return;
+    return Plugin_Continue;
   }
 
   Get5DecoyStartedEvent decoyObject =
@@ -429,18 +429,19 @@ static Action Stats_DecoyStartedEvent(Event event, const char[] name, bool dontB
   Call_Finish();
 
   EventLogger_LogAndDeleteEvent(decoyObject);
+  return Plugin_Continue;
 }
 
 static Action Stats_SmokeGrenadeDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   int attacker = GetClientOfUserId(event.GetInt("userid"));
 
   if (!IsValidClient(attacker)) {
     g_LatestMolotovToExtinguishBySmoke = 0;  // If someone disconnects after throwing grenade.
-    return;
+    return Plugin_Continue;
   }
 
   Get5SmokeDetonatedEvent smokeEvent =
@@ -455,16 +456,17 @@ static Action Stats_SmokeGrenadeDetonateEvent(Event event, const char[] name, bo
 
   // Reset this so other smokes don't get extinguish attribution.
   g_LatestMolotovToExtinguishBySmoke = 0;
+  return Plugin_Continue;
 }
 
 static Action Stats_MolotovStartBurnEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   if (g_LatestUserIdToDetonateMolotov == 0) {
     // If user disconnected after throwing the molotov, this will be 0.
-    return;
+    return Plugin_Continue;
   }
 
   int entityId = event.GetInt("entityid");
@@ -480,11 +482,12 @@ static Action Stats_MolotovStartBurnEvent(Event event, const char[] name, bool d
                                   GetPlayerObject(g_LatestUserIdToDetonateMolotov)  // Set in molotov detonate event
                                   ),
     true);
+  return Plugin_Continue;
 }
 
 static Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   int entityId = event.GetInt("entityid");
@@ -494,6 +497,7 @@ static Action Stats_MolotovExtinguishedEvent(Event event, const char[] name, boo
   g_LatestMolotovToExtinguishBySmoke = entityId;
 
   LogDebug("Molotov Event: %s, %d", name, entityId);
+  return Plugin_Continue;
 }
 
 static Action Stats_MolotovEndedEvent(Event event, const char[] name, bool dontBroadcast) {
@@ -505,11 +509,12 @@ static Action Stats_MolotovEndedEvent(Event event, const char[] name, bool dontB
   IntToString(entityId, molotovKey, sizeof(molotovKey));
 
   EndMolotovEvent(molotovKey);
+  return Plugin_Continue;
 }
 
 static Action Stats_MolotovDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   int attacker = GetClientOfUserId(event.GetInt("userid"));
@@ -519,21 +524,22 @@ static Action Stats_MolotovDetonateEvent(Event event, const char[] name, bool do
   if (!IsValidClient(attacker)) {
     // Could happen if someone disconnects after throwing a grenade, but before it pops.
     g_LatestUserIdToDetonateMolotov = 0;
-    return;
+    return Plugin_Continue;
   }
 
   g_LatestUserIdToDetonateMolotov = attacker;
+  return Plugin_Continue;
 }
 
 static Action Stats_FlashbangDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   int attacker = GetClientOfUserId(event.GetInt("userid"));
 
   if (!IsValidClient(attacker)) {
-    return;
+    return Plugin_Continue;
   }
 
   int entityId = event.GetInt("entityid");
@@ -546,6 +552,7 @@ static Action Stats_FlashbangDetonateEvent(Event event, const char[] name, bool 
   g_FlashbangContainer.SetValue(flashKey, flashEvent, true);
 
   CreateTimer(0.001, Timer_HandleFlashbang, entityId, TIMER_FLAG_NO_MAPCHANGE);
+  return Plugin_Continue;
 }
 
 static Action Timer_HandleFlashbang(Handle timer, int entityId) {
@@ -559,13 +566,13 @@ static Action Timer_HandleFlashbang(Handle timer, int entityId) {
 
 static Action Stats_HEGrenadeDetonateEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   int attacker = GetClientOfUserId(event.GetInt("userid"));
 
   if (!IsValidClient(attacker)) {
-    return;
+    return Plugin_Continue;
   }
 
   int entityId = event.GetInt("entityid");
@@ -578,6 +585,7 @@ static Action Stats_HEGrenadeDetonateEvent(Event event, const char[] name, bool 
   g_HEGrenadeContainer.SetValue(grenadeKey, grenadeObject, true);
 
   CreateTimer(0.001, Timer_HandleHEGrenade, entityId, TIMER_FLAG_NO_MAPCHANGE);
+  return Plugin_Continue;
 }
 
 static Action Timer_HandleHEGrenade(Handle timer, int entityId) {
@@ -591,13 +599,13 @@ static Action Timer_HandleHEGrenade(Handle timer, int entityId) {
 
 static Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   int attacker = GetClientOfUserId(event.GetInt("userid"));
 
   if (!IsValidClient(attacker)) {
-    return;
+    return Plugin_Continue;
   }
 
   char weapon[32];
@@ -614,6 +622,7 @@ static Action Stats_GrenadeThrownEvent(Event event, const char[] name, bool dont
   Call_Finish();
 
   EventLogger_LogAndDeleteEvent(grenadeEvent);
+  return Plugin_Continue;
 }
 
 static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBroadcast) {
@@ -765,7 +774,7 @@ static void UpdateTradeStat(int attacker, int victim) {
 
 static Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   g_BombPlantedTime = GetEngineTime();
@@ -787,11 +796,12 @@ static Action Stats_BombPlantedEvent(Event event, const char[] name, bool dontBr
 
     EventLogger_LogAndDeleteEvent(bombEvent);
   }
+  return Plugin_Continue;
 }
 
 static Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   int client = GetClientOfUserId(event.GetInt("userid"));
@@ -817,11 +827,12 @@ static Action Stats_BombDefusedEvent(Event event, const char[] name, bool dontBr
 
     EventLogger_LogAndDeleteEvent(defuseEvent);
   }
+  return Plugin_Continue;
 }
 
 static Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   Get5BombExplodedEvent bombExplodedEvent =
@@ -834,11 +845,12 @@ static Action Stats_BombExplodedEvent(Event event, const char[] name, bool dontB
   Call_Finish();
 
   EventLogger_LogAndDeleteEvent(bombExplodedEvent);
+  return Plugin_Continue;
 }
 
 static Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   float duration = event.GetFloat("blind_duration");
@@ -846,12 +858,12 @@ static Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBr
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
 
   if (!IsValidClient(attacker) || !IsValidClient(victim)) {
-    return;
+    return Plugin_Continue;
   }
 
   int victimTeam = GetClientTeam(victim);
   if (victimTeam == CS_TEAM_SPECTATOR || victimTeam == CS_TEAM_NONE) {
-    return;
+    return Plugin_Continue;
   }
 
   bool friendlyFire = GetClientTeam(attacker) == victimTeam;
@@ -873,11 +885,12 @@ static Action Stats_PlayerBlindEvent(Event event, const char[] name, bool dontBr
       flashEvent.Victims.PushObject(new Get5BlindedGrenadeVictim(GetPlayerObject(victim), friendlyFire, duration));
     }
   }
+  return Plugin_Continue;
 }
 
 static Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroadcast) {
   if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   int client = GetClientOfUserId(event.GetInt("userid"));
@@ -896,6 +909,7 @@ static Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroad
 
     EventLogger_LogAndDeleteEvent(mvpEvent);
   }
+  return Plugin_Continue;
 }
 
 static int IncrementPlayerStatByValue(int client, const char[] field, int incrementBy) {

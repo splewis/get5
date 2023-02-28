@@ -32,25 +32,6 @@
 #undef REQUIRE_EXTENSIONS
 #include <SteamWorks>
 
-#define CHECK_READY_TIMER_INTERVAL  1.0
-#define INFO_MESSAGE_TIMER_INTERVAL 20.0
-
-#define DEBUG_CVAR      "get5_debug"
-#define MATCH_ID_LENGTH 64
-#define MAX_CVAR_LENGTH 513  // 512 + 1 for buffers
-
-#define TEAM1_STARTING_SIDE CS_TEAM_CT
-#define TEAM2_STARTING_SIDE CS_TEAM_T
-#define DEFAULT_TAG         "[{YELLOW}Get5{NORMAL}]"
-
-#if !defined LATEST_VERSION_URL
-#define LATEST_VERSION_URL "https://raw.githubusercontent.com/splewis/get5/master/scripting/get5/version.sp"
-#endif
-
-#if !defined GET5_GITHUB_PAGE
-#define GET5_GITHUB_PAGE "splewis.github.io/get5"
-#endif
-
 #pragma semicolon 1
 #pragma newdecls required
 /**
@@ -59,6 +40,8 @@
  * Default heap size is 4KB
  */
 #pragma dynamic 32000
+
+#include "get5/util.sp"
 
 /** ConVar handles **/
 ConVar g_AllowPauseCancellationCvar;
@@ -324,9 +307,8 @@ Handle g_OnSeriesInit = INVALID_HANDLE;
 Handle g_OnSeriesResult = INVALID_HANDLE;
 Handle g_OnSidePicked = INVALID_HANDLE;
 
-#include "get5/util.sp"
 #include "get5/version.sp"
-
+// Space required, or clang will alphabetize this and put version.sp at the end which breaks compilation.
 #include "get5/backups.sp"
 #include "get5/chatcommands.sp"
 #include "get5/debug.sp"
@@ -671,7 +653,7 @@ public void OnPluginStart() {
 
 static Action Timer_InfoMessages(Handle timer) {
   if (g_GameState == Get5State_Live || g_GameState == Get5State_None) {
-    return;
+    return Plugin_Continue;
   }
 
   char readyCommandFormatted[64];
@@ -738,6 +720,7 @@ static Action Timer_InfoMessages(Handle timer) {
     // Handle postgame
     Get5_MessageToAll("%t", "WaitingForGOTVBroadcastEnding");
   }
+  return Plugin_Continue;
 }
 
 public void OnClientAuthorized(int client, const char[] auth) {
@@ -949,11 +932,11 @@ static Action Timer_ConfigsExecutedCallback(Handle timer) {
 
 static Action Timer_CheckReady(Handle timer) {
   if (g_GameState == Get5State_None) {
-    return;
+    return Plugin_Continue;
   }
   if (IsDoingRestoreOrMapChange()) {
     LogDebug("Timer_CheckReady: Waiting for restore or map change");
-    return;
+    return Plugin_Continue;
   }
   CheckTeamNameStatus(Get5Team_1);
   CheckTeamNameStatus(Get5Team_2);
@@ -983,6 +966,7 @@ static Action Timer_CheckReady(Handle timer) {
       StartRecording();
     }
   }
+  return Plugin_Continue;
 }
 
 // Returns true if the teams are ready and then does not print anything.
@@ -1168,7 +1152,7 @@ static Action Command_LoadMatchUrl(int client, int args) {
 static Action Command_DumpStats(int client, int args) {
   if (g_GameState == Get5State_None) {
     ReplyToCommand(client, "Cannot dump match stats when no match is loaded.");
-    return;
+    return Plugin_Handled;
   }
 
   char arg[PLATFORM_MAX_PATH];
@@ -1184,6 +1168,7 @@ static Action Command_DumpStats(int client, int args) {
   } else {
     ReplyToCommand(client, "Failed to save match stats to %s", arg);
   }
+  return Plugin_Handled;
 }
 
 Action Command_Ct(int client, int args) {
@@ -1401,18 +1386,20 @@ static Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
     int client = GetClientOfUserId(event.GetInt("userid"));
     CreateTimer(0.1, Timer_ReplenishMoney, client, TIMER_FLAG_NO_MAPCHANGE);
   }
+  return Plugin_Continue;
 }
 
 static Action Timer_ReplenishMoney(Handle timer, int client) {
   if (IsPlayer(client) && OnActiveTeam(client)) {
     SetEntProp(client, Prop_Send, "m_iAccount", GetCvarIntSafe("mp_maxmoney"));
   }
+  return Plugin_Handled;
 }
 
 static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_MatchOver");
   if (g_GameState == Get5State_None) {
-    return;
+    return Plugin_Continue;
   }
 
   // This ensures that the mp_match_restart_delay is not shorter
@@ -1484,7 +1471,7 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       // clinch config.
       if (remainingMaps <= 0) {
         EndSeries(Get5Team_None, true, restartDelay);
-        return;
+        return Plugin_Continue;
       }
     } else if (g_SeriesCanClinch) {
       // This adjusts for ties!
@@ -1492,16 +1479,16 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       if (t1maps == actualMapsToWin) {
         // Team 1 won
         EndSeries(Get5Team_1, true, restartDelay);
-        return;
+        return Plugin_Continue;
       } else if (t2maps == actualMapsToWin) {
         // Team 2 won
         EndSeries(Get5Team_2, true, restartDelay);
-        return;
+        return Plugin_Continue;
       }
     } else if (remainingMaps <= 0) {
       EndSeries(t1maps > t2maps ? Get5Team_1 : Get5Team_2, true,
                 restartDelay);  // Tie handled in first if-block
-      return;
+      return Plugin_Continue;
     }
 
     if (t1maps > t2maps) {
@@ -1539,6 +1526,7 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     // second built-in delay in the ChangeMap function called by Timer_NextMatchMap.
     g_PendingMapChangeTimer = CreateTimer(restartDelay - 4, Timer_NextMatchMap);
   }
+  return Plugin_Continue;
 }
 
 Action Timer_NextMatchMap(Handle timer) {
@@ -1724,7 +1712,7 @@ void ResetMatchCvarsAndHostnameAndKickPlayers(bool kickPlayers) {
 static Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundPreStart");
   if (g_GameState == Get5State_None) {
-    return;
+    return Plugin_Continue;
   }
 
   if (g_GameState == Get5State_Live) {
@@ -1747,6 +1735,7 @@ static Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
   g_MapNumber = Get5_GetMapNumber();
   // Round number always -1 if not live.
   g_RoundNumber = g_GameState != Get5State_Live ? -1 : GetRoundsPlayed();
+  return Plugin_Continue;
 }
 
 static Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast) {
@@ -1770,6 +1759,7 @@ static Action Event_FreezeEnd(Event event, const char[] name, bool dontBroadcast
   if (g_GameState == Get5State_Live && !IsDoingRestoreOrMapChange()) {
     Stats_RoundStart();
   }
+  return Plugin_Continue;
 }
 
 void RestartInfoTimer() {
@@ -1799,7 +1789,7 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
 
   if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {
     // Get5_OnRoundStart() is fired from within the backup event when loading the valve backup.
-    return;
+    return Plugin_Continue;
   }
 
   // Update server hostname as it may contain team score variables.
@@ -1826,7 +1816,7 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
       ChangeState(Get5State_WaitingForKnifeRoundDecision);
       PromptForKnifeDecision();
       StartKnifeTimer();
-      return;
+      return Plugin_Continue;
     }
     if (g_GameState == Get5State_GoingLive) {
       LogDebug("Changed to live.");
@@ -1836,7 +1826,7 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
       // live-announcement to the actual live start.
       RestartGame();
       CreateTimer(3.0, Timer_MatchLive, _, TIMER_FLAG_NO_MAPCHANGE);
-      return;  // Next round start will take care of below, such as writing backup.
+      return Plugin_Continue;  // Next round start will take care of below, such as writing backup.
     }
   }
 
@@ -1857,13 +1847,13 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   }
 
   if (g_GameState != Get5State_Live) {
-    return;
+    return Plugin_Continue;
   }
 
   if (g_PendingSurrenderTeam != Get5Team_None) {
     SurrenderMap(g_PendingSurrenderTeam);
     g_PendingSurrenderTeam = Get5Team_None;
-    return;
+    return Plugin_Continue;
   }
 
   Get5RoundStartedEvent startEvent = new Get5RoundStartedEvent(g_MatchID, g_MapNumber, g_RoundNumber);
@@ -1872,6 +1862,7 @@ static Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
   Call_PushCell(startEvent);
   Call_Finish();
   EventLogger_LogAndDeleteEvent(startEvent);
+  return Plugin_Continue;
 }
 
 static Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroadcast) {
@@ -1907,12 +1898,13 @@ static Action Event_RoundWinPanel(Event event, const char[] name, bool dontBroad
     event.SetInt("funfact_data3", 0);
     event.SetInt("final_event", ConvertCSTeamToDefaultWinReason(winningCSTeam));
   }
+  return Plugin_Continue;
 }
 
 static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundEnd");
   if (g_GameState == Get5State_None || IsDoingRestoreOrMapChange()) {
-    return;
+    return Plugin_Continue;
   }
 
   if (g_GameState == Get5State_KnifeRound && g_KnifeWinnerTeam != Get5Team_None) {
@@ -1921,7 +1913,7 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     // We override this event only to have the correct audio callout in the game.
     event.SetInt("winner", winningCSTeam);
     event.SetInt("reason", ConvertCSTeamToDefaultWinReason(winningCSTeam));
-    return;
+    return Plugin_Continue;
   }
 
   if (g_GameState == Get5State_Live) {
@@ -2007,6 +1999,7 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       g_TeamGivenStopCommand[t] = false;
     }
   }
+  return Plugin_Continue;
 }
 
 static void SwapSides() {
@@ -2034,6 +2027,7 @@ static Action Event_CvarChanged(Event event, const char[] name, bool dontBroadca
       event.BroadcastDisabled = true;
     }
   }
+  return Plugin_Continue;
 }
 
 static void StartGame(bool knifeRound) {
@@ -2266,8 +2260,8 @@ release version to remove this message.");
   SteamWorks_SendHTTPRequest(req);
 }
 
-static int VersionCheckRequestCallback(Handle request, bool failure, bool requestSuccessful,
-                                       EHTTPStatusCode statusCode) {
+static void VersionCheckRequestCallback(Handle request, bool failure, bool requestSuccessful,
+                                        EHTTPStatusCode statusCode) {
   if (failure || !requestSuccessful) {
     LogError("Failed to check for Get5 update. HTTP error code: %d.", statusCode);
     delete request;
@@ -2314,4 +2308,55 @@ static int VersionCheckRequestCallback(Handle request, bool failure, bool reques
   }
 
   delete versionRegex;
+}
+
+bool IsDoingRestoreOrMapChange() {
+  return g_DoingBackupRestoreNow || g_MapChangePending;
+}
+
+void AnnouncePhaseChange(const char[] format, const char[] message) {
+  int count = g_PhaseAnnouncementCountCvar.IntValue;
+  if (count > 10) {
+    count = 10;
+  }
+  for (int i = 0; i < count; i++) {
+    Get5_MessageToAll(format, message);
+  }
+}
+
+void CheckAndCreateFolderPath(const ConVar cvar, const char[][] varsToReplace, const int varListSize,
+                              char outputFolder[PLATFORM_MAX_PATH], const int outputFolderSize) {
+  char path[PLATFORM_MAX_PATH];
+  char cvarName[MAX_CVAR_LENGTH];
+
+  cvar.GetName(cvarName, sizeof(cvarName));
+  cvar.GetString(path, sizeof(path));
+
+  for (int i = 0; i < varListSize; i++) {
+    if (StrEqual("{MATCHID}", varsToReplace[i])) {
+      ReplaceString(path, sizeof(path), varsToReplace[i], g_MatchID);
+    } else if (StrEqual("{DATE}", varsToReplace[i])) {
+      char dateFormat[64];
+      char formattedDate[64];
+      int timeStamp = GetTime();
+      g_DateFormatCvar.GetString(dateFormat, sizeof(dateFormat));
+
+      FormatTime(formattedDate, sizeof(formattedDate), dateFormat, timeStamp);
+      ReplaceString(path, sizeof(path), varsToReplace[i], formattedDate);
+    }
+  }
+
+  int folderLength = strlen(path);
+
+  if (folderLength > 0 &&
+      (path[0] == '/' || path[0] == '.' || path[folderLength - 1] != '/' || StrContains(path, "//") != -1)) {
+    LogError(
+      "%s must end with a slash and must not start with a slash or dot. It will be reset to an empty string! Current value: %s",
+      cvarName, path);
+    path = "";
+    cvar.SetString(path, false, false);
+  } else {
+    CreateFolderStructure(path);
+  }
+  Format(outputFolder, outputFolderSize, "%s", path);
 }

@@ -209,6 +209,7 @@ static Action Timer_PlacePlayerFromTeamNone(Handle timer, int client) {
   if (g_GameState != Get5State_None && IsPlayer(client)) {
     CheckClientTeam(client);
   }
+  return Plugin_Handled;
 }
 
 static bool LoadMatchFile(const char[] config, char[] error, bool backup) {
@@ -293,8 +294,8 @@ bool LoadMatchFromUrl(const char[] url, const ArrayList paramNames = null, const
   return true;
 }
 
-static int LoadMatchFromUrl_Callback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
-                                     DataPack pack) {
+static void LoadMatchFromUrl_Callback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode,
+                                      DataPack pack) {
 
   char loadedUrl[PLATFORM_MAX_PATH];
   pack.Reset();
@@ -1569,6 +1570,51 @@ static void AddTeamLogoToDownloadTable(const char[] logoName) {
     } else {
       LogError("Error in locating file %s. Please ensure the file exists on your game server.", logoPath);
     }
+  }
+}
+
+void SetTeamInfo(const Get5Side side, const char[] name, const char[] flag, const char[] logo, const char[] matchstat,
+                 int series_score) {
+  int team_int = (side == Get5Side_CT) ? 1 : 2;
+
+  char teamCvarName[MAX_CVAR_LENGTH];
+  char flagCvarName[MAX_CVAR_LENGTH];
+  char logoCvarName[MAX_CVAR_LENGTH];
+  char textCvarName[MAX_CVAR_LENGTH];
+  char scoreCvarName[MAX_CVAR_LENGTH];
+  FormatEx(teamCvarName, sizeof(teamCvarName), "mp_teamname_%d", team_int);
+  FormatEx(flagCvarName, sizeof(flagCvarName), "mp_teamflag_%d", team_int);
+  FormatEx(logoCvarName, sizeof(logoCvarName), "mp_teamlogo_%d", team_int);
+  FormatEx(textCvarName, sizeof(textCvarName), "mp_teammatchstat_%d", team_int);
+  FormatEx(scoreCvarName, sizeof(scoreCvarName), "mp_teamscore_%d", team_int);
+
+  // Add Ready/Not ready tags to team name if in warmup.
+  char taggedName[MAX_CVAR_LENGTH];
+  if (g_ReadyTeamTagCvar.BoolValue) {
+    if (IsReadyGameState()) {
+      Get5Team matchTeam = CSTeamToGet5Team(view_as<int>(side));
+      if (IsTeamReady(matchTeam)) {
+        FormatEx(taggedName, sizeof(taggedName), "%s %T", name, "ReadyTag", LANG_SERVER);
+      } else {
+        FormatEx(taggedName, sizeof(taggedName), "%s %T", name, "NotReadyTag", LANG_SERVER);
+      }
+    } else {
+      strcopy(taggedName, sizeof(taggedName), name);
+    }
+  } else {
+    strcopy(taggedName, sizeof(taggedName), name);
+  }
+
+  SetConVarStringSafe(teamCvarName, taggedName);
+  SetConVarStringSafe(flagCvarName, flag);
+  SetConVarStringSafe(logoCvarName, logo);
+  SetConVarStringSafe(textCvarName, matchstat);
+
+  // We do this because IntValue = 0 does not consistently set an empty string, relevant for testing.
+  if (g_MapsToWin > 1 && series_score > 0) {
+    SetConVarIntSafe(scoreCvarName, series_score);
+  } else {
+    SetConVarStringSafe(scoreCvarName, "");
   }
 }
 

@@ -124,8 +124,10 @@ Get5Player GetPlayerObject(int client) {
     return new Get5Player(0, "", view_as<Get5Side>(CS_TEAM_NONE), "Console", false);
   }
 
+  int userId = GetClientUserId(client);
+
   if (IsClientSourceTV(client)) {
-    return new Get5Player(0, "", view_as<Get5Side>(CS_TEAM_NONE), "GOTV", false);
+    return new Get5Player(userId, "", view_as<Get5Side>(CS_TEAM_NONE), "GOTV", false);
   }
 
   // In cases where users disconnect (Get5PlayerDisconnectedEvent) without being on a team, they
@@ -135,8 +137,6 @@ Get5Player GetPlayerObject(int client) {
 
   char name[MAX_NAME_LENGTH];
   GetClientName(client, name, sizeof(name));
-
-  int userId = GetClientUserId(client);
 
   if (IsAuthedPlayer(client)) {
     char auth[AUTH_LENGTH];

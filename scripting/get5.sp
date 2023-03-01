@@ -771,29 +771,23 @@ public void OnClientPostAdminCheck(int client) {
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
-  if (g_GameState == Get5State_Veto && g_MuteAllChatDuringMapSelectionCvar.BoolValue && StrEqual(command, "say")) {
-    if (client != g_VetoCaptains[Get5Team_1] && client != g_VetoCaptains[Get5Team_2]) {
+  if (client > 0 && g_GameState == Get5State_Veto && g_MuteAllChatDuringMapSelectionCvar.BoolValue &&
+      StrEqual(command, "say") && client != g_VetoCaptains[Get5Team_1] && client != g_VetoCaptains[Get5Team_2]) {
       Get5_Message(client, "%t", "MapSelectionTeamChatOnly");
       return Plugin_Stop;
-    }
   }
   return Plugin_Continue;
 }
 
 public void OnClientSayCommand_Post(int client, const char[] command, const char[] sArgs) {
   if (g_GameState != Get5State_None && (StrEqual(command, "say") || StrEqual(command, "say_team"))) {
-    if (IsValidClient(client)) {
-      Get5PlayerSayEvent event = new Get5PlayerSayEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
-                                                        GetPlayerObject(client), command, sArgs);
-
-      LogDebug("Calling Get5_OnPlayerSay()");
-
-      Call_StartForward(g_OnPlayerSay);
-      Call_PushCell(event);
-      Call_Finish();
-
-      EventLogger_LogAndDeleteEvent(event);
-    }
+    Get5PlayerSayEvent event = new Get5PlayerSayEvent(g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(),
+                                                      GetPlayerObject(client), command, sArgs);
+    LogDebug("Calling Get5_OnPlayerSay()");
+    Call_StartForward(g_OnPlayerSay);
+    Call_PushCell(event);
+    Call_Finish();
+    EventLogger_LogAndDeleteEvent(event);
   }
   CheckForChatAlias(client, sArgs);
 }

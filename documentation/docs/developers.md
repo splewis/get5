@@ -26,14 +26,14 @@ If you are unfamiliar with how building SourceMod plugins works, you can use [Do
 Get5 [from source](https://github.com/splewis/get5). A precompiled image is available:
 
 ```shell
-docker pull nickdnk/get5-build:latest
+docker pull nickdnk/get5-build:1.10.0-6545-sp-fix
 ```
 
 If run from the repository root, this would put the compiled plugin into a `builds` folder. You could of course replace
 `$PWD/builds` with any other path to move the output there.
 
 ```shell
-docker run --rm -v $PWD:/get5src -v $PWD/builds:/get5/builds nickdnk/get5-build:latest
+docker run --rm -v $PWD:/get5src -v $PWD/builds:/get5/builds nickdnk/get5-build:1.10.0-6545-sp-fix
 ```
 
 !!! warning "Custom builds are unsupported"

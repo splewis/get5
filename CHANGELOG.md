@@ -37,7 +37,7 @@ details.
    `teamX_score` (int) has been replaced by an object called `teamX`, which looks like this.
 
    Old:
-   ```json
+   ```json5
    {
      "event": "round_end",
      "matchid": "29844",
@@ -48,14 +48,14 @@ details.
      "reason": 8,
      "winner": {
        "team": "team1",
-       "side": "ct"
+       "side": "t"
      },
      "team1_score": 10,
      "team2_score": 12
    }
    ```
    New:
-   ```json
+   ```json5
    {
      "event": "round_end",
      "matchid": "29844",
@@ -66,7 +66,7 @@ details.
      "reason": 8,
      "winner": {
        "team": "team1",
-       "side": "ct"
+       "side": "t"
      },
      "team1": {
        "name": "TeamName",

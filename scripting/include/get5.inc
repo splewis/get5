@@ -6,6 +6,63 @@
 #include <json>  // github.com/clugg/sm-json
 #include <cstrike>
 
+// Series stats (root section)
+#define STAT_SERIESWINNER "winner"
+#define STAT_SERIESTYPE "series_type"
+#define STAT_SERIES_TEAM1NAME "team1_name"
+#define STAT_SERIES_TEAM2NAME "team2_name"
+#define STAT_SERIES_FORFEIT "forfeit"
+
+// Map stats (under "map0", "map1", etc.)
+#define STAT_MAPNAME "mapname"
+#define STAT_MAPWINNER "winner"
+#define STAT_DEMOFILENAME "demo_filename"
+
+// Team stats (under map section, then "team1" or "team2")
+#define STAT_TEAMSCORE "score"
+#define STAT_TEAMSCORE_CT "score_ct"
+#define STAT_TEAMSCORE_T "score_t"
+#define STAT_STARTING_SIDE "starting_side"
+
+// Player stats (under map section, then team section, then player's steam64)
+// If adding stuff here, also add to the InitPlayerStats function!
+#define STAT_INIT "init" // used to zero-fill stats only. Not a real stat.
+#define STAT_COACHING "coaching" // indicates if the player is a coach.
+#define STAT_NAME "name"
+#define STAT_KILLS "kills"
+#define STAT_DEATHS "deaths"
+#define STAT_ASSISTS "assists"
+#define STAT_FLASHBANG_ASSISTS "flashbang_assists"
+#define STAT_TEAMKILLS "teamkills"
+#define STAT_SUICIDES "suicides"
+#define STAT_DAMAGE "damage"
+#define STAT_UTILITY_DAMAGE "util_damage"
+#define STAT_ENEMIES_FLASHED "enemies_flashed"
+#define STAT_FRIENDLIES_FLASHED "friendlies_flashed"
+#define STAT_KNIFE_KILLS "knife_kills"
+#define STAT_HEADSHOT_KILLS "headshot_kills"
+#define STAT_ROUNDSPLAYED "roundsplayed"
+#define STAT_BOMBDEFUSES "bomb_defuses"
+#define STAT_BOMBPLANTS "bomb_plants"
+#define STAT_1K "1kill_rounds"
+#define STAT_2K "2kill_rounds"
+#define STAT_3K "3kill_rounds"
+#define STAT_4K "4kill_rounds"
+#define STAT_5K "5kill_rounds"
+#define STAT_V1 "v1"
+#define STAT_V2 "v2"
+#define STAT_V3 "v3"
+#define STAT_V4 "v4"
+#define STAT_V5 "v5"
+#define STAT_FIRSTKILL_T "firstkill_t"
+#define STAT_FIRSTKILL_CT "firstkill_ct"
+#define STAT_FIRSTDEATH_T "firstdeath_t"
+#define STAT_FIRSTDEATH_CT "firstdeath_ct"
+#define STAT_TRADEKILL "tradekill"
+#define STAT_KAST "kast"
+#define STAT_CONTRIBUTION_SCORE "contribution_score"
+#define STAT_MVP "mvp"
+
 enum Get5Side {
   Get5Side_None = CS_TEAM_NONE,
   Get5Side_Spec = CS_TEAM_SPECTATOR,
@@ -165,6 +222,468 @@ native bool Get5_GetMatchStats(KeyValues kv);
 // Increases an (integer-typed) player statistic in the plugin's stats keyvalue structure.
 native int Get5_IncreasePlayerStat(int client, const char[] statName, int amount = 1);
 
+
+methodmap Get5PlayerStats < JSON_Object {
+
+  property int Kills {
+    public set(int val) {
+      this.SetInt("kills", val);
+    }
+    public get() {
+      return this.GetInt("kills");
+    }
+  }
+
+  property int Deaths {
+    public set(int val) {
+      this.SetInt("deaths", val);
+    }
+    public get() {
+      return this.GetInt("deaths");
+    }
+  }
+
+  property int Assists {
+    public set(int val) {
+      this.SetInt("assists", val);
+    }
+    public get() {
+      return this.GetInt("assists");
+    }
+  }
+
+  property int FlashbangAssists {
+    public set(int val) {
+      this.SetInt("flashbang_assists", val);
+    }
+    public get() {
+      return this.GetInt("flashbang_assists");
+    }
+  }
+
+  property int TeamKills {
+    public set(int val) {
+      this.SetInt("team_kills", val);
+    }
+    public get() {
+      return this.GetInt("team_kills");
+    }
+  }
+
+  property int Suicides {
+    public set(int val) {
+      this.SetInt("suicides", val);
+    }
+    public get() {
+      return this.GetInt("suicides");
+    }
+  }
+
+  property int Damage {
+    public set(int val) {
+      this.SetInt("damage", val);
+    }
+    public get() {
+      return this.GetInt("damage");
+    }
+  }
+
+  property int UtilityDamage {
+    public set(int val) {
+      this.SetInt("utility_damage", val);
+    }
+    public get() {
+      return this.GetInt("utility_damage");
+    }
+  }
+
+  property int EnemiesFlashed {
+    public set(int val) {
+      this.SetInt("enemies_flashed", val);
+    }
+    public get() {
+      return this.GetInt("enemies_flashed");
+    }
+  }
+
+  property int FriendliesFlashed {
+    public set(int val) {
+      this.SetInt("friendlies_flashed", val);
+    }
+    public get() {
+      return this.GetInt("friendlies_flashed");
+    }
+  }
+
+  property int KnifeKills {
+    public set(int val) {
+      this.SetInt("knife_kills", val);
+    }
+    public get() {
+      return this.GetInt("knife_kills");
+    }
+  }
+
+  property int HeadshotKills {
+    public set(int val) {
+      this.SetInt("headshot_kills", val);
+    }
+    public get() {
+      return this.GetInt("headshot_kills");
+    }
+  }
+
+  property int RoundsPlayed {
+    public set(int val) {
+      this.SetInt("rounds_played", val);
+    }
+    public get() {
+      return this.GetInt("rounds_played");
+    }
+  }
+
+  property int BombDefuses {
+    public set(int val) {
+      this.SetInt("bomb_defuses", val);
+    }
+    public get() {
+      return this.GetInt("bomb_defuses");
+    }
+  }
+
+  property int BombPlants {
+    public set(int val) {
+      this.SetInt("bomb_plants", val);
+    }
+    public get() {
+      return this.GetInt("bomb_plants");
+    }
+  }
+
+  property int Kills1 {
+    public set(int val) {
+      this.SetInt("1k", val);
+    }
+    public get() {
+      return this.GetInt("1k");
+    }
+  }
+
+  property int Kills2 {
+    public set(int val) {
+      this.SetInt("2k", val);
+    }
+    public get() {
+      return this.GetInt("2k");
+    }
+  }
+
+  property int Kills3 {
+    public set(int val) {
+      this.SetInt("3k", val);
+    }
+    public get() {
+      return this.GetInt("3k");
+    }
+  }
+
+  property int Kills4 {
+    public set(int val) {
+      this.SetInt("4k", val);
+    }
+    public get() {
+      return this.GetInt("4k");
+    }
+  }
+
+  property int Kills5 {
+    public set(int val) {
+      this.SetInt("5k", val);
+    }
+    public get() {
+      return this.GetInt("5k");
+    }
+  }
+
+  property int OneV1s {
+    public set(int val) {
+      this.SetInt("1v1", val);
+    }
+    public get() {
+      return this.GetInt("1v1");
+    }
+  }
+
+  property int OneV2s {
+    public set(int val) {
+      this.SetInt("1v2", val);
+    }
+    public get() {
+      return this.GetInt("1v2");
+    }
+  }
+
+  property int OneV3s {
+    public set(int val) {
+      this.SetInt("1v3", val);
+    }
+    public get() {
+      return this.GetInt("1v3");
+    }
+  }
+
+  property int OneV4s {
+    public set(int val) {
+      this.SetInt("1v4", val);
+    }
+    public get() {
+      return this.GetInt("1v4");
+    }
+  }
+
+  property int OneV5s {
+    public set(int val) {
+      this.SetInt("1v5", val);
+    }
+    public get() {
+      return this.GetInt("1v5");
+    }
+  }
+
+  property int FirstKillsT {
+    public set(int val) {
+      this.SetInt("first_kills_t", val);
+    }
+    public get() {
+      return this.GetInt("first_kills_t");
+    }
+  }
+
+  property int FirstKillsCT {
+    public set(int val) {
+      this.SetInt("first_kills_ct", val);
+    }
+    public get() {
+      return this.GetInt("first_kills_ct");
+    }
+  }
+
+  property int FirstDeathsT {
+    public set(int val) {
+      this.SetInt("first_deaths_t", val);
+    }
+    public get() {
+      return this.GetInt("first_deaths_t");
+    }
+  }
+
+  property int FirstDeathsCT {
+    public set(int val) {
+      this.SetInt("first_deaths_ct", val);
+    }
+    public get() {
+      return this.GetInt("first_deaths_ct");
+    }
+  }
+
+  property int TradeKills {
+    public set(int val) {
+      this.SetInt("trade_kills", val);
+    }
+    public get() {
+      return this.GetInt("trade_kills");
+    }
+  }
+
+  property int KAST {
+    public set(int val) {
+      this.SetInt("kast", val);
+    }
+    public get() {
+      return this.GetInt("kast");
+    }
+  }
+
+  property int Score {
+    public set(int val) {
+      this.SetInt("score", val);
+    }
+    public get() {
+      return this.GetInt("score");
+    }
+  }
+
+  property int MVPs {
+    public set(int val) {
+      this.SetInt("mvp", val);
+    }
+    public get() {
+      return this.GetInt("mvp");
+    }
+  }
+
+  public Get5PlayerStats(const int kills, const int deaths, const int assists, const int flashbangAssists,
+        const int teamKills, const int suicides, const int damage, const int utilityDamage, const int enemiesFlashed,
+        const int friendliesFlashed, const int knifeKills, const int headshotKills, const int roundsPlayed,
+        const int bombDefuses, const int bombPlants, const int kills1, const int kills2, const int kills3,
+        const int kills4, const int kills5, const int oneV1s, const int oneV2s, const int oneV3s,
+        const int oneV4s, const int oneV5s, const int firstKillsT, const int firstKillsCT, const int firstDeathsT,
+        const int firstDeathsCT, const int tradeKills, const int kast, const int score, const int mvp) {
+    Get5PlayerStats self = view_as<Get5PlayerStats>(new JSON_Object());
+    self.Kills = kills;
+    self.Deaths = deaths;
+    self.Assists = assists;
+    self.FlashbangAssists = flashbangAssists;
+    self.TeamKills = teamKills;
+    self.Suicides = suicides;
+    self.Damage = damage;
+    self.UtilityDamage = utilityDamage;
+    self.EnemiesFlashed = enemiesFlashed;
+    self.FriendliesFlashed = friendliesFlashed;
+    self.KnifeKills = knifeKills;
+    self.HeadshotKills = headshotKills;
+    self.RoundsPlayed = roundsPlayed;
+    self.BombDefuses = bombDefuses;
+    self.BombPlants = bombPlants;
+    self.OneV1s = oneV1s;
+    self.OneV2s = oneV2s;
+    self.OneV3s = oneV3s;
+    self.OneV4s = oneV4s;
+    self.OneV5s = oneV5s;
+    self.Kills1 = kills1;
+    self.Kills2 = kills2;
+    self.Kills3 = kills3;
+    self.Kills4 = kills4;
+    self.Kills5 = kills5;
+    self.FirstKillsT = firstKillsT;
+    self.FirstKillsCT = firstKillsCT;
+    self.FirstDeathsT = firstDeathsT;
+    self.FirstDeathsCT = firstDeathsCT;
+    self.TradeKills = tradeKills;
+    self.KAST = kast;
+    self.Score = score
+    self.MVPs = mvp;
+    return self;
+  }
+}
+
+methodmap Get5PlayerBase < JSON_Object {
+  public bool SetSteamId(const char[] value) {
+    return this.SetString("steamid", value);
+  }
+  public bool GetSteamId(char[] buffer, const int maxSize) {
+    return this.GetString("steamid", buffer, maxSize);
+  }
+
+  public bool SetName(const char[] value) {
+    return this.SetString("name", value);
+  }
+  public bool GetName(char[] buffer, const int maxSize) {
+    return this.GetString("name", buffer, maxSize);
+  }
+}
+
+methodmap Get5StatsPlayer < Get5PlayerBase {
+
+  property Get5PlayerStats Stats {
+    public get() {
+      return view_as<Get5PlayerStats>(this.GetObject("stats"));
+    }
+    public set(Get5PlayerStats val) {
+      this.SetObject("stats", val);
+    }
+  }
+
+  public Get5StatsPlayer(const char[] steamId, const char[] name, const Get5PlayerStats stats) {
+    Get5StatsPlayer self = view_as<Get5StatsPlayer>(new JSON_Object());
+    self.SetSteamId(steamId);
+    self.SetName(name);
+    self.Stats = stats;
+    return self;
+  }
+}
+
+methodmap Get5StatsTeam < JSON_Object {
+
+  public bool GetName(char[] buffer, const int maxSize) {
+    return this.GetString("name", buffer, maxSize);
+  }
+
+  public bool SetName(const char[] value) {
+    return this.SetString("name", value);
+  }
+
+  property int Score {
+    public get() {
+      return this.GetInt("score");
+    }
+    public set(int val) {
+      this.SetInt("score", val);
+    }
+  }
+
+  property int ScoreCT {
+    public get() {
+      return this.GetInt("score_ct");
+    }
+    public set(int val) {
+      this.SetInt("score_ct", val);
+    }
+  }
+
+  property int ScoreT {
+    public get() {
+      return this.GetInt("score_t");
+    }
+    public set(int val) {
+      this.SetInt("score_t", val);
+    }
+  }
+
+  // Array of type Get5StatsPlayer
+  property JSON_Array Players {
+    public get() {
+      return view_as<JSON_Array>(this.GetObject("players"));
+    }
+    public set(JSON_Array players) {
+      this.SetObject("players", players);
+    }
+  }
+
+  property Get5Side Side {
+    public get() {
+      return view_as<Get5Side>(this.GetInt("side_int"));
+    }
+    public set(Get5Side side) {
+      this.SetInt("side_int", view_as<int>(side));
+      this.SetHidden("side_int", true);
+      ConvertGet5SideToStringInJson(this, "side", side);
+    }
+  }
+
+  property Get5Side StartingSide {
+    public get() {
+      return view_as<Get5Side>(this.GetInt("starting_side_int"));
+    }
+    public set(Get5Side side) {
+      this.SetInt("starting_side_int", view_as<int>(side));
+      this.SetHidden("starting_side_int", true);
+      ConvertGet5SideToStringInJson(this, "starting_side", side);
+    }
+  }
+
+  public Get5StatsTeam(const char[] teamName, const int score, const Get5Side side) {
+    Get5StatsTeam self = view_as<Get5StatsTeam>(new JSON_Object());
+    self.SetName(teamName);
+    self.Score = score;
+    self.Players = new JSON_Array();
+    self.Side = side;
+    self.ScoreCT = 0;
+    self.ScoreT = 0;
+    self.StartingSide = Get5Side_None;
+    return self;
+  }
+}
 
 methodmap Get5StatusTeam < JSON_Object {
 
@@ -349,7 +868,7 @@ methodmap Get5Winner < JSON_Object {
   }
 }
 
-methodmap Get5Player < JSON_Object {
+methodmap Get5Player < Get5PlayerBase {
 
   property Get5Side Side {
     public get() {
@@ -360,20 +879,6 @@ methodmap Get5Player < JSON_Object {
       this.SetHidden("side_int", true);
       ConvertGet5SideToStringInJson(this, "side", side);
     }
-  }
-
-  public bool SetSteamId(const char[] value) {
-    return this.SetString("steamid", value);
-  }
-  public bool GetSteamId(char[] buffer, const int maxSize) {
-    return this.GetString("steamid", buffer, maxSize);
-  }
-
-  public bool SetName(const char[] value) {
-    return this.SetString("name", value);
-  }
-  public bool GetName(char[] buffer, const int maxSize) {
-    return this.GetString("name", buffer, maxSize);
   }
 
   property bool IsBot {
@@ -1078,25 +1583,26 @@ methodmap Get5RoundEndedEvent < Get5TimedRoundEvent {
     }
   }
 
-  property int Team1Score {
+  property Get5StatsTeam Team1 {
     public get() {
-      return this.GetInt("team1_score");
+      return view_as<Get5StatsTeam>(this.GetObject("team1"));
     }
-    public set(int score) {
-      this.SetInt("team1_score", score);
+    public set(Get5StatsTeam team) {
+      this.SetObject("team1", team);
     }
   }
 
-  property int Team2Score {
+  property Get5StatsTeam Team2 {
     public get() {
-      return this.GetInt("team2_score");
+      return view_as<Get5StatsTeam>(this.GetObject("team2"));
     }
-    public set(int score) {
-      this.SetInt("team2_score", score);
+    public set(Get5StatsTeam team) {
+      this.SetObject("team2", team);
     }
   }
 
-  public Get5RoundEndedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime, const CSRoundEndReason reason, const Get5Winner winner, const int team1Score, const int team2Score) {
+  public Get5RoundEndedEvent(const char[] matchId, const int mapNumber, const int roundNumber, const int roundTime,
+      const CSRoundEndReason reason, const Get5Winner winner, const Get5StatsTeam team1, const Get5StatsTeam team2) {
     Get5RoundEndedEvent self = view_as<Get5RoundEndedEvent>(new JSON_Object());
     self.SetEvent("round_end");
     self.SetMatchId(matchId);
@@ -1105,8 +1611,8 @@ methodmap Get5RoundEndedEvent < Get5TimedRoundEvent {
     self.RoundTime = roundTime;
     self.Reason = reason;
     self.Winner = winner;
-    self.Team1Score = team1Score;
-    self.Team2Score = team2Score;
+    self.Team1 = team1;
+    self.Team2 = team2;
     return self;
   }
 }
@@ -1866,60 +2372,6 @@ forward void Get5_OnPauseBegan(const Get5MatchPauseBeganEvent event);
 // Note that the match ID, map number and round number is the one being restored *to*, not the current game state at the
 // time the backup is loaded.
 forward void Get5_OnBackupRestore(const Get5BackupRestoredEvent event);
-
-// Series stats (root section)
-#define STAT_SERIESWINNER "winner"
-#define STAT_SERIESTYPE "series_type"
-#define STAT_SERIES_TEAM1NAME "team1_name"
-#define STAT_SERIES_TEAM2NAME "team2_name"
-#define STAT_SERIES_FORFEIT "forfeit"
-
-// Map stats (under "map0", "map1", etc.)
-#define STAT_MAPNAME "mapname"
-#define STAT_MAPWINNER "winner"
-#define STAT_DEMOFILENAME "demo_filename"
-
-// Team stats (under map section, then "team1" or "team2")
-#define STAT_TEAMSCORE "score"
-
-// Player stats (under map section, then team section, then player's steam64)
-// If adding stuff here, also add to the InitPlayerStats function!
-#define STAT_INIT "init" // used to zero-fill stats only. Not a real stat.
-#define STAT_COACHING "coaching" // indicates if the player is a coach.
-#define STAT_NAME "name"
-#define STAT_KILLS "kills"
-#define STAT_DEATHS "deaths"
-#define STAT_ASSISTS "assists"
-#define STAT_FLASHBANG_ASSISTS "flashbang_assists"
-#define STAT_TEAMKILLS "teamkills"
-#define STAT_SUICIDES "suicides"
-#define STAT_DAMAGE "damage"
-#define STAT_UTILITY_DAMAGE "util_damage"
-#define STAT_ENEMIES_FLASHED "enemies_flashed"
-#define STAT_FRIENDLIES_FLASHED "friendlies_flashed"
-#define STAT_KNIFE_KILLS "knife_kills"
-#define STAT_HEADSHOT_KILLS "headshot_kills"
-#define STAT_ROUNDSPLAYED "roundsplayed"
-#define STAT_BOMBDEFUSES "bomb_defuses"
-#define STAT_BOMBPLANTS "bomb_plants"
-#define STAT_1K "1kill_rounds"
-#define STAT_2K "2kill_rounds"
-#define STAT_3K "3kill_rounds"
-#define STAT_4K "4kill_rounds"
-#define STAT_5K "5kill_rounds"
-#define STAT_V1 "v1"
-#define STAT_V2 "v2"
-#define STAT_V3 "v3"
-#define STAT_V4 "v4"
-#define STAT_V5 "v5"
-#define STAT_FIRSTKILL_T "firstkill_t"
-#define STAT_FIRSTKILL_CT "firstkill_ct"
-#define STAT_FIRSTDEATH_T "firstdeath_t"
-#define STAT_FIRSTDEATH_CT "firstdeath_ct"
-#define STAT_TRADEKILL "tradekill"
-#define STAT_KAST "kast"
-#define STAT_CONTRIBUTION_SCORE "contribution_score"
-#define STAT_MVP "mvp"
 
 public SharedPlugin __pl_get5 = {
     name = "get5",

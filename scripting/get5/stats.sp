@@ -267,21 +267,39 @@ void Stats_RoundStart() {
   }
 }
 
-void Stats_RoundEnd(int csTeamWinner) {
+static void SetScoreStats(const int roundNumber, const Get5Team team, const Get5Side side, const Get5Side winningSide,
+                          const char[] sideKey, const char[] otherSideKey) {
+  int csTeam = view_as<int>(side);
+  g_StatsKv.JumpToKey(team == Get5Team_1 ? "team1" : "team2", true);
+  if (roundNumber == 0) {
+    g_StatsKv.SetNum(STAT_STARTING_SIDE, csTeam);
+  }
+  g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(csTeam));
+  if (winningSide == side) {
+    g_StatsKv.SetNum(sideKey, g_StatsKv.GetNum(sideKey, 0) + 1);
+  }
+  if (g_StatsKv.GetNum(otherSideKey) == 0) {
+    g_StatsKv.SetNum(otherSideKey, 0);
+  }
+  g_StatsKv.GoBack();
+}
+
+void Stats_RoundEnd(const Get5Side winningSide, const Get5Side team1Side, const Get5Side team2Side) {
   // Update team scores.
   GoToMap();
   char mapName[PLATFORM_MAX_PATH];
   GetCleanMapName(mapName, sizeof(mapName));
   g_StatsKv.SetString(STAT_MAPNAME, mapName);
+
+  char sideKey[32];
+  strcopy(sideKey, sizeof(sideKey), winningSide == Get5Side_CT ? STAT_TEAMSCORE_CT : STAT_TEAMSCORE_T);
+  char otherSideKey[32];
+  strcopy(otherSideKey, sizeof(otherSideKey), winningSide == Get5Side_CT ? STAT_TEAMSCORE_T : STAT_TEAMSCORE_CT);
+
+  SetScoreStats(g_RoundNumber, Get5Team_1, team1Side, winningSide, sideKey, otherSideKey);
+  SetScoreStats(g_RoundNumber, Get5Team_2, team2Side, winningSide, sideKey, otherSideKey);
+
   GoBackFromMap();
-
-  GoToTeam(Get5Team_1);
-  g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1)));
-  GoBackFromTeam();
-
-  GoToTeam(Get5Team_2);
-  g_StatsKv.SetNum(STAT_TEAMSCORE, CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2)));
-  GoBackFromTeam();
 
   // Update player 1vx, x-kill, and KAST values.
   LOOP_CLIENTS(i) {
@@ -301,7 +319,7 @@ void Stats_RoundEnd(int csTeamWinner) {
             IncrementPlayerStat(i, STAT_5K);
         }
 
-        if (GetClientTeam(i) == csTeamWinner) {
+        if (GetClientTeam(i) == view_as<int>(winningSide)) {
           switch (g_RoundClutchingEnemyCount[i]) {
             case 1:
               IncrementPlayerStat(i, STAT_V1);
@@ -320,9 +338,10 @@ void Stats_RoundEnd(int csTeamWinner) {
           IncrementPlayerStat(i, STAT_KAST);
         }
 
-        GoToPlayer(i);
-        g_StatsKv.SetNum(STAT_CONTRIBUTION_SCORE, CS_GetClientContributionScore(i));
-        GoBackFromPlayer();
+        if (GoToPlayer(i)) {
+          g_StatsKv.SetNum(STAT_CONTRIBUTION_SCORE, CS_GetClientContributionScore(i));
+          GoBackFromPlayer();
+        }
       }
     }
   }
@@ -913,7 +932,9 @@ static Action Stats_RoundMVPEvent(Event event, const char[] name, bool dontBroad
 }
 
 static int IncrementPlayerStatByValue(int client, const char[] field, int incrementBy) {
-  GoToPlayer(client);
+  if (!GoToPlayer(client)) {
+    return 0;
+  }
   int current = g_StatsKv.GetNum(field, 0);
   int newValue = current + incrementBy;
   g_StatsKv.SetNum(field, newValue);
@@ -1007,6 +1028,67 @@ static void GoBackFromMap() {
   g_StatsKv.GoBack();
 }
 
+void FillPlayerStats(const Get5StatsTeam team1, const Get5StatsTeam team2) {
+  GoToMap();
+  if (g_StatsKv.JumpToKey("team1", true)) {
+    team1.ScoreCT = g_StatsKv.GetNum(STAT_TEAMSCORE_CT);
+    team1.ScoreT = g_StatsKv.GetNum(STAT_TEAMSCORE_T);
+    team1.StartingSide = view_as<Get5Side>(g_StatsKv.GetNum(STAT_STARTING_SIDE));
+    if (g_StatsKv.JumpToKey("players", true)) {
+      ConvertKeyValueStatusToJSON(team1.Players);
+      g_StatsKv.GoBack();
+    }
+    g_StatsKv.GoBack();
+  }
+  if (g_StatsKv.JumpToKey("team2", true)) {
+    team2.ScoreCT = g_StatsKv.GetNum(STAT_TEAMSCORE_CT);
+    team2.ScoreT = g_StatsKv.GetNum(STAT_TEAMSCORE_T);
+    team2.StartingSide = view_as<Get5Side>(g_StatsKv.GetNum(STAT_STARTING_SIDE));
+    if (g_StatsKv.JumpToKey("players", true)) {
+      ConvertKeyValueStatusToJSON(team2.Players);
+      g_StatsKv.GoBack();
+    }
+    g_StatsKv.GoBack();
+  }
+  g_StatsKv.GoBack();
+}
+
+static void ConvertKeyValueStatusToJSON(const JSON_Array team) {
+  if (!g_StatsKv.GotoFirstSubKey(false)) {
+    return;
+  }
+
+  if (g_StatsKv.GetNum(STAT_COACHING)) {
+    g_StatsKv.GoBack();
+    return;
+  }
+
+  char name[MAX_NAME_LENGTH];
+  char auth[AUTH_LENGTH];
+
+  do {
+
+    g_StatsKv.GetSectionName(auth, sizeof(auth));
+    g_StatsKv.GetString(STAT_NAME, name, sizeof(name));
+    team.PushObject(new Get5StatsPlayer(
+      auth, name,
+      new Get5PlayerStats(
+        g_StatsKv.GetNum(STAT_KILLS), g_StatsKv.GetNum(STAT_DEATHS), g_StatsKv.GetNum(STAT_ASSISTS),
+        g_StatsKv.GetNum(STAT_FLASHBANG_ASSISTS), g_StatsKv.GetNum(STAT_TEAMKILLS), g_StatsKv.GetNum(STAT_SUICIDES),
+        g_StatsKv.GetNum(STAT_DAMAGE), g_StatsKv.GetNum(STAT_UTILITY_DAMAGE), g_StatsKv.GetNum(STAT_ENEMIES_FLASHED),
+        g_StatsKv.GetNum(STAT_FRIENDLIES_FLASHED), g_StatsKv.GetNum(STAT_KNIFE_KILLS),
+        g_StatsKv.GetNum(STAT_HEADSHOT_KILLS), g_StatsKv.GetNum(STAT_ROUNDSPLAYED), g_StatsKv.GetNum(STAT_BOMBDEFUSES),
+        g_StatsKv.GetNum(STAT_BOMBPLANTS), g_StatsKv.GetNum(STAT_1K), g_StatsKv.GetNum(STAT_2K),
+        g_StatsKv.GetNum(STAT_3K), g_StatsKv.GetNum(STAT_4K), g_StatsKv.GetNum(STAT_5K), g_StatsKv.GetNum(STAT_V1),
+        g_StatsKv.GetNum(STAT_V2), g_StatsKv.GetNum(STAT_V3), g_StatsKv.GetNum(STAT_V4), g_StatsKv.GetNum(STAT_V5),
+        g_StatsKv.GetNum(STAT_FIRSTKILL_T), g_StatsKv.GetNum(STAT_FIRSTKILL_CT), g_StatsKv.GetNum(STAT_FIRSTDEATH_T),
+        g_StatsKv.GetNum(STAT_FIRSTDEATH_CT), g_StatsKv.GetNum(STAT_TRADEKILL), g_StatsKv.GetNum(STAT_KAST),
+        g_StatsKv.GetNum(STAT_CONTRIBUTION_SCORE), g_StatsKv.GetNum(STAT_MVP))));
+
+  } while (g_StatsKv.GotoNextKey(false));
+  g_StatsKv.GoBack();
+}
+
 static bool GoToTeam(Get5Team team) {
   GoToMap();
 
@@ -1030,16 +1112,21 @@ static bool GoToPlayer(int client) {
   if (!GoToTeam(team)) {
     return false;
   }
-
-  char auth[AUTH_LENGTH];
-  if (GetAuth(client, auth, sizeof(auth))) {
-    g_StatsKv.JumpToKey(auth, true);
-    return true;
+  if (g_StatsKv.JumpToKey("players", true)) {
+    char auth[AUTH_LENGTH];
+    if (GetAuth(client, auth, sizeof(auth))) {
+      g_StatsKv.JumpToKey(auth, true);
+      return true;
+    } else {
+      // Maintain order if auth check fails.
+      g_StatsKv.GoBack();
+    }
   }
   return false;
 }
 
 static void GoBackFromPlayer() {
+  g_StatsKv.GoBack();
   GoBackFromTeam();
   g_StatsKv.GoBack();
 }

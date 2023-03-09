@@ -248,11 +248,17 @@ static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
   FormatEx(mapKey, sizeof(mapKey), "map%d", mapNumber);
   if (kv.JumpToKey(mapKey)) {
     if (kv.JumpToKey("team1")) {
-      UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_1);
+      if (kv.JumpToKey("players")) {
+        UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_1);
+        kv.GoBack();
+      }
       kv.GoBack();
     }
     if (kv.JumpToKey("team2")) {
-      UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_2);
+      if (kv.JumpToKey("players")) {
+        UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_2);
+        kv.GoBack();
+      }
       kv.GoBack();
     }
     kv.GoBack();

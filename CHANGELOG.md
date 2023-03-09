@@ -8,6 +8,105 @@ Whenever you update your Get5 plugin, remember to **always** update the `transla
 Please see the [installation instructions](https://splewis.github.io/get5/latest/installation/#installation) for
 details.
 
+# 0.14.0
+
+⚠️ PRERELEASE
+
+#### 2022-03-09
+
+### Breaking Changes 🛠
+
+1. The `Get5_OnPlayerSay` event now includes messages sent from Console (or potentially GOTV). You should filter out
+   these messages on your end if you don't want to react to them. Note that console is always `user_id` 0 and GOTV's
+   name is always `GOTV`. Alternatively, you can ignore all messages with an empty `steamid`.
+2. The [stats system](https://splewis.github.io/get5/latest/stats_system/#keyvalue) has been updated. This means that
+   the structure has been modified to allow for more information, specifically the starting side and score for each side
+   for each team.
+
+   **If you use any of the stats extensions, you must also update those plugins (`get5_mysqlstats.smx`
+   and `get5_apistats.smx`)!**
+
+   Keys changed for each team (i.e. `map0 -> team1`):
+    1. Players' SteamIDs and stats have moved from the root of the team object into a key called `players`.
+    2. Added `score_ct`
+    3. Added `score_t`
+    4. Added `starting_side` (`2` for T, `3` for CT as this is an integer enum)
+3. The structure of the `Get5_OnRoundEnd` JSON event has changed (not to be confused with the KeyValues file in #2
+   above):
+
+   `teamX_score` (int) has been replaced by an object called `teamX`, which looks like this.
+
+   Old:
+   ```json
+   {
+     "event": "round_end",
+     "matchid": "29844",
+     "map_number": 0,
+     "map_name": "de_dust2",
+     "round_number": 21,
+     "round_time": 34944,
+     "reason": 8,
+     "winner": {
+       "team": "team1",
+       "side": "ct"
+     },
+     "team1_score": 10,
+     "team2_score": 12
+   }
+   ```
+   New:
+   ```json
+   {
+     "event": "round_end",
+     "matchid": "29844",
+     "map_number": 0,
+     "map_name": "de_dust2",
+     "round_number": 21,
+     "round_time": 34944,
+     "reason": 8,
+     "winner": {
+       "team": "team1",
+       "side": "ct"
+     },
+     "team1": {
+       "name": "TeamName",
+       "score": 10,
+       "score_ct": 4,
+       "score_t": 6,
+       "side": "t",
+       "starting_side": "ct",
+       "players": [
+         {
+           "name": "Nyxi",
+           "steamid": "76561197996426755",
+           "stats": {
+             // Full player stats.
+           }
+         }
+       ]
+     }
+     // same for "team2"
+   }
+   ```
+
+   This affects the `Get5_OnRoundEnd` forward as well, so if you have a plugin that reads this data, you must update it.
+   For full details and the SourceMod properties, see
+   the [event documentation](https://splewis.github.io/get5/dev/events_and_forwards/#events).
+
+### New Features / Changes 🎉
+
+1. Get5 is now built with SourceMod 1.11.
+2. The JSON "pretty print" spacing string has changed from 4 spaces to 1 tab. This is strictly because there is a 16KB
+   max buffer size in SourceMod, which we come dangerously close to when posting the full player stats via JSON. If you
+   play 6v6 or 7v7, you may need to
+   set [`get5_pretty_print_json 0`](https://splewis.github.io/get5/latest/configuration/#get5_pretty_print_json) to
+   avoid hitting the limit. You **will** see an error in console if this happens.
+3. The `get5_mysqlstats` extension now uses a transaction to update stat rows for each player. This improves performance
+   via reduced I/O between the game server and the database server.
+4. The [documentation of events](https://splewis.github.io/get5/dev/events_and_forwards/#events) is now rendered
+   on `https://redocly.github.io` instead of being embedded in the Get5 documentation website. This allows for more
+   space and makes it easier to browse/read.
+
 # 0.13.1
 
 #### 2023-03-20
@@ -68,7 +167,7 @@ details.
    round ends. This behavior can be controlled
    via [`get5_allow_pause_cancellation`](https://splewis.github.io/get5/latest/configuration/#get5_allow_pause_cancellation).
 
-## New Features / Changes 🎉
+### New Features / Changes 🎉
 
 1. Admins can now use the
    command [`get5_add_ready_time`](https://splewis.github.io/get5/latest/commands/#get5_add_ready_time) to add more time

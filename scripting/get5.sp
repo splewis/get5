@@ -358,6 +358,10 @@ public void OnPluginStart() {
   InitDebugLog(DEBUG_CVAR, "get5");
   LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
 
+  // Because we JSON encode the entire match stats on round end, we change from 4 spaces to a tab when pretty-printing.
+  // It saves a significant number of bytes, and we're limited to 16K. See SendEventJSONToURL().
+  JSON_PP_INDENT = "\t";
+
   // Because we use SDKHooks for damage, we need to re-hook clients that are already on the server
   // in case the plugin is reloaded. This includes bots.
   LOOP_CLIENTS(i) {
@@ -773,8 +777,8 @@ public void OnClientPostAdminCheck(int client) {
 public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
   if (client > 0 && g_GameState == Get5State_Veto && g_MuteAllChatDuringMapSelectionCvar.BoolValue &&
       StrEqual(command, "say") && client != g_VetoCaptains[Get5Team_1] && client != g_VetoCaptains[Get5Team_2]) {
-      Get5_Message(client, "%t", "MapSelectionTeamChatOnly");
-      return Plugin_Stop;
+    Get5_Message(client, "%t", "MapSelectionTeamChatOnly");
+    return Plugin_Stop;
   }
   return Plugin_Continue;
 }
@@ -1913,10 +1917,12 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
   }
 
   if (g_GameState == Get5State_Live) {
-    int csTeamWinner = event.GetInt("winner");
+    Get5Side winnerSide = view_as<Get5Side>(event.GetInt("winner"));
+    Get5Side team1Side = view_as<Get5Side>(Get5TeamToCSTeam(Get5Team_1));
+    Get5Side team2Side = view_as<Get5Side>(Get5TeamToCSTeam(Get5Team_2));
 
-    int team1Score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
-    int team2Score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
+    int team1Score = CS_GetTeamScore(view_as<int>(team1Side));
+    int team2Score = CS_GetTeamScore(view_as<int>(team2Side));
 
     if (team1Score == team2Score) {
       // If a vote is started and the game proceeds to a tie; stop the timers as surrender can now not be performed.
@@ -1926,7 +1932,7 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
     Get5_MessageToAll("%s {GREEN}%d {NORMAL}- {GREEN}%d %s", g_FormattedTeamNames[Get5Team_1], team1Score, team2Score,
                       g_FormattedTeamNames[Get5Team_2]);
 
-    Stats_RoundEnd(csTeamWinner);
+    Stats_RoundEnd(winnerSide, team1Side, team2Side);
 
     if (g_DamagePrintCvar.BoolValue) {
       LOOP_CLIENTS(i) {
@@ -1972,12 +1978,17 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       }
     }
 
+    Get5StatsTeam team1 = new Get5StatsTeam(g_TeamNames[Get5Team_1], team1Score, team1Side);
+    Get5StatsTeam team2 = new Get5StatsTeam(g_TeamNames[Get5Team_2], team2Score, team2Side);
+
+    FillPlayerStats(team1, team2);
+
     // CSRoundEndReason is incorrect in CSGO compared to the enumerations defined here:
     // https://github.com/alliedmodders/sourcemod/blob/master/plugins/include/cstrike.inc#L53-L77
     // - which is why we subtract one.
     Get5RoundEndedEvent roundEndEvent = new Get5RoundEndedEvent(
       g_MatchID, g_MapNumber, g_RoundNumber, GetRoundTime(), view_as<CSRoundEndReason>(event.GetInt("reason") - 1),
-      new Get5Winner(CSTeamToGet5Team(csTeamWinner), view_as<Get5Side>(csTeamWinner)), team1Score, team2Score);
+      new Get5Winner(CSTeamToGet5Team(view_as<int>(winnerSide)), winnerSide), team1, team2);
 
     LogDebug("Calling Get5_OnRoundEnd()");
     Call_StartForward(g_OnRoundEnd);

@@ -28,4 +28,9 @@ table below indicate the name of the forward in SourceMod.
 
 ## Events
 
-<swagger-ui src="event_schema.yml"/>
+Documentation of the events is available
+on [https://redocly.github.io/redoc/?url=https://splewis.github.io/get5/latest/event_schema.yml](https://redocly.github.io/redoc/?url=https://splewis.github.io/get5/latest/event_schema.yml){:target="_blank"}.
+
+!!! warning "Stable docs"
+
+    If you want to browse the development version of the events, replace `latest` with `dev` in the URL.

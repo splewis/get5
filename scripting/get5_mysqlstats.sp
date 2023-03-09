@@ -161,19 +161,8 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
 }
 
 static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
-  // Update team scores
-  int t1score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_1));
-  int t2score = CS_GetTeamScore(Get5_Get5TeamToCSTeam(Get5Team_2));
-
-  char matchIdSz[64];
-  db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
-
-  FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_maps` \
-        SET team1_score = %d, team2_score = %d WHERE matchid = '%s' and mapnumber = %d",
-           t1score, t2score, matchIdSz, mapNumber);
-  LogDebug(queryBuffer);
-  db.Query(SQLErrorCheckCallback, queryBuffer);
-
+  int t1score = 0;
+  int t2score = 0;
   // Update player stats
   KeyValues kv = new KeyValues("Stats");
   Get5_GetMatchStats(kv);
@@ -181,16 +170,32 @@ static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
   FormatEx(mapKey, sizeof(mapKey), "map%d", mapNumber);
   if (kv.JumpToKey(mapKey)) {
     if (kv.JumpToKey("team1")) {
-      AddPlayerStats(matchId, mapNumber, kv, Get5Team_1);
+      t1score = kv.GetNum("score");
+      if (kv.JumpToKey("players")) {
+        AddPlayerStats(matchId, mapNumber, kv, Get5Team_1);
+        kv.GoBack();
+      }
       kv.GoBack();
     }
     if (kv.JumpToKey("team2")) {
-      AddPlayerStats(matchId, mapNumber, kv, Get5Team_2);
+      t2score = kv.GetNum("score");
+      if (kv.JumpToKey("players")) {
+        AddPlayerStats(matchId, mapNumber, kv, Get5Team_2);
+        kv.GoBack();
+      }
       kv.GoBack();
     }
     kv.GoBack();
   }
   delete kv;
+
+  char matchIdSz[64];
+  db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
+  FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_maps` \
+        SET team1_score = %d, team2_score = %d WHERE matchid = '%s' and mapnumber = %d",
+           t1score, t2score, matchIdSz, mapNumber);
+  LogDebug(queryBuffer);
+  db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
 public void Get5_OnMapResult(const Get5MapResultEvent event) {
@@ -235,6 +240,7 @@ static void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyV
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
   if (kv.GotoFirstSubKey()) {
+    Transaction t = new Transaction();
     do {
       if (kv.GetNum(STAT_COACHING, 0) > 0) {
         continue;  // Don't update stats for coaches.
@@ -346,10 +352,24 @@ static void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyV
       // clang-format on
 
       LogDebug(queryBuffer);
-      db.Query(SQLErrorCheckCallback, queryBuffer);
+      t.AddQuery(queryBuffer);
 
     } while (kv.GotoNextKey());
     kv.GoBack();
+
+    db.Execute(t, SQL_TransactionSuccessCallback, SQL_TransactionErrorCallback);
+  }
+}
+
+static void SQL_TransactionSuccessCallback(Database d, any data, int numQueries, DBResultSet[] results,
+                                           any[] queryData) {
+  return;
+}
+
+static void SQL_TransactionErrorCallback(Database d, any data, int numQueries, const char[] error, int failIndex,
+                                         any[] queryData) {
+  if (!StrEqual("", error)) {
+    LogError("SQL transaction error: %s", error);
   }
 }
 

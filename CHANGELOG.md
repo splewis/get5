@@ -19,7 +19,7 @@ details.
 1. The `Get5_OnPlayerSay` event now includes messages sent from Console (or potentially GOTV). You should filter out
    these messages on your end if you don't want to react to them. Note that console is always `user_id` 0 and GOTV's
    name is always `GOTV`. Alternatively, you can ignore all messages with an empty `steamid`.
-2. The [stats system](https://splewis.github.io/get5/latest/stats_system/#keyvalue) has been updated. This means that
+2. The [stats system](https://splewis.github.io/get5/dev/stats_system/#keyvalue) has been updated. This means that
    the structure has been modified to allow for more information, specifically the starting side and score for each side
    for each team.
 
@@ -92,6 +92,10 @@ details.
    This affects the `Get5_OnRoundEnd` forward as well, so if you have a plugin that reads this data, you must update it.
    For full details and the SourceMod properties, see
    the [event documentation](https://splewis.github.io/get5/dev/events_and_forwards/#events).
+4. Get5 no longer sets its [game state](https://splewis.github.io/get5/dev/commands/#get5_status) to `none`
+   immediately following the end of the series, but now waits until the restore timer fires. Get5 will be in `post_game`
+   until the timer runs out, similarly to when waiting for the next map. This means that GOTV broadcasts will have a
+   chance to finish before Get5 releases the server.
 
 ### New Features / Changes 🎉
 
@@ -99,13 +103,19 @@ details.
 2. The JSON "pretty print" spacing string has changed from 4 spaces to 1 tab. This is strictly because there is a 16KB
    max buffer size in SourceMod, which we come dangerously close to when posting the full player stats via JSON. If you
    play 6v6 or 7v7, you may need to
-   set [`get5_pretty_print_json 0`](https://splewis.github.io/get5/latest/configuration/#get5_pretty_print_json) to
+   set [`get5_pretty_print_json 0`](https://splewis.github.io/get5/dev/configuration/#get5_pretty_print_json) to
    avoid hitting the limit. You **will** see an error in console if this happens.
 3. The `get5_mysqlstats` extension now uses a transaction to update stat rows for each player. This improves performance
    via reduced I/O between the game server and the database server.
 4. The [documentation of events](https://splewis.github.io/get5/dev/events_and_forwards/#events) is now rendered
    on `https://redocly.github.io` instead of being embedded in the Get5 documentation website. This allows for more
    space and makes it easier to browse/read.
+5. The team configuration
+   parameters ([`mp_teamname_1`](https://totalcsgo.com/command/mpteamname1),
+   [`mp_teamflag_1`](https://totalcsgo.com/command/mpteamflag1),
+   [`mp_teamlogo_1`](https://totalcsgo.com/command/mpteamlogo1) etc.) are now reset to blank when Get5 ends a series.
+   Previously, these parameters would linger and would have to be manually reset or replaced by loading a new match
+   configuration.
 
 # 0.13.0
 

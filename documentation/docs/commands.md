@@ -284,8 +284,9 @@ during ready-up phases.
        <br><br>**`live`**<br>The game is live.
        <br><br>**`pending_restore`**<br>A [backup](../backup) for a different map was loaded and the game is either
        pending a map change or waiting for users to [`!ready`](../commands#ready) to restore to a live round.
-       <br><br>**`post_game`**<br>The map has ended and the countdown to the next map is ongoing. This stage will only
-       occur in multi-map series, as single-map matches end immediately.
+       <br><br>**`post_game`**<br>The map has ended and the countdown to the next map or
+       [server config restoration](../configuration#get5_reset_cvars_on_end) is ongoing. If the server is broadcasting 
+       [GOTV](../gotv/#broadcast), it will remain in `post_game` at least until the broadcast has ended.
     3. Whether the game is currently [paused](../pausing).
     4. The match configuration file currently loaded. `Example: "addons/sourcemod/configs/get5/match_config.json"`. Note
        that this points to the URL of the match configuration when a match was loaded

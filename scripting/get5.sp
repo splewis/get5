@@ -720,9 +720,11 @@ static Action Timer_InfoMessages(Handle timer) {
     PrintVetoHelpMessage();
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     PromptForKnifeDecision();
-  } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
-    // Handle postgame
-    Get5_MessageToAll("%t", "WaitingForGOTVBroadcastEnding");
+  } else if (g_GameState == Get5State_PostGame) {
+    if (g_ResetCvarsTimer == INVALID_HANDLE && GetTvDelay() > 0) {
+      // Only print this if the reset timer isn't running, which would mean it's the last map.
+      Get5_MessageToAll("%t", "WaitingForGOTVBroadcastEnding");
+    }
   }
   return Plugin_Continue;
 }
@@ -1570,10 +1572,10 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
   Call_Finish();
 
   EventLogger_LogAndDeleteEvent(event);
-  ChangeState(Get5State_None);
 
   if (restoreDelay < 0.1) {
     ResetMatchCvarsAndHostnameAndKickPlayers(kickPlayers);
+    ChangeState(Get5State_None);
   } else {
     // If we restore cvars immediately, it might change the tv_ params or set the
     // mp_match_restart_delay to something lower, which is noticed by the game and may trigger a map
@@ -1581,6 +1583,7 @@ void EndSeries(Get5Team winningTeam, bool printWinnerMessage, float restoreDelay
     // has passed. We also don't want to kick players until after the specified delay, as it will kick
     // casters potentially before GOTV ends.
     g_ResetCvarsTimer = CreateTimer(restoreDelay, Timer_RestoreMatchCvarsAndKickPlayers, kickPlayers);
+    ChangeState(Get5State_PostGame);
   }
 
   // If the match is ended during pending map change;
@@ -1686,6 +1689,7 @@ static Action Timer_RestoreMatchCvarsAndKickPlayers(Handle timer, bool kickPlaye
     return Plugin_Handled;
   }
   ResetMatchCvarsAndHostnameAndKickPlayers(kickPlayers);
+  ChangeState(Get5State_None);
   g_ResetCvarsTimer = INVALID_HANDLE;
   return Plugin_Handled;
 }
@@ -2064,6 +2068,14 @@ static void SetServerStateOnStartup(bool force) {
   // when first player joins, but as a safeguard we don't want to move a live game into warmup on
   // player connect.
   if (!force && g_GameState == Get5State_Live) {
+    return;
+  }
+
+  // If the map is forcefully changed/reloaded while waiting for a cvar restore in postgame, we call the function
+  // manually.
+  if (g_GameState == Get5State_PostGame && g_ResetCvarsTimer != INVALID_HANDLE) {
+    LogDebug("Triggering ConVar reset timer as the map was changed unexpectedly.");
+    TriggerTimer(g_ResetCvarsTimer);
     return;
   }
   // If the server is in preveto or pending backup when someone joins or the configs exec, it should

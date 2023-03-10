@@ -1665,6 +1665,20 @@ void ResetHostname() {
   g_HostnamePreGet5 = "";
 }
 
+void ResetTeamConfigs() {
+  SetConVarStringSafe("mp_teamname_1", "");
+  SetConVarStringSafe("mp_teamflag_1", "");
+  SetConVarStringSafe("mp_teamlogo_1", "");
+  SetConVarStringSafe("mp_teammatchstat_1", "");
+  SetConVarStringSafe("mp_teamscore_1", "");
+
+  SetConVarStringSafe("mp_teamname_2", "");
+  SetConVarStringSafe("mp_teamflag_2", "");
+  SetConVarStringSafe("mp_teamlogo_2", "");
+  SetConVarStringSafe("mp_teammatchstat_2", "");
+  SetConVarStringSafe("mp_teamscore_2", "");
+}
+
 void UpdateHostname() {
   char formattedHostname[128];
   if (FormatCvarString(g_SetHostnameCvar, formattedHostname, sizeof(formattedHostname), false)) {

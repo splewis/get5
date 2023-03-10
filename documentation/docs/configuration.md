@@ -119,10 +119,11 @@ disable.<br>**`Default: ""`**
 
 ####`get5_reset_cvars_on_end`
 :  Whether the `cvars` of a [match configuration](../match_schema#schema) as well as
-the [Get5-determined hostname](#get5_hostname_format) are reset to their original values when a series ends. You may
-want to disable this if you only run Get5 on your servers and use `cvars` to
-configure [demos](../gotv), [backups](../backup) or [remote URL logging](../events_and_forwards#http) on a per-match
-basis, as reverting some of those parameters can be problematic.<br>**`Default: 1`**
+the [Get5-determined hostname](#get5_hostname_format) are reset to their original values when a series ends. This also
+causes team-specific configuration options (name, flag, logo etc.) to be set to empty on match end. You may want to
+disable this if you only run Get5 on your servers and use `cvars` to configure [demos](../gotv), [backups](../backup)
+or [remote URL logging](../events_and_forwards#http) on a per-match basis, as reverting some of those parameters can be
+problematic.<br>**`Default: 1`**
 
 ####`get5_debug`
 :   Enable or disable verbose debug output from Get5. Intended for development and debugging purposes

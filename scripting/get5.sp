@@ -1702,6 +1702,7 @@ void ResetMatchCvarsAndHostnameAndKickPlayers(bool kickPlayers) {
   if (g_ResetCvarsOnEndCvar.BoolValue) {
     RestoreCvars(g_MatchConfigChangedCvars);
     ResetHostname();
+    ResetTeamConfigs();
   } else {
     CloseCvarStorage(g_MatchConfigChangedCvars);
   }

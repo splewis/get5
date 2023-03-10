@@ -26,7 +26,8 @@ paths:
         - Series Flow
       summary: Get5_OnGameStateChanged
       description: |
-        Fired when the game state changes.
+        Fired when the game state changes. You can listen for this event and mark a server as available when it sends
+        `none` as its game state; this is always sent *after* both the series *and* the GOTV broadcast have ended.
       requestBody:
         content:
           application/json:
@@ -273,8 +274,7 @@ paths:
         - Series Flow
       summary: Get5_OnSeriesResult
       description: |
-        Fired when a series is over. `winner` indicates team and side 0 if there was no winner in cases of a draw or
-        if the series was forcefully canceled.
+        Fired when a series ends.
       requestBody:
         content:
           application/json:
@@ -305,9 +305,8 @@ paths:
                       minimum: 0
                       example: 45
                       description: |
-                        The number of seconds until Get5 restores any changed ConVars after the series has ended. This is
-                        the GOTV broadcast delay plus a few seconds. If you use this event to relinquish a server instance,
-                        you should wait until this time has passed before starting a new match or shutting down the server.
+                        The number of seconds until Get5 restores any changed ConVars and resets its game state to
+                        `none` after the series has ended.
       responses: { }
   "/Get5_OnKnifeRoundStarted":
     post:

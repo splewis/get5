@@ -1639,8 +1639,9 @@ during ready-up phases.</dd>
    <br><br><strong><code>live</code></strong><br>The game is live.
    <br><br><strong><code>pending_restore</code></strong><br>A <a href="../backup">backup</a> for a different map was loaded and the game is either
    pending a map change or waiting for users to <a href="../commands#ready"><code>!ready</code></a> to restore to a live round.
-   <br><br><strong><code>post_game</code></strong><br>The map has ended and the countdown to the next map is ongoing. This stage will only
-   occur in multi-map series, as single-map matches end immediately.</li>
+   <br><br><strong><code>post_game</code></strong><br>The map has ended and the countdown to the next map or
+   <a href="../configuration#get5_reset_cvars_on_end">server config restoration</a> is ongoing. If the server is broadcasting 
+   <a href="../gotv/#broadcast">GOTV</a>, it will remain in <code>post_game</code> at least until the broadcast has ended.</li>
 <li>Whether the game is currently <a href="../pausing">paused</a>.</li>
 <li>The match configuration file currently loaded. <code>Example: "addons/sourcemod/configs/get5/match_config.json"</code>. Note
    that this points to the URL of the match configuration when a match was loaded

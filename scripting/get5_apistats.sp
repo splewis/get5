@@ -275,8 +275,8 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
 
   Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/finish", matchId, event.MapNumber);
   if (req != INVALID_HANDLE) {
-    AddIntParam(req, "team1score", event.Team1Score);
-    AddIntParam(req, "team2score", event.Team2Score);
+    AddIntParam(req, "team1score", event.Team1.Score);
+    AddIntParam(req, "team2score", event.Team2.Score);
     AddStringParam(req, "winner", winnerString);
     SteamWorks_SendHTTPRequest(req);
   }

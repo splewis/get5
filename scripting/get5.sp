@@ -143,6 +143,7 @@ ArrayList g_TeamPlayers[MATCHTEAM_COUNT];
 ArrayList g_TeamCoaches[MATCHTEAM_COUNT];
 StringMap g_PlayerNames;
 StringMap g_ChatCommands;
+char g_TeamIDs[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
 char g_TeamNames[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
 char g_TeamTags[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
 char g_FormattedTeamNames[MATCHTEAM_COUNT][MAX_CVAR_LENGTH];
@@ -1072,12 +1073,21 @@ static Action Command_EndMatch(int client, int args) {
   }
 
   // Call game-ending forwards.
-  int team1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
-  int team2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
+  Get5Side team1Side = view_as<Get5Side>(Get5TeamToCSTeam(Get5Team_1));
+  Get5Side team2Side = view_as<Get5Side>(Get5TeamToCSTeam(Get5Team_2));
+  int team1score = CS_GetTeamScore(view_as<int>(team1Side));
+  int team2score = CS_GetTeamScore(view_as<int>(team2Side));
 
-  Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
-    g_MatchID, g_MapNumber, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), team1score,
-    team2score);
+  Get5StatsTeam team1 = new Get5StatsTeam(g_TeamIDs[Get5Team_1], g_TeamNames[Get5Team_1], team1score,
+                                          g_TeamSeriesScores[Get5Team_1], team1Side);
+  Get5StatsTeam team2 = new Get5StatsTeam(g_TeamIDs[Get5Team_2], g_TeamNames[Get5Team_2], team2score,
+                                          g_TeamSeriesScores[Get5Team_2], team2Side);
+
+  FillPlayerStats(team1, team2);
+
+  Get5MapResultEvent mapResultEvent =
+    new Get5MapResultEvent(g_MatchID, g_MapNumber,
+                           new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), team1, team2);
 
   LogDebug("Calling Get5_OnMapResult()");
   Call_StartForward(g_OnMapResult);
@@ -1434,12 +1444,14 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
       UnpauseGame();
     }
     // Figure out who won
-    int t1score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_1));
-    int t2score = CS_GetTeamScore(Get5TeamToCSTeam(Get5Team_2));
+    Get5Side team1Side = view_as<Get5Side>(Get5TeamToCSTeam(Get5Team_1));
+    Get5Side team2Side = view_as<Get5Side>(Get5TeamToCSTeam(Get5Team_2));
+    int team1score = CS_GetTeamScore(view_as<int>(team1Side));
+    int team2score = CS_GetTeamScore(view_as<int>(team2Side));
     Get5Team winningTeam = Get5Team_None;
-    if (t1score > t2score) {
+    if (team1score > team2score) {
       winningTeam = Get5Team_1;
-    } else if (t2score > t1score) {
+    } else if (team2score > team1score) {
       winningTeam = Get5Team_2;
     }
 
@@ -1451,12 +1463,19 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     Stats_UpdateMapScore(winningTeam);
     g_TeamSeriesScores[winningTeam]++;
 
-    g_TeamScoresPerMap.Set(g_MapNumber, t1score, view_as<int>(Get5Team_1));
-    g_TeamScoresPerMap.Set(g_MapNumber, t2score, view_as<int>(Get5Team_2));
+    g_TeamScoresPerMap.Set(g_MapNumber, team1score, view_as<int>(Get5Team_1));
+    g_TeamScoresPerMap.Set(g_MapNumber, team2score, view_as<int>(Get5Team_2));
+
+    Get5StatsTeam team1 = new Get5StatsTeam(g_TeamIDs[Get5Team_1], g_TeamNames[Get5Team_1], team1score,
+                                            g_TeamSeriesScores[Get5Team_1], team1Side);
+    Get5StatsTeam team2 = new Get5StatsTeam(g_TeamIDs[Get5Team_2], g_TeamNames[Get5Team_2], team2score,
+                                            g_TeamSeriesScores[Get5Team_2], team2Side);
+
+    FillPlayerStats(team1, team2);
 
     Get5MapResultEvent mapResultEvent = new Get5MapResultEvent(
-      g_MatchID, g_MapNumber, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), t1score,
-      t2score);
+      g_MatchID, g_MapNumber, new Get5Winner(winningTeam, view_as<Get5Side>(Get5TeamToCSTeam(winningTeam))), team1,
+      team2);
 
     LogDebug("Calling Get5_OnMapResult()");
 
@@ -1645,6 +1664,7 @@ void ResetMatchConfigVariables(bool backup = false) {
   g_MapsLeftInVetoPool.Clear();
   g_TeamScoresPerMap.Clear();
   for (int i = 0; i < MATCHTEAM_COUNT; i++) {
+    g_TeamIDs[i] = "";
     g_TeamNames[i] = "";
     g_TeamTags[i] = "";
     g_FormattedTeamNames[i] = "";
@@ -1983,8 +2003,10 @@ static Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
       }
     }
 
-    Get5StatsTeam team1 = new Get5StatsTeam(g_TeamNames[Get5Team_1], team1Score, team1Side);
-    Get5StatsTeam team2 = new Get5StatsTeam(g_TeamNames[Get5Team_2], team2Score, team2Side);
+    Get5StatsTeam team1 = new Get5StatsTeam(g_TeamIDs[Get5Team_1], g_TeamNames[Get5Team_1], team1Score,
+                                            g_TeamSeriesScores[Get5Team_1], team1Side);
+    Get5StatsTeam team2 = new Get5StatsTeam(g_TeamIDs[Get5Team_2], g_TeamNames[Get5Team_2], team2Score,
+                                            g_TeamSeriesScores[Get5Team_2], team2Side);
 
     FillPlayerStats(team1, team2);
 

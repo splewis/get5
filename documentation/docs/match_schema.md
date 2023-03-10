@@ -20,6 +20,7 @@ type SteamID = string // (8)
 type Get5PlayerSet = { [key: SteamID]: string } | SteamID[] // (9)
 
 interface Get5MatchTeam {
+    "id": string | undefined // (38)
     "players": Get5PlayerSet // (24)
     "coaches": Get5PlayerSet | undefined // (23)
     "name": string | undefined // (16)
@@ -164,6 +165,8 @@ interface Get5Match {
     strings consisting of any valid combination of `team1_ban`, `team2_ban`, `team1_pick` and `team2_pick`.
 37. _Optional_<br>Whether to configure the match for [Wingman mode](../wingman). If this is enabled, `players_per_team`
     defaults to `2` instead of `5`.<br><br>**`Default: false`**
+38. _Optional_<br>The ID of the team. This can be used to link the team to an external resource, such as a database ID.
+    The ID is included in the event system for events that include a team.
 
 !!! info "Team assignment priority"
 
@@ -230,6 +233,7 @@ These examples are identical in the way they would work if loaded.
         "fromfile": "addons/sourcemod/get5/team_navi.json"
       },
       "team2": {
+        "id": "3752",
         "name": "Astralis",
         "tag": "Astralis",
         "flag": "DK",
@@ -257,6 +261,7 @@ These examples are identical in the way they would work if loaded.
     `fromfile` example:
     ```json title="addons/sourcemod/get5/team_navi.json"
     {
+      "id": "1348",
       "name": "Natus Vincere",
       "tag": "NaVi",
       "flag": "UA",
@@ -311,6 +316,7 @@ These examples are identical in the way they would work if loaded.
             "fromfile": "addons/sourcemod/get5/team_navi.json"
         },
         "team2": {
+            "id": "3752",
             "name": "Astralis",
             "tag": "Astralis",
             "flag": "DK",
@@ -394,8 +400,9 @@ These examples are identical in the way they would work if loaded.
         }
         "team2"
         {
+            "id" "3752"
             "name" "Astralis"
-            "tag"  "Astralis"
+            "tag" "Astralis"
             "flag" "DK"
             "logo" "astr"
             "matchtext" "Defending Champions"
@@ -424,9 +431,10 @@ These examples are identical in the way they would work if loaded.
     `fromfile` example:
     ```cfg title="addons/sourcemod/get5/team_navi.cfg"
     "Team"
-    { 
+    {
+        "id" "1348"
         "name" "Natus Vincere"
-        "tag"  "NaVi"
+        "tag" "NaVi"
         "flag" "UA"
         "logo" "navi"
         "matchtext" "Challengers"

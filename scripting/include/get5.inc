@@ -9,8 +9,8 @@
 // Series stats (root section)
 #define STAT_SERIESWINNER "winner"
 #define STAT_SERIESTYPE "series_type"
-#define STAT_SERIES_TEAM1NAME "team1_name"
-#define STAT_SERIES_TEAM2NAME "team2_name"
+#define STAT_SERIES_TEAM_ID "id"
+#define STAT_SERIES_TEAM_NAME "name"
 #define STAT_SERIES_FORFEIT "forfeit"
 
 // Map stats (under "map0", "map1", etc.)
@@ -252,12 +252,12 @@ methodmap Get5PlayerStats < JSON_Object {
     }
   }
 
-  property int FlashbangAssists {
+  property int FlashAssists {
     public set(int val) {
-      this.SetInt("flashbang_assists", val);
+      this.SetInt("flash_assists", val);
     }
     public get() {
-      return this.GetInt("flashbang_assists");
+      return this.GetInt("flash_assists");
     }
   }
 
@@ -522,7 +522,7 @@ methodmap Get5PlayerStats < JSON_Object {
     }
   }
 
-  public Get5PlayerStats(const int kills, const int deaths, const int assists, const int flashbangAssists,
+  public Get5PlayerStats(const int kills, const int deaths, const int assists, const int flashAssists,
         const int teamKills, const int suicides, const int damage, const int utilityDamage, const int enemiesFlashed,
         const int friendliesFlashed, const int knifeKills, const int headshotKills, const int roundsPlayed,
         const int bombDefuses, const int bombPlants, const int kills1, const int kills2, const int kills3,
@@ -533,7 +533,7 @@ methodmap Get5PlayerStats < JSON_Object {
     self.Kills = kills;
     self.Deaths = deaths;
     self.Assists = assists;
-    self.FlashbangAssists = flashbangAssists;
+    self.FlashAssists = flashAssists;
     self.TeamKills = teamKills;
     self.Suicides = suicides;
     self.Damage = damage;
@@ -603,7 +603,24 @@ methodmap Get5StatsPlayer < Get5PlayerBase {
   }
 }
 
-methodmap Get5StatsTeam < JSON_Object {
+methodmap Get5TeamWrapper < JSON_Object {
+
+  // This allows the property to be null in JSON but empty string in SourceMod.
+  public bool GetId(char[] buffer, const int maxSize) {
+    if (this.GetType("id") != JSON_Type_String) {
+      strcopy(buffer, maxSize, "");
+      return true;
+    } else {
+      return this.GetString("id", buffer, maxSize);
+    }
+  }
+
+  public bool SetId(const char[] value) {
+    if (strlen(value) > 0) {
+      return this.SetString("id", value);
+    }
+    return this.SetObject("id", null);
+  }
 
   public bool GetName(char[] buffer, const int maxSize) {
     return this.GetString("name", buffer, maxSize);
@@ -611,6 +628,25 @@ methodmap Get5StatsTeam < JSON_Object {
 
   public bool SetName(const char[] value) {
     return this.SetString("name", value);
+  }
+
+  public Get5TeamWrapper(const char[] id, const char[] teamName) {
+    Get5TeamWrapper self = view_as<Get5TeamWrapper>(new JSON_Object());
+    self.SetId(id);
+    self.SetName(teamName);
+    return self;
+  }
+}
+
+methodmap Get5StatsTeam < Get5TeamWrapper {
+
+  property int SeriesScore {
+    public get() {
+      return this.GetInt("series_score");
+    }
+    public set(int val) {
+      this.SetInt("series_score", val);
+    }
   }
 
   property int Score {
@@ -672,12 +708,14 @@ methodmap Get5StatsTeam < JSON_Object {
     }
   }
 
-  public Get5StatsTeam(const char[] teamName, const int score, const Get5Side side) {
+  public Get5StatsTeam(const char[] id, const char[] teamName, const int score, const int seriesScore, const Get5Side side) {
     Get5StatsTeam self = view_as<Get5StatsTeam>(new JSON_Object());
+    self.SetId(id);
     self.SetName(teamName);
     self.Score = score;
-    self.Players = new JSON_Array();
+    self.SeriesScore = seriesScore;
     self.Side = side;
+    self.Players = new JSON_Array();
     self.ScoreCT = 0;
     self.ScoreT = 0;
     self.StartingSide = Get5Side_None;
@@ -1273,32 +1311,33 @@ methodmap Get5MapResultEvent < Get5MapEvent {
     }
   }
 
-  property int Team1Score {
+  property Get5StatsTeam Team1 {
     public get() {
-      return this.GetInt("team1_score");
+      return view_as<Get5StatsTeam>(this.GetObject("team1"));
     }
-    public set(int score) {
-      this.SetInt("team1_score", score);
+    public set(Get5StatsTeam team) {
+      this.SetObject("team1", team);
     }
   }
 
-  property int Team2Score {
+  property Get5StatsTeam Team2 {
     public get() {
-      return this.GetInt("team2_score");
+      return view_as<Get5StatsTeam>(this.GetObject("team2"));
     }
-    public set(int score) {
-      this.SetInt("team2_score", score);
+    public set(Get5StatsTeam team) {
+      this.SetObject("team2", team);
     }
   }
 
-  public Get5MapResultEvent(const char[] matchId, const int mapNumber, const Get5Winner winner, int team1Score, int team2Score) {
+  public Get5MapResultEvent(const char[] matchId, const int mapNumber, const Get5Winner winner,
+      const Get5StatsTeam team1, const Get5StatsTeam team2) {
     Get5MapResultEvent self = view_as<Get5MapResultEvent>(new JSON_Object());
     self.SetEvent("map_result");
     self.SetMatchId(matchId);
     self.MapNumber = mapNumber;
     self.Winner = winner;
-    self.Team1Score = team1Score;
-    self.Team2Score = team2Score;
+    self.Team1 = team1;
+    self.Team2 = team2;
     return self;
   }
 }
@@ -1494,26 +1533,40 @@ methodmap Get5MatchUnpausedEvent < Get5MatchPauseEvent {
 
 methodmap Get5SeriesStartedEvent < Get5MatchEvent {
 
-  public bool SetTeam1Name(const char[] value) {
-    return this.SetString("team1_name", value);
-  }
-  public bool GetTeam1Name(char[] buffer, const int maxSize) {
-    return this.GetString("team1_name", buffer, maxSize);
-  }
-
-  public bool SetTeam2Name(const char[] value) {
-    return this.SetString("team2_name", value);
-  }
-  public bool GetTeam2Name(char[] buffer, const int maxSize) {
-    return this.GetString("team2_name", buffer, maxSize);
+  property int SeriesLength {
+    public get() {
+      return this.GetInt("series_length");
+    }
+    public set(int val) {
+      this.SetInt("series_length", val);
+    }
   }
 
-  public Get5SeriesStartedEvent(const char[] matchId, const char[] team1Name, const char[] team2Name) {
+  property Get5TeamWrapper Team1 {
+    public get() {
+      return view_as<Get5TeamWrapper>(this.GetObject("team1"));
+    }
+    public set(Get5TeamWrapper team) {
+      this.SetObject("team1", team);
+    }
+  }
+
+  property Get5TeamWrapper Team2 {
+    public get() {
+      return view_as<Get5TeamWrapper>(this.GetObject("team2"));
+    }
+    public set(Get5TeamWrapper team) {
+      this.SetObject("team2", team);
+    }
+  }
+
+  public Get5SeriesStartedEvent(const char[] matchId, const int length, const Get5TeamWrapper team1, const Get5TeamWrapper team2) {
     Get5SeriesStartedEvent self = view_as<Get5SeriesStartedEvent>(new JSON_Object());
     self.SetEvent("series_start");
     self.SetMatchId(matchId);
-    self.SetTeam1Name(team1Name);
-    self.SetTeam2Name(team2Name);
+    self.SeriesLength = length;
+    self.Team1 = team1;
+    self.Team2 = team2;
     return self;
   }
 }

@@ -21,17 +21,7 @@ static void Get5_Test() {
   SetConVarStringSafe("mp_teammatchstat_txt", "");
   SetConVarStringSafe("mp_teamprediction_pct", "0");
 
-  SetConVarStringSafe("mp_teamname_1", "");
-  SetConVarStringSafe("mp_teamflag_1", "");
-  SetConVarStringSafe("mp_teamlogo_1", "");
-  SetConVarStringSafe("mp_teammatchstat_1", "");
-  SetConVarStringSafe("mp_teamscore_1", "");
-
-  SetConVarStringSafe("mp_teamname_2", "");
-  SetConVarStringSafe("mp_teamflag_2", "");
-  SetConVarStringSafe("mp_teamlogo_2", "");
-  SetConVarStringSafe("mp_teammatchstat_2", "");
-  SetConVarStringSafe("mp_teamscore_2", "");
+  ResetTeamConfigs();
 
   ValidMatchConfigTest("addons/sourcemod/configs/get5/tests/default_valid.json");
   ValidMatchConfigTest("addons/sourcemod/configs/get5/tests/default_valid.cfg");

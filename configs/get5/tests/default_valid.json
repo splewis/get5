@@ -23,6 +23,7 @@
   "favored_percentage_team1": 75,
   "favored_percentage_text": "team percentage text",
   "team1": {
+    "id": "TeamAID",
     "name": "Team A Default",
     "tag": "TAG-A",
     "flag": "US",

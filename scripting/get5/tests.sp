@@ -622,6 +622,7 @@ static void ValidMatchConfigTest(const char[] matchConfig) {
   AssertStrEq("Steam ID Coach 2 Team A", playerId, "76561197946789735");
   AssertStrEq("Name Coach 2 Team A", playerName, "CoachAName2");
 
+  AssertStrEq("Team A ID", g_TeamIDs[Get5Team_1], "TeamAID");
   AssertStrEq("Team A Name", g_TeamNames[Get5Team_1], "Team A Default");
   AssertStrEq("Team A Logo", g_TeamLogos[Get5Team_1], "logofilename");
   AssertStrEq("Team A Flag", g_TeamFlags[Get5Team_1], "US");
@@ -648,6 +649,7 @@ static void ValidMatchConfigTest(const char[] matchConfig) {
 
   AssertEq("Team B Coaches Empty", GetTeamCoaches(Get5Team_2).Length, 0);
 
+  AssertStrEq("Team B ID", g_TeamIDs[Get5Team_2], "TeamBID");
   AssertStrEq("Team B Name", g_TeamNames[Get5Team_2], "Team B Default");
   AssertStrEq("Team B Logo", g_TeamLogos[Get5Team_2], "fromfile_team");
   AssertStrEq("Team B Flag", g_TeamFlags[Get5Team_2], "DE");

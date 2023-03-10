@@ -163,16 +163,14 @@ paths:
                     event:
                       enum:
                         - series_start
-                    team1_name:
-                      type: string
-                      example: NaVi
-                      description: The name of team 1. `GetTeam1Name()` and `SetTeam1Name()`
-                        in SourceMod.
-                    team2_name:
-                      type: string
-                      example: Astralis
-                      description: The name of team 2. `GetTeam2Name()` and `SetTeam2Name()`
-                        in SourceMod.
+                    series_length:
+                      type: integer
+                      minimum: 1
+                      description: The number of maps in the series, i.e. 3 for a Bo3. `SeriesLength` in SourceMod.
+                    team1:
+                      "$ref": "#/components/schemas/Get5TeamWrapper"
+                    team2:
+                      "$ref": "#/components/schemas/Get5TeamWrapper"
       responses: { }
   "/Get5_OnMatchPaused":
     post:
@@ -255,16 +253,10 @@ paths:
                     event:
                       enum:
                         - map_result
-                    team1_score:
-                      type: integer
-                      minimum: 0
-                      description: The score of team1. `Team1Score` in SourceMod.
-                      example: 16
-                    team2_score:
-                      type: integer
-                      minimum: 0
-                      description: The score of team2. `Team2Score` in SourceMod.
-                      example: 13
+                    team1:
+                      $ref: "#/components/schemas/Get5StatsTeam"
+                    team2:
+                      $ref: "#/components/schemas/Get5StatsTeam"
                     winner:
                       $ref: "#/components/schemas/Get5Winner"
       responses: { }
@@ -1112,43 +1104,59 @@ components:
           properties:
             pause_type:
               $ref: "#/components/schemas/Get5PauseType"
-    Get5StatsTeam:
+    Get5TeamWrapper:
       type: object
+      description: Describes a team. `Team1` or `Team2` in SourceMod.
       properties:
+        id:
+          type: string
+          description: User-supplied ID of the team, if one was provided. `GetId()` and `SetId()` in SourceMod. `null` in JSON and an empty string in SourceMod.
+          example: "2843"
+          nullable: true
         name:
           type: string
-          description: The name of the team.
+          description: The name of the team. `GetName()` and `SetName()` in SourceMod.
           example: Natus Vincere
-        score:
-          type: integer
-          minimum: 0
-          description: The team's total score on the current map.
-          example: 14
-        score_ct:
-          type: integer
-          minimum: 0
-          description: The team's score on the CT side on the current map.
-          example: 10
-        score_t:
-          type: integer
-          minimum: 0
-          description: The team's score on the T side on the current map.
-          example: 14
-        players:
-          type: array
-          description: The players on the team.
-          items:
-            $ref: "#/components/schemas/Get5StatsPlayer"
-        side:
-          title: Get5Side
-          description: The current side of the team.
-          allOf:
-            - $ref: "#/components/schemas/Get5Side"
-        starting_side:
-          title: Get5Side
-          description: The starting side of the team.
-          allOf:
-            - $ref: "#/components/schemas/Get5Side"
+    Get5StatsTeam:
+      description: Describes a team with its score and player stats. `Team1` or `Team2` in SourceMod.
+      allOf:
+        - $ref: "#/components/schemas/Get5TeamWrapper"
+        - type: object
+          properties:
+            series_score:
+              type: integer
+              minimum: 0
+              description: The team's current series score, i.e. the number of maps they have won in the series. `SeriesScore` in SourceMod.
+            score:
+              type: integer
+              minimum: 0
+              description: The team's total score on the current map. `Score` in SourceMod.
+              example: 14
+            score_ct:
+              type: integer
+              minimum: 0
+              description: The team's score on the CT side on the current map. `ScoreCT` in SourceMod.
+              example: 10
+            score_t:
+              type: integer
+              minimum: 0
+              description: The team's score on the T side on the current map. `ScoreT` in SourceMod.
+              example: 14
+            players:
+              type: array
+              description: The players on the team. `Players` in SourceMod.
+              items:
+                $ref: "#/components/schemas/Get5StatsPlayer"
+            side:
+              title: Get5Side
+              description: The current side of the team. `Side` in SourceMod.
+              allOf:
+                - $ref: "#/components/schemas/Get5Side"
+            starting_side:
+              title: Get5Side
+              description: The starting side of the team. `StartingSide` in SourceMod.
+              allOf:
+                - $ref: "#/components/schemas/Get5Side"
     Get5PlayerBase:
       type: object
       properties:
@@ -1324,10 +1332,10 @@ components:
           minimum: 0
           description: 'The number of assists the player had. `Assists` in SourceMod.'
           example: 5
-        flashbang_assists:
+        flash_assists:
           type: integer
           minimum: 0
-          description: 'The number of flashbang assists the player had. `FlashbangAssists` in SourceMod.'
+          description: 'The number of flashbang assists the player had. `FlashAssists` in SourceMod.'
           example: 3
         team_kills:
           type: integer

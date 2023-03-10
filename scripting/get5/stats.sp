@@ -163,12 +163,19 @@ void Stats_Reset() {
 
 void Stats_InitSeries() {
   Stats_Reset();
-  char seriesType[32];
+  char seriesType[16];
   FormatEx(seriesType, sizeof(seriesType), "bo%d", g_NumberOfMapsInSeries);
   g_StatsKv.SetString(STAT_SERIESTYPE, seriesType);
-  g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamNames[Get5Team_1]);
-  g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[Get5Team_2]);
+  InitTeam(Get5Team_1);
+  InitTeam(Get5Team_2);
   DumpToFile();
+}
+
+static void InitTeam(Get5Team team) {
+  g_StatsKv.JumpToKey(team == Get5Team_1 ? "team1" : "team2", true);
+  g_StatsKv.SetString(STAT_SERIES_TEAM_ID, g_TeamIDs[team]);
+  g_StatsKv.SetString(STAT_SERIES_TEAM_NAME, g_TeamNames[team]);
+  g_StatsKv.GoBack();
 }
 
 void Stats_ResetRoundValues() {

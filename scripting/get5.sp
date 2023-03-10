@@ -720,9 +720,11 @@ static Action Timer_InfoMessages(Handle timer) {
     PrintVetoHelpMessage();
   } else if (g_GameState == Get5State_WaitingForKnifeRoundDecision) {
     PromptForKnifeDecision();
-  } else if (g_GameState == Get5State_PostGame && GetTvDelay() > 0) {
-    // Handle postgame
-    Get5_MessageToAll("%t", "WaitingForGOTVBroadcastEnding");
+  } else if (g_GameState == Get5State_PostGame) {
+    if (g_ResetCvarsTimer == INVALID_HANDLE && GetTvDelay() > 0) {
+      // Only print this if the reset timer isn't running, which would mean it's the last map.
+      Get5_MessageToAll("%t", "WaitingForGOTVBroadcastEnding");
+    }
   }
   return Plugin_Continue;
 }

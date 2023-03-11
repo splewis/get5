@@ -568,9 +568,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#http" class="md-nav__link">
+    HTTP Events
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#keyvalue" class="md-nav__link">
     KeyValue System
   </a>
+  
+    <nav class="md-nav" aria-label="KeyValue System">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -695,9 +715,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#http" class="md-nav__link">
+    HTTP Events
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#keyvalue" class="md-nav__link">
     KeyValue System
   </a>
+  
+    <nav class="md-nav" aria-label="KeyValue System">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -735,48 +775,101 @@
 <h2 id="forwards">SourceMod Forwards</h2>
 <p>If you're writing your own plugin, you can collect stats from the game using the
 <a href="../events_and_forwards">forwards</a> provided by Get5.</p>
+<h2 id="http">HTTP Events</h2>
+<p>If you want to send stats to a web server, the <a href="../events_and_forwards#http">HTTP event system</a> will let you collect
+game information at any level of granularity by sending data as JSON over HTTP(S); from grenades thrown, kills, player
+chat messages to round, map or series results.</p>
 <h2 id="keyvalue">KeyValue System</h2>
 <p>Get5 will automatically record basic stats for each player for each map in the match. These are stored in an internal
 KeyValues structure, and are available at any time during the match (including the postgame waiting period) via the
 <code>Get5_GetMatchStats</code> native and the <a href="../commands#get5_dumpstats"><code>get5_dumpstats</code></a> command.</p>
 <p>The root level contains data for the full series; the series winner (if one exists yet) and the series type (bo1, bo3,
-etc).</p>
+etc.) and the team names/IDs.</p>
 <p>Under the root level is a level for each map (<code>map0</code>, <code>map1</code> etc.), which contains the map winner (if one exists yet),
 the map name and the demo file recording.</p>
 <p>Under the map level is a section for each team (<code>team1</code> and <code>team2</code>), which contains the current team score (on
-that map) and the team name.</p>
-<p>Each player has a section under the team level under the section name of their SteamID 64. It contains all the personal
-level stats: name, kills, deaths, assists, etc.</p>
-<p>Partial Example:</p>
+that map), the score for each side on that map (CT vs. T) and the side the team started on as well as an object with
+player stats (<code>players</code>) for the entire team, saved under each player's SteamID64.</p>
+<h4 id="example">Example</h4>
+<div class="admonition example">
+<p class="admonition-title"><code>get5_matchstats.cfg</code></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>&quot;Stats&quot;
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>{
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    &quot;series_type&quot;       &quot;bo1&quot;
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    &quot;team1_name&quot;        &quot;EnvyUs&quot;
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    &quot;team2_name&quot;        &quot;Fnatic&quot;
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    &quot;map0&quot;
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    {
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        &quot;mapname&quot;       &quot;de_mirage&quot;
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        &quot;demo_filename&quot; &quot;304_map1_de_mirage.dem&quot;
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        &quot;winner&quot;        &quot;team1&quot;
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        &quot;team1&quot;
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        {
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>            &quot;score&quot;          &quot;5&quot;
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>            &quot;73613643164646&quot;
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>            {
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>                &quot;name&quot;    &quot;xyz&quot;
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>                &quot;kills&quot;   &quot;0&quot;
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>                &quot;deaths&quot;  &quot;1&quot;
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>                &quot;assists&quot; &quot;5&quot;
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>                &quot;damage&quot;  &quot;352&quot;
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>            }
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>        }
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    }
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>}
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    &quot;series_type&quot;  &quot;bo1&quot;
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    &quot;team1&quot;
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    {
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        &quot;id&quot;    &quot;23758&quot;
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        &quot;name&quot;  &quot;EnvyUs&quot;
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    }
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    &quot;team2&quot;
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    {
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        &quot;id&quot;    &quot;15716&quot;
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        &quot;name&quot;  &quot;Fnatic&quot;
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    }
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    &quot;winner&quot;  &quot;team1&quot;
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    &quot;map0&quot;
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    {
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        &quot;mapname&quot;        &quot;de_mirage&quot;
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        &quot;demo_filename&quot;  &quot;304_map1_de_mirage.dem&quot;
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>        &quot;winner&quot;         &quot;team1&quot;
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>        &quot;team1&quot;
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        {
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>            &quot;players&quot;
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>            {
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>                &quot;76561197996426755&quot;
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>                {
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>                    &quot;init&quot;                &quot;1&quot; // internal init key, ignore this
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>                    &quot;coaching&quot;            &quot;0&quot; // 1 if the player is a coach
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>                    &quot;name&quot;                &quot;xyz&quot;
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>                    &quot;kills&quot;               &quot;9&quot;
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>                    &quot;deaths&quot;              &quot;3&quot;
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>                    &quot;assists&quot;             &quot;5&quot;
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>                    &quot;flashbang_assists&quot;   &quot;2&quot;
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>                    &quot;teamkills&quot;           &quot;0&quot;
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>                    &quot;suicides&quot;            &quot;0&quot;
+<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>                    &quot;damage&quot;              &quot;945&quot;
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>                    &quot;util_damage&quot;         &quot;34&quot;
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>                    &quot;enemies_flashed&quot;     &quot;4&quot;
+<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>                    &quot;friendlies_flashed&quot;  &quot;1&quot;
+<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>                    &quot;knife_kills&quot;         &quot;0&quot;
+<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>                    &quot;headshot_kills&quot;      &quot;3&quot;
+<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>                    &quot;roundsplayed&quot;        &quot;8&quot;
+<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>                    &quot;bomb_defuses&quot;        &quot;1&quot;
+<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>                    &quot;bomb_plants&quot;         &quot;0&quot;
+<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>                    &quot;1kill_rounds&quot;        &quot;1&quot;
+<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>                    &quot;2kill_rounds&quot;        &quot;2&quot;
+<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>                    &quot;3kill_rounds&quot;        &quot;1&quot;
+<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>                    &quot;4kill_rounds&quot;        &quot;0&quot;
+<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>                    &quot;5kill_rounds&quot;        &quot;0&quot;
+<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>                    &quot;v1&quot;                  &quot;3&quot; // 1v1s won
+<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>                    &quot;v2&quot;                  &quot;2&quot;
+<a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a>                    &quot;v3&quot;                  &quot;1&quot;
+<a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a>                    &quot;v4&quot;                  &quot;0&quot;
+<a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a>                    &quot;v5&quot;                  &quot;0&quot;
+<a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a>                    &quot;firstkill_t&quot;         &quot;0&quot;
+<a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a>                    &quot;firstkill_ct&quot;        &quot;2&quot;
+<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a>                    &quot;firstdeath_t&quot;        &quot;0&quot;
+<a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a>                    &quot;firstdeath_ct&quot;       &quot;2&quot;
+<a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a>                    &quot;tradekill&quot;           &quot;4&quot;
+<a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a>                    &quot;kast&quot;                &quot;8&quot;
+<a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a>                    &quot;contribution_score&quot;  &quot;23&quot;
+<a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a>                    &quot;mvp&quot; &quot;4&quot;
+<a id="__codelineno-0-62" name="__codelineno-0-62" href="#__codelineno-0-62"></a>                }
+<a id="__codelineno-0-63" name="__codelineno-0-63" href="#__codelineno-0-63"></a>            }
+<a id="__codelineno-0-64" name="__codelineno-0-64" href="#__codelineno-0-64"></a>            &quot;score&quot;          &quot;5&quot; // total rounds won
+<a id="__codelineno-0-65" name="__codelineno-0-65" href="#__codelineno-0-65"></a>            &quot;score_ct&quot;       &quot;2&quot; // rounds won on CT
+<a id="__codelineno-0-66" name="__codelineno-0-66" href="#__codelineno-0-66"></a>            &quot;score_t&quot;        &quot;3&quot; // rounds won on T
+<a id="__codelineno-0-67" name="__codelineno-0-67" href="#__codelineno-0-67"></a>            &quot;starting_side&quot;  &quot;3&quot; // 3 for CT, 2 for T  
+<a id="__codelineno-0-68" name="__codelineno-0-68" href="#__codelineno-0-68"></a>        }
+<a id="__codelineno-0-69" name="__codelineno-0-69" href="#__codelineno-0-69"></a>    }
+<a id="__codelineno-0-70" name="__codelineno-0-70" href="#__codelineno-0-70"></a>}
 </code></pre></div>
-<div class="admonition question">
-<p class="admonition-title">What stats are collected?</p>
-<p>See the <a href="https://github.com/splewis/get5/blob/master/scripting/include/get5.inc#L1769">get5.inc include file</a> for
-what stats will be recorded and what their keys are in the KeyValue structure.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">KeyValues != JSON</p>
+<p>Please note that the <a href="../events_and_forwards">JSON events</a> have similar - <strong>but not identical</strong> - structure and
+keys to this file. The KeyValues system is inferior to the JSON-based HTTP system in many ways, and most modern
+integrations would likely be better off using JSON, especially if data is being sent to a web server.</p>
 </div>
 <h2 id="mysql">MySQL Statistics</h2>
 <p>Get5 ships with a (disabled by default) plugin called <code>get5_mysqlstats</code> that will save many of the stats to a MySQL

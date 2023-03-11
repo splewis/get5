@@ -71,40 +71,33 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
   char team2Name[64];
   char serverId[65];
 
-  char seriesTypeSz[sizeof(seriesType) * 2 + 1];
   char team1NameSz[sizeof(team1Name) * 2 + 1];
   char team2NameSz[sizeof(team2Name) * 2 + 1];
   char serverIdSz[sizeof(serverId) * 2 + 1];
 
-  KeyValues tmpStats = new KeyValues("Stats");
+  FormatEx(seriesType, sizeof(seriesType), "bo%d", event.SeriesLength);
 
-  Get5_GetMatchStats(tmpStats);
-  tmpStats.GetString(STAT_SERIESTYPE, seriesType, sizeof(seriesType));
-  db.Escape(seriesType, seriesTypeSz, sizeof(seriesTypeSz));
+  event.Team1.GetName(team1Name, sizeof(team1Name));
+  event.Team2.GetName(team2Name, sizeof(team2Name));
 
-  tmpStats.GetString(STAT_SERIES_TEAM1NAME, team1Name, sizeof(team1Name));
   db.Escape(team1Name, team1NameSz, sizeof(team1NameSz));
-
-  tmpStats.GetString(STAT_SERIES_TEAM2NAME, team2Name, sizeof(team2Name));
   db.Escape(team2Name, team2NameSz, sizeof(team2NameSz));
 
   Get5_GetServerID(serverId, sizeof(serverId));
   db.Escape(serverId, serverIdSz, sizeof(serverIdSz));
-
-  delete tmpStats;
 
   // Match ID defaults to an empty string, so if it's empty we use auto-increment from MySQL.
   // We also consider "scrim" and "manual" candidates for auto-increment, as those are the fixed
   // strings used for get5_scrim and get5_creatematch, so without that condition, those would break
   // the default mysql as only integers are accepted.
   if (strlen(matchId) > 0 && !StrEqual(matchId, "scrim") && !StrEqual(matchId, "manual")) {
-    char matchIdSz[64];
+    char matchIdSz[128];
     db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
     FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
             (matchid, series_type, team1_name, team2_name, start_time, server_id) VALUES \
             ('%s', '%s', '%s', '%s', NOW(), '%s')",
-             matchIdSz, seriesTypeSz, team1NameSz, team2NameSz, serverIdSz);
+             matchIdSz, seriesType, team1NameSz, team2NameSz, serverIdSz);
     LogDebug(queryBuffer);
     db.Query(SQLErrorCheckCallback, queryBuffer);
     LogMessage("Starting match with preset ID: %s", matchId);
@@ -112,7 +105,7 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
     FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
             (series_type, team1_name, team2_name, start_time, server_id) VALUES \
             ('%s', '%s', '%s', NOW(), '%s')",
-             seriesTypeSz, team1NameSz, team2NameSz, serverIdSz);
+             seriesType, team1NameSz, team2NameSz, serverIdSz);
     LogDebug(queryBuffer);
     db.Query(MatchInitCallback, queryBuffer);
   }
@@ -148,7 +141,7 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
   char mapNameSz[sizeof(mapName) * 2 + 1];
   db.Escape(mapName, mapNameSz, sizeof(mapNameSz));
 
-  char matchIdSz[64];
+  char matchIdSz[128];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
   FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT IGNORE INTO `get5_stats_maps` \
@@ -160,44 +153,6 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
   db.Query(SQLErrorCheckCallback, queryBuffer);
 }
 
-static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
-  int t1score = 0;
-  int t2score = 0;
-  // Update player stats
-  KeyValues kv = new KeyValues("Stats");
-  Get5_GetMatchStats(kv);
-  char mapKey[32];
-  FormatEx(mapKey, sizeof(mapKey), "map%d", mapNumber);
-  if (kv.JumpToKey(mapKey)) {
-    if (kv.JumpToKey("team1")) {
-      t1score = kv.GetNum("score");
-      if (kv.JumpToKey("players")) {
-        AddPlayerStats(matchId, mapNumber, kv, Get5Team_1);
-        kv.GoBack();
-      }
-      kv.GoBack();
-    }
-    if (kv.JumpToKey("team2")) {
-      t2score = kv.GetNum("score");
-      if (kv.JumpToKey("players")) {
-        AddPlayerStats(matchId, mapNumber, kv, Get5Team_2);
-        kv.GoBack();
-      }
-      kv.GoBack();
-    }
-    kv.GoBack();
-  }
-  delete kv;
-
-  char matchIdSz[64];
-  db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
-  FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_maps` \
-        SET team1_score = %d, team2_score = %d WHERE matchid = '%s' and mapnumber = %d",
-           t1score, t2score, matchIdSz, mapNumber);
-  LogDebug(queryBuffer);
-  db.Query(SQLErrorCheckCallback, queryBuffer);
-}
-
 public void Get5_OnMapResult(const Get5MapResultEvent event) {
   if (g_DisableStats) {
     return;
@@ -206,159 +161,29 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
   char matchId[64];
   event.GetMatchId(matchId, sizeof(matchId));
 
-  char matchIdSz[64];
+  char matchIdSz[128];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
   // Update the map winner
   char winnerString[64];
   GetTeamString(event.Winner.Team, winnerString, sizeof(winnerString));
+
+  Transaction t = new Transaction();
+
   FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_maps` SET winner = '%s', end_time = NOW() \
         WHERE matchid = '%s' and mapnumber = %d",
            winnerString, matchIdSz, event.MapNumber);
   LogDebug(queryBuffer);
-  db.Query(SQLErrorCheckCallback, queryBuffer);
+  t.AddQuery(queryBuffer);
 
   // Update the series scores
-  int t1_seriesscore, t2_seriesscore, tmp;
-  Get5_GetTeamScores(Get5Team_1, t1_seriesscore, tmp);
-  Get5_GetTeamScores(Get5Team_2, t2_seriesscore, tmp);
-
   FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_matches` \
         SET team1_score = %d, team2_score = %d WHERE matchid = '%s'",
-           t1_seriesscore, t2_seriesscore, matchIdSz);
+           event.Team1.SeriesScore, event.Team2.SeriesScore, matchIdSz);
   LogDebug(queryBuffer);
-  db.Query(SQLErrorCheckCallback, queryBuffer);
-}
+  t.AddQuery(queryBuffer);
 
-static void AddPlayerStats(const char[] matchId, const int mapNumber, const KeyValues kv, const Get5Team team) {
-  char name[MAX_NAME_LENGTH];
-  char auth[AUTH_LENGTH];
-  char nameSz[MAX_NAME_LENGTH * 2 + 1];
-  char authSz[AUTH_LENGTH * 2 + 1];
-
-  char matchIdSz[64];
-  db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
-
-  if (kv.GotoFirstSubKey()) {
-    Transaction t = new Transaction();
-    do {
-      if (kv.GetNum(STAT_COACHING, 0) > 0) {
-        continue;  // Don't update stats for coaches.
-      }
-      kv.GetSectionName(auth, sizeof(auth));
-      kv.GetString("name", name, sizeof(name));
-      db.Escape(auth, authSz, sizeof(authSz));
-      db.Escape(name, nameSz, sizeof(nameSz));
-
-      int kills = kv.GetNum(STAT_KILLS);
-      int deaths = kv.GetNum(STAT_DEATHS);
-      int flashbang_assists = kv.GetNum(STAT_FLASHBANG_ASSISTS);
-      int assists = kv.GetNum(STAT_ASSISTS);
-      int teamkills = kv.GetNum(STAT_TEAMKILLS);
-      int damage = kv.GetNum(STAT_DAMAGE);
-      int utility_damage = kv.GetNum(STAT_UTILITY_DAMAGE);
-      int enemies_flashed = kv.GetNum(STAT_ENEMIES_FLASHED);
-      int friendlies_flashed = kv.GetNum(STAT_FRIENDLIES_FLASHED);
-      int headshot_kills = kv.GetNum(STAT_HEADSHOT_KILLS);
-      int knife_kills = kv.GetNum(STAT_KNIFE_KILLS);
-      int roundsplayed = kv.GetNum(STAT_ROUNDSPLAYED);
-      int plants = kv.GetNum(STAT_BOMBPLANTS);
-      int defuses = kv.GetNum(STAT_BOMBDEFUSES);
-      int v1 = kv.GetNum(STAT_V1);
-      int v2 = kv.GetNum(STAT_V2);
-      int v3 = kv.GetNum(STAT_V3);
-      int v4 = kv.GetNum(STAT_V4);
-      int v5 = kv.GetNum(STAT_V5);
-      int k2 = kv.GetNum(STAT_2K);
-      int k3 = kv.GetNum(STAT_3K);
-      int k4 = kv.GetNum(STAT_4K);
-      int k5 = kv.GetNum(STAT_5K);
-      int firstkill_t = kv.GetNum(STAT_FIRSTKILL_T);
-      int firstkill_ct = kv.GetNum(STAT_FIRSTKILL_CT);
-      int firstdeath_t = kv.GetNum(STAT_FIRSTDEATH_T);
-      int firstdeath_ct = kv.GetNum(STAT_FIRSTDEATH_CT);
-      int tradekill = kv.GetNum(STAT_TRADEKILL);
-      int kast = kv.GetNum(STAT_KAST);
-      int contribution_score = kv.GetNum(STAT_CONTRIBUTION_SCORE);
-      int mvp = kv.GetNum(STAT_MVP);
-
-      char teamString[16];
-      GetTeamString(team, teamString, sizeof(teamString));
-
-      // Note that FormatEx() has a 127 argument limit. See SP_MAX_CALL_ARGUMENTS in sourcepawn.
-      // At this time we're at around 33, so this should not be a problem in the foreseeable future.
-      // clang-format off
-      FormatEx(queryBuffer, sizeof(queryBuffer),
-                "INSERT INTO `get5_stats_players` \
-                (`matchid`, `mapnumber`, `steamid64`, `team`, \
-                `rounds_played`, `name`, `kills`, `deaths`, `flashbang_assists`, \
-                `assists`, `teamkills`, `knife_kills`, `headshot_kills`, \
-                `damage`, `utility_damage`, `enemies_flashed`, `friendlies_flashed`, \
-                `bomb_plants`, `bomb_defuses`, \
-                `v1`, `v2`, `v3`, `v4`, `v5`, \
-                `2k`, `3k`, `4k`, `5k`, \
-                `firstkill_t`, `firstkill_ct`, `firstdeath_t`, `firstdeath_ct`, \
-                `tradekill`, `kast`, `contribution_score`, `mvp` \
-                ) VALUES \
-                ('%s', %d, '%s', '%s', \
-                %d, '%s', %d, %d, %d, \
-                %d, %d, %d, %d, \
-                %d, %d, %d, %d, %d, %d, \
-                %d, %d, %d, %d, %d, \
-                %d, %d, %d, %d, \
-                %d, %d, %d, %d, \
-                %d, %d, %d, %d) \
-                ON DUPLICATE KEY UPDATE \
-                `rounds_played` = VALUES(`rounds_played`), \
-                `kills` = VALUES(`kills`), \
-                `deaths` = VALUES(`deaths`), \
-                `flashbang_assists` = VALUES(`flashbang_assists`), \
-                `assists` = VALUES(`assists`), \
-                `teamkills` = VALUES(`teamkills`), \
-                `knife_kills` = VALUES(`knife_kills`), \
-                `headshot_kills` = VALUES(`headshot_kills`), \
-                `damage` = VALUES(`damage`), \
-                `utility_damage` = VALUES(`utility_damage`), \
-                `enemies_flashed` = VALUES(`enemies_flashed`), \
-                `friendlies_flashed` = VALUES(`friendlies_flashed`), \
-                `bomb_plants` = VALUES(`bomb_plants`), \
-                `bomb_defuses` = VALUES(`bomb_defuses`), \
-                `v1` = VALUES(`v1`), \
-                `v2` = VALUES(`v2`), \
-                `v3` = VALUES(`v3`), \
-                `v4` = VALUES(`v4`), \
-                `v5` = VALUES(`v5`), \
-                `2k` = VALUES(`2k`), \
-                `3k` = VALUES(`3k`), \
-                `4k` = VALUES(`4k`), \
-                `5k` = VALUES(`5k`), \
-                `firstkill_t` = VALUES(`firstkill_t`), \
-                `firstkill_ct` = VALUES(`firstkill_ct`), \
-                `firstdeath_t` = VALUES(`firstdeath_t`), \
-                `firstdeath_ct` = VALUES(`firstdeath_ct`), \
-                `tradekill` = VALUES(`tradekill`), \
-                `kast` = VALUES(`kast`), \
-                `contribution_score` = VALUES(`contribution_score`), \
-                `mvp` = VALUES(`mvp`)",
-             matchIdSz, mapNumber, authSz, teamString,
-             roundsplayed, nameSz, kills, deaths, flashbang_assists, 
-             assists, teamkills, knife_kills, headshot_kills, damage, utility_damage,
-             enemies_flashed, friendlies_flashed,
-             plants, defuses, 
-             v1, v2, v3, v4, v5, 
-             k2, k3, k4, k5, 
-             firstkill_t, firstkill_ct, firstdeath_t, firstdeath_ct,
-             tradekill, kast, contribution_score, mvp);
-      // clang-format on
-
-      LogDebug(queryBuffer);
-      t.AddQuery(queryBuffer);
-
-    } while (kv.GotoNextKey());
-    kv.GoBack();
-
-    db.Execute(t, SQL_TransactionSuccessCallback, SQL_TransactionErrorCallback);
-  }
+  db.Execute(t, SQL_TransactionSuccessCallback, SQL_TransactionErrorCallback);
 }
 
 static void SQL_TransactionSuccessCallback(Database d, any data, int numQueries, DBResultSet[] results,
@@ -384,7 +209,7 @@ public void Get5_OnSeriesResult(const Get5SeriesResultEvent event) {
   char winnerString[64];
   GetTeamString(event.Winner.Team, winnerString, sizeof(winnerString));
 
-  char matchIdSz[64];
+  char matchIdSz[128];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
   FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_matches` \
@@ -401,10 +226,126 @@ static void SQLErrorCheckCallback(Handle owner, Handle hndl, const char[] error,
   }
 }
 
-public void Get5_OnRoundStatsUpdated(const Get5RoundStatsUpdatedEvent event) {
-  if (Get5_GetGameState() == Get5State_Live && !g_DisableStats) {
-    char matchId[64];
-    event.GetMatchId(matchId, sizeof(matchId));
-    UpdateRoundStats(matchId, event.MapNumber);
+static void AddPlayerStatToTransaction(const char[] escapedMatchId, const Transaction t, const Get5StatsPlayer player,
+                                       const Get5Team team, const int mapNumber) {
+  char name[MAX_NAME_LENGTH];
+  char auth[AUTH_LENGTH];
+  char nameSz[MAX_NAME_LENGTH * 2 + 1];
+  char authSz[AUTH_LENGTH * 2 + 1];
+
+  player.GetSteamId(auth, sizeof(auth));
+  player.GetName(name, sizeof(name));
+
+  db.Escape(auth, authSz, sizeof(authSz));
+  db.Escape(name, nameSz, sizeof(nameSz));
+
+  char teamString[16];
+  GetTeamString(team, teamString, sizeof(teamString));
+
+  Get5PlayerStats s = player.Stats;
+
+  // Note that FormatEx() has a 127 argument limit. See SP_MAX_CALL_ARGUMENTS in sourcepawn.
+  // At this time we're at around 33, so this should not be a problem in the foreseeable future.
+  // clang-format off
+  FormatEx(queryBuffer, sizeof(queryBuffer),
+            "INSERT INTO `get5_stats_players` \
+            (`matchid`, `mapnumber`, `steamid64`, `team`, \
+            `rounds_played`, `name`, `kills`, `deaths`, `flashbang_assists`, \
+            `assists`, `teamkills`, `knife_kills`, `headshot_kills`, \
+            `damage`, `utility_damage`, `enemies_flashed`, `friendlies_flashed`, \
+            `bomb_plants`, `bomb_defuses`, \
+            `v1`, `v2`, `v3`, `v4`, `v5`, \
+            `2k`, `3k`, `4k`, `5k`, \
+            `firstkill_t`, `firstkill_ct`, `firstdeath_t`, `firstdeath_ct`, \
+            `tradekill`, `kast`, `contribution_score`, `mvp` \
+            ) VALUES \
+            ('%s', %d, '%s', '%s', \
+            %d, '%s', %d, %d, %d, \
+            %d, %d, %d, %d, \
+            %d, %d, %d, %d, %d, %d, \
+            %d, %d, %d, %d, %d, \
+            %d, %d, %d, %d, \
+            %d, %d, %d, %d, \
+            %d, %d, %d, %d) \
+            ON DUPLICATE KEY UPDATE \
+            `rounds_played` = VALUES(`rounds_played`), \
+            `kills` = VALUES(`kills`), \
+            `deaths` = VALUES(`deaths`), \
+            `flashbang_assists` = VALUES(`flashbang_assists`), \
+            `assists` = VALUES(`assists`), \
+            `teamkills` = VALUES(`teamkills`), \
+            `knife_kills` = VALUES(`knife_kills`), \
+            `headshot_kills` = VALUES(`headshot_kills`), \
+            `damage` = VALUES(`damage`), \
+            `utility_damage` = VALUES(`utility_damage`), \
+            `enemies_flashed` = VALUES(`enemies_flashed`), \
+            `friendlies_flashed` = VALUES(`friendlies_flashed`), \
+            `bomb_plants` = VALUES(`bomb_plants`), \
+            `bomb_defuses` = VALUES(`bomb_defuses`), \
+            `v1` = VALUES(`v1`), \
+            `v2` = VALUES(`v2`), \
+            `v3` = VALUES(`v3`), \
+            `v4` = VALUES(`v4`), \
+            `v5` = VALUES(`v5`), \
+            `2k` = VALUES(`2k`), \
+            `3k` = VALUES(`3k`), \
+            `4k` = VALUES(`4k`), \
+            `5k` = VALUES(`5k`), \
+            `firstkill_t` = VALUES(`firstkill_t`), \
+            `firstkill_ct` = VALUES(`firstkill_ct`), \
+            `firstdeath_t` = VALUES(`firstdeath_t`), \
+            `firstdeath_ct` = VALUES(`firstdeath_ct`), \
+            `tradekill` = VALUES(`tradekill`), \
+            `kast` = VALUES(`kast`), \
+            `contribution_score` = VALUES(`contribution_score`), \
+            `mvp` = VALUES(`mvp`)",
+         escapedMatchId, mapNumber, authSz, teamString,
+         s.RoundsPlayed, nameSz, s.Kills, s.Deaths, s.FlashAssists,
+         s.Assists, s.TeamKills, s.KnifeKills, s.HeadshotKills, s.Damage, s.UtilityDamage,
+         s.EnemiesFlashed, s.FriendliesFlashed,
+         s.BombPlants, s.BombDefuses,
+         s.OneV1s, s.OneV2s, s.OneV3s, s.OneV4s, s.OneV5s,
+         s.Kills2, s.Kills3, s.Kills4, s.Kills5,
+         s.FirstKillsT, s.FirstKillsCT, s.FirstDeathsT, s.FirstDeathsCT,
+         s.TradeKills, s.KAST, s.Score, s.MVPs);
+  // clang-format on
+
+  LogDebug(queryBuffer);
+  t.AddQuery(queryBuffer);
+}
+
+public void Get5_OnRoundEnd(const Get5RoundEndedEvent event) {
+  if (Get5_GetGameState() != Get5State_Live || g_DisableStats) {
+    return;
   }
+
+  char matchId[64];
+  event.GetMatchId(matchId, sizeof(matchId));
+  char matchIdSz[128];
+  db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
+
+  Transaction t = new Transaction();
+
+  FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_maps` \
+        SET team1_score = %d, team2_score = %d WHERE matchid = '%s' and mapnumber = %d",
+           event.Team1.Score, event.Team2.Score, matchIdSz, event.MapNumber);
+  LogDebug(queryBuffer);
+  t.AddQuery(queryBuffer);
+
+  JSON_Array team1Players = event.Team1.Players;
+  JSON_Array team2Players = event.Team2.Players;
+
+  int i;
+  int size = team1Players.Length;
+  for (i = 0; i < size; i++) {
+    AddPlayerStatToTransaction(matchIdSz, t, view_as<Get5StatsPlayer>(team1Players.GetObject(i)), Get5Team_1,
+                               event.MapNumber);
+  }
+  size = team2Players.Length;
+  for (i = 0; i < size; i++) {
+    AddPlayerStatToTransaction(matchIdSz, t, view_as<Get5StatsPlayer>(team2Players.GetObject(i)), Get5Team_2,
+                               event.MapNumber);
+  }
+
+  db.Execute(t, SQL_TransactionSuccessCallback, SQL_TransactionErrorCallback);
 }

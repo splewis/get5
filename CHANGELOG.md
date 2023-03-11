@@ -12,7 +12,7 @@ details.
 
 ⚠️ PRERELEASE
 
-#### 2022-03-09
+#### 2022-03-11
 
 ### Breaking Changes 🛠
 
@@ -21,20 +21,96 @@ details.
    name is always `GOTV`. Alternatively, you can ignore all messages with an empty `steamid`.
 2. The [stats system](https://splewis.github.io/get5/dev/stats_system/#keyvalue) has been updated. This means that
    the structure has been modified to allow for more information, specifically the starting side and score for each side
-   for each team.
+   for each team, full stats for players as well as a new option to add team IDs.
 
    **If you use any of the stats extensions, you must also update those plugins (`get5_mysqlstats.smx`
    and `get5_apistats.smx`)!**
 
+   Keys changed in the map root (i.e. `map0`):
+    1. `team1_name` and `team2_name` removed.
+    2. `team1` and `team2` added (objects), each with an `id` and a `name` key.
+
    Keys changed for each team (i.e. `map0 -> team1`):
-    1. Players' SteamIDs and stats have moved from the root of the team object into a key called `players`.
+    1. Players' SteamIDs and stats have moved from the root of the team object into an object called `players`.
     2. Added `score_ct`
     3. Added `score_t`
     4. Added `starting_side` (`2` for T, `3` for CT as this is an integer enum)
-3. The structure of the `Get5_OnRoundEnd` JSON event has changed (not to be confused with the KeyValues file in #2
-   above):
 
-   `teamX_score` (int) has been replaced by an object called `teamX`, which looks like this.
+3. The structure of the `Get5_OnSeriesInit` JSON event has changed:
+
+   Old:
+   ```json5
+   {
+     "event": "series_start",
+     "matchid": "29844",
+     "team1_name": "TeamName",
+     "team2_name": "AnotherTeamName"
+   }
+   ```
+   New:
+   ```json5
+   {
+     "event": "series_start",
+     "series_length": 3, // Bo3
+     "matchid": "29844",
+     "team1": {
+       "id": "482", // nullable in JSON, empty string in SourceMod.
+       "name": "TeamName"
+     }
+     // same for team2
+   }
+   ```
+4. The structure of the `Get5_OnMapResult` JSON event has changed:
+
+   Old:
+   ```json5
+   {
+     "event": "map_result",
+     "matchid": "29844",
+     "map_number": 0,
+     "winner": {
+       "team": "team1",
+       "side": "t"
+     },
+     "team1_score": 10,
+     "team2_score": 12
+   }
+   ```
+
+   New:
+   ```json5
+   {
+     "event": "map_result",
+     "matchid": "29844",
+     "map_number": 0,
+     "winner": {
+       "team": "team1",
+       "side": "t"
+     },
+     "team1": {
+       "id": "482", // nullable in JSON, empty string in SourceMod.
+       "name": "TeamName",
+       "series_score": 1,
+       "score": 10,
+       "score_ct": 4,
+       "score_t": 6,
+       "side": "t",
+       "starting_side": "ct",
+       "players": [
+         {
+           "name": "Nyxi",
+           "steamid": "76561197996426755",
+           "stats": {
+             // Full player stats.
+           }
+         }
+       ]
+     },
+     // same for team2
+   }
+   ```
+
+5. Similarly to 4., the structure of the `Get5_OnRoundEnd` JSON event has changed:
 
    Old:
    ```json5
@@ -69,7 +145,9 @@ details.
        "side": "t"
      },
      "team1": {
+       "id": "482", // nullable in JSON, empty string in SourceMod.
        "name": "TeamName",
+       "series_score": 1,
        "score": 10,
        "score_ct": 4,
        "score_t": 6,
@@ -89,10 +167,10 @@ details.
    }
    ```
 
-   This affects the `Get5_OnRoundEnd` forward as well, so if you have a plugin that reads this data, you must update it.
-   For full details and the SourceMod properties, see
+   These changes affect the corresponding forwards as well, so if you have a plugin that reads this data, you must
+   update it. For full details and the SourceMod properties, see
    the [event documentation](https://splewis.github.io/get5/dev/events_and_forwards/#events).
-4. Get5 no longer sets its [game state](https://splewis.github.io/get5/dev/commands/#get5_status) to `none`
+6. Get5 no longer sets its [game state](https://splewis.github.io/get5/dev/commands/#get5_status) to `none`
    immediately following the end of the series, but now waits until the restore timer fires. Get5 will be in `post_game`
    until the timer runs out, similarly to when waiting for the next map. This means that GOTV broadcasts will have a
    chance to finish before Get5 releases the server.
@@ -106,7 +184,8 @@ details.
    set [`get5_pretty_print_json 0`](https://splewis.github.io/get5/dev/configuration/#get5_pretty_print_json) to
    avoid hitting the limit. You **will** see an error in console if this happens.
 3. The `get5_mysqlstats` extension now uses a transaction to update stat rows for each player. This improves performance
-   via reduced I/O between the game server and the database server.
+   via reduced I/O between the game server and the database server. It now also runs on the JSON methodmaps provided to
+   forwards instead of copying the KeyValue stat object.
 4. The [documentation of events](https://splewis.github.io/get5/dev/events_and_forwards/#events) is now rendered
    on `https://redocly.github.io` instead of being embedded in the Get5 documentation website. This allows for more
    space and makes it easier to browse/read.
@@ -116,6 +195,8 @@ details.
    [`mp_teamlogo_1`](https://totalcsgo.com/command/mpteamlogo1) etc.) are now reset to blank when Get5 ends a series.
    Previously, these parameters would linger and would have to be manually reset or replaced by loading a new match
    configuration.
+6. You can now provide an `id` parameter to your team objects in match configurations, which is echoed back in the
+   forwards and JSON events.
 
 # 0.13.0
 
@@ -251,10 +332,10 @@ to [the documentation](https://splewis.github.io/get5/latest/translations/) for 
    separately from [`get5_time_to_start`](https://splewis.github.io/get5/latest/configuration/#get5_time_to_start). If
    you don't set this variable, players will have infinite time to ready for veto.
 4. `maplist` is now required in match configurations. There is now no "default map list" in Get5.
-6. The `filename` property of the `demo_finished` and `demo_upload_ended` events now includes the folder, i.e. the full
+5. The `filename` property of the `demo_finished` and `demo_upload_ended` events now includes the folder, i.e. the full
    path to the file, if [`get5_demo_path`](https://splewis.github.io/get5/latest/configuration/#get5_demo_path) is set.
-7. `Get5_OnPreLoadMatchConfig()` no longer fires when loading a backup file.
-8. If you use `fromfile`, make sure to always have JSON files end with `.json`, or Get5 will assume they are KeyValues,
+6. `Get5_OnPreLoadMatchConfig()` no longer fires when loading a backup file.
+7. If you use `fromfile`, make sure to always have JSON files end with `.json`, or Get5 will assume they are KeyValues,
    regardless of the format of the match config.
 
 ### New Features 🎉

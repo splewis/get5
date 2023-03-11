@@ -152,8 +152,10 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
 
     Stats_InitSeries();
 
-    Get5SeriesStartedEvent startEvent =
-      new Get5SeriesStartedEvent(g_MatchID, g_TeamNames[Get5Team_1], g_TeamNames[Get5Team_2]);
+    Get5TeamWrapper team1 = new Get5TeamWrapper(g_TeamIDs[Get5Team_1], g_TeamNames[Get5Team_1]);
+    Get5TeamWrapper team2 = new Get5TeamWrapper(g_TeamIDs[Get5Team_2], g_TeamNames[Get5Team_2]);
+
+    Get5SeriesStartedEvent startEvent = new Get5SeriesStartedEvent(g_MatchID, g_NumberOfMapsInSeries, team1, team2);
 
     LogDebug("Calling Get5_OnSeriesInit");
 
@@ -382,6 +384,7 @@ static void AddTeamBackupData(const char[] key, const KeyValues kv, const Get5Te
   WritePlayerDataToKV("players", GetTeamPlayers(team), kv, auth, name);
   kv.SetString("name", g_TeamNames[team]);
   if (team != Get5Team_Spec) {
+    kv.SetString("id", g_TeamIDs[team]);
     kv.SetString("tag", g_TeamTags[team]);
     kv.SetString("flag", g_TeamFlags[team]);
     kv.SetString("logo", g_TeamLogos[team]);
@@ -727,6 +730,7 @@ static bool LoadTeamDataKeyValue(const KeyValues kv, const Get5Team matchTeam, c
     AddSubsectionAuthsToList(kv, "players", GetTeamPlayers(matchTeam));
     if (matchTeam != Get5Team_Spec) {
       AddSubsectionAuthsToList(kv, "coaches", GetTeamCoaches(matchTeam));
+      kv.GetString("id", g_TeamIDs[matchTeam], MAX_CVAR_LENGTH, "");
       kv.GetString("tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH, "");
       kv.GetString("flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH, "");
       kv.GetString("logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH, "");
@@ -912,6 +916,7 @@ static bool LoadTeamDataJson(const JSON_Object json, const Get5Team matchTeam, c
       if (coaches != null) {
         AddJsonAuthsToList(json, "coaches", GetTeamCoaches(matchTeam), AUTH_LENGTH);
       }
+      json_object_get_string_safe(json, "id", g_TeamIDs[matchTeam], MAX_CVAR_LENGTH);
       json_object_get_string_safe(json, "tag", g_TeamTags[matchTeam], MAX_CVAR_LENGTH);
       json_object_get_string_safe(json, "flag", g_TeamFlags[matchTeam], MAX_CVAR_LENGTH);
       json_object_get_string_safe(json, "logo", g_TeamLogos[matchTeam], MAX_CVAR_LENGTH);
@@ -1625,9 +1630,15 @@ void CheckTeamNameStatus(Get5Team team) {
         if (GetClientMatchTeam(i) == team) {
           FormatEx(g_TeamNames[team], MAX_CVAR_LENGTH, "team_%N", i);
           if (team == Get5Team_1) {
-            g_StatsKv.SetString(STAT_SERIES_TEAM1NAME, g_TeamNames[team]);
+            if (g_StatsKv.JumpToKey("team1")) {
+              g_StatsKv.SetString(STAT_SERIES_TEAM_NAME, g_TeamNames[team]);
+              g_StatsKv.GoBack();
+            }
           } else if (team == Get5Team_2) {
-            g_StatsKv.SetString(STAT_SERIES_TEAM2NAME, g_TeamNames[team]);
+            if (g_StatsKv.JumpToKey("team2")) {
+              g_StatsKv.SetString(STAT_SERIES_TEAM_NAME, g_TeamNames[team]);
+              g_StatsKv.GoBack();
+            }
           }
           break;
         }

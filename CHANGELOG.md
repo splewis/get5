@@ -12,7 +12,7 @@ details.
 
 ⚠️ PRERELEASE
 
-#### 2022-03-09
+#### 2022-03-11
 
 ### Breaking Changes 🛠
 
@@ -170,7 +170,7 @@ details.
    These changes affect the corresponding forwards as well, so if you have a plugin that reads this data, you must
    update it. For full details and the SourceMod properties, see
    the [event documentation](https://splewis.github.io/get5/dev/events_and_forwards/#events).
-4. Get5 no longer sets its [game state](https://splewis.github.io/get5/dev/commands/#get5_status) to `none`
+6. Get5 no longer sets its [game state](https://splewis.github.io/get5/dev/commands/#get5_status) to `none`
    immediately following the end of the series, but now waits until the restore timer fires. Get5 will be in `post_game`
    until the timer runs out, similarly to when waiting for the next map. This means that GOTV broadcasts will have a
    chance to finish before Get5 releases the server.

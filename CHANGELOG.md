@@ -12,7 +12,7 @@ details.
 
 ⚠️ PRERELEASE
 
-#### 2022-03-09
+#### 2022-03-11
 
 ### Breaking Changes 🛠
 
@@ -170,7 +170,7 @@ details.
    These changes affect the corresponding forwards as well, so if you have a plugin that reads this data, you must
    update it. For full details and the SourceMod properties, see
    the [event documentation](https://splewis.github.io/get5/dev/events_and_forwards/#events).
-4. Get5 no longer sets its [game state](https://splewis.github.io/get5/dev/commands/#get5_status) to `none`
+6. Get5 no longer sets its [game state](https://splewis.github.io/get5/dev/commands/#get5_status) to `none`
    immediately following the end of the series, but now waits until the restore timer fires. Get5 will be in `post_game`
    until the timer runs out, similarly to when waiting for the next map. This means that GOTV broadcasts will have a
    chance to finish before Get5 releases the server.
@@ -332,10 +332,10 @@ to [the documentation](https://splewis.github.io/get5/latest/translations/) for 
    separately from [`get5_time_to_start`](https://splewis.github.io/get5/latest/configuration/#get5_time_to_start). If
    you don't set this variable, players will have infinite time to ready for veto.
 4. `maplist` is now required in match configurations. There is now no "default map list" in Get5.
-6. The `filename` property of the `demo_finished` and `demo_upload_ended` events now includes the folder, i.e. the full
+5. The `filename` property of the `demo_finished` and `demo_upload_ended` events now includes the folder, i.e. the full
    path to the file, if [`get5_demo_path`](https://splewis.github.io/get5/latest/configuration/#get5_demo_path) is set.
-7. `Get5_OnPreLoadMatchConfig()` no longer fires when loading a backup file.
-8. If you use `fromfile`, make sure to always have JSON files end with `.json`, or Get5 will assume they are KeyValues,
+6. `Get5_OnPreLoadMatchConfig()` no longer fires when loading a backup file.
+7. If you use `fromfile`, make sure to always have JSON files end with `.json`, or Get5 will assume they are KeyValues,
    regardless of the format of the match config.
 
 ### New Features 🎉

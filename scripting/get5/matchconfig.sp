@@ -1413,7 +1413,7 @@ Action Command_CreateScrim(int client, int args) {
 
   char matchid[MATCH_ID_LENGTH] = "scrim";
   char matchMap[PLATFORM_MAX_PATH];
-  GetCleanMapName(matchMap, sizeof(matchMap));
+  GetCurrentMap(matchMap, sizeof(matchMap));
   char otherTeamName[MAX_CVAR_LENGTH] = "Away";
 
   if (args >= 1) {

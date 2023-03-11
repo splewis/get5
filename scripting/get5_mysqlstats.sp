@@ -91,7 +91,7 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
   // strings used for get5_scrim and get5_creatematch, so without that condition, those would break
   // the default mysql as only integers are accepted.
   if (strlen(matchId) > 0 && !StrEqual(matchId, "scrim") && !StrEqual(matchId, "manual")) {
-    char matchIdSz[64];
+    char matchIdSz[128];
     db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
     FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT INTO `get5_stats_matches` \
@@ -141,7 +141,7 @@ public void Get5_OnGoingLive(const Get5GoingLiveEvent event) {
   char mapNameSz[sizeof(mapName) * 2 + 1];
   db.Escape(mapName, mapNameSz, sizeof(mapNameSz));
 
-  char matchIdSz[64];
+  char matchIdSz[128];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
   FormatEx(queryBuffer, sizeof(queryBuffer), "INSERT IGNORE INTO `get5_stats_maps` \
@@ -161,7 +161,7 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
   char matchId[64];
   event.GetMatchId(matchId, sizeof(matchId));
 
-  char matchIdSz[64];
+  char matchIdSz[128];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
   // Update the map winner
@@ -209,7 +209,7 @@ public void Get5_OnSeriesResult(const Get5SeriesResultEvent event) {
   char winnerString[64];
   GetTeamString(event.Winner.Team, winnerString, sizeof(winnerString));
 
-  char matchIdSz[64];
+  char matchIdSz[128];
   db.Escape(matchId, matchIdSz, sizeof(matchIdSz));
 
   FormatEx(queryBuffer, sizeof(queryBuffer), "UPDATE `get5_stats_matches` \

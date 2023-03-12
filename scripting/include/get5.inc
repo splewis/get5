@@ -984,13 +984,6 @@ methodmap Get5MatchTeamEvent < Get5MatchEvent {
 
 methodmap Get5MapEvent < Get5MatchEvent {
 
-  public bool SetMapName(const char[] map) {
-    return this.SetString("map_name", map);
-  }
-  public bool GetMapName(char[] buffer, const int maxSize) {
-    return this.GetString("map_name", buffer, maxSize);
-  }
-
   property int MapNumber {
     public get() {
       return this.GetInt("map_number");

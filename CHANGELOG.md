@@ -172,6 +172,10 @@ details.
    immediately following the end of the series, but now waits until the restore timer fires. Get5 will be in `post_game`
    until the timer runs out, similarly to when waiting for the next map. This means that GOTV broadcasts will have a
    chance to finish before Get5 releases the server.
+7. The map is now **always** reloaded when a match configuration is loaded, even if the server is already on the correct
+   map. Similarly, if doing in-game map selection (veto), the map is always changed to the first map in the series, even
+   if the server is already on that map. This reverts this change
+   from [0.13](https://github.com/splewis/get5/blob/development/CHANGELOG.md#0130).
 
 ### New Features / Changes 🎉
 

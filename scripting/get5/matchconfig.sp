@@ -83,41 +83,27 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
     return false;
   }
 
-  bool gameModeReloadRequired = IsMapReloadRequiredForGameMode(g_Wingman);
+  if (!restoreBackup) {
+    if (g_SkipVeto) {
+      // Copy the first k maps from the maplist to the final match maps.
+      for (int i = 0; i < g_NumberOfMapsInSeries; i++) {
+        g_MapPoolList.GetString(i, mapName, sizeof(mapName));
+        g_MapsToPlay.PushString(mapName);
 
-  if (g_SkipVeto) {
-    // Copy the first k maps from the maplist to the final match maps.
-    for (int i = 0; i < g_NumberOfMapsInSeries; i++) {
-      g_MapPoolList.GetString(i, mapName, sizeof(mapName));
-      g_MapsToPlay.PushString(mapName);
-
-      // Push a map side if one hasn't been set yet.
-      if (g_MapSides.Length < g_MapsToPlay.Length) {
-        if (g_MatchSideType == MatchSideType_Standard || g_MatchSideType == MatchSideType_AlwaysKnife) {
-          g_MapSides.Push(SideChoice_KnifeRound);
-        } else {
-          g_MapSides.Push(SideChoice_Team1CT);
+        // Push a map side if one hasn't been set yet.
+        if (g_MapSides.Length < g_MapsToPlay.Length) {
+          if (g_MatchSideType == MatchSideType_Standard || g_MatchSideType == MatchSideType_AlwaysKnife) {
+            g_MapSides.Push(SideChoice_KnifeRound);
+          } else {
+            g_MapSides.Push(SideChoice_Team1CT);
+          }
         }
       }
-    }
-
-    if (!restoreBackup) {
       ChangeState(Get5State_Warmup);
-      // When restoring from backup, changelevel is called after loading the match config.
-      g_MapPoolList.GetString(Get5_GetMapNumber(), mapName, sizeof(mapName));
-      char currentMap[PLATFORM_MAX_PATH];
-      GetCurrentMap(currentMap, sizeof(currentMap));
-      if (!StrEqual(mapName, currentMap)) {
-        gameModeReloadRequired = false;  // we can skip this when the map is changed here.
-        SetCorrectGameMode();
-        ChangeMap(mapName);
-      }
+    } else {
+      ChangeState(Get5State_PreVeto);
     }
-  } else if (!restoreBackup) {
-    ChangeState(Get5State_PreVeto);
-  }
-
-  if (g_GameState == Get5State_None) {
+  } else if (g_GameState == Get5State_None) {
     // Make sure here that we don't run the code below in game state none, but also not overriding
     // PreVeto. Currently, this could happen if you restored a backup with skip_veto:false.
     ChangeState(Get5State_Warmup);
@@ -142,6 +128,7 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   ServerCommand("mp_backup_round_file backup_%s", serverId);
 
   if (!restoreBackup) {
+    SetCorrectGameMode();
     StopRecording();  // Ensure no recording is running when starting a match, as that prevents Get5 from starting one.
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();
@@ -149,6 +136,8 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
       LogDebug("Match was paused when loading match config. Unpausing.");
       UnpauseGame();
     }
+
+    Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
 
     Stats_InitSeries();
 
@@ -171,18 +160,23 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
       LogError("Setting player auths in the \"players\" or \"coaches\" section has no impact with get5_check_auths 0");
     }
 
-    // ExecuteMatchConfigCvars must be executed before we place players, as it might have
-    // get5_check_auths 1. We must also have called SetStartingTeams to get the sides right. When
-    // restoring from backup, assigning to teams is done after loading the match config as it
-    // depends on the sides being set correctly by the backup, so we put it inside this "if" here.
-    // When the match is loaded, we do not want to assign players on no team, as they may be in the
-    // process of joining the server, which is the reason for the timer callback. This has caused
-    // problems with players getting stuck on no team when using match config autoload, essentially
-    // recreating the "coaching bug". Adding a few seconds seems to solve this problem. We cannot just
-    // skip team none, as players may also just be on the team selection menu when the match is
-    // loaded, meaning they will never have a joingame hook, as it already happened, and we still
-    // want those players placed.
-    if (g_CheckAuthsCvar.BoolValue) {
+    // If we veto, the map will change after veto, otherwise we change it immediately.
+    if (g_SkipVeto) {
+      g_MapsToPlay.GetString(0, mapName, sizeof(mapName));
+      ChangeMap(mapName, 3.0);
+    } else if (g_CheckAuthsCvar.BoolValue) {
+      // ExecuteMatchConfigCvars must be executed before we place players, as it might have
+      // get5_check_auths 1. We must also have called SetStartingTeams to get the sides right. When
+      // restoring from backup, assigning to teams is done after loading the match config as it
+      // depends on the sides being set correctly by the backup, so we put it inside this "if" here.
+      // When the match is loaded, we do not want to assign players on no team, as they may be in the
+      // process of joining the server, which is the reason for the timer callback. This has caused
+      // problems with players getting stuck on no team when using match config autoload, essentially
+      // recreating the "coaching bug". Adding a few seconds seems to solve this problem. We cannot just
+      // skip team none, as players may also just be on the team selection menu when the match is
+      // loaded, meaning they will never have a joingame hook, as it already happened, and we still
+      // want those players placed.
+      // Move players to their right teams during veto.
       LOOP_CLIENTS(i) {
         if (IsPlayer(i)) {
           if (GetClientTeam(i) == CS_TEAM_NONE) {
@@ -194,16 +188,7 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
       }
     }
   }
-
   strcopy(g_LoadedConfigFile, sizeof(g_LoadedConfigFile), config);
-
-  Get5_MessageToAll("%t", "MatchConfigLoadedInfoMessage");
-
-  if (gameModeReloadRequired && !restoreBackup) {
-    GetCurrentMap(mapName, sizeof(mapName));
-    SetCorrectGameMode();
-    ChangeMap(mapName, 3.0);
-  }
   return true;
 }
 

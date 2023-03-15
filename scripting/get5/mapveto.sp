@@ -89,36 +89,13 @@ static void FinishVeto() {
     Get5_MessageToAll("%t", "MapIsInfoMessage", i + 1 - mapNumber, map);
   }
 
-  char currentMapName[PLATFORM_MAX_PATH];
-  GetCleanMapName(currentMapName, sizeof(currentMapName));
-
-  char mapToPlay[PLATFORM_MAX_PATH];
-  g_MapsToPlay.GetString(0, mapToPlay, sizeof(mapToPlay));
-
-  // In case the sides don't match after selection, we check it here before writing the backup.
-  // Also required if the map doesn't need to change.
-  SetStartingTeams();
-  SetMatchTeamCvars();
-
-  if (!StrEqual(currentMapName, mapToPlay)) {
-    ResetReadyStatus();
-    float delay = 10.0;
-    g_MapChangePending = true;
-    if (g_DisplayGotvVetoCvar.BoolValue) {
-      // Players must wait for GOTV to end before we can change map, but we don't need to record that.
-      g_PendingMapChangeTimer = CreateTimer(float(GetTvDelay()) + delay, Timer_NextMatchMap);
-    } else {
-      g_PendingMapChangeTimer = CreateTimer(delay, Timer_NextMatchMap);
-    }
-  } else {
-    LOOP_CLIENTS(i) {
-      if (IsPlayer(i)) {
-        CheckClientTeam(i);
-      }
-    }
+  float delay = 7.0;
+  g_MapChangePending = true;
+  if (g_DisplayGotvVetoCvar.BoolValue) {
+    delay = float(GetTvDelay()) + delay;
   }
+  g_PendingMapChangeTimer = CreateTimer(delay, Timer_NextMatchMap);
   ChangeState(Get5State_Warmup);
-  WriteBackup();  // Write first pre-live backup after veto.
 }
 
 // Main Veto Controller

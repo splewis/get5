@@ -41,27 +41,44 @@ cfg/get5/live_wingman.cfg # (4)
 
 !!! danger "Prohibited options"
 
-    You should avoid these commands in your live, knife and warmup configuration files, as all of these are handled by
-    Get5 automatically. Introducing restarts, warmup changes or [GOTV](../gotv) delay modifications can cause problems.
-    If you want to set your `tv_delay` or `tv_delay1`, do it in the `cvars` section of your
-    [match configuration](../match_schema).
+    You should avoid these commands in your live, knife and warmup configuration files, as most of these are handled by
+    Get5 automatically or not suitable for changes based on game phases. Introducing restarts, warmup changes or
+    [GOTV](../gotv) delay modifications can cause problems. If you want to set your `tv_delay` or `tv_delay1`, do it in
+    the `cvars` section of your [match configuration](../match_schema). You should also not manually configure any
+    parameters related to pausing or teams (names, flags etc.), as all of these are set by Get5 based on the contents of
+    you match configuration.
 
     ```
+    // You should *never* change any of these yourself:
     mp_do_warmup_period
     mp_restartgame
     mp_warmup_end
-    mp_warmup_pausetimer   
+    mp_warmup_pausetimer
     mp_warmup_start
     mp_warmuptime
     mp_warmuptime_all_players_connected
     mp_endwarmup_player_count
+    mp_team_timeout_max
+    mp_team_timeout_time
+    mp_teamscore_max
+    mp_teammatchstat_txt
+    mp_teamprediction_txt
+    mp_teamprediction_pct
+    mp_teamname_1/2
+    mp_teamflag_1/2
+    mp_teamlogo_1/2
+    mp_teammatchstat_1/2
+    mp_teamscore_1/2
+    tv_delaymapchange
+
+    // You can change these (or any other GOTV parameters),
+    // but don't use live/knife/warmup.cfg to do it:
     tv_delay
     tv_delay1
-    tv_delaymapchange
     tv_enable
     tv_enable1
-    tv_record
-    tv_stoprecord
+    tv_snapshotrate
+    tv_snapshotrate1
     ```
 
 ## Server Setup

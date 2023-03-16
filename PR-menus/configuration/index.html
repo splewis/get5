@@ -913,6 +913,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#get5_cvars_file" class="md-nav__link">
+    get5_cvars_file
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2095,6 +2102,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#get5_cvars_file" class="md-nav__link">
+    get5_cvars_file
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2398,21 +2412,63 @@ you match configuration.</p>
 </div>
 <h4 id="setup-menu">Setup Menu</h4>
 <p>In addition to the phase configuration files, three other files can be customised to control the behavior of chat
-commands and the <code>!get5</code> menu. You can change the location of the <a href="../configuration#get5_teams_file">teams</a>
-and <a href="../configuration#get5_maps_file">maps</a> files.</p>
+commands, the <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a> CLI and the <code>!get5</code> menu. You can change the location
+of the <a href="../configuration#get5_teams_file">teams</a> and <a href="../configuration#get5_maps_file">maps</a> files.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/teams.json</span><span class="w"> </span><span class="c1"># (1)</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/maps.json</span><span class="w"> </span><span class="c1"># (2)</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="l l-Scalar l-Scalar-Plain">addons/sourcemod/configs/get5/commands.cfg</span><span class="w"> </span><span class="c1"># (3)</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/cvars.json</span><span class="w"> </span><span class="c1"># (3)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="l l-Scalar l-Scalar-Plain">addons/sourcemod/configs/get5/commands.cfg</span><span class="w"> </span><span class="c1"># (4)</span>
 </code></pre></div>
 <ol>
 <li>Contains teams available for selection when manually creating matches or scrims from the <a href="../commands#get5"><code>!get5</code></a>
    menu. Must be a JSON
    array with <a href="../match_schema#schema"><code>Get5MatchTeam</code></a> objects.</li>
-<li>Contains the map pool to use when creating matches or scrims from the <a href="../commands#get5"><code>!get5</code></a> menu. Must be a
-   JSON array of strings, i.e. <code>["de_dust2", "de_mirage", "de_inferno"]</code>. If this file is missing or empty, the default
-   competitive map pool will be used.</li>
-<li>Contains custom Get5 <a href="../commands#custom-chat-commands">chat commands</a> in KeyValues format. The location of this file
-   cannot be configured.</li>
+<li>
+<p>Contains the map pool to use when creating matches or scrims from the <a href="../commands#get5"><code>!get5</code></a> menu. Must be a
+   JSON object with arrays of strings. If this file is missing or empty, the default competitive map pool will be used.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">   </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">      </span><span class="s2">&quot;de_ancient&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">      </span><span class="s2">&quot;de_anubis&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">      </span><span class="s2">&quot;de_inferno&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">      </span><span class="s2">&quot;de_mirage&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">      </span><span class="s2">&quot;de_nuke&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">      </span><span class="s2">&quot;de_overpass&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">      </span><span class="s2">&quot;de_vertigo&quot;</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">   </span><span class="p">],</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">   </span><span class="nt">&quot;extended&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">      </span><span class="s2">&quot;de_ancient&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">      </span><span class="s2">&quot;de_anubis&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">      </span><span class="s2">&quot;de_cache&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">      </span><span class="s2">&quot;de_dust2&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">      </span><span class="s2">&quot;de_inferno&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">      </span><span class="s2">&quot;de_mirage&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">      </span><span class="s2">&quot;de_nuke&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">      </span><span class="s2">&quot;de_overpass&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">      </span><span class="s2">&quot;de_train&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">      </span><span class="s2">&quot;de_vertigo&quot;</span>
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">   </span><span class="p">]</span>
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="p">}</span>
+</code></pre></div>
+</li>
+<li>
+<p>Contains sets of <code>cvars</code> you can use to pass to <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>. The <code>default</code>
+   object is used when creating matches from the <a href="../commands#get5"><code>!get5</code></a> menu.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">&quot;no_ff_casual&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">&quot;mp_friendlyfire&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="nt">&quot;sv_damage_print_enable&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">}</span>
+</code></pre></div>
+<p>This would allow you to pass <code>--cvars no_ff_casual</code> to <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a> to load
+   this set of parameters for a match. <code>default</code> is loaded if you don't pass the <code>--cvars</code> argument.</p>
+</li>
+<li>
+<p>Contains custom Get5 <a href="../commands#custom-chat-commands">chat commands</a> in KeyValues format. The location of this file
+   cannot be configured.</p>
+</li>
 </ol>
 <h2 id="server-setup">Server Setup</h2>
 <h4 id="get5_server_id"><code>get5_server_id</code></h4>
@@ -2793,7 +2849,9 @@ a <a href="#color-substitutes">color modifier</a>.<br><strong><code>Default: "[{
 <dl>
 <dd>Formatting of damage reports in chat on round end. Ignored
 if <a href="#get5_print_damage"><code>get5_print_damage</code></a> is disabled.<br>
-<strong><code>Default: "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)"</code></strong></dd>
+*
+<em><code>Default: "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)"</code>
+</em>*</dd>
 </dl>
 <div class="admonition example">
 <p class="admonition-title">Damage report example</p>
@@ -2802,12 +2860,12 @@ assists and flash assists.</p>
 <p><code>{KILL_TO}</code> becomes a green <code>X</code> for a kill or a yellow <code>A</code> or <code>F</code> for assist or flash assist, respectively.</p>
 <p><code>{KILL_FROM}</code> is similar to <code>{KILL_TO}</code>, but the <code>X</code> value is red (indicating a player killed you).</p>
 <p>No attribution replaces <code>{KILL_TO}</code> and/or <code>{KILL_FROM}</code> with a white dash: <code>-</code>.
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>[Get5] Team A 1 - 0 Team B
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - Killed this player, they assisted in killing you.
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - Killed by this player, flash assisted in killing them.
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - No interaction, this player survived.
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - Assisted in killing this player.
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - Dealt damage to this player, not enough for assist.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>[Get5] Team A 1 - 0 Team B
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - Killed this player, they assisted in killing you.
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - Killed by this player, flash assisted in killing them.
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - No interaction, this player survived.
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - Assisted in killing this player.
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - Dealt damage to this player, not enough for assist.
 </code></pre></div></p>
 </div>
 <h2 id="config-files">Config File Locations</h2>
@@ -2830,11 +2888,18 @@ mode.<br><strong><code>Default: "get5/live_wingman.cfg"</code></strong></dd>
 </dl>
 <h4 id="get5_teams_file"><code>get5_teams_file</code></h4>
 <dl>
-<dd>JSON file with team information, relative to <code>csgo/cfg</code>.<br><strong><code>Default: "get5/teams.json"</code></strong></dd>
+<dd>JSON file with team information to use with <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a> or
+the <a href="../commands#get5"><code>!get5</code></a> menu. Relative to <code>csgo/cfg</code>.<br><strong><code>Default: "get5/teams.json"</code></strong></dd>
 </dl>
 <h4 id="get5_maps_file"><code>get5_maps_file</code></h4>
 <dl>
-<dd>JSON file with custom map pool, relative to <code>csgo/cfg</code>.<br><strong><code>Default: "get5/maps.json"</code></strong></dd>
+<dd>JSON file with map pools to use with <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>. Relative
+to <code>csgo/cfg</code>.<br><strong><code>Default: "get5/maps.json"</code></strong></dd>
+</dl>
+<h4 id="get5_cvars_file"><code>get5_cvars_file</code></h4>
+<dl>
+<dd>JSON file with sets of cvars to use with <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>. Relative
+to <code>csgo/cfg</code>.<br><strong><code>Default: "get5/cvars.json"</code></strong></dd>
 </dl>
 <h2 id="demos">Demos</h2>
 <h4 id="get5_demo_upload_url"><code>get5_demo_upload_url</code></h4>
@@ -2887,7 +2952,8 @@ extension. Set to empty string to disable.<br><strong><code>Default: ""</code></
 <h4 id="get5_remote_log_header_key"><code>get5_remote_log_header_key</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_remote_log_header_value"><code>get5_remote_log_header_value</code></a> are defined, this
-header name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.<br><strong><code>Default: "Authorization"</code></strong></dd>
+header name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.<br><em>
+</em><code>Default: "Authorization"</code>**</dd>
 </dl>
 <h4 id="get5_remote_log_header_value"><code>get5_remote_log_header_value</code></h4>
 <dl>

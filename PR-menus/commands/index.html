@@ -1599,6 +1599,14 @@ shorten the command if you use the CLI often or with automated systems. Boolean 
 </ul>
 </li>
 <li>
+<p><code>--side_type</code> or <code>-st</code></p>
+<ul>
+<li>Determines the behavior for side selection.</li>
+<li>Type: String; one of <code>standard</code>, <code>always_knife</code> or <code>never_knife</code></li>
+<li>Default: <code>standard</code></li>
+</ul>
+</li>
+<li>
 <p><code>--coaches_must_ready</code> or <code>-cmr</code></p>
 <ul>
 <li>Determines if coaches must also <a href="../commands#ready"><code>!ready</code></a> up.</li>
@@ -1636,7 +1644,7 @@ shorten the command if you use the CLI often or with automated systems. Boolean 
 <li>
 <p><code>--wingman</code> or <code>-w</code></p>
 <ul>
-<li>Configures the match for <a href="../wingman">wingman mode</a>. This sets the default of <code>--players-per-team</code> to <code>2</code> if not
+<li>Configures the match for <a href="../wingman">wingman mode</a>. This sets the default of <code>--players_per_team</code> to <code>2</code> if not
   provided.</li>
 <li>Type: Boolean (no arguments)</li>
 <li>Default: <code>false</code></li>
@@ -1672,7 +1680,7 @@ shorten the command if you use the CLI often or with automated systems. Boolean 
 <ul>
 <li>Sets <code>team1</code>. Must be the key of a team in
   the <a href="../configuration#setup-menu">teams file</a>. If you omit this <em>and</em> <code>--team2</code>, the match will be created with
-  the current teams, and each team must have <code>--players-per-team</code> players present. Must not be equal to <code>--team2</code>.</li>
+  the current teams, and each team must have <code>--players_per_team</code> players present. Must not be equal to <code>--team2</code>.</li>
 <li>Type: String</li>
 <li>Default: <code>""</code></li>
 </ul>

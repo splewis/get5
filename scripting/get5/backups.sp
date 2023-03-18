@@ -577,7 +577,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
   }
   delete kv;
 
-  if (backupIsForDifferentMap) {
+  if (backupIsForDifferentMap || (g_MapReloadRequired && backupIsForDifferentMatch)) {
     // We don't need to assign players if changing map; this will be done when the players rejoin.
     // If a map is to be changed, we want to suppress all stats events immediately, as the
     // Get5_OnBackupRestore is called now and we don't want events firing after this until the game

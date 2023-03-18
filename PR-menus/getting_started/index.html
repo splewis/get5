@@ -386,15 +386,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#players-per-team" class="md-nav__link">
-    Players Per Team
+  <a href="#series-length" class="md-nav__link">
+    Series Length
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#series-length" class="md-nav__link">
-    Series Length
+  <a href="#team-size" class="md-nav__link">
+    Team Size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#team-selection-mode" class="md-nav__link">
+    Team Selection Mode
   </a>
   
 </li>
@@ -414,13 +421,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#team-selection-mode" class="md-nav__link">
-    Team Selection Mode
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#friendly-fire" class="md-nav__link">
     Friendly Fire
   </a>
@@ -435,8 +435,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#playout" class="md-nav__link">
-    Playout
+  <a href="#play-all-rounds" class="md-nav__link">
+    Play All Rounds
   </a>
   
 </li>
@@ -861,15 +861,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#players-per-team" class="md-nav__link">
-    Players Per Team
+  <a href="#series-length" class="md-nav__link">
+    Series Length
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#series-length" class="md-nav__link">
-    Series Length
+  <a href="#team-size" class="md-nav__link">
+    Team Size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#team-selection-mode" class="md-nav__link">
+    Team Selection Mode
   </a>
   
 </li>
@@ -889,13 +896,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#team-selection-mode" class="md-nav__link">
-    Team Selection Mode
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#friendly-fire" class="md-nav__link">
     Friendly Fire
   </a>
@@ -910,8 +910,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#playout" class="md-nav__link">
-    Playout
+  <a href="#play-all-rounds" class="md-nav__link">
+    Play All Rounds
   </a>
   
 </li>
@@ -1031,50 +1031,26 @@ and on the right team before you can continue. In order to preselect teams, you 
 your <a href="#teams-file">teams file</a>. You can also configure a custom map pool using the <a href="#maps-file">maps file</a>. Behind the
 scenes, the menu simply creates and loads a <a href="../match_schema">match configuration</a> file based on the selected options.</p>
 <h3 id="menu-options">Menu Options</h3>
+<p>The options below are available in the <code>!get5</code> menu. The match schema the options affect is listed with each option.</p>
 <h4 id="game-mode">Game Mode</h4>
+<ul>
+<li>Sets <code>wingman</code>.</li>
+</ul>
 <p>The game mode allows you to switch between Competitive (regular 5v5) and <a href="../wingman">Wingman</a> mode.</p>
-<p>Match configuration parameter: <code>wingman</code>.</p>
-<h4 id="players-per-team">Players Per Team</h4>
-<p>Defines the number of players each team can have, excluding coaches. Make sure this matches the selected Game Mode.</p>
-<p>Match configuration parameter: <code>players_per_team</code>.</p>
 <h4 id="series-length">Series Length</h4>
+<ul>
+<li>Sets <code>num_maps</code>.</li>
+</ul>
 <p>Sets the maximum number of maps to play in the series.</p>
-<p>Match configuration parameter: <code>num_maps</code>.</p>
-<h4 id="map-selection">Map Selection</h4>
-<p>Determines the strategy used to select the map(s) to play:</p>
-<ol>
-<li>
-<p><strong>Manual</strong><br>
-   The map(s) must be selected from the menu by the admin.</p>
-</li>
-<li>
-<p><strong>Current Map</strong><br>
-   Play the current map (<em>Series Length == 1 only</em>).</p>
-</li>
-<li>
-<p><strong>Pick/Ban</strong><br>
-   The <a href="../veto">map selection</a> system is used (<em>Series Length &gt; 1 only</em>).</p>
-</li>
-</ol>
-<p>Match configuration parameters: Combination of <code>skip_veto</code> and <code>maplist</code>.</p>
-<h4 id="side-type">Side Type</h4>
-<p>Determines the strategy for side selection.</p>
-<ol>
-<li>
-<p><strong>Standard</strong><br>
-   The team that doesn't pick a map gets to pick a side on it (<em>Map Selection == Pick/Ban only</em>).</p>
-</li>
-<li>
-<p><strong>Always Knife</strong><br>
-   A knife round is always used.</p>
-</li>
-<li>
-<p><strong>Team 1 CT</strong><br>
-   Team 1 always starts CT.</p>
-</li>
-</ol>
-<p>Match configuration parameter: <code>side_type</code>.</p>
+<h4 id="team-size">Team Size</h4>
+<ul>
+<li>Sets <code>players_per_team</code>.</li>
+</ul>
+<p>Defines the number of players each team can have, excluding coaches. Make sure this matches the selected Game Mode.</p>
 <h4 id="team-selection-mode">Team Selection Mode</h4>
+<ul>
+<li>Sets <code>scrim</code>, <code>team1</code> and <code>team2</code>.</li>
+</ul>
 <p>Determines how teams are selected or configured.</p>
 <ol>
 <li>
@@ -1095,53 +1071,100 @@ scenes, the menu simply creates and loads a <a href="../match_schema">match conf
    will be a random player.</p>
 </li>
 </ol>
-<p>Match configuration parameters: Combination of <code>scrim</code>, <code>team1</code> and <code>team2</code>.</p>
+<h4 id="map-selection">Map Selection</h4>
+<ul>
+<li>Sets <code>skip_veto</code> and <code>maplist</code>.</li>
+</ul>
+<p>Determines the strategy used to select the map(s) to play:</p>
+<ol>
+<li>
+<p><strong>Manual</strong><br>
+   The map(s) must be selected from the menu by the admin.</p>
+</li>
+<li>
+<p><strong>Current Map</strong><br>
+   Play the current map (<em>Series Length == 1 only</em>).</p>
+</li>
+<li>
+<p><strong>Pick/Ban</strong><br>
+   The <a href="../veto">map selection</a> system is used (<em>Series Length &gt; 1 only</em>).</p>
+</li>
+</ol>
+<h4 id="side-type">Side Type</h4>
+<ul>
+<li>Sets <code>side_type</code>.</li>
+</ul>
+<p>Determines the strategy for side selection.</p>
+<ol>
+<li>
+<p><strong>Standard</strong><br>
+   The team that doesn't pick a map gets to pick a side on it (<em>Map Selection == Pick/Ban only</em>).</p>
+</li>
+<li>
+<p><strong>Always Knife</strong><br>
+   A knife round is always used.</p>
+</li>
+<li>
+<p><strong>Team 1 CT</strong><br>
+   Team 1 always starts CT.</p>
+</li>
+</ol>
 <h4 id="friendly-fire">Friendly Fire</h4>
-<p>Toggles friendly fire on or off by setting <a href="https://totalcsgo.com/command/mpfriendlyfire"><code>mp_friendlyfire</code></a>.</p>
+<ul>
+<li>Sets <a href="https://totalcsgo.com/command/mpfriendlyfire"><code>mp_friendlyfire</code></a> in <code>cvars</code>.</li>
+</ul>
+<p>Determines if friendly fire is enabled or not.</p>
 <h4 id="overtime">Overtime</h4>
-<p>Toggles overtime on or off by setting <a href="https://totalcsgo.com/command/mpovertimeenable"><code>mp_overtime_enable</code></a>.</p>
-<h4 id="playout">Playout</h4>
-<p>Toggles full playout on or off by setting <a href="https://totalcsgo.com/command/mpmatchcanclinch"><code>mp_match_can_clinch</code></a>.</p>
+<ul>
+<li>Sets <a href="https://totalcsgo.com/command/mpovertimeenable"><code>mp_overtime_enable</code></a> in <code>cvars</code>.</li>
+</ul>
+<p>Determines if overtime is enabled or not.</p>
+<h4 id="play-all-rounds">Play All Rounds</h4>
+<ul>
+<li>Sets <a href="https://totalcsgo.com/command/mpmatchcanclinch"><code>mp_match_can_clinch</code></a> in <code>cvars</code>.</li>
+</ul>
+<p>Determines if all rounds of the match will be played or not, even if a team has logically won.</p>
 <h3 id="teams-file">Teams File</h3>
-<p>This file would allow you to select NaVi and Astralis as teams in the match configuration menu. Any parameter
-defined in the <a href="../match_schema#schema">Get5MatchTeam</a> schema (except <code>fromfile</code>) can be used in this file as well,
-but only <code>players</code> is required. You should provide a team name to make the teams distinguishable in the menu.</p>
+<p>This file would allow you to select NaVi and Astralis as teams in the match configuration menu or pass <code>navi</code>
+or <code>astralis</code> as <code>--team1</code> or <code>--team2</code> when using the <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a> command.
+Any property defined in the <a href="../match_schema#schema">Get5MatchTeam</a> schema (except <code>fromfile</code>) can be used in this file,
+but only <code>players</code> is required. If you don't set a team name, the team's key is used in the menu.</p>
 <div class="admonition example">
 <p class="admonition-title">Teams file example (<code>cfg/get5/teams.json</code>)</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">[</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="p">{</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Natus Vincere&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NaVi&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">&quot;flag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UA&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">&quot;logo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;navi&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nt">&quot;players&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="nt">&quot;76561198034202275&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;s1mple&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">      </span><span class="nt">&quot;76561198044045107&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;electronic&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">      </span><span class="nt">&quot;76561198246607476&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b1t&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">      </span><span class="nt">&quot;76561198121220486&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Perfecto&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">      </span><span class="nt">&quot;76561198040577200&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sdy&quot;</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="p">},</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="nt">&quot;coaches&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">      </span><span class="nt">&quot;76561198013523865&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B1ad3&quot;</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">  </span><span class="p">},</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">  </span><span class="p">{</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Astralis&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Astralis&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">    </span><span class="nt">&quot;flag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DK&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">    </span><span class="nt">&quot;logo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;astr&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">    </span><span class="nt">&quot;players&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">      </span><span class="nt">&quot;76561197990682262&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Xyp9x&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">      </span><span class="nt">&quot;76561198010511021&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gla1ve&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">      </span><span class="nt">&quot;76561197979669175&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;K0nfig&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">      </span><span class="nt">&quot;76561198028458803&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BlameF&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">      </span><span class="nt">&quot;76561198024248129&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;farlig&quot;</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">    </span><span class="p">},</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">    </span><span class="nt">&quot;coaches&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">      </span><span class="nt">&quot;76561197987144812&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Trace&quot;</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">   </span><span class="nt">&quot;navi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Natus Vincere&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NaVi&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;flag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UA&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">&quot;logo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;navi&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">      </span><span class="nt">&quot;players&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">         </span><span class="nt">&quot;76561198034202275&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;s1mple&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">         </span><span class="nt">&quot;76561198044045107&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;electronic&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">         </span><span class="nt">&quot;76561198246607476&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b1t&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">         </span><span class="nt">&quot;76561198121220486&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Perfecto&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">         </span><span class="nt">&quot;76561198040577200&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sdy&quot;</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">      </span><span class="p">},</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">      </span><span class="nt">&quot;coaches&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">         </span><span class="nt">&quot;76561198013523865&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B1ad3&quot;</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">   </span><span class="p">},</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">   </span><span class="nt">&quot;astralis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Astralis&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">      </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Astralis&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">      </span><span class="nt">&quot;flag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DK&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">      </span><span class="nt">&quot;logo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;astr&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">      </span><span class="nt">&quot;players&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">         </span><span class="nt">&quot;76561197990682262&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Xyp9x&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">         </span><span class="nt">&quot;76561198010511021&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gla1ve&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">         </span><span class="nt">&quot;76561197979669175&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;K0nfig&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">         </span><span class="nt">&quot;76561198028458803&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BlameF&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">         </span><span class="nt">&quot;76561198024248129&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;farlig&quot;</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">      </span><span class="p">},</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">      </span><span class="nt">&quot;coaches&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">         </span><span class="nt">&quot;76561197987144812&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Trace&quot;</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">   </span><span class="p">}</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="p">}</span>
 </code></pre></div>
 </div>
 <h3 id="maps-file">Maps File</h3>

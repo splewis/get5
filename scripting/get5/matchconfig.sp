@@ -128,7 +128,6 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   ServerCommand("mp_backup_round_file backup_%s", serverId);
 
   if (!restoreBackup) {
-    SetCorrectGameMode();
     StopRecording();  // Ensure no recording is running when starting a match, as that prevents Get5 from starting one.
     ExecCfg(g_WarmupCfgCvar);
     StartWarmup();
@@ -160,10 +159,17 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
       LogError("Setting player auths in the \"players\" or \"coaches\" section has no impact with get5_check_auths 0");
     }
 
-    // If we veto, the map will change after veto, otherwise we change it immediately.
+    // If we veto, the map and game mode will change after veto, otherwise we change it immediately.
+    // When restoring from backup, changelevel is called after loading the match config.
     if (g_SkipVeto) {
       g_MapsToPlay.GetString(0, mapName, sizeof(mapName));
-      ChangeMap(mapName, 3.0);
+      char currentMap[PLATFORM_MAX_PATH];
+      GetCurrentMap(currentMap, sizeof(currentMap));
+      if (g_MapReloadRequired || !StrEqual(mapName, currentMap) || IsMapReloadRequiredForGameMode(g_Wingman)) {
+        // If we do the veto, game mode and map change is done post-veto instead.
+        SetCorrectGameMode();
+        ChangeMap(mapName);
+      }
     } else if (g_CheckAuthsCvar.BoolValue) {
       // ExecuteMatchConfigCvars must be executed before we place players, as it might have
       // get5_check_auths 1. We must also have called SetStartingTeams to get the sides right. When

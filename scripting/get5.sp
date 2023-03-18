@@ -131,7 +131,9 @@ ConVar g_CoachingEnabledCvar;
 int g_MapsToWin = 1;  // Maps needed to win the series.
 bool g_SeriesCanClinch = true;
 bool g_Wingman = false;
-int g_RoundNumber = -1;  // The round number, 0-indexed. -1 if the match is not live.
+bool g_MapReloadRequired = false;  // Gets set to true on match-win, so matches are always reloaded if a previous
+                                   // game was played on the same map with no reload in between.
+int g_RoundNumber = -1;            // The round number, 0-indexed. -1 if the match is not live.
 // The active map number, used by stats. Required as the calculated round number changes immediately
 // as a map ends, but before the map changes to the next.
 int g_MapNumber = 0;             // the current map number, starting at 0.
@@ -855,6 +857,7 @@ public void OnMapStart() {
   g_ReadyTimeWaitingUsed = 0;
   g_KnifeWinnerTeam = Get5Team_None;
   g_HasKnifeRoundStarted = false;
+  g_MapReloadRequired = false;
 
   LOOP_TEAMS(team) {
     g_TeamGivenStopCommand[team] = false;
@@ -1408,6 +1411,7 @@ static Action Timer_ReplenishMoney(Handle timer, int client) {
 
 static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_MatchOver");
+  g_MapReloadRequired = true;  // Set even if Get5 is not running, so Get5 will know to reload the map.
   if (g_GameState == Get5State_None) {
     return Plugin_Continue;
   }

@@ -16,6 +16,9 @@ static void Get5_Test() {
     return;
   }
 
+  // This kind of messes with the test flow of backups.
+  FindConVar("get5_always_reload_map").SetBool(false);
+
   // We reset these to default as tests need them to be consistent.
   SetConVarStringSafe("mp_teamscore_max", "0");
   SetConVarStringSafe("mp_teammatchstat_txt", "");

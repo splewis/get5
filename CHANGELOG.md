@@ -172,13 +172,8 @@ details.
    immediately following the end of the series, but now waits until the restore timer fires. Get5 will be in `post_game`
    until the timer runs out, similarly to when waiting for the next map. This means that GOTV broadcasts will have a
    chance to finish before Get5 releases the server.
-7. The map is now always reloaded when a match configuration is loaded, even if the server is already on the correct
-   map. Similarly, if doing in-game map selection (veto), the map is always changed to the first map in the series, even
-   if the server is already on that map. This reverts this change
-   from [0.13](https://github.com/splewis/get5/blob/development/CHANGELOG.md#0130). You can disable this behavior
-   via [`get5_always_reload_map`](https://splewis.github.io/get5/dev/configuration/#get5_always_reload_map), but you
-   should only do this if you know your server is *always fresh*; if it was just rebooted or started as a container. The
-   reason we force-reload the map is to prevent various game state bugs caused by previous matches, such as [the warmup
+7. The map is now always reloaded when a match configuration is loaded *if* a game was previously played on the same map
+   with no map reload in between. This is in effort to clear the game state and prevent bugs such as [the warmup
    countdown timer stopping at 0.01](https://github.com/splewis/get5/issues/976).
 
 ### New Features / Changes 🎉

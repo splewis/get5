@@ -414,6 +414,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#map-pool" class="md-nav__link">
+    Map Pool
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#side-type" class="md-nav__link">
     Side Type
   </a>
@@ -443,20 +450,6 @@
         
       </ul>
     </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#teams-file" class="md-nav__link">
-    Teams File
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#maps-file" class="md-nav__link">
-    Maps File
-  </a>
   
 </li>
         
@@ -889,6 +882,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#map-pool" class="md-nav__link">
+    Map Pool
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#side-type" class="md-nav__link">
     Side Type
   </a>
@@ -918,20 +918,6 @@
         
       </ul>
     </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#teams-file" class="md-nav__link">
-    Teams File
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#maps-file" class="md-nav__link">
-    Maps File
-  </a>
   
 </li>
         
@@ -1028,8 +1014,9 @@ soon as a player joins by setting <a href="../configuration#get5_autoload_config
 by <a href="../installation#administrators">server admins</a> to configure and start a match from within the game.
 Out-of-the-box, you can only start a match with current players, meaning that all players (and coaches) must be present
 and on the right team before you can continue. In order to preselect teams, you must add available teams to
-your <a href="#teams-file">teams file</a>. You can also configure a custom map pool using the <a href="#maps-file">maps file</a>. Behind the
-scenes, the menu simply creates and loads a <a href="../match_schema">match configuration</a> file based on the selected options.</p>
+your <a href="../configuration#teams-file">teams file</a>. You can also configure a custom map pool using
+the <a href="../configuration#maps-file">maps file</a>. Behind the scenes, the menu simply creates and loads
+a <a href="../match_schema">match configuration</a> file based on the selected options.</p>
 <h3 id="menu-options">Menu Options</h3>
 <p>The options below are available in the <code>!get5</code> menu. The match schema the options affect is listed with each option.</p>
 <h4 id="game-mode">Game Mode</h4>
@@ -1062,13 +1049,14 @@ scenes, the menu simply creates and loads a <a href="../match_schema">match conf
 <li>
 <p><strong>Fixed</strong><br>
    Uses the teams selected from the menu by the admin. This requires at least two teams in
-   the <a href="#teams-file">teams file</a>. The team captains will be the first players in <code>players</code> for each team.</p>
+   the <a href="../configuration#teams-file">teams file</a>. The team captains will be the first players in <code>players</code> for each
+   team.</p>
 </li>
 <li>
 <p><strong>Scrim</strong><br>
    Uses the team selected from the menu as the "home team". This requires at least one team in
-   the <a href="#teams-file">teams file</a>. The home team captain will be the first player in <code>players</code>, and the away-team captain
-   will be a random player.</p>
+   the <a href="../configuration##teams-file">teams file</a>. The home team captain will be the first player in <code>players</code>, and the
+   away-team captain will be a random player.</p>
 </li>
 </ol>
 <h4 id="map-selection">Map Selection</h4>
@@ -1090,6 +1078,12 @@ scenes, the menu simply creates and loads a <a href="../match_schema">match conf
    The <a href="../veto">map selection</a> system is used (<em>Series Length &gt; 1 only</em>).</p>
 </li>
 </ol>
+<h4 id="map-pool">Map Pool</h4>
+<ul>
+<li>Sets <code>maplist</code>.</li>
+</ul>
+<p>Determines which pool of maps to select from when using <strong>Manual</strong> or <strong>Pick/Ban</strong> <a href="#map-selection">map selection</a> mode.
+You can define additional map pools by editing your <a href="../configuration#maps-file">maps file</a>.</p>
 <h4 id="side-type">Side Type</h4>
 <ul>
 <li>Sets <code>side_type</code>.</li>
@@ -1124,63 +1118,6 @@ scenes, the menu simply creates and loads a <a href="../match_schema">match conf
 <li>Sets <a href="https://totalcsgo.com/command/mpmatchcanclinch"><code>mp_match_can_clinch</code></a> in <code>cvars</code>.</li>
 </ul>
 <p>Determines if all rounds of the match will be played or not, even if a team has logically won.</p>
-<h3 id="teams-file">Teams File</h3>
-<p>This file would allow you to select NaVi and Astralis as teams in the match configuration menu or pass <code>navi</code>
-or <code>astralis</code> as <code>--team1</code> or <code>--team2</code> when using the <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a> command.
-Any property defined in the <a href="../match_schema#schema">Get5MatchTeam</a> schema (except <code>fromfile</code>) can be used in this file,
-but only <code>players</code> is required. If you don't set a team name, the team's key is used in the menu.</p>
-<div class="admonition example">
-<p class="admonition-title">Teams file example (<code>cfg/get5/teams.json</code>)</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">   </span><span class="nt">&quot;navi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Natus Vincere&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NaVi&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;flag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UA&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">&quot;logo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;navi&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">      </span><span class="nt">&quot;players&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">         </span><span class="nt">&quot;76561198034202275&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;s1mple&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">         </span><span class="nt">&quot;76561198044045107&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;electronic&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">         </span><span class="nt">&quot;76561198246607476&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b1t&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">         </span><span class="nt">&quot;76561198121220486&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Perfecto&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">         </span><span class="nt">&quot;76561198040577200&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sdy&quot;</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">      </span><span class="p">},</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">      </span><span class="nt">&quot;coaches&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">         </span><span class="nt">&quot;76561198013523865&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B1ad3&quot;</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="p">}</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">   </span><span class="p">},</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">   </span><span class="nt">&quot;astralis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Astralis&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">      </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Astralis&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">      </span><span class="nt">&quot;flag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DK&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">      </span><span class="nt">&quot;logo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;astr&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">      </span><span class="nt">&quot;players&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">         </span><span class="nt">&quot;76561197990682262&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Xyp9x&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">         </span><span class="nt">&quot;76561198010511021&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gla1ve&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">         </span><span class="nt">&quot;76561197979669175&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;K0nfig&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">         </span><span class="nt">&quot;76561198028458803&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BlameF&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">         </span><span class="nt">&quot;76561198024248129&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;farlig&quot;</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">      </span><span class="p">},</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">      </span><span class="nt">&quot;coaches&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">         </span><span class="nt">&quot;76561197987144812&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Trace&quot;</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">      </span><span class="p">}</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">   </span><span class="p">}</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="p">}</span>
-</code></pre></div>
-</div>
-<h3 id="maps-file">Maps File</h3>
-<p>You can configure a custom map list to use. If this file does not exist or does not contain any maps, the default
-competitive map pool will be used. Note that this is entirely optional.</p>
-<div class="admonition example">
-<p class="admonition-title">Maps file example (<code>cfg/get5/maps.json</code>)</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">[</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="s2">&quot;de_dust2&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="s2">&quot;de_mirage&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="s2">&quot;de_inferno&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="s2">&quot;de_anubis&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="s2">&quot;de_ancient&quot;</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">]</span>
-</code></pre></div>
-</div>
 <h2 id="scrims">Scrims</h2>
 <p>We call "<em>having a home team defined and anyone else on the opposing team</em>" a <strong>scrim</strong>, and loading this configuration
 is referred to as <strong>scrim mode</strong>. This feature is designed for practices where you know the Steam IDs of your own team
@@ -1190,6 +1127,7 @@ and want to enforce team-locking, but don't know the Steam IDs of your opponents
 <ol>
 <li>Using the <a href="#get5-menu"><code>!get5</code></a> menu and setting <a href="#team-selection-mode">Team Selection Mode</a> to <strong>Scrim</strong>.</li>
 <li>Setting <code>scrim: true</code> in any <a href="../match_schema#schema">match configuration</a>.</li>
+<li>Passing <code>--scrim</code> and your home team to <code>--team1</code> with <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>.</li>
 <li>Using the  <a href="../commands#get5_scrim"><code>get5_scrim</code></a> command and the fixed <code>scrim_template.cfg</code> file - see below.</li>
 </ol>
 <h3 id="scrim-template">Using the Scrim template (<img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" /> Legacy)</h3>

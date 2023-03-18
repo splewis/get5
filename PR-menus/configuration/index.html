@@ -327,8 +327,29 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#setup-menu" class="md-nav__link">
-    Setup Menu
+  <a href="#chat-commands-file" class="md-nav__link">
+    Chat Commands File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teams-file" class="md-nav__link">
+    Teams File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maps-file" class="md-nav__link">
+    Maps File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cvars-file" class="md-nav__link">
+    Cvars File
   </a>
   
 </li>
@@ -1516,8 +1537,29 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#setup-menu" class="md-nav__link">
-    Setup Menu
+  <a href="#chat-commands-file" class="md-nav__link">
+    Chat Commands File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teams-file" class="md-nav__link">
+    Teams File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maps-file" class="md-nav__link">
+    Maps File
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cvars-file" class="md-nav__link">
+    Cvars File
   </a>
   
 </li>
@@ -2410,66 +2452,141 @@ you match configuration.</p>
 <a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>tv_snapshotrate1
 </code></pre></div>
 </div>
-<h4 id="setup-menu">Setup Menu</h4>
-<p>In addition to the phase configuration files, three other files can be customised to control the behavior of chat
-commands, the <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a> CLI and the <code>!get5</code> menu. You can change the location
-of the <a href="../configuration#get5_teams_file">teams</a> and <a href="../configuration#get5_maps_file">maps</a> files.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/teams.json</span><span class="w"> </span><span class="c1"># (1)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/maps.json</span><span class="w"> </span><span class="c1"># (2)</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/cvars.json</span><span class="w"> </span><span class="c1"># (3)</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="l l-Scalar l-Scalar-Plain">addons/sourcemod/configs/get5/commands.cfg</span><span class="w"> </span><span class="c1"># (4)</span>
+<h4 id="chat-commands-file">Chat Commands File</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="l l-Scalar l-Scalar-Plain">addons/sourcemod/configs/get5/commands.cfg</span>
 </code></pre></div>
-<ol>
-<li>Contains teams available for selection when manually creating matches or scrims from the <a href="../commands#get5"><code>!get5</code></a>
-   menu. Must be a JSON
-   array with <a href="../match_schema#schema"><code>Get5MatchTeam</code></a> objects.</li>
-<li>
-<p>Contains the map pool to use when creating matches or scrims from the <a href="../commands#get5"><code>!get5</code></a> menu. Must be a
-   JSON object with arrays of strings. If this file is missing or empty, the default competitive map pool will be used.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">   </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">      </span><span class="s2">&quot;de_ancient&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">      </span><span class="s2">&quot;de_anubis&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">      </span><span class="s2">&quot;de_inferno&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">      </span><span class="s2">&quot;de_mirage&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">      </span><span class="s2">&quot;de_nuke&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">      </span><span class="s2">&quot;de_overpass&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">      </span><span class="s2">&quot;de_vertigo&quot;</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">   </span><span class="p">],</span>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">   </span><span class="nt">&quot;extended&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">      </span><span class="s2">&quot;de_ancient&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">      </span><span class="s2">&quot;de_anubis&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">      </span><span class="s2">&quot;de_cache&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">      </span><span class="s2">&quot;de_dust2&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">      </span><span class="s2">&quot;de_inferno&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">      </span><span class="s2">&quot;de_mirage&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">      </span><span class="s2">&quot;de_nuke&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">      </span><span class="s2">&quot;de_overpass&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">      </span><span class="s2">&quot;de_train&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">      </span><span class="s2">&quot;de_vertigo&quot;</span>
-<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">   </span><span class="p">]</span>
-<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="p">}</span>
-</code></pre></div>
-</li>
-<li>
-<p>Contains sets of <code>cvars</code> you can use to pass to <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>. The <code>default</code>
-   object is used when creating matches from the <a href="../commands#get5"><code>!get5</code></a> menu.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">&quot;no_ff_casual&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">&quot;mp_friendlyfire&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="nt">&quot;sv_damage_print_enable&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">}</span>
-</code></pre></div>
-<p>This would allow you to pass <code>--cvars no_ff_casual</code> to <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a> to load
-   this set of parameters for a match. <code>default</code> is loaded if you don't pass the <code>--cvars</code> argument.</p>
-</li>
-<li>
 <p>Contains custom Get5 <a href="../commands#custom-chat-commands">chat commands</a> in KeyValues format. The location of this file
-   cannot be configured.</p>
-</li>
-</ol>
+cannot be configured.</p>
+<h4 id="teams-file">Teams File</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/teams.json</span>
+</code></pre></div>
+<p>The teams file is used to set teams from the <a href="../commands#get5"><code>!get5</code></a> menu or as arguments to <code>--team1</code> or <code>--team2</code>
+when using <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>. Any property defined in
+the <a href="../match_schema#schema">Get5MatchTeam</a> schema (except <code>fromfile</code>) can be used in this file, but only <code>players</code> is
+required. If you don't set a team <code>name</code>, the team's key is used in the menu. The file is empty (<code>{}</code>) by default.</p>
+<p>You can set the location of the teams file with <a href="#get5_teams_file"><code>get5_teams_file</code></a>.</p>
+<div class="admonition example">
+<p class="admonition-title">Teams file example</p>
+<p>This file would allow you to run:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>get5_creatematch<span class="w"> </span>--team1<span class="w"> </span><span class="s2">&quot;navi&quot;</span><span class="w"> </span>--team2<span class="w"> </span><span class="s2">&quot;astralis&quot;</span>
+</code></pre></div>
+<p>or</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>get5_creatematch<span class="w"> </span>--team1<span class="w"> </span><span class="s2">&quot;navi&quot;</span><span class="w"> </span>--scrim<span class="w"> </span><span class="s2">&quot;OtherTeamName&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">   </span><span class="nt">&quot;navi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Natus Vincere&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">      </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NaVi&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">      </span><span class="nt">&quot;flag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UA&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">      </span><span class="nt">&quot;logo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;navi&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">      </span><span class="nt">&quot;players&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">         </span><span class="nt">&quot;76561198034202275&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;s1mple&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">         </span><span class="nt">&quot;76561198044045107&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;electronic&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">         </span><span class="nt">&quot;76561198246607476&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b1t&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">         </span><span class="nt">&quot;76561198121220486&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Perfecto&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">         </span><span class="nt">&quot;76561198040577200&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sdy&quot;</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">      </span><span class="p">},</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">      </span><span class="nt">&quot;coaches&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">         </span><span class="nt">&quot;76561198013523865&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B1ad3&quot;</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">   </span><span class="p">},</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">   </span><span class="nt">&quot;astralis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Astralis&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">      </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Astralis&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">      </span><span class="nt">&quot;flag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DK&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">      </span><span class="nt">&quot;logo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;astr&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="w">      </span><span class="nt">&quot;players&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="w">         </span><span class="nt">&quot;76561197990682262&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Xyp9x&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">         </span><span class="nt">&quot;76561198010511021&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gla1ve&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="w">         </span><span class="nt">&quot;76561197979669175&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;K0nfig&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="w">         </span><span class="nt">&quot;76561198028458803&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BlameF&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="w">         </span><span class="nt">&quot;76561198024248129&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;farlig&quot;</span>
+<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a><span class="w">      </span><span class="p">},</span>
+<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a><span class="w">      </span><span class="nt">&quot;coaches&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a><span class="w">         </span><span class="nt">&quot;76561197987144812&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Trace&quot;</span>
+<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a><span class="w">   </span><span class="p">}</span>
+<a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<h4 id="maps-file">Maps File</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/maps.json</span>
+</code></pre></div>
+<p>You can configure sets of map pools to use. The default file covers the competitive map pool, an extended pool and some
+<a href="../wingman">Wingman</a> maps. You can add as many sets of map pools as you want. Each key of your pool can be selected
+in the <a href="../commands#get5"><code>!get5</code></a> menu or passed to <code>--map_pool</code> when using
+the <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a> command. You can add workshop maps to this file as well, i.e.
+<code>"workshop/1193875520/de_aztec"</code>.</p>
+<p>You can set the location of the maps file with <a href="#get5_maps_file"><code>get5_maps_file</code></a>.</p>
+<div class="admonition example">
+<p class="admonition-title">Maps file example</p>
+<p>This file would allow you to run:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>get5_creatematch<span class="w"> </span>--map_pool<span class="w"> </span><span class="s2">&quot;extended&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">   </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">      </span><span class="s2">&quot;de_ancient&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">      </span><span class="s2">&quot;de_anubis&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">      </span><span class="s2">&quot;de_inferno&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">      </span><span class="s2">&quot;de_mirage&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">      </span><span class="s2">&quot;de_nuke&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">      </span><span class="s2">&quot;de_overpass&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">      </span><span class="s2">&quot;de_vertigo&quot;</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">   </span><span class="p">],</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">   </span><span class="nt">&quot;extended&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">      </span><span class="s2">&quot;de_ancient&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">      </span><span class="s2">&quot;de_anubis&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">      </span><span class="s2">&quot;de_cache&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">      </span><span class="s2">&quot;de_dust2&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">      </span><span class="s2">&quot;de_inferno&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">      </span><span class="s2">&quot;de_mirage&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">      </span><span class="s2">&quot;de_nuke&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">      </span><span class="s2">&quot;de_overpass&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">      </span><span class="s2">&quot;de_train&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">      </span><span class="s2">&quot;de_vertigo&quot;</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="w">   </span><span class="p">],</span>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">   </span><span class="nt">&quot;wingman&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">      </span><span class="s2">&quot;de_shortdust&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="w">      </span><span class="s2">&quot;de_boyard&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="w">      </span><span class="s2">&quot;de_chalice&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="w">      </span><span class="s2">&quot;de_cbble&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a><span class="w">      </span><span class="s2">&quot;de_inferno&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="w">      </span><span class="s2">&quot;de_lake&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="w">      </span><span class="s2">&quot;de_overpass&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a><span class="w">      </span><span class="s2">&quot;de_shortnuke&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a><span class="w">      </span><span class="s2">&quot;de_train&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-33" name="__codelineno-10-33" href="#__codelineno-10-33"></a><span class="w">      </span><span class="s2">&quot;de_vertigo&quot;</span>
+<a id="__codelineno-10-34" name="__codelineno-10-34" href="#__codelineno-10-34"></a><span class="w">   </span><span class="p">]</span>
+<a id="__codelineno-10-35" name="__codelineno-10-35" href="#__codelineno-10-35"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<h4 id="cvars-file">Cvars File</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="l l-Scalar l-Scalar-Plain">cfg/get5/cvars.json</span>
+</code></pre></div>
+<p>You can configure sets of configuration parameters (<code>cvars</code>) to use. The default file contains only <code>default</code>, which is
+automatically used in the <a href="../commands#get5"><code>!get5</code></a> menu and as the default <code>--cvars</code> parameter when
+using <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>. Anything you put in the <code>default</code> key is automatically loaded
+unless you provide a different <code>--cvars</code> parameter.</p>
+<p>You can set the location of the cvars file with <a href="#get5_cvars_file"><code>get5_cvars_file</code></a>.</p>
+<div class="admonition example">
+<p class="admonition-title">Cvars file example</p>
+<p>This file would allow you to run:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>get5_creatematch<span class="w"> </span>--cvars<span class="w"> </span><span class="s2">&quot;no_ff_casual&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">{</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">   </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">   </span><span class="nt">&quot;no_ff_casual&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">      </span><span class="nt">&quot;mp_friendlyfire&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">      </span><span class="nt">&quot;sv_damage_print_enable&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">   </span><span class="p">}</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title"><code>default</code> is required!</p>
+<p>Do not remove the <code>default</code> key. If you don't want to apply any extra <code>cvars</code> when loading matches from the <code>!get5</code>
+menu or when using <code>get5_creatematch</code>, you should simply leave this object empty (<code>{}</code>).</p>
+</div>
 <h2 id="server-setup">Server Setup</h2>
 <h4 id="get5_server_id"><code>get5_server_id</code></h4>
 <dl>
@@ -2860,12 +2977,12 @@ assists and flash assists.</p>
 <p><code>{KILL_TO}</code> becomes a green <code>X</code> for a kill or a yellow <code>A</code> or <code>F</code> for assist or flash assist, respectively.</p>
 <p><code>{KILL_FROM}</code> is similar to <code>{KILL_TO}</code>, but the <code>X</code> value is red (indicating a player killed you).</p>
 <p>No attribution replaces <code>{KILL_TO}</code> and/or <code>{KILL_FROM}</code> with a white dash: <code>-</code>.
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>[Get5] Team A 1 - 0 Team B
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - Killed this player, they assisted in killing you.
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - Killed by this player, flash assisted in killing them.
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - No interaction, this player survived.
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - Assisted in killing this player.
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - Dealt damage to this player, not enough for assist.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>[Get5] Team A 1 - 0 Team B
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>- [X] (100 in 3) to [A] (44 in 1) from Player1 (0 HP) # - Killed this player, they assisted in killing you.
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>- [F] (0 in 0) to [X] (56 in 2) from Player2 (0 HP)   # - Killed by this player, flash assisted in killing them.
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>- [-] (0 in 0) to [-] (0 in 0) from Player3 (84 HP)   # - No interaction, this player survived.
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>- [A] (73 in 2) to [-] (0 in 0) from Player4 (0 HP)   # - Assisted in killing this player.
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>- [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - Dealt damage to this player, not enough for assist.
 </code></pre></div></p>
 </div>
 <h2 id="config-files">Config File Locations</h2>
@@ -2888,17 +3005,17 @@ mode.<br><strong><code>Default: "get5/live_wingman.cfg"</code></strong></dd>
 </dl>
 <h4 id="get5_teams_file"><code>get5_teams_file</code></h4>
 <dl>
-<dd>JSON file with team information to use with <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a> or
-the <a href="../commands#get5"><code>!get5</code></a> menu. Relative to <code>csgo/cfg</code>.<br><strong><code>Default: "get5/teams.json"</code></strong></dd>
+<dd>Location of the JSON <a href="#teams-file">teams file</a>. Relative
+to <code>csgo/cfg</code>.<br><strong><code>Default: "get5/teams.json"</code></strong></dd>
 </dl>
 <h4 id="get5_maps_file"><code>get5_maps_file</code></h4>
 <dl>
-<dd>JSON file with map pools to use with <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>. Relative
+<dd>Location of the JSON <a href="#maps-file">maps file</a>. Relative
 to <code>csgo/cfg</code>.<br><strong><code>Default: "get5/maps.json"</code></strong></dd>
 </dl>
 <h4 id="get5_cvars_file"><code>get5_cvars_file</code></h4>
 <dl>
-<dd>JSON file with sets of cvars to use with <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>. Relative
+<dd>Location of the JSON <a href="#Cvars-file">cvars file</a>. Relative
 to <code>csgo/cfg</code>.<br><strong><code>Default: "get5/cvars.json"</code></strong></dd>
 </dl>
 <h2 id="demos">Demos</h2>

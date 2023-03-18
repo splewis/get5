@@ -1460,9 +1460,9 @@ a <a href="../backup">backup</a>.</dd>
 </dl>
 <h2 id="custom-chat-commands">Customizing Chat Commands</h2>
 <p>Get5 allows you to customize the chat commands used by players. By default, all of the above commands can be used,
-but you can define your own set of commands by adding aliases to the file at
-<code>addons/sourcemod/configs/get5/commands.cfg</code>. This file is empty by default. When you add a new alias for a command,
-that alias will be the one Get5 uses when it references the command in chat.</p>
+but you can define your own set of commands by adding aliases to
+the <a href="../configuration#chat-commands-file">chat commands file</a>. This file is empty by default. When you add a new alias
+for a command, that alias will be the one Get5 uses when it references the command in chat.</p>
 <p>If you provide an invalid command (on the <em>right-hand side</em> in the config file), an error will be thrown. Avoid mapping
 already used commands to other functionality, as it will likely be confusing to players. You may add multiple aliases
 for a single command, but note that the <strong>last</strong> alias to be assigned to the command will be the one Get5 uses in chat.</p>
@@ -1548,14 +1548,14 @@ also <a href="../configuration#get5_kick_on_force_end">kick players</a>.</dd>
 <dl>
 <dd>Creates a new match using a CLI-approach. You can use this command to create almost any kind of match by combining
 any of the following parameters as arguments. Running this command with no arguments creates a single match (5v5) with
-the map pool from your <a href="../configuration#setup-menu">maps file</a> and map selection enabled, as explained by the defaults
-below.</dd>
+the first map pool from your <a href="../configuration#maps-file">maps file</a> and map selection enabled, as explained by the
+defaults below.</dd>
 </dl>
 <div class="admonition tip">
 <p class="admonition-title">Single dash is a shorthand &amp; booleans don't take arguments</p>
 <p>The parameters all have a double-dash (<code>--num_maps</code>) and a single-dash name (<code>-nm</code>). This is simply to allow you to
-shorten the command if you use the CLI often or with automated systems. Boolean properties can be disabled by simply
-<em>not</em> passing the parameter.</p>
+shorten the command if you use the CLI often or with automated systems. Boolean switches can be disabled by simply
+<em>not</em> passing the parameter as they all default to <code>false</code>.</p>
 </div>
 <ul>
 <li>
@@ -1638,7 +1638,7 @@ shorten the command if you use the CLI often or with automated systems. Boolean 
   takes the name of the opposing team as an argument. <code>--team1</code> defines the home team. This parameter acts a boolean
   switch if no team name argument is supplied, in which case the opposing team will be unnamed.</li>
 <li>Type: <code>String</code></li>
-<li>Default: <code>""</code></li>
+<li>Default: <code>"" / false</code></li>
 </ul>
 </li>
 <li>
@@ -1667,7 +1667,7 @@ shorten the command if you use the CLI often or with automated systems. Boolean 
 </ul>
 </li>
 <li>
-<p><code>--clinch_series</code> or <code>-cs</code></p>
+<p><code>--no_series_clinch</code> or <code>-nsc</code></p>
 <ul>
 <li>Configures the series to play all maps, even if a team has practically won. I.e. plays all 3 maps of a Bo3.
   Irrelevant if <code>--num_maps</code> is 1.</li>
@@ -1679,7 +1679,7 @@ shorten the command if you use the CLI often or with automated systems. Boolean 
 <p><code>--team1</code> or <code>-t1</code></p>
 <ul>
 <li>Sets <code>team1</code>. Must be the key of a team in
-  the <a href="../configuration#setup-menu">teams file</a>. If you omit this <em>and</em> <code>--team2</code>, the match will be created with
+  the <a href="../configuration#teams-file">teams file</a>. If you omit this <em>and</em> <code>--team2</code>, the match will be created with
   the current teams, and each team must have <code>--players_per_team</code> players present. Must not be equal to <code>--team2</code>.</li>
 <li>Type: <code>String</code></li>
 <li>Default: <code>""</code></li>
@@ -1688,7 +1688,7 @@ shorten the command if you use the CLI often or with automated systems. Boolean 
 <li>
 <p><code>--team2</code> or <code>-t2</code></p>
 <ul>
-<li>Sets <code>team2</code>. Must be the key of a team in the <a href="../configuration#setup-menu">teams file</a>. Cannot be used
+<li>Sets <code>team2</code>. Must be the key of a team in the <a href="../configuration#teams-file">teams file</a>. Cannot be used
   with <code>--scrim</code>. Must not be equal to <code>--team1</code>.</li>
 <li>Type: <code>String</code></li>
 <li>Default: <code>""</code></li>
@@ -1697,7 +1697,7 @@ shorten the command if you use the CLI often or with automated systems. Boolean 
 <li>
 <p><code>--maplist</code> or <code>-ml</code></p>
 <ul>
-<li>Uses a custom map list instead of the maps from the <a href="../configuration#setup-menu">maps file</a>. Must be a
+<li>Uses a custom map list instead of the maps from the <a href="../configuration#maps-file">maps file</a>. Must be a
   comma-separated list of map names, i.e. <code>de_mirage,de_nuke,de_vertigo</code> Cannot be used with <code>--current_map</code>
   or <code>--map_pool</code> and cannot contain fewer maps than provided to <code>--num_maps</code>.</li>
 <li>Type: <code>String[]</code></li>
@@ -1717,9 +1717,8 @@ shorten the command if you use the CLI often or with automated systems. Boolean 
 <li>
 <p><code>--map_pool</code> or <code>-mp</code></p>
 <ul>
-<li>Determines which key to read maps from in the <a href="../configuration#setup-menu">maps file</a>. You can add as many keys
-  as you want to this file with different sets of maps. The selected map pool cannot contain fewer maps
-  than <code>--num_maps</code>. Cannot be used with <code>--maplist</code> or <code>--current_map</code>.</li>
+<li>Determines which key to read maps from in the <a href="../configuration#maps-file">maps file</a>. The selected map pool
+  cannot contain fewer maps than <code>--num_maps</code>. Cannot be used with <code>--maplist</code> or <code>--current_map</code>.</li>
 <li>Type: String</li>
 <li>Default: <code>default</code></li>
 </ul>
@@ -1727,8 +1726,7 @@ shorten the command if you use the CLI often or with automated systems. Boolean 
 <li>
 <p><code>--cvars</code> or <code>-cv</code></p>
 <ul>
-<li>Determines which key to read <code>cvars</code> from in the <a href="../configuration#setup-menu">cvars file</a>. You can add as many
-  keys as you want to this file with different sets of configuration parameters.</li>
+<li>Determines which key to read <code>cvars</code> from in the <a href="../configuration#cvars-file">cvars file</a>.</li>
 <li>Type: String</li>
 <li>Default: <code>default</code></li>
 </ul>
@@ -1744,23 +1742,23 @@ shorten the command if you use the CLI often or with automated systems. Boolean 
 </ul>
 <div class="admonition example">
 <p class="admonition-title"><code>get5_creatematch</code> examples</p>
-<p>Bo3 with current teams and map selection, using the default maps from the maps file:
+<p>Bo3 with current teams and map selection, using the default maps from the <a href="../configuration#maps-file">maps file</a>:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>get5_creatematch<span class="w"> </span>--num_maps<span class="w"> </span><span class="m">3</span>
 </code></pre></div></p>
 <p>Bo3 with current teams using a specific set of maps:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>get5_creatematch<span class="w"> </span>--num_maps<span class="w"> </span><span class="m">3</span><span class="w"> </span>--maplist<span class="w"> </span><span class="s2">&quot;de_nuke,de_mirage,de_inferno,de_vertigo,de_cache&quot;</span>
 </code></pre></div></p>
-<p>Single match with specific teams from the teams file and the default maps from the map file:
+<p>Single match with specific teams from the <a href="../configuration#teams-file">teams file</a> and the default maps from the <a href="../configuration#maps-file">maps file</a>:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>get5_creatematch<span class="w"> </span>--team1<span class="w"> </span><span class="s2">&quot;astralis&quot;</span><span class="w"> </span>--team2<span class="w"> </span><span class="s2">&quot;navi&quot;</span>
 </code></pre></div></p>
-<p>A Bo3 scrim against a team named "Heroic" with home team preset to Astralis (from the teams file) and using the
-default map pool from the map file:
+<p>A Bo3 scrim against a team named "Heroic" with home team preset to Astralis (from the <a href="../configuration#teams-file">teams file</a>) and using the
+default map pool from the <a href="../configuration#maps-file">maps file</a>:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>get5_creatematch<span class="w"> </span>--num_maps<span class="w"> </span><span class="m">3</span><span class="w"> </span>--team1<span class="w"> </span><span class="s2">&quot;astralis&quot;</span><span class="w"> </span>--scrim<span class="w"> </span><span class="s2">&quot;Heroic&quot;</span>
 </code></pre></div></p>
-<p>A single scrim match against an unnamed team with a custom set of <code>cvars</code> (from the cvars file):
+<p>A single scrim match against an unnamed team with a custom set of <code>cvars</code> (from the <a href="../configuration#cvars-file">cvars file</a>):
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>get5_creatematch<span class="w"> </span>--team1<span class="w"> </span><span class="s2">&quot;astralis&quot;</span><span class="w"> </span>--scrim<span class="w"> </span>--cvars<span class="w"> </span><span class="s2">&quot;no_ff_casual&quot;</span>
 </code></pre></div></p>
-<p>A Bo5 from a custom extended map pool in the map file and fixed teams:
+<p>A Bo5 from an extended map pool in the <a href="../configuration#maps-file">maps file</a> and fixed teams from the <a href="../configuration#teams-file">teams file</a>:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>get5_creatematch<span class="w"> </span>--num_maps<span class="w"> </span><span class="m">5</span><span class="w"> </span>--team1<span class="w"> </span><span class="s2">&quot;astralis&quot;</span><span class="w"> </span>--team2<span class="w"> </span><span class="s2">&quot;navi&quot;</span><span class="w"> </span>--map_pool<span class="w"> </span><span class="s2">&quot;extended&quot;</span>
 </code></pre></div></p>
 <p>A 1v1 wingman match with current players on the current map:

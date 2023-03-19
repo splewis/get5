@@ -198,6 +198,7 @@ details.
    configuration.
 6. You can now provide an `id` parameter to your team objects in match configurations, which is echoed back in the
    forwards and JSON events.
+7. Fixed missing HTTP event on `Get5_OnTeamReadyStatusChanged` and associated memory leak.
 
 # 0.13.1
 

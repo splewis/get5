@@ -218,6 +218,8 @@ void UnreadyTeam(Get5Team team) {
   Call_PushCell(readyEvent);
   Call_Finish();
 
+  EventLogger_LogAndDeleteEvent(readyEvent);
+
   SetMatchTeamCvars();
   Get5_MessageToAll("%t", "TeamIsNoLongerReady", g_FormattedTeamNames[team]);
 }

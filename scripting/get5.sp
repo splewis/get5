@@ -361,8 +361,7 @@ public void OnPluginStart() {
   InitDebugLog(DEBUG_CVAR, "get5");
   LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
 
-  // Because we JSON encode the entire match stats on round end, we change from 4 spaces to a tab when pretty-printing.
-  // It saves a significant number of bytes, and we're limited to 16K. See SendEventJSONToURL().
+  // Make JSON payloads smaller by using 1 tab instead of 4 spaces to pretty print.
   JSON_PP_INDENT = "\t";
 
   // Because we use SDKHooks for damage, we need to re-hook clients that are already on the server

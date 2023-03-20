@@ -179,11 +179,8 @@ details.
 ### New Features / Changes 🎉
 
 1. Get5 is now built with SourceMod 1.11.
-2. The JSON "pretty print" spacing string has changed from 4 spaces to 1 tab. This is strictly because there is a 16KB
-   max buffer size in SourceMod, which we come dangerously close to when posting the full player stats via JSON. If you
-   play 6v6 or 7v7, you may need to
-   set [`get5_pretty_print_json 0`](https://splewis.github.io/get5/dev/configuration/#get5_pretty_print_json) to
-   avoid hitting the limit. You **will** see an error in console if this happens.
+2. The JSON "pretty print" spacing string has changed from 4 spaces to 1 tab. This is strictly to reduce the size of the
+   JSON payload and has no practical effect on the objects.
 3. The `get5_mysqlstats` extension now uses a transaction to update stat rows for each player. This improves performance
    via reduced I/O between the game server and the database server. It now also runs on the JSON methodmaps provided to
    forwards instead of copying the KeyValue stat object.

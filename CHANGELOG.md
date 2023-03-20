@@ -201,7 +201,7 @@ details.
 
 #### 2023-03-20
 
-## New Features / Changes 🎉
+### New Features / Changes 🎉
 
 1. Fix critical memory leaks and heap size issues.
 2. Fix missing HTTP event for `Get5_OnTeamReadyStatusChanged` if a team goes from ready to unready.

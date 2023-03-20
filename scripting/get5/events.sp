@@ -14,13 +14,6 @@ void SendEventJSONToURL(const char[] event) {
     return;
   }
 
-  int contentLength = strlen(event);
-  if (contentLength >= 16383) {
-    LogError(
-      "JSON event size exceeds the maximum supported value of 16382 bytes and cannot be sent to your log URL. You should consider setting get5_pretty_print_json 0 to reduce the JSON size.");
-    return;
-  }
-
   static char error[PLATFORM_MAX_PATH];
   Handle eventRequest = CreateGet5HTTPRequest(k_EHTTPMethodPOST, eventUrl, error);
   if (eventRequest == INVALID_HANDLE) {
@@ -41,7 +34,7 @@ void SendEventJSONToURL(const char[] event) {
     return;
   }
 
-  SteamWorks_SetHTTPRequestRawPostBody(eventRequest, "application/json", event, contentLength);
+  SteamWorks_SetHTTPRequestRawPostBody(eventRequest, "application/json", event, strlen(event));
   SteamWorks_SetHTTPRequestNetworkActivityTimeout(eventRequest, 15);  // Default 60 is a bit much.
   SteamWorks_SetHTTPCallbacks(eventRequest, EventRequestCallback);
   SteamWorks_SendHTTPRequest(eventRequest);

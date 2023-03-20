@@ -389,7 +389,8 @@ static void EndMolotovEvent(const char[] molotovKey) {
   Get5MolotovDetonatedEvent molotovObject;
   if (g_MolotovContainer.GetValue(molotovKey, molotovObject)) {
     if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-      delete molotovObject;
+      json_cleanup_and_delete(molotovObject);
+      LogDebug("Deleting molotov event with key %s as match is no longer live.", molotovKey);
     } else {
       molotovObject.EndTime = GetRoundTime();
       LogDebug("Calling Get5_OnMolotovDetonated()");
@@ -406,7 +407,8 @@ static void EndHEEvent(const char[] grenadeKey) {
   Get5HEDetonatedEvent heObject;
   if (g_HEGrenadeContainer.GetValue(grenadeKey, heObject)) {
     if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-      delete heObject;
+      json_cleanup_and_delete(heObject);
+      LogDebug("Deleting HE event with key %s as match is no longer live.", grenadeKey);
     } else {
       LogDebug("Calling Get5_OnHEGrenadeDetonated()");
       Call_StartForward(g_OnHEGrenadeDetonated);
@@ -422,7 +424,8 @@ static void EndFlashbangEvent(const char[] flashKey) {
   Get5FlashbangDetonatedEvent flashEvent;
   if (g_FlashbangContainer.GetValue(flashKey, flashEvent)) {
     if (g_GameState != Get5State_Live || IsDoingRestoreOrMapChange()) {
-      delete flashEvent;
+      json_cleanup_and_delete(flashEvent);
+      LogDebug("Deleting flash event with key %s as match is no longer live.", flashKey);
     } else {
       LogDebug("Calling Get5_OnFlashbangDetonated()");
       Call_StartForward(g_OnFlashbangDetonated);
@@ -660,7 +663,6 @@ static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
   if (!IsValidClient(victim)) {
     return Plugin_Continue;  // Not sure how this would happen, but it's not something we care about.
   }
-  Get5Player victimPlayer = GetPlayerObject(victim);
 
   int attacker = GetClientOfUserId(event.GetInt("attacker"));
   Get5Player attackerPlayer = IsValidClient(attacker) ? GetPlayerObject(attacker) : null;
@@ -669,8 +671,11 @@ static Action Stats_PlayerDeathEvent(Event event, const char[] name, bool dontBr
       // HandleReadyCommand checks for game state, so we don't need to do that here as well.
       HandleReadyCommand(attacker, true);
     }
+    json_cleanup_and_delete(attackerPlayer);
     return Plugin_Continue;
   }
+
+  Get5Player victimPlayer = GetPlayerObject(victim);
 
   Get5Side victimSide = victimPlayer.Side;
   Get5Side attackerSide = attackerPlayer != null ? attackerPlayer.Side : Get5Side_None;
@@ -1168,10 +1173,11 @@ static bool DumpToJSONFile(const char[] path) {
   File stats_file = OpenFile(path, "w");
   if (stats_file == null) {
     LogError("Failed to open stats file");
+    json_cleanup_and_delete(stats);
     return false;
   }
 
-  // Mark the JSON buffer static to avoid running into limited haep/stack space, see
+  // Mark the JSON buffer static to avoid running into limited heap/stack space, see
   // https://forums.alliedmods.net/showpost.php?p=2620835&postcount=6
   static char jsonBuffer[65536];  // 64 KiB
   stats.Encode(jsonBuffer, sizeof(jsonBuffer));

@@ -54,11 +54,12 @@
 #pragma semicolon 1
 #pragma newdecls required
 /**
- * Increases stack space to 32000 cells (or 128KB, a cell is 4 bytes)
- * This is to prevent "Not enough space on the heap" error when dumping match stats
- * Default heap size is 4KB
+ * Increases stack space to 131072 cells (or 512KB; a cell is 4 bytes).
+ * This is to prevent "Not enough space on the heap" error when dumping match stats while also
+ * allowing a 64KB static buffer for JSON encode output for HTTP events.
+ * Default heap size is 1024 cells (4KB).
  */
-#pragma dynamic 32000
+#pragma dynamic 131072
 
 /** ConVar handles **/
 ConVar g_AllowPauseCancellationCvar;
@@ -1064,6 +1065,10 @@ static Action Command_EndMatch(int client, int args) {
     return Plugin_Handled;
   }
 
+  // Clear ongoing grenade containers, if any. Requires live state or the events will be lost,
+  // so we do this before changing the game state below.
+  Stats_ResetGrenadeContainers();
+
   Get5Team winningTeam = Get5Team_None;  // defaults to tie
   if (args >= 1) {
     char forcedWinningTeam[8];
@@ -1723,13 +1728,10 @@ void ResetMatchCvarsAndHostnameAndKickPlayers(bool kickPlayers) {
 
 static Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
   LogDebug("Event_RoundPreStart");
+  Stats_ResetGrenadeContainers();  // Always do this. If not in live, the events are simply
+  // discarded and this just prevents memory leaks.
   if (g_GameState == Get5State_None) {
     return;
-  }
-
-  if (g_GameState == Get5State_Live) {
-    // End lingering grenade trackers from previous round.
-    Stats_ResetGrenadeContainers();
   }
 
   if (g_PendingSideSwap) {
@@ -2218,9 +2220,9 @@ void EventLogger_LogAndDeleteEvent(Get5Event event) {
 
   // We could use json_encode_size here from sm-json, but since we fire events *all the time*
   // and the function to calculate the buffer size is a lot of code, we just statically allocate
-  // a 16k buffer here and reuse that.
-  static char buffer[16384];
-  event.Encode(buffer, 16384, options);
+  // a 64K buffer here and reuse that.
+  static char buffer[65536];
+  event.Encode(buffer, 65536, options);
 
   char logPath[PLATFORM_MAX_PATH];
   if (FormatCvarString(g_EventLogFormatCvar, logPath, sizeof(logPath))) {

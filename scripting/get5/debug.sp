@@ -236,11 +236,12 @@ static void AddLogLines(File f, const char[] pattern, int maxLines) {
       }
 
       delete logFile;
+      delete lines;
     } else {
       f.WriteLine("Couldn't read log file %s", filename);
     }
   }
-
+  delete logFilenames;
   delete dir;
 }
 

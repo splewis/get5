@@ -8,9 +8,18 @@ Whenever you update your Get5 plugin, remember to **always** update the `transla
 Please see the [installation instructions](https://splewis.github.io/get5/latest/installation/#installation) for
 details.
 
+# 0.13.1
+
+#### 2023-03-20
+
+## New Features / Changes 🎉
+
+1. Fix critical memory leaks and heap size issues.
+2. Fix missing HTTP event for `Get5_OnTeamReadyStatusChanged` if a team goes from ready to unready.
+
 # 0.13.0
 
-#### 2022-02-18
+#### 2023-02-18
 
 ### Breaking Changes 🛠
 
@@ -95,7 +104,7 @@ details.
 
 # 0.12.1
 
-#### 2022-01-16
+#### 2023-01-16
 
 ## What's Changed
 
@@ -142,10 +151,10 @@ to [the documentation](https://splewis.github.io/get5/latest/translations/) for 
    separately from [`get5_time_to_start`](https://splewis.github.io/get5/latest/configuration/#get5_time_to_start). If
    you don't set this variable, players will have infinite time to ready for veto.
 4. `maplist` is now required in match configurations. There is now no "default map list" in Get5.
-6. The `filename` property of the `demo_finished` and `demo_upload_ended` events now includes the folder, i.e. the full
+5. The `filename` property of the `demo_finished` and `demo_upload_ended` events now includes the folder, i.e. the full
    path to the file, if [`get5_demo_path`](https://splewis.github.io/get5/latest/configuration/#get5_demo_path) is set.
-7. `Get5_OnPreLoadMatchConfig()` no longer fires when loading a backup file.
-8. If you use `fromfile`, make sure to always have JSON files end with `.json`, or Get5 will assume they are KeyValues,
+6. `Get5_OnPreLoadMatchConfig()` no longer fires when loading a backup file.
+7. If you use `fromfile`, make sure to always have JSON files end with `.json`, or Get5 will assume they are KeyValues,
    regardless of the format of the match config.
 
 ### New Features 🎉

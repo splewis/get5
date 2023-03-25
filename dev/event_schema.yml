@@ -1,8 +1,11 @@
 ---
 openapi: "3.0.3"
 info:
-  title: ""
+  title: "Get5 Event Documentation"
   version: ""
+  description: | 
+    This is the documentation of all JSON events and native plugin forwards for Get5. All HTTP events get
+    sent as POST requests to the root of the URL you provided for `get5_remote_log_url` in your Get5 configuration.
 paths:
   "/Get_OnEvent":
     post:

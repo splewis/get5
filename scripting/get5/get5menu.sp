@@ -859,6 +859,7 @@ static void CreateMatch(int client) {
   match.SetBool("skip_veto", g_SetupMenuMapSelection != Get5SetupMenu_MapSelectionMode_PickBan);
   match.SetInt("players_per_team", g_SetupMenuPlayersPerTeam);
   match.SetBool("clinch_series", true);
+  match.SetBool("wingman", g_SetupMenuWingman);
   match.SetBool("scrim", g_SetupMenuTeamSelection == Get5SetupMenu_TeamSelectionMode_Scrim);
 
   char sideType[32];

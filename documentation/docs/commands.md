@@ -102,16 +102,16 @@ server, this stops that timer.
 
 ####`!get5`
 
-:   Opens a menu that wraps some common commands. It's mostly intended for people using scrim settings, and has
-menu buttons for starting a scrim, force-starting, force-ending, adding a ringer, and loading the most recent backup
-file.
+:   Opens a [menu](../getting_started#get5-menu) that allows access to common commands. You can use the menu to start
+a new match (or scrim), [end a match](#get5_endmatch), [force teams ready](#get5_forceready) or load
+a [backup](../backup).
 
 ## Customizing Chat Commands {: #custom-chat-commands }
 
 Get5 allows you to customize the chat commands used by players. By default, all of the above commands can be used,
-but you can define your own set of commands by adding aliases to the file at
-`addons/sourcemod/configs/get5/commands.cfg`. This file is empty by default. When you add a new alias for a command,
-that alias will be the one Get5 uses when it references the command in chat.
+but you can define your own set of commands by adding aliases to
+the [chat commands file](../configuration#chat-commands-file). This file is empty by default. When you add a new alias
+for a command, that alias will be the one Get5 uses when it references the command in chat.
 
 If you provide an invalid command (on the *right-hand side* in the config file), an error will be thrown. Avoid mapping
 already used commands to other functionality, as it will likely be confusing to players. You may add multiple aliases
@@ -197,14 +197,191 @@ should put all arguments inside quotation marks (`""`).
 to that team. Omitting the team argument sets no winner (tie). This command can be configured to
 also [kick players](../configuration#get5_kick_on_force_end).
 
-####`get5_creatematch [map name] [matchid]` {: #get5_creatematch }
-:   Creates a BO1 match with the current players on the server. `map name` defaults to the current map and `matchid`
-defaults to `manual`. You should **not** provide a match ID if you use the [MySQL extension](../stats_system#mysql).
+####`get5_creatematch [--parameter] [value]` {: #get5_creatematch }
+:   Creates a new match using a CLI-approach. You can use this command to create almost any kind of match by combining
+any of the following parameters as arguments. Running this command with no arguments creates a single match (5v5) with
+the first map pool from your [maps file](../configuration#maps-file) and map selection enabled, as explained by the
+defaults below.
+
+!!! tip "Single dash is a shorthand & booleans don't take arguments"
+
+    The parameters all have a double-dash (`--num_maps`) and a single-dash name (`-nm`). This is simply to allow you to
+    shorten the command if you use the CLI often or with automated systems. Boolean switches can be disabled by simply
+    *not* passing the parameter as they all default to `false`.
+
+- `--num_maps` or `-nm`
+    - The number of maps to play in the series.
+    - Type: Integer
+    - Default: `1`
+
+- `--players_per_team` or `-ppt`
+    - Determines the number of players per team.
+    - Type: Integer
+    - Default: `5` or `2` (depending on `--wingman`)
+
+- `--coaches_per_team` or `-cpt`
+    - Determines the maximum number of coaches per team.
+    - Type: Integer
+    - Default: `2`
+
+- `--matchid` or `-id`
+    - The ID of the match.
+    - Type: String
+    - Default: `""`
+
+- `--skip_veto` or `-sv`
+    - Disables the [map selection system](../veto).
+    - Type: Boolean (no arguments)
+    - Default: `false`
+
+- `--side_type` or `-st`
+    - Determines the behavior for side selection, unless overridden by `--map_sides`.
+    - Type: `String`; one of `standard`, `always_knife`, `never_knife`, `random`
+    - Default: `standard`
+
+- `--coaches_must_ready` or `-cmr`
+    - Determines if coaches must also [`!ready`](../commands#ready) up.
+    - Type: `Boolean` (no arguments)
+    - Default: `false`
+
+- `--min_players_to_ready` or `-mptr`
+    - Determines the minimum number of players that must be present before the [`!forceready`](../commands#forceready)
+      command may be used.
+    - Type: `Integer`
+    - Default: `0`
+
+- `--min_spectators_to_ready` or `-mstr`
+    - Determines the minimum number of spectators that must [`!ready`](../commands#ready) up.
+    - Type: `Integer`
+    - Default: `0`
+
+- `--scrim` or `-s`
+    - Configures the match for [scrim mode](../getting_started#scrims). Cannot be combined with `--team2`. Optionally
+      takes the name of the opposing team as an argument. `--team1` defines the home team. This parameter acts a boolean
+      switch if no team name argument is supplied, in which case the opposing team will be unnamed.
+    - Type: `String`
+    - Default: `"" / false`
+
+- `--wingman` or `-w`
+    - Configures the match for [wingman mode](../wingman). This sets the default of `--players_per_team` to `2` if not
+      provided.
+    - Type: `Boolean` (no arguments)
+    - Default: `false`
+
+- `--veto_first` or `-vf`
+    - Determines the logic for selecting which team gets to pick or ban a map first. Ignored if `--skip_veto` is passed.
+    - Type: `String`; one of `team1`, `team2`, `random`
+    - Default: `team1`
+
+- `--current_map` or `-cm`
+    - Creates a match on the *current* map. Cannot be combined with `--num_maps > 1` or `--maplist`.
+    - Type: `Boolean` (no arguments)
+    - Default: `false`
+
+- `--no_series_clinch` or `-nsc`
+    - Configures the series to play all maps, even if a team has practically won. I.e. plays all 3 maps of a Bo3.
+      Irrelevant if `--num_maps` is 1.
+    - Type: `Boolean` (no arguments)
+    - Default: `false`
+
+- `--team1` or `-t1`
+    - Sets `team1`. Must be the key of a team in
+      the [teams file](../configuration#teams-file). If you omit this *and* `--team2`, the match will be created with
+      the current teams, and each team must have `--players_per_team` players present. Must not be equal to `--team2`.
+    - Type: `String`
+    - Default: `""`
+
+- `--team2` or `-t2`
+    - Sets `team2`. Must be the key of a team in the [teams file](../configuration#teams-file). Cannot be used
+      with `--scrim`. Must not be equal to `--team1`.
+    - Type: `String`
+    - Default: `""`
+
+- `--maplist` or `-ml`
+    - Uses a custom map list instead of the maps from the [maps file](../configuration#maps-file). Must be a
+      comma-separated list of map names, i.e. `de_mirage,de_nuke,de_vertigo` Cannot be used with `--current_map`
+      or `--map_pool` and cannot contain fewer maps than provided to `--num_maps`.
+    - Type: `String[]`
+    - Default: `[]`
+
+- `--map_sides` or `-ms`
+    - Presets the sides for each map. Must be a comma-separated list of side options. It does *not* need to contain as
+      many parameters as `--num_maps`, i.e. `team1_ct,team2_ct` could be used for a Bo3, and the side on the last map
+      would be determined by the value of `--side_type`.
+    - Type: `String[]`, any of: `team1_ct`, `team2_ct`, `knife`
+    - Default: `[]`
+
+- `--map_pool` or `-mp`
+    - Determines which key to read maps from in the [maps file](../configuration#maps-file). The selected map pool
+      cannot contain fewer maps than `--num_maps`. Cannot be used with `--maplist` or `--current_map`.
+    - Type: String
+    - Default: `default`
+
+- `--cvars` or `-cv`
+    - Determines which key to read `cvars` from in the [cvars file](../configuration#cvars-file).
+    - Type: String
+    - Default: `default`
+
+- `--match_title` or `-mt`
+    - Sets the title of the match.
+    - Type: String
+    - Default: `""`
+
+!!! example "`get5_creatematch` examples"
+
+    Bo3 with current teams and map selection, using the default maps from the [maps file](../configuration#maps-file):
+    ```sh
+    get5_creatematch --num_maps 3
+    ```
+
+    Bo3 with current teams using a specific set of maps:
+    ```sh
+    get5_creatematch --num_maps 3 --maplist "de_nuke,de_mirage,de_inferno,de_vertigo,de_cache"
+    ```
+
+    Single match with specific teams from the [teams file](../configuration#teams-file) and the default maps from the [maps file](../configuration#maps-file):
+    ```sh
+    get5_creatematch --team1 "astralis" --team2 "navi"
+    ```
+
+    A Bo3 scrim against a team named "Heroic" with home team preset to Astralis (from the [teams file](../configuration#teams-file)) and using the
+    default map pool from the [maps file](../configuration#maps-file):
+    ```sh
+    get5_creatematch --num_maps 3 --team1 "astralis" --scrim "Heroic"
+    ```
+
+    A single scrim match against an unnamed team with a custom set of `cvars` (from the [cvars file](../configuration#cvars-file)):
+    ```sh
+    get5_creatematch --team1 "astralis" --scrim --cvars "no_ff_casual"
+    ```
+
+    A Bo5 from an extended map pool in the [maps file](../configuration#maps-file) and fixed teams from the [teams file](../configuration#teams-file):
+    ```sh
+    get5_creatematch --num_maps 5 --team1 "astralis" --team2 "navi" --map_pool "extended"
+    ```
+
+    A 1v1 wingman match with current players on the current map:
+    ```sh
+    get5_creatematch --current_map --wingman --players_per_team 1
+    ```
+
+    A Bo3 with current teams, sides *and* maps already set and a custom title. `--skip_veto` is not required when
+    `--num_maps` is the same as the number of maps provided to `--maplist`.
+    ```sh
+    get5_creatematch --num_maps 3 --maplist "de_nuke,de_mirage,de_inferno"
+    --map_sides "team1_ct,team2_ct,knife" --match_title "Blast Fall Final 2022"
+    ```
 
 ####`get5_scrim [opposing team name] [map name] [matchid]` {: #get5_scrim }
-:   Creates a [scrim](../getting_started#scrims) on the current map. The opposing team name defaults to `Away`
-and the map defaults to the current map. `matchid` defaults to `scrim`. You should **not** provide a match ID if
-you use the [MySQL extension](../stats_system#mysql).
+:   Creates a [scrim](../getting_started#scrims) on the current map using the `scrim_template.cfg` approach. The
+opposing team name defaults to `Away` and the map defaults to the current map. `matchid` defaults to `scrim`. You should
+**not** provide a match ID if you use the [MySQL extension](../stats_system#mysql).
+
+!!! note "Legacy"
+
+    You should consider using the teams file + `get5_creatematch` CLI-approach instead of this command.
+    The same could be accomplished by adding your home team to your teams file and running this command:<br>
+    `get5_creatematch --scrim [opposing team name] --maplist [map name] --matchid [match id] --team1 [home team id]`
 
 ####`get5_addplayer <auth> <team1|team2|spec> [name]` {: #get5_addplayer }
 :   Adds a Steam ID to a team (can be any format for the Steam ID). The name parameter optionally locks the player's
@@ -223,7 +400,7 @@ from the server immediately.
 ####`get5_addkickedplayer <team1|team2|spec> [name]` {: #get5_addkickedplayer }
 :   Adds the last kicked Steam ID to a team. The name parameter optionally locks the player's name.
 
-####`get5_removekickedplayer <team1|team2|spec>` {: #get5_removekickedplayer }
+####`get5_removekickedplayer` {: #get5_removekickedplayer }
 :   Removes the last kicked Steam ID from all teams. Cannot be used in scrim mode.
 
 ####`get5_add_ready_time <seconds>` {: #get5_add_ready_time }

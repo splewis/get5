@@ -299,46 +299,58 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
   mapStringIndex = (numSplits > 0) ? (numSplits - 1) : (0);
   strcopy(buffer, len, buffers[mapStringIndex]);
 
-  if (cleanName && StrContains(mapName, "workshop", false) != 0) {
-    if (StrEqual(buffer, "de_cache")) {
-      strcopy(buffer, len, "Cache");
-    } else if (StrEqual(buffer, "de_inferno")) {
+  if (cleanName) {
+    if (StrContains(buffer, "de_inferno", false) != -1) {
       strcopy(buffer, len, "Inferno");
-    } else if (StrEqual(buffer, "de_dust2")) {
-      strcopy(buffer, len, "Dust II");
-    } else if (StrEqual(buffer, "de_mirage")) {
+    } else if (StrContains(buffer, "de_mirage", false) != -1) {
       strcopy(buffer, len, "Mirage");
-    } else if (StrEqual(buffer, "de_train")) {
-      strcopy(buffer, len, "Train");
-    } else if (StrEqual(buffer, "de_cbble")) {
-      strcopy(buffer, len, "Cobblestone");
-    } else if (StrEqual(buffer, "de_anubis")) {
+    } else if (StrContains(buffer, "de_anubis", false) != -1) {
       strcopy(buffer, len, "Anubis");
-    } else if (StrEqual(buffer, "de_overpass")) {
+    } else if (StrContains(buffer, "de_overpass", false) != -1) {
       strcopy(buffer, len, "Overpass");
-    } else if (StrEqual(buffer, "de_nuke")) {
+    } else if (StrContains(buffer, "de_nuke", false) != -1 || StrContains(buffer, "de_shortnuke", false) != -1) {
       strcopy(buffer, len, "Nuke");
-    } else if (StrEqual(buffer, "de_vertigo")) {
+    } else if (StrContains(buffer, "de_vertigo", false) != -1) {
       strcopy(buffer, len, "Vertigo");
-    } else if (StrEqual(buffer, "de_ancient")) {
+    } else if (StrContains(buffer, "de_ancient", false) != -1) {
       strcopy(buffer, len, "Ancient");
-    } else if (StrEqual(buffer, "de_tuscan")) {
+    } else if (StrContains(buffer, "de_train", false) != -1) {
+      strcopy(buffer, len, "Train");
+    } else if (StrContains(buffer, "de_dust2", false) != -1) {
+      strcopy(buffer, len, "Dust II");
+    } else if (StrContains(buffer, "de_cache", false) != -1) {
+      strcopy(buffer, len, "Cache");
+    } else if (StrContains(buffer, "de_tuscan", false) != -1) {
       strcopy(buffer, len, "Tuscan");
-    } else if (StrEqual(buffer, "de_prime")) {
+    } else if (StrContains(buffer, "de_cbble", false) != -1) {
+      strcopy(buffer, len, "Cobblestone");
+    } else if (StrContains(buffer, "de_prime", false) != -1) {
       strcopy(buffer, len, "Prime");
-    } else if (StrEqual(buffer, "de_grind")) {
+    } else if (StrContains(buffer, "de_grind", false) != -1) {
       strcopy(buffer, len, "Grind");
-    } else if (StrEqual(buffer, "de_mocha")) {
+    } else if (StrContains(buffer, "de_canals", false) != -1) {
+      strcopy(buffer, len, "Canals");
+    } else if (StrContains(buffer, "de_mocha", false) != -1) {
       strcopy(buffer, len, "Mocha");
-    } else if (StrEqual(buffer, "cs_militia")) {
+    } else if (StrContains(buffer, "de_boyard", false) != -1) {
+      strcopy(buffer, len, "Boyard");
+    } else if (StrContains(buffer, "de_chalice", false) != -1) {
+      strcopy(buffer, len, "Chalice");
+    } else if (StrContains(buffer, "de_lake", false) != -1) {
+      strcopy(buffer, len, "Lake");
+    } else if (StrContains(buffer, "de_shortdust", false) != -1) {
+      strcopy(buffer, len, "Dust");
+    } else if (StrContains(buffer, "de_aztec", false) != -1) {
+      strcopy(buffer, len, "Aztec");
+    } else if (StrContains(buffer, "cs_militia", false) != -1) {
       strcopy(buffer, len, "Militia");
-    } else if (StrEqual(buffer, "cs_agency")) {
+    } else if (StrContains(buffer, "cs_agency", false) != -1) {
       strcopy(buffer, len, "Agency");
-    } else if (StrEqual(buffer, "cs_office")) {
+    } else if (StrContains(buffer, "cs_office", false) != -1) {
       strcopy(buffer, len, "Office");
-    } else if (StrEqual(buffer, "cs_italy")) {
+    } else if (StrContains(buffer, "cs_italy", false) != -1) {
       strcopy(buffer, len, "Italy");
-    } else if (StrEqual(buffer, "cs_assault")) {
+    } else if (StrContains(buffer, "cs_assault", false) != -1) {
       strcopy(buffer, len, "Assault");
     }
   }
@@ -458,13 +470,16 @@ stock bool IsPlayerTeam(Get5Team team) {
   return team == Get5Team_1 || team == Get5Team_2;
 }
 
-stock Get5Team VetoFirstFromString(const char[] str) {
+stock Get5VetoFirst VetoFirstFromString(const char[] str, char[] error) {
   if (StrEqual(str, "random", false)) {
-    return view_as<Get5Team>(GetRandomInt(0, 1));
+    return Get5VetoFirst_Random;
   } else if (StrEqual(str, "team2", false)) {
-    return Get5Team_2;
+    return Get5VetoFirst_Team2;
+  } else if (StrEqual(str, "team1", false)) {
+    return Get5VetoFirst_Team1;
   } else {
-    return Get5Team_1;
+    FormatEx(error, PLATFORM_MAX_PATH, "Invalid veto_first '%s'. Must be one of 'team1', 'team2', 'random'.", str);
+    return Get5VetoFirst_Invalid;
   }
 }
 
@@ -474,7 +489,7 @@ stock bool GetAuth(int client, char[] auth, int size) {
 
   bool ret = GetClientAuthId(client, AuthId_SteamID64, auth, size);
   if (!ret) {
-    LogError("Failed to get steamid for client %L", client);
+    LogError("Failed to resolve Steam ID for client %L. This is usually a temporary or network related error.", client);
   }
   return ret;
 }
@@ -520,13 +535,19 @@ stock void GetTeamString(Get5Team team, char[] buffer, int len) {
   }
 }
 
-stock MatchSideType MatchSideTypeFromString(const char[] str) {
-  if (StrEqual(str, "normal", false) || StrEqual(str, "standard", false)) {
+stock MatchSideType MatchSideTypeFromString(const char[] str, char[] error) {
+  if (StrEqual(str, "standard", false)) {
     return MatchSideType_Standard;
   } else if (StrEqual(str, "never_knife", false)) {
     return MatchSideType_NeverKnife;
-  } else {
+  } else if (StrEqual(str, "always_knife", false)) {
     return MatchSideType_AlwaysKnife;
+  } else if (StrEqual(str, "random", false)) {
+    return MatchSideType_Random;
+  } else {
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "Invalid side_type '%s'. Must be one of 'standard', 'never_knife', 'always_knife', 'random'.", str);
+    return MatchSideType_Invalid;
   }
 }
 
@@ -535,6 +556,8 @@ stock void MatchSideTypeToString(MatchSideType type, char[] str, int len) {
     FormatEx(str, len, "standard");
   } else if (type == MatchSideType_NeverKnife) {
     FormatEx(str, len, "never_knife");
+  } else if (type == MatchSideType_Random) {
+    FormatEx(str, len, "random");
   } else {
     FormatEx(str, len, "always_knife");
   }
@@ -829,4 +852,22 @@ stock Get5ChatCommand StringToChatCommand(const char[] string) {
   } else {
     return Get5ChatCommand_Unknown;
   }
+}
+
+stock bool IsMapWorkshop(const char[] mapName) {
+  return StrContains(mapName, "workshop", false) == 0;
+}
+
+stock JSON_Object LoadJSONIfFileExists(const char[] filepath, char[] error, int options = 0) {
+  if (!FileExists(filepath)) {
+    FormatEx(error, PLATFORM_MAX_PATH, "File '%s' does not exist or cannot be read.", filepath);
+    return null;
+  }
+  JSON_Object json = json_read_from_file(filepath, options);
+  if (json == null) {
+    char jsonError[128];
+    json_get_last_error(jsonError, sizeof(jsonError));
+    FormatEx(error, PLATFORM_MAX_PATH, "Failed to decode JSON from file '%s'. Error: %s", filepath, jsonError);
+  }
+  return json;
 }

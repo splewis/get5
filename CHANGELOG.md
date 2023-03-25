@@ -175,6 +175,14 @@ details.
 7. The map is now always reloaded when a match configuration is loaded *if* a game was previously played on the same map
    with no map reload in between. This is in effort to clear the game state and prevent bugs such as [the warmup
    countdown timer stopping at 0.01](https://github.com/splewis/get5/issues/976).
+8. The [`get5_creatematch`](https://splewis.github.io/get5/dev/commands/#get5_creatematch) command has been replaced by
+   a CLI-like command which lets you configure almost any type of match with a single command.
+9. [`num_maps`](https://splewis.github.io/get5/dev/match_schema/#schema) in the match schema now defaults to `1` instead
+   of `3`.
+10. [`get5_scrim`](https://splewis.github.io/get5/dev/commands/#get5_scrim) and the accompanying `scrim_template.cfg`
+    file is now considered legacy, and you should instead
+    use [`get5_creatematch --scrim --team1 home_team`](https://splewis.github.io/get5/dev/commands/#get5_creatematch)
+    and add your home team to the new teams file to achieve the same result.
 
 ### New Features / Changes 🎉
 
@@ -196,6 +204,15 @@ details.
 6. You can now provide an `id` parameter to your team objects in match configurations, which is echoed back in the
    forwards and JSON events.
 7. Fixed missing HTTP event on `Get5_OnTeamReadyStatusChanged` and associated memory leak.
+8. [`side_type`](https://splewis.github.io/get5/dev/match_schema/#schema) now accepts `random` as a parameter.
+9. Workshop maps are now correctly formatted in the map veto system, assuming they contain a know map.
+   I.e. `workshop/82722474/de_nuke_2` would format to `Nuke`, since it contains `de_nuke`. Previously, a complete match
+   was required. The default Wingman maps now also format correctly (`de_lake` => `Lake` etc.).
+10. The [`!get5`](https://splewis.github.io/get5/dev/commands/#get5) menu has been significantly upgraded and now
+    supports creating almost any type of match, similarly to the new `get5_creatematch` command, but using in-game menus
+    only. It now also lets you browse recent backups and set a winner if force-ending a match.
+11. Any match configuration file can now take `scrim: true` in order to load in scrim mode, and `team2` will then not be
+    required.
 
 # 0.13.1
 

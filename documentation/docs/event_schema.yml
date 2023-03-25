@@ -1486,9 +1486,9 @@ tags:
   - name: All Events
     description: Forward fired for all events.
   - name: Series Flow
-    description: Events the occur in relation to setting up a match or series.
+    description: Events that occur in relation to setting up a match or series.
   - name: Map Flow
-    description: Events the occur in relation to a map pick or match-events on a map.
+    description: Events that occur in relation to a map pick or match-events on a map.
   - name: Live
     description: Events that only occur during live rounds (not during knife, veto or warmup).
   - name: Client Actions

@@ -539,17 +539,16 @@ void LoadPlayerNames() {
   delete namesKv;
 }
 
-void SwapScrimTeamStatus(int client) {
+bool SwapScrimTeamStatus(int client) {
   // If we're in any team -> remove from any team list.
   // If we're not in any team -> add to team1.
   char auth[AUTH_LENGTH];
-  if (GetAuth(client, auth, sizeof(auth))) {
-    bool alreadyInList = RemovePlayerFromTeams(auth);
-    if (!alreadyInList) {
-      char steam64[AUTH_LENGTH];
-      ConvertAuthToSteam64(auth, steam64);
-      GetTeamPlayers(Get5Team_1).PushString(steam64);
-    }
-    CheckClientTeam(client);
+  if (!GetAuth(client, auth, sizeof(auth))) {
+    return false;
   }
+  if (!RemovePlayerFromTeams(auth)) {
+    GetTeamPlayers(Get5Team_1).PushString(auth);
+  }
+  CheckClientTeam(client);
+  return true;
 }

@@ -6,6 +6,25 @@
 #include <json>  // github.com/clugg/sm-json
 #include <cstrike>
 
+enum Get5SetupMenu_TeamSelectionMode {
+  Get5SetupMenu_TeamSelectionMode_Current,
+  Get5SetupMenu_TeamSelectionMode_Fixed,
+  Get5SetupMenu_TeamSelectionMode_Scrim
+};
+
+enum Get5SetupMenu_MapSelectionMode {
+  Get5SetupMenu_MapSelectionMode_PickBan,
+  Get5SetupMenu_MapSelectionMode_Current,
+  Get5SetupMenu_MapSelectionMode_Manual
+};
+
+enum Get5VetoFirst {
+  Get5VetoFirst_Team1,
+  Get5VetoFirst_Team2,
+  Get5VetoFirst_Random,
+  Get5VetoFirst_Invalid
+};
+
 // Series stats (root section)
 #define STAT_SERIESWINNER "winner"
 #define STAT_SERIESTYPE "series_type"
@@ -77,11 +96,11 @@ enum Get5BombSite {
 };
 
 enum Get5MapSelectionOption {
-  Get5MapSelectionOption_Invalid,
   Get5MapSelectionOption_Team1Pick,
   Get5MapSelectionOption_Team2Pick,
   Get5MapSelectionOption_Team1Ban,
-  Get5MapSelectionOption_Team2Ban
+  Get5MapSelectionOption_Team2Ban,
+  Get5MapSelectionOption_Invalid
 }
 
 #define MATCHTEAM_COUNT 4
@@ -140,6 +159,8 @@ enum MatchSideType {
   MatchSideType_Standard,     // Team that doesn't pick map gets side choice, leftovers go to knife rounds
   MatchSideType_AlwaysKnife,  // All maps use a knife round to pick sides
   MatchSideType_NeverKnife,   // Team 1 always starts CT
+  MatchSideType_Random,       // Sides are randomly decided
+  MatchSideType_Invalid
 };
 
 enum SideChoice {
@@ -2221,7 +2242,101 @@ methodmap Get5BombDefusedEvent < Get5PlayerBombEvent {
     return self;
   }
 }
+/*
+methodmap Get5MatchConfig < JSON_Object {
 
+  property int ClinchSeries {
+    public get() {
+      return this.GetBool("clinch_series");
+    }
+    public set(bool val) {
+      this.SetBool("clinch_series", val);
+    }
+  }
+
+  property int Wingman {
+    public get() {
+      return this.GetBool("wingman");
+    }
+    public set(bool val) {
+      this.SetBool("wingman", val);
+    }
+  }
+
+  property int SkipVeto {
+    public get() {
+      return this.GetBool("skip_veto");
+    }
+    public set(bool val) {
+      this.SetBool("skip_veto", val);
+    }
+  }
+
+  property int CoachesMustReady {
+    public get() {
+      return this.GetBool("coaches_must_ready");
+    }
+    public set(bool val) {
+      this.SetBool("coaches_must_ready", val);
+    }
+  }
+
+  property int NumberOfMaps {
+    public get() {
+      return this.GetInt("num_maps");
+    }
+    public set(int val) {
+      this.SetInt("num_maps", val);
+    }
+  }
+
+  property int PlayersPerTeam {
+    public get() {
+      return this.GetInt("players_per_team");
+    }
+    public set(int val) {
+      this.SetInt("players_per_team", val);
+    }
+  }
+
+  property int CoachesPerTeam {
+    public get() {
+      return this.GetInt("coaches_per_team");
+    }
+    public set(int val) {
+      this.SetInt("coaches_per_team", val);
+    }
+  }
+
+  property int MinSpectatorsToReady {
+    public get() {
+      return this.GetInt("min_spectators_to_ready");
+    }
+    public set(int val) {
+      this.SetInt("min_spectators_to_ready", val);
+    }
+  }
+
+  property Get5Team VetoFirst {
+    public get() {
+      return this.GetInt("veto_first_int");
+    }
+    public set(int val) {
+      this.SetInt("veto_first_int", val);
+      this.SetHidden("veto_first_int", true);
+    }
+  }
+
+  property JSON_Array VetoMode {
+    public get() {
+      return this.GetInt("veto_mode_internal");
+    }
+    public set(int val) {
+      this.SetInt("min_spectators_to_ready", val);
+    }
+  }
+}
+*/
 stock void GameStateString(const Get5State state, char[] buffer, const int length) {
   switch (state) {
     case Get5State_None:

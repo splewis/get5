@@ -88,7 +88,7 @@ stock int AddJsonAuthsToList(JSON_Object json, const char[] key, ArrayList list,
       }
 
     } else {
-      int length = data.Iterate();
+      int length = data.Length;
       int key_length = 0;
       char name[MAX_NAME_LENGTH];
       for (int i = 0; i < length; i++) {

@@ -225,7 +225,7 @@ static bool LoadMatchFile(const char[] config, char[] error, bool backup) {
 
   bool success = false;
   if (IsJSONPath(config)) {
-    JSON_Object json = json_read_from_file(config, JSON_DECODE_ORDERED_KEYS);
+    JSON_Object json = json_read_from_file(config);
     if (json == null) {
       FormatEx(error, PLATFORM_MAX_PATH, "Failed to read match config from file \"%s\" as JSON.", config);
     } else {
@@ -618,7 +618,7 @@ static bool LoadMatchFromJson(const JSON_Object json, char[] error) {
   if (cvars != null) {
     char cvarValue[MAX_CVAR_LENGTH];
 
-    int length = cvars.Iterate();
+    int length = cvars.Length;
     int key_length = 0;
     for (int i = 0; i < length; i++) {
       key_length = cvars.GetKeySize(i);
@@ -931,7 +931,7 @@ static bool LoadMapListFromFile(const char[] fromFile, char[] error) {
   }
   bool success = false;
   if (IsJSONPath(fromFile)) {
-    JSON_Object jsonFromFile = json_read_from_file(fromFile, JSON_DECODE_ORDERED_KEYS);
+    JSON_Object jsonFromFile = json_read_from_file(fromFile);
     if (jsonFromFile == null) {
       FormatEx(error, PLATFORM_MAX_PATH,
                "\"maplist\" -> \"fromfile\" points to an invalid or unreadable JSON file: \"%s\".", fromFile);
@@ -966,7 +966,7 @@ bool LoadTeamDataFromFile(const char[] fromFile, const Get5Team team, char[] err
   }
   bool success = false;
   if (IsJSONPath(fromFile)) {
-    JSON_Object jsonFromFile = json_read_from_file(fromFile, JSON_DECODE_ORDERED_KEYS);
+    JSON_Object jsonFromFile = json_read_from_file(fromFile);
     if (jsonFromFile != null) {
       success = LoadTeamDataJson(jsonFromFile, team, error, false);
       json_cleanup_and_delete(jsonFromFile);

@@ -213,6 +213,8 @@ details.
     only. It now also lets you browse recent backups and set a winner if force-ending a match.
 11. Any match configuration file can now take `scrim: true` in order to load in scrim mode, and `team2` will then not be
     required.
+12. Get5 now uses the v5 development branch of sm-json which as important fixes to plugin forwards. Once sm-json 5 is
+    released, it will be used in the final 0.14 version of Get5.
 
 # 0.13.1
 

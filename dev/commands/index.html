@@ -616,7 +616,7 @@
         
           <li class="md-nav__item">
   <a href="#get5_creatematch" class="md-nav__link">
-    get5_creatematch [map name] [matchid]
+    get5_creatematch [--parameter] [value]
   </a>
   
 </li>
@@ -658,7 +658,7 @@
         
           <li class="md-nav__item">
   <a href="#get5_removekickedplayer" class="md-nav__link">
-    get5_removekickedplayer &lt;team1|team2|spec&gt;
+    get5_removekickedplayer
   </a>
   
 </li>
@@ -1219,7 +1219,7 @@
         
           <li class="md-nav__item">
   <a href="#get5_creatematch" class="md-nav__link">
-    get5_creatematch [map name] [matchid]
+    get5_creatematch [--parameter] [value]
   </a>
   
 </li>
@@ -1261,7 +1261,7 @@
         
           <li class="md-nav__item">
   <a href="#get5_removekickedplayer" class="md-nav__link">
-    get5_removekickedplayer &lt;team1|team2|spec&gt;
+    get5_removekickedplayer
   </a>
   
 </li>
@@ -1454,15 +1454,15 @@ cancel a forfeit win if the rest of the team left.</p>
 </div>
 <h4 id="get5"><code>!get5</code></h4>
 <dl>
-<dd>Opens a menu that wraps some common commands. It's mostly intended for people using scrim settings, and has
-menu buttons for starting a scrim, force-starting, force-ending, adding a ringer, and loading the most recent backup
-file.</dd>
+<dd>Opens a <a href="../getting_started#get5-menu">menu</a> that allows access to common commands. You can use the menu to start
+a new match (or scrim), <a href="#get5_endmatch">end a match</a>, <a href="#get5_forceready">force teams ready</a> or load
+a <a href="../backup">backup</a>.</dd>
 </dl>
 <h2 id="custom-chat-commands">Customizing Chat Commands</h2>
 <p>Get5 allows you to customize the chat commands used by players. By default, all of the above commands can be used,
-but you can define your own set of commands by adding aliases to the file at
-<code>addons/sourcemod/configs/get5/commands.cfg</code>. This file is empty by default. When you add a new alias for a command,
-that alias will be the one Get5 uses when it references the command in chat.</p>
+but you can define your own set of commands by adding aliases to
+the <a href="../configuration#chat-commands-file">chat commands file</a>. This file is empty by default. When you add a new alias
+for a command, that alias will be the one Get5 uses when it references the command in chat.</p>
 <p>If you provide an invalid command (on the <em>right-hand side</em> in the config file), an error will be thrown. Avoid mapping
 already used commands to other functionality, as it will likely be confusing to players. You may add multiple aliases
 for a single command, but note that the <strong>last</strong> alias to be assigned to the command will be the one Get5 uses in chat.</p>
@@ -1544,17 +1544,244 @@ contain any sensitive information <em>or</em> that it is protected by authorizat
 to that team. Omitting the team argument sets no winner (tie). This command can be configured to
 also <a href="../configuration#get5_kick_on_force_end">kick players</a>.</dd>
 </dl>
-<h4 id="get5_creatematch"><code>get5_creatematch [map name] [matchid]</code></h4>
+<h4 id="get5_creatematch"><code>get5_creatematch [--parameter] [value]</code></h4>
 <dl>
-<dd>Creates a BO1 match with the current players on the server. <code>map name</code> defaults to the current map and <code>matchid</code>
-defaults to <code>manual</code>. You should <strong>not</strong> provide a match ID if you use the <a href="../stats_system#mysql">MySQL extension</a>.</dd>
+<dd>Creates a new match using a CLI-approach. You can use this command to create almost any kind of match by combining
+any of the following parameters as arguments. Running this command with no arguments creates a single match (5v5) with
+the first map pool from your <a href="../configuration#maps-file">maps file</a> and map selection enabled, as explained by the
+defaults below.</dd>
 </dl>
+<div class="admonition tip">
+<p class="admonition-title">Single dash is a shorthand &amp; booleans don't take arguments</p>
+<p>The parameters all have a double-dash (<code>--num_maps</code>) and a single-dash name (<code>-nm</code>). This is simply to allow you to
+shorten the command if you use the CLI often or with automated systems. Boolean switches can be disabled by simply
+<em>not</em> passing the parameter as they all default to <code>false</code>.</p>
+</div>
+<ul>
+<li>
+<p><code>--num_maps</code> or <code>-nm</code></p>
+<ul>
+<li>The number of maps to play in the series.</li>
+<li>Type: Integer</li>
+<li>Default: <code>1</code></li>
+</ul>
+</li>
+<li>
+<p><code>--players_per_team</code> or <code>-ppt</code></p>
+<ul>
+<li>Determines the number of players per team.</li>
+<li>Type: Integer</li>
+<li>Default: <code>5</code> or <code>2</code> (depending on <code>--wingman</code>)</li>
+</ul>
+</li>
+<li>
+<p><code>--coaches_per_team</code> or <code>-cpt</code></p>
+<ul>
+<li>Determines the maximum number of coaches per team.</li>
+<li>Type: Integer</li>
+<li>Default: <code>2</code></li>
+</ul>
+</li>
+<li>
+<p><code>--matchid</code> or <code>-id</code></p>
+<ul>
+<li>The ID of the match.</li>
+<li>Type: String</li>
+<li>Default: <code>""</code></li>
+</ul>
+</li>
+<li>
+<p><code>--skip_veto</code> or <code>-sv</code></p>
+<ul>
+<li>Disables the <a href="../veto">map selection system</a>.</li>
+<li>Type: Boolean (no arguments)</li>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li>
+<p><code>--side_type</code> or <code>-st</code></p>
+<ul>
+<li>Determines the behavior for side selection, unless overridden by <code>--map_sides</code>.</li>
+<li>Type: <code>String</code>; one of <code>standard</code>, <code>always_knife</code>, <code>never_knife</code>, <code>random</code></li>
+<li>Default: <code>standard</code></li>
+</ul>
+</li>
+<li>
+<p><code>--coaches_must_ready</code> or <code>-cmr</code></p>
+<ul>
+<li>Determines if coaches must also <a href="../commands#ready"><code>!ready</code></a> up.</li>
+<li>Type: <code>Boolean</code> (no arguments)</li>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li>
+<p><code>--min_players_to_ready</code> or <code>-mptr</code></p>
+<ul>
+<li>Determines the minimum number of players that must be present before the <a href="../commands#forceready"><code>!forceready</code></a>
+  command may be used.</li>
+<li>Type: <code>Integer</code></li>
+<li>Default: <code>0</code></li>
+</ul>
+</li>
+<li>
+<p><code>--min_spectators_to_ready</code> or <code>-mstr</code></p>
+<ul>
+<li>Determines the minimum number of spectators that must <a href="../commands#ready"><code>!ready</code></a> up.</li>
+<li>Type: <code>Integer</code></li>
+<li>Default: <code>0</code></li>
+</ul>
+</li>
+<li>
+<p><code>--scrim</code> or <code>-s</code></p>
+<ul>
+<li>Configures the match for <a href="../getting_started#scrims">scrim mode</a>. Cannot be combined with <code>--team2</code>. Optionally
+  takes the name of the opposing team as an argument. <code>--team1</code> defines the home team. This parameter acts a boolean
+  switch if no team name argument is supplied, in which case the opposing team will be unnamed.</li>
+<li>Type: <code>String</code></li>
+<li>Default: <code>"" / false</code></li>
+</ul>
+</li>
+<li>
+<p><code>--wingman</code> or <code>-w</code></p>
+<ul>
+<li>Configures the match for <a href="../wingman">wingman mode</a>. This sets the default of <code>--players_per_team</code> to <code>2</code> if not
+  provided.</li>
+<li>Type: <code>Boolean</code> (no arguments)</li>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li>
+<p><code>--veto_first</code> or <code>-vf</code></p>
+<ul>
+<li>Determines the logic for selecting which team gets to pick or ban a map first. Ignored if <code>--skip_veto</code> is passed.</li>
+<li>Type: <code>String</code>; one of <code>team1</code>, <code>team2</code>, <code>random</code></li>
+<li>Default: <code>team1</code></li>
+</ul>
+</li>
+<li>
+<p><code>--current_map</code> or <code>-cm</code></p>
+<ul>
+<li>Creates a match on the <em>current</em> map. Cannot be combined with <code>--num_maps &gt; 1</code> or <code>--maplist</code>.</li>
+<li>Type: <code>Boolean</code> (no arguments)</li>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li>
+<p><code>--no_series_clinch</code> or <code>-nsc</code></p>
+<ul>
+<li>Configures the series to play all maps, even if a team has practically won. I.e. plays all 3 maps of a Bo3.
+  Irrelevant if <code>--num_maps</code> is 1.</li>
+<li>Type: <code>Boolean</code> (no arguments)</li>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li>
+<p><code>--team1</code> or <code>-t1</code></p>
+<ul>
+<li>Sets <code>team1</code>. Must be the key of a team in
+  the <a href="../configuration#teams-file">teams file</a>. If you omit this <em>and</em> <code>--team2</code>, the match will be created with
+  the current teams, and each team must have <code>--players_per_team</code> players present. Must not be equal to <code>--team2</code>.</li>
+<li>Type: <code>String</code></li>
+<li>Default: <code>""</code></li>
+</ul>
+</li>
+<li>
+<p><code>--team2</code> or <code>-t2</code></p>
+<ul>
+<li>Sets <code>team2</code>. Must be the key of a team in the <a href="../configuration#teams-file">teams file</a>. Cannot be used
+  with <code>--scrim</code>. Must not be equal to <code>--team1</code>.</li>
+<li>Type: <code>String</code></li>
+<li>Default: <code>""</code></li>
+</ul>
+</li>
+<li>
+<p><code>--maplist</code> or <code>-ml</code></p>
+<ul>
+<li>Uses a custom map list instead of the maps from the <a href="../configuration#maps-file">maps file</a>. Must be a
+  comma-separated list of map names, i.e. <code>de_mirage,de_nuke,de_vertigo</code> Cannot be used with <code>--current_map</code>
+  or <code>--map_pool</code> and cannot contain fewer maps than provided to <code>--num_maps</code>.</li>
+<li>Type: <code>String[]</code></li>
+<li>Default: <code>[]</code></li>
+</ul>
+</li>
+<li>
+<p><code>--map_sides</code> or <code>-ms</code></p>
+<ul>
+<li>Presets the sides for each map. Must be a comma-separated list of side options. It does <em>not</em> need to contain as
+  many parameters as <code>--num_maps</code>, i.e. <code>team1_ct,team2_ct</code> could be used for a Bo3, and the side on the last map
+  would be determined by the value of <code>--side_type</code>.</li>
+<li>Type: <code>String[]</code>, any of: <code>team1_ct</code>, <code>team2_ct</code>, <code>knife</code></li>
+<li>Default: <code>[]</code></li>
+</ul>
+</li>
+<li>
+<p><code>--map_pool</code> or <code>-mp</code></p>
+<ul>
+<li>Determines which key to read maps from in the <a href="../configuration#maps-file">maps file</a>. The selected map pool
+  cannot contain fewer maps than <code>--num_maps</code>. Cannot be used with <code>--maplist</code> or <code>--current_map</code>.</li>
+<li>Type: String</li>
+<li>Default: <code>default</code></li>
+</ul>
+</li>
+<li>
+<p><code>--cvars</code> or <code>-cv</code></p>
+<ul>
+<li>Determines which key to read <code>cvars</code> from in the <a href="../configuration#cvars-file">cvars file</a>.</li>
+<li>Type: String</li>
+<li>Default: <code>default</code></li>
+</ul>
+</li>
+<li>
+<p><code>--match_title</code> or <code>-mt</code></p>
+<ul>
+<li>Sets the title of the match.</li>
+<li>Type: String</li>
+<li>Default: <code>""</code></li>
+</ul>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title"><code>get5_creatematch</code> examples</p>
+<p>Bo3 with current teams and map selection, using the default maps from the <a href="../configuration#maps-file">maps file</a>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>get5_creatematch<span class="w"> </span>--num_maps<span class="w"> </span><span class="m">3</span>
+</code></pre></div></p>
+<p>Bo3 with current teams using a specific set of maps:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>get5_creatematch<span class="w"> </span>--num_maps<span class="w"> </span><span class="m">3</span><span class="w"> </span>--maplist<span class="w"> </span><span class="s2">&quot;de_nuke,de_mirage,de_inferno,de_vertigo,de_cache&quot;</span>
+</code></pre></div></p>
+<p>Single match with specific teams from the <a href="../configuration#teams-file">teams file</a> and the default maps from the <a href="../configuration#maps-file">maps file</a>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>get5_creatematch<span class="w"> </span>--team1<span class="w"> </span><span class="s2">&quot;astralis&quot;</span><span class="w"> </span>--team2<span class="w"> </span><span class="s2">&quot;navi&quot;</span>
+</code></pre></div></p>
+<p>A Bo3 scrim against a team named "Heroic" with home team preset to Astralis (from the <a href="../configuration#teams-file">teams file</a>) and using the
+default map pool from the <a href="../configuration#maps-file">maps file</a>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>get5_creatematch<span class="w"> </span>--num_maps<span class="w"> </span><span class="m">3</span><span class="w"> </span>--team1<span class="w"> </span><span class="s2">&quot;astralis&quot;</span><span class="w"> </span>--scrim<span class="w"> </span><span class="s2">&quot;Heroic&quot;</span>
+</code></pre></div></p>
+<p>A single scrim match against an unnamed team with a custom set of <code>cvars</code> (from the <a href="../configuration#cvars-file">cvars file</a>):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>get5_creatematch<span class="w"> </span>--team1<span class="w"> </span><span class="s2">&quot;astralis&quot;</span><span class="w"> </span>--scrim<span class="w"> </span>--cvars<span class="w"> </span><span class="s2">&quot;no_ff_casual&quot;</span>
+</code></pre></div></p>
+<p>A Bo5 from an extended map pool in the <a href="../configuration#maps-file">maps file</a> and fixed teams from the <a href="../configuration#teams-file">teams file</a>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>get5_creatematch<span class="w"> </span>--num_maps<span class="w"> </span><span class="m">5</span><span class="w"> </span>--team1<span class="w"> </span><span class="s2">&quot;astralis&quot;</span><span class="w"> </span>--team2<span class="w"> </span><span class="s2">&quot;navi&quot;</span><span class="w"> </span>--map_pool<span class="w"> </span><span class="s2">&quot;extended&quot;</span>
+</code></pre></div></p>
+<p>A 1v1 wingman match with current players on the current map:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>get5_creatematch<span class="w"> </span>--current_map<span class="w"> </span>--wingman<span class="w"> </span>--players_per_team<span class="w"> </span><span class="m">1</span>
+</code></pre></div></p>
+<p>A Bo3 with current teams, sides <em>and</em> maps already set and a custom title. <code>--skip_veto</code> is not required when
+<code>--num_maps</code> is the same as the number of maps provided to <code>--maplist</code>.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>get5_creatematch<span class="w"> </span>--num_maps<span class="w"> </span><span class="m">3</span><span class="w"> </span>--maplist<span class="w"> </span><span class="s2">&quot;de_nuke,de_mirage,de_inferno&quot;</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>--map_sides<span class="w"> </span><span class="s2">&quot;team1_ct,team2_ct,knife&quot;</span><span class="w"> </span>--match_title<span class="w"> </span><span class="s2">&quot;Blast Fall Final 2022&quot;</span>
+</code></pre></div></p>
+</div>
 <h4 id="get5_scrim"><code>get5_scrim [opposing team name] [map name] [matchid]</code></h4>
 <dl>
-<dd>Creates a <a href="../getting_started#scrims">scrim</a> on the current map. The opposing team name defaults to <code>Away</code>
-and the map defaults to the current map. <code>matchid</code> defaults to <code>scrim</code>. You should <strong>not</strong> provide a match ID if
-you use the <a href="../stats_system#mysql">MySQL extension</a>.</dd>
+<dd>Creates a <a href="../getting_started#scrims">scrim</a> on the current map using the <code>scrim_template.cfg</code> approach. The
+opposing team name defaults to <code>Away</code> and the map defaults to the current map. <code>matchid</code> defaults to <code>scrim</code>. You should
+<strong>not</strong> provide a match ID if you use the <a href="../stats_system#mysql">MySQL extension</a>.</dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Legacy</p>
+<p>You should consider using the teams file + <code>get5_creatematch</code> CLI-approach instead of this command.
+The same could be accomplished by adding your home team to your teams file and running this command:<br>
+<code>get5_creatematch --scrim [opposing team name] --maplist [map name] --matchid [match id] --team1 [home team id]</code></p>
+</div>
 <h4 id="get5_addplayer"><code>get5_addplayer &lt;auth&gt; &lt;team1|team2|spec&gt; [name]</code></h4>
 <dl>
 <dd>Adds a Steam ID to a team (can be any format for the Steam ID). The name parameter optionally locks the player's
@@ -1576,7 +1803,7 @@ from the server immediately.</dd>
 <dl>
 <dd>Adds the last kicked Steam ID to a team. The name parameter optionally locks the player's name.</dd>
 </dl>
-<h4 id="get5_removekickedplayer"><code>get5_removekickedplayer &lt;team1|team2|spec&gt;</code></h4>
+<h4 id="get5_removekickedplayer"><code>get5_removekickedplayer</code></h4>
 <dl>
 <dd>Removes the last kicked Steam ID from all teams. Cannot be used in scrim mode.</dd>
 </dl>
@@ -1597,30 +1824,30 @@ during ready-up phases.</dd>
 <div class="admonition abstract">
 <p class="admonition-title">Definition</p>
 <p><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" /> Properties marked as <code>undefined</code> are only present if a match configuration has been loaded.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">StatusTeam</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="c1">// (11)</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="s2">&quot;series_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="c1">// (12)</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="s2">&quot;current_map_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="c1">// (13)</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="s2">&quot;connected_clients&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="c1">// (14)</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="s2">&quot;ready&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">,</span><span class="w"> </span><span class="c1">// (15)</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="s2">&quot;side&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;t&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;ct&quot;</span><span class="w"> </span><span class="c1">// (16)</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">Status</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="s2">&quot;plugin_version&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="c1">// (1)</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="s2">&quot;gamestate&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;pre_veto&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;veto&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;warmup&quot;</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;knife&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;waiting_for_knife_decision&quot;</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;going_live&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;live&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;pending_restore&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;post_game&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// (2)</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="s2">&quot;paused&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">,</span><span class="w"> </span><span class="c1">// (3)</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="s2">&quot;loaded_config_file&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (4)</span>
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">    </span><span class="s2">&quot;matchid&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (5)</span>
-<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">    </span><span class="s2">&quot;map_number&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (6)</span>
-<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">    </span><span class="s2">&quot;round_number&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (7)</span>
-<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">    </span><span class="s2">&quot;round_time&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (8)</span>
-<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="s2">&quot;team1&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">StatusTeam</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (9),</span>
-<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">    </span><span class="s2">&quot;team2&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">StatusTeam</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (10)</span>
-<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">    </span><span class="s2">&quot;maps&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (17)</span>
-<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">StatusTeam</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="c1">// (11)</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="s2">&quot;series_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="c1">// (12)</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="s2">&quot;current_map_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="c1">// (13)</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="s2">&quot;connected_clients&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="c1">// (14)</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="s2">&quot;ready&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">,</span><span class="w"> </span><span class="c1">// (15)</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="s2">&quot;side&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;t&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;ct&quot;</span><span class="w"> </span><span class="c1">// (16)</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="p">}</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">Status</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">    </span><span class="s2">&quot;plugin_version&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="c1">// (1)</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">    </span><span class="s2">&quot;gamestate&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;pre_veto&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;veto&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;warmup&quot;</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;knife&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;waiting_for_knife_decision&quot;</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;going_live&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;live&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;pending_restore&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;post_game&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// (2)</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="w">    </span><span class="s2">&quot;paused&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">,</span><span class="w"> </span><span class="c1">// (3)</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="w">    </span><span class="s2">&quot;loaded_config_file&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (4)</span>
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="w">    </span><span class="s2">&quot;matchid&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (5)</span>
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="w">    </span><span class="s2">&quot;map_number&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (6)</span>
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="w">    </span><span class="s2">&quot;round_number&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (7)</span>
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="w">    </span><span class="s2">&quot;round_time&quot;</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (8)</span>
+<a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a><span class="w">    </span><span class="s2">&quot;team1&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">StatusTeam</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (9),</span>
+<a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="w">    </span><span class="s2">&quot;team2&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">StatusTeam</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="c1">// (10)</span>
+<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a><span class="w">    </span><span class="s2">&quot;maps&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="w"> </span><span class="c1">// (17)</span>
+<a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a><span class="p">}</span>
 </code></pre></div>
 <ol>
 <li>The version of Get5 you are currently running, along with that version's commit. <code>Example: "0.8.1-8ef7ffa3"</code></li>
@@ -1667,37 +1894,37 @@ during ready-up phases.</dd>
 </div>
 <details class="example">
 <summary>Example</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="s2">&quot;plugin_version&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;0.9.4-8ef7ffa3&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="s2">&quot;gamestate&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;live&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="s2">&quot;paused&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="s2">&quot;loaded_config_file&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;addons/sourcemod/configs/get5/match_config.json&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="s2">&quot;matchid&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1743&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="s2">&quot;map_number&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="s2">&quot;round_number&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">14</span><span class="p">,</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="s2">&quot;round_time&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">14234</span><span class="p">,</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="s2">&quot;team1&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;NaVi&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="s2">&quot;series_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="s2">&quot;current_map_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="s2">&quot;connected_clients&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">        </span><span class="s2">&quot;ready&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">        </span><span class="s2">&quot;side&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;t&quot;</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">    </span><span class="p">},</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span><span class="s2">&quot;team2&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">        </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Astralis&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">        </span><span class="s2">&quot;series_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span>
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">        </span><span class="s2">&quot;current_map_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span>
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">        </span><span class="s2">&quot;connected_clients&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span>
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">        </span><span class="s2">&quot;ready&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="w">        </span><span class="s2">&quot;side&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;ct&quot;</span>
-<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">    </span><span class="p">},</span>
-<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="w">    </span><span class="s2">&quot;maps&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">        </span><span class="s2">&quot;de_dust2&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="w">        </span><span class="s2">&quot;de_nuke&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="w">        </span><span class="s2">&quot;de_inferno&quot;</span>
-<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="w">    </span><span class="p">]</span>
-<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="s2">&quot;plugin_version&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;0.9.4-8ef7ffa3&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="s2">&quot;gamestate&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;live&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="s2">&quot;paused&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="s2">&quot;loaded_config_file&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;addons/sourcemod/configs/get5/match_config.json&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="s2">&quot;matchid&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1743&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">    </span><span class="s2">&quot;map_number&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span><span class="s2">&quot;round_number&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">14</span><span class="p">,</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="s2">&quot;round_time&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">14234</span><span class="p">,</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">    </span><span class="s2">&quot;team1&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">        </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;NaVi&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">        </span><span class="s2">&quot;series_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">        </span><span class="s2">&quot;current_map_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">        </span><span class="s2">&quot;connected_clients&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">        </span><span class="s2">&quot;ready&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">        </span><span class="s2">&quot;side&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;t&quot;</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">    </span><span class="s2">&quot;team2&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">        </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Astralis&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">        </span><span class="s2">&quot;series_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">        </span><span class="s2">&quot;current_map_score&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="w">        </span><span class="s2">&quot;connected_clients&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">        </span><span class="s2">&quot;ready&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">        </span><span class="s2">&quot;side&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;ct&quot;</span>
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="w">    </span><span class="s2">&quot;maps&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="w">        </span><span class="s2">&quot;de_dust2&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a><span class="w">        </span><span class="s2">&quot;de_nuke&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="w">        </span><span class="s2">&quot;de_inferno&quot;</span>
+<a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="w">    </span><span class="p">]</span>
+<a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a><span class="p">}</span>
 </code></pre></div>
 </details>
 <h4 id="get5_listbackups"><code>get5_listbackups [matchid]</code></h4>
@@ -1715,8 +1942,8 @@ See <a href="https://wiki.alliedmods.net/Admin_Commands_(SourceMod)#How_to_Targe
 <div class="admonition example">
 <p class="admonition-title">User ID vs client index</p>
 <p>To view user IDs, type <code>users</code> in console. In this example, <code>43</code> is the user ID and <code>1</code> is the client index:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>&gt; users
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>1:43:&quot;Quinn&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>&gt; users
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>1:43:&quot;Quinn&quot;
 </code></pre></div></p>
 </div>
 <h4 id="get5_dumpstats"><code>get5_dumpstats [file]</code></h4>

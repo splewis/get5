@@ -551,18 +551,24 @@
     HTTP
   </a>
   
+    <nav class="md-nav" aria-label="HTTP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#events" class="md-nav__link">
+    Events
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#sourcemod-forwards" class="md-nav__link">
     SourceMod Forwards
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#events" class="md-nav__link">
-    Events
   </a>
   
 </li>
@@ -692,18 +698,24 @@
     HTTP
   </a>
   
+    <nav class="md-nav" aria-label="HTTP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#events" class="md-nav__link">
+    Events
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#sourcemod-forwards" class="md-nav__link">
     SourceMod Forwards
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#events" class="md-nav__link">
-    Events
   </a>
   
 </li>
@@ -730,11 +742,11 @@
 <p>Get5 contains an event-logging system that logs many client actions and what is happening in the game. These supplement
 the logs CS:GO makes on its own, but add a lot of additional information about the ongoing match.</p>
 <h2 id="http">HTTP</h2>
-<p>To receive Get5 <a href="#events">events</a> on a web server, define
-a <a href="../configuration#get5_remote_log_url">URL for event logging</a>. Get5 will send all events to the URL as JSON over
-HTTP. You may add a <a href="../configuration#get5_remote_log_header_key">custom HTTP header</a> to authenticate your request.
-Get5 will also add a header called <code>Get5-ServerId</code> with the value of <a href="../configuration#get5_server_id"><code>get5_server_id</code></a>
-<strong>if</strong> it is not an empty string.</p>
+<p>To receive Get5 events on a web server, define a <a href="../configuration#get5_remote_log_url">URL for event logging</a>. Get5
+will send all events to the URL as JSON over HTTP. You may add
+a <a href="../configuration#get5_remote_log_header_key">custom HTTP header</a> to authenticate your request. Get5 will also add a
+header called <code>Get5-ServerId</code> with the value of <a href="../configuration#get5_server_id"><code>get5_server_id</code></a> <strong>if</strong> it is not an
+empty string.</p>
 <div class="admonition warning">
 <p class="admonition-title">Simple HTTP</p>
 <p>There is no deduplication or retry-logic for failed requests. It is assumed that a stable connection can be made
@@ -743,13 +755,12 @@ HTTP <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Keep-Ali
 <strong>is</strong> supported and encouraged if connection is made over a public network. Logging over HTTP requires
 the <a href="../installation#steamworks">SteamWorks</a> extension on your server.</p>
 </div>
+<h3 id="events">Events</h3>
+<p>OpenAPI documentation of the events sent by Get5 is available <a href="../events.html">here</a>.</p>
 <h2 id="sourcemod-forwards">SourceMod Forwards</h2>
 <p>If you are writing your own SourceMod plugin, you can hook onto
 the Get5 <a href="https://github.com/splewis/get5/blob/master/scripting/include/get5.inc">forwards</a>. This is
-what <code>get5_apistats</code> and <a href="../stats_system#mysql"><code>get5_mysqlstats</code></a> both do. The paths of the <code>POST</code> endpoints in the
-table below indicate the name of the forward in SourceMod.</p>
-<h2 id="events">Events</h2>
-<p>Documentation of the events is available <a href="../events.html">here</a>.</p>
+what <code>get5_apistats</code> and <a href="../stats_system#mysql"><code>get5_mysqlstats</code></a> both do.</p>
 
 
 

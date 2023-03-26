@@ -475,9 +475,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    Example
+  <a href="#examples" class="md-nav__link">
+    Examples
   </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    Via get5_loadbackup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#menu" class="md-nav__link">
+    Via !get5
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -504,7 +524,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example_1" class="md-nav__link">
+  <a href="#example" class="md-nav__link">
     Example
   </a>
   
@@ -736,9 +756,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    Example
+  <a href="#examples" class="md-nav__link">
+    Examples
   </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    Via get5_loadbackup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#menu" class="md-nav__link">
+    Via !get5
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -765,7 +805,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example_1" class="md-nav__link">
+  <a href="#example" class="md-nav__link">
     Example
   </a>
   
@@ -826,10 +866,11 @@ are <a href="..configuration/#get5_server_id"><code>get5_server_id</code></a>, <
 then deletes the original backup file. A special backup
 called <code>get5_backup%s_match%s_map%d_prelive.cfg</code> is created and should be used if you want to restore to the beginning
 of the map, before the knife round.</p>
-<h3 id="example">Example</h3>
+<h3 id="examples">Examples</h3>
+<h4 id="command-line">Via <a href="../commands#get5_loadbackup"><code>get5_loadbackup</code></a></h4>
 <p>When in a match, you can call <a href="../commands#get5_listbackups"><code>get5_listbackups</code></a> to view all backups for the current
-match. Note that all rounds and map numbers start at 0.</p>
-<p>They print in the format <code>filepath timestamp team1 team2 map team1_score team2_score</code>.</p>
+match. Note that all rounds and map numbers start at 0 when using the command-line.</p>
+<p>Files print in the format <code>filepath timestamp team1 team2 map team1_score team2_score</code>.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>&gt; get5_listbackups
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>get5_backup4_match1844_map0_prelive.cfg 2022-07-26 18:51:25 &quot;Team A&quot; &quot;Team B&quot;
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>get5_backup4_match1844_map0_round30.cfg 2022-07-26 19:13:41 &quot;Team A&quot; &quot;Team B&quot; de_dust2 2 28
@@ -846,6 +887,10 @@ match. Note that all rounds and map numbers start at 0.</p>
 <a href="../configuration#get5_server_id">server with ID 4</a>, run <a href="../commands#get5_loadbackup"><code>get5_loadbackup</code></a>:</p>
 <p><code>get5_loadbackup get5_backup4_match1844_map0_round12.cfg</code></p>
 </div>
+<h4 id="menu">Via <a href="../commands#get5"><code>!get5</code></a></h4>
+<p>You can also load backups from the <code>!get5</code> menu. When a match is loaded, it will list only backups for the loaded
+match (based on the match ID), and it will display the round number to easily select. Note that within the menu, round-
+and map numbers are <strong>not zero-indexed</strong> in order to be more user-friendly.</p>
 <p>After loading a backup, the game state is restored and the game is <a href="../pausing#backup">paused</a>. Both teams
 must <a href="../commands#unpause"><code>!unpause</code></a> to continue.</p>
 <h3 id="upload">Automatic Upload</h3>
@@ -872,7 +917,7 @@ about this backup, just discard the file if the <code>Get5-RoundNumber</code> he
 <h4 id="authorization">Authorization</h4>
 <p>You can add a <a href="../configuration#get5_remote_backup_header_key">custom header</a> to the request for authorization, if
 required.</p>
-<h4 id="example_1">Example</h4>
+<h4 id="example">Example</h4>
 <p>For an example of how to read the file on your web server, please see the example for <a href="../gotv#example">demo uploads</a>.
 The same principles apply to backups.</p>
 <h3 id="remote">Loading from Remote</h3>

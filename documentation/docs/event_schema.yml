@@ -1,13 +1,19 @@
 ---
-openapi: "3.0.3"
+openapi: "3.1.0"
 info:
   title: "Get5 Event Documentation"
   version: ""
-  description: | 
+  description: |
     This is the documentation of all JSON events and native plugin forwards for Get5. All HTTP events get
-    sent as POST requests to the root of the URL you provided for `get5_remote_log_url` in your Get5 configuration.
-paths:
-  "/Get_OnEvent":
+    sent as POST requests to the root of the URL you provided for
+    [`get5_remote_log_url`](configuration#get5_remote_log_url) in your Get5 configuration. You should inspect the value
+    of the `event` property to determine the type of event. You cannot select which events to receive, but you can
+    instead discard the ones you don't need.
+    
+    You are expected to return a 200-range HTTP code to all request, or Get5 will consider them failed. The HTTP timeout
+    is 15 seconds and there are no automatic retries.
+webhooks:
+  "Get_OnEvent":
     post:
       tags:
         - All Events
@@ -22,8 +28,7 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/Get5Event"
-      responses: { }
-  "/Get5_OnGameStateChanged":
+  "Get5_OnGameStateChanged":
     post:
       tags:
         - Series Flow
@@ -53,8 +58,7 @@ paths:
                         in SourceMod.
                       allOf:
                         - "$ref": "#/components/schemas/Get5State"
-      responses: { }
-  "/Get5_OnPlayerConnected":
+  "Get5_OnPlayerConnected":
     post:
       tags:
         - Client Actions
@@ -77,8 +81,7 @@ paths:
                       type: string
                       example: '34.132.182.66'
                       description: The IP address of the connecting client. `GetIPAddress()` and `SetIPAddress()` in SourceMod.
-      responses: { }
-  "/Get5_OnPlayerDisconnected":
+  "Get5_OnPlayerDisconnected":
     post:
       tags:
         - Client Actions
@@ -97,8 +100,7 @@ paths:
                     event:
                       enum:
                         - player_disconnect
-      responses: { }
-  "/Get5_OnPreLoadMatchConfig":
+  "Get5_OnPreLoadMatchConfig":
     post:
       tags:
         - Series Flow
@@ -121,8 +123,7 @@ paths:
                       type: string
                       description: The file the server attempted to load. `GetFileName()`
                         and `SetFileName()` in SourceMod.
-      responses: { }
-  "/Get5_OnLoadMatchConfigFailed":
+  "Get5_OnLoadMatchConfigFailed":
     post:
       tags:
         - Series Flow
@@ -146,8 +147,7 @@ paths:
                       description: The error description for why the config load failed.
                         `GetReason()` and `SetReason()` in SourceMod.
                       example: You done goofed.
-      responses: { }
-  "/Get5_OnSeriesInit":
+  "Get5_OnSeriesInit":
     post:
       tags:
         - Series Flow
@@ -174,8 +174,7 @@ paths:
                       "$ref": "#/components/schemas/Get5TeamWrapper"
                     team2:
                       "$ref": "#/components/schemas/Get5TeamWrapper"
-      responses: { }
-  "/Get5_OnMatchPaused":
+  "Get5_OnMatchPaused":
     post:
       tags:
         - Map Flow
@@ -195,8 +194,7 @@ paths:
                     event:
                       enum:
                         - game_paused
-      responses: { }
-  "/Get5_OnMatchUnpaused":
+  "Get5_OnMatchUnpaused":
     post:
       tags:
         - Map Flow
@@ -215,8 +213,7 @@ paths:
                     event:
                       enum:
                         - game_unpaused
-      responses: { }
-  "/Get5_OnPauseBegan":
+  "Get5_OnPauseBegan":
     post:
       tags:
         - Map Flow
@@ -236,8 +233,7 @@ paths:
                     event:
                       enum:
                         - pause_began
-      responses: { }
-  "/Get5_OnMapResult":
+  "Get5_OnMapResult":
     post:
       tags:
         - Series Flow
@@ -262,8 +258,7 @@ paths:
                       $ref: "#/components/schemas/Get5StatsTeam"
                     winner:
                       $ref: "#/components/schemas/Get5Winner"
-      responses: { }
-  "/Get5_OnSeriesResult":
+  "Get5_OnSeriesResult":
     post:
       tags:
         - Series Flow
@@ -302,8 +297,7 @@ paths:
                       description: |
                         The number of seconds until Get5 restores any changed ConVars and resets its game state to
                         `none` after the series has ended.
-      responses: { }
-  "/Get5_OnKnifeRoundStarted":
+  "Get5_OnKnifeRoundStarted":
     post:
       tags:
         - Map Flow
@@ -322,8 +316,7 @@ paths:
                     event:
                       enum:
                         - knife_start
-      responses: { }
-  "/Get5_OnKnifeRoundWon":
+  "Get5_OnKnifeRoundWon":
     post:
       tags:
         - Map Flow
@@ -349,8 +342,7 @@ paths:
                       type: boolean
                       description: Indicates if the winning team elected to swap sides
                         or not. `Swapped` on SourceMod.
-      responses: { }
-  "/Get5_OnSidePicked":
+  "Get5_OnSidePicked":
     post:
       tags:
         - Series Flow
@@ -376,8 +368,7 @@ paths:
                       minimum: 0
                       description: The map number the team chose a side for. `MapNumber`
                         in SourceMod.
-      responses: { }
-  "/Get5_OnMapPicked":
+  "Get5_OnMapPicked":
     post:
       tags:
         - Series Flow
@@ -400,8 +391,7 @@ paths:
                       type: integer
                       minimum: 0
                       description: The map number of the chosen map.
-      responses: { }
-  "/Get5_OnMapVetoed":
+  "Get5_OnMapVetoed":
     post:
       tags:
         - Series Flow
@@ -420,8 +410,7 @@ paths:
                     event:
                       enum:
                         - map_vetoed
-      responses: { }
-  "/Get5_OnTeamReadyStatusChanged":
+  "Get5_OnTeamReadyStatusChanged":
     post:
       tags:
         - Map Flow
@@ -449,8 +438,7 @@ paths:
                         an integer enum.
                       allOf:
                         - "$ref": "#/components/schemas/Get5State"
-      responses: { }
-  "/Get5_OnGoingLive":
+  "Get5_OnGoingLive":
     post:
       tags:
         - Map Flow
@@ -469,8 +457,7 @@ paths:
                     event:
                       enum:
                         - going_live
-      responses: { }
-  "/Get5_OnRoundStart":
+  "Get5_OnRoundStart":
     post:
       tags:
         - Live
@@ -489,8 +476,7 @@ paths:
                     event:
                       enum:
                         - round_start
-      responses: { }
-  "/Get5_OnRoundEnd":
+  "Get5_OnRoundEnd":
     post:
       tags:
         - Live
@@ -526,8 +512,7 @@ paths:
                       description: The stats for team 2.
                       allOf:
                         - $ref: "#/components/schemas/Get5StatsTeam"
-      responses: { }
-  "/Get5_OnRoundStatsUpdated":
+  "Get5_OnRoundStatsUpdated":
     post:
       tags:
         - Live
@@ -546,8 +531,7 @@ paths:
                     event:
                       enum:
                         - stats_updated
-      responses: { }
-  "/Get5_OnBackupRestore":
+  "Get5_OnBackupRestore":
     post:
       tags:
         - Series Flow
@@ -571,8 +555,7 @@ paths:
                       type: string
                       description: The name of the file that was used to restore the game
                         state from. `GetFileName()` and `SetFileName()` in SourceMod.
-      responses: { }
-  "/Get5_OnDemoFinished":
+  "Get5_OnDemoFinished":
     post:
       tags:
         - Series Flow
@@ -591,8 +574,7 @@ paths:
                     event:
                       enum:
                         - demo_finished
-      responses: { }
-  "/Get5_OnDemoUploadEnded":
+  "Get5_OnDemoUploadEnded":
     post:
       tags:
         - Series Flow
@@ -615,8 +597,7 @@ paths:
                     success:
                       type: boolean
                       description: Whether the upload was successful. `Success` in SourceMod.
-      responses: { }
-  "/Get5_OnPlayerBecameMVP":
+  "Get5_OnPlayerBecameMVP":
     post:
       tags:
         - Live
@@ -639,8 +620,7 @@ paths:
                       type: integer
                       minimum: 0
                       description: The reason for the MVP assignment. `Reason` in SourceMod.
-      responses: { }
-  "/Get5_OnGrenadeThrown":
+  "Get5_OnGrenadeThrown":
     post:
       tags:
         - Live
@@ -659,8 +639,7 @@ paths:
                     event:
                       enum:
                         - grenade_thrown
-      responses: { }
-  "/Get5_OnPlayerDeath":
+  "Get5_OnPlayerDeath":
     post:
       tags:
         - Live
@@ -719,8 +698,7 @@ paths:
                         - "$ref": "#/components/schemas/Get5Player"
                     assist:
                       "$ref": "#/components/schemas/Get5AssisterObject"
-      responses: { }
-  "/Get5_OnPlayerSay":
+  "Get5_OnPlayerSay":
     post:
       tags:
         - Client Actions
@@ -753,8 +731,7 @@ paths:
                       description: |
                         The arguments passed to the command; the message written. `GetMessage()` and `SetMessage()` in
                         SourceMod.
-      responses: { }
-  "/Get5_OnHEGrenadeDetonated":
+  "Get5_OnHEGrenadeDetonated":
     post:
       tags:
         - Live
@@ -774,8 +751,7 @@ paths:
                     event:
                       enum:
                         - hegrenade_detonated
-      responses: { }
-  "/Get5_OnMolotovDetonated":
+  "Get5_OnMolotovDetonated":
     post:
       tags:
         - Live
@@ -797,8 +773,7 @@ paths:
                     event:
                       enum:
                         - molotov_detonated
-      responses: { }
-  "/Get5_OnFlashbangDetonated":
+  "Get5_OnFlashbangDetonated":
     post:
       tags:
         - Live
@@ -819,8 +794,7 @@ paths:
                     event:
                       enum:
                         - flashbang_detonated
-      responses: { }
-  "/Get5_OnSmokeGrenadeDetonated":
+  "Get5_OnSmokeGrenadeDetonated":
     post:
       tags:
         - Live
@@ -844,8 +818,7 @@ paths:
                       type: boolean
                       description: Indicates if the smoke distinguished an active molotov/firebomb.
                         `ExtinguishedMolotov` in SourceMod.
-      responses: { }
-  "/Get5_OnDecoyStarted":
+  "Get5_OnDecoyStarted":
     post:
       tags:
         - Live
@@ -865,8 +838,7 @@ paths:
                     event:
                       enum:
                         - decoygrenade_started
-      responses: { }
-  "/Get5_OnBombPlanted":
+  "Get5_OnBombPlanted":
     post:
       tags:
         - Live
@@ -885,8 +857,7 @@ paths:
                     event:
                       enum:
                         - bomb_planted
-      responses: { }
-  "/Get5_OnBombDefused":
+  "Get5_OnBombDefused":
     post:
       tags:
         - Live
@@ -911,8 +882,7 @@ paths:
                       example: 12438
                       description: Indicates how many milliseconds remained on the bomb
                         timer when it was defused.
-      responses: { }
-  "/Get5_OnBombExploded":
+  "Get5_OnBombExploded":
     post:
       tags:
         - Live
@@ -931,7 +901,6 @@ paths:
                     event:
                       enum:
                         - bomb_exploded
-      responses: { }
 components:
   schemas:
     Get5State:

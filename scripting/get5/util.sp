@@ -5,6 +5,7 @@
 #define MAX_CVAR_LENGTH             513  // 512 + 1 for buffers
 #define MAX_INTEGER_STRING_LENGTH   16
 #define MAX_FLOAT_STRING_LENGTH     32
+#define SERVER_ID_LENGTH            65
 #define AUTH_LENGTH                 64
 #define GAME_MODE_WINGMAN           2
 #define GAME_MODE_COMPETITIVE       1

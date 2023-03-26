@@ -134,7 +134,7 @@ bool LoadMatchConfig(const char[] config, char[] error, bool restoreBackup = fal
   UpdateHostname();
 
   // Set mp_backup_round_file to prevent backup file collisions
-  char serverId[65];
+  char serverId[SERVER_ID_LENGTH];
   g_ServerIdCvar.GetString(serverId, sizeof(serverId));
   ServerCommand("mp_backup_round_file backup_%s", serverId);
 
@@ -522,7 +522,7 @@ bool ValidateJSONMatchConfig(const JSON_Object json, char[] error) {
     }
   }
   char boolKeys[][] = {"clinch_series", "wingman", "coaches_must_ready", "skip_veto", "scrim"};
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 5; i++) {
     if (json.HasKey(boolKeys[i]) && (json.GetType(boolKeys[i]) != JSON_Type_Bool &&
                                      (json.GetType(boolKeys[i]) != JSON_Type_Int ||
                                       (json.GetInt(boolKeys[i]) != 0 && json.GetInt(boolKeys[i]) != 1)))) {
@@ -1892,7 +1892,7 @@ Action Command_CreateMatch(int client, int args) {
   matchConfig.SetInt("min_spectators_to_ready", minSpectatorsToReady);
   matchConfig.SetInt("min_players_to_ready", minPlayersToReady);
 
-  char serverId[65];
+  char serverId[SERVER_ID_LENGTH];
   g_ServerIdCvar.GetString(serverId, sizeof(serverId));
   char path[PLATFORM_MAX_PATH];
   FormatEx(path, sizeof(path), TEMP_MATCHCONFIG_JSON, serverId);
@@ -1903,7 +1903,7 @@ Action Command_CreateMatch(int client, int args) {
   if (!LoadMatchConfig(path, error)) {
     ReplyToCommand(client, error);
   } else {
-    // DeleteFileIfExists(path);
+    DeleteFileIfExists(path);
   }
   return Plugin_Handled;
 }

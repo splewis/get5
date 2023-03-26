@@ -69,7 +69,7 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
   char seriesType[64];
   char team1Name[64];
   char team2Name[64];
-  char serverId[65];
+  char serverId[SERVER_ID_LENGTH];
 
   char team1NameSz[sizeof(team1Name) * 2 + 1];
   char team2NameSz[sizeof(team2Name) * 2 + 1];

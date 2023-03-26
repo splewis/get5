@@ -831,8 +831,6 @@ static bool ResetTeams(char[] error) {
   g_SetupMenuTeamForTeam1 = "";
   g_SetupMenuTeamForTeam2 = "";
   json_cleanup_and_delete(g_SetupMenuAvailableTeams);
-  char teamsFile[PLATFORM_MAX_PATH];
-  g_TeamsFileCvar.GetString(teamsFile, sizeof(teamsFile));
   g_SetupMenuAvailableTeams = LoadTeamsFile(error);
   return g_SetupMenuAvailableTeams != null;
 }
@@ -847,7 +845,7 @@ static void CreateMatch(int client) {
     return;
   }
 
-  char serverId[65];
+  char serverId[SERVER_ID_LENGTH];
   g_ServerIdCvar.GetString(serverId, sizeof(serverId));
   char path[PLATFORM_MAX_PATH];
   FormatEx(path, sizeof(path), TEMP_MATCHCONFIG_JSON, serverId);

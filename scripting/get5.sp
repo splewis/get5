@@ -2236,7 +2236,7 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len, bool safeTeamNames = 
     ReplaceString(team1Str, sizeof(team1Str), " ", "_");
     ReplaceString(team2Str, sizeof(team2Str), " ", "_");
   }
-  char serverId[65];
+  char serverId[SERVER_ID_LENGTH];
   g_ServerIdCvar.GetString(serverId, sizeof(serverId));
 
   // MATCHTITLE must go first as it can contain other placeholders
@@ -2269,7 +2269,7 @@ bool FormatCvarString(ConVar cvar, char[] buffer, int len, bool safeTeamNames = 
 // Formats a temp file path based ont he server id. The pattern parameter is expected to have a %s
 // token in it.
 void GetTempFilePath(char[] path, int len, const char[] pattern) {
-  char serverId[65];
+  char serverId[SERVER_ID_LENGTH];
   g_ServerIdCvar.GetString(serverId, sizeof(serverId));
   FormatEx(path, len, pattern, serverId);
 }

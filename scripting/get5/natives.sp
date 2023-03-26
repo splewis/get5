@@ -231,7 +231,7 @@ public int Native_SetMatchID(Handle plugin, int numParams) {
 }
 
 public int Native_GetServerID(Handle plugin, int numParams) {
-  char serverId[65];
+  char serverId[SERVER_ID_LENGTH];
   g_ServerIdCvar.GetString(serverId, sizeof(serverId));
   SetNativeString(1, serverId, GetNativeCell(2));
   return 0;

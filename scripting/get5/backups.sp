@@ -111,7 +111,7 @@ ArrayList GetBackups(const char[] matchID) {
   }
   ArrayList backups = new ArrayList(PLATFORM_MAX_PATH);
   char pattern[PLATFORM_MAX_PATH];
-  char serverId[65];
+  char serverId[SERVER_ID_LENGTH];
   g_ServerIdCvar.GetString(serverId, sizeof(serverId));
   FormatEx(pattern, sizeof(pattern), "get5_backup%s_match%s", serverId, matchID);
 
@@ -247,7 +247,7 @@ void WriteBackup() {
   char variableSubstitutes[][] = {"{MATCHID}"};
   CheckAndCreateFolderPath(g_RoundBackupPathCvar, variableSubstitutes, 1, folder, sizeof(folder));
 
-  char serverId[65];
+  char serverId[SERVER_ID_LENGTH];
   g_ServerIdCvar.GetString(serverId, sizeof(serverId));
 
   char filename[PLATFORM_MAX_PATH];

@@ -2463,7 +2463,8 @@ cannot be configured.</p>
 <p>The teams file is used to set teams from the <a href="../commands#get5"><code>!get5</code></a> menu or as arguments to <code>--team1</code> or <code>--team2</code>
 when using <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>. Any property defined in
 the <a href="../match_schema#schema">Get5MatchTeam</a> schema (except <code>fromfile</code>) can be used in this file, but only <code>players</code> is
-required. If you don't set a team <code>name</code>, the team's key is used in the menu. The file is empty (<code>{}</code>) by default.</p>
+required. If you don't set a team <code>name</code>, the team's key is used in the menu. The default, empty teams file is generated
+if the file does not exist. This prevents accidental overwrites when updating the plugin.</p>
 <p>You can set the location of the teams file with <a href="#get5_teams_file"><code>get5_teams_file</code></a>.</p>
 <div class="admonition example">
 <p class="admonition-title">Teams file example</p>
@@ -2517,7 +2518,8 @@ required. If you don't set a team <code>name</code>, the team's key is used in t
 in the <a href="../commands#get5"><code>!get5</code></a> menu or passed to <code>--map_pool</code> when using
 the <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a> command. You can add workshop maps to this file as well, i.e.
 <code>"workshop/1193875520/de_aztec"</code>.</p>
-<p>You can set the location of the maps file with <a href="#get5_maps_file"><code>get5_maps_file</code></a>.</p>
+<p>You can set the location of the maps file with <a href="#get5_maps_file"><code>get5_maps_file</code></a>. The default map file (example below)
+is generated if the file does not exist. This prevents accidental overwrites when updating the plugin.</p>
 <div class="admonition example">
 <p class="admonition-title">Maps file example</p>
 <p>This file would allow you to run:</p>
@@ -2567,7 +2569,8 @@ the <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a> com
 automatically used in the <a href="../commands#get5"><code>!get5</code></a> menu and as the default <code>--cvars</code> parameter when
 using <a href="../commands#get5_creatematch"><code>get5_creatematch</code></a>. Anything you put in the <code>default</code> key is automatically loaded
 unless you provide a different <code>--cvars</code> parameter.</p>
-<p>You can set the location of the cvars file with <a href="#get5_cvars_file"><code>get5_cvars_file</code></a>.</p>
+<p>You can set the location of the cvars file with <a href="#get5_cvars_file"><code>get5_cvars_file</code></a>. The default cvars file is
+generated if the file does not exist. This prevents accidental overwrites when updating the plugin.</p>
 <div class="admonition example">
 <p class="admonition-title">Cvars file example</p>
 <p>This file would allow you to run:</p>

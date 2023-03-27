@@ -278,7 +278,7 @@ static void PromptForMapSelectionInChat(const Get5MapSelectionOption option) {
                         g_MapsToPlay.Length + 1);
   }
   char mapListAsString[PLATFORM_MAX_PATH];
-  ImplodeMapArrayToString(g_MapsLeftInVetoPool, mapListAsString, sizeof(mapListAsString));
+  ImplodeMapArrayToString(g_MapsLeftInVetoPool, mapListAsString, sizeof(mapListAsString), true);
   Get5_MessageToAll("%t %s.", "MapSelectionRemainingMaps", mapListAsString);
 
   int client;
@@ -323,14 +323,16 @@ static void PromptForSideSelectionInChat(const Get5Team team) {
   Get5_Message(client, "%t", "MapSelectionPickSideHelp", formattedCommandCT, formattedCommandT);
 }
 
-void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize) {
+void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize, bool sort) {
   char[][] mapsArray = new char[mapPool.Length][PLATFORM_MAX_PATH];
   for (int i = 0; i < mapPool.Length; i++) {
     mapPool.GetString(i, mapsArray[i], PLATFORM_MAX_PATH);
     FormatMapName(mapsArray[i], mapsArray[i], PLATFORM_MAX_PATH, true, false);
   }
   // Sort alphabetically.
-  SortStrings(mapsArray, mapPool.Length, Sort_Ascending);
+  if (sort) {
+    SortStrings(mapsArray, mapPool.Length, Sort_Ascending);
+  }
   ImplodeStrings(mapsArray, mapPool.Length, ", ", buffer, bufferSize);
 }
 

@@ -101,7 +101,8 @@ cfg/get5/teams.json
 The teams file is used to set teams from the [`!get5`](../commands#get5) menu or as arguments to `--team1` or `--team2`
 when using [`get5_creatematch`](../commands#get5_creatematch). Any property defined in
 the [Get5MatchTeam](../match_schema#schema) schema (except `fromfile`) can be used in this file, but only `players` is
-required. If you don't set a team `name`, the team's key is used in the menu. The file is empty (`{}`) by default.
+required. If you don't set a team `name`, the team's key is used in the menu. The default, empty teams file is generated
+if the file does not exist. This prevents accidental overwrites when updating the plugin.
 
 You can set the location of the teams file with [`get5_teams_file`](#get5_teams_file).
 
@@ -168,7 +169,8 @@ in the [`!get5`](../commands#get5) menu or passed to `--map_pool` when using
 the [`get5_creatematch`](../commands#get5_creatematch) command. You can add workshop maps to this file as well, i.e.
 `"workshop/1193875520/de_aztec"`.
 
-You can set the location of the maps file with [`get5_maps_file`](#get5_maps_file).
+You can set the location of the maps file with [`get5_maps_file`](#get5_maps_file). The default map file (example below)
+is generated if the file does not exist. This prevents accidental overwrites when updating the plugin.
 
 !!! example "Maps file example"
 
@@ -227,7 +229,8 @@ automatically used in the [`!get5`](../commands#get5) menu and as the default `-
 using [`get5_creatematch`](../commands#get5_creatematch). Anything you put in the `default` key is automatically loaded
 unless you provide a different `--cvars` parameter.
 
-You can set the location of the cvars file with [`get5_cvars_file`](#get5_cvars_file).
+You can set the location of the cvars file with [`get5_cvars_file`](#get5_cvars_file). The default cvars file is
+generated if the file does not exist. This prevents accidental overwrites when updating the plugin.
 
 !!! example "Cvars file example"
 

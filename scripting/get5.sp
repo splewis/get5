@@ -385,8 +385,8 @@ public void OnPluginStart() {
   InitDebugLog(DEBUG_CVAR, "get5");
   LogDebug("OnPluginStart version=%s", PLUGIN_VERSION);
 
-  // Make JSON payloads smaller by using 1 tab instead of 4 spaces to pretty print.
-  JSON_PP_INDENT = "\t";
+  // Make JSON payloads smaller by using 2 spaces instead of 4 to pretty print.
+  JSON_PP_INDENT = "  ";
 
   // Because we use SDKHooks for damage, we need to re-hook clients that are already on the server
   // in case the plugin is reloaded. This includes bots.

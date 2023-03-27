@@ -90,7 +90,7 @@ static void ShowSetupMenu(int client, int displayAt = 0) {
   if (g_SetupMenuMapSelection == Get5SetupMenu_MapSelectionMode_Manual) {
     char mapsString[PLATFORM_MAX_PATH];
     if (g_SetupMenuSelectedMaps.Length > 0) {
-      ImplodeMapArrayToString(g_SetupMenuSelectedMaps, mapsString, sizeof(mapsString));
+      ImplodeMapArrayToString(g_SetupMenuSelectedMaps, mapsString, sizeof(mapsString), false);
       Format(mapsString, sizeof(mapsString), "Maps: %s", mapsString);
     } else {
       mapsString = "Select Maps";
@@ -340,16 +340,11 @@ static int SetupMenuHandler(Menu menu, MenuAction action, int client, int param2
   return 0;
 }
 
-static void ShowSelectTeamsMenu(int client, bool showTeamReloadMessage = false) {
+static void ShowSelectTeamsMenu(int client) {
   Menu menu = new Menu(SelectTeamsMenuHandler);
   menu.SetTitle("Select Teams");
-  char error[PLATFORM_MAX_PATH];
   if (g_SetupMenuAvailableTeams == null) {
-    if (!ResetTeams(error)) {
-      Get5_Message(client, "Error loading team data: %s", error);
-    } else if (showTeamReloadMessage) {
-      Get5_Message(client, "Reloaded team data. Found %d team(s).", g_SetupMenuAvailableTeams.Length);
-    }
+    ResetTeams(client);
   }
   PrintSelectedTeamName(Get5Team_1, menu);
   if (g_SetupMenuTeamSelection != Get5SetupMenu_TeamSelectionMode_Scrim) {
@@ -403,8 +398,8 @@ static int SelectTeamsMenuHandler(Menu menu, MenuAction action, int client, int 
       strcopy(g_SetupMenuTeamForTeam2, sizeof(g_SetupMenuTeamForTeam2), team1);
       ShowSelectTeamsMenu(client);
     } else if (StrEqual(selectedOption, SETUP_MENU_TEAMS_RESET, true)) {
-      json_cleanup_and_delete(g_SetupMenuAvailableTeams);
-      ShowSelectTeamsMenu(client, true);
+      ResetTeams(client, true);
+      ShowSelectTeamsMenu(client);
     }
   } else if (action == MenuAction_Cancel && param2 == MenuCancel_ExitBack) {
     ShowSetupMenu(client, GetIndexForPage(1));
@@ -517,14 +512,18 @@ static int SelectMapPoolMenuHandler(Menu menu, MenuAction action, int client, in
   if (action == MenuAction_Select) {
     char selectedPool[64];
     menu.GetItem(param2, selectedPool, sizeof(selectedPool));
-    g_SetupMenuSelectedMaps.Clear();
     if (!StrEqual(selectedPool, SETUP_MENU_MAP_SELECTION_RESET, true)) {
       strcopy(g_SetupMenuSelectedMapPool, sizeof(g_SetupMenuSelectedMapPool), selectedPool);
-      ResetMapPool(client);
+      if (g_SetupMenuSelectedMaps.Length > 0) {
+        // We only need to do this if a map was selected.
+        g_SetupMenuSelectedMaps.Clear();
+        ResetMapPool(client);
+      }
       HandleMapPoolAndSeriesLength();
       ShowSetupMenu(client, 0);
     } else {
-      ResetMapPool(client);
+      g_SetupMenuSelectedMaps.Clear();
+      ResetMapPool(client, true);
       HandleMapPoolAndSeriesLength();
       ShowSelectMapPoolMenu(client);
     }
@@ -795,43 +794,46 @@ static void HandleMapPoolAndSeriesLength() {
   }
 }
 
-static void ResetMapPool(int client) {
+static void ResetMapPool(int client, bool showReloadMessage = false) {
   json_cleanup_and_delete(g_SetupMenuMapPool);
   char error[PLATFORM_MAX_PATH];
   g_SetupMenuMapPool = LoadMapsFile(error);
   if (g_SetupMenuMapPool == null) {
-    CreateDefaultMapPool();
+    g_SetupMenuMapPool = new JSON_Object();
+    g_SetupMenuSelectedMapPool = DEFAULT_CONFIG_KEY;
+    g_SetupMenuMapPool.SetObject(g_SetupMenuSelectedMapPool, CreateDefaultMapPool());
     if (IsValidClient(client)) {
-      Get5_Message(client, "Failed to read maps file. Generating default map pool. Error: %s", error);
+      Get5_Message(client, "Failed to load maps file. Generating default map pool. Error: %s", error);
     }
-  } else if (strlen(g_SetupMenuSelectedMapPool) == 0 || !g_SetupMenuMapPool.HasKey(g_SetupMenuSelectedMapPool)) {
-    g_SetupMenuMapPool.GetKey(0, g_SetupMenuSelectedMapPool, sizeof(g_SetupMenuSelectedMapPool));
+  } else {
+    // File will not load if empty, so it's safe to do this.
+    if (strlen(g_SetupMenuSelectedMapPool) == 0 || !g_SetupMenuMapPool.HasKey(g_SetupMenuSelectedMapPool)) {
+      g_SetupMenuMapPool.GetKey(0, g_SetupMenuSelectedMapPool, sizeof(g_SetupMenuSelectedMapPool));
+    }
+    if (showReloadMessage && IsValidClient(client)) {
+      Get5_Message(client, "Reloaded maps file. Found %d map pools(s).", g_SetupMenuMapPool.Length);
+    }
   }
-}
-
-static void CreateDefaultMapPool() {
-  g_SetupMenuMapPool = new JSON_Object();
-  g_SetupMenuSelectedMapPool = "default";
-  JSON_Array defaultArray = new JSON_Array();
-  defaultArray.PushString("de_ancient");
-  defaultArray.PushString("de_anubis");
-  defaultArray.PushString("de_inferno");
-  defaultArray.PushString("de_mirage");
-  defaultArray.PushString("de_nuke");
-  defaultArray.PushString("de_overpass");
-  defaultArray.PushString("de_vertigo");
-  g_SetupMenuMapPool.SetObject(g_SetupMenuSelectedMapPool, defaultArray);
 }
 
 static JSON_Array GetMapsFromSelectedPool() {
   return view_as<JSON_Array>(g_SetupMenuMapPool.GetObject(g_SetupMenuSelectedMapPool));
 }
 
-static bool ResetTeams(char[] error) {
+static bool ResetTeams(int client, bool showReloadMessage = false) {
   g_SetupMenuTeamForTeam1 = "";
   g_SetupMenuTeamForTeam2 = "";
   json_cleanup_and_delete(g_SetupMenuAvailableTeams);
+  char error[PLATFORM_MAX_PATH];
   g_SetupMenuAvailableTeams = LoadTeamsFile(error);
+  if (g_SetupMenuAvailableTeams == null) {
+    if (IsValidClient(client)) {
+      Get5_Message(client, "Failed to load teams file. Error: %s", error);
+    }
+    g_SetupMenuAvailableTeams = new JSON_Object();
+  } else if (showReloadMessage && IsValidClient(client)) {
+    Get5_Message(client, "Reloaded teams file. Found %d team(s).", g_SetupMenuAvailableTeams.Length);
+  }
   return g_SetupMenuAvailableTeams != null;
 }
 
@@ -909,7 +911,7 @@ static void CreateMatch(int client) {
   }
 
   char error[PLATFORM_MAX_PATH];
-  JSON_Object cvars = LoadCvarsFile(error, "default");
+  JSON_Object cvars = LoadCvarsFile(error, DEFAULT_CONFIG_KEY);
   if (cvars == null) {
     Get5_Message(client, "Error loading cvars: %s", error);
     json_cleanup_and_delete(match);

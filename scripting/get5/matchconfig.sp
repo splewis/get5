@@ -1561,8 +1561,8 @@ Action Command_CreateMatch(int client, int args) {
   bool useCurrentMap = false;
   char team1Id[64], team2Id[64], maps[16][PLATFORM_MAX_PATH], mapSides[16][16], matchTitle[64],
     matchId[MATCH_ID_LENGTH], scrimAwayTeamName[32];
-  char mapPoolKey[64] = "default";
-  char cVarsKey[64] = "default";
+  char mapPoolKey[64] = DEFAULT_CONFIG_KEY;
+  char cVarsKey[64] = DEFAULT_CONFIG_KEY;
   char vetoFirst[16] = CONFIG_VETOFIRST_DEFAULT;
   char sideType[16] = CONFIG_SIDETYPE_DEFAULT;
 
@@ -2277,6 +2277,10 @@ JSON_Object LoadTeamsFile(char[] error) {
   g_TeamsFileCvar.GetString(teamsFile, sizeof(teamsFile));
   Format(teamsFile, sizeof(teamsFile), "cfg/%s", teamsFile);
 
+  if (!FileExists(teamsFile)) {
+    WriteDefaultTeamsFile(teamsFile);
+  }
+
   JSON_Object json = LoadJSONIfFileExists(teamsFile, error);
   if (json == null) {
     return null;
@@ -2312,6 +2316,10 @@ JSON_Object LoadCvarsFile(char[] error, const char[] key) {
   char cvarsFile[PLATFORM_MAX_PATH];
   g_CvarsFileCvar.GetString(cvarsFile, sizeof(cvarsFile));
   Format(cvarsFile, sizeof(cvarsFile), "cfg/%s", cvarsFile);
+
+  if (!FileExists(cvarsFile)) {
+    WriteDefaultCvarsFile(cvarsFile);
+  }
 
   JSON_Object cvars = LoadJSONIfFileExists(cvarsFile, error);
   if (cvars == null) {
@@ -2350,6 +2358,10 @@ JSON_Object LoadMapsFile(char[] error) {
   char mapFile[PLATFORM_MAX_PATH];
   g_MapsFileCvar.GetString(mapFile, sizeof(mapFile));
   Format(mapFile, sizeof(mapFile), "cfg/%s", mapFile);
+
+  if (!FileExists(mapFile)) {
+    WriteDefaultMapsFile(mapFile);
+  }
 
   JSON_Object maps = LoadJSONIfFileExists(mapFile, error);
   if (maps == null) {
@@ -2403,4 +2415,70 @@ JSON_Object LoadMapsFile(char[] error) {
     }
   }
   return maps;
+}
+
+JSON_Array CreateDefaultMapPool() {
+  JSON_Array defaultArray = new JSON_Array();
+  defaultArray.PushString("de_ancient");
+  defaultArray.PushString("de_anubis");
+  defaultArray.PushString("de_inferno");
+  defaultArray.PushString("de_mirage");
+  defaultArray.PushString("de_nuke");
+  defaultArray.PushString("de_overpass");
+  defaultArray.PushString("de_vertigo");
+  return defaultArray;
+}
+
+static void WriteDefaultMapsFile(const char[] file) {
+  LogMessage("Generating default maps file at '%s' because the file does not exist.", file);
+  JSON_Object maps = new JSON_Object();
+
+  JSON_Array defaultPool = CreateDefaultMapPool();
+
+  JSON_Array extendedPool = new JSON_Array();
+  extendedPool.PushString("de_ancient");
+  extendedPool.PushString("de_anubis");
+  extendedPool.PushString("de_cache");
+  extendedPool.PushString("de_dust2");
+  extendedPool.PushString("de_inferno");
+  extendedPool.PushString("de_mirage");
+  extendedPool.PushString("de_nuke");
+  extendedPool.PushString("de_overpass");
+  extendedPool.PushString("de_train");
+  extendedPool.PushString("de_vertigo");
+
+  JSON_Array wingmanPool = new JSON_Array();
+  wingmanPool.PushString("de_shortdust");
+  wingmanPool.PushString("de_boyard");
+  wingmanPool.PushString("de_chalice");
+  wingmanPool.PushString("de_cbble");
+  wingmanPool.PushString("de_inferno");
+  wingmanPool.PushString("de_lake");
+  wingmanPool.PushString("de_overpass");
+  wingmanPool.PushString("de_shortnuke");
+  wingmanPool.PushString("de_train");
+  wingmanPool.PushString("de_vertigo");
+
+  maps.SetObject(DEFAULT_CONFIG_KEY, defaultPool);
+  maps.SetObject("extended", extendedPool);
+  maps.SetObject("wingman", wingmanPool);
+
+  maps.WriteToFile(file, JSON_ENCODE_PRETTY);
+
+  json_cleanup_and_delete(maps);
+}
+
+static void WriteDefaultTeamsFile(const char[] file) {
+  LogMessage("Generating default teams file at '%s' because the file does not exist.", file);
+  JSON_Object teams = new JSON_Object();
+  teams.WriteToFile(file, JSON_ENCODE_PRETTY);
+  json_cleanup_and_delete(teams);
+}
+
+static void WriteDefaultCvarsFile(const char[] file) {
+  LogMessage("Generating default cvars file at '%s' because the file does not exist.", file);
+  JSON_Object cvars = new JSON_Object();
+  cvars.SetObject(DEFAULT_CONFIG_KEY, new JSON_Object());
+  cvars.WriteToFile(file, JSON_ENCODE_PRETTY);
+  json_cleanup_and_delete(cvars);
 }

@@ -190,8 +190,8 @@ details.
 ### New Features / Changes 🎉
 
 1. Get5 is now built with SourceMod 1.11.
-2. The JSON "pretty print" spacing string has changed from 4 spaces to 1 tab. This is strictly to reduce the size of the
-   JSON payload and has no practical effect on the objects.
+2. The JSON "pretty print" spacing string has changed from 4 spaces to 2 spaces. This is strictly to reduce the size of
+   the JSON payload and has no practical effect on the objects.
 3. The `get5_mysqlstats` extension now uses a transaction to update stat rows for each player. This improves performance
    via reduced I/O between the game server and the database server. It now also runs on the JSON methodmaps provided to
    forwards instead of copying the KeyValue stat object.

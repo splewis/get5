@@ -63,7 +63,7 @@ interface Get5Match {
     "favored_percentage_team1": number | undefined // (14)
     "favored_percentage_text": string | undefined // (15)
     "team1": Get5MatchTeam // (20)
-    "team2": Get5MatchTeam // (21)
+    "team2": Get5MatchTeam | undefined // (21)
     "cvars": { [key: string]: string | number } | undefined // (22)
 }
 ```
@@ -124,7 +124,7 @@ interface Get5Match {
 19. _Optional_<br>The team logo (wraps `mp_teamlogo_1` or `mp_teamlogo_2`), which requires to be on a FastDL in order
     for clients to see.<br><br>**`Default: ""`**
 20. _Required_<br>The data for the first team.
-21. _Required_<br>The data for the second team. Not required if `scrim` is `true`.
+21. _Optional_<br>The data for the second team. Not required if `scrim` is `true`.
 22. _Optional_<br>Various commands to execute on the server when loading the match configuration. This can be both
     regular server-commands and any [`Get5 configuration parameter`](../configuration),
     i.e. `{"mp_friendlyfire": "0", "get5_max_pauses": "2"}`.<br><br>When the match ends, these parameters will by

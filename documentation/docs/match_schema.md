@@ -9,8 +9,7 @@ Two files ship with Get5 that give a general idea of what can be included in a m
 format can be found [here](https://github.com/splewis/get5/blob/master/configs/get5/example_match.cfg), and a JSON
 format can be found [here](https://github.com/splewis/get5/blob/master/configs/get5/example_match.json). In this
 documentation, we'll go through what each value means, but do note that **only the values** `team1`, `team2` and
-`maplist` are required to start a match. Reasonable defaults are used for the other values (Bo3 series,
-5v5, empty strings for team names, etc.). We recommend using the JSON format whenever possible, as JSON has way
+`maplist` are required to start a match. We recommend using the JSON format whenever possible, as JSON has way
 better support in various programming languages than Valve's KeyValue format (which essentially has none).
 
 ## The schema {: #schema }

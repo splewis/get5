@@ -1203,8 +1203,7 @@ components:
             SourceMod.
       description: |
         Describes an assist to a kill. `null` if no assister. `Assist`
-        in SourceMod. Use `HasAssist()` in SourceMod to determine if the property
-        exists before accessing it.
+        in SourceMod.
     Get5GrenadeVictim:
       type: object
       properties:

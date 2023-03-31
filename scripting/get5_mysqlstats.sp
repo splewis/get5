@@ -75,7 +75,7 @@ public void Get5_OnSeriesInit(const Get5SeriesStartedEvent event) {
   char team2NameSz[sizeof(team2Name) * 2 + 1];
   char serverIdSz[sizeof(serverId) * 2 + 1];
 
-  FormatEx(seriesType, sizeof(seriesType), "bo%d", event.SeriesLength);
+  FormatEx(seriesType, sizeof(seriesType), "bo%d", event.NumberOfMaps);
 
   event.Team1.GetName(team1Name, sizeof(team1Name));
   event.Team2.GetName(team2Name, sizeof(team2Name));

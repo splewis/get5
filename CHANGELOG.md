@@ -51,7 +51,7 @@ details.
    ```json5
    {
      "event": "series_start",
-     "series_length": 3, // Bo3
+     "num_maps": 3, // Bo3
      "matchid": "29844",
      "team1": {
        "id": "482", // nullable in JSON, empty string in SourceMod.

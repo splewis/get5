@@ -166,10 +166,10 @@ webhooks:
                     event:
                       enum:
                         - series_start
-                    series_length:
+                    num_maps:
                       type: integer
                       minimum: 1
-                      description: The number of maps in the series, i.e. 3 for a Bo3. `SeriesLength` in SourceMod.
+                      description: The number of maps in the series, i.e. 3 for a Bo3. `NumberOfMaps` in SourceMod.
                     team1:
                       "$ref": "#/components/schemas/Get5TeamWrapper"
                     team2:

@@ -1547,12 +1547,12 @@ methodmap Get5MatchUnpausedEvent < Get5MatchPauseEvent {
 
 methodmap Get5SeriesStartedEvent < Get5MatchEvent {
 
-  property int SeriesLength {
+  property int NumberOfMaps {
     public get() {
-      return this.GetInt("series_length");
+      return this.GetInt("num_maps");
     }
     public set(int val) {
-      this.SetInt("series_length", val);
+      this.SetInt("num_maps", val);
     }
   }
 
@@ -1578,7 +1578,7 @@ methodmap Get5SeriesStartedEvent < Get5MatchEvent {
     Get5SeriesStartedEvent self = view_as<Get5SeriesStartedEvent>(new JSON_Object());
     self.SetEvent("series_start");
     self.SetMatchId(matchId);
-    self.SeriesLength = length;
+    self.NumberOfMaps = length;
     self.Team1 = team1;
     self.Team2 = team2;
     return self;

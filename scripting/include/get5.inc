@@ -1882,16 +1882,6 @@ methodmap Get5PlayerDeathEvent < Get5PlayerWeaponEvent {
     }
   }
 
-  // Use before accessing "Assist", as its getter will raise an exception if null.
-  public bool HasAssist() {
-    return this.GetObject("assist") != null;
-  }
-
-  // Use before accessing "Attacker", as its getter will raise an exception if null.
-  public bool HasAttacker() {
-    return this.GetObject("attacker") != null;
-  }
-
   public Get5PlayerDeathEvent(
     const char[] matchId,
     const int mapNumber,

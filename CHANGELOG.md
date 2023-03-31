@@ -186,6 +186,8 @@ details.
 11. Get5 now uses version 5.x of [`sm-json`](https://github.com/clugg/sm-json), which contains important fixes to plugin
     forwards. If you have any custom plugins reading from Get5 forwards, they should also update their version of this
     library and be recompiled.
+12. Removed `HasAssist()` and `HasAttacker()` from `Get5PlayerDeathEvent` in SourceMod forwards. You should simply check
+    `Assist` and `Attacker` for null, respectively.
 
 ### New Features / Changes 🎉
 

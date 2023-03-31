@@ -197,9 +197,10 @@ details.
 3. The `get5_mysqlstats` extension now uses a transaction to update stat rows for each player. This improves performance
    via reduced I/O between the game server and the database server. It now also runs on the JSON methodmaps provided to
    forwards instead of copying the KeyValue stat object.
-4. The [documentation of events](https://splewis.github.io/get5/dev/events_and_forwards/#events) is now rendered
-   on `https://redocly.github.io` instead of being embedded in the Get5 documentation website. This allows for more
-   space and makes it easier to browse/read.
+4. The [documentation of events](https://splewis.github.io/get5/dev/events_and_forwards/#events) is now
+   rendered separately using [ReDocly](https://redocly.github.io) instead of being embedded in the Get5 documentation
+   website. This allows for more space and makes it easier to browse/read. It also allows you to link directly to an
+   event.
 5. The team configuration
    parameters ([`mp_teamname_1`](https://totalcsgo.com/command/mpteamname1),
    [`mp_teamflag_1`](https://totalcsgo.com/command/mpteamflag1),

@@ -584,9 +584,7 @@ a [color modifier](#color-substitutes).<br>**`Default: "[{YELLOW}Get5{NORMAL}]"`
 ####`get5_damageprint_format`
 :   Formatting of damage reports in chat on round end. Ignored
 if [`get5_print_damage`](#get5_print_damage) is disabled.<br>
-*
-*`Default: "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)"`
-**
+**`Default: "- [{KILL_TO}] ({DMG_TO} in {HITS_TO}) to [{KILL_FROM}] ({DMG_FROM} in {HITS_FROM}) from {NAME} ({HEALTH} HP)"`**
 
 !!! example "Damage report example"
 

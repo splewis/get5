@@ -787,7 +787,9 @@ static bool LoadMatchFromJson(const JSON_Object json, char[] error) {
         IntToString(cvars.GetInt(cvarName), cvarValue, sizeof(cvarValue));
 #if SM_INT64_SUPPORTED  // requires SM 1.11 build 6861 according to sm-json
       } else if (type == JSON_Type_Int64) {
-        IntToString(cvars.GetInt(cvarName), cvarValue, sizeof(cvarValue));
+        int value[2];
+        cvars.GetInt64(cvarName, value);
+        Int64ToString(value, cvarValue, sizeof(cvarValue));
 #endif
       } else if (type == JSON_Type_Float) {
         FloatToString(cvars.GetFloat(cvarName), cvarValue, sizeof(cvarValue));

@@ -1076,7 +1076,7 @@ more <a href="../match_schema#schema">match schema</a> parameters in the resulti
 </li>
 <li>
 <p><strong>Pick/Ban</strong><br>
-   The <a href="../veto">map selection</a> system is used (<em>Series Length &gt; 1 only</em>).</p>
+   The <a href="../veto">map selection</a> system is used.</p>
 </li>
 </ol>
 <h4 id="map-pool">Map Pool</h4>
@@ -1128,7 +1128,7 @@ You can define additional map pools by editing your <a href="../configuration#ma
 is referred to as <strong>scrim mode</strong>. This feature is designed for practices where you know the Steam IDs of your own team
 and want to enforce team-locking, but don't know the Steam IDs of your opponents.</p>
 <h3 id="how-to">How-to</h3>
-<p>There are three distinct ways you can start a scrim.</p>
+<p>There are four distinct ways you can start a scrim:</p>
 <ol>
 <li>Using the <a href="#get5-menu"><code>!get5</code></a> menu and setting <a href="#team-selection-mode">Team Selection Mode</a> to <strong>Scrim</strong>.</li>
 <li>Setting <code>scrim: true</code> in any <a href="../match_schema#schema">match configuration</a>.</li>
@@ -1160,8 +1160,7 @@ available slots.</p>
 ends up being on the other team in a scrim, you can use the <a href="../commands#ringer"><code>!ringer</code></a> command to temporarily swap
 them (similarly, you can use it to put someone not in the list on your team temporarily).</p>
 <h4 id="starting-the-match">Starting the Match</h4>
-<p>Rather than creating a <a href="../match_schema">match configuration</a>, you should
-use the <a href="../commands#get5_scrim"><code>get5_scrim</code></a> command when the server is on the correct map. You can do this via
+<p>Use the <a href="../commands#get5_scrim"><code>get5_scrim</code></a> command when the server is on the correct map. You can do this via
 RCON or as a regular console command if you are <a href="../installation#administrators">a server administrator</a>.
 You could also type <a href="../commands#scrim"><code>!scrim</code></a> in chat.</p>
 <h4 id="changing-scrim-settings">Changing Scrim Settings</h4>

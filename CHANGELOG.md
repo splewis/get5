@@ -12,7 +12,7 @@ details.
 
 ⚠️ PRERELEASE
 
-#### 2023-03-26
+#### 2023-04-02
 
 ### Breaking Changes 🛠
 
@@ -25,6 +25,11 @@ details.
 
    **If you use any of the stats extensions, you must also update those plugins (`get5_mysqlstats.smx`
    and `get5_apistats.smx`)!**
+
+   These changes affect the structure of the `get5_matchstats.cfg` file generated
+   by [`get5_dumpstats`](https://splewis.github.io/get5/dev/commands/#get5_dumpstats) and the `KeyValues` returned by
+   the `Get5_GetMatchStats` native. These are *not* changes to the JSON objects (see below for that) or the schema of
+   the MySQL extension. If you don't use the native or dump match stats to a file, this does *not* affect you.
 
    Keys changed in the map root (i.e. `map0`):
     1. `team1_name` and `team2_name` removed.

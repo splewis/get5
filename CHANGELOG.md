@@ -193,6 +193,11 @@ details.
     library and be recompiled.
 12. Removed `HasAssist()` and `HasAttacker()` from `Get5PlayerDeathEvent` in SourceMod forwards. You should simply check
     `Assist` and `Attacker` for null, respectively.
+13. Validation of JSON files is stricter than before. For instance; an empty string for a boolean or numeric value will
+    now throw an error. As will `"0"` and `"1"`. The reasoning behind this is to prevent silent errors such as a match
+    file loading "correctly" but with unexpected behavior. Anyone using JSON files should consult
+    the [match schema](https://splewis.github.io/get5/dev/match_schema/#schema) prior to upgrading.
+14. Validation of KeyValues files (`.cfg`) is also stricter than before, and the feedback on errors should be better.
 
 ### New Features / Changes 🎉
 

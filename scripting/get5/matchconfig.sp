@@ -1985,8 +1985,8 @@ Action Command_CreateScrim(int client, int args) {
     do {
       WritePlaceholderInsteadOfEmptyString(kv, name, sizeof(name));
     } while (kv.GotoNextKey(false));
-    kv.Rewind();
   }
+  kv.Rewind();
 
   // Also ensure empty string values in cvars get printed to the match config.
   if (kv.JumpToKey("cvars")) {
@@ -1995,10 +1995,9 @@ Action Command_CreateScrim(int client, int args) {
       do {
         WritePlaceholderInsteadOfEmptyString(kv, cVarValue, sizeof(cVarValue));
       } while (kv.GotoNextKey(false));
-      kv.GoBack();
     }
-    kv.GoBack();
   }
+  kv.Rewind();
 
   kv.JumpToKey("team2", true);
   kv.SetString("name", otherTeamName);

@@ -268,22 +268,19 @@ static int SetupMenuHandler(Menu menu, MenuAction action, int client, int param2
           g_SetupMenuMapSelection = Get5SetupMenu_MapSelectionMode_PickBan;
       }
 
-      // In "current", we only allow series length 1.
       if (g_SetupMenuMapSelection == Get5SetupMenu_MapSelectionMode_Current) {
+        // In "current", we only allow series length 1.
         g_SetupMenuSeriesLength = 1;
-      }
-
-      // In "manual", make sure series length is not longer than the map pool.
-      JSON_Array maps = GetMapsFromSelectedPool();
-      if (g_SetupMenuMapSelection == Get5SetupMenu_MapSelectionMode_Manual) {
+      } else if (g_SetupMenuMapSelection == Get5SetupMenu_MapSelectionMode_Manual) {
+        // In "manual", make sure series length is not longer than the map pool.
+        JSON_Array maps = GetMapsFromSelectedPool();
         if (g_SetupMenuSeriesLength > maps.Length) {
           g_SetupMenuSeriesLength = maps.Length;
         }
-      }
-
-      // If we switch to pick/ban, make sure series length is one less than the map pool.
-      // We can't do this if there are not enough maps.
-      if (g_SetupMenuMapSelection == Get5SetupMenu_MapSelectionMode_PickBan) {
+      } else if (g_SetupMenuMapSelection == Get5SetupMenu_MapSelectionMode_PickBan) {
+        // If we switch to pick/ban, make sure series length is one less than the map pool.
+        // We can't do this if there are not enough maps.
+        JSON_Array maps = GetMapsFromSelectedPool();
         if (g_SetupMenuSeriesLength >= maps.Length) {
           g_SetupMenuSeriesLength = maps.Length - 1;
           if (g_SetupMenuSeriesLength < 1) {
@@ -783,8 +780,6 @@ static void HandleMapPoolAndSeriesLength() {
       g_SetupMenuSeriesLength = maps.Length - 1;
       if (g_SetupMenuSeriesLength < 1) {
         g_SetupMenuSeriesLength = 1;
-      }
-      if (maps.Length < 2) {
         g_SetupMenuMapSelection = Get5SetupMenu_MapSelectionMode_Manual;
       }
     } else if (g_SetupMenuSeriesLength > maps.Length) {

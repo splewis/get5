@@ -79,7 +79,7 @@ Determines the strategy used to select the map(s) to play:
    Play the current map (*Series Length == 1 only*).
 
 3. **Pick/Ban**<br>
-   The [map selection](../veto) system is used (*Series Length > 1 only*).
+   The [map selection](../veto) system is used.
 
 #### Map Pool {: #map-pool}
 
@@ -132,7 +132,7 @@ and want to enforce team-locking, but don't know the Steam IDs of your opponents
 
 ### How-to
 
-There are three distinct ways you can start a scrim.
+There are four distinct ways you can start a scrim:
 
 1. Using the [`!get5`](#get5-menu) menu and setting [Team Selection Mode](#team-selection-mode) to **Scrim**.
 2. Setting `scrim: true` in any [match configuration](../match_schema#schema).
@@ -169,8 +169,7 @@ them (similarly, you can use it to put someone not in the list on your team temp
 
 #### Starting the Match
 
-Rather than creating a [match configuration](../match_schema), you should
-use the [`get5_scrim`](../commands#get5_scrim) command when the server is on the correct map. You can do this via
+Use the [`get5_scrim`](../commands#get5_scrim) command when the server is on the correct map. You can do this via
 RCON or as a regular console command if you are [a server administrator](../installation#administrators).
 You could also type [`!scrim`](../commands#scrim) in chat.
 

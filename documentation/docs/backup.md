@@ -22,12 +22,14 @@ then deletes the original backup file. A special backup
 called `get5_backup%s_match%s_map%d_prelive.cfg` is created and should be used if you want to restore to the beginning
 of the map, before the knife round.
 
-### Example
+### Examples
+
+#### Via [`get5_loadbackup`](../commands#get5_loadbackup) {: #command-line }
 
 When in a match, you can call [`get5_listbackups`](../commands#get5_listbackups) to view all backups for the current
-match. Note that all rounds and map numbers start at 0.
+match. Note that all rounds and map numbers start at 0 when using the command-line.
 
-They print in the format `filepath timestamp team1 team2 map team1_score team2_score`.
+Files print in the format `filepath timestamp team1 team2 map team1_score team2_score`.
 
 ```
 > get5_listbackups
@@ -47,6 +49,12 @@ get5_backup4_match1844_map0_round17.cfg 2022-07-26 19:03:39 "Team A" "Team B" de
     [server with ID 4](../configuration#get5_server_id), run [`get5_loadbackup`](../commands#get5_loadbackup):
 
     `get5_loadbackup get5_backup4_match1844_map0_round12.cfg`
+
+#### Via [`!get5`](../commands#get5) {: #menu }
+
+You can also load backups from the `!get5` menu. When a match is loaded, it will list only backups for the loaded
+match (based on the match ID), and it will display the round number to easily select. Note that within the menu, round-
+and map numbers are **not zero-indexed** in order to be more user-friendly.
 
 After loading a backup, the game state is restored and the game is [paused](../pausing#backup). Both teams
 must [`!unpause`](../commands#unpause) to continue.

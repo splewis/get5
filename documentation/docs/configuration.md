@@ -20,9 +20,11 @@ the explanation of the [match schema](../match_schema), that section will overri
     parameters are set, being close to this limit may cause problems. This applies to things like URLs or HTTP headers,
     so beware of long strings in these cases.
 
-### Phase Configuration Files
+### Configuration Files
 
-You should also have three config files. These can be edited, but we recommend not
+#### Game Phases
+
+You should also have four config files. These can be edited, but we recommend not
 blindly pasting another config in (e.g. ESL, CEVO). These must only include commands you would run in the console (such
 as `mp_friendlyfire 1`) and should determine the rules for those three stage of your match. You can
 also [point to other files](#config-files) by editing the main config file.
@@ -41,28 +43,217 @@ cfg/get5/live_wingman.cfg # (4)
 
 !!! danger "Prohibited options"
 
-    You should avoid these commands in your live, knife and warmup configuration files, as all of these are handled by
-    Get5 automatically. Introducing restarts, warmup changes or [GOTV](../gotv) delay modifications can cause problems.
-    If you want to set your `tv_delay` or `tv_delay1`, do it in the `cvars` section of your
-    [match configuration](../match_schema).
+    You should avoid these commands in your live, knife and warmup configuration files, as most of these are handled by
+    Get5 automatically or not suitable for changes based on game phases. Introducing restarts, warmup changes or
+    [GOTV](../gotv) delay modifications can cause problems. If you want to set your `tv_delay` or `tv_delay1`, do it in
+    the `cvars` section of your [match configuration](../match_schema). You should also not manually configure any
+    parameters related to pausing or teams (names, flags etc.), as all of these are set by Get5 based on the contents of
+    you match configuration.
 
     ```
+    // You should *never* change any of these yourself:
     mp_do_warmup_period
     mp_restartgame
     mp_warmup_end
-    mp_warmup_pausetimer   
+    mp_warmup_pausetimer
     mp_warmup_start
     mp_warmuptime
     mp_warmuptime_all_players_connected
     mp_endwarmup_player_count
+    mp_team_timeout_max
+    mp_team_timeout_time
+    mp_teamscore_max
+    mp_teammatchstat_txt
+    mp_teamprediction_txt
+    mp_teamprediction_pct
+    mp_teamname_1/2
+    mp_teamflag_1/2
+    mp_teamlogo_1/2
+    mp_teammatchstat_1/2
+    mp_teamscore_1/2
+    tv_delaymapchange
+
+    // You can change these (or any other GOTV parameters),
+    // but don't use live/knife/warmup.cfg to do it:
     tv_delay
     tv_delay1
-    tv_delaymapchange
     tv_enable
     tv_enable1
-    tv_record
-    tv_stoprecord
+    tv_snapshotrate
+    tv_snapshotrate1
     ```
+
+#### Chat Commands File {: #chat-commands-file }
+
+```yaml
+addons/sourcemod/configs/get5/commands.cfg
+```
+
+Contains custom Get5 [chat commands](../commands#custom-chat-commands) in KeyValues format. The location of this file
+cannot be configured.
+
+#### Teams File {: #teams-file }
+
+```yaml
+cfg/get5/teams.json
+```
+
+The teams file is used to set teams from the [`!get5`](../commands#get5) menu or as arguments to `--team1` or `--team2`
+when using [`get5_creatematch`](../commands#get5_creatematch). Any property defined in
+the [Get5MatchTeam](../match_schema#schema) schema (except `fromfile`) can be used in this file, but only `players` is
+required. If you don't set a team `name`, the team's key is used in the menu. The default, empty teams file is generated
+if the file does not exist. This prevents accidental overwrites when updating the plugin.
+
+You can set the location of the teams file with [`get5_teams_file`](#get5_teams_file).
+
+!!! example "Teams file example"
+
+    This file would allow you to run:
+
+    ```sh
+    get5_creatematch --team1 "navi" --team2 "astralis"
+    ```
+
+    or
+
+    ```sh
+    get5_creatematch --team1 "navi" --scrim "OtherTeamName"
+    ```
+
+    ```json
+    {
+       "navi": {
+          "name": "Natus Vincere",
+          "tag": "NaVi",
+          "flag": "UA",
+          "logo": "navi",
+          "players": {
+             "76561198034202275": "s1mple",
+             "76561198044045107": "electronic",
+             "76561198246607476": "b1t",
+             "76561198121220486": "Perfecto",
+             "76561198040577200": "sdy"
+          },
+          "coaches": {
+             "76561198013523865": "B1ad3"
+          }
+       },
+       "astralis": {
+          "name": "Astralis",
+          "tag": "Astralis",
+          "flag": "DK",
+          "logo": "astr",
+          "players": {
+             "76561197990682262": "Xyp9x",
+             "76561198010511021": "gla1ve",
+             "76561197979669175": "K0nfig",
+             "76561198028458803": "BlameF",
+             "76561198024248129": "farlig"
+          },
+          "coaches": {
+             "76561197987144812": "Trace"
+          }
+       }
+    }
+    ```
+
+#### Maps File {: #maps-file }
+
+```yaml
+cfg/get5/maps.json
+```
+
+You can configure sets of map pools to use. The default file covers the competitive map pool, an extended pool and some
+[Wingman](../wingman) maps. You can add as many sets of map pools as you want. Each key of your pool can be selected
+in the [`!get5`](../commands#get5) menu or passed to `--map_pool` when using
+the [`get5_creatematch`](../commands#get5_creatematch) command. You can add workshop maps to this file as well, i.e.
+`"workshop/1193875520/de_aztec"`.
+
+You can set the location of the maps file with [`get5_maps_file`](#get5_maps_file). The default map file (example below)
+is generated if the file does not exist. This prevents accidental overwrites when updating the plugin.
+
+!!! example "Maps file example"
+
+    This file would allow you to run:
+
+    ```sh
+    get5_creatematch --map_pool "extended"
+    ```
+
+    ```json
+    {
+       "default": [
+          "de_ancient",
+          "de_anubis",
+          "de_inferno",
+          "de_mirage",
+          "de_nuke",
+          "de_overpass",
+          "de_vertigo"
+       ],
+       "extended": [
+          "de_ancient",
+          "de_anubis",
+          "de_cache",
+          "de_dust2",
+          "de_inferno",
+          "de_mirage",
+          "de_nuke",
+          "de_overpass",
+          "de_train",
+          "de_vertigo"
+       ],
+       "wingman": [
+          "de_shortdust",
+          "de_boyard",
+          "de_chalice",
+          "de_cbble",
+          "de_inferno",
+          "de_lake",
+          "de_overpass",
+          "de_shortnuke",
+          "de_train",
+          "de_vertigo"
+       ]
+    }
+    ```
+
+#### Cvars File {: #cvars-file }
+
+```yaml
+cfg/get5/cvars.json
+```
+
+You can configure sets of configuration parameters (`cvars`) to use. The default file contains only `default`, which is
+automatically used in the [`!get5`](../commands#get5) menu and as the default `--cvars` parameter when
+using [`get5_creatematch`](../commands#get5_creatematch). Anything you put in the `default` key is automatically loaded
+unless you provide a different `--cvars` parameter.
+
+You can set the location of the cvars file with [`get5_cvars_file`](#get5_cvars_file). The default cvars file is
+generated if the file does not exist. This prevents accidental overwrites when updating the plugin.
+
+!!! example "Cvars file example"
+
+    This file would allow you to run:
+
+    ```sh
+    get5_creatematch --cvars "no_ff_casual"
+    ```
+
+    ```json
+    {
+       "default": {},
+       "no_ff_casual": {
+          "mp_friendlyfire": 0,
+          "sv_damage_print_enable": 1
+       }
+    }
+    ```
+
+!!! warning "`default` is required!"
+
+    Do not remove the `default` key. If you don't want to apply any extra `cvars` when loading matches from the `!get5`
+    menu or when using `get5_creatematch`, you should simply leave this object empty (`{}`).
 
 ## Server Setup
 
@@ -119,10 +310,11 @@ disable.<br>**`Default: ""`**
 
 ####`get5_reset_cvars_on_end`
 :  Whether the `cvars` of a [match configuration](../match_schema#schema) as well as
-the [Get5-determined hostname](#get5_hostname_format) are reset to their original values when a series ends. You may
-want to disable this if you only run Get5 on your servers and use `cvars` to
-configure [demos](../gotv), [backups](../backup) or [remote URL logging](../events_and_forwards#http) on a per-match
-basis, as reverting some of those parameters can be problematic.<br>**`Default: 1`**
+the [Get5-determined hostname](#get5_hostname_format) are reset to their original values when a series ends. This also
+causes team-specific configuration options (name, flag, logo etc.) to be set to empty on match end. You may want to
+disable this if you only run Get5 on your servers and use `cvars` to configure [demos](../gotv), [backups](../backup)
+or [remote URL logging](../events_and_forwards#http) on a per-match basis, as reverting some of those parameters can be
+problematic.<br>**`Default: 1`**
 
 ####`get5_debug`
 :   Enable or disable verbose debug output from Get5. Intended for development and debugging purposes
@@ -413,7 +605,7 @@ if [`get5_print_damage`](#get5_print_damage) is disabled.<br>
     - [-] (30 in 1) to [-] (0 in 0) from Player5 (0 HP)   # - Dealt damage to this player, not enough for assist.
     ```
 
-## Config Files
+## Config File Locations {: #config-files }
 
 ####`get5_live_cfg`
 :   Config file executed when the game goes live, relative to `csgo/cfg`.<br>**`Default: "get5/live.cfg"`**
@@ -427,6 +619,18 @@ mode.<br>**`Default: "get5/live_wingman.cfg"`**
 
 ####`get5_knife_cfg`
 :   Config file executed for the knife round, relative to `csgo/cfg`.<br>**`Default: "get5/knife.cfg"`**
+
+####`get5_teams_file`
+:   Location of the JSON [teams file](#teams-file). Relative
+to `csgo/cfg`.<br>**`Default: "get5/teams.json"`**
+
+####`get5_maps_file`
+:   Location of the JSON [maps file](#maps-file). Relative
+to `csgo/cfg`.<br>**`Default: "get5/maps.json"`**
+
+####`get5_cvars_file`
+:   Location of the JSON [cvars file](#Cvars-file). Relative
+to `csgo/cfg`.<br>**`Default: "get5/cvars.json"`**
 
 ## Demos
 
@@ -473,7 +677,8 @@ extension. Set to empty string to disable.<br>**`Default: ""`**
 
 ####`get5_remote_log_header_key`
 :   If this **and** [`get5_remote_log_header_value`](#get5_remote_log_header_value) are defined, this
-header name and value will be used for your [event HTTP requests](../events_and_forwards#http).<br>**`Default: "Authorization"`**
+header name and value will be used for your [event HTTP requests](../events_and_forwards#http).<br>*
+*`Default: "Authorization"`**
 
 ####`get5_remote_log_header_value`
 :   If this **and** [`get5_remote_log_header_key`](#get5_remote_log_header_key) are defined, this header

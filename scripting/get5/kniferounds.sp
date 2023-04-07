@@ -16,7 +16,7 @@ Action StartKnifeRound(Handle timer) {
 static Action Timer_AnnounceKnife(Handle timer) {
   g_KnifeCountdownTimer = INVALID_HANDLE;
   if (g_GameState == Get5State_None) {
-    return;
+    return Plugin_Handled;
   }
   AnnouncePhaseChange("{GREEN}%t", "KnifeInfoMessage");
 
@@ -31,6 +31,7 @@ static Action Timer_AnnounceKnife(Handle timer) {
   EventLogger_LogAndDeleteEvent(knifeEvent);
 
   g_HasKnifeRoundStarted = true;
+  return Plugin_Handled;
 }
 
 void StartKnifeTimer() {
@@ -152,4 +153,5 @@ static Action Timer_ForceKnifeDecision(Handle timer) {
     Get5_MessageToAll("%t", "TeamLostTimeToDecideInfoMessage", g_FormattedTeamNames[g_KnifeWinnerTeam]);
     EndKnifeRound(false);
   }
+  return Plugin_Handled;
 }

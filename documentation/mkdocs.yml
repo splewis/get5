@@ -29,7 +29,6 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
 plugins:
-  - swagger-ui-tag
   - mike:
       # These fields are all optional; the defaults are as below...
       canonical_version: null

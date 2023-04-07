@@ -11,7 +11,7 @@ static Action Timer_GoToLive(Handle timer) {
   if (g_GameState != Get5State_Warmup && g_GameState != Get5State_WaitingForKnifeRoundDecision) {
     // super defensive race-condition check. These are the only two allowed states
     // for this callback, so if the game had been canceled during this time, do nothing.
-    return;
+    return Plugin_Handled;
   }
   // Always disable sv_cheats!
   ServerCommand("sv_cheats 0");
@@ -40,6 +40,7 @@ static Action Timer_GoToLive(Handle timer) {
   Call_PushCell(liveEvent);
   Call_Finish();
   EventLogger_LogAndDeleteEvent(liveEvent);
+  return Plugin_Handled;
 }
 
 Action Timer_MatchLive(Handle timer) {

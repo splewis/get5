@@ -71,7 +71,7 @@ static bool SetHeaderKeyValuePairInt(const Handle request, const char[] header, 
 }
 
 static bool SetGet5ServerIdHeader(const Handle request, char[] error) {
-  char serverId[65];
+  char serverId[SERVER_ID_LENGTH];
   g_ServerIdCvar.GetString(serverId, sizeof(serverId));
   if (strlen(serverId) == 0) {
     return true;

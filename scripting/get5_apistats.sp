@@ -110,7 +110,7 @@ void ApiInfoChanged(ConVar convar, const char[] oldValue, const char[] newValue)
   LogDebug("get5_web_api_url now set to %s", g_APIURL);
 }
 
-static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:...) {
+static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any...) {
   char url[1024];
   FormatEx(url, sizeof(url), "%s%s", g_APIURL, apiMethod);
 
@@ -135,13 +135,12 @@ static Handle CreateRequest(EHTTPMethod httpMethod, const char[] apiMethod, any:
   }
 }
 
-int RequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode) {
+void RequestCallback(Handle request, bool failure, bool requestSuccessful, EHTTPStatusCode statusCode) {
   if (failure || !requestSuccessful) {
     LogError("API request failed, HTTP status code = %d", statusCode);
     char response[1024];
     SteamWorks_GetHTTPResponseBodyData(request, response, sizeof(response));
     LogError(response);
-    return;
   }
 }
 
@@ -193,7 +192,7 @@ static void CheckForLogo(const char[] logo) {
   }
 }
 
-static int LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status, int data) {
+static void LogoCallback(Handle request, bool failure, bool successful, EHTTPStatusCode status, int data) {
   if (failure || !successful) {
     LogError("Logo request failed, status code = %d", status);
     return;
@@ -249,11 +248,17 @@ static void UpdateRoundStats(const char[] matchId, const int mapNumber) {
   FormatEx(mapKey, sizeof(mapKey), "map%d", mapNumber);
   if (kv.JumpToKey(mapKey)) {
     if (kv.JumpToKey("team1")) {
-      UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_1);
+      if (kv.JumpToKey("players")) {
+        UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_1);
+        kv.GoBack();
+      }
       kv.GoBack();
     }
     if (kv.JumpToKey("team2")) {
-      UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_2);
+      if (kv.JumpToKey("players")) {
+        UpdatePlayerStats(matchId, mapNumber, kv, Get5Team_2);
+        kv.GoBack();
+      }
       kv.GoBack();
     }
     kv.GoBack();
@@ -270,8 +275,8 @@ public void Get5_OnMapResult(const Get5MapResultEvent event) {
 
   Handle req = CreateRequest(k_EHTTPMethodPOST, "match/%s/map/%d/finish", matchId, event.MapNumber);
   if (req != INVALID_HANDLE) {
-    AddIntParam(req, "team1score", event.Team1Score);
-    AddIntParam(req, "team2score", event.Team2Score);
+    AddIntParam(req, "team1score", event.Team1.Score);
+    AddIntParam(req, "team2score", event.Team2.Score);
     AddStringParam(req, "winner", winnerString);
     SteamWorks_SendHTTPRequest(req);
   }

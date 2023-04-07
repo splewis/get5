@@ -8,11 +8,233 @@ Whenever you update your Get5 plugin, remember to **always** update the `transla
 Please see the [installation instructions](https://splewis.github.io/get5/latest/installation/#installation) for
 details.
 
+# 0.14.0
+
+⚠️ PRERELEASE
+
+#### 2023-04-02
+
+### Breaking Changes 🛠
+
+1. The `Get5_OnPlayerSay` event now includes messages sent from Console (or potentially GOTV). You should filter out
+   these messages on your end if you don't want to react to them. Note that console is always `user_id` 0 and GOTV's
+   name is always `GOTV`. Alternatively, you can ignore all messages with an empty `steamid`.
+2. The [stats system](https://splewis.github.io/get5/dev/stats_system/#keyvalue) has been updated. This means that
+   the structure has been modified to allow for more information, specifically the starting side and score for each side
+   for each team, full stats for players as well as a new option to add team IDs.
+
+   **If you use any of the stats extensions, you must also update those plugins (`get5_mysqlstats.smx`
+   and `get5_apistats.smx`)!**
+
+   These changes affect the structure of the `get5_matchstats.cfg` file generated
+   by [`get5_dumpstats`](https://splewis.github.io/get5/dev/commands/#get5_dumpstats) and the `KeyValues` returned by
+   the `Get5_GetMatchStats` native. These are *not* changes to the JSON objects (see below for that) or the schema of
+   the MySQL extension. If you don't use the native or dump match stats to a file, this does *not* affect you.
+
+   Keys changed in the map root (i.e. `map0`):
+    1. `team1_name` and `team2_name` removed.
+    2. `team1` and `team2` added (objects), each with an `id` and a `name` key.
+
+   Keys changed for each team (i.e. `map0 -> team1`):
+    1. Players' SteamIDs and stats have moved from the root of the team object into an object called `players`.
+    2. Added `score_ct`
+    3. Added `score_t`
+    4. Added `starting_side` (`2` for T, `3` for CT as this is an integer enum)
+
+3. The structure of the `Get5_OnSeriesInit` JSON event has changed:
+
+   Old:
+   ```json5
+   {
+     "event": "series_start",
+     "matchid": "29844",
+     "team1_name": "TeamName",
+     "team2_name": "AnotherTeamName"
+   }
+   ```
+   New:
+   ```json5
+   {
+     "event": "series_start",
+     "num_maps": 3, // Bo3
+     "matchid": "29844",
+     "team1": {
+       "id": "482", // nullable in JSON, empty string in SourceMod.
+       "name": "TeamName"
+     }
+     // same for team2
+   }
+   ```
+4. The structure of the `Get5_OnMapResult` JSON event has changed:
+
+   Old:
+   ```json5
+   {
+     "event": "map_result",
+     "matchid": "29844",
+     "map_number": 0,
+     "winner": {
+       "team": "team1",
+       "side": "t"
+     },
+     "team1_score": 10,
+     "team2_score": 12
+   }
+   ```
+
+   New:
+   ```json5
+   {
+     "event": "map_result",
+     "matchid": "29844",
+     "map_number": 0,
+     "winner": {
+       "team": "team1",
+       "side": "t"
+     },
+     "team1": {
+       "id": "482", // nullable in JSON, empty string in SourceMod.
+       "name": "TeamName",
+       "series_score": 1,
+       "score": 10,
+       "score_ct": 4,
+       "score_t": 6,
+       "side": "t",
+       "starting_side": "ct",
+       "players": [
+         {
+           "name": "Nyxi",
+           "steamid": "76561197996426755",
+           "stats": {
+             // Full player stats.
+           }
+         }
+       ]
+     },
+     // same for team2
+   }
+   ```
+
+5. Similarly to 4., the structure of the `Get5_OnRoundEnd` JSON event has changed:
+
+   Old:
+   ```json5
+   {
+     "event": "round_end",
+     "matchid": "29844",
+     "map_number": 0,
+     "round_number": 21,
+     "round_time": 34944,
+     "reason": 8,
+     "winner": {
+       "team": "team1",
+       "side": "t"
+     },
+     "team1_score": 10,
+     "team2_score": 12
+   }
+   ```
+   New:
+   ```json5
+   {
+     "event": "round_end",
+     "matchid": "29844",
+     "map_number": 0,
+     "round_number": 21,
+     "round_time": 34944,
+     "reason": 8,
+     "winner": {
+       "team": "team1",
+       "side": "t"
+     },
+     "team1": {
+       "id": "482", // nullable in JSON, empty string in SourceMod.
+       "name": "TeamName",
+       "series_score": 1,
+       "score": 10,
+       "score_ct": 4,
+       "score_t": 6,
+       "side": "t",
+       "starting_side": "ct",
+       "players": [
+         {
+           "name": "Nyxi",
+           "steamid": "76561197996426755",
+           "stats": {
+             // Full player stats.
+           }
+         }
+       ]
+     }
+     // same for "team2"
+   }
+   ```
+
+   These changes affect the corresponding forwards as well, so if you have a plugin that reads this data, you must
+   update it. For full details and the SourceMod properties, see
+   the [event documentation](https://splewis.github.io/get5/dev/events_and_forwards/#events).
+6. Get5 no longer sets its [game state](https://splewis.github.io/get5/dev/commands/#get5_status) to `none`
+   immediately following the end of the series, but now waits until the restore timer fires. Get5 will be in `post_game`
+   until the timer runs out, similarly to when waiting for the next map. This means that GOTV broadcasts will have a
+   chance to finish before Get5 releases the server.
+7. The map is now always reloaded when a match configuration is loaded *if* a game was previously played on the same map
+   with no map reload in between. This is in effort to clear the game state and prevent bugs such as [the warmup
+   countdown timer stopping at 0.01](https://github.com/splewis/get5/issues/976).
+8. The [`get5_creatematch`](https://splewis.github.io/get5/dev/commands/#get5_creatematch) command has been replaced by
+   a CLI-like command which lets you configure almost any type of match with a single command.
+9. [`num_maps`](https://splewis.github.io/get5/dev/match_schema/#schema) in the match schema now defaults to `1` instead
+   of `3`.
+10. [`get5_scrim`](https://splewis.github.io/get5/dev/commands/#get5_scrim) and the accompanying `scrim_template.cfg`
+    file is now considered legacy, and you should instead
+    use [`get5_creatematch --scrim --team1 home_team`](https://splewis.github.io/get5/dev/commands/#get5_creatematch)
+    and add your home team to the new teams file to achieve the same result.
+11. Get5 now uses version 5.x of [`sm-json`](https://github.com/clugg/sm-json), which contains important fixes to plugin
+    forwards. If you have any custom plugins reading from Get5 forwards, they should also update their version of this
+    library and be recompiled.
+12. Removed `HasAssist()` and `HasAttacker()` from `Get5PlayerDeathEvent` in SourceMod forwards. You should simply check
+    `Assist` and `Attacker` for null, respectively.
+13. Validation of JSON files is stricter than before. For instance; an empty string for a boolean or numeric value will
+    now throw an error. As will `"0"` and `"1"`. The reasoning behind this is to prevent silent errors such as a match
+    file loading "correctly" but with unexpected behavior. Anyone using JSON files should consult
+    the [match schema](https://splewis.github.io/get5/dev/match_schema/#schema) prior to upgrading.
+14. Validation of KeyValues files (`.cfg`) is also stricter than before, and the feedback on errors should be better.
+
+### New Features / Changes 🎉
+
+1. Get5 is now built with SourceMod 1.11.
+2. The JSON "pretty print" spacing string has changed from 4 spaces to 2 spaces. This is strictly to reduce the size of
+   the JSON payload and has no practical effect on the objects.
+3. The `get5_mysqlstats` extension now uses a transaction to update stat rows for each player. This improves performance
+   via reduced I/O between the game server and the database server. It now also runs on the JSON methodmaps provided to
+   forwards instead of copying the KeyValue stat object.
+4. The [documentation of events](https://splewis.github.io/get5/dev/events_and_forwards/#events) is now
+   rendered separately using [ReDocly](https://redocly.github.io) instead of being embedded in the Get5 documentation
+   website. This allows for more space and makes it easier to browse/read. It also allows you to link directly to an
+   event.
+5. The team configuration
+   parameters ([`mp_teamname_1`](https://totalcsgo.com/command/mpteamname1),
+   [`mp_teamflag_1`](https://totalcsgo.com/command/mpteamflag1),
+   [`mp_teamlogo_1`](https://totalcsgo.com/command/mpteamlogo1) etc.) are now reset to blank when Get5 ends a series.
+   Previously, these parameters would linger and would have to be manually reset or replaced by loading a new match
+   configuration.
+6. You can now provide an `id` parameter to your team objects in match configurations, which is echoed back in the
+   forwards and JSON events.
+7. Fixed missing HTTP event on `Get5_OnTeamReadyStatusChanged` and associated memory leak.
+8. [`side_type`](https://splewis.github.io/get5/dev/match_schema/#schema) now accepts `random` as a parameter.
+9. Workshop maps are now correctly formatted in the map veto system, assuming they contain a know map.
+   I.e. `workshop/82722474/de_nuke_2` would format to `Nuke`, since it contains `de_nuke`. Previously, a complete match
+   was required. The default Wingman maps now also format correctly (`de_lake` => `Lake` etc.).
+10. The [`!get5`](https://splewis.github.io/get5/dev/commands/#get5) menu has been significantly upgraded and now
+    supports creating almost any type of match, similarly to the new `get5_creatematch` command, but using in-game menus
+    only. It now also lets you browse recent backups and set a winner if force-ending a match.
+11. Any match configuration file can now take `scrim: true` in order to load in scrim mode, and `team2` will then not be
+    required.
+
 # 0.13.1
 
 #### 2023-03-20
 
-## New Features / Changes 🎉
+### New Features / Changes 🎉
 
 1. Fix critical memory leaks and heap size issues.
 2. Fix missing HTTP event for `Get5_OnTeamReadyStatusChanged` if a team goes from ready to unready.
@@ -68,7 +290,7 @@ details.
    round ends. This behavior can be controlled
    via [`get5_allow_pause_cancellation`](https://splewis.github.io/get5/latest/configuration/#get5_allow_pause_cancellation).
 
-## New Features / Changes 🎉
+### New Features / Changes 🎉
 
 1. Admins can now use the
    command [`get5_add_ready_time`](https://splewis.github.io/get5/latest/commands/#get5_add_ready_time) to add more time

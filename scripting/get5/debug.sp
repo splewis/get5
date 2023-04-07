@@ -120,7 +120,7 @@ static void AddGlobalStateInfo(File f) {
   f.WriteLine("g_SeriesCanClinch = %d", g_SeriesCanClinch);
   f.WriteLine("g_Wingman = %d", g_Wingman);
   f.WriteLine("g_HasKnifeRoundStarted = %d", g_HasKnifeRoundStarted);
-
+  f.WriteLine("g_MapReloadRequired = %d", g_MapReloadRequired);
   f.WriteLine("g_MapChangePending = %d", g_MapChangePending);
   f.WriteLine("g_PendingSideSwap = %d", g_PendingSideSwap);
   f.WriteLine("g_DoingBackupRestoreNow = %d", g_DoingBackupRestoreNow);
@@ -133,6 +133,7 @@ static void AddGlobalStateInfo(File f) {
   LOOP_TEAMS(team) {
     GetTeamString(team, buffer, sizeof(buffer));
     f.WriteLine("Team info for %s (%d):", buffer, team);
+    f.WriteLine("g_TeamIDs = %s", g_TeamIDs[team]);
     f.WriteLine("g_TeamNames = %s", g_TeamNames[team]);
     WriteArrayList(f, "g_TeamPlayers", g_TeamPlayers[team]);
     f.WriteLine("g_TeamTags = %s", g_TeamTags[team]);

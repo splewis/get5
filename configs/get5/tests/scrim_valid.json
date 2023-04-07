@@ -1,7 +1,8 @@
 {
-  "matchid": "test_match_valid",
+  "matchid": "test_match_valid_scrim",
   "match_title": "Test {MAPNUMBER} of {MAXMAPS}",
   "num_maps": 3,
+  "scrim": true,
   "skip_veto": true,
   "clinch_series": true,
   "side_type": "never_knife",
@@ -23,7 +24,6 @@
   "favored_percentage_team1": 75,
   "favored_percentage_text": "team percentage text",
   "team1": {
-    "id": "TeamAID",
     "name": "Team A Default",
     "tag": "TAG-A",
     "flag": "US",
@@ -40,9 +40,6 @@
       "76561197946789735": "CoachAName2"
     },
     "matchtext": "Defending Champions"
-  },
-  "team2": {
-    "fromfile": "addons/sourcemod/configs/get5/tests/team2.json"
   },
   "spectators": {
     "name": "Spectator Team Name",

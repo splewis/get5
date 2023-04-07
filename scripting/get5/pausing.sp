@@ -42,6 +42,7 @@ void RestartPauseTimer() {
 
 static Action Timer_ResetPauseRestriction(Handle timer, int data) {
   g_IsChangingPauseState = false;
+  return Plugin_Handled;
 }
 
 void UnpauseGame() {
@@ -182,9 +183,13 @@ Action Command_Pause(int client, int args) {
     return Plugin_Handled;
   }
 
-  // This gets set here because it appears to be async, so setting it when
-  // the GSI starts briefly results in a missing max value.
-  ServerCommand("mp_team_timeout_max %d", maxPauses);
+  // Make sure mp_team_timeout_max is correct. We need to use a ConVar handle so the
+  // change is not async, or a (potentially) incorrect max value will flash on the first tick of the
+  // pause if the pause is called during freezetime.
+  ConVar timeoutMax = FindConVar("mp_team_timeout_max");
+  if (timeoutMax) {
+    timeoutMax.SetInt(maxPauses);
+  }
 
   PauseGame(team, Get5PauseType_Tactical);
 

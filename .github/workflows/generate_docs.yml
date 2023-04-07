@@ -1,10 +1,12 @@
 name: Publish MKDocs to GH Pages
 on:
+  pull_request:
+    branches:
+      - "development"
   push:
     branches:
       - "master"
       - "development"
-      - "adjust_docs"
 jobs:
   build:
     name: Deploy docs
@@ -23,6 +25,9 @@ jobs:
           if [ ${{ github.ref }} == 'refs/heads/master' ]
           then
             mike deploy latest --push
-          else
+          elif [ ${{ github.ref }} == 'refs/heads/development' ]
+          then
             mike deploy dev --push
+          else
+            mike deploy PR-${{ github.head_ref || github.ref_name }}  --push
           fi

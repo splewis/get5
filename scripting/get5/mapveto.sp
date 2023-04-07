@@ -90,7 +90,7 @@ static void FinishVeto() {
   }
 
   char currentMapName[PLATFORM_MAX_PATH];
-  GetCleanMapName(currentMapName, sizeof(currentMapName));
+  GetCurrentMap(currentMapName, sizeof(currentMapName));
 
   char mapToPlay[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(0, mapToPlay, sizeof(mapToPlay));
@@ -100,16 +100,15 @@ static void FinishVeto() {
   SetStartingTeams();
   SetMatchTeamCvars();
 
-  if (!StrEqual(currentMapName, mapToPlay)) {
+  if (IsMapReloadRequiredForGameMode(g_Wingman) || g_MapReloadRequired || !StrEqual(currentMapName, mapToPlay)) {
     ResetReadyStatus();
-    float delay = 10.0;
+    SetCorrectGameMode();
+    float delay = 7.0;
     g_MapChangePending = true;
     if (g_DisplayGotvVetoCvar.BoolValue) {
-      // Players must wait for GOTV to end before we can change map, but we don't need to record that.
-      g_PendingMapChangeTimer = CreateTimer(float(GetTvDelay()) + delay, Timer_NextMatchMap);
-    } else {
-      g_PendingMapChangeTimer = CreateTimer(delay, Timer_NextMatchMap);
+      delay = float(GetTvDelay()) + delay;
     }
+    g_PendingMapChangeTimer = CreateTimer(delay, Timer_NextMatchMap);
   } else {
     LOOP_CLIENTS(i) {
       if (IsPlayer(i)) {
@@ -201,13 +200,21 @@ void HandleSideChoice(const Get5Side side, int client) {
   HandleVetoStep();
 }
 
+static void HandleAutomaticSideSelection() {
+  if (g_MatchSideType == MatchSideType_Random) {
+    g_MapSides.Push(GetRandomInt(0, 1) == 0 ? SideChoice_Team1CT : SideChoice_Team1T);
+  } else {
+    g_MapSides.Push(g_MatchSideType == MatchSideType_NeverKnife ? SideChoice_Team1CT : SideChoice_KnifeRound);
+  }
+}
+
 static void HandleVetoStep() {
   // As long as sides are not set for a map, either give side pick or auto-decide sides and recursively call this.
   if (g_MapSides.Length < g_MapsToPlay.Length) {
     if (g_MatchSideType == MatchSideType_Standard) {
       PromptForSideSelectionInChat(OtherMatchTeam(g_LastVetoTeam));
     } else {
-      g_MapSides.Push(g_MatchSideType == MatchSideType_NeverKnife ? SideChoice_Team1CT : SideChoice_KnifeRound);
+      HandleAutomaticSideSelection();
       HandleVetoStep();
     }
   } else if (g_NumberOfMapsInSeries > g_MapsToPlay.Length) {
@@ -216,7 +223,7 @@ static void HandleVetoStep() {
       char mapName[PLATFORM_MAX_PATH];
       g_MapsLeftInVetoPool.GetString(0, mapName, sizeof(mapName));
       PickMap(mapName, Get5Team_None);
-      g_MapSides.Push(g_MatchSideType == MatchSideType_NeverKnife ? SideChoice_Team1CT : SideChoice_KnifeRound);
+      HandleAutomaticSideSelection();
       FinishVeto();
     } else {
       // More than 1 map in the pool and not all maps are picked; present choices as determine by config.
@@ -271,7 +278,7 @@ static void PromptForMapSelectionInChat(const Get5MapSelectionOption option) {
                         g_MapsToPlay.Length + 1);
   }
   char mapListAsString[PLATFORM_MAX_PATH];
-  ImplodeMapArrayToString(g_MapsLeftInVetoPool, mapListAsString, sizeof(mapListAsString));
+  ImplodeMapArrayToString(g_MapsLeftInVetoPool, mapListAsString, sizeof(mapListAsString), true);
   Get5_MessageToAll("%t %s.", "MapSelectionRemainingMaps", mapListAsString);
 
   int client;
@@ -316,11 +323,15 @@ static void PromptForSideSelectionInChat(const Get5Team team) {
   Get5_Message(client, "%t", "MapSelectionPickSideHelp", formattedCommandCT, formattedCommandT);
 }
 
-static void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize) {
+void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize, bool sort) {
   char[][] mapsArray = new char[mapPool.Length][PLATFORM_MAX_PATH];
   for (int i = 0; i < mapPool.Length; i++) {
     mapPool.GetString(i, mapsArray[i], PLATFORM_MAX_PATH);
     FormatMapName(mapsArray[i], mapsArray[i], PLATFORM_MAX_PATH, true, false);
+  }
+  // Sort alphabetically.
+  if (sort) {
+    SortStrings(mapsArray, mapPool.Length, Sort_Ascending);
   }
   ImplodeStrings(mapsArray, mapPool.Length, ", ", buffer, bufferSize);
 }
@@ -438,6 +449,11 @@ bool RemoveMapFromMapPool(const ArrayList mapPool, const char[] str, char[] buff
     mapPool.GetString(eraseIndex, buffer, bufferSize);
     mapPool.Erase(eraseIndex);
     return true;
+  }
+  if (StrContains(str, "cobble", false) > -1) {
+    // Because Cobblestone is the only map that's actually misspelled, we re-run the code if the input contained
+    // "cobble" but there was no match, this time using "cbble" instead, which will match de_cbble.
+    return RemoveMapFromMapPool(mapPool, "cbble", buffer, bufferSize);
   }
   return false;
 }

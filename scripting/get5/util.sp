@@ -1,12 +1,23 @@
 #include <sdktools>
 
-#define MAX_INTEGER_STRING_LENGTH 16
-#define MAX_FLOAT_STRING_LENGTH   32
-#define AUTH_LENGTH               64
-#define GAME_MODE_WINGMAN         2
-#define GAME_MODE_COMPETITIVE     1
-#define GAME_TYPE_CLASSIC         0
-
+#define LATEST_VERSION_URL          "https://raw.githubusercontent.com/splewis/get5/master/scripting/get5/version.sp"
+#define GET5_GITHUB_PAGE            "splewis.github.io/get5"
+#define DEFAULT_CONFIG_KEY          "default"
+#define MAX_CVAR_LENGTH             513  // 512 + 1 for buffers
+#define MAX_INTEGER_STRING_LENGTH   16
+#define MAX_FLOAT_STRING_LENGTH     32
+#define SERVER_ID_LENGTH            65
+#define AUTH_LENGTH                 64
+#define GAME_MODE_WINGMAN           2
+#define GAME_MODE_COMPETITIVE       1
+#define GAME_TYPE_CLASSIC           0
+#define CHECK_READY_TIMER_INTERVAL  1.0
+#define INFO_MESSAGE_TIMER_INTERVAL 20.0
+#define DEBUG_CVAR                  "get5_debug"
+#define MATCH_ID_LENGTH             64
+#define TEAM1_STARTING_SIDE         CS_TEAM_CT
+#define TEAM2_STARTING_SIDE         CS_TEAM_T
+#define DEFAULT_TAG                 "[{YELLOW}Get5{NORMAL}]"
 // Dummy value for when we need to write a KeyValue string, but we don't care about the value *or*
 // when the value is an empty string. Trying to write an empty string results in the KeyValue not
 // being written, so we use this.
@@ -179,16 +190,6 @@ stock void ReplaceStringWithInt(char[] buffer, int len, const char[] replace, in
   ReplaceString(buffer, len, replace, intString, caseSensitive);
 }
 
-stock void AnnouncePhaseChange(const char[] format, const char[] message) {
-  int count = g_PhaseAnnouncementCountCvar.IntValue;
-  if (count > 10) {
-    count = 10;
-  }
-  for (int i = 0; i < count; i++) {
-    Get5_MessageToAll(format, message);
-  }
-}
-
 stock bool InWarmup() {
   return GameRules_GetProp("m_bWarmupPeriod") != 0;
 }
@@ -237,51 +238,6 @@ stock bool IsPaused() {
 
 stock void RestartGame(int delay = 1) {
   ServerCommand("mp_restartgame %d", delay);
-}
-
-stock void SetTeamInfo(const Get5Side side, const char[] name, const char[] flag, const char[] logo,
-                       const char[] matchstat, int series_score) {
-  int team_int = (side == Get5Side_CT) ? 1 : 2;
-
-  char teamCvarName[MAX_CVAR_LENGTH];
-  char flagCvarName[MAX_CVAR_LENGTH];
-  char logoCvarName[MAX_CVAR_LENGTH];
-  char textCvarName[MAX_CVAR_LENGTH];
-  char scoreCvarName[MAX_CVAR_LENGTH];
-  FormatEx(teamCvarName, sizeof(teamCvarName), "mp_teamname_%d", team_int);
-  FormatEx(flagCvarName, sizeof(flagCvarName), "mp_teamflag_%d", team_int);
-  FormatEx(logoCvarName, sizeof(logoCvarName), "mp_teamlogo_%d", team_int);
-  FormatEx(textCvarName, sizeof(textCvarName), "mp_teammatchstat_%d", team_int);
-  FormatEx(scoreCvarName, sizeof(scoreCvarName), "mp_teamscore_%d", team_int);
-
-  // Add Ready/Not ready tags to team name if in warmup.
-  char taggedName[MAX_CVAR_LENGTH];
-  if (g_ReadyTeamTagCvar.BoolValue) {
-    if (IsReadyGameState()) {
-      Get5Team matchTeam = CSTeamToGet5Team(view_as<int>(side));
-      if (IsTeamReady(matchTeam)) {
-        FormatEx(taggedName, sizeof(taggedName), "%s %T", name, "ReadyTag", LANG_SERVER);
-      } else {
-        FormatEx(taggedName, sizeof(taggedName), "%s %T", name, "NotReadyTag", LANG_SERVER);
-      }
-    } else {
-      strcopy(taggedName, sizeof(taggedName), name);
-    }
-  } else {
-    strcopy(taggedName, sizeof(taggedName), name);
-  }
-
-  SetConVarStringSafe(teamCvarName, taggedName);
-  SetConVarStringSafe(flagCvarName, flag);
-  SetConVarStringSafe(logoCvarName, logo);
-  SetConVarStringSafe(textCvarName, matchstat);
-
-  // We do this because IntValue = 0 does not consistently set an empty string, relevant for testing.
-  if (g_MapsToWin > 1 && series_score > 0) {
-    SetConVarIntSafe(scoreCvarName, series_score);
-  } else {
-    SetConVarStringSafe(scoreCvarName, "");
-  }
 }
 
 stock void SetConVarIntSafe(const char[] name, int value) {
@@ -345,46 +301,58 @@ stock void FormatMapName(const char[] mapName, char[] buffer, int len, bool clea
   mapStringIndex = (numSplits > 0) ? (numSplits - 1) : (0);
   strcopy(buffer, len, buffers[mapStringIndex]);
 
-  if (cleanName && StrContains(mapName, "workshop", false) != 0) {
-    if (StrEqual(buffer, "de_cache")) {
-      strcopy(buffer, len, "Cache");
-    } else if (StrEqual(buffer, "de_inferno")) {
+  if (cleanName) {
+    if (StrContains(buffer, "de_inferno", false) != -1) {
       strcopy(buffer, len, "Inferno");
-    } else if (StrEqual(buffer, "de_dust2")) {
-      strcopy(buffer, len, "Dust II");
-    } else if (StrEqual(buffer, "de_mirage")) {
+    } else if (StrContains(buffer, "de_mirage", false) != -1) {
       strcopy(buffer, len, "Mirage");
-    } else if (StrEqual(buffer, "de_train")) {
-      strcopy(buffer, len, "Train");
-    } else if (StrEqual(buffer, "de_cbble")) {
-      strcopy(buffer, len, "Cobblestone");
-    } else if (StrEqual(buffer, "de_anubis")) {
+    } else if (StrContains(buffer, "de_anubis", false) != -1) {
       strcopy(buffer, len, "Anubis");
-    } else if (StrEqual(buffer, "de_overpass")) {
+    } else if (StrContains(buffer, "de_overpass", false) != -1) {
       strcopy(buffer, len, "Overpass");
-    } else if (StrEqual(buffer, "de_nuke")) {
+    } else if (StrContains(buffer, "de_nuke", false) != -1 || StrContains(buffer, "de_shortnuke", false) != -1) {
       strcopy(buffer, len, "Nuke");
-    } else if (StrEqual(buffer, "de_vertigo")) {
+    } else if (StrContains(buffer, "de_vertigo", false) != -1) {
       strcopy(buffer, len, "Vertigo");
-    } else if (StrEqual(buffer, "de_ancient")) {
+    } else if (StrContains(buffer, "de_ancient", false) != -1) {
       strcopy(buffer, len, "Ancient");
-    } else if (StrEqual(buffer, "de_tuscan")) {
+    } else if (StrContains(buffer, "de_train", false) != -1) {
+      strcopy(buffer, len, "Train");
+    } else if (StrContains(buffer, "de_dust2", false) != -1) {
+      strcopy(buffer, len, "Dust II");
+    } else if (StrContains(buffer, "de_cache", false) != -1) {
+      strcopy(buffer, len, "Cache");
+    } else if (StrContains(buffer, "de_tuscan", false) != -1) {
       strcopy(buffer, len, "Tuscan");
-    } else if (StrEqual(buffer, "de_prime")) {
+    } else if (StrContains(buffer, "de_cbble", false) != -1) {
+      strcopy(buffer, len, "Cobblestone");
+    } else if (StrContains(buffer, "de_prime", false) != -1) {
       strcopy(buffer, len, "Prime");
-    } else if (StrEqual(buffer, "de_grind")) {
+    } else if (StrContains(buffer, "de_grind", false) != -1) {
       strcopy(buffer, len, "Grind");
-    } else if (StrEqual(buffer, "de_mocha")) {
+    } else if (StrContains(buffer, "de_canals", false) != -1) {
+      strcopy(buffer, len, "Canals");
+    } else if (StrContains(buffer, "de_mocha", false) != -1) {
       strcopy(buffer, len, "Mocha");
-    } else if (StrEqual(buffer, "cs_militia")) {
+    } else if (StrContains(buffer, "de_boyard", false) != -1) {
+      strcopy(buffer, len, "Boyard");
+    } else if (StrContains(buffer, "de_chalice", false) != -1) {
+      strcopy(buffer, len, "Chalice");
+    } else if (StrContains(buffer, "de_lake", false) != -1) {
+      strcopy(buffer, len, "Lake");
+    } else if (StrContains(buffer, "de_shortdust", false) != -1) {
+      strcopy(buffer, len, "Dust");
+    } else if (StrContains(buffer, "de_aztec", false) != -1) {
+      strcopy(buffer, len, "Aztec");
+    } else if (StrContains(buffer, "cs_militia", false) != -1) {
       strcopy(buffer, len, "Militia");
-    } else if (StrEqual(buffer, "cs_agency")) {
+    } else if (StrContains(buffer, "cs_agency", false) != -1) {
       strcopy(buffer, len, "Agency");
-    } else if (StrEqual(buffer, "cs_office")) {
+    } else if (StrContains(buffer, "cs_office", false) != -1) {
       strcopy(buffer, len, "Office");
-    } else if (StrEqual(buffer, "cs_italy")) {
+    } else if (StrContains(buffer, "cs_italy", false) != -1) {
       strcopy(buffer, len, "Italy");
-    } else if (StrEqual(buffer, "cs_assault")) {
+    } else if (StrContains(buffer, "cs_assault", false) != -1) {
       strcopy(buffer, len, "Assault");
     }
   }
@@ -504,13 +472,16 @@ stock bool IsPlayerTeam(Get5Team team) {
   return team == Get5Team_1 || team == Get5Team_2;
 }
 
-stock Get5Team VetoFirstFromString(const char[] str) {
+stock Get5VetoFirst VetoFirstFromString(const char[] str, char[] error) {
   if (StrEqual(str, "random", false)) {
-    return view_as<Get5Team>(GetRandomInt(0, 1));
+    return Get5VetoFirst_Random;
   } else if (StrEqual(str, "team2", false)) {
-    return Get5Team_2;
+    return Get5VetoFirst_Team2;
+  } else if (StrEqual(str, "team1", false)) {
+    return Get5VetoFirst_Team1;
   } else {
-    return Get5Team_1;
+    FormatEx(error, PLATFORM_MAX_PATH, "Invalid veto_first '%s'. Must be one of 'team1', 'team2', 'random'.", str);
+    return Get5VetoFirst_Invalid;
   }
 }
 
@@ -520,7 +491,7 @@ stock bool GetAuth(int client, char[] auth, int size) {
 
   bool ret = GetClientAuthId(client, AuthId_SteamID64, auth, size);
   if (!ret) {
-    LogError("Failed to get steamid for client %L", client);
+    LogError("Failed to resolve Steam ID for client %L. This is usually a temporary or network related error.", client);
   }
   return ret;
 }
@@ -566,13 +537,19 @@ stock void GetTeamString(Get5Team team, char[] buffer, int len) {
   }
 }
 
-stock MatchSideType MatchSideTypeFromString(const char[] str) {
-  if (StrEqual(str, "normal", false) || StrEqual(str, "standard", false)) {
+stock MatchSideType MatchSideTypeFromString(const char[] str, char[] error) {
+  if (StrEqual(str, "standard", false)) {
     return MatchSideType_Standard;
   } else if (StrEqual(str, "never_knife", false)) {
     return MatchSideType_NeverKnife;
-  } else {
+  } else if (StrEqual(str, "always_knife", false)) {
     return MatchSideType_AlwaysKnife;
+  } else if (StrEqual(str, "random", false)) {
+    return MatchSideType_Random;
+  } else {
+    FormatEx(error, PLATFORM_MAX_PATH,
+             "Invalid side_type '%s'. Must be one of 'standard', 'never_knife', 'always_knife', 'random'.", str);
+    return MatchSideType_Invalid;
   }
 }
 
@@ -581,6 +558,8 @@ stock void MatchSideTypeToString(MatchSideType type, char[] str, int len) {
     FormatEx(str, len, "standard");
   } else if (type == MatchSideType_NeverKnife) {
     FormatEx(str, len, "never_knife");
+  } else if (type == MatchSideType_Random) {
+    FormatEx(str, len, "random");
   } else {
     FormatEx(str, len, "always_knife");
   }
@@ -736,43 +715,6 @@ stock bool CreateFolderStructure(const char[] path) {
   return true;
 }
 
-stock void CheckAndCreateFolderPath(const ConVar cvar, const char[][] varsToReplace, const int varListSize,
-                                    char outputFolder[PLATFORM_MAX_PATH], const int outputFolderSize) {
-  char path[PLATFORM_MAX_PATH];
-  char cvarName[MAX_CVAR_LENGTH];
-
-  cvar.GetName(cvarName, sizeof(cvarName));
-  cvar.GetString(path, sizeof(path));
-
-  for (int i = 0; i < varListSize; i++) {
-    if (StrEqual("{MATCHID}", varsToReplace[i])) {
-      ReplaceString(path, sizeof(path), varsToReplace[i], g_MatchID);
-    } else if (StrEqual("{DATE}", varsToReplace[i])) {
-      char dateFormat[64];
-      char formattedDate[64];
-      int timeStamp = GetTime();
-      g_DateFormatCvar.GetString(dateFormat, sizeof(dateFormat));
-
-      FormatTime(formattedDate, sizeof(formattedDate), dateFormat, timeStamp);
-      ReplaceString(path, sizeof(path), varsToReplace[i], formattedDate);
-    }
-  }
-
-  int folderLength = strlen(path);
-
-  if (folderLength > 0 &&
-      (path[0] == '/' || path[0] == '.' || path[folderLength - 1] != '/' || StrContains(path, "//") != -1)) {
-    LogError(
-      "%s must end with a slash and must not start with a slash or dot. It will be reset to an empty string! Current value: %s",
-      cvarName, path);
-    path = "";
-    cvar.SetString(path, false, false);
-  } else {
-    CreateFolderStructure(path);
-  }
-  Format(outputFolder, outputFolderSize, "%s", path);
-}
-
 stock int GetMilliSecondsPassedSince(float timestamp) {
   return RoundToFloor((GetEngineTime() - timestamp) * 1000);
 }
@@ -812,10 +754,6 @@ stock void ConvertSecondsToMinutesAndSeconds(int timeAsSeconds, char[] buffer, c
     seconds = timeAsSeconds % 60;
   }
   FormatEx(buffer, bufferSize, seconds < 10 ? "%d:0%d" : "%d:%d", minutes, seconds);
-}
-
-stock bool IsDoingRestoreOrMapChange() {
-  return g_DoingBackupRestoreNow || g_MapChangePending;
 }
 
 stock void ChatCommandToString(const Get5ChatCommand command, char[] buffer, const int bufferSize) {
@@ -916,4 +854,22 @@ stock Get5ChatCommand StringToChatCommand(const char[] string) {
   } else {
     return Get5ChatCommand_Unknown;
   }
+}
+
+stock bool IsMapWorkshop(const char[] mapName) {
+  return StrContains(mapName, "workshop", false) == 0;
+}
+
+stock JSON_Object LoadJSONIfFileExists(const char[] filepath, char[] error, int options = 0) {
+  if (!FileExists(filepath)) {
+    FormatEx(error, PLATFORM_MAX_PATH, "File '%s' does not exist or cannot be read.", filepath);
+    return null;
+  }
+  JSON_Object json = json_read_from_file(filepath, options);
+  if (json == null) {
+    char jsonError[128];
+    json_get_last_error(jsonError, sizeof(jsonError));
+    FormatEx(error, PLATFORM_MAX_PATH, "Failed to decode JSON from file '%s'. Error: %s", filepath, jsonError);
+  }
+  return json;
 }

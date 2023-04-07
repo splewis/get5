@@ -1,6 +1,7 @@
 #define TEMP_MATCHCONFIG_BACKUP_PATTERN "get5_match_config_backup%s.txt"
 #define TEMP_REMOTE_BACKUP_PATTERN      "get5_backup_remote%s.txt"
 #define TEMP_VALVE_BACKUP_PATTERN       "get5_temp_backup%s.txt"
+#define TEMP_MATCHCONFIG_JSON           "get5_temp_config_%s.json"
 #define TEMP_VALVE_NAMES_FILE_PATTERN   "get5_names%s.txt"
 
 Action Command_LoadBackupUrl(int client, int args) {
@@ -67,7 +68,7 @@ Action Command_LoadBackup(int client, int args) {
 
 Action Command_ListBackups(int client, int args) {
   if (!g_BackupSystemEnabledCvar.BoolValue) {
-    ReplyToCommand(client, "The backup system is disabled");
+    ReplyToCommand(client, "The backup system is disabled.");
     return Plugin_Handled;
   }
 
@@ -78,39 +79,77 @@ Action Command_ListBackups(int client, int args) {
     strcopy(matchID, sizeof(matchID), g_MatchID);
   }
 
+  ArrayList backups = GetBackups(matchID);
+
+  if (backups == null || backups.Length == 0) {
+    ReplyToCommand(client, "Found no backup files matching the provided parameters.");
+  } else {
+    char backupInfo[256];
+    char filename[PLATFORM_MAX_PATH];
+    int length = backups.Length;
+    for (int i = 0; i < length; i++) {
+      backups.GetString(i, filename, sizeof(filename));
+      if (GetBackupInfo(filename, backupInfo, sizeof(backupInfo))) {
+        ReplyToCommand(client, backupInfo);
+      } else {
+        ReplyToCommand(client, filename);
+      }
+    }
+  }
+  delete backups;
+  return Plugin_Handled;
+}
+
+ArrayList GetBackups(const char[] matchID) {
   char path[PLATFORM_MAX_PATH];
   g_RoundBackupPathCvar.GetString(path, sizeof(path));
   ReplaceString(path, sizeof(path), "{MATCHID}", matchID);
 
   DirectoryListing files = OpenDirectory(strlen(path) > 0 ? path : ".");
-  bool foundBackups = false;
-  if (files != null) {
-    char backupInfo[256];
-    char pattern[PLATFORM_MAX_PATH];
-    char serverId[65];
-    g_ServerIdCvar.GetString(serverId, sizeof(serverId));
-    FormatEx(pattern, sizeof(pattern), "get5_backup%s_match%s", serverId, matchID);
+  if (files == null) {
+    return null;
+  }
+  ArrayList backups = new ArrayList(PLATFORM_MAX_PATH);
+  char pattern[PLATFORM_MAX_PATH];
+  char serverId[SERVER_ID_LENGTH];
+  g_ServerIdCvar.GetString(serverId, sizeof(serverId));
+  FormatEx(pattern, sizeof(pattern), "get5_backup%s_match%s", serverId, matchID);
 
-    char filename[PLATFORM_MAX_PATH];
-    while (files.GetNext(filename, sizeof(filename))) {
-      if (StrContains(filename, pattern) == 0) {
-        foundBackups = true;
-        Format(filename, sizeof(filename), "%s%s", path, filename);
-        if (GetBackupInfo(filename, backupInfo, sizeof(backupInfo))) {
-          ReplyToCommand(client, backupInfo);
-        } else {
-          ReplyToCommand(client, filename);
-        }
-      }
+  char filename[PLATFORM_MAX_PATH];
+  while (files.GetNext(filename, sizeof(filename))) {
+    if (StrContains(filename, pattern) == 0) {
+      Format(filename, sizeof(filename), "%s%s", path, filename);
+      backups.PushString(filename);
     }
-    delete files;
   }
+  delete files;
+  backups.Sort(Sort_Descending, Sort_String);
+  return backups;
+}
 
-  if (!foundBackups) {
-    ReplyToCommand(client, "Found no backup files matching the provided parameters.");
+bool GetRoundInfoFromBackupFile(const char[] path, char[] buffer, const int maxLength, bool includeMatchId) {
+  KeyValues kv = new KeyValues("Backup");
+  if (!kv.ImportFromFile(path)) {
+    LogError("Failed to find or read backup file \"%s\".", path);
+    delete kv;
+    return false;
   }
-
-  return Plugin_Handled;
+  char matchId[MATCH_ID_LENGTH];
+  if (includeMatchId) {
+    kv.GetString("matchid", matchId, sizeof(matchId));
+    if (strlen(matchId) == 0) {
+      matchId = "No ID";
+    }
+    Format(matchId, sizeof(matchId), "%s: ", matchId);
+  }
+  int mapNumber = kv.GetNum("mapnumber") + 1;
+  if (kv.JumpToKey("valve_backup")) {
+    FormatEx(buffer, maxLength, "%sMap %d, Round %d", matchId, mapNumber, kv.GetNum("round") + 1);
+  } else {
+    FormatEx(buffer, maxLength, "%sMap %d, Pre-live", matchId, mapNumber);
+  }
+  delete kv;
+  return true;
 }
 
 static bool GetBackupInfo(const char[] path, char[] info, int maxlength) {
@@ -208,7 +247,7 @@ void WriteBackup() {
   char variableSubstitutes[][] = {"{MATCHID}"};
   CheckAndCreateFolderPath(g_RoundBackupPathCvar, variableSubstitutes, 1, folder, sizeof(folder));
 
-  char serverId[65];
+  char serverId[SERVER_ID_LENGTH];
   g_ServerIdCvar.GetString(serverId, sizeof(serverId));
 
   char filename[PLATFORM_MAX_PATH];
@@ -577,7 +616,7 @@ bool RestoreFromBackup(const char[] path, char[] error) {
   }
   delete kv;
 
-  if (backupIsForDifferentMap) {
+  if (backupIsForDifferentMap || (g_MapReloadRequired && backupIsForDifferentMatch)) {
     // We don't need to assign players if changing map; this will be done when the players rejoin.
     // If a map is to be changed, we want to suppress all stats events immediately, as the
     // Get5_OnBackupRestore is called now and we don't want events firing after this until the game

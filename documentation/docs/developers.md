@@ -26,15 +26,36 @@ If you are unfamiliar with how building SourceMod plugins works, you can use [Do
 Get5 [from source](https://github.com/splewis/get5). A precompiled image is available:
 
 ```shell
-docker pull nickdnk/get5-build:1.10.0-6545-sp-fix
+docker pull nickdnk/get5-build:latest
 ```
 
-If run from the repository root, this would put the compiled plugin into a `builds` folder. You could of course replace
-`$PWD/builds` with any other path to move the output there.
+Before you build, please ensure you have installed the [`sm-json`](https://github.com/clugg/sm-json) dependency, which
+is configured as a submodule. The Docker container does not do this because it can cause file permission issues with
+the repository.
 
 ```shell
-docker run --rm -v $PWD:/get5src -v $PWD/builds:/get5/builds nickdnk/get5-build:1.10.0-6545-sp-fix
+git submodule update --init
 ```
+
+You must mount two volumes for the build to succeed:
+
+1. `/get5_src` should be mounted to the repository root.
+2. `/get5_build` should be mounted where you want the output build files. Note that this directory and all its files may
+   belong to `root`.
+
+```shell
+docker run --rm \
+-v $PWD:/get5_src \
+-v $PWD/build:/get5_build \
+nickdnk/get5-build:latest \
+get5
+```
+
+!!! tip "Good to know"
+
+    `$PWD` means "current directory", so in this case, this command would assume you are in the repository root, and the
+    output will end up in a folder called `/build` within there. `\` in the script just escapes the new-line, so the
+    command is easier to read.
 
 !!! warning "Custom builds are unsupported"
 

@@ -10,6 +10,12 @@
 If you're writing your own plugin, you can collect stats from the game using the
 [forwards](../events_and_forwards) provided by Get5.
 
+## HTTP Events {: #http }
+
+If you want to send stats to a web server, the [HTTP event system](../events_and_forwards#http) will let you collect
+game information at any level of granularity by sending data as JSON over HTTP(S); from grenades thrown, kills, player
+chat messages to round, map or series results.
+
 ## KeyValue System {: #keyvalue }
 
 Get5 will automatically record basic stats for each player for each map in the match. These are stored in an internal
@@ -17,50 +23,97 @@ KeyValues structure, and are available at any time during the match (including t
 `Get5_GetMatchStats` native and the [`get5_dumpstats`](../commands#get5_dumpstats) command.
 
 The root level contains data for the full series; the series winner (if one exists yet) and the series type (bo1, bo3,
-etc).
+etc.) and the team names/IDs.
 
 Under the root level is a level for each map (`map0`, `map1` etc.), which contains the map winner (if one exists yet),
 the map name and the demo file recording.
 
 Under the map level is a section for each team (`team1` and `team2`), which contains the current team score (on
-that map) and the team name.
+that map), the score for each side on that map (CT vs. T) and the side the team started on as well as an object with
+player stats (`players`) for the entire team, saved under each player's SteamID64.
 
-Each player has a section under the team level under the section name of their SteamID 64. It contains all the personal
-level stats: name, kills, deaths, assists, etc.
+#### Example
 
-Partial Example:
+!!! example "`get5_matchstats.cfg`"
 
-```
-"Stats"
-{
-    "series_type"       "bo1"
-    "team1_name"        "EnvyUs"
-    "team2_name"        "Fnatic"
-    "map0"
+    ```
+    "Stats"
     {
-        "mapname"       "de_mirage"
-        "demo_filename" "304_map1_de_mirage.dem"
-        "winner"        "team1"
+        "series_type"  "bo1"
         "team1"
         {
-            "score"          "5"
-            "73613643164646"
+            "id"    "23758"
+            "name"  "EnvyUs"
+        }
+        "team2"
+        {
+            "id"    "15716"
+            "name"  "Fnatic"
+        }
+        "winner"  "team1"
+        "map0"
+        {
+            "mapname"        "de_mirage"
+            "demo_filename"  "304_map1_de_mirage.dem"
+            "winner"         "team1"
+            "team1"
             {
-                "name"    "xyz"
-                "kills"   "0"
-                "deaths"  "1"
-                "assists" "5"
-                "damage"  "352"
+                "players"
+                {
+                    "76561197996426755"
+                    {
+                        "init"                "1" // internal init key, ignore this
+                        "coaching"            "0" // 1 if the player is a coach
+                        "name"                "xyz"
+                        "kills"               "9"
+                        "deaths"              "3"
+                        "assists"             "5"
+                        "flashbang_assists"   "2"
+                        "teamkills"           "0"
+                        "suicides"            "0"
+                        "damage"              "945"
+                        "util_damage"         "34"
+                        "enemies_flashed"     "4"
+                        "friendlies_flashed"  "1"
+                        "knife_kills"         "0"
+                        "headshot_kills"      "3"
+                        "roundsplayed"        "8"
+                        "bomb_defuses"        "1"
+                        "bomb_plants"         "0"
+                        "1kill_rounds"        "1"
+                        "2kill_rounds"        "2"
+                        "3kill_rounds"        "1"
+                        "4kill_rounds"        "0"
+                        "5kill_rounds"        "0"
+                        "v1"                  "3" // 1v1s won
+                        "v2"                  "2"
+                        "v3"                  "1"
+                        "v4"                  "0"
+                        "v5"                  "0"
+                        "firstkill_t"         "0"
+                        "firstkill_ct"        "2"
+                        "firstdeath_t"        "0"
+                        "firstdeath_ct"       "2"
+                        "tradekill"           "4"
+                        "kast"                "8"
+                        "contribution_score"  "23"
+                        "mvp" "4"
+                    }
+                }
+                "score"          "5" // total rounds won
+                "score_ct"       "2" // rounds won on CT
+                "score_t"        "3" // rounds won on T
+                "starting_side"  "3" // 3 for CT, 2 for T  
             }
         }
     }
-}
-```
+    ```
 
-!!! question "What stats are collected?"
+!!! info "KeyValues != JSON"
 
-    See the [get5.inc include file](https://github.com/splewis/get5/blob/master/scripting/include/get5.inc#L1769) for
-    what stats will be recorded and what their keys are in the KeyValue structure.
+    Please note that the [JSON events](../events_and_forwards) have similar - **but not identical** - structure and
+    keys to this file. The KeyValues system is inferior to the JSON-based HTTP system in many ways, and most modern
+    integrations would likely be better off using JSON, especially if data is being sent to a web server.
 
 ## MySQL Statistics {: #mysql }
 

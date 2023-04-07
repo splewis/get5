@@ -402,6 +402,16 @@ static void MapVetoLogicTest() {
              RemoveMapFromMapPool(mapPool, "dust", error, sizeof(error)));
   AssertEq("Check map pool match precise match, size 1", 1, mapPool.Length);
 
+  // Cobblestone is misspelled, so we have a special case for that.
+  mapPool.PushString("de_cbble");
+  AssertTrue("Check cobblestone map removed on cobble",
+             RemoveMapFromMapPool(mapPool, "cobblestone", error, sizeof(error)));
+  AssertEq("Check map pool size after cobblestone", 1, mapPool.Length);
+
+  mapPool.PushString("workshop/1193875520/de_aztec");
+  AssertTrue("Check banning workshop map", RemoveMapFromMapPool(mapPool, "aztec", error, sizeof(error)));
+  AssertEq("Check map pool size after workshop ban", 1, mapPool.Length);
+
   delete mapPool;
 }
 

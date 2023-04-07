@@ -408,6 +408,10 @@ static void MapVetoLogicTest() {
              RemoveMapFromMapPool(mapPool, "cobblestone", error, sizeof(error)));
   AssertEq("Check map pool size after cobblestone", 1, mapPool.Length);
 
+  mapPool.PushString("workshop/1193875520/de_aztec");
+  AssertTrue("Check banning workshop map", RemoveMapFromMapPool(mapPool, "aztec", error, sizeof(error)));
+  AssertEq("Check map pool size after workshop ban", 1, mapPool.Length);
+
   delete mapPool;
 }
 

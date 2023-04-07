@@ -450,5 +450,10 @@ bool RemoveMapFromMapPool(const ArrayList mapPool, const char[] str, char[] buff
     mapPool.Erase(eraseIndex);
     return true;
   }
+  if (StrContains(str, "cobble", false) > -1) {
+    // Because Cobblestone is the only map that's actually misspelled, we re-run the code if the input contained
+    // "cobble" but there was no match, this time using "cbble" instead, which will match de_cbble.
+    return RemoveMapFromMapPool(mapPool, "cbble", buffer, bufferSize);
+  }
   return false;
 }

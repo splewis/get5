@@ -10,16 +10,14 @@ details.
 
 # 0.14.0
 
-⚠️ PRERELEASE
-
-#### 2023-04-02
+#### 2023-04-08
 
 ### Breaking Changes 🛠
 
 1. The `Get5_OnPlayerSay` event now includes messages sent from Console (or potentially GOTV). You should filter out
    these messages on your end if you don't want to react to them. Note that console is always `user_id` 0 and GOTV's
    name is always `GOTV`. Alternatively, you can ignore all messages with an empty `steamid`.
-2. The [stats system](https://splewis.github.io/get5/dev/stats_system/#keyvalue) has been updated. This means that
+2. The [stats system](https://splewis.github.io/get5/latest/stats_system/#keyvalue) has been updated. This means that
    the structure has been modified to allow for more information, specifically the starting side and score for each side
    for each team, full stats for players as well as a new option to add team IDs.
 
@@ -27,7 +25,7 @@ details.
    and `get5_apistats.smx`)!**
 
    These changes affect the structure of the `get5_matchstats.cfg` file generated
-   by [`get5_dumpstats`](https://splewis.github.io/get5/dev/commands/#get5_dumpstats) and the `KeyValues` returned by
+   by [`get5_dumpstats`](https://splewis.github.io/get5/latest/commands/#get5_dumpstats) and the `KeyValues` returned by
    the `Get5_GetMatchStats` native. These are *not* changes to the JSON objects (see below for that) or the schema of
    the MySQL extension. If you don't use the native or dump match stats to a file, this does *not* affect you.
 
@@ -172,21 +170,21 @@ details.
 
    These changes affect the corresponding forwards as well, so if you have a plugin that reads this data, you must
    update it. For full details and the SourceMod properties, see
-   the [event documentation](https://splewis.github.io/get5/dev/events_and_forwards/#events).
-6. Get5 no longer sets its [game state](https://splewis.github.io/get5/dev/commands/#get5_status) to `none`
+   the [event documentation](https://splewis.github.io/get5/latest/events_and_forwards/#events).
+6. Get5 no longer sets its [game state](https://splewis.github.io/get5/latest/commands/#get5_status) to `none`
    immediately following the end of the series, but now waits until the restore timer fires. Get5 will be in `post_game`
    until the timer runs out, similarly to when waiting for the next map. This means that GOTV broadcasts will have a
    chance to finish before Get5 releases the server.
 7. The map is now always reloaded when a match configuration is loaded *if* a game was previously played on the same map
    with no map reload in between. This is in effort to clear the game state and prevent bugs such as [the warmup
    countdown timer stopping at 0.01](https://github.com/splewis/get5/issues/976).
-8. The [`get5_creatematch`](https://splewis.github.io/get5/dev/commands/#get5_creatematch) command has been replaced by
-   a CLI-like command which lets you configure almost any type of match with a single command.
-9. [`num_maps`](https://splewis.github.io/get5/dev/match_schema/#schema) in the match schema now defaults to `1` instead
-   of `3`.
-10. [`get5_scrim`](https://splewis.github.io/get5/dev/commands/#get5_scrim) and the accompanying `scrim_template.cfg`
+8. The [`get5_creatematch`](https://splewis.github.io/get5/latest/commands/#get5_creatematch) command has been replaced
+   by a CLI-like command which lets you configure almost any type of match with a single command.
+9. [`num_maps`](https://splewis.github.io/get5/latest/match_schema/#schema) in the match schema now defaults to `1`
+   instead of `3`.
+10. [`get5_scrim`](https://splewis.github.io/get5/latest/commands/#get5_scrim) and the accompanying `scrim_template.cfg`
     file is now considered legacy, and you should instead
-    use [`get5_creatematch --scrim --team1 home_team`](https://splewis.github.io/get5/dev/commands/#get5_creatematch)
+    use [`get5_creatematch --scrim --team1 home_team`](https://splewis.github.io/get5/latest/commands/#get5_creatematch)
     and add your home team to the new teams file to achieve the same result.
 11. Get5 now uses version 5.x of [`sm-json`](https://github.com/clugg/sm-json), which contains important fixes to plugin
     forwards. If you have any custom plugins reading from Get5 forwards, they should also update their version of this
@@ -196,8 +194,10 @@ details.
 13. Validation of JSON files is stricter than before. For instance; an empty string for a boolean or numeric value will
     now throw an error. As will `"0"` and `"1"`. The reasoning behind this is to prevent silent errors such as a match
     file loading "correctly" but with unexpected behavior. Anyone using JSON files should consult
-    the [match schema](https://splewis.github.io/get5/dev/match_schema/#schema) prior to upgrading.
+    the [match schema](https://splewis.github.io/get5/latest/match_schema/#schema) prior to upgrading.
 14. Validation of KeyValues files (`.cfg`) is also stricter than before, and the feedback on errors should be better.
+15. Cobblestone is now correctly detected in the chat-based veto system when typing `!ban cobble`. This needed a
+    workaround as the map file is the only one that's actually *misspelled*.
 
 ### New Features / Changes 🎉
 
@@ -207,7 +207,7 @@ details.
 3. The `get5_mysqlstats` extension now uses a transaction to update stat rows for each player. This improves performance
    via reduced I/O between the game server and the database server. It now also runs on the JSON methodmaps provided to
    forwards instead of copying the KeyValue stat object.
-4. The [documentation of events](https://splewis.github.io/get5/dev/events_and_forwards/#events) is now
+4. The [documentation of events](https://splewis.github.io/get5/latest/events_and_forwards/#events) is now
    rendered separately using [ReDocly](https://redocly.github.io) instead of being embedded in the Get5 documentation
    website. This allows for more space and makes it easier to browse/read. It also allows you to link directly to an
    event.
@@ -220,11 +220,11 @@ details.
 6. You can now provide an `id` parameter to your team objects in match configurations, which is echoed back in the
    forwards and JSON events.
 7. Fixed missing HTTP event on `Get5_OnTeamReadyStatusChanged` and associated memory leak.
-8. [`side_type`](https://splewis.github.io/get5/dev/match_schema/#schema) now accepts `random` as a parameter.
+8. [`side_type`](https://splewis.github.io/get5/latest/match_schema/#schema) now accepts `random` as a parameter.
 9. Workshop maps are now correctly formatted in the map veto system, assuming they contain a know map.
    I.e. `workshop/82722474/de_nuke_2` would format to `Nuke`, since it contains `de_nuke`. Previously, a complete match
    was required. The default Wingman maps now also format correctly (`de_lake` => `Lake` etc.).
-10. The [`!get5`](https://splewis.github.io/get5/dev/commands/#get5) menu has been significantly upgraded and now
+10. The [`!get5`](https://splewis.github.io/get5/latest/commands/#get5) menu has been significantly upgraded and now
     supports creating almost any type of match, similarly to the new `get5_creatematch` command, but using in-game menus
     only. It now also lets you browse recent backups and set a winner if force-ending a match.
 11. Any match configuration file can now take `scrim: true` in order to load in scrim mode, and `team2` will then not be

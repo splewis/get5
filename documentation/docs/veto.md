@@ -43,7 +43,8 @@ the map list.
    
     :regional_indicator_x: :white_check_mark: :octicons-dash-16: played by default
 
-Note that these examples assume that [`veto_first`](../match_schema#schema) is set to `team1`.
+Note that these examples assume that [`veto_first`](../match_schema#schema) is set to `team1`. You can invert or
+randomize the default flow by setting `veto_first` to `team2` or `random`, respectively.
 
 === "Single Map"
 
@@ -98,6 +99,8 @@ play ([`num_maps`](../match_schema#schema)) and map pool size ([`maplist`](../ma
 The [`veto_mode`](../match_schema#schema) parameter accepts an array of strings:
 
 `team1_pick`, `team1_ban`, `team2_pick` and `team2_ban`.
+
+When using a custom veto flow, [`veto_first`](../match_schema#schema) is ignored.
 
 ### Rules {: #rules }
 

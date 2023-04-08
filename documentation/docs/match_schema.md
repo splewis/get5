@@ -77,9 +77,9 @@ interface Get5Match {
 3. _Optional_<br>The number of players per team. You should **never** set this to a value higher than the number of
    players you want to actually play in a game, *excluding* coaches.<br><br>**`Default: 5 (2 in wingman)`**
 4. _Optional_<br>The maximum number of [coaches](../coaching) per team.<br><br>**`Default: 2`**
-5. _Optional_<br>The minimum number of players that must be present for the [`!forceready`](../commands#forceready)
-   command to succeed. If not forcing a team ready, **all** players must [`!ready`](../commands#ready) up
-   themselves.<br><br>**`Default: 0`**
+5. _Optional_<br>The minimum number of players that must be present on a team for
+   the [`!forceready`](../commands#forceready) command to succeed. This should not be larger than `players_per_team`. If
+   not forcing a team ready, **all** players must [`!ready`](../commands#ready) up themselves.<br><br>**`Default: 0`**
 6. _Optional_<br>The minimum number of spectators that must be [`!ready`](../commands#ready) for the game to
    begin.<br><br>**`Default: 0`**
 7. _Optional_<br>Whether to skip the [map selection](../veto) phase. If `true`, `num_maps` are simply played in the
@@ -92,7 +92,8 @@ interface Get5Match {
    <br>and<br>`{"76561197996426755": "PlayerName", "76561356896422767": "PlayerName"}` are both valid values.
 10. _Optional_<br>The spectators to allow into the game. If not defined, spectators cannot join the
     game.<br><br>**`Default: undefined`**
-11. _Optional_<br>The team that makes the first [map selection](../veto) choice.<br><br>**`Default: "team1"`**
+11. _Optional_<br>The team that makes the first [map selection](../veto) choice. This parameter is ignored if you
+    provide a custom veto flow via `veto_mode`.<br><br>**`Default: "team1"`**
 12. _Optional_<br>The method used to determine sides during [map selection](../veto).<br><br>`standard` means that the
     team that doesn't pick a map gets the side choice (only if `skip_veto` is `false`).<br><br>`always_knife` means that
     sides are always determined by a knife-round.<br><br>`never_knife` means that `team1` always starts on

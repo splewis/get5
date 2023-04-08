@@ -1,6 +1,6 @@
 void ChangeMap(const char[] map, float delay = 3.0) {
   char formattedMapName[64];
-  FormatMapName(map, formattedMapName, sizeof(formattedMapName), true, true);
+  FormatMapName(map, formattedMapName, sizeof(formattedMapName), g_FormatMapNamesCvar.BoolValue, true);
   Get5_MessageToAll("%t", "ChangingMapInfoMessage", formattedMapName);
 
   // pass the "true" name to a timer to changelevel

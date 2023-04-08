@@ -776,8 +776,6 @@ away-team when in <a href="../getting_started#scrims">scrim mode</a>. Except for
 can <a href="../configuration#get5_mute_allchat_during_map_selection">only talk in <strong>team chat</strong></a> during map selection. This is
 to reduce clutter, as a lot of text is already printed during this phase.</p>
 <h2 id="options">Options</h2>
-<p><code>team1</code> starts by default, but you can change this in the match configuration via
-the <a href="../match_schema#schema"><code>veto_first</code></a> parameter, which also supports <code>random</code>.</p>
 <p>When a team picks a map, the other team gets to choose the side to start on for that map. If a map is selected
 by default by being the last map standing, a knife round is used. This behavior is determined by
 the <a href="../match_schema#schema"><code>side_type</code></a> parameter of your match configuration. Sides may also be predetermined using
@@ -797,8 +795,8 @@ the map list.</p>
 <p><img alt="2⃣" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/32-20e3.svg" title=":two:" /> <img alt="⛔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26d4.svg" title=":no_entry:" /> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"/></svg></span> <code>team2_ban</code></p>
 <p><img alt="🇽" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f1fd.svg" title=":regional_indicator_x:" /> <img alt="✅" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2705.svg" title=":white_check_mark:" /> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"/></svg></span> played by default</p>
 </div>
-<p>Note that these examples assume that <a href="../match_schema#schema"><code>veto_first</code></a> is set to <code>team1</code>. You can invert or
-randomize the default flow by setting <code>veto_first</code> to <code>team2</code> or <code>random</code>, respectively.</p>
+<p>Note that these examples assume that <a href="../match_schema#schema"><code>veto_first</code></a> is set to <code>team1</code>, which starts by default.
+You can invert or randomize the default flow by setting <code>veto_first</code> to <code>team2</code> or <code>random</code>, respectively.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Single Map</label><label for="__tabbed_1_2">Double Map</label><label for="__tabbed_1_3">Best-of-X</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">

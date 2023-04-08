@@ -799,9 +799,9 @@ better support in various programming languages than Valve's KeyValue format (wh
 <li><em>Optional</em><br>The number of players per team. You should <strong>never</strong> set this to a value higher than the number of
    players you want to actually play in a game, <em>excluding</em> coaches.<br><br><strong><code>Default: 5 (2 in wingman)</code></strong></li>
 <li><em>Optional</em><br>The maximum number of <a href="../coaching">coaches</a> per team.<br><br><strong><code>Default: 2</code></strong></li>
-<li><em>Optional</em><br>The minimum number of players that must be present for the <a href="../commands#forceready"><code>!forceready</code></a>
-   command to succeed. If not forcing a team ready, <strong>all</strong> players must <a href="../commands#ready"><code>!ready</code></a> up
-   themselves.<br><br><strong><code>Default: 0</code></strong></li>
+<li><em>Optional</em><br>The minimum number of players that must be present on a team for
+   the <a href="../commands#forceready"><code>!forceready</code></a> command to succeed. This should not be larger than <code>players_per_team</code>. If
+   not forcing a team ready, <strong>all</strong> players must <a href="../commands#ready"><code>!ready</code></a> up themselves.<br><br><strong><code>Default: 0</code></strong></li>
 <li><em>Optional</em><br>The minimum number of spectators that must be <a href="../commands#ready"><code>!ready</code></a> for the game to
    begin.<br><br><strong><code>Default: 0</code></strong></li>
 <li><em>Optional</em><br>Whether to skip the <a href="../veto">map selection</a> phase. If <code>true</code>, <code>num_maps</code> are simply played in the
@@ -814,7 +814,8 @@ better support in various programming languages than Valve's KeyValue format (wh
    <br>and<br><code>{"76561197996426755": "PlayerName", "76561356896422767": "PlayerName"}</code> are both valid values.</li>
 <li><em>Optional</em><br>The spectators to allow into the game. If not defined, spectators cannot join the
     game.<br><br><strong><code>Default: undefined</code></strong></li>
-<li><em>Optional</em><br>The team that makes the first <a href="../veto">map selection</a> choice.<br><br><strong><code>Default: "team1"</code></strong></li>
+<li><em>Optional</em><br>The team that makes the first <a href="../veto">map selection</a> choice. This parameter is ignored if you
+    provide a custom veto flow via <code>veto_mode</code>.<br><br><strong><code>Default: "team1"</code></strong></li>
 <li><em>Optional</em><br>The method used to determine sides during <a href="../veto">map selection</a>.<br><br><code>standard</code> means that the
     team that doesn't pick a map gets the side choice (only if <code>skip_veto</code> is <code>false</code>).<br><br><code>always_knife</code> means that
     sides are always determined by a knife-round.<br><br><code>never_knife</code> means that <code>team1</code> always starts on

@@ -303,8 +303,8 @@ static int SetupMenuHandler(Menu menu, MenuAction action, int client, int param2
       return 0;
     } else if (StrEqual(infoString, SETUP_MENU_START_MATCH, true)) {
       if (g_SetupMenuTeamSelection == Get5SetupMenu_TeamSelectionMode_Current &&
-          (GetTeamPlayerCount(Get5Team_1) != g_SetupMenuPlayersPerTeam ||
-           GetTeamPlayerCount(Get5Team_2) != g_SetupMenuPlayersPerTeam)) {
+          (GetSidePlayerCount(Get5Side_CT) != g_SetupMenuPlayersPerTeam ||
+           GetSidePlayerCount(Get5Side_T) != g_SetupMenuPlayersPerTeam)) {
         Get5_Message(client, "Both teams must have %d player(s) when using current teams.", g_SetupMenuPlayersPerTeam);
       } else if (g_SetupMenuTeamSelection == Get5SetupMenu_TeamSelectionMode_Fixed &&
                  (strlen(g_SetupMenuTeamForTeam1) == 0 || strlen(g_SetupMenuTeamForTeam2) == 0)) {
@@ -335,6 +335,16 @@ static int SetupMenuHandler(Menu menu, MenuAction action, int client, int param2
     delete menu;
   }
   return 0;
+}
+
+static int GetSidePlayerCount(Get5Side side) {
+  int playerCount = 0;
+  LOOP_CLIENTS(i) {
+    if (IsPlayer(i) && view_as<Get5Side>(GetClientTeam(i)) == side) {
+      playerCount++;
+    }
+  }
+  return playerCount;
 }
 
 static void ShowSelectTeamsMenu(int client) {
@@ -882,8 +892,8 @@ static void CreateMatch(int client) {
 
   if (g_SetupMenuTeamSelection == Get5SetupMenu_TeamSelectionMode_Current) {
 
-    match.SetObject("team1", GetTeamObjectFromCurrentPlayers(Get5Team_1, g_SetupMenuTeam1Captain));
-    match.SetObject("team2", GetTeamObjectFromCurrentPlayers(Get5Team_2, g_SetupMenuTeam2Captain));
+    match.SetObject("team1", GetTeamObjectFromCurrentPlayers(Get5Side_CT, g_SetupMenuTeam1Captain));
+    match.SetObject("team2", GetTeamObjectFromCurrentPlayers(Get5Side_T, g_SetupMenuTeam2Captain));
 
   } else if (g_SetupMenuTeamSelection == Get5SetupMenu_TeamSelectionMode_Fixed) {
 
@@ -897,7 +907,7 @@ static void CreateMatch(int client) {
     match.SetObject("team1", g_SetupMenuAvailableTeams.GetObject(g_SetupMenuTeamForTeam1).DeepCopy());
   }
 
-  JSON_Object spectators = GetTeamObjectFromCurrentPlayers(Get5Team_Spec);
+  JSON_Object spectators = GetTeamObjectFromCurrentPlayers(Get5Side_Spec);
   if (view_as<JSON_Array>(spectators.GetObject("players")).Length > 0) {
     match.SetObject("spectators", spectators);
   } else {

@@ -1829,8 +1829,8 @@ Action Command_CreateMatch(int client, int args) {
 
   // If neither team is provided, use current teams.
   if (!hasTeam1 && !hasTeam2) {
-    JSON_Object team1 = GetTeamObjectFromCurrentPlayers(Get5Team_1);
-    JSON_Object team2 = GetTeamObjectFromCurrentPlayers(Get5Team_2);
+    JSON_Object team1 = GetTeamObjectFromCurrentPlayers(Get5Side_CT);
+    JSON_Object team2 = GetTeamObjectFromCurrentPlayers(Get5Side_T);
     int team1PlayerLength = view_as<JSON_Array>(team1.GetObject("players")).Length;
     int team2PlayerLength = view_as<JSON_Array>(team2.GetObject("players")).Length;
     matchConfig.SetObject("team1", team1);
@@ -2038,7 +2038,7 @@ Action Command_Ringer(int client, int args) {
   return Plugin_Handled;
 }
 
-JSON_Object GetTeamObjectFromCurrentPlayers(const Get5Team team, int forcedCaptainClient = 0) {
+JSON_Object GetTeamObjectFromCurrentPlayers(const Get5Side side, int forcedCaptainClient = 0) {
   JSON_Object teamObject = new JSON_Object();
   JSON_Array players = new JSON_Array();
 
@@ -2050,7 +2050,7 @@ JSON_Object GetTeamObjectFromCurrentPlayers(const Get5Team team, int forcedCapta
   if (forcedCaptainClient > 0) {
     LOOP_CLIENTS(i) {
       if (i == forcedCaptainClient) {
-        if (CheckIfClientIsOnTeam(i, team, false) && GetAuth(i, auth, sizeof(auth))) {
+        if (CheckIfClientIsOnSide(i, side, false) && GetAuth(i, auth, sizeof(auth))) {
           SetTeamNameFromClient(i, teamName, sizeof(teamName));
           players.PushString(auth);
           first = false;
@@ -2064,9 +2064,9 @@ JSON_Object GetTeamObjectFromCurrentPlayers(const Get5Team team, int forcedCapta
       // Already added above.
       continue;
     }
-    if (CheckIfClientIsOnTeam(i, team, false) && GetAuth(i, auth, sizeof(auth))) {
+    if (CheckIfClientIsOnSide(i, side, false) && GetAuth(i, auth, sizeof(auth))) {
       players.PushString(auth);
-      if (first && team != Get5Team_Spec) {
+      if (first && side != Get5Side_Spec) {
         SetTeamNameFromClient(i, teamName, sizeof(teamName));
       }
       first = false;
@@ -2076,15 +2076,17 @@ JSON_Object GetTeamObjectFromCurrentPlayers(const Get5Team team, int forcedCapta
     teamObject.SetString("name", teamName);
   }
   teamObject.SetObject("players", players);
-  AddCoachesToAuthJSON(teamObject, team);
+  if (side != Get5Side_Spec) {
+    AddCoachesToAuthJSON(teamObject, side);
+  }
   return teamObject;
 }
 
-void AddCoachesToAuthJSON(const JSON_Object json, const Get5Team team) {
+static void AddCoachesToAuthJSON(const JSON_Object json, const Get5Side side) {
   JSON_Array coaches;
   char auth[AUTH_LENGTH];
   LOOP_CLIENTS(i) {
-    if (CheckIfClientIsOnTeam(i, team, true) && GetAuth(i, auth, sizeof(auth))) {
+    if (CheckIfClientIsOnSide(i, side, true) && GetAuth(i, auth, sizeof(auth))) {
       if (coaches == null) {
         coaches = new JSON_Array();
       }
@@ -2100,17 +2102,12 @@ static void SetTeamNameFromClient(const int client, char[] teamName, const int t
   FormatEx(teamName, teamNameLength, "team_%N", client);
 }
 
-static bool CheckIfClientIsOnTeam(const int client, const Get5Team team, const bool coaching) {
+static bool CheckIfClientIsOnSide(const int client, const Get5Side side, const bool coaching) {
   if (!IsAuthedPlayer(client)) {
     return false;
   }
-  Get5Side side = coaching ? GetClientCoachingSide(client) : view_as<Get5Side>(GetClientTeam(client));
-  if (team == Get5Team_1 && side == Get5Side_CT) {
-    return true;
-  } else if (team == Get5Team_2 && side == Get5Side_T) {
-    return true;
-  }
-  return false;
+  Get5Side currentSide = coaching ? GetClientCoachingSide(client) : view_as<Get5Side>(GetClientTeam(client));
+  return currentSide == side;
 }
 
 // Adds the team logos to the download table.

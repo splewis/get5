@@ -82,10 +82,11 @@ static void FinishVeto() {
 
   // If a team has a map advantage, don't print that map.
   int mapNumber = Get5_GetMapNumber();
+  bool formatMapNames = g_FormatMapNamesCvar.BoolValue;
   for (int i = mapNumber; i < g_MapsToPlay.Length; i++) {
     char map[PLATFORM_MAX_PATH];
     g_MapsToPlay.GetString(i, map, sizeof(map));
-    FormatMapName(map, map, sizeof(map), true, true);
+    FormatMapName(map, map, sizeof(map), formatMapNames, true);
     Get5_MessageToAll("%t", "MapIsInfoMessage", i + 1 - mapNumber, map);
   }
 
@@ -309,7 +310,7 @@ static void PromptForSideSelectionInChat(const Get5Team team) {
   char mapName[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(g_MapsToPlay.Length - 1, mapName, sizeof(mapName));
   char formattedMapName[PLATFORM_MAX_PATH];
-  FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), true, true);
+  FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), g_FormatMapNamesCvar.BoolValue, true);
   Get5_MessageToAll("%t", "MapSelectionPickSide", g_FormattedTeamNames[team], formattedMapName);
 
   int client = g_VetoCaptains[team];
@@ -325,9 +326,10 @@ static void PromptForSideSelectionInChat(const Get5Team team) {
 
 void ImplodeMapArrayToString(const ArrayList mapPool, char[] buffer, const int bufferSize, bool sort) {
   char[][] mapsArray = new char[mapPool.Length][PLATFORM_MAX_PATH];
+  bool formatMapNames = g_FormatMapNamesCvar.BoolValue;
   for (int i = 0; i < mapPool.Length; i++) {
     mapPool.GetString(i, mapsArray[i], PLATFORM_MAX_PATH);
-    FormatMapName(mapsArray[i], mapsArray[i], PLATFORM_MAX_PATH, true, false);
+    FormatMapName(mapsArray[i], mapsArray[i], PLATFORM_MAX_PATH, formatMapNames, false);
   }
   // Sort alphabetically.
   if (sort) {
@@ -345,7 +347,7 @@ static bool BanMap(const char[] mapName, const Get5Team team) {
     return false;
   }
   char mapNameFormatted[PLATFORM_MAX_PATH];
-  FormatMapName(mapNameFromArray, mapNameFormatted, sizeof(mapNameFormatted), true, false);
+  FormatMapName(mapNameFromArray, mapNameFormatted, sizeof(mapNameFormatted), g_FormatMapNamesCvar.BoolValue, false);
   // Add color here as FormatMapName would make the color green.
   Format(mapNameFormatted, sizeof(mapNameFormatted), "{LIGHT_RED}%s{NORMAL}", mapNameFormatted);
   Get5_MessageToAll("%t", "TeamBannedMap", g_FormattedTeamNames[team], mapNameFormatted);
@@ -372,7 +374,7 @@ static bool PickMap(const char[] mapName, const Get5Team team) {
   }
   if (team != Get5Team_None) {
     char mapNameFormatted[PLATFORM_MAX_PATH];
-    FormatMapName(mapNameFromArray, mapNameFormatted, sizeof(mapNameFormatted), true, true);
+    FormatMapName(mapNameFromArray, mapNameFormatted, sizeof(mapNameFormatted), g_FormatMapNamesCvar.BoolValue, true);
     Get5_MessageToAll("%t", "TeamPickedMap", g_FormattedTeamNames[team], mapNameFormatted, g_MapsToPlay.Length + 1);
   }
 
@@ -404,7 +406,7 @@ static void PickSide(const Get5Side side, const Get5Team team) {
   char mapName[PLATFORM_MAX_PATH];
   g_MapsToPlay.GetString(mapNumber, mapName, sizeof(mapName));
   char mapNameFormatted[PLATFORM_MAX_PATH];
-  FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), true, true);
+  FormatMapName(mapName, mapNameFormatted, sizeof(mapNameFormatted), g_FormatMapNamesCvar.BoolValue, true);
 
   char sideFormatted[32];
   FormatEx(sideFormatted, sizeof(sideFormatted), "{GREEN}%s{NORMAL}", side == Get5Side_CT ? "CT" : "T");

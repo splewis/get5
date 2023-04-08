@@ -565,14 +565,19 @@ static void ShowSelectMapMenu(int client) {
     sortedMaps.PushString(mapName);
   }
 
-  // Sorts maps based on their formatted name.
-  sortedMaps.SortCustom(SortMapsBasedOnFormattedName);
+  bool formatMapNames = g_FormatMapNamesCvar.BoolValue;
+  if (formatMapNames) {
+    // Sorts maps based on their formatted name.
+    sortedMaps.SortCustom(SortMapsBasedOnFormattedName);
+  } else {
+    sortedMaps.Sort(Sort_Ascending, Sort_String);
+  }
 
   char formattedMapName[PLATFORM_MAX_PATH];
   l = sortedMaps.Length;
   for (int i = 0; i < l; i++) {
     sortedMaps.GetString(i, mapName, sizeof(mapName));
-    FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), true);
+    FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), formatMapNames);
     menu.AddItem(mapName, formattedMapName);
   }
   delete sortedMaps;

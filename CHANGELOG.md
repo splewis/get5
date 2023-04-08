@@ -8,7 +8,18 @@ Whenever you update your Get5 plugin, remember to **always** update the `transla
 Please see the [installation instructions](https://splewis.github.io/get5/latest/installation/#installation) for
 details.
 
+# 0.14.1
+
+#### 2023-04-08
+
+Hotfix of stuff that should have been in 0.14.0.
+
+1. Fixed "create match with current teams" from the `!get5` menu.
+2. Add option to disable formatting known map names via [`get5_format_map_names`](https://splewis.github.io/get5/latest/configuration/#get5_format_map_names).
+
 # 0.14.0
+
+*Note: Removed from releases. Please use 0.14.1 instead.*
 
 #### 2023-04-08
 

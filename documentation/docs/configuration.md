@@ -551,6 +551,9 @@ value will be used for your [backup upload HTTP request](#get5_remote_backup_url
 
 ## Formats & Paths
 
+####`get5_format_map_names`
+:   Whether to format known map names in chat and menus, i.e. `de_mirage` becomes `Mirage`.<br>**`Default: 1`**
+
 ####`get5_time_format`
 :   Date and time format string. This determines the [`{TIME}`](#tag-time) tag.<br>**`Default: "%Y-%m-%d_%H-%M-%S"`**
 

@@ -63,6 +63,7 @@ ConVar g_DamagePrintExcessCvar;
 ConVar g_DamagePrintFormatCvar;
 ConVar g_DemoNameFormatCvar;
 ConVar g_DisplayGotvVetoCvar;
+ConVar g_FormatMapNamesCvar;
 ConVar g_EventLogFormatCvar;
 ConVar g_EventLogRemoteURLCvar;
 ConVar g_EventLogRemoteHeaderKeyCvar;
@@ -483,6 +484,7 @@ public void OnPluginStart() {
   g_MuteAllChatDuringMapSelectionCvar   = CreateConVar("get5_mute_allchat_during_map_selection", "1", "If enabled, only the team captains can type in all-chat during map selection.");
   g_PauseOnVetoCvar                     = CreateConVar("get5_pause_on_veto", "1", "Whether the game pauses during map selection.");
   g_DisplayGotvVetoCvar                 = CreateConVar("get5_display_gotv_veto", "0", "Whether to wait for map selection to be broadcast to GOTV before changing map.");
+  g_FormatMapNamesCvar                  = CreateConVar("get5_format_map_names", "1", "Whether to format known map names.");
 
   // Server config
   g_AutoLoadConfigCvar                  = CreateConVar("get5_autoload_config", "", "The path/name of a match config file to automatically load when the server loads or when the first player joins.");
@@ -1576,7 +1578,7 @@ static Action Event_MatchOver(Event event, const char[] name, bool dontBroadcast
     // state immediately while waiting for the restartDelay, we set it here also.
     g_MapChangePending = true;
     char nextMapFormatted[PLATFORM_MAX_PATH];
-    FormatMapName(nextMap, nextMapFormatted, sizeof(nextMapFormatted), true, true);
+    FormatMapName(nextMap, nextMapFormatted, sizeof(nextMapFormatted), g_FormatMapNamesCvar.BoolValue, true);
     Get5_MessageToAll("%t", "NextSeriesMapInfoMessage", nextMapFormatted, timeToMapChangeFormatted);
     ChangeState(Get5State_PostGame);
     // Subtracting 4 seconds makes the map change 1 second before the timer expires, as there is a 3

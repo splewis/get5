@@ -73,7 +73,7 @@ interface Get5Match {
    should leave this field blank (or omit it), as match IDs will be assigned automatically. If you do want to assign
    match IDs from another source, they **must** be integers (in a string) and must increment between
    matches.<br><br>**`Default: ""`**
-2. _Optional_<br>The number of maps to play in the series.<br><br>**`Default: 3`**
+2. _Optional_<br>The number of maps to play in the series.<br><br>**`Default: 1`**
 3. _Optional_<br>The number of players per team. You should **never** set this to a value higher than the number of
    players you want to actually play in a game, *excluding* coaches.<br><br>**`Default: 5 (2 in wingman)`**
 4. _Optional_<br>The maximum number of [coaches](../coaching) per team.<br><br>**`Default: 2`**

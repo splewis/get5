@@ -13,9 +13,6 @@ to reduce clutter, as a lot of text is already printed during this phase.
 
 ## Options {: #options }
 
-`team1` starts by default, but you can change this in the match configuration via
-the [`veto_first`](../match_schema#schema) parameter, which also supports `random`.
-
 When a team picks a map, the other team gets to choose the side to start on for that map. If a map is selected
 by default by being the last map standing, a knife round is used. This behavior is determined by
 the [`side_type`](../match_schema#schema) parameter of your match configuration. Sides may also be predetermined using
@@ -43,8 +40,8 @@ the map list.
    
     :regional_indicator_x: :white_check_mark: :octicons-dash-16: played by default
 
-Note that these examples assume that [`veto_first`](../match_schema#schema) is set to `team1`. You can invert or
-randomize the default flow by setting `veto_first` to `team2` or `random`, respectively.
+Note that these examples assume that [`veto_first`](../match_schema#schema) is set to `team1`, which starts by default.
+You can invert or randomize the default flow by setting `veto_first` to `team2` or `random`, respectively.
 
 === "Single Map"
 

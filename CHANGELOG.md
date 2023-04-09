@@ -19,7 +19,7 @@ Hotfix of stuff that should have been in 0.14.0.
 
 # 0.14.0
 
-*Note: Removed from releases. Please use 0.14.1 instead.*
+*Note: Removed from releases. Please use 0.14.1 instead. All changes below still apply.*
 
 #### 2023-04-08
 
@@ -228,18 +228,17 @@ Hotfix of stuff that should have been in 0.14.0.
    configuration.
 6. You can now provide an `id` parameter to your team objects in match configurations, which is echoed back in the
    forwards and JSON events.
-7. Fixed missing HTTP event on `Get5_OnTeamReadyStatusChanged` and associated memory leak.
-8. [`side_type`](https://splewis.github.io/get5/latest/match_schema/#schema) now accepts `random` as a parameter.
-9. Workshop maps are now correctly formatted in the map veto system, assuming they contain a known map.
+7. [`side_type`](https://splewis.github.io/get5/latest/match_schema/#schema) now accepts `random` as a parameter.
+8. Workshop maps are now correctly formatted in the map veto system, assuming they contain a known map.
    I.e. `workshop/82722474/de_nuke_2` would format to `Nuke`, since it contains `de_nuke`. Previously, a complete match
    was required. The default Wingman maps now also format correctly (`de_lake` => `Lake` etc.).
-10. The [`!get5`](https://splewis.github.io/get5/latest/commands/#get5) menu has been significantly upgraded and now
-    supports creating almost any type of match, similarly to the new `get5_creatematch` command, but using in-game menus
-    only. It now also lets you browse recent backups and set a winner if force-ending a match.
-11. Any match configuration file can now take `scrim: true` in order to load in scrim mode, and `team2` will then not be
+9. The [`!get5`](https://splewis.github.io/get5/latest/commands/#get5) menu has been significantly upgraded and now
+   supports creating almost any type of match, similarly to the new `get5_creatematch` command, but using in-game menus
+   only. It now also lets you browse recent backups and set a winner if force-ending a match.
+10. Any match configuration file can now take `scrim: true` in order to load in scrim mode, and `team2` will then not be
     required.
-12. Cobblestone is now correctly detected in the chat-based veto system when typing `!ban cobble`. This needed a
-    workaround as the map file is the only one that's actually *misspelled*.
+11. Cobblestone is now correctly detected in the chat-based veto system when typing `!ban cobble`. This needed a
+    workaround as the map file is the only one that's actually *misspelled* (`de_cbble`).
 
 # 0.13.1
 

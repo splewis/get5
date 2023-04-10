@@ -900,6 +900,7 @@ public void OnMapStart() {
   // If the map is changed while a map timer is counting down, kill the timer. This could happen if
   // a too long mp_match_restart_delay was set and admins decide to manually intervene.
   if (g_PendingMapChangeTimer != INVALID_HANDLE) {
+    g_ReadyTimeWaitingUsed = 0;
     delete g_PendingMapChangeTimer;
     LogDebug("Killed g_PendingMapChangeTimer as map was changed.");
   }

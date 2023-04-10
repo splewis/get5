@@ -967,6 +967,7 @@ static Action Timer_CheckReady(Handle timer) {
     return Plugin_Continue;
   }
   if (IsDoingRestoreOrMapChange()) {
+    g_ReadyTimeWaitingUsed = 0;
     LogDebug("Timer_CheckReady: Waiting for restore or map change");
     return Plugin_Continue;
   }

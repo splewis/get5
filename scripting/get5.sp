@@ -883,7 +883,6 @@ public void OnMapStart() {
   LogDebug("OnMapStart");
   g_MapChangePending = false;
   g_DoingBackupRestoreNow = false;
-  g_ReadyTimeWaitingUsed = 0;
   g_KnifeWinnerTeam = Get5Team_None;
   g_HasKnifeRoundStarted = false;
   g_MapReloadRequired = false;

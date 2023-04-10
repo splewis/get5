@@ -8,6 +8,14 @@ Whenever you update your Get5 plugin, remember to **always** update the `transla
 Please see the [installation instructions](https://splewis.github.io/get5/latest/installation/#installation) for
 details.
 
+# 0.14.2
+
+#### 2023-04-10
+
+Minor bugfix.
+
+1. Prevent first joining player from resetting the ready waiting timer back to zero.
+
 # 0.14.1
 
 #### 2023-04-08
@@ -19,7 +27,7 @@ Hotfix of stuff that should have been in 0.14.0.
 
 # 0.14.0
 
-*Note: Removed from releases. Please use 0.14.1 instead. All changes below still apply.*
+*Note: Removed from releases. Please use 0.14.2 instead. All changes below still apply.*
 
 #### 2023-04-08
 

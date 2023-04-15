@@ -892,17 +892,31 @@ static void Utils_Test() {
   AssertStrEq("ConvertAuthToSteam64_4_value", output, expected);
 
   char mapName[64] = "workshop/3374744/Old Aztec";
+  char mapWorkshopId[64];
   char formattedMapName[64];
   FormatMapName(mapName, formattedMapName, sizeof(formattedMapName));
   AssertStrEq("Check workshop map name correctly formatted", "Old Aztec", formattedMapName);
-  AssertEq("Check workshop map ID extraction", GetMapIdFromString(mapName), 3374744);
+  AssertTrue("Check workshop map detected", IsMapWorkshop(mapName));
+  AssertTrue("Check workshop map ID extraction", GetMapIdFromString(mapName, mapWorkshopId, sizeof(mapWorkshopId)));
+  AssertStrEq("Check workshop map ID", mapWorkshopId, "3374744");
 
   mapName = "workshop/837575";  // name missing
   FormatMapName(mapName, formattedMapName, sizeof(formattedMapName));
-  AssertStrEq("Check workshop map name incorrectly formatted", "837575", formattedMapName);
-  AssertEq("Check workshop map ID extraction", GetMapIdFromString(mapName), 837575);
+  AssertStrEq("Check workshop map name without name", "837575", formattedMapName);
+  AssertTrue("Check workshop map ID extraction without name",
+             GetMapIdFromString(mapName, mapWorkshopId, sizeof(mapWorkshopId)));
+  AssertStrEq("Check workshop map ID without name", mapWorkshopId, "837575");
+
+  mapName = "workshop/33747383585844/Old Aztec";
+  FormatMapName(mapName, formattedMapName, sizeof(formattedMapName));
+  AssertStrEq("Check workshop map name correctly formatted 64 bit", "Old Aztec", formattedMapName);
+  AssertTrue("Check workshop map detected 64 bit", IsMapWorkshop(mapName));
+  AssertTrue("Check workshop map ID extraction 64 bit",
+             GetMapIdFromString(mapName, mapWorkshopId, sizeof(mapWorkshopId)));
+  AssertStrEq("Check workshop map ID 64 bit", mapWorkshopId, "33747383585844");
 
   mapName = "de_dust2";
+  AssertFalse("Check regular map not detected as workshop", IsMapWorkshop(mapName));
   FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), true);
   AssertStrEq("Check regular map name correctly formatted", "Dust II", formattedMapName);
   FormatMapName(mapName, formattedMapName, sizeof(formattedMapName), true, true);

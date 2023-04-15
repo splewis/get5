@@ -8,6 +8,14 @@ Whenever you update your Get5 plugin, remember to **always** update the `transla
 Please see the [installation instructions](https://splewis.github.io/get5/latest/installation/#installation) for
 details.
 
+# 0.14.4
+
+#### 2023-04-16
+
+Minor bugfix.
+
+1. Fix invalid parsing of workshop maps with IDs consisting of 64-bit integers.
+
 # 0.14.3
 
 #### 2023-04-10

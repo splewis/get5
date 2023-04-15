@@ -20,16 +20,23 @@ static Action Timer_DelayedChangeMap(Handle timer, Handle pack) {
   ResetPack(pack);
   ReadPackString(pack, map, sizeof(map));
   CloseHandle(pack);
-  if (IsMapWorkshop(map)) {
-    ServerCommand("host_workshop_map %d", GetMapIdFromString(map));
+  char workshopMap[PLATFORM_MAX_PATH];
+  if (IsMapWorkshop(map) && GetMapIdFromString(map, workshopMap, sizeof(workshopMap))) {
+    ServerCommand("host_workshop_map %s", workshopMap);
   } else {
     ServerCommand("changelevel %s", map);
   }
   return Plugin_Handled;
 }
 
-int GetMapIdFromString(const char[] map) {
+bool GetMapIdFromString(const char[] map, char[] buffer, const int bufferSize) {
   char buffers[4][PLATFORM_MAX_PATH];
   ExplodeString(map, "/", buffers, sizeof(buffers), PLATFORM_MAX_PATH);
-  return StringToInt(buffers[1]);
+  int value[2];
+  StringToInt64(buffers[1], value);
+  if (value[0] > 0) {
+    strcopy(buffer, bufferSize, buffers[1]);
+    return true;
+  }
+  return false;
 }

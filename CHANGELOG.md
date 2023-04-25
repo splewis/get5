@@ -8,6 +8,14 @@ Whenever you update your Get5 plugin, remember to **always** update the `transla
 Please see the [installation instructions](https://splewis.github.io/get5/latest/installation/#installation) for
 details.
 
+# 0.14.5
+
+#### 2023-04-25
+
+Bugfix.
+
+1. Prevent the presence of coaches in teams from messing up the stats in JSON events. 
+
 # 0.14.4
 
 #### 2023-04-16

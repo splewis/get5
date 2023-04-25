@@ -1070,15 +1070,15 @@ static void ConvertKeyValueStatusToJSON(const JSON_Array team) {
     return;
   }
 
-  if (g_StatsKv.GetNum(STAT_COACHING)) {
-    g_StatsKv.GoBack();
-    return;
-  }
-
   char name[MAX_NAME_LENGTH];
   char auth[AUTH_LENGTH];
 
   do {
+
+    // Don't include coaches.
+    if (g_StatsKv.GetNum(STAT_COACHING)) {
+      continue;
+    }
 
     g_StatsKv.GetSectionName(auth, sizeof(auth));
     g_StatsKv.GetString(STAT_NAME, name, sizeof(name));

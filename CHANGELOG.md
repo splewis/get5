@@ -43,7 +43,7 @@ Hotfix of stuff that should have been in 0.14.0.
 
 # 0.14.0
 
-*Note: Removed from releases. Please use 0.14.3 instead. All changes below still apply.*
+*Note: Removed from releases. Please use newest 0.14.x instead. All changes below still apply.*
 
 #### 2023-04-08
 

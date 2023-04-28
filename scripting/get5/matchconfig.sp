@@ -752,7 +752,7 @@ static bool LoadMatchFromJson(const JSON_Object json, char[] error) {
     for (int i = 0; i < array.Length; i++) {
       char buffer[64];
       array.GetString(i, buffer, sizeof(buffer));
-      SideChoice sideChoice = SideTypeFromString(buffer, error);
+      SideChoice sideChoice = SideChoiceFromString(buffer, error);
       if (sideChoice == SideChoice_Invalid) {
         return false;
       }
@@ -948,7 +948,7 @@ static bool LoadMatchFromKeyValue(KeyValues kv, char[] error) {
       do {
         char buffer[64];
         kv.GetSectionName(buffer, sizeof(buffer));
-        SideChoice sideChoice = SideTypeFromString(buffer, error);
+        SideChoice sideChoice = SideChoiceFromString(buffer, error);
         if (sideChoice == SideChoice_Invalid) {
           return false;
         }
@@ -1714,7 +1714,7 @@ Action Command_CreateMatch(int client, int args) {
         }
         sidesCount = ExplodeString(value, ",", mapSides, 16, PLATFORM_MAX_PATH, true);
         for (int mi = 0; mi < sidesCount; mi++) {
-          if (SideTypeFromString(mapSides[mi], error) == SideChoice_Invalid) {
+          if (SideChoiceFromString(mapSides[mi], error) == SideChoice_Invalid) {
             ReplyToCommand(client, "'%s' error: %s", parameter, error);
             return Plugin_Handled;
           }
@@ -1883,6 +1883,7 @@ Action Command_CreateMatch(int client, int args) {
     matchConfig.SetString("match_title", matchTitle);
   }
   matchConfig.SetString("veto_first", vetoFirst);
+  matchConfig.SetString("side_type", sideType);
   matchConfig.SetBool("clinch_series", clinchSeries);
   matchConfig.SetBool("coaches_must_ready", coachesMustReady);
   matchConfig.SetBool("wingman", wingman);

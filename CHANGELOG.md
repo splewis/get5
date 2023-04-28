@@ -8,13 +8,25 @@ Whenever you update your Get5 plugin, remember to **always** update the `transla
 Please see the [installation instructions](https://splewis.github.io/get5/latest/installation/#installation) for
 details.
 
+# 0.14.6
+
+#### 2023-04-29
+
+Bugfix and minor adjustments.
+
+1. Fix missing acknowledgement of the `--side_type` argument for `get5_creatematch`.
+2. Rename helper function `SideTypeFromString` to `SideChoiceFromString`.
+3. Add [`get5_demo_upload_use_put`](https://splewis.github.io/get5/latest/configuration/get5_demo_upload_use_put)
+   and [`get5_demo_upload_timeout`](https://splewis.github.io/get5/latest/configuration/get5_demo_upload_timeout) to
+   improve flexibility of demo uploads.
+
 # 0.14.5
 
 #### 2023-04-25
 
 Bugfix.
 
-1. Prevent the presence of coaches in teams from messing up the stats in JSON events. 
+1. Prevent the presence of coaches in teams from messing up the stats in JSON events.
 
 # 0.14.4
 
@@ -39,7 +51,8 @@ Minor bugfix.
 Hotfix of stuff that should have been in 0.14.0.
 
 1. Fixed "create match with current teams" from the `!get5` menu.
-2. Add option to disable formatting known map names via [`get5_format_map_names`](https://splewis.github.io/get5/latest/configuration/#get5_format_map_names).
+2. Add option to disable formatting known map names
+   via [`get5_format_map_names`](https://splewis.github.io/get5/latest/configuration/#get5_format_map_names).
 
 # 0.14.0
 

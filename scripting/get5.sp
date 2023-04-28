@@ -119,6 +119,8 @@ ConVar g_SurrenderCooldownCvar;
 ConVar g_ForfeitEnabledCvar;
 ConVar g_ForfeitCountdownTimeCvar;
 ConVar g_DemoUploadURLCvar;
+ConVar g_DemoUploadUsePUTCvar;
+ConVar g_DemoUploadTimeoutCvar;
 ConVar g_DemoUploadHeaderKeyCvar;
 ConVar g_DemoUploadHeaderValueCvar;
 ConVar g_DemoUploadDeleteAfterCvar;
@@ -435,6 +437,8 @@ public void OnPluginStart() {
   g_DemoUploadHeaderKeyCvar             = CreateConVar("get5_demo_upload_header_key", "Authorization", "If defined, a custom HTTP header with this name is added to the demo upload HTTP request.", FCVAR_DONTRECORD);
   g_DemoUploadHeaderValueCvar           = CreateConVar("get5_demo_upload_header_value", "", "If defined, the value of the custom header added to the demo upload HTTP request.", FCVAR_DONTRECORD | FCVAR_PROTECTED);
   g_DemoUploadURLCvar                   = CreateConVar("get5_demo_upload_url", "", "If defined, recorded demos will be uploaded to this URL over HTTP. If no protocol is provided, 'http://' is prepended to this value.", FCVAR_DONTRECORD);
+  g_DemoUploadUsePUTCvar                = CreateConVar("get5_demo_upload_use_put", "0", "If enabled, the demo upload HTTP request will use PUT instead of POST.", FCVAR_DONTRECORD);
+  g_DemoUploadTimeoutCvar               = CreateConVar("get5_demo_upload_timeout", "180", "The timeout of the demo upload HTTP request, in seconds.", FCVAR_DONTRECORD);
 
   // Surrender/Forfeit
   g_ForfeitCountdownTimeCvar            = CreateConVar("get5_forfeit_countdown", "180", "The grace-period (in seconds) for rejoining the server to avoid a loss by forfeit.", 0, true, 30.0);

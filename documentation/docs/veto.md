@@ -11,7 +11,7 @@ away-team when in [scrim mode](../getting_started#scrims). Except for the team c
 can [only talk in **team chat**](../configuration#get5_mute_allchat_during_map_selection) during map selection. This is
 to reduce clutter, as a lot of text is already printed during this phase.
 
-## Options {: #options }
+## Side Selection {: #side-selection }
 
 When a team picks a map, the other team gets to choose the side to start on for that map. If a map is selected
 by default by being the last map standing, a knife round is used. This behavior is determined by

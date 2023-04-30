@@ -647,7 +647,7 @@ stock bool HelpfulAttack(int attacker, int victim) {
   return attacker != victim && GetClientTeam(attacker) != GetClientTeam(victim);
 }
 
-stock SideChoice SideTypeFromString(const char[] input, char[] error) {
+stock SideChoice SideChoiceFromString(const char[] input, char[] error) {
   if (StrEqual(input, "team1_ct", false) || StrEqual(input, "team2_t", false)) {
     return SideChoice_Team1CT;
   } else if (StrEqual(input, "team1_t", false) || StrEqual(input, "team2_ct", false)) {

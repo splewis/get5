@@ -642,6 +642,12 @@ to `csgo/cfg`.<br>**`Default: "get5/cvars.json"`**
 once a recording stops. If no protocol is provided, `http://` will be prepended to this value. Requires the
 [SteamWorks](../installation#steamworks) extension.<br>**`Default: ""`**
 
+####`get5_demo_upload_use_put`
+:   If enabled, the demo upload HTTP request will use `PUT` instead of `POST`.<br>**`Default: 0`**
+
+####`get5_demo_upload_timeout`
+:   The HTTP timeout of the demo upload request, in seconds.<br>**`Default: 180`**
+
 ####`get5_demo_upload_header_key`
 :   If this **and** [`get5_demo_upload_header_value`](#get5_demo_upload_header_value) are defined, this header name and
 value will be used for your [demo upload HTTP request](#get5_demo_upload_url).<br>**`Default: "Authorization"`**

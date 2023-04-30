@@ -150,7 +150,8 @@ static void UploadDemoToServer(const char[] demoFilePath, const char[] demoFileN
   }
 
   char error[PLATFORM_MAX_PATH];
-  Handle demoRequest = CreateGet5HTTPRequest(k_EHTTPMethodPOST, demoUrl, error);
+  EHTTPMethod method = g_DemoUploadUsePUTCvar.BoolValue ? k_EHTTPMethodPUT : k_EHTTPMethodPOST;
+  Handle demoRequest = CreateGet5HTTPRequest(method, demoUrl, error);
   if (demoRequest == INVALID_HANDLE || !AddFileAsHttpBody(demoRequest, demoFilePath, error) ||
       !SetFileNameHeader(demoRequest, demoFileName, error) || !SetMatchIdHeader(demoRequest, matchId, error) ||
       !SetMapNumberHeader(demoRequest, mapNumber, error)) {
@@ -173,7 +174,11 @@ static void UploadDemoToServer(const char[] demoFilePath, const char[] demoFileN
   DataPack pack = GetDemoInfoDataPack(matchId, mapNumber, demoFilePath, demoFileName, demoUrl, demoHeaderKey,
                                       demoHeaderValue, deleteAfterUpload);
 
-  SteamWorks_SetHTTPRequestNetworkActivityTimeout(demoRequest, 180);
+  int timeout = g_DemoUploadTimeoutCvar.IntValue;
+  if (timeout < 0) {
+    timeout = 0;
+  }
+  SteamWorks_SetHTTPRequestNetworkActivityTimeout(demoRequest, timeout);
   SteamWorks_SetHTTPRequestContextValue(demoRequest, pack);
   SteamWorks_SetHTTPCallbacks(demoRequest, DemoRequest_Callback);
   SteamWorks_SendHTTPRequest(demoRequest);

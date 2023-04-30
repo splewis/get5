@@ -16,8 +16,8 @@ Bugfix and minor adjustments.
 
 1. Fix missing acknowledgement of the `--side_type` argument for `get5_creatematch`.
 2. Rename helper function `SideTypeFromString` to `SideChoiceFromString`.
-3. Add [`get5_demo_upload_use_put`](https://splewis.github.io/get5/latest/configuration/get5_demo_upload_use_put)
-   and [`get5_demo_upload_timeout`](https://splewis.github.io/get5/latest/configuration/get5_demo_upload_timeout) to
+3. Add [`get5_demo_upload_use_put`](https://splewis.github.io/get5/latest/configuration/#get5_demo_upload_use_put)
+   and [`get5_demo_upload_timeout`](https://splewis.github.io/get5/latest/configuration/#get5_demo_upload_timeout) to
    improve flexibility of demo uploads.
 
 # 0.14.5

@@ -19,7 +19,7 @@ jobs:
         python-version: '3.10'
     - run: python ./misc/format.py
 
-    - uses: EndBug/add-and-commit@v9.1.1
+    - uses: EndBug/add-and-commit@v9.1.2
       with:
         committer_name: GitHub Actions
         committer_email: 41898282+github-actions[bot]@users.noreply.github.com

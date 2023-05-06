@@ -964,6 +964,7 @@ static bool LoadMatchFromKeyValue(KeyValues kv, char[] error) {
       if (!LoadVetoDataKeyValues(kv, error)) {
         return false;
       }
+      kv.GoBack();
     } else {
       GenerateDefaultVetoSetup(g_MapPoolList, g_MapBanOrder, g_NumberOfMapsInSeries, g_LastVetoTeam);
     }

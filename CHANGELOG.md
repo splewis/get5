@@ -8,6 +8,14 @@ Whenever you update your Get5 plugin, remember to **always** update the `transla
 Please see the [installation instructions](https://splewis.github.io/get5/latest/installation/#installation) for
 details.
 
+# 0.14.7
+
+#### 2023-05-06
+
+Bugfix.
+
+1. Fix missing loading of `cvars` if also using `veto_mode` with a KeyValues match configuration.
+
 # 0.14.6
 
 #### 2023-04-29

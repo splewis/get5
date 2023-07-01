@@ -17,7 +17,7 @@
         <link rel="next" href="../getting_started/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
@@ -25,10 +25,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.26e3688c.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.a6bdf11c.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ecc896b0.min.css">
       
       
 
@@ -695,7 +695,7 @@
     Surrender &amp; Forfeit
   </a>
   
-    <nav class="md-nav" aria-label="Surrender &amp; Forfeit">
+    <nav class="md-nav" aria-label="Surrender & Forfeit">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -833,7 +833,7 @@
     Formats &amp; Paths
   </a>
   
-    <nav class="md-nav" aria-label="Formats &amp; Paths">
+    <nav class="md-nav" aria-label="Formats & Paths">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1926,7 +1926,7 @@
     Surrender &amp; Forfeit
   </a>
   
-    <nav class="md-nav" aria-label="Surrender &amp; Forfeit">
+    <nav class="md-nav" aria-label="Surrender & Forfeit">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2064,7 +2064,7 @@
     Formats &amp; Paths
   </a>
   
-    <nav class="md-nav" aria-label="Formats &amp; Paths">
+    <nav class="md-nav" aria-label="Formats & Paths">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2964,17 +2964,19 @@ does not work.</p>
 <dl>
 <dd>If defined, Get5 will <a href="../backup#upload">automatically send backups</a> to this URL in an HTTP <code>POST</code> request. If no
 protocol is provided, <code>http://</code> will be prepended to this value. Requires the
-<a href="../installation#steamworks">SteamWorks</a> extension.<br><strong><code>Default: ""</code></strong></dd>
+<a href="../installation#steamworks">SteamWorks</a> extension.<br><strong><code>Default: ""</code></strong><br><strong>FCVAR_PROTECTED</strong></dd>
 </dl>
 <h4 id="get5_remote_backup_header_key"><code>get5_remote_backup_header_key</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_remote_backup_header_value"><code>get5_remote_backup_header_value</code></a> are defined, this header name
-and value will be used for your <a href="#get5_remote_backup_url">backup upload HTTP request</a>.<br><strong><code>Default: "Authorization"</code></strong></dd>
+and value will be used for your <a href="#get5_remote_backup_url">backup upload HTTP request</a>.<br><strong><code>Default: "Authorization"</code></strong>
+<br><strong>FCVAR_PROTECTED</strong></dd>
 </dl>
 <h4 id="get5_remote_backup_header_value"><code>get5_remote_backup_header_value</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_remote_backup_header_key"><code>get5_remote_backup_header_key</code></a> are defined, this header name and
-value will be used for your <a href="#get5_remote_backup_url">backup upload HTTP request</a>.<br><strong><code>Default: ""</code></strong></dd>
+value will be used for your <a href="#get5_remote_backup_url">backup upload HTTP request</a>.<br><strong><code>Default: ""</code></strong>
+<br><strong>FCVAR_PROTECTED</strong></dd>
 </dl>
 <h2 id="formats-paths">Formats &amp; Paths</h2>
 <h4 id="get5_format_map_names"><code>get5_format_map_names</code></h4>
@@ -3076,7 +3078,7 @@ to <code>csgo/cfg</code>.<br><strong><code>Default: "get5/cvars.json"</code></st
 <dl>
 <dd>If defined, Get5 will <a href="../gotv#upload">automatically send a recorded demo</a> to this URL in an HTTP <code>POST</code> request
 once a recording stops. If no protocol is provided, <code>http://</code> will be prepended to this value. Requires the
-<a href="../installation#steamworks">SteamWorks</a> extension.<br><strong><code>Default: ""</code></strong></dd>
+<a href="../installation#steamworks">SteamWorks</a> extension.<br><strong><code>Default: ""</code></strong><br><strong>FCVAR_PROTECTED</strong></dd>
 </dl>
 <h4 id="get5_demo_upload_use_put"><code>get5_demo_upload_use_put</code></h4>
 <dl>
@@ -3089,12 +3091,14 @@ once a recording stops. If no protocol is provided, <code>http://</code> will be
 <h4 id="get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></a> are defined, this header name and
-value will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>.<br><strong><code>Default: "Authorization"</code></strong></dd>
+value will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>.<br><strong><code>Default: "Authorization"</code></strong>
+<br><strong>FCVAR_PROTECTED</strong></dd>
 </dl>
 <h4 id="get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></a> are defined, this header name and
-value will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>.<br><strong><code>Default: ""</code></strong></dd>
+value will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>.<br><strong><code>Default: ""</code></strong>
+<br><strong>FCVAR_PROTECTED</strong></dd>
 </dl>
 <h4 id="get5_demo_delete_after_upload"><code>get5_demo_delete_after_upload</code></h4>
 <dl>
@@ -3125,18 +3129,19 @@ that stage.</p>
 <h4 id="get5_remote_log_url"><code>get5_remote_log_url</code></h4>
 <dl>
 <dd>The URL to send all <a href="../events_and_forwards#http">events</a> to. Requires the <a href="../installation#steamworks">SteamWorks</a>
-extension. Set to empty string to disable.<br><strong><code>Default: ""</code></strong></dd>
+extension. Set to empty string to disable.<br><strong><code>Default: ""</code></strong><br><strong>FCVAR_PROTECTED</strong></dd>
 </dl>
 <h4 id="get5_remote_log_header_key"><code>get5_remote_log_header_key</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_remote_log_header_value"><code>get5_remote_log_header_value</code></a> are defined, this
-header name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.<br><em>
-</em><code>Default: "Authorization"</code>**</dd>
+header name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.
+<br><strong><code>Default: "Authorization"</code></strong><br><strong>FCVAR_PROTECTED</strong></dd>
 </dl>
 <h4 id="get5_remote_log_header_value"><code>get5_remote_log_header_value</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_remote_log_header_key"><code>get5_remote_log_header_key</code></a> are defined, this header
-name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.<br><strong><code>Default: ""</code></strong></dd>
+name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.<br><strong><code>Default: ""</code></strong>
+<br><strong>FCVAR_PROTECTED</strong></dd>
 </dl>
 <h2 id="substitution-variables">Substitution Variables</h2>
 <h3 id="state-substitutes">Match/State Substitutes</h3>
@@ -3250,11 +3255,15 @@ after using a color variable.</p>
     <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "navigation.tracking", "navigation.sections"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.fac441b0.min.js"></script>
+      <script src="../assets/javascripts/bundle.b425cdc4.min.js"></script>
       
-        <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
+        
+          <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
+        
       
-        <script src="../javascripts/tablesort.js"></script>
+        
+          <script src="../javascripts/tablesort.js"></script>
+        
       
     
   </body>

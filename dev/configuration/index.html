@@ -2964,19 +2964,19 @@ does not work.</p>
 <dl>
 <dd>If defined, Get5 will <a href="../backup#upload">automatically send backups</a> to this URL in an HTTP <code>POST</code> request. If no
 protocol is provided, <code>http://</code> will be prepended to this value. Requires the
-<a href="../installation#steamworks">SteamWorks</a> extension.<br><strong><code>Default: ""</code></strong><br><strong>FCVAR_PROTECTED</strong></dd>
+<a href="../installation#steamworks">SteamWorks</a> extension.<br><strong><code>Default: ""</code></strong><br><strong>FCVAR_PROTECTED</strong> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5 5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg></span></dd>
 </dl>
 <h4 id="get5_remote_backup_header_key"><code>get5_remote_backup_header_key</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_remote_backup_header_value"><code>get5_remote_backup_header_value</code></a> are defined, this header name
 and value will be used for your <a href="#get5_remote_backup_url">backup upload HTTP request</a>.<br><strong><code>Default: "Authorization"</code></strong>
-<br><strong>FCVAR_PROTECTED</strong></dd>
+<br><strong>FCVAR_PROTECTED</strong> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5 5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg></span></dd>
 </dl>
 <h4 id="get5_remote_backup_header_value"><code>get5_remote_backup_header_value</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_remote_backup_header_key"><code>get5_remote_backup_header_key</code></a> are defined, this header name and
 value will be used for your <a href="#get5_remote_backup_url">backup upload HTTP request</a>.<br><strong><code>Default: ""</code></strong>
-<br><strong>FCVAR_PROTECTED</strong></dd>
+<br><strong>FCVAR_PROTECTED</strong> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5 5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg></span></dd>
 </dl>
 <h2 id="formats-paths">Formats &amp; Paths</h2>
 <h4 id="get5_format_map_names"><code>get5_format_map_names</code></h4>
@@ -3078,7 +3078,7 @@ to <code>csgo/cfg</code>.<br><strong><code>Default: "get5/cvars.json"</code></st
 <dl>
 <dd>If defined, Get5 will <a href="../gotv#upload">automatically send a recorded demo</a> to this URL in an HTTP <code>POST</code> request
 once a recording stops. If no protocol is provided, <code>http://</code> will be prepended to this value. Requires the
-<a href="../installation#steamworks">SteamWorks</a> extension.<br><strong><code>Default: ""</code></strong><br><strong>FCVAR_PROTECTED</strong></dd>
+<a href="../installation#steamworks">SteamWorks</a> extension.<br><strong><code>Default: ""</code></strong><br><strong>FCVAR_PROTECTED</strong> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5 5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg></span></dd>
 </dl>
 <h4 id="get5_demo_upload_use_put"><code>get5_demo_upload_use_put</code></h4>
 <dl>
@@ -3092,13 +3092,13 @@ once a recording stops. If no protocol is provided, <code>http://</code> will be
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></a> are defined, this header name and
 value will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>.<br><strong><code>Default: "Authorization"</code></strong>
-<br><strong>FCVAR_PROTECTED</strong></dd>
+<br><strong>FCVAR_PROTECTED</strong> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5 5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg></span></dd>
 </dl>
 <h4 id="get5_demo_upload_header_value"><code>get5_demo_upload_header_value</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_demo_upload_header_key"><code>get5_demo_upload_header_key</code></a> are defined, this header name and
 value will be used for your <a href="#get5_demo_upload_url">demo upload HTTP request</a>.<br><strong><code>Default: ""</code></strong>
-<br><strong>FCVAR_PROTECTED</strong></dd>
+<br><strong>FCVAR_PROTECTED</strong> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5 5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg></span></dd>
 </dl>
 <h4 id="get5_demo_delete_after_upload"><code>get5_demo_delete_after_upload</code></h4>
 <dl>
@@ -3129,19 +3129,19 @@ that stage.</p>
 <h4 id="get5_remote_log_url"><code>get5_remote_log_url</code></h4>
 <dl>
 <dd>The URL to send all <a href="../events_and_forwards#http">events</a> to. Requires the <a href="../installation#steamworks">SteamWorks</a>
-extension. Set to empty string to disable.<br><strong><code>Default: ""</code></strong><br><strong>FCVAR_PROTECTED</strong></dd>
+extension. Set to empty string to disable.<br><strong><code>Default: ""</code></strong><br><strong>FCVAR_PROTECTED</strong> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5 5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg></span></dd>
 </dl>
 <h4 id="get5_remote_log_header_key"><code>get5_remote_log_header_key</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_remote_log_header_value"><code>get5_remote_log_header_value</code></a> are defined, this
 header name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.
-<br><strong><code>Default: "Authorization"</code></strong><br><strong>FCVAR_PROTECTED</strong></dd>
+<br><strong><code>Default: "Authorization"</code></strong><br><strong>FCVAR_PROTECTED</strong> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5 5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg></span></dd>
 </dl>
 <h4 id="get5_remote_log_header_value"><code>get5_remote_log_header_value</code></h4>
 <dl>
 <dd>If this <strong>and</strong> <a href="#get5_remote_log_header_key"><code>get5_remote_log_header_key</code></a> are defined, this header
 name and value will be used for your <a href="../events_and_forwards#http">event HTTP requests</a>.<br><strong><code>Default: ""</code></strong>
-<br><strong>FCVAR_PROTECTED</strong></dd>
+<br><strong>FCVAR_PROTECTED</strong> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5 5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg></span></dd>
 </dl>
 <h2 id="substitution-variables">Substitution Variables</h2>
 <h3 id="state-substitutes">Match/State Substitutes</h3>

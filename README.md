@@ -4,7 +4,7 @@
 [![Discord Chat](https://img.shields.io/discord/926309849673895966?label=Discord)](https://discord.gg/zmqEa4keCk)
 [![Downloads](https://img.shields.io/github/downloads/splewis/get5/total?label=Downloads)](https://github.com/splewis/get5/releases/latest)
 
-## Status: Supported, actively developed.
+## Status: Supported. Development paused pending more information about CS2.
 
 Get5 is a standalone SourceMod plugin for CS:GO servers for running matches.
 

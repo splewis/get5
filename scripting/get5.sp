@@ -426,19 +426,19 @@ public void OnPluginStart() {
   g_StopCommandEnabledCvar              = CreateConVar("get5_stop_command_enabled", "1", "Whether clients can use the !stop command to restore to the beginning of the current round.");
   g_StopCommandNoDamageCvar             = CreateConVar("get5_stop_command_no_damage", "0", "Whether the stop command becomes unavailable if a player damages a player from the opposing team.");
   g_StopCommandTimeLimitCvar            = CreateConVar("get5_stop_command_time_limit", "0", "The number of seconds into a round after which a team can no longer request/confirm to stop and restart the round.");
-  g_RemoteBackupURLCvar                 = CreateConVar("get5_remote_backup_url", "", "A URL to send backup files to over HTTP. Leave empty to disable.");
-  g_RemoteBackupURLHeaderKeyCvar        = CreateConVar("get5_remote_backup_header_key", "Authorization", "If defined, a custom HTTP header with this name is added to the backup HTTP request.", FCVAR_DONTRECORD);
-  g_RemoteBackupURLHeaderValueCvar      = CreateConVar("get5_remote_backup_header_value", "", "If defined, the value of the custom header added to the backup HTTP request.", FCVAR_DONTRECORD | FCVAR_PROTECTED);
+  g_RemoteBackupURLCvar                 = CreateConVar("get5_remote_backup_url", "", "A URL to send backup files to over HTTP. Leave empty to disable.", FCVAR_PROTECTED);
+  g_RemoteBackupURLHeaderKeyCvar        = CreateConVar("get5_remote_backup_header_key", "Authorization", "If defined, a custom HTTP header with this name is added to the backup HTTP request.", FCVAR_PROTECTED);
+  g_RemoteBackupURLHeaderValueCvar      = CreateConVar("get5_remote_backup_header_value", "", "If defined, the value of the custom header added to the backup HTTP request.", FCVAR_PROTECTED);
 
   // Demos
   g_DemoUploadDeleteAfterCvar           = CreateConVar("get5_demo_delete_after_upload", "0", "Whether to delete the demo from the game server after a successful upload.");
   g_DemoNameFormatCvar                  = CreateConVar("get5_demo_name_format", "{TIME}_{MATCHID}_map{MAPNUMBER}_{MAPNAME}", "The format to use for demo files. Do not remove the {TIME} placeholder if you use the backup system. Set to empty string to disable automatic demo recording.");
   g_DemoPathCvar                        = CreateConVar("get5_demo_path", "", "The folder to save demo files in, relative to the csgo directory. If defined, it must not start with a slash and must end with a slash. Set to empty string to use the csgo root.");
-  g_DemoUploadHeaderKeyCvar             = CreateConVar("get5_demo_upload_header_key", "Authorization", "If defined, a custom HTTP header with this name is added to the demo upload HTTP request.", FCVAR_DONTRECORD);
-  g_DemoUploadHeaderValueCvar           = CreateConVar("get5_demo_upload_header_value", "", "If defined, the value of the custom header added to the demo upload HTTP request.", FCVAR_DONTRECORD | FCVAR_PROTECTED);
-  g_DemoUploadURLCvar                   = CreateConVar("get5_demo_upload_url", "", "If defined, recorded demos will be uploaded to this URL over HTTP. If no protocol is provided, 'http://' is prepended to this value.", FCVAR_DONTRECORD);
-  g_DemoUploadUsePUTCvar                = CreateConVar("get5_demo_upload_use_put", "0", "If enabled, the demo upload HTTP request will use PUT instead of POST.", FCVAR_DONTRECORD);
-  g_DemoUploadTimeoutCvar               = CreateConVar("get5_demo_upload_timeout", "180", "The timeout of the demo upload HTTP request, in seconds.", FCVAR_DONTRECORD);
+  g_DemoUploadHeaderKeyCvar             = CreateConVar("get5_demo_upload_header_key", "Authorization", "If defined, a custom HTTP header with this name is added to the demo upload HTTP request.", FCVAR_PROTECTED);
+  g_DemoUploadHeaderValueCvar           = CreateConVar("get5_demo_upload_header_value", "", "If defined, the value of the custom header added to the demo upload HTTP request.", FCVAR_PROTECTED);
+  g_DemoUploadURLCvar                   = CreateConVar("get5_demo_upload_url", "", "If defined, recorded demos will be uploaded to this URL over HTTP. If no protocol is provided, 'http://' is prepended to this value.", FCVAR_PROTECTED);
+  g_DemoUploadUsePUTCvar                = CreateConVar("get5_demo_upload_use_put", "0", "If enabled, the demo upload HTTP request will use PUT instead of POST.");
+  g_DemoUploadTimeoutCvar               = CreateConVar("get5_demo_upload_timeout", "180", "The timeout of the demo upload HTTP request, in seconds.");
 
   // Surrender/Forfeit
   g_ForfeitCountdownTimeCvar            = CreateConVar("get5_forfeit_countdown", "180", "The grace-period (in seconds) for rejoining the server to avoid a loss by forfeit.", 0, true, 30.0);
@@ -451,9 +451,9 @@ public void OnPluginStart() {
 
   // Events
   g_EventLogFormatCvar                  = CreateConVar("get5_event_log_format", "", "Path to use when writing match event logs to disk. Use \"\" to disable.");
-  g_EventLogRemoteHeaderKeyCvar         = CreateConVar("get5_remote_log_header_key", "Authorization", "If defined, a custom HTTP header with this name is added to the HTTP requests for events.", FCVAR_DONTRECORD);
-  g_EventLogRemoteHeaderValueCvar       = CreateConVar("get5_remote_log_header_value", "", "If defined, the value of the custom header added to the events sent over HTTP.", FCVAR_DONTRECORD | FCVAR_PROTECTED);
-  g_EventLogRemoteURLCvar               = CreateConVar("get5_remote_log_url", "", "If defined, all events are sent to this URL over HTTP. If no protocol is provided, 'http://' is prepended to this value.", FCVAR_DONTRECORD);
+  g_EventLogRemoteHeaderKeyCvar         = CreateConVar("get5_remote_log_header_key", "Authorization", "If defined, a custom HTTP header with this name is added to the HTTP requests for events.", FCVAR_PROTECTED);
+  g_EventLogRemoteHeaderValueCvar       = CreateConVar("get5_remote_log_header_value", "", "If defined, the value of the custom header added to the events sent over HTTP.", FCVAR_PROTECTED);
+  g_EventLogRemoteURLCvar               = CreateConVar("get5_remote_log_url", "", "If defined, all events are sent to this URL over HTTP. If no protocol is provided, 'http://' is prepended to this value.", FCVAR_PROTECTED);
 
   // Damage info
   g_DamagePrintCvar                     = CreateConVar("get5_print_damage", "1", "Whether damage reports are printed to chat on round end.");

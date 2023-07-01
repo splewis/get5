@@ -280,7 +280,7 @@ defaults below.
 
 - `--no_series_clinch` or `-nsc`
     - Configures the series to play all maps, even if a team has practically won. I.e. plays all 3 maps of a Bo3.
-      Irrelevant if `--num_maps` is 1.
+      Irrelevant if `--num_maps` <= 2.
     - Type: `Boolean` (no arguments)
     - Default: `false`
 

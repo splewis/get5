@@ -539,15 +539,17 @@ exist.<br>**`Default: ""`**
 ####`get5_remote_backup_url`
 :   If defined, Get5 will [automatically send backups](../backup#upload) to this URL in an HTTP `POST` request. If no
 protocol is provided, `http://` will be prepended to this value. Requires the
-[SteamWorks](../installation#steamworks) extension.<br>**`Default: ""`**
+[SteamWorks](../installation#steamworks) extension.<br>**`Default: ""`**<br>**FCVAR_PROTECTED** :material-lock:
 
 ####`get5_remote_backup_header_key`
 :   If this **and** [`get5_remote_backup_header_value`](#get5_remote_backup_header_value) are defined, this header name
 and value will be used for your [backup upload HTTP request](#get5_remote_backup_url).<br>**`Default: "Authorization"`**
+<br>**FCVAR_PROTECTED** :material-lock:
 
 ####`get5_remote_backup_header_value`
 :   If this **and** [`get5_remote_backup_header_key`](#get5_remote_backup_header_key) are defined, this header name and
 value will be used for your [backup upload HTTP request](#get5_remote_backup_url).<br>**`Default: ""`**
+<br>**FCVAR_PROTECTED** :material-lock:
 
 ## Formats & Paths
 
@@ -640,7 +642,7 @@ to `csgo/cfg`.<br>**`Default: "get5/cvars.json"`**
 ####`get5_demo_upload_url`
 :   If defined, Get5 will [automatically send a recorded demo](../gotv#upload) to this URL in an HTTP `POST` request
 once a recording stops. If no protocol is provided, `http://` will be prepended to this value. Requires the
-[SteamWorks](../installation#steamworks) extension.<br>**`Default: ""`**
+[SteamWorks](../installation#steamworks) extension.<br>**`Default: ""`**<br>**FCVAR_PROTECTED** :material-lock:
 
 ####`get5_demo_upload_use_put`
 :   If enabled, the demo upload HTTP request will use `PUT` instead of `POST`.<br>**`Default: 0`**
@@ -651,10 +653,12 @@ once a recording stops. If no protocol is provided, `http://` will be prepended 
 ####`get5_demo_upload_header_key`
 :   If this **and** [`get5_demo_upload_header_value`](#get5_demo_upload_header_value) are defined, this header name and
 value will be used for your [demo upload HTTP request](#get5_demo_upload_url).<br>**`Default: "Authorization"`**
+<br>**FCVAR_PROTECTED** :material-lock:
 
 ####`get5_demo_upload_header_value`
 :   If this **and** [`get5_demo_upload_header_key`](#get5_demo_upload_header_key) are defined, this header name and
 value will be used for your [demo upload HTTP request](#get5_demo_upload_url).<br>**`Default: ""`**
+<br>**FCVAR_PROTECTED** :material-lock:
 
 ####`get5_demo_delete_after_upload`
 :   Whether to delete the demo file from the game server after
@@ -682,16 +686,17 @@ empty string to disable recording demos.<br>**`Default: "{TIME}_{MATCHID}_map{MA
 
 ####`get5_remote_log_url`
 :   The URL to send all [events](../events_and_forwards#http) to. Requires the [SteamWorks](../installation#steamworks)
-extension. Set to empty string to disable.<br>**`Default: ""`**
+extension. Set to empty string to disable.<br>**`Default: ""`**<br>**FCVAR_PROTECTED** :material-lock:
 
 ####`get5_remote_log_header_key`
 :   If this **and** [`get5_remote_log_header_value`](#get5_remote_log_header_value) are defined, this
-header name and value will be used for your [event HTTP requests](../events_and_forwards#http).<br>*
-*`Default: "Authorization"`**
+header name and value will be used for your [event HTTP requests](../events_and_forwards#http).
+<br>**`Default: "Authorization"`**<br>**FCVAR_PROTECTED** :material-lock:
 
 ####`get5_remote_log_header_value`
 :   If this **and** [`get5_remote_log_header_key`](#get5_remote_log_header_key) are defined, this header
 name and value will be used for your [event HTTP requests](../events_and_forwards#http).<br>**`Default: ""`**
+<br>**FCVAR_PROTECTED** :material-lock:
 
 ## Substitution Variables
 

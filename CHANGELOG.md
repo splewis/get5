@@ -8,6 +8,39 @@ Whenever you update your Get5 plugin, remember to **always** update the `transla
 Please see the [installation instructions](https://splewis.github.io/get5/latest/installation/#installation) for
 details.
 
+# 0.15.0
+
+#### 2023-07-01
+
+This update changes the behavior of configuration parameters to make parameters apply consistently. Previously, only
+some configuration parameters would reset on map change while others would not.
+
+### Breaking Changes 🛠
+
+The [`FCVAR_DONTRECORD`](https://wiki.alliedmods.net/SourcePawn_Basics_-_Customization_through_ConVars) flag has been
+removed from all parameters, which means they all reset to the value stored in the
+[main configuration file](https://splewis.github.io/get5/latest/configuration/#main-config) when the map
+changes. In practice this means that any value you change during the course of a map via the console will *not* persist
+through a map change. If you want configuration parameters to be match-specific, you must either change them in the main
+config file *or* include them in the `cvars` section of your
+[match configuration](https://splewis.github.io/get5/latest/match_schema/#schema), which is loaded immediately following
+a map change. If you already use `cvars` and don't set parameters via console, you can safely update to 0.15.0.
+
+The following configuration parameters are now `FCVAR_PROTECTED`, which means you can only **set** their values, never
+read them back from the console (it will output `1` if set and `0` if empty):
+
+1. [`get5_remote_backup_url`](https://splewis.github.io/get5/latest/configuration/#get5_remote_backup_url)
+2. [`get5_remote_backup_header_key`](https://splewis.github.io/get5/latest/configuration/#get5_remote_backup_header_key)
+3. [`get5_remote_backup_header_value`](https://splewis.github.io/get5/latest/configuration/#get5_remote_backup_header_value)
+
+4. [`get5_demo_upload_url`](https://splewis.github.io/get5/latest/configuration/#get5_demo_upload_url)
+5. [`get5_demo_upload_header_key`](https://splewis.github.io/get5/latest/configuration/#get5_demo_upload_header_key)
+6. [`get5_demo_upload_header_value`](https://splewis.github.io/get5/latest/configuration/#get5_demo_upload_header_value)
+
+7. [`get5_remote_log_url`](https://splewis.github.io/get5/latest/configuration/#get5_remote_log_url)
+8. [`get5_remote_log_header_key`](https://splewis.github.io/get5/latest/configuration/#get5_remote_log_header_key)
+9. [`get5_remote_log_header_value`](https://splewis.github.io/get5/latest/configuration/#get5_remote_log_header_value)
+
 # 0.14.7
 
 #### 2023-05-06

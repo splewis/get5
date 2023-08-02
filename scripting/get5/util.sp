@@ -3,7 +3,7 @@
 #define LATEST_VERSION_URL          "https://raw.githubusercontent.com/splewis/get5/master/scripting/get5/version.sp"
 #define GET5_GITHUB_PAGE            "splewis.github.io/get5"
 #define DEFAULT_CONFIG_KEY          "default"
-#define MAX_CVAR_LENGTH             513  // 512 + 1 for buffers
+#define MAX_CVAR_LENGTH             1025  // 1024 + 1 for buffers
 #define MAX_INTEGER_STRING_LENGTH   16
 #define MAX_FLOAT_STRING_LENGTH     32
 #define SERVER_ID_LENGTH            65

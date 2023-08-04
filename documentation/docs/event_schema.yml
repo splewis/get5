@@ -670,9 +670,10 @@ webhooks:
                       description: Indicates if the player was killed through smoke. `ThruSmoke`
                         in SourceMod.
                     penetrated:
-                      type: boolean
-                      description: Indicates if the player was killed through an object
-                        (another player or walls). `Penetrated` in SourceMod.
+                      type: integer
+                      minimum: 0
+                      description: Indicates if the player was killed through objects
+                        (other players or walls) as well as how many objects were penetrated. `Penetrated` in SourceMod.
                     attacker_blind:
                       type: boolean
                       description: Indicates if the attacker was blind while the player
@@ -877,7 +878,7 @@ webhooks:
                       enum:
                         - bomb_defused
                     bomb_time_remaining:
-                      type: number
+                      type: integer
                       minimum: 0
                       example: 12438
                       description: Indicates how many milliseconds remained on the bomb

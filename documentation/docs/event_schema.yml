@@ -670,7 +670,7 @@ webhooks:
                       description: Indicates if the player was killed through smoke. `ThruSmoke`
                         in SourceMod.
                     penetrated:
-                      type: boolean
+                      type: number
                       description: Indicates if the player was killed through an object
                         (another player or walls). `Penetrated` in SourceMod.
                     attacker_blind:

@@ -671,6 +671,7 @@ webhooks:
                         in SourceMod.
                     penetrated:
                       type: integer
+                      minimum: 0
                       description: Indicates if the player was killed through objects
                         (other players or walls) as well as how many objects were penetrated. `Penetrated` in SourceMod.
                     attacker_blind:

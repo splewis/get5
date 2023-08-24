@@ -51,14 +51,13 @@ so or can live with the potential consequences.
 
 SteamWorks is not required for Get5 to work on your game server, but it is required if you wish
 to [load match configurations remotely](../commands#get5_loadmatch_url), [send events to a remote URL](../configuration#get5_remote_log_url), [check for updates](../configuration#get5_print_update_notice)
-or [upload demos](../gotv#upload) to a web server.
+or upload [demos](../gotv#upload) or [backups](../backup#upload) to a web server.
 
-[:material-steam: Download SteamWorks](https://github.com/KyleSanderson/SteamWorks/releases/){ .md-button .md-button--primary }
+[:material-steam: Download SteamWorks](https://github.com/hexa-core-eu/SteamWorks/releases/){ .md-button .md-button--primary }
 
-!!! tip "SteamWorks for Windows"
+!!! tip
 
-    Similarly to SourceMod and MetaMod, SteamWorks is OS-specific. If you run Windows, you can get a Windows-version of
-    SteamWorks [here](https://github.com/hexa-core-eu/SteamWorks/releases).
+    Similarly to SourceMod and MetaMod, SteamWorks is OS-specific. Remember to select the right version for your server.
 
 ## Installation {: #installation }
 

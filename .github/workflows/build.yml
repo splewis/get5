@@ -90,7 +90,7 @@ jobs:
           myToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Tag And Attach Nightly Build
-        uses: ncipollo/release-action@v1.12.0
+        uses: ncipollo/release-action@v1.13.0
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           artifacts: "artifacts/${{ needs.build.outputs.filename }}.zip,artifacts/${{ needs.build.outputs.filename }}.tar.gz"
@@ -131,7 +131,7 @@ jobs:
           path: artifacts
 
       - name: Tag And Draft Release
-        uses: ncipollo/release-action@v1.12.0
+        uses: ncipollo/release-action@v1.13.0
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           artifacts: "artifacts/${{ needs.build.outputs.filename }}.zip,artifacts/${{ needs.build.outputs.filename }}.tar.gz"

@@ -16,7 +16,7 @@ jobs:
       SM_JSON_INC_PATH: get5/dependencies/sm-json/addons/sourcemod/scripting/include
       STEAMWORKS_URL: https://raw.githubusercontent.com/hexa-core-eu/SteamWorks/main/Pawn/includes/SteamWorks.inc
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: 'get5'
           submodules: true
@@ -77,7 +77,7 @@ jobs:
     if: github.ref == 'refs/heads/development'
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v3
         with:
           name: ${{ needs.build.outputs.filename }}
@@ -117,7 +117,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Generate changelog
         id: changelog

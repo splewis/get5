@@ -4,7 +4,18 @@
 [![Discord Chat](https://img.shields.io/discord/926309849673895966?label=Discord)](https://discord.gg/zmqEa4keCk)
 [![Downloads](https://img.shields.io/github/downloads/splewis/get5/total?label=Downloads)](https://github.com/splewis/get5/releases/latest)
 
-## Status: Supported. Development paused pending more information about CS2.
+## Status: Discontinued.
+Get5 works only for CS:GO and will **not** be available for CS2. It still works for the legacy CS:GO version on SourceMod 1.
+
+*Alternative platforms for CS2:*
+### **Ankor**
+Game node management based on SwiftlyS2: https://github.com/ankorcs/ankor
+### **MatchZy**
+Get5-inspired plugin based on CounterStrikeSharp: https://github.com/shobhit-pathak/MatchZy
+### **PugSharp**
+Pug-plugin based on CounterStrikeSharp: https://github.com/Lan2Play/PugSharp
+
+---
 
 Get5 is a standalone SourceMod plugin for CS:GO servers for running matches.
 
@@ -32,7 +43,7 @@ If you don't know which one you need, this is the one you need.
 
 A Discord server is available for general discussion.
 
-[![Discord](https://dcbadge.vercel.app/api/server/zmqEa4keCk?style=flat)](https://discord.gg/zmqEa4keCk)
+[![](https://dcbadge.limes.pink/api/server/zmqEa4keCk)](https://discord.gg/zmqEa4keCk)
 
 ---
 
